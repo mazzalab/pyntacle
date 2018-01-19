@@ -7,7 +7,7 @@ import numpy as np
 import time
 from igraph import Graph
 
-
+#added some random stuff for commit test from pycharm
 def initialization(graph):
     graph[graph == 0] = graph.shape[0] + 1  # set zero values to the max possible path length + 1
     np.fill_diagonal(graph, 0)  # set diagonal values to 0 (no distance from itself)
