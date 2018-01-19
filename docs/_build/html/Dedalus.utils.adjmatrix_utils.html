@@ -1,0 +1,321 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Dedalus.utils.adjmatrix_utils module &mdash; Dedalus  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Dedalus  documentation" href="index.html"/>
+        <link rel="up" title="Dedalus.utils package" href="Dedalus.utils.html"/>
+        <link rel="next" title="Dedalus.utils.edgelist_utils module" href="Dedalus.utils.edgelist_utils.html"/>
+        <link rel="prev" title="Dedalus.utils.add_attributes module" href="Dedalus.utils.add_attributes.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Dedalus
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="Dedalus.html">Dedalus package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="Dedalus.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="Dedalus.algorithms.html">Dedalus.algorithms package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dedalus.commands.html">Dedalus.commands package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dedalus.exception.html">Dedalus.exception package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dedalus.graph_generator.html">Dedalus.graph_generator package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dedalus.graph_operations.html">Dedalus.graph_operations package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dedalus.io_stream.html">Dedalus.io_stream package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dedalus.misc.html">Dedalus.misc package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Dedalus.report.html">Dedalus.report package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="Dedalus.utils.html">Dedalus.utils package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="Dedalus.utils.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Dedalus.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Dedalus</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="Dedalus.html">Dedalus package</a> &raquo;</li>
+        
+          <li><a href="Dedalus.utils.html">Dedalus.utils package</a> &raquo;</li>
+        
+      <li>Dedalus.utils.adjmatrix_utils module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/Dedalus.utils.adjmatrix_utils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-Dedalus.utils.adjmatrix_utils">
+<span id="dedalus-utils-adjmatrix-utils-module"></span><h1>Dedalus.utils.adjmatrix_utils module<a class="headerlink" href="#module-Dedalus.utils.adjmatrix_utils" title="Permalink to this headline">¶</a></h1>
+<p>Utilities made for common adjacency matrix file operations</p>
+<dl class="class">
+<dt id="Dedalus.utils.adjmatrix_utils.AdjmUtils">
+<em class="property">class </em><code class="descname">AdjmUtils</code><span class="sig-paren">(</span><em>file: str</em>, <em>header: bool</em>, <em>separator=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Dedalus/utils/adjmatrix_utils.html#AdjmUtils"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Dedalus.utils.adjmatrix_utils.AdjmUtils" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="Dedalus.utils.adjmatrix_utils.AdjmUtils.is_direct">
+<code class="descname">is_direct</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Dedalus/utils/adjmatrix_utils.html#AdjmUtils.is_direct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Dedalus.utils.adjmatrix_utils.AdjmUtils.is_direct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to check whether an adjacency matrix is direct or not</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">directbool, a value representing True if the matrix is direct and False otherwise</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Dedalus.utils.adjmatrix_utils.AdjmUtils.is_squared">
+<code class="descname">is_squared</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Dedalus/utils/adjmatrix_utils.html#AdjmUtils.is_squared"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Dedalus.utils.adjmatrix_utils.AdjmUtils.is_squared" title="Permalink to this definition">¶</a></dt>
+<dd><p>Utilitiy to check if an adjaceny matrix is squared or not by checking if the number of lines</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a boolean representing True if the matrix is squared or False otherwise</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Dedalus.utils.adjmatrix_utils.AdjmUtils.is_weighted">
+<code class="descname">is_weighted</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Dedalus/utils/adjmatrix_utils.html#AdjmUtils.is_weighted"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Dedalus.utils.adjmatrix_utils.AdjmUtils.is_weighted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that returns a boolean telling whether the adjacency matrix is weighted or not</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">self.weightbool, a boolean with True if the graph is weighted and false otherwise</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Dedalus.utils.adjmatrix_utils.AdjmUtils.logger">
+<code class="descname">logger</code><em class="property"> = None</em><a class="headerlink" href="#Dedalus.utils.adjmatrix_utils.AdjmUtils.logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Dedalus.utils.adjmatrix_utils.AdjmUtils.make_undirect">
+<code class="descname">make_undirect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Dedalus/utils/adjmatrix_utils.html#AdjmUtils.make_undirect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Dedalus.utils.adjmatrix_utils.AdjmUtils.make_undirect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an undirect network to a direct one and write it to a new file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Dedalus.utils.adjmatrix_utils.AdjmUtils.remove_weigths">
+<code class="descname">remove_weigths</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Dedalus/utils/adjmatrix_utils.html#AdjmUtils.remove_weigths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Dedalus.utils.adjmatrix_utils.AdjmUtils.remove_weigths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert matrix to unweighted by setting every value different from 1 to 1 and write it to a new file</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Dedalus.utils.edgelist_utils.html" class="btn btn-neutral float-right" title="Dedalus.utils.edgelist_utils module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Dedalus.utils.add_attributes.html" class="btn btn-neutral" title="Dedalus.utils.add_attributes module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Author.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

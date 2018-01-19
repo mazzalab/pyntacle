@@ -1,0 +1,366 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Installation &mdash; Dedalus  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Dedalus  documentation" href="index.html"/>
+        <link rel="next" title="Dedalus package" href="Dedalus.html"/>
+        <link rel="prev" title="Welcome to Dedalus’ API documentation!" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Dedalus
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#python-version-support">Python version support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-dedalus">Installing Dedalus</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#installing-dedalus-using-anaconda-or-miniconda">Installing Dedalus using Anaconda or Miniconda</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#linux-and-mac-os-x">Linux and Mac OS X</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#windows">Windows</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#installing-dedalus-from-source">Installing Dedalus from source</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#debian-ubuntu">Debian, Ubuntu</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#kubuntu">Kubuntu</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#centos-7">CentOS 7</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mac-os-x">Mac OS X</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Dedalus.html">Dedalus package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Dedalus</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Installation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/installation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>The easiest way for the majority of users to install pandas is to install it as part of the Anaconda distribution, a cross-platform distribution for data analysis and scientific computing. This is the recommended installation method for most users.</p>
+<p>Instructions for installing from source on various Linux distributions and MacOs are also provided.</p>
+<div class="section" id="python-version-support">
+<h2>Python version support<a class="headerlink" href="#python-version-support" title="Permalink to this headline">¶</a></h2>
+<p>Officially, Python <strong>&gt;= 3.4</strong>.</p>
+</div>
+<div class="section" id="installing-dedalus">
+<h2>Installing Dedalus<a class="headerlink" href="#installing-dedalus" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="installing-dedalus-using-anaconda-or-miniconda">
+<h3>Installing Dedalus using Anaconda or Miniconda<a class="headerlink" href="#installing-dedalus-using-anaconda-or-miniconda" title="Permalink to this headline">¶</a></h3>
+<p>Installing Dedalus and all its dependencies can be challenging for inexperienced users.
+There are several advantages in using Anaconda to install not only Dedalus, but also Python and other packages: it is cross platform (Linux, MacOS X, Windows),
+you do not require administrative rights to install it (it goes in the user’s home directory),
+it allows you to work in <em>virtual environments</em>, which can be used as safe sandbox-like sub-systems that can be created, used, exported or deleted at your will.</p>
+<p>You can choose between the full <a class="reference external" href="http://docs.continuum.io/anaconda/">Anaconda</a> and its minified version, <a class="reference external" href="http://conda.pydata.org/miniconda.html">Miniconda</a>.
+The difference between the two is that Anaconda comes with hundreds of packages and can be a bit heavier to install,
+while Miniconda allows you to create a minimal, self-contained Python installation, and then use the <a class="reference external" href="https://conda.io/docs/">Conda</a> command to install additional packages of your choice.</p>
+<p>In any case, <a class="reference external" href="https://conda.io/docs/">Conda</a> is the package manager that the Anaconda and Miniconda distributions are built upon.
+It is both cross-platform and language agnostic (it can play a similar role to a pip and virtualenv combination), and you need to set it up by running either the <a class="reference external" href="https://www.anaconda.com/download/">Anaconda installer</a>
+or the <a class="reference external" href="https://conda.io/miniconda.html">Miniconda installer</a>, choosing the <strong>Python 3.6</strong> version.</p>
+<p>The next step is to create a new conda environment (if you are familiar with virtual environments, these are analogous to a virtualenv but they also allow you to specify precisely which Python version to install).</p>
+<div class="section" id="linux-and-mac-os-x">
+<h4>Linux and Mac OS X<a class="headerlink" href="#linux-and-mac-os-x" title="Permalink to this headline">¶</a></h4>
+<p>Run the following commands from a terminal window:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="n">name_of_my_env</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.6</span>
+</pre></div>
+</div>
+<p>This will create a minimal environment with only Python v.3.6 installed in it. To put your self inside this environment run:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">source</span> <span class="n">activate</span> <span class="n">name_of_my_env</span>
+</pre></div>
+</div>
+<p>And finally, we install the latest version of Dedalus:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="o">-</span><span class="n">c</span> <span class="n">bfxcss</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">dedalus</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="windows">
+<h4>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h4>
+<p>Due to some missing dependencies, at the moment we are forced to revert to Python v.3.5. Open a cmd terminal window or - better - an <a href="https://chrisconlan.com/wp-content/uploads/2017/05/anaconda_prompt.png"  target="_blank">Anaconda prompt</a>, and type:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">y</span> <span class="o">-</span><span class="n">n</span> <span class="n">name_of_my_env</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.5</span>
+</pre></div>
+</div>
+<p>Then, we activate the newly created environment:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">activate</span> <span class="n">name_of_my_env</span>
+</pre></div>
+</div>
+<p>Finally, we install the latest version of Dedalus:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="o">-</span><span class="n">c</span> <span class="n">bfxcss</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">dedalus</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="installing-dedalus-from-source">
+<h3>Installing Dedalus from source<a class="headerlink" href="#installing-dedalus-from-source" title="Permalink to this headline">¶</a></h3>
+<p>Installing from source is advised for advanced users only. The following instructions were written for Mac OS v.11+ and a few major Linux distros. System requirements can vary for other distros/versions.</p>
+<p>The source code can be downloaded from our <a class="reference external" href="http://example.com">GitHub</a> releases page as a .tar.gz file. Before trying to install Dedalus, there are system requirements that need to be satisfied on each platform.</p>
+<div class="section" id="debian-ubuntu">
+<h4>Debian, Ubuntu<a class="headerlink" href="#debian-ubuntu" title="Permalink to this headline">¶</a></h4>
+<p>As a user with admin rights, run:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>apt-get install -y build-essential linux-headers-$(uname -r) libgl1-mesa-glx libigraph0v5 libigraph0-dev libcairo2-dev libffi-dev libjpeg-dev libgif-dev libblas-dev liblapack-dev python3-pip
+</pre></div>
+</div>
+<p>Finally, extract the Dedalus <a class="reference external" href="http://www.example.com">source tar.gz file</a> navigate into it and run as an administrator:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="kubuntu">
+<h4>Kubuntu<a class="headerlink" href="#kubuntu" title="Permalink to this headline">¶</a></h4>
+<p>As a user with admin rights, run:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>apt-get install build-essential linux-headers-$(uname -r) libgl1-mesa-glx libigraph0v5 libigraph0-dev libcairo2-dev libffi-dev libjpeg-dev libgif-dev libblas-dev liblapack-dev python3-pip
+</pre></div>
+</div>
+<p>Then, we need to download and install the Cairo library:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">pygobject</span><span class="o">/</span><span class="n">pycairo</span><span class="o">/</span><span class="n">archive</span><span class="o">/</span><span class="n">master</span><span class="o">.</span><span class="n">zip</span> <span class="p">;</span> <span class="n">unzip</span> <span class="n">master</span><span class="o">.</span><span class="n">zip</span><span class="p">;</span> <span class="n">cd</span> <span class="n">pycairo</span><span class="o">-</span><span class="n">master</span><span class="p">;</span> <span class="n">python3</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">build</span> <span class="p">;</span> <span class="n">sudo</span> <span class="n">python3</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span><span class="p">;</span> <span class="n">cd</span> <span class="o">..</span><span class="p">;</span> <span class="n">rm</span> <span class="o">-</span><span class="n">r</span> <span class="n">master</span><span class="o">.</span><span class="n">zip</span> <span class="n">pycairo</span><span class="o">-</span><span class="n">master</span>
+</pre></div>
+</div>
+<p>Finally, extract the Dedalus <a class="reference external" href="http://www.example.com">source tar.gz file</a> navigate into it and run as an administrator:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="centos-7">
+<h4>CentOS 7<a class="headerlink" href="#centos-7" title="Permalink to this headline">¶</a></h4>
+<p>As an admin, you need to run:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>yum groupinstall -y development kernel-headers-`uname -r` kernel-devel-`uname -r` gcc gcc-c++ yum-utils; yum install -y https://centos7.iuscommunity.org/ius-release.rpm; yum install -y wget python36u-devel.x86_64 igraph-devel.x86_64 cairo-devel.x86_64 atlas-devel.x86_64 libffi-devel.x86_64 python36u-pip
+wget https://github.com/pygobject/pycairo/releases/download/v1.14.1/pycairo-1.14.1.tar.gz ; tar -xf pycairo-1.14.1.tar.gz; cd pycairo-1.14.1; python3.6 setup.py build ; sudo python3.6 setup.py install; cd ..; rm -rf pycairo-1.14.1*
+</pre></div>
+</div>
+<p>Finally, extract the Dedalus <a class="reference external" href="http://www.example.com">source tar.gz file</a> navigate into it and run as an administrator:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python3</span><span class="o">.</span><span class="mi">6</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="mac-os-x">
+<h4>Mac OS X<a class="headerlink" href="#mac-os-x" title="Permalink to this headline">¶</a></h4>
+<p>In order to compile from source, you need some of the tools that are conveniently packed in <a class="reference external" href="https://itunes.apple.com/us/app/xcode/id497799835?mt=12">XCode</a>, which has to be downloaded and installed from the Mac App Store.
+Once you have XCode - and you have opened at least once -, you will need to install the XCode Command Line Tools, by opening a terminal, typing:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">xcode</span><span class="o">-</span><span class="n">select</span> <span class="o">--</span><span class="n">install</span>
+</pre></div>
+</div>
+<p>and following the prompt on screen.</p>
+<p>Additionally, you need other dependencies to compile Dedalus. You can easily fetch them using the package manager <a class="reference external" href="https://www.macports.org/install.php">Mac Ports</a>.</p>
+<p>Once Mac Ports is installed, getting the dependencies is easy:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">port</span> <span class="n">install</span> <span class="n">py35</span><span class="o">-</span><span class="n">cairo</span> <span class="n">py35</span><span class="o">-</span><span class="n">setuptools</span> <span class="n">py35</span><span class="o">-</span><span class="n">pandas</span> <span class="n">py35</span><span class="o">-</span><span class="n">seaborn</span> <span class="n">py35</span><span class="o">-</span><span class="n">colorama</span> <span class="n">py35</span><span class="o">-</span><span class="n">xlsxwriter</span> <span class="n">py35</span><span class="o">-</span><span class="n">igraph</span>
+</pre></div>
+</div>
+<p>Note: unfortunately, at the time of writing this guide, Mac Ports does not provide a python3.6 version of the library ‘xlsxwriter’; therefore, everything must be downgraded to Python 3.5. This does not affect the performance or the results.</p>
+<p>Finally, extract the Dedalus <a class="reference external" href="http://www.example.com">source tar.gz file</a> navigate into it and run as an administrator:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python3</span><span class="o">.</span><span class="mi">5</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
+<span class="n">ln</span> <span class="o">-</span><span class="n">s</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">Library</span><span class="o">/</span><span class="n">Frameworks</span><span class="o">/</span><span class="n">Python</span><span class="o">.</span><span class="n">framework</span><span class="o">/</span><span class="n">Versions</span><span class="o">/</span><span class="mf">3.5</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">dedalus</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="nb">bin</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Dedalus.html" class="btn btn-neutral float-right" title="Dedalus package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to Dedalus’ API documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Author.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

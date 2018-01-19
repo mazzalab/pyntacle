@@ -1,0 +1,619 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Dedalus.report.reporter &mdash; Dedalus  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="Dedalus  documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Dedalus
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Dedalus.html">Dedalus package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Dedalus</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>Dedalus.report.reporter</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for Dedalus.report.reporter</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">this module handles all the reporting regarding Dedalus</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="c1"># standard libraries</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">from</span> <span class="nn">config</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">isnan</span>
+
+<span class="kn">import</span> <span class="nn">xlsxwriter</span>
+<span class="kn">from</span> <span class="nn">igraph</span> <span class="k">import</span> <span class="n">Graph</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">isinf</span><span class="p">,</span> <span class="n">median</span>
+
+<span class="c1"># Dedalus libraries</span>
+<span class="kn">from</span> <span class="nn">algorithms.global_topology</span> <span class="k">import</span> <span class="n">_GlobalAttribute</span>
+<span class="kn">from</span> <span class="nn">algorithms.key_player</span> <span class="k">import</span> <span class="n">_KeyplayerAttribute</span>
+<span class="kn">from</span> <span class="nn">algorithms.local_topology</span> <span class="k">import</span> <span class="n">_LocalAttribute</span>
+<span class="kn">from</span> <span class="nn">algorithms.sparseness</span> <span class="k">import</span> <span class="n">_SparsenessAttribute</span>
+<span class="kn">from</span> <span class="nn">exception.missing_attribute_error</span> <span class="k">import</span> <span class="n">MissingAttributeError</span>
+<span class="kn">from</span> <span class="nn">exception.wrong_argument_error</span> <span class="k">import</span> <span class="n">WrongArgumentError</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">graph_utils</span>  <span class="c1"># swiss knife for graph utilities</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo, Mauro Truglio, Tommaso Mazza&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The Dedalus Project&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ferenc Jordan&quot;</span><span class="p">]</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;d.capocefalo@css-mendel.it&quot;</span>
+<span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Development&quot;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s2">&quot;27 October 2016&quot;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">  Copyright (C) 20016-2017  Tommaso Mazza &lt;t,mazza@css-mendel.it&gt;</span>
+<span class="s2">  Viale Regina Margherita 261, 00198 Rome, Italy</span>
+
+<span class="s2">  This program is free software; you can use and redistribute it under</span>
+<span class="s2">  the terms of the BY-NC-ND license as published by</span>
+<span class="s2">  Creative Commons; either version 4 of the License, or</span>
+<span class="s2">  (at your option) any later version.</span>
+
+<span class="s2">  This program is distributed in the hope that it will be useful,</span>
+<span class="s2">  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="s2">  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="s2">  GNU General Public License for more details.</span>
+
+<span class="s2">  You should have received a copy of the GNU General Public License</span>
+<span class="s2">  along with this program; if not, write to the Free Software</span>
+<span class="s2">  Foundation, Inc.,  51 Franklin Street, Fifth Floor, Boston, MA</span>
+<span class="s2">  02110-1301 USA</span>
+<span class="s2">  &quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="DedalusReporter"><a class="viewcode-back" href="../../../Dedalus.report.reporter.html#Dedalus.report.reporter.DedalusReporter">[docs]</a><span class="k">class</span> <span class="nc">DedalusReporter</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This method creates a report according to the type of analysis run by Dedalus</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">graph2</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Initialize a reporter function for the given graph</span>
+<span class="sd">        </span>
+<span class="sd">        :param graph: the target igraph Graph object</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">log</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        check if graph has node names and they are unique</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="c1">#store first graph</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span> <span class="o">=</span> <span class="n">graph</span>
+
+        <span class="c1"># initialize graph utility class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__utils</span> <span class="o">=</span> <span class="n">graph_utils</span><span class="o">.</span><span class="n">GraphUtils</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__utils</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>  <span class="c1"># check that input graph is properly set</span>
+
+        <span class="k">if</span> <span class="n">graph2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">graph2</span><span class="p">,</span> <span class="n">Graph</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;adding second graph for comparison purposes&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">__graph2</span> <span class="o">=</span> <span class="n">graph2</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__utils2</span> <span class="o">=</span> <span class="n">graph_utils</span><span class="o">.</span><span class="n">GraphUtils</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__utils2</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__report</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#initialize empty report</span>
+
+    <span class="k">def</span> <span class="nf">__init_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">report_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__report</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;Dedalus&quot;</span><span class="p">,</span> <span class="s2">&quot;Report:&quot;</span><span class="p">,</span> <span class="n">report_type</span><span class="p">])])</span>
+
+        <span class="k">if</span> <span class="n">report_type</span> <span class="o">==</span> <span class="s2">&quot;Metrics - Global Topology Comparison&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph2</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;graph name&quot;</span><span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]),</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph2</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])])</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;graph name&quot;</span><span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])])</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;components&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">components</span><span class="p">()),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph2</span><span class="o">.</span><span class="n">components</span><span class="p">())])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;nodes&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph2</span><span class="o">.</span><span class="n">vcount</span><span class="p">()])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;edges&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">ecount</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph2</span><span class="o">.</span><span class="n">ecount</span><span class="p">()])</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;a second graph is not initialized in report, please re-instanciate the class adding the second graph&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;graph name&quot;</span><span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;components&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">components</span><span class="p">())])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;nodes&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;edges&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">ecount</span><span class="p">()])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">])</span>
+
+<div class="viewcode-block" id="DedalusReporter.report_KP"><a class="viewcode-back" href="../../../Dedalus.report.reporter.html#Dedalus.report.reporter.DedalusReporter.report_KP">[docs]</a>    <span class="k">def</span> <span class="nf">report_KP</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resultsdic</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Creates a reporter for the KP metrics as a list of lists (stored in the self.report list</span>
+<span class="sd">        </span>
+<span class="sd">        :param resultsdic: a dictionary of results as outputted by kp_runner.py</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="c1"># initialize empty report</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__init_report</span><span class="p">(</span><span class="n">report_type</span><span class="o">=</span><span class="s2">&quot;Key Player&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;-Run Info-&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;Requested metrics:&quot;</span><span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">resultsdic</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)])])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;Algorithm:&quot;</span><span class="p">,</span> <span class="n">resultsdic</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;KP-INFO&quot;</span><span class="p">)])</span> <span class="c1">#added by me to handle the type of algorithm used</span>
+        <span class="n">resultsdic</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="c1">#remove the key if present</span>
+
+        <span class="k">if</span> <span class="n">_KeyplayerAttribute</span><span class="o">.</span><span class="n">F</span> <span class="ow">in</span> <span class="n">resultsdic</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">resultsdic</span><span class="p">[</span><span class="n">_KeyplayerAttribute</span><span class="o">.</span><span class="n">F</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nb">float</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;Starting Value - F (whole graph): &quot;</span><span class="p">,</span> <span class="n">resultsdic</span><span class="p">[</span><span class="n">_KeyplayerAttribute</span><span class="o">.</span><span class="n">F</span><span class="p">][</span><span class="mi">0</span><span class="p">]])</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">WrongArgumentError</span><span class="p">(</span><span class="s2">&quot;Starting F must be specified for the report&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">_KeyplayerAttribute</span><span class="o">.</span><span class="n">DF</span> <span class="ow">in</span> <span class="n">resultsdic</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">resultsdic</span><span class="p">[</span><span class="n">_KeyplayerAttribute</span><span class="o">.</span><span class="n">DF</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nb">float</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;Starting Value - DF (whole graph): &quot;</span><span class="p">,</span> <span class="n">resultsdic</span><span class="p">[</span><span class="n">_KeyplayerAttribute</span><span class="o">.</span><span class="n">DF</span><span class="p">][</span><span class="mi">0</span><span class="p">]])</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">WrongArgumentError</span><span class="p">(</span><span class="s2">&quot;Starting F must be specified for the report&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">_KeyplayerAttribute</span><span class="o">.</span><span class="n">MREACH</span> <span class="ow">in</span> <span class="n">resultsdic</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">WrongArgumentError</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">m</span><span class="se">\&quot;</span><span class="s2"> must be defined&quot;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;MREACH Value: &quot;</span><span class="p">,</span> <span class="n">m</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">_KeyplayerAttribute</span><span class="o">.</span><span class="n">MREACH</span> <span class="ow">in</span> <span class="n">resultsdic</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;KP Measure&quot;</span><span class="p">,</span> <span class="s2">&quot;KP Set&quot;</span><span class="p">,</span> <span class="s2">&quot;KP Value&quot;</span><span class="p">,</span> <span class="s2">&quot;Fraction of Nodes Reached (MREACH)&quot;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;KP Measure&quot;</span><span class="p">,</span> <span class="s2">&quot;KP Set&quot;</span><span class="p">,</span> <span class="s2">&quot;KP Value&quot;</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">resultsdic</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">_KeyplayerAttribute</span><span class="o">.</span><span class="n">MREACH</span><span class="p">:</span>
+                <span class="n">perc_node_reached</span> <span class="o">=</span> <span class="p">(</span><span class="n">resultsdic</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">m</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">key</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">resultsdic</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">]),</span> <span class="n">resultsdic</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span> <span class="nb">round</span><span class="p">(</span><span class="n">perc_node_reached</span><span class="p">,</span><span class="mi">2</span><span class="p">)])</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">key</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">resultsdic</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">]),</span> <span class="n">resultsdic</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">2</span><span class="p">]])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__report</span> <span class="o">=</span> <span class="p">[[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">y</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="DedalusReporter.report_global_topology"><a class="viewcode-back" href="../../../Dedalus.report.reporter.html#Dedalus.report.reporter.DedalusReporter.report_global_topology">[docs]</a>    <span class="k">def</span> <span class="nf">report_global_topology</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Create a report (as a list) containing all the global attributes list requested</span>
+<span class="sd">        </span>
+<span class="sd">        :param attributes_list: a list of GlobalAttributes that must be reported</span>
+<span class="sd">        :param graph_copy: a second graph to be reported</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__utils</span><span class="o">.</span><span class="n">check_attributes_types</span><span class="p">(</span><span class="n">attributes_list</span><span class="o">=</span><span class="n">attributes_list</span><span class="p">,</span>
+                                            <span class="n">attribute_types</span><span class="o">=</span><span class="p">[</span><span class="n">_GlobalAttribute</span><span class="p">,</span> <span class="n">_SparsenessAttribute</span><span class="p">])</span>
+
+        <span class="n">attributes_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__utils</span><span class="o">.</span><span class="n">get_attribute_names</span><span class="p">(</span><span class="n">attribute_list</span><span class="o">=</span><span class="n">attributes_list</span><span class="p">)</span>
+
+        <span class="c1"># print(attributes_names)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__init_report</span><span class="p">(</span><span class="n">report_type</span><span class="o">=</span><span class="s2">&quot;Metrics - Global Topology&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;Metric Name&quot;</span><span class="p">,</span> <span class="s2">&quot;Metric Value&quot;</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">attributes_names</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">elem</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">[</span><span class="n">elem</span><span class="p">])])</span>
+
+        <span class="c1"># force each element of the list to be a string</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__report</span> <span class="o">=</span> <span class="p">[[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">y</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="DedalusReporter.report_global_comparisons"><a class="viewcode-back" href="../../../Dedalus.report.reporter.html#Dedalus.report.reporter.DedalusReporter.report_global_comparisons">[docs]</a>    <span class="k">def</span> <span class="nf">report_global_comparisons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        **[EXPAND]**</span>
+<span class="sd">        </span>
+<span class="sd">        :param attributes_list: a òist of attributes that must be present in both graphs</span>
+<span class="sd">        :param graph2: another graph object</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__utils</span><span class="o">.</span><span class="n">check_attributes_types</span><span class="p">(</span><span class="n">attributes_list</span><span class="o">=</span><span class="n">attributes_list</span><span class="p">,</span>
+                                            <span class="n">attribute_types</span><span class="o">=</span><span class="p">[</span><span class="n">_GlobalAttribute</span><span class="p">,</span> <span class="n">_SparsenessAttribute</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__utils2</span><span class="o">.</span><span class="n">check_attributes_types</span><span class="p">(</span><span class="n">attributes_list</span><span class="o">=</span><span class="n">attributes_list</span><span class="p">,</span>
+                                             <span class="n">attribute_types</span><span class="o">=</span><span class="p">[</span><span class="n">_GlobalAttribute</span><span class="p">,</span> <span class="n">_SparsenessAttribute</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__init_report</span><span class="p">(</span><span class="n">report_type</span><span class="o">=</span><span class="s2">&quot;Metrics - Global Topology Comparison&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;Metric Name&quot;</span><span class="p">,</span> <span class="s2">&quot;Metrics - Original Graph&quot;</span><span class="p">,</span> <span class="s2">&quot;Metrics - Comparison Graph&quot;</span><span class="p">])</span>
+
+        <span class="n">attributes_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__utils</span><span class="o">.</span><span class="n">get_attribute_names</span><span class="p">(</span><span class="n">attribute_list</span><span class="o">=</span><span class="n">attributes_list</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attributes_names</span><span class="p">:</span><span class="c1">#check if attribute exist</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__utils2</span><span class="o">.</span><span class="n">attribute_in_graph</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">attributes_names</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">elem</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">[</span><span class="n">elem</span><span class="p">]),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph2</span><span class="p">[</span><span class="n">elem</span><span class="p">])])</span>
+
+        <span class="c1"># force each element of the list to be a string</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__report</span> <span class="o">=</span> <span class="p">[[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">y</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="DedalusReporter.report_local_topology"><a class="viewcode-back" href="../../../Dedalus.report.reporter.html#Dedalus.report.reporter.DedalusReporter.report_local_topology">[docs]</a>    <span class="k">def</span> <span class="nf">report_local_topology</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">local_attributes_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Report all the requested topological indices for the requested nodes</span>
+<span class="sd">        </span>
+<span class="sd">        :param node_names: a list of node names (must be string)</span>
+<span class="sd">        :param local_attributes_list: a list of LocalAttribute parameter</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__utils</span><span class="o">.</span><span class="n">check_name_list</span><span class="p">(</span><span class="n">names_list</span><span class="o">=</span><span class="n">node_names</span><span class="p">)</span>  <span class="c1"># check integrity of node names</span>
+
+        <span class="n">index_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__utils</span><span class="o">.</span><span class="n">get_node_indices</span><span class="p">(</span><span class="n">node_names</span><span class="o">=</span><span class="n">node_names</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__utils</span><span class="o">.</span><span class="n">check_attributes_types</span><span class="p">(</span><span class="n">attributes_list</span><span class="o">=</span><span class="n">local_attributes_list</span><span class="p">,</span> <span class="n">attribute_types</span><span class="o">=</span><span class="n">_LocalAttribute</span><span class="p">)</span>
+
+        <span class="n">attribute_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__utils</span><span class="o">.</span><span class="n">get_attribute_names</span><span class="p">(</span><span class="n">attribute_list</span><span class="o">=</span><span class="n">local_attributes_list</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;node&quot;</span><span class="p">)</span>
+
+        <span class="n">attribute_header</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">at</span> <span class="ow">in</span> <span class="n">attribute_names</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">at</span> <span class="o">==</span> <span class="s2">&quot;shortest_path&quot;</span><span class="p">:</span>
+                <span class="n">attribute_header</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                    <span class="p">(</span><span class="s2">&quot;average shortest path&quot;</span><span class="p">,</span> <span class="s2">&quot;median shortest path&quot;</span><span class="p">,</span> <span class="s2">&quot;maximum shortest path&quot;</span><span class="p">))</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">attribute_header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">at</span><span class="p">)</span>
+
+        <span class="c1"># fix the shortest path and add the following fields instead</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__init_report</span><span class="p">(</span><span class="n">report_type</span><span class="o">=</span><span class="s2">&quot;Metrics - Local Topology&quot;</span><span class="p">)</span>  <span class="c1"># initialize standard report</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">node_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;Info on selected nodes&quot;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s2">&quot;Info on selected node&quot;</span><span class="p">])</span>
+
+        <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Node Name&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">attribute_header</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">index_list</span><span class="p">:</span>
+
+            <span class="n">elem</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="n">node_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">(</span><span class="n">index</span><span class="p">)[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span>
+                <span class="mi">0</span><span class="p">]</span>  <span class="c1"># get the node name (is a list of 1 element so we take the first element only</span>
+            <span class="n">elem</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_name</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attribute_names</span><span class="p">:</span>  <span class="c1"># loop through the attributes</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">(</span><span class="n">index</span><span class="p">)[</span><span class="n">attr</span><span class="p">]</span>  <span class="c1"># should be the list corresponding to the queried attribute</span>
+
+                <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;shortest_path&quot;</span><span class="p">:</span>
+
+                    <span class="k">if</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;node </span><span class="si">{0}</span><span class="s2"> does not have attribute </span><span class="si">{1}</span><span class="s2">, returning </span><span class="se">\&quot;</span><span class="s2">NA</span><span class="se">\&quot;</span><span class="s2">  instead&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">(</span><span class="n">index</span><span class="p">)[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">attr</span><span class="p">))</span>
+                        <span class="n">elem</span><span class="o">.</span><span class="n">extend</span><span class="p">((</span><span class="s2">&quot;NA&quot;</span><span class="p">,</span> <span class="s2">&quot;NA&quot;</span><span class="p">,</span> <span class="s2">&quot;NA&quot;</span><span class="p">,</span> <span class="s2">&quot;NA&quot;</span><span class="p">))</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+
+                        <span class="n">sp</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># takes the list of shortest paths, should be a list of 1 element</span>
+                        <span class="nb">sum</span> <span class="o">=</span> <span class="mi">0</span>
+
+                        <span class="n">cleaned_sp</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sp</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">isinf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">isnan</span><span class="p">(</span>
+                            <span class="n">x</span><span class="p">)]</span>  <span class="c1"># remove everything that is a positive integer</span>
+
+                        <span class="k">if</span> <span class="n">cleaned_sp</span><span class="p">:</span>
+
+                            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">cleaned_sp</span><span class="p">:</span>
+                                <span class="nb">sum</span> <span class="o">=</span> <span class="nb">sum</span> <span class="o">+</span> <span class="n">val</span>
+
+                            <span class="n">av_sp</span> <span class="o">=</span> <span class="nb">sum</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">cleaned_sp</span><span class="p">)</span>
+
+                            <span class="n">med_sp</span> <span class="o">=</span> <span class="n">median</span><span class="p">(</span><span class="n">cleaned_sp</span><span class="p">)</span>
+                            <span class="n">max_sp</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">cleaned_sp</span><span class="p">)</span>
+                            <span class="n">elem</span><span class="o">.</span><span class="n">extend</span><span class="p">((</span><span class="n">av_sp</span><span class="p">,</span> <span class="n">med_sp</span><span class="p">,</span> <span class="n">max_sp</span><span class="p">))</span>
+
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                                <span class="s2">&quot;node </span><span class="si">{0}</span><span class="s2"> is an isolate, therefore it will have no sp report for it, returning </span><span class="se">\&quot;</span><span class="s2">NA</span><span class="se">\&quot;</span><span class="s2"> instead&quot;</span><span class="p">)</span>
+                            <span class="n">elem</span><span class="o">.</span><span class="n">extend</span><span class="p">((</span><span class="s2">&quot;NA&quot;</span><span class="p">,</span> <span class="s2">&quot;NA&quot;</span><span class="p">,</span> <span class="s2">&quot;NA&quot;</span><span class="p">))</span>
+
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="k">if</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;node </span><span class="si">{0}</span><span class="s2"> does not have attribute </span><span class="si">{1}</span><span class="s2">, returning </span><span class="se">\&quot;</span><span class="s2">NA</span><span class="se">\&quot;</span><span class="s2">  instead&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">(</span><span class="n">index</span><span class="p">)[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">attr</span><span class="p">))</span>
+                        <span class="n">elem</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;NA&quot;</span><span class="p">)</span>
+
+                    <span class="k">elif</span> <span class="n">isnan</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                            <span class="s2">&quot;node </span><span class="si">{0}</span><span class="s2"> has an infinite value for attribute </span><span class="si">{1}</span><span class="s2">, returning </span><span class="se">\&quot;</span><span class="s2">nan</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">(</span><span class="n">index</span><span class="p">)[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">attr</span><span class="p">))</span>
+                        <span class="n">elem</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+
+                    <span class="k">elif</span> <span class="n">isinf</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                            <span class="s2">&quot;node </span><span class="si">{0}</span><span class="s2"> has an infinite value for attribute </span><span class="si">{1}</span><span class="s2">, returning </span><span class="se">\&quot;</span><span class="s2">inf</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">(</span><span class="n">index</span><span class="p">)[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">attr</span><span class="p">))</span>
+                        <span class="n">elem</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">elem</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
+
+        <span class="c1"># force each element of the list to be a string</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__report</span> <span class="o">=</span> <span class="p">[[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">y</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="DedalusReporter.get_report"><a class="viewcode-back" href="../../../Dedalus.report.reporter.html#Dedalus.report.reporter.DedalusReporter.get_report">[docs]</a>    <span class="k">def</span> <span class="nf">get_report</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return the self.report list in order to pass it to an external builder</span>
+<span class="sd">        </span>
+<span class="sd">        :return: the self.__report object</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__report</span></div>
+
+<div class="viewcode-block" id="DedalusReporter.create_report"><a class="viewcode-back" href="../../../Dedalus.report.reporter.html#Dedalus.report.reporter.DedalusReporter.create_report">[docs]</a>    <span class="k">def</span> <span class="nf">create_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">report_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">extensionlist</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;.tsv&quot;</span><span class="p">,</span> <span class="s2">&quot;.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;.csv&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">EnvironmentError</span><span class="p">(</span><span class="s2">&quot;a report must be created first using one of the several report functions&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">report_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">report_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">report_path</span><span class="p">)</span>
+            <span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">report_path</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># take file name extension</span>
+
+            <span class="k">if</span> <span class="n">extension</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">extensionlist</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">WrongArgumentError</span><span class="p">(</span><span class="s2">&quot;extension of file </span><span class="si">{}</span><span class="s2"> is not supported&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">extension</span><span class="p">))</span>
+
+            <span class="n">reportdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">report_path</span><span class="p">))</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">reportdir</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;directory of report does not exists, creating it&quot;</span><span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">reportdir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;report path is not specified, using generic name </span><span class="se">\&quot;</span><span class="s2">dedalus_report</span><span class="se">\&quot;</span><span class="s2"> &quot;</span>
+                             <span class="s2">&quot;on the current directory (tab-separated file&quot;</span><span class="p">)</span>
+
+            <span class="n">report_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()),</span> <span class="s2">&quot;dedalus_report.tsv&quot;</span><span class="p">)</span>
+            <span class="n">extension</span> <span class="o">=</span> <span class="s2">&quot;.txt&quot;</span>
+
+        <span class="k">if</span> <span class="n">extension</span> <span class="o">!=</span> <span class="s2">&quot;.xlsx&quot;</span><span class="p">:</span>
+
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">report_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s2">&quot;.tsv&quot;</span> <span class="ow">or</span> <span class="n">extension</span> <span class="o">==</span> <span class="s2">&quot;.txt&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;creating a tab-delimited report&quot;</span><span class="p">)</span>
+
+                    <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="p">:</span>
+                        <span class="n">elem</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                    <span class="n">out</span><span class="o">.</span><span class="n">writelines</span><span class="p">([</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="p">])</span>
+
+                <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s2">&quot;.csv&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;creating csv report&quot;</span><span class="p">)</span>
+                    <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+                    <span class="n">writer</span><span class="o">.</span><span class="n">writerows</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;creating an excel report&quot;</span><span class="p">)</span>
+            <span class="n">workbook</span> <span class="o">=</span> <span class="n">xlsxwriter</span><span class="o">.</span><span class="n">Workbook</span><span class="p">(</span><span class="n">report_path</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;constant_memory&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+            <span class="n">workbook</span><span class="o">.</span><span class="n">use_zip64</span><span class="p">()</span>
+            <span class="nb">format</span> <span class="o">=</span> <span class="n">workbook</span><span class="o">.</span><span class="n">add_format</span><span class="p">()</span>
+
+            <span class="n">worksheet</span> <span class="o">=</span> <span class="n">workbook</span><span class="o">.</span><span class="n">add_worksheet</span><span class="p">(</span><span class="s2">&quot;Dedalus Report&quot;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__report</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">elem</span><span class="p">):</span>
+                    <span class="n">worksheet</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span>
+
+            <span class="n">workbook</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">report_path</span></div></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Author.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

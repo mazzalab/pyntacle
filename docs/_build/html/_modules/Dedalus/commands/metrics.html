@@ -1,0 +1,737 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Dedalus.commands.metrics &mdash; Dedalus  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="Dedalus  documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Dedalus
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Dedalus.html">Dedalus package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Dedalus</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>Dedalus.commands.metrics</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for Dedalus.commands.metrics</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">algorithms.global_topology</span> <span class="k">import</span> <span class="n">GlobalTopology</span><span class="p">,</span> <span class="n">_GlobalAttribute</span>
+<span class="kn">from</span> <span class="nn">algorithms.local_topology</span> <span class="k">import</span> <span class="n">LocalTopology</span><span class="p">,</span> <span class="n">_LocalAttribute</span>
+<span class="kn">from</span> <span class="nn">algorithms.sparseness</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">algorithms.sparseness</span> <span class="k">import</span> <span class="n">_SparsenessAttribute</span>
+<span class="kn">from</span> <span class="nn">config</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">exception.generic_error</span> <span class="k">import</span> <span class="n">Error</span>
+<span class="kn">from</span> <span class="nn">exception.multiple_solutions_error</span> <span class="k">import</span> <span class="n">MultipleSolutionsError</span>
+<span class="kn">from</span> <span class="nn">io_stream.graph_to_binary</span> <span class="k">import</span> <span class="n">GraphToBinary</span>
+<span class="kn">from</span> <span class="nn">misc.graph_load</span> <span class="k">import</span> <span class="n">GraphLoad</span><span class="p">,</span> <span class="n">separator_detect</span>
+<span class="kn">from</span> <span class="nn">report.plotter</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">report.reporter</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">utils.add_attributes</span> <span class="k">import</span> <span class="n">AddAttributes</span>
+<span class="kn">from</span> <span class="nn">utils.graph_utils</span> <span class="k">import</span> <span class="n">GraphUtils</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo, Mauro Truglio, Tommaso Mazza&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The Dedalus Project&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ferenc Jordan&quot;</span><span class="p">]</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;bioinformatics@css-mendel.it&quot;</span>
+<span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Development&quot;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s2">&quot;14 November 2016&quot;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">  Copyright (C) 20016-2017  Tommaso Mazza &lt;t,mazza@css-mendel.it&gt;</span>
+<span class="s2">  Viale Regina Margherita 261, 00198 Rome, Italy</span>
+
+<span class="s2">  This program is free software; you can use and redistribute it under</span>
+<span class="s2">  the terms of the BY-NC-ND license as published by</span>
+<span class="s2">  Creative Commons; either version 4 of the License, or</span>
+<span class="s2">  (at your option) any later version.</span>
+
+<span class="s2">  This program is distributed in the hope that it will be useful,</span>
+<span class="s2">  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="s2">  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="s2">  GNU General Public License for more details.</span>
+
+<span class="s2">  You should have received a copy of the GNU General Public License</span>
+<span class="s2">  along with this program; if not, write to the Free Software</span>
+<span class="s2">  Foundation, Inc.,  51 Franklin Street, Fifth Floor, Boston, MA</span>
+<span class="s2">  02110-1301 USA</span>
+<span class="s2">  &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Metrics"><a class="viewcode-back" href="../../../Dedalus.commands.metrics.html#Dedalus.commands.metrics.Metrics">[docs]</a><span class="k">class</span> <span class="nc">Metrics</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **[EXPAND]**</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logging</span> <span class="o">=</span> <span class="n">log</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+
+        <span class="c1"># Check for pycairo</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_plot</span> <span class="ow">and</span> <span class="n">util</span><span class="o">.</span><span class="n">find_spec</span><span class="p">(</span><span class="s2">&quot;cairo&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;WARNING: It seems that the pycairo library is not installed/available. Plots&quot;</span>
+                             <span class="s2">&quot;will not be produced.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_plot</span> <span class="o">=</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="Metrics.run"><a class="viewcode-back" href="../../../Dedalus.commands.metrics.html#Dedalus.commands.metrics.Metrics.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorAnimation</span><span class="p">()</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_header</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="s1">&#39;which&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">Error</span><span class="p">(</span><span class="s2">&quot;usage: dedalus.py metrics {global, local} [options]&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Checking input file</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">input_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;Please specify an input file using the -i option.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">input_file</span><span class="p">))</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">input_file</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Cannot find </span><span class="si">{}</span><span class="s2">. Is the path correct?&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">input_file</span><span class="p">))</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+        <span class="c1"># check output directory</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">):</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Warning: Output directory does not exist, will create one at </span><span class="si">{}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">)))</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Running Dedalus metrics, with arguments&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+
+        <span class="c1"># Load Graph</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">GraphLoad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">input_file</span><span class="p">,</span> <span class="n">format_dictionary</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">format</span><span class="p">,</span> <span class="s2">&quot;NA&quot;</span><span class="p">),</span> <span class="n">header</span><span class="p">)</span><span class="o">.</span><span class="n">graph_load</span><span class="p">()</span>
+
+        <span class="c1"># init Utils global stuff</span>
+        <span class="n">utils</span> <span class="o">=</span> <span class="n">GraphUtils</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">largest_component</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">graph</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_largest_component</span><span class="p">()</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Taking the largest component of the input graph as you requested (</span><span class="si">{}</span><span class="s2"> nodes, </span><span class="si">{}</span><span class="s2"> edges)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">(),</span> <span class="n">graph</span><span class="o">.</span><span class="n">ecount</span><span class="p">()))</span>
+
+            <span class="k">except</span> <span class="n">MultipleSolutionsError</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the </span><span class="se">\&quot;</span><span class="s2">--largest-component</span><span class="se">\&quot;</span><span class="s2"> option. Quitting</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Check provided dimensions&#39; format</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_dim</span><span class="p">:</span>  <span class="c1"># define custom format</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_dim</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_dim</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                    <span class="s2">&quot;Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_dim</span><span class="p">)):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_dim</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_dim</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                        <span class="s2">&quot;Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_dim</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                        <span class="s2">&quot;Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">plot_size</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_dim</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># generate different formats according to graph size</span>
+            <span class="k">if</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">150</span><span class="p">:</span>
+                <span class="n">plot_size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">800</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">plot_size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1600</span><span class="p">,</span> <span class="mi">1600</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">report_format</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">report_format</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">which</span> <span class="o">==</span> <span class="s2">&quot;local&quot;</span><span class="p">:</span>
+
+            <span class="n">reporter</span> <span class="o">=</span> <span class="n">DedalusReporter</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span> <span class="c1">#init reporter</span>
+
+            <span class="c1"># initialize local attribute method</span>
+
+            <span class="n">local_attributes</span> <span class="o">=</span> <span class="n">LocalTopology</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Computing local metrics for nodes </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">nodes</span><span class="p">))</span>
+                <span class="n">nodes_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+                <span class="n">index_list</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_node_indices</span><span class="p">(</span><span class="n">node_names</span><span class="o">=</span><span class="n">nodes_list</span><span class="p">)</span>
+                <span class="c1"># print(index_list)</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">utils</span><span class="o">.</span><span class="n">check_name_list</span><span class="p">(</span><span class="n">nodes_list</span><span class="p">)</span>  <span class="c1"># to check everything&#39;s in order</span>
+
+                <span class="k">except</span> <span class="n">MissingAttributeError</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                        <span class="s2">&quot;One of the nodes you specified is not in the input graph, check your node list and its formatting&quot;</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Computing local metrics for all nodes in the graph</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">index_list</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">local_attributes</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">index_list</span><span class="o">=</span><span class="n">index_list</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">local_attributes</span><span class="o">.</span><span class="n">clustering_coefficient</span><span class="p">(</span><span class="n">index_list</span><span class="o">=</span><span class="n">index_list</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">local_attributes</span><span class="o">.</span><span class="n">betweenness</span><span class="p">(</span><span class="n">index_list</span><span class="o">=</span><span class="n">index_list</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">local_attributes</span><span class="o">.</span><span class="n">closeness</span><span class="p">(</span><span class="n">index_list</span><span class="o">=</span><span class="n">index_list</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">local_attributes</span><span class="o">.</span><span class="n">radiality</span><span class="p">(</span><span class="n">index_list</span><span class="o">=</span><span class="n">index_list</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">local_attributes</span><span class="o">.</span><span class="n">radiality_reach</span><span class="p">(</span><span class="n">index_list</span><span class="o">=</span><span class="n">index_list</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">local_attributes</span><span class="o">.</span><span class="n">eccentricity</span><span class="p">(</span><span class="n">index_list</span><span class="o">=</span><span class="n">index_list</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">local_attributes</span><span class="o">.</span><span class="n">shortest_path</span><span class="p">(</span><span class="n">index_list</span><span class="o">=</span><span class="n">index_list</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">damping_factor</span> <span class="o">&lt;</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">damping_factor</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;damping factor must be betweeen 0 and 1&quot;</span><span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+                    <span class="n">local_attributes</span><span class="o">.</span><span class="n">pagerank</span><span class="p">(</span><span class="n">index_list</span><span class="o">=</span><span class="n">index_list</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                              <span class="n">damping</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">damping_factor</span><span class="p">,</span>
+                                              <span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights</span><span class="p">):</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                            <span class="s2">&quot;Input file </span><span class="si">{}</span><span class="s2"> does not exist. Quitting.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights</span><span class="p">))</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Adding Edge Weights from file </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights</span><span class="p">))</span>
+
+                        <span class="n">weights_sep</span> <span class="o">=</span> <span class="n">separator_detect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span>
+                        <span class="n">graph</span> <span class="o">=</span> <span class="n">GraphLoad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">input_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">format</span><span class="p">,</span> <span class="n">header</span><span class="p">)</span><span class="o">.</span><span class="n">graph_load</span><span class="p">()</span>
+
+                        <span class="n">weights</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filepath_or_buffer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">weights_sep</span><span class="p">)</span>
+
+                        <span class="c1"># Check attributes file&#39;s format</span>
+                        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="n">weights</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="s1">&#39; ()&#39;</span><span class="p">):</span>
+                            <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;cytoscape&#39;</span>
+                            <span class="n">weightscol</span> <span class="o">=</span> <span class="mi">1</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;standard&#39;</span>
+                            <span class="n">weightscol</span> <span class="o">=</span> <span class="mi">2</span>
+                        
+                        <span class="c1"># convert the weights to floats</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">weights</span><span class="p">[</span><span class="n">weights</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">weightscol</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
+
+                        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">errs</span><span class="p">:</span>
+                            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Weights must be float or integers. Quitting</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                                <span class="s2">&quot;Using column 3 as edge weights for pagerank. Adding the other values as edge attributes, but they will not be used for pagerank computing</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                            <span class="n">weights_name</span> <span class="o">=</span> <span class="n">weights</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">weightscol</span><span class="p">]</span>  <span class="c1"># store the name of the attribute</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">weights_name</span><span class="p">)</span>
+                            <span class="n">AddAttributes</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span><span class="o">.</span><span class="n">add_edge_attributes</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span>
+                                                                           <span class="n">sep</span><span class="o">=</span><span class="n">weights_sep</span><span class="p">,</span>
+                                                                           <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>  <span class="c1"># todo sfixa questo</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">es</span><span class="p">))</span>
+                            <span class="n">weights_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>
+                                            <span class="n">graph</span><span class="o">.</span><span class="n">es</span><span class="p">()[</span><span class="n">weights_name</span><span class="p">]]</span>
+
+                            <span class="n">local_attributes</span><span class="o">.</span><span class="n">pagerank</span><span class="p">(</span><span class="n">index_list</span><span class="o">=</span><span class="n">index_list</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights_list</span><span class="p">,</span>
+                                                      <span class="n">damping</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">damping_factor</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">(</span>
+                                <span class="s2">&quot;weights file must contains at least two columns, the first should represent node names and the second ther respective weights. Quitting.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># create report for the selected metrics</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">nodes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">nodes_list</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+                <span class="n">report_prefix</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;Dedalus&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;local_metrics&quot;</span><span class="p">,</span> <span class="s2">&quot;report&quot;</span><span class="p">,</span>
+                                          <span class="n">runtime_date</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">report_prefix</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="p">[</span><span class="s2">&quot;Dedalus&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;local_metrics_selected_nodes_report&quot;</span><span class="p">,</span>
+                     <span class="n">runtime_date</span><span class="p">])</span>
+
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Producing report in </span><span class="si">{}</span><span class="s2"> format.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">report_format</span><span class="p">))</span>
+
+            <span class="n">report_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="n">report_prefix</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">report_format</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">report_path</span><span class="p">):</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;WARNING: File </span><span class="si">{}</span><span class="s2"> already exists, overwriting it</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">report_path</span><span class="p">))</span>
+
+            <span class="n">local_attributes_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">_LocalAttribute</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span>
+                                     <span class="n">_LocalAttribute</span><span class="o">.</span><span class="n">clustering_coefficient</span><span class="p">,</span>
+                                     <span class="n">_LocalAttribute</span><span class="o">.</span><span class="n">betweenness</span><span class="p">,</span>
+                                     <span class="n">_LocalAttribute</span><span class="o">.</span><span class="n">shortest_path</span><span class="p">,</span>
+                                     <span class="n">_LocalAttribute</span><span class="o">.</span><span class="n">closeness</span><span class="p">,</span>
+                                     <span class="n">_LocalAttribute</span><span class="o">.</span><span class="n">radiality</span><span class="p">,</span>
+                                     <span class="n">_LocalAttribute</span><span class="o">.</span><span class="n">radiality_reach</span><span class="p">,</span>
+                                     <span class="n">_LocalAttribute</span><span class="o">.</span><span class="n">eccentricity</span><span class="p">,</span>
+                                     <span class="n">_LocalAttribute</span><span class="o">.</span><span class="n">pagerank</span><span class="p">]</span>
+
+            <span class="n">reporter</span><span class="o">.</span><span class="n">report_local_topology</span><span class="p">(</span><span class="n">node_names</span><span class="o">=</span><span class="n">nodes_list</span><span class="p">,</span> <span class="n">local_attributes_list</span><span class="o">=</span><span class="n">local_attributes_list</span><span class="p">)</span>
+
+            <span class="n">reporter</span><span class="o">.</span><span class="n">create_report</span><span class="p">(</span><span class="n">report_path</span><span class="o">=</span><span class="n">report_path</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_plot</span> <span class="ow">and</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">:</span>
+    
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Generating plots in </span><span class="si">{}</span><span class="s2"> format.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_format</span><span class="p">))</span>
+                
+                <span class="c1"># generates plot directory</span>
+                <span class="n">plot_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="s2">&quot;Dedalus-Plots&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s2">&quot;A directory named </span><span class="se">\&quot;</span><span class="s2">Dedalus-Plots</span><span class="se">\&quot;</span><span class="s2"> already exists, I may overwrite something in there&quot;</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+                <span class="n">plot_graph</span> <span class="o">=</span> <span class="n">PlotGraph</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span>
+                <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_node_label</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>  <span class="c1"># assign node labels to graph</span>
+
+                <span class="n">pal</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="s2">&quot;Accent&quot;</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span><span class="o">.</span><span class="n">as_hex</span><span class="p">()</span>
+                <span class="n">framepal</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="s2">&quot;Accent&quot;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">desat</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">as_hex</span><span class="p">()</span>
+
+                <span class="n">other_nodes_colour</span> <span class="o">=</span> <span class="n">pal</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                <span class="n">other_frame_colour</span> <span class="o">=</span> <span class="n">framepal</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                <span class="n">other_nodes_size</span> <span class="o">=</span> <span class="mi">25</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>  <span class="c1"># make node selected of a different colour and bigger than the other ones, so they can be visualized</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Highlighting nodes </span><span class="si">{}</span><span class="s2"> in plot</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nodes_list</span><span class="p">))</span>
+                    <span class="n">selected_nodes_colour</span> <span class="o">=</span> <span class="n">pal</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">selected_nodes_frames</span> <span class="o">=</span> <span class="n">framepal</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                    <span class="n">node_colours</span> <span class="o">=</span> <span class="p">[</span><span class="n">selected_nodes_colour</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">nodes_list</span> <span class="k">else</span> <span class="n">other_nodes_colour</span>
+                                    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>
+                                    <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()]</span>
+                    <span class="n">node_frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">selected_nodes_frames</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">nodes_list</span> <span class="k">else</span> <span class="n">other_frame_colour</span>
+                                    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>
+                                    <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()]</span>
+
+                    <span class="c1">#print(node_colours)</span>
+
+                    <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_node_colours</span><span class="p">(</span><span class="n">colours</span><span class="o">=</span><span class="n">node_colours</span><span class="p">)</span>
+
+                    <span class="n">node_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">45</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">nodes_list</span> <span class="k">else</span> <span class="n">other_nodes_size</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()]</span>
+                    <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_node_sizes</span><span class="p">(</span><span class="n">sizes</span><span class="o">=</span><span class="n">node_sizes</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># sys.stdout.write(&quot;Plotting network\n&quot;.format(nodes_list))</span>
+                    <span class="n">node_colours</span> <span class="o">=</span> <span class="p">[</span><span class="n">other_nodes_colour</span><span class="p">]</span> <span class="o">*</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span>
+                    <span class="n">node_frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">other_frame_colour</span><span class="p">]</span> <span class="o">*</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span>
+                    <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_node_colours</span><span class="p">(</span><span class="n">colours</span><span class="o">=</span><span class="n">node_colours</span><span class="p">)</span>
+
+                    <span class="n">node_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="n">other_nodes_size</span><span class="p">]</span> <span class="o">*</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span>
+                    <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_node_sizes</span><span class="p">(</span><span class="n">sizes</span><span class="o">=</span><span class="n">node_sizes</span><span class="p">)</span>
+
+                <span class="c1"># define layout</span>
+                <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_layouts</span><span class="p">()</span>
+
+                <span class="n">plot_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="p">[</span><span class="s2">&quot;Dedalus&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;local_metrics_plot_&quot;</span><span class="p">,</span>
+                     <span class="n">runtime_date</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_format</span><span class="p">]))</span>
+                <span class="n">plot_graph</span><span class="o">.</span><span class="n">plot_graph</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">plot_path</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="n">plot_size</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">edge_curved</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                      <span class="n">keep_aspect_ratio</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">vertex_label_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">vertex_frame_color</span><span class="o">=</span><span class="n">node_frames</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_plot</span> <span class="ow">and</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">1000</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;The graph has too many nodes (</span><span class="si">{}</span><span class="s2">). Can&#39;t draw graph</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()))</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">which</span> <span class="o">==</span> <span class="s2">&quot;global&quot;</span><span class="p">:</span>
+
+            <span class="c1">#define all global attributes that will be found</span>
+            <span class="n">global_attributes_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">_GlobalAttribute</span><span class="o">.</span><span class="n">average_degree</span><span class="p">,</span> <span class="n">_GlobalAttribute</span><span class="o">.</span><span class="n">average_path_length</span><span class="p">,</span>
+                                      <span class="n">_GlobalAttribute</span><span class="o">.</span><span class="n">diameter</span><span class="p">,</span> <span class="n">_GlobalAttribute</span><span class="o">.</span><span class="n">density</span><span class="p">,</span>
+                                      <span class="n">_GlobalAttribute</span><span class="o">.</span><span class="n">clustering_coefficient</span><span class="p">,</span>
+                                      <span class="n">_GlobalAttribute</span><span class="o">.</span><span class="n">weighted_clustering_coefficient</span><span class="p">,</span>
+                                      <span class="n">_GlobalAttribute</span><span class="o">.</span><span class="n">average_eccentricity</span><span class="p">,</span> <span class="n">_GlobalAttribute</span><span class="o">.</span><span class="n">average_radiality</span><span class="p">,</span>
+                                      <span class="n">_GlobalAttribute</span><span class="o">.</span><span class="n">average_radiality_reach</span><span class="p">,</span> <span class="n">_GlobalAttribute</span><span class="o">.</span><span class="n">average_closeness</span><span class="p">,</span>
+                                      <span class="n">_GlobalAttribute</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span>
+                                      <span class="n">_SparsenessAttribute</span><span class="o">.</span><span class="n">completeness</span><span class="p">,</span>
+                                      <span class="n">_SparsenessAttribute</span><span class="o">.</span><span class="n">completeness_legacy</span><span class="p">,</span>
+                                      <span class="n">_SparsenessAttribute</span><span class="o">.</span><span class="n">compactness</span><span class="p">]</span>
+
+            <span class="c1">#find metrics for the whole graph (without removing nodes)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Computing global Metrics for whole graph</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">global_topology</span> <span class="o">=</span> <span class="n">GlobalTopology</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span>
+            <span class="n">sparseness</span> <span class="o">=</span> <span class="n">Sparseness</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span>
+
+            <span class="n">global_topology</span><span class="o">.</span><span class="n">clustering_coefficient</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="n">global_topology</span><span class="o">.</span><span class="n">weighted_clustering_coefficient</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">global_topology</span><span class="o">.</span><span class="n">average_closeness</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">global_topology</span><span class="o">.</span><span class="n">average_degree</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">global_topology</span><span class="o">.</span><span class="n">average_eccentricity</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">global_topology</span><span class="o">.</span><span class="n">average_radiality</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">global_topology</span><span class="o">.</span><span class="n">average_radiality_reach</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">global_topology</span><span class="o">.</span><span class="n">average_path_length</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">global_topology</span><span class="o">.</span><span class="n">density</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">global_topology</span><span class="o">.</span><span class="n">diameter</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">global_topology</span><span class="o">.</span><span class="n">pi</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">sparseness</span><span class="o">.</span><span class="n">compactness</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">sparseness</span><span class="o">.</span><span class="n">completeness</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">sparseness</span><span class="o">.</span><span class="n">completeness_legacy</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_nodes</span><span class="p">:</span> <span class="c1">#create standard report for the whole graph</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Producing report</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="n">reporter</span> <span class="o">=</span> <span class="n">DedalusReporter</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span>
+                <span class="n">reporter</span><span class="o">.</span><span class="n">report_global_topology</span><span class="p">(</span><span class="n">global_attributes_list</span><span class="p">)</span>
+                <span class="n">report_prefix</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;Dedalus&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span> <span class="s2">&quot;metrics&quot;</span><span class="p">,</span> <span class="s2">&quot;report&quot;</span><span class="p">])</span>
+
+                <span class="n">report_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="p">[</span><span class="n">report_prefix</span><span class="p">,</span> <span class="n">runtime_date</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">report_format</span><span class="p">)</span>
+
+                <span class="n">reporter</span><span class="o">.</span><span class="n">report_global_topology</span><span class="p">(</span><span class="n">global_attributes_list</span><span class="p">)</span>
+                <span class="n">reporter</span><span class="o">.</span><span class="n">create_report</span><span class="p">(</span><span class="n">report_path</span><span class="o">=</span><span class="n">report_path</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Removing nodes </span><span class="si">{}</span><span class="s2"> from input graph and computing global metrics</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_nodes</span><span class="p">))</span>
+                <span class="n">nodes_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_nodes</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+
+                <span class="c1"># this will be useful when producing the two global topology plots, one for the global graph and the other one fo all nodes</span>
+                <span class="n">nodes_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">nodes_list</span><span class="p">]</span>
+                <span class="n">index_list</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_node_indices</span><span class="p">(</span><span class="n">node_names</span><span class="o">=</span><span class="n">nodes_list</span><span class="p">)</span>
+
+                <span class="c1"># delete vertices</span>
+                <span class="n">graph_nonodes</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">graph_nonodes</span><span class="o">.</span><span class="n">delete_vertices</span><span class="p">(</span><span class="n">index_list</span><span class="p">)</span> <span class="c1">#remove target nodes</span>
+
+                <span class="n">global_topology_nonodes</span><span class="o">=</span> <span class="n">GlobalTopology</span><span class="p">(</span><span class="n">graph_nonodes</span><span class="p">)</span>
+                <span class="n">sparseness_nonodes</span> <span class="o">=</span> <span class="n">Sparseness</span><span class="p">(</span><span class="n">graph_nonodes</span><span class="p">)</span>
+
+                <span class="n">global_topology_nonodes</span><span class="o">.</span><span class="n">clustering_coefficient</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">global_topology_nonodes</span><span class="o">.</span><span class="n">weighted_clustering_coefficient</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">global_topology_nonodes</span><span class="o">.</span><span class="n">average_closeness</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">global_topology_nonodes</span><span class="o">.</span><span class="n">average_degree</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">global_topology_nonodes</span><span class="o">.</span><span class="n">average_eccentricity</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">global_topology_nonodes</span><span class="o">.</span><span class="n">average_radiality</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">global_topology_nonodes</span><span class="o">.</span><span class="n">average_radiality_reach</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">global_topology_nonodes</span><span class="o">.</span><span class="n">average_path_length</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">global_topology_nonodes</span><span class="o">.</span><span class="n">density</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">global_topology_nonodes</span><span class="o">.</span><span class="n">diameter</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">global_topology_nonodes</span><span class="o">.</span><span class="n">pi</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+                <span class="n">sparseness_nonodes</span><span class="o">.</span><span class="n">compactness</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">sparseness_nonodes</span><span class="o">.</span><span class="n">completeness</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">sparseness_nonodes</span><span class="o">.</span><span class="n">completeness_legacy</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Producing report</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">reporter</span> <span class="o">=</span> <span class="n">DedalusReporter</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span> <span class="n">graph2</span><span class="o">=</span><span class="n">graph_nonodes</span><span class="p">)</span>
+                <span class="n">reporter</span><span class="o">.</span><span class="n">report_global_comparisons</span><span class="p">(</span><span class="n">attributes_list</span><span class="o">=</span><span class="n">global_attributes_list</span><span class="p">)</span>
+
+                <span class="n">report_prefix</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;Dedalus&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span> <span class="s2">&quot;metrics&quot;</span><span class="p">,</span> <span class="s2">&quot;nonodes&quot;</span><span class="p">,</span> <span class="s2">&quot;report&quot;</span><span class="p">])</span>
+
+                <span class="n">report_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="p">[</span><span class="n">report_prefix</span><span class="p">,</span> <span class="n">runtime_date</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">report_format</span><span class="p">)</span>
+
+                <span class="n">reporter</span><span class="o">.</span><span class="n">create_report</span><span class="p">(</span><span class="n">report_path</span><span class="o">=</span><span class="n">report_path</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_plot</span> <span class="ow">and</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_nodes</span><span class="p">:</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Generating Plots of both input graph </span><span class="si">{}</span><span class="s2"> and the graph without nodes</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">input_file</span><span class="p">)))</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Generating Plot of input graph </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">input_file</span><span class="p">)))</span>
+
+                <span class="c1"># generates plot directory</span>
+                <span class="n">plot_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="s2">&quot;Dedalus-Plots&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s2">&quot;WARNING: A directory named </span><span class="se">\&quot;</span><span class="s2">Dedalus-Plots</span><span class="se">\&quot;</span><span class="s2"> already exists, I may overwrite something in there&quot;</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">)</span>
+
+                <span class="n">other_nodes_size</span> <span class="o">=</span> <span class="mi">25</span>
+                <span class="n">pal</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="s2">&quot;Accent&quot;</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span><span class="o">.</span><span class="n">as_hex</span><span class="p">()</span>
+                <span class="n">framepal</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="s2">&quot;Accent&quot;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">desat</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">as_hex</span><span class="p">()</span>
+                <span class="n">other_nodes_colour</span> <span class="o">=</span> <span class="n">pal</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                <span class="n">other_frame_colour</span> <span class="o">=</span> <span class="n">framepal</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                <span class="n">no_nodes_size</span> <span class="o">=</span> <span class="mi">35</span>
+                <span class="n">no_nodes_colour</span> <span class="o">=</span> <span class="n">pal</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+                <span class="n">no_nodes_frames</span> <span class="o">=</span> <span class="n">framepal</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_nodes</span><span class="p">:</span>
+                    <span class="n">plot_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;Dedalus&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="s2">&quot;global_metrics_plot_original&quot;</span><span class="p">,</span> <span class="n">runtime_date</span><span class="p">]),</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_format</span><span class="p">]))</span>
+                    <span class="n">node_colours</span> <span class="o">=</span> <span class="p">[</span><span class="n">no_nodes_colour</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">nodes_list</span> <span class="k">else</span> <span class="n">other_nodes_colour</span> <span class="k">for</span> <span class="n">x</span>
+                                    <span class="ow">in</span>
+                                    <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()]</span>
+                    <span class="n">node_frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">no_nodes_frames</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">nodes_list</span> <span class="k">else</span> <span class="n">other_frame_colour</span> <span class="k">for</span> <span class="n">x</span>
+                                   <span class="ow">in</span>
+                                   <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()]</span>
+
+                    <span class="n">node_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="n">no_nodes_size</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">nodes_list</span> <span class="k">else</span> <span class="n">other_nodes_size</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>
+                                  <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()]</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">node_colours</span> <span class="o">=</span> <span class="p">[</span><span class="n">other_nodes_colour</span><span class="p">]</span> <span class="o">*</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span>
+                    <span class="n">node_frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">other_frame_colour</span><span class="p">]</span> <span class="o">*</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span>
+                    <span class="n">node_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="n">other_nodes_size</span><span class="p">]</span> <span class="o">*</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span>
+                    <span class="n">plot_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;Dedalus&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="s2">&quot;global_metrics_plot&quot;</span><span class="p">,</span> <span class="n">runtime_date</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_format</span><span class="p">]))</span>
+
+                <span class="n">plot_graph</span> <span class="o">=</span> <span class="n">PlotGraph</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span>
+                <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_node_label</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>  <span class="c1"># assign node labels to graph</span>
+
+                <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_node_colours</span><span class="p">(</span><span class="n">colours</span><span class="o">=</span><span class="n">node_colours</span><span class="p">)</span>
+                <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_node_sizes</span><span class="p">(</span><span class="n">sizes</span><span class="o">=</span><span class="n">node_sizes</span><span class="p">)</span>
+
+                <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_node_colours</span><span class="p">(</span><span class="n">colours</span><span class="o">=</span><span class="n">node_colours</span><span class="p">)</span>
+                <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_node_sizes</span><span class="p">(</span><span class="n">sizes</span><span class="o">=</span><span class="n">node_sizes</span><span class="p">)</span>
+
+                <span class="c1"># define layout</span>
+                <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_layouts</span><span class="p">()</span>
+
+                <span class="n">plot_graph</span><span class="o">.</span><span class="n">plot_graph</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">plot_path</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="n">plot_size</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">edge_curved</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                      <span class="n">keep_aspect_ratio</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">vertex_label_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">vertex_frame_color</span><span class="o">=</span><span class="n">node_frames</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_nodes</span><span class="p">:</span>
+
+                    <span class="n">plot_graph</span> <span class="o">=</span> <span class="n">PlotGraph</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph_nonodes</span><span class="p">)</span>
+                    <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_node_label</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">graph_nonodes</span><span class="o">.</span><span class="n">vs</span><span class="p">()[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>  <span class="c1"># assign node labels to graph</span>
+
+                    <span class="c1"># print(graph_copy.vs()[&quot;name&quot;])</span>
+                    <span class="n">node_colours</span> <span class="o">=</span> <span class="p">[</span><span class="n">other_nodes_colour</span><span class="p">]</span> <span class="o">*</span> <span class="n">graph_nonodes</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span>
+                    <span class="n">node_frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">other_frame_colour</span><span class="p">]</span> <span class="o">*</span> <span class="n">graph_nonodes</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span>
+                    <span class="n">node_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="n">other_nodes_size</span><span class="p">]</span> <span class="o">*</span> <span class="n">graph_nonodes</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span>
+
+                    <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_node_colours</span><span class="p">(</span><span class="n">colours</span><span class="o">=</span><span class="n">node_colours</span><span class="p">)</span>
+                    <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_node_sizes</span><span class="p">(</span><span class="n">sizes</span><span class="o">=</span><span class="n">node_sizes</span><span class="p">)</span>
+
+                    <span class="c1"># define layout</span>
+                    <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_layouts</span><span class="p">()</span>
+
+                    <span class="n">plot_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;Dedalus&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="s2">&quot;global_metrics_plot_nonodes&quot;</span><span class="p">,</span><span class="n">runtime_date</span><span class="p">]),</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_format</span><span class="p">]))</span>
+
+                    <span class="n">plot_graph</span><span class="o">.</span><span class="n">plot_graph</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">plot_path</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="n">plot_size</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">edge_curved</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                          <span class="n">keep_aspect_ratio</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">vertex_label_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">vertex_frame_color</span><span class="o">=</span><span class="n">node_frames</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_plot</span> <span class="ow">and</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">1000</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;The graph has too many nodes (</span><span class="si">{}</span><span class="s2">). Can&#39;t draw graph</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                <span class="s2">&quot;This should not happen. Please contact Dedadlus developer and send a command line, along with a log. Quitti9ng</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">save_binary</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Saving graph to a Binary file</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">binary_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="n">report_prefix</span> <span class="o">+</span> <span class="s2">&quot;.graph&quot;</span><span class="p">)</span>
+            <span class="n">GraphToBinary</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">binary_path</span><span class="p">)</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Dedalus Metrics completed successfully. Ending</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Author.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
