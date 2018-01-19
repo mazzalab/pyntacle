@@ -12,14 +12,14 @@ Python version support
 Officially, Python **>= 3.4**.
 
 ******************
-Installing Dedalus
+Installing pyntacle
 ******************
 
 ==============================================
-Installing Dedalus using Anaconda or Miniconda
+Installing pyntacle using Anaconda or Miniconda
 ==============================================
-Installing Dedalus and all its dependencies can be challenging for inexperienced users.
-There are several advantages in using Anaconda to install not only Dedalus, but also Python and other packages: it is cross platform (Linux, MacOS X, Windows), 
+Installing pyntacle and all its dependencies can be challenging for inexperienced users.
+There are several advantages in using Anaconda to install not only pyntacle, but also Python and other packages: it is cross platform (Linux, MacOS X, Windows),
 you do not require administrative rights to install it (it goes in the user's home directory), 
 it allows you to work in *virtual environments*, which can be used as safe sandbox-like sub-systems that can be created, used, exported or deleted at your will. 
 
@@ -48,11 +48,11 @@ This will create a minimal environment with only Python v.3.6 installed in it. T
 
   source activate name_of_my_env
 
-And finally, we install the latest version of Dedalus:
+And finally, we install the latest version of pyntacle:
 
 ::
 
-  conda install -y -c bfxcss -c conda-forge dedalus
+  conda install -y -c bfxcss -c conda-forge pyntacle
 
 -------
 Windows
@@ -74,20 +74,20 @@ Then, we activate the newly created environment:
 
   activate name_of_my_env
 
-Finally, we install the latest version of Dedalus:
+Finally, we install the latest version of pyntacle:
 
 ::
 
-  conda install -y -c bfxcss -c conda-forge dedalus
+  conda install -y -c bfxcss -c conda-forge pyntacle
 
 
 ==============================
-Installing Dedalus from source
+Installing pyntacle from source
 ==============================
 
 Installing from source is advised for advanced users only. The following instructions were written for Mac OS v.11+ and a few major Linux distros. System requirements can vary for other distros/versions.
 
-The source code can be downloaded from our `GitHub <http://example.com>`_ releases page as a .tar.gz file. Before trying to install Dedalus, there are system requirements that need to be satisfied on each platform.
+The source code can be downloaded from our `GitHub <http://example.com>`_ releases page as a .tar.gz file. Before trying to install pyntacle, there are system requirements that need to be satisfied on each platform.
 
 --------------
 Debian, Ubuntu
@@ -99,7 +99,7 @@ As a user with admin rights, run:
 
  apt-get install -y build-essential linux-headers-$(uname -r) libgl1-mesa-glx libigraph0v5 libigraph0-dev libcairo2-dev libffi-dev libjpeg-dev libgif-dev libblas-dev liblapack-dev python3-pip
 
-Finally, extract the Dedalus `source tar.gz file <http://www.example.com>`_ navigate into it and run as an administrator:
+Finally, extract the pyntacle `source tar.gz file <http://www.example.com>`_ navigate into it and run as an administrator:
 
 ::
 
@@ -121,7 +121,7 @@ Then, we need to download and install the Cairo library:
 
   wget https://github.com/pygobject/pycairo/archive/master.zip ; unzip master.zip; cd pycairo-master; python3 setup.py build ; sudo python3 setup.py install; cd ..; rm -r master.zip pycairo-master
 
-Finally, extract the Dedalus `source tar.gz file <http://www.example.com>`_ navigate into it and run as an administrator:
+Finally, extract the pyntacle `source tar.gz file <http://www.example.com>`_ navigate into it and run as an administrator:
 
 ::
 
@@ -138,7 +138,7 @@ As an admin, you need to run:
   yum groupinstall -y development kernel-headers-`uname -r` kernel-devel-`uname -r` gcc gcc-c++ yum-utils; yum install -y https://centos7.iuscommunity.org/ius-release.rpm; yum install -y wget python36u-devel.x86_64 igraph-devel.x86_64 cairo-devel.x86_64 atlas-devel.x86_64 libffi-devel.x86_64 python36u-pip
   wget https://github.com/pygobject/pycairo/releases/download/v1.14.1/pycairo-1.14.1.tar.gz ; tar -xf pycairo-1.14.1.tar.gz; cd pycairo-1.14.1; python3.6 setup.py build ; sudo python3.6 setup.py install; cd ..; rm -rf pycairo-1.14.1*
 
-Finally, extract the Dedalus `source tar.gz file <http://www.example.com>`_ navigate into it and run as an administrator:
+Finally, extract the pyntacle `source tar.gz file <http://www.example.com>`_ navigate into it and run as an administrator:
 
 
 ::
@@ -158,7 +158,7 @@ Once you have XCode - and you have opened at least once -, you will need to inst
 
 and following the prompt on screen.
  
-Additionally, you need other dependencies to compile Dedalus. You can easily fetch them using the package manager `Mac Ports <https://www.macports.org/install.php>`_.
+Additionally, you need other dependencies to compile pyntacle. You can easily fetch them using the package manager `Mac Ports <https://www.macports.org/install.php>`_.
 
 Once Mac Ports is installed, getting the dependencies is easy:
 
@@ -168,12 +168,12 @@ Once Mac Ports is installed, getting the dependencies is easy:
 
 Note: unfortunately, at the time of writing this guide, Mac Ports does not provide a python3.6 version of the library 'xlsxwriter'; therefore, everything must be downgraded to Python 3.5. This does not affect the performance or the results.
 
-Finally, extract the Dedalus `source tar.gz file <http://www.example.com>`_ navigate into it and run as an administrator:
+Finally, extract the pyntacle `source tar.gz file <http://www.example.com>`_ navigate into it and run as an administrator:
 
 ::
 
   python3.5 setup.py install
-  ln -s /opt/local/Library/Frameworks/Python.framework/Versions/3.5/bin/dedalus /opt/local/bin
+  ln -s /opt/local/Library/Frameworks/Python.framework/Versions/3.5/bin/pyntacle /opt/local/bin
 
 
 

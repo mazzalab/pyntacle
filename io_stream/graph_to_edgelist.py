@@ -10,7 +10,7 @@ from exception.notagraph_error import NotAGraphError
 from io_stream.igraph_exporter import IGraphExporter
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The Dedalus Project"
+__copyright__ = "Copyright 2016, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"

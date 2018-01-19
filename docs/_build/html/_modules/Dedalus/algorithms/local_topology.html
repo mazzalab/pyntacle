@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Dedalus.algorithms.local_topology &mdash; Dedalus  documentation</title>
+  <title>pyntacle.algorithms.local_topology &mdash; pyntacle  documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="Dedalus  documentation" href="../../../index.html"/>
+    <link rel="top" title="pyntacle  documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Dedalus
+            <a href="../../../index.html" class="icon icon-home"> pyntacle
           
 
           
@@ -88,7 +88,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../Dedalus.html">Dedalus package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyntacle.html">pyntacle package</a></li>
 </ul>
 
             
@@ -103,7 +103,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Dedalus</a>
+          <a href="../../../index.html">pyntacle</a>
         
       </nav>
 
@@ -135,7 +135,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>Dedalus.algorithms.local_topology</li>
+      <li>pyntacle.algorithms.local_topology</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -152,7 +152,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for Dedalus.algorithms.local_topology</h1><div class="highlight"><pre>
+  <h1>Source code for pyntacle.algorithms.local_topology</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Calculator of local properties of graphs</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -162,14 +162,14 @@
 
 <span class="kn">from</span> <span class="nn">igraph</span> <span class="k">import</span> <span class="n">Graph</span>
 
-<span class="c1"># Dedalus Libraries</span>
+<span class="c1"># pyntacle Libraries</span>
 <span class="kn">from</span> <span class="nn">algorithms</span> <span class="k">import</span> <span class="n">global_topology</span>
 <span class="kn">from</span> <span class="nn">exception.wrong_argument_error</span> <span class="k">import</span> <span class="n">WrongArgumentError</span>
 <span class="kn">from</span> <span class="nn">utils.graph_utils</span> <span class="k">import</span> <span class="n">GraphUtils</span>
 <span class="kn">from</span> <span class="nn">config</span> <span class="k">import</span> <span class="o">*</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo, Mauro Truglio, Tommaso Mazza&quot;</span>
-<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The Dedalus Project&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The pyntacle Project&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ferenc Jordan&quot;</span><span class="p">]</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo&quot;</span>
@@ -210,7 +210,7 @@
     <span class="n">pagerank</span> <span class="o">=</span> <span class="mi">9</span>
 
 
-<div class="viewcode-block" id="LocalTopology"><a class="viewcode-back" href="../../../Dedalus.algorithms.local_topology.html#Dedalus.algorithms.local_topology.LocalTopology">[docs]</a><span class="k">class</span> <span class="nc">LocalTopology</span><span class="p">:</span>
+<div class="viewcode-block" id="LocalTopology"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology.html#pyntacle.algorithms.local_topology.LocalTopology">[docs]</a><span class="k">class</span> <span class="nc">LocalTopology</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculator of local properties of graphs **[EXPAND?]**</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -234,14 +234,14 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span> <span class="o">=</span> <span class="n">graph</span>
 
-<div class="viewcode-block" id="LocalTopology.get_graph"><a class="viewcode-back" href="../../../Dedalus.algorithms.local_topology.html#Dedalus.algorithms.local_topology.LocalTopology.get_graph">[docs]</a>    <span class="k">def</span> <span class="nf">get_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<div class="viewcode-block" id="LocalTopology.get_graph"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology.html#pyntacle.algorithms.local_topology.LocalTopology.get_graph">[docs]</a>    <span class="k">def</span> <span class="nf">get_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the graph</span>
 <span class="sd">        :return: - A Graph data structure</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span></div>
 
-<div class="viewcode-block" id="LocalTopology.set_graph"><a class="viewcode-back" href="../../../Dedalus.algorithms.local_topology.html#Dedalus.algorithms.local_topology.LocalTopology.set_graph">[docs]</a>    <span class="k">def</span> <span class="nf">set_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">deepcopy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="LocalTopology.set_graph"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology.html#pyntacle.algorithms.local_topology.LocalTopology.set_graph">[docs]</a>    <span class="k">def</span> <span class="nf">set_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">deepcopy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Replaces the internal graph object with a new one</span>
 <span class="sd">        </span>
@@ -253,7 +253,7 @@
                 <span class="k">del</span> <span class="n">graph</span><span class="p">[</span><span class="n">elem</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span> <span class="o">=</span> <span class="n">graph</span></div>
 
-<div class="viewcode-block" id="LocalTopology.degree"><a class="viewcode-back" href="../../../Dedalus.algorithms.local_topology.html#Dedalus.algorithms.local_topology.LocalTopology.degree">[docs]</a>    <span class="k">def</span> <span class="nf">degree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<div class="viewcode-block" id="LocalTopology.degree"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology.html#pyntacle.algorithms.local_topology.LocalTopology.degree">[docs]</a>    <span class="k">def</span> <span class="nf">degree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the degree of every node in the graph, or of a specified list of nodes</span>
 <span class="sd">        </span>
@@ -281,7 +281,7 @@
 
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">_LocalAttribute</span><span class="o">.</span><span class="n">degree</span><span class="o">.</span><span class="n">name</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="LocalTopology.betweenness"><a class="viewcode-back" href="../../../Dedalus.algorithms.local_topology.html#Dedalus.algorithms.local_topology.LocalTopology.betweenness">[docs]</a>    <span class="k">def</span> <span class="nf">betweenness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="LocalTopology.betweenness"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology.html#pyntacle.algorithms.local_topology.LocalTopology.betweenness">[docs]</a>    <span class="k">def</span> <span class="nf">betweenness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the betweenness of every node in the graph, or of a specified list of nodes</span>
 <span class="sd">        </span>
@@ -312,7 +312,7 @@
 
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">_LocalAttribute</span><span class="o">.</span><span class="n">betweenness</span><span class="o">.</span><span class="n">name</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="LocalTopology.clustering_coefficient"><a class="viewcode-back" href="../../../Dedalus.algorithms.local_topology.html#Dedalus.algorithms.local_topology.LocalTopology.clustering_coefficient">[docs]</a>    <span class="k">def</span> <span class="nf">clustering_coefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="LocalTopology.clustering_coefficient"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology.html#pyntacle.algorithms.local_topology.LocalTopology.clustering_coefficient">[docs]</a>    <span class="k">def</span> <span class="nf">clustering_coefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the clustering coefficient of every node in the graph, or of a specified list of nodes</span>
 <span class="sd">        </span>
@@ -343,7 +343,7 @@
 
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">_LocalAttribute</span><span class="o">.</span><span class="n">clustering_coefficient</span><span class="o">.</span><span class="n">name</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="LocalTopology.closeness"><a class="viewcode-back" href="../../../Dedalus.algorithms.local_topology.html#Dedalus.algorithms.local_topology.LocalTopology.closeness">[docs]</a>    <span class="k">def</span> <span class="nf">closeness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="LocalTopology.closeness"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology.html#pyntacle.algorithms.local_topology.LocalTopology.closeness">[docs]</a>    <span class="k">def</span> <span class="nf">closeness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the closeness of every node in the graph, or of a specified list of nodes</span>
 <span class="sd">        </span>
@@ -371,7 +371,7 @@
 
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">_LocalAttribute</span><span class="o">.</span><span class="n">closeness</span><span class="o">.</span><span class="n">name</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="LocalTopology.eccentricity"><a class="viewcode-back" href="../../../Dedalus.algorithms.local_topology.html#Dedalus.algorithms.local_topology.LocalTopology.eccentricity">[docs]</a>    <span class="k">def</span> <span class="nf">eccentricity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="LocalTopology.eccentricity"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology.html#pyntacle.algorithms.local_topology.LocalTopology.eccentricity">[docs]</a>    <span class="k">def</span> <span class="nf">eccentricity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the eccentricity of every node in the graph, or of a specified list of nodes</span>
 <span class="sd">        </span>
@@ -399,7 +399,7 @@
 
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">_LocalAttribute</span><span class="o">.</span><span class="n">eccentricity</span><span class="o">.</span><span class="n">name</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="LocalTopology.shortest_path"><a class="viewcode-back" href="../../../Dedalus.algorithms.local_topology.html#Dedalus.algorithms.local_topology.LocalTopology.shortest_path">[docs]</a>    <span class="k">def</span> <span class="nf">shortest_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="LocalTopology.shortest_path"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology.html#pyntacle.algorithms.local_topology.LocalTopology.shortest_path">[docs]</a>    <span class="k">def</span> <span class="nf">shortest_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the shortest path lengths between all (or a specified list of) nodes in the graph and every other nodes</span>
 <span class="sd">        </span>
@@ -427,7 +427,7 @@
 
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">_LocalAttribute</span><span class="o">.</span><span class="n">shortest_path</span><span class="o">.</span><span class="n">name</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="LocalTopology.radiality"><a class="viewcode-back" href="../../../Dedalus.algorithms.local_topology.html#Dedalus.algorithms.local_topology.LocalTopology.radiality">[docs]</a>    <span class="k">def</span> <span class="nf">radiality</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="LocalTopology.radiality"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology.html#pyntacle.algorithms.local_topology.LocalTopology.radiality">[docs]</a>    <span class="k">def</span> <span class="nf">radiality</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the radiality of every node in the graph, or of a specified list of nodes. The radiality of a node v</span>
 <span class="sd">        is calculated by computing the shortest path between the node v and all other nodes in the graph. The value</span>
@@ -480,7 +480,7 @@
 
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">_LocalAttribute</span><span class="o">.</span><span class="n">radiality</span><span class="o">.</span><span class="n">name</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="LocalTopology.radiality_reach"><a class="viewcode-back" href="../../../Dedalus.algorithms.local_topology.html#Dedalus.algorithms.local_topology.LocalTopology.radiality_reach">[docs]</a>    <span class="k">def</span> <span class="nf">radiality_reach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="LocalTopology.radiality_reach"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology.html#pyntacle.algorithms.local_topology.LocalTopology.radiality_reach">[docs]</a>    <span class="k">def</span> <span class="nf">radiality_reach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes a modified version of the radiality in which the radiality is computer for each component and then</span>
 <span class="sd">        weighted over the proportion of nodes present in that component with respect</span>
@@ -582,7 +582,7 @@
 
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">_LocalAttribute</span><span class="o">.</span><span class="n">radiality_reach</span><span class="o">.</span><span class="n">name</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="LocalTopology.eigenvector_centrality"><a class="viewcode-back" href="../../../Dedalus.algorithms.local_topology.html#Dedalus.algorithms.local_topology.LocalTopology.eigenvector_centrality">[docs]</a>    <span class="k">def</span> <span class="nf">eigenvector_centrality</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scaled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index_list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="LocalTopology.eigenvector_centrality"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology.html#pyntacle.algorithms.local_topology.LocalTopology.eigenvector_centrality">[docs]</a>    <span class="k">def</span> <span class="nf">eigenvector_centrality</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scaled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index_list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the eigenvector centrality between all  nodes in the graph using igraph builtin operators (Igraph.evc)</span>
 <span class="sd">        </span>
@@ -616,7 +616,7 @@
 
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">_LocalAttribute</span><span class="o">.</span><span class="n">eigenvector_centrality</span><span class="o">.</span><span class="n">name</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="LocalTopology.pagerank"><a class="viewcode-back" href="../../../Dedalus.algorithms.local_topology.html#Dedalus.algorithms.local_topology.LocalTopology.pagerank">[docs]</a>    <span class="k">def</span> <span class="nf">pagerank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">damping</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="LocalTopology.pagerank"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology.html#pyntacle.algorithms.local_topology.LocalTopology.pagerank">[docs]</a>    <span class="k">def</span> <span class="nf">pagerank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">damping</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the pagerank index of every node in the graph, or of a specified list of nodes</span>
 <span class="sd">        </span>

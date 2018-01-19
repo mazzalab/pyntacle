@@ -1,7 +1,7 @@
-Dedalus package
+pyntacle package
 ===============
 
-.. automodule:: Dedalus
+.. automodule:: pyntacle
     :members:
     :undoc-members:
     :show-inheritance:
@@ -11,21 +11,21 @@ Subpackages
 
 .. toctree::
 
-    Dedalus.algorithms
-    Dedalus.commands
-    Dedalus.exception
-    Dedalus.graph_generator
-    Dedalus.graph_operations
-    Dedalus.io_stream
-    Dedalus.misc
-    Dedalus.report
-    Dedalus.utils
+    pyntacle.algorithms
+    pyntacle.commands
+    pyntacle.exception
+    pyntacle.graph_generator
+    pyntacle.graph_operations
+    pyntacle.io_stream
+    pyntacle.misc
+    pyntacle.report
+    pyntacle.utils
 
 Submodules
 ----------
 
 .. toctree::
 
-   Dedalus.config
-   Dedalus.dedalus
+   pyntacle.config
+   pyntacle.pyntacle
 

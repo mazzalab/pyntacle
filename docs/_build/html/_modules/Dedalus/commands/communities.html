@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Dedalus.commands.communities &mdash; Dedalus  documentation</title>
+  <title>pyntacle.commands.communities &mdash; pyntacle  documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="Dedalus  documentation" href="../../../index.html"/>
+    <link rel="top" title="pyntacle  documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Dedalus
+            <a href="../../../index.html" class="icon icon-home"> pyntacle
           
 
           
@@ -88,7 +88,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../Dedalus.html">Dedalus package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyntacle.html">pyntacle package</a></li>
 </ul>
 
             
@@ -103,7 +103,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Dedalus</a>
+          <a href="../../../index.html">pyntacle</a>
         
       </nav>
 
@@ -135,7 +135,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>Dedalus.commands.communities</li>
+      <li>pyntacle.commands.communities</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -152,7 +152,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for Dedalus.commands.communities</h1><div class="highlight"><pre>
+  <h1>Source code for pyntacle.commands.communities</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">simplefilter</span>
 
 <span class="kn">from</span> <span class="nn">exception.multiple_solutions_error</span> <span class="k">import</span> <span class="n">MultipleSolutionsError</span>
@@ -169,7 +169,7 @@
 <span class="kn">from</span> <span class="nn">utils.modules_utils</span> <span class="k">import</span> <span class="n">ModuleUtils</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo, Mauro Truglio, Tommaso Mazza&quot;</span>
-<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The Dedalus Project&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The pyntacle Project&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ferenc Jordan&quot;</span><span class="p">]</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo&quot;</span>
@@ -196,7 +196,7 @@
 <span class="s2">  02110-1301 USA</span>
 <span class="s2">  &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Communities"><a class="viewcode-back" href="../../../Dedalus.commands.communities.html#Dedalus.commands.communities.Communities">[docs]</a><span class="k">class</span> <span class="nc">Communities</span><span class="p">():</span>
+<div class="viewcode-block" id="Communities"><a class="viewcode-back" href="../../../pyntacle.commands.communities.html#pyntacle.commands.communities.Communities">[docs]</a><span class="k">class</span> <span class="nc">Communities</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    **[EXPAND]**</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -210,7 +210,7 @@
                              <span class="s2">&quot;will not be produced.&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_plot</span> <span class="o">=</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="Communities.run"><a class="viewcode-back" href="../../../Dedalus.commands.communities.html#Dedalus.commands.communities.Communities.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Communities.run"><a class="viewcode-back" href="../../../pyntacle.commands.communities.html#pyntacle.commands.communities.Communities.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorAnimation</span><span class="p">()</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
@@ -409,7 +409,7 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
-                <span class="s2">&quot;This should not happen. Please contact Dedalus Developers and send your command line, along with a log. Quitting</span><span class="se">\n</span><span class="s2">.&quot;</span><span class="p">)</span>
+                <span class="s2">&quot;This should not happen. Please contact pyntacle Developers and send your command line, along with a log. Quitting</span><span class="se">\n</span><span class="s2">.&quot;</span><span class="p">)</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="n">mods_report</span> <span class="o">=</span> <span class="p">[]</span>
@@ -420,7 +420,7 @@
         <span class="c1"># print(mods_report)</span>
         <span class="c1"># input()</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-            <span class="s2">&quot;Dedalus - Community Finding Report:</span><span class="se">\n</span><span class="s2">algorithm:</span><span class="si">{0}</span><span class="se">\n</span><span class="s2">Total number of Modules Found:</span><span class="se">\t</span><span class="si">{1}</span><span class="se">\n</span><span class="s2">Index</span><span class="se">\t</span><span class="s2">Nodes</span><span class="se">\t</span><span class="s2">Edges </span><span class="se">\t</span><span class="s2">Components</span><span class="se">\n</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s2">&quot;pyntacle - Community Finding Report:</span><span class="se">\n</span><span class="s2">algorithm:</span><span class="si">{0}</span><span class="se">\n</span><span class="s2">Total number of Modules Found:</span><span class="se">\t</span><span class="si">{1}</span><span class="se">\n</span><span class="s2">Index</span><span class="se">\t</span><span class="s2">Nodes</span><span class="se">\t</span><span class="s2">Edges </span><span class="se">\t</span><span class="s2">Components</span><span class="se">\n</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">algorithm</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">mods</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mods_report</span><span class="p">)))</span>
 
         <span class="c1"># initialize Moduleutils class</span>
@@ -503,7 +503,7 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">output_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># insert random name generator</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;Dedalus&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">algorithm</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;pyntacle&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">algorithm</span><span class="p">])</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
                 <span class="s2">&quot;output modules name not specified. Basename of the output modules will be </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">output_file</span><span class="p">))</span>
@@ -556,7 +556,7 @@
 
         <span class="c1"># save the original graph into a binary file</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">save_binary</span><span class="p">:</span>
-            <span class="n">binary_name</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;Dedalus_communities&quot;</span><span class="p">,</span> <span class="s2">&quot;graph&quot;</span><span class="p">])</span>
+            <span class="n">binary_name</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;pyntacle_communities&quot;</span><span class="p">,</span> <span class="s2">&quot;graph&quot;</span><span class="p">])</span>
             <span class="n">binary_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="n">binary_name</span><span class="p">)</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
                 <span class="s2">&quot;Storing the input graph with module labels into .graph file at path </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
@@ -564,11 +564,11 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_plot</span><span class="p">:</span>
 
-            <span class="n">plot_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="s2">&quot;Dedalus-Plots&quot;</span><span class="p">)</span>
+            <span class="n">plot_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="s2">&quot;pyntacle-Plots&quot;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;A directory named </span><span class="se">\&quot;</span><span class="s2">Dedalus-Plots</span><span class="se">\&quot;</span><span class="s2"> already exists, I may overwrite something in there&quot;</span><span class="p">)</span>
+                    <span class="s2">&quot;A directory named </span><span class="se">\&quot;</span><span class="s2">pyntacle-Plots</span><span class="se">\&quot;</span><span class="s2"> already exists, I may overwrite something in there&quot;</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">)</span>
@@ -583,7 +583,7 @@
                 <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Generating plots in </span><span class="si">{}</span><span class="s2"> format.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_format</span><span class="p">))</span>
 
                 <span class="n">main_plot_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                    <span class="p">[</span><span class="s2">&quot;Dedalus&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">input_file</span><span class="p">))[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;modules&quot;</span><span class="p">,</span>
+                    <span class="p">[</span><span class="s2">&quot;pyntacle&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">input_file</span><span class="p">))[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;modules&quot;</span><span class="p">,</span>
                      <span class="n">runtime_date</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_format</span><span class="p">]))</span>
 
                 <span class="c1"># initialize general graph Drawer</span>
@@ -613,7 +613,7 @@
                                          <span class="n">vertex_frame_color</span><span class="o">=</span><span class="n">bord_list</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-                    <span class="s2">&quot;Input Graph is above Dedalus Plotting limits (</span><span class="si">{}</span><span class="s2"> nodes, we support 1000 nodes). Will skip plotting this module.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="s2">&quot;Input Graph is above pyntacle Plotting limits (</span><span class="si">{}</span><span class="s2"> nodes, we support 1000 nodes). Will skip plotting this module.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                         <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()))</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">final_mods</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">:</span>
@@ -643,7 +643,7 @@
 
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-                        <span class="s2">&quot;Module </span><span class="si">{0}</span><span class="s2"> is above Dedalus Plotting limits (</span><span class="si">{1}</span><span class="s2"> nodes , we support 1000 nodes). Will skip plotting this module.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="s2">&quot;Module </span><span class="si">{0}</span><span class="s2"> is above pyntacle Plotting limits (</span><span class="si">{1}</span><span class="s2"> nodes , we support 1000 nodes). Will skip plotting this module.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                             <span class="n">i</span><span class="p">,</span> <span class="n">comm</span><span class="o">.</span><span class="n">vcount</span><span class="p">()))</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Community Finding completed successfully. Ending</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>

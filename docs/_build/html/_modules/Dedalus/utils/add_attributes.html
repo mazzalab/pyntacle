@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Dedalus.utils.add_attributes &mdash; Dedalus  documentation</title>
+  <title>pyntacle.utils.add_attributes &mdash; pyntacle  documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="Dedalus  documentation" href="../../../index.html"/>
+    <link rel="top" title="pyntacle  documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Dedalus
+            <a href="../../../index.html" class="icon icon-home"> pyntacle
           
 
           
@@ -88,7 +88,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../Dedalus.html">Dedalus package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyntacle.html">pyntacle package</a></li>
 </ul>
 
             
@@ -103,7 +103,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Dedalus</a>
+          <a href="../../../index.html">pyntacle</a>
         
       </nav>
 
@@ -135,7 +135,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>Dedalus.utils.add_attributes</li>
+      <li>pyntacle.utils.add_attributes</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -152,7 +152,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for Dedalus.utils.add_attributes</h1><div class="highlight"><pre>
+  <h1>Source code for pyntacle.utils.add_attributes</h1><div class="highlight"><pre>
 <span></span><span class="c1"># external libraries</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -162,11 +162,11 @@
 
 <span class="kn">from</span> <span class="nn">exception.illegal_argument_number_error</span> <span class="k">import</span> <span class="n">IllegalArgumentNumberError</span>
 <span class="kn">from</span> <span class="nn">exception.unsupported_graph_error</span> <span class="k">import</span> <span class="n">UnsupportedGrapherror</span>
-<span class="c1"># Dedalus Libraries</span>
+<span class="c1"># pyntacle Libraries</span>
 <span class="kn">from</span> <span class="nn">exception.wrong_argument_error</span> <span class="k">import</span> <span class="n">WrongArgumentError</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo, Mauro Truglio, Tommaso Mazza&quot;</span>
-<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The Dedalus Project&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The pyntacle Project&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ferenc Jordan&quot;</span><span class="p">]</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo&quot;</span>
@@ -194,7 +194,7 @@
 <span class="s2">  &quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="AddAttributes"><a class="viewcode-back" href="../../../Dedalus.utils.add_attributes.html#Dedalus.utils.add_attributes.AddAttributes">[docs]</a><span class="k">class</span> <span class="nc">AddAttributes</span><span class="p">():</span>
+<div class="viewcode-block" id="AddAttributes"><a class="viewcode-back" href="../../../pyntacle.utils.add_attributes.html#pyntacle.utils.add_attributes.AddAttributes">[docs]</a><span class="k">class</span> <span class="nc">AddAttributes</span><span class="p">():</span>
     <span class="n">logger</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
@@ -228,7 +228,7 @@
 
             <span class="k">return</span> <span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">sep</span><span class="p">)</span>
 
-<div class="viewcode-block" id="AddAttributes.add_graph_attributes"><a class="viewcode-back" href="../../../Dedalus.utils.add_attributes.html#Dedalus.utils.add_attributes.AddAttributes.add_graph_attributes">[docs]</a>    <span class="k">def</span> <span class="nf">add_graph_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AddAttributes.add_graph_attributes"><a class="viewcode-back" href="../../../pyntacle.utils.add_attributes.html#pyntacle.utils.add_attributes.AddAttributes.add_graph_attributes">[docs]</a>    <span class="k">def</span> <span class="nf">add_graph_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Add an attribute to a graph object</span>
@@ -253,7 +253,7 @@
                 <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">attrfile</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">sep</span><span class="p">))[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">sep</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="AddAttributes.add_node_attributes"><a class="viewcode-back" href="../../../Dedalus.utils.add_attributes.html#Dedalus.utils.add_attributes.AddAttributes.add_node_attributes">[docs]</a>    <span class="k">def</span> <span class="nf">add_node_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AddAttributes.add_node_attributes"><a class="viewcode-back" href="../../../pyntacle.utils.add_attributes.html#pyntacle.utils.add_attributes.AddAttributes.add_node_attributes">[docs]</a>    <span class="k">def</span> <span class="nf">add_node_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This function takes an header file and, optionally, a separator, and add them to a graph imprted in __init</span>
 <span class="sd">        </span>
@@ -313,7 +313,7 @@
 
                     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Node attributes successfully added!&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="AddAttributes.add_edge_attributes"><a class="viewcode-back" href="../../../Dedalus.utils.add_attributes.html#Dedalus.utils.add_attributes.AddAttributes.add_edge_attributes">[docs]</a>    <span class="k">def</span> <span class="nf">add_edge_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;standard&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="AddAttributes.add_edge_attributes"><a class="viewcode-back" href="../../../pyntacle.utils.add_attributes.html#pyntacle.utils.add_attributes.AddAttributes.add_edge_attributes">[docs]</a>    <span class="k">def</span> <span class="nf">add_edge_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;standard&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add edge attributes specified in a file like (nodeA/nodeB/listofvalues)</span>
 <span class="sd">        **[EXPAND DESCRIPTIONS OF PARAMS]**</span>
@@ -401,7 +401,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Edge attributes added&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">attrnames</span>  <span class="c1"># return the names of the attributes</span></div>
 
-<div class="viewcode-block" id="AddAttributes.add_edge_names"><a class="viewcode-back" href="../../../Dedalus.utils.add_attributes.html#Dedalus.utils.add_attributes.AddAttributes.add_edge_names">[docs]</a>    <span class="k">def</span> <span class="nf">add_edge_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">readd</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="AddAttributes.add_edge_names"><a class="viewcode-back" href="../../../pyntacle.utils.add_attributes.html#pyntacle.utils.add_attributes.AddAttributes.add_edge_names">[docs]</a>    <span class="k">def</span> <span class="nf">add_edge_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">readd</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Add adjacent edge as attribute stored in a tuple to each edge</span>
 <span class="sd">        </span>
@@ -425,7 +425,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;attribute </span><span class="se">\&#39;</span><span class="s2">node_names</span><span class="se">\&#39;</span><span class="s2"> already exist&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="AddAttributes.add_graph_name"><a class="viewcode-back" href="../../../Dedalus.utils.add_attributes.html#Dedalus.utils.add_attributes.AddAttributes.add_graph_name">[docs]</a>    <span class="k">def</span> <span class="nf">add_graph_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">namestring</span><span class="p">):</span>
+<div class="viewcode-block" id="AddAttributes.add_graph_name"><a class="viewcode-back" href="../../../pyntacle.utils.add_attributes.html#pyntacle.utils.add_attributes.AddAttributes.add_graph_name">[docs]</a>    <span class="k">def</span> <span class="nf">add_graph_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">namestring</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Assign a name to a graph (or replace it)</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -434,7 +434,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">namestring</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="AddAttributes.add_parent_name"><a class="viewcode-back" href="../../../Dedalus.utils.add_attributes.html#Dedalus.utils.add_attributes.AddAttributes.add_parent_name">[docs]</a>    <span class="k">def</span> <span class="nf">add_parent_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AddAttributes.add_parent_name"><a class="viewcode-back" href="../../../pyntacle.utils.add_attributes.html#pyntacle.utils.add_attributes.AddAttributes.add_parent_name">[docs]</a>    <span class="k">def</span> <span class="nf">add_parent_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Add the graph&#39;s name to each vertex, as the &quot;__parent&quot; attribute</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -443,7 +443,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s2">&quot;__parent&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="AddAttributes.graph_initializer"><a class="viewcode-back" href="../../../Dedalus.utils.add_attributes.html#Dedalus.utils.add_attributes.AddAttributes.graph_initializer">[docs]</a>    <span class="k">def</span> <span class="nf">graph_initializer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">node_names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AddAttributes.graph_initializer"><a class="viewcode-back" href="../../../pyntacle.utils.add_attributes.html#pyntacle.utils.add_attributes.AddAttributes.graph_initializer">[docs]</a>    <span class="k">def</span> <span class="nf">graph_initializer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">node_names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Generic method that wraps up th generic operations used when importing or creating a graph using igraph generator</span>
 <span class="sd">        </span>

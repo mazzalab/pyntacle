@@ -1,7 +1,7 @@
-Dedalus\.exception\.unproperlyformattedfile\_error module
+pyntacle\.exception\.unproperlyformattedfile\_error module
 =========================================================
 
-.. automodule:: Dedalus.exception.unproperlyformattedfile_error
+.. automodule:: pyntacle.exception.unproperlyformattedfile_error
     :members:
     :undoc-members:
     :show-inheritance:

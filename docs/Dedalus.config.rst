@@ -1,7 +1,7 @@
-Dedalus\.config module
+pyntacle\.config module
 ======================
 
-.. automodule:: Dedalus.config
+.. automodule:: pyntacle.config
     :members:
     :undoc-members:
     :show-inheritance:

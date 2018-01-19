@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Dedalus.algorithms.greedy_optimization &mdash; Dedalus  documentation</title>
+  <title>pyntacle.algorithms.greedy_optimization &mdash; pyntacle  documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="Dedalus  documentation" href="../../../index.html"/>
+    <link rel="top" title="pyntacle  documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Dedalus
+            <a href="../../../index.html" class="icon icon-home"> pyntacle
           
 
           
@@ -88,7 +88,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../Dedalus.html">Dedalus package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyntacle.html">pyntacle package</a></li>
 </ul>
 
             
@@ -103,7 +103,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Dedalus</a>
+          <a href="../../../index.html">pyntacle</a>
         
       </nav>
 
@@ -135,7 +135,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>Dedalus.algorithms.greedy_optimization</li>
+      <li>pyntacle.algorithms.greedy_optimization</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -152,7 +152,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for Dedalus.algorithms.greedy_optimization</h1><div class="highlight"><pre>
+  <h1>Source code for pyntacle.algorithms.greedy_optimization</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Greedy optimization algorithms for optimal kp-set calculation</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -166,7 +166,7 @@
 <span class="kn">from</span> <span class="nn">config</span> <span class="k">import</span> <span class="o">*</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo, Mauro Truglio, Tommaso Mazza&quot;</span>
-<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2017, The Dedalus Project&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2017, The pyntacle Project&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ferenc Jordan&quot;</span><span class="p">]</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.0.3&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo&quot;</span>
@@ -194,7 +194,7 @@
 <span class="s2">  &quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="GreedyOptimization"><a class="viewcode-back" href="../../../Dedalus.algorithms.greedy_optimization.html#Dedalus.algorithms.greedy_optimization.GreedyOptimization">[docs]</a><span class="k">class</span> <span class="nc">GreedyOptimization</span><span class="p">:</span>
+<div class="viewcode-block" id="GreedyOptimization"><a class="viewcode-back" href="../../../pyntacle.algorithms.greedy_optimization.html#pyntacle.algorithms.greedy_optimization.GreedyOptimization">[docs]</a><span class="k">class</span> <span class="nc">GreedyOptimization</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Greedy optimization algorithms for optimal kp-set calculation</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -221,7 +221,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span> <span class="o">=</span> <span class="n">graph</span>
             <span class="n">GraphUtils</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">)</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
 
-<div class="viewcode-block" id="GreedyOptimization.optimize_kpp_neg"><a class="viewcode-back" href="../../../Dedalus.algorithms.greedy_optimization.html#Dedalus.algorithms.greedy_optimization.GreedyOptimization.optimize_kpp_neg">[docs]</a>    <span class="k">def</span> <span class="nf">optimize_kpp_neg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kpp_size</span><span class="p">,</span> <span class="n">kpp_type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+<div class="viewcode-block" id="GreedyOptimization.optimize_kpp_neg"><a class="viewcode-back" href="../../../pyntacle.algorithms.greedy_optimization.html#pyntacle.algorithms.greedy_optimization.GreedyOptimization.optimize_kpp_neg">[docs]</a>    <span class="k">def</span> <span class="nf">optimize_kpp_neg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kpp_size</span><span class="p">,</span> <span class="n">kpp_type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        It iteratively searches for a kpp-set of a predefined dimension, removes it and measures the residual</span>
 <span class="sd">        fragmentation score.</span>
@@ -319,7 +319,7 @@
                                                                                        <span class="n">fragmentation_score</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">S</span><span class="p">,</span> <span class="n">fragmentation_score</span></div>
 
-<div class="viewcode-block" id="GreedyOptimization.optimize_kpp_pos"><a class="viewcode-back" href="../../../Dedalus.algorithms.greedy_optimization.html#Dedalus.algorithms.greedy_optimization.GreedyOptimization.optimize_kpp_pos">[docs]</a>    <span class="k">def</span> <span class="nf">optimize_kpp_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kpp_size</span><span class="p">,</span> <span class="n">kpp_type</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+<div class="viewcode-block" id="GreedyOptimization.optimize_kpp_pos"><a class="viewcode-back" href="../../../pyntacle.algorithms.greedy_optimization.html#pyntacle.algorithms.greedy_optimization.GreedyOptimization.optimize_kpp_pos">[docs]</a>    <span class="k">def</span> <span class="nf">optimize_kpp_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kpp_size</span><span class="p">,</span> <span class="n">kpp_type</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        It iteratively searches for a kpp-set of a predefined dimension, with maximal reachability.</span>
 <span class="sd">        m-reach: min = 0 (unreachable); max = size(graph) - kpp_size (total reachability)</span>

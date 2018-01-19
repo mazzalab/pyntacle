@@ -1,4 +1,4 @@
-Dedalus Report: Metrics - Local Topology	
+pyntacle Report: Metrics - Local Topology
 graph name	figure_8	
 components	1	
 nodes	32	

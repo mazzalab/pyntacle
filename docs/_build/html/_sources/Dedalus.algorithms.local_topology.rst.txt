@@ -1,7 +1,7 @@
-Dedalus\.algorithms\.local\_topology module
+pyntacle\.algorithms\.local\_topology module
 ===========================================
 
-.. automodule:: Dedalus.algorithms.local_topology
+.. automodule:: pyntacle.algorithms.local_topology
     :members:
     :undoc-members:
     :show-inheritance:

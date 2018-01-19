@@ -1,7 +1,7 @@
-Dedalus\.exception\.multiple\_solutions\_error module
+pyntacle\.exception\.multiple\_solutions\_error module
 =====================================================
 
-.. automodule:: Dedalus.exception.multiple_solutions_error
+.. automodule:: pyntacle.exception.multiple_solutions_error
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,7 +1,7 @@
-Dedalus\.graph\_operations\.modules\_finder module
+pyntacle\.graph\_operations\.modules\_finder module
 ==================================================
 
-.. automodule:: Dedalus.graph_operations.modules_finder
+.. automodule:: pyntacle.graph_operations.modules_finder
     :members:
     :undoc-members:
     :show-inheritance:

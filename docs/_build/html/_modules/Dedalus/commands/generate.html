@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Dedalus.commands.generate &mdash; Dedalus  documentation</title>
+  <title>pyntacle.commands.generate &mdash; pyntacle  documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="Dedalus  documentation" href="../../../index.html"/>
+    <link rel="top" title="pyntacle  documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Dedalus
+            <a href="../../../index.html" class="icon icon-home"> pyntacle
           
 
           
@@ -88,7 +88,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../Dedalus.html">Dedalus package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyntacle.html">pyntacle package</a></li>
 </ul>
 
             
@@ -103,7 +103,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Dedalus</a>
+          <a href="../../../index.html">pyntacle</a>
         
       </nav>
 
@@ -135,7 +135,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>Dedalus.commands.generate</li>
+      <li>pyntacle.commands.generate</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -152,7 +152,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for Dedalus.commands.generate</h1><div class="highlight"><pre>
+  <h1>Source code for pyntacle.commands.generate</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">exception.generic_error</span> <span class="k">import</span> <span class="n">Error</span>
 <span class="kn">from</span> <span class="nn">config</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">exception.illegal_graph_size_error</span> <span class="k">import</span> <span class="n">IllegalGraphSizeError</span>
@@ -166,7 +166,7 @@
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">simplefilter</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo, Mauro Truglio, Tommaso Mazza&quot;</span>
-<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The Dedalus Project&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The pyntacle Project&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ferenc Jordan&quot;</span><span class="p">]</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo&quot;</span>
@@ -193,7 +193,7 @@
 <span class="s2">  02110-1301 USA</span>
 <span class="s2">  &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Generate"><a class="viewcode-back" href="../../../Dedalus.commands.generate.html#Dedalus.commands.generate.Generate">[docs]</a><span class="k">class</span> <span class="nc">Generate</span><span class="p">():</span>
+<div class="viewcode-block" id="Generate"><a class="viewcode-back" href="../../../pyntacle.commands.generate.html#pyntacle.commands.generate.Generate">[docs]</a><span class="k">class</span> <span class="nc">Generate</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    **[EXPAND]**</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -201,7 +201,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logging</span> <span class="o">=</span> <span class="n">log</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
 
-<div class="viewcode-block" id="Generate.run"><a class="viewcode-back" href="../../../Dedalus.commands.generate.html#Dedalus.commands.generate.Generate.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Generate.run"><a class="viewcode-back" href="../../../pyntacle.commands.generate.html#pyntacle.commands.generate.Generate.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorAnimation</span><span class="p">()</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
@@ -362,7 +362,7 @@
                     <span class="s2">&quot;ERROR : The parameters you chose were invalid. Please check your command line. Quitting.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">Error</span><span class="p">(</span><span class="s2">&quot;This should not appear. Contact Dedalus Developer for Debugging&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">Error</span><span class="p">(</span><span class="s2">&quot;This should not appear. Contact pyntacle Developer for Debugging&quot;</span><span class="p">)</span>
 
         <span class="c1"># Check provided dimensions&#39; format</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_dim</span><span class="p">:</span>  <span class="c1"># define custom format</span>
@@ -455,11 +455,11 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_plot</span> <span class="ow">and</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">:</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Drawing Generated Graph</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="c1"># generates plot directory</span>
-            <span class="n">plot_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="s2">&quot;Dedalus-Plots&quot;</span><span class="p">)</span>
+            <span class="n">plot_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="s2">&quot;pyntacle-Plots&quot;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;A directory named </span><span class="se">\&quot;</span><span class="s2">Dedalus-Plots</span><span class="se">\&quot;</span><span class="s2"> already exist, I may overwrite something in there&quot;</span><span class="p">)</span>
+                    <span class="s2">&quot;A directory named </span><span class="se">\&quot;</span><span class="s2">pyntacle-Plots</span><span class="se">\&quot;</span><span class="s2"> already exist, I may overwrite something in there&quot;</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">)</span>
@@ -516,11 +516,11 @@
 
         <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_plot</span> <span class="ow">and</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">1000</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Graph (</span><span class="si">{}</span><span class="s2"> nodes) exceeds Dedalus limits for plotting (maximum 1000 nodes). Will not draw Graph&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="s2">&quot;Graph (</span><span class="si">{}</span><span class="s2"> nodes) exceeds pyntacle limits for plotting (maximum 1000 nodes). Will not draw Graph&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()))</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Dedalus Generate completed successfully. Ending</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;pyntacle Generate completed successfully. Ending</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div></div>
 </pre></div>
 

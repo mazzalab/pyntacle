@@ -1,7 +1,7 @@
-Dedalus\.report\.reporter module
+pyntacle\.report\.reporter module
 ================================
 
-.. automodule:: Dedalus.report.reporter
+.. automodule:: pyntacle.report.reporter
     :members:
     :undoc-members:
     :show-inheritance:

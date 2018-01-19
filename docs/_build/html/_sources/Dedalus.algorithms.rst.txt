@@ -1,7 +1,7 @@
-Dedalus\.algorithms package
+pyntacle\.algorithms package
 ===========================
 
-.. automodule:: Dedalus.algorithms
+.. automodule:: pyntacle.algorithms
     :members:
     :undoc-members:
     :show-inheritance:
@@ -11,11 +11,11 @@ Submodules
 
 .. toctree::
 
-   Dedalus.algorithms.bruteforce_search
-   Dedalus.algorithms.global_topology
-   Dedalus.algorithms.greedy_optimization
-   Dedalus.algorithms.key_player
-   Dedalus.algorithms.local_topology
-   Dedalus.algorithms.scalefree_inference
-   Dedalus.algorithms.sparseness
+   pyntacle.algorithms.bruteforce_search
+   pyntacle.algorithms.global_topology
+   pyntacle.algorithms.greedy_optimization
+   pyntacle.algorithms.key_player
+   pyntacle.algorithms.local_topology
+   pyntacle.algorithms.scalefree_inference
+   pyntacle.algorithms.sparseness
 

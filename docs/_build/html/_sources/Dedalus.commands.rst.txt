@@ -1,7 +1,7 @@
-Dedalus\.commands package
+pyntacle\.commands package
 =========================
 
-.. automodule:: Dedalus.commands
+.. automodule:: pyntacle.commands
     :members:
     :undoc-members:
     :show-inheritance:
@@ -11,10 +11,10 @@ Submodules
 
 .. toctree::
 
-   Dedalus.commands.communities
-   Dedalus.commands.convert
-   Dedalus.commands.generate
-   Dedalus.commands.keyplayer
-   Dedalus.commands.metrics
-   Dedalus.commands.set
+   pyntacle.commands.communities
+   pyntacle.commands.convert
+   pyntacle.commands.generate
+   pyntacle.commands.keyplayer
+   pyntacle.commands.metrics
+   pyntacle.commands.set
 

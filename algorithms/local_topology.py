@@ -7,14 +7,14 @@ from enum import Enum
 
 from igraph import Graph
 
-# Dedalus Libraries
+# pyntacle Libraries
 from algorithms import global_topology
 from exception.wrong_argument_error import WrongArgumentError
 from utils.graph_utils import GraphUtils
 from config import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The Dedalus Project"
+__copyright__ = "Copyright 2016, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"

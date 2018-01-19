@@ -1,7 +1,7 @@
-Dedalus\.algorithms\.greedy\_optimization module
+pyntacle\.algorithms\.greedy\_optimization module
 ================================================
 
-.. automodule:: Dedalus.algorithms.greedy_optimization
+.. automodule:: pyntacle.algorithms.greedy_optimization
     :members:
     :undoc-members:
     :show-inheritance:

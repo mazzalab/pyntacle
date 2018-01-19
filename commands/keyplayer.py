@@ -9,7 +9,7 @@ from report.reporter import *
 from utils.graph_utils import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The Dedalus Project"
+__copyright__ = "Copyright 2016, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -80,9 +80,9 @@ class KeyPlayer():
             # self.args.nodes = [str.lower(x) for x in self.args.nodes]
 
         if not hasattr(self.args, 'which'):
-            raise Error("usage: dedalus.py keyplayer {kp-finder, kp-info} [options]'")
+            raise Error("usage: pyntacle.py keyplayer {kp-finder, kp-info} [options]'")
 
-        self.logging.debug('Running Dedalus keyplayer, with arguments')
+        self.logging.debug('Running pyntacle keyplayer, with arguments')
         self.logging.debug(self.args)
 
         # Load Graph
@@ -192,7 +192,7 @@ class KeyPlayer():
                             self.args.k_size, self.args.m_reach))
 
             else:
-                sys.stdout.write("Wrong implementatio. Please contact Dedalus Developers and sent this error message, along with a command line and a log.\nQuitting.\n")
+                sys.stdout.write("Wrong implementatio. Please contact pyntacle Developers and sent this error message, along with a command line and a log.\nQuitting.\n")
                 sys.exit(1)
 
             sys.stdout.write("Search for the best kp set completed!\n")
@@ -259,7 +259,7 @@ class KeyPlayer():
                                                                   results[metric][-1]))
         else:
             log.critical(
-                "This should not happen. Please contact Dedalus Developers and send your command line. Quitting\n.")
+                "This should not happen. Please contact pyntacle Developers and send your command line. Quitting\n.")
             sys.exit(1)
 
         # reporting and plotting part
@@ -267,7 +267,7 @@ class KeyPlayer():
         sys.stdout.write("Producing report in {} format.\n".format(self.args.report_format))
 
         report_prefix = "_".join(
-            ["Dedalus", self.args.which, graph["name"][0], "kpsize", str(k_size), results.get("algorithm", "KP-Info"),"report", runtime_date])
+            ["pyntacle", self.args.which, graph["name"][0], "kpsize", str(k_size), results.get("algorithm", "KP-Info"),"report", runtime_date])
         report_path = os.path.join(self.args.directory, ".".join([report_prefix, self.args.report_format]))
 
         if os.path.exists(report_path):
@@ -275,7 +275,7 @@ class KeyPlayer():
                 "A report with the same name ({}) already exists, overwriting it".format
                 (os.path.basename(report_path)))
 
-        r = DedalusReporter(graph=graph)
+        r = pyntacleReporter(graph=graph)
         r.report_KP(resultsdic=results, m=self.args.m_reach)
         r.create_report(report_path=report_path)
 
@@ -289,11 +289,11 @@ class KeyPlayer():
     
             sys.stdout.write("Generating plots in {} format.\n".format(self.args.plot_format))
 
-            plot_dir = os.path.join(self.args.directory, "Dedalus-Plots")
+            plot_dir = os.path.join(self.args.directory, "pyntacle-Plots")
 
             if os.path.isdir(plot_dir):
                 self.logging.warning(
-                    "A directory named \"Dedalus-Plots\" already exists, I may overwrite something in there")
+                    "A directory named \"pyntacle-Plots\" already exists, I may overwrite something in there")
 
             else:
                 os.mkdir(plot_dir)
@@ -390,7 +390,7 @@ class KeyPlayer():
 
                 else:
                     self.logging.critical(
-                        "This should not happen. Please contact Dedalus developer and send a command line, along with a log. Quitting\n")
+                        "This should not happen. Please contact pyntacle developer and send a command line, along with a log. Quitting\n")
                     sys.exit(1)
 
                 node_sizes = [35 if x["name"] in results[metric][1] else other_nodes_size for x in graph.vs()]
@@ -473,5 +473,5 @@ class KeyPlayer():
         elif graph.vcount() >= 1000:
             sys.stdout.write("The graph has too many nodes ({}). Can't draw graph\n".format(graph.vcount()))
         cursor.stop()
-        sys.stdout.write("Dedalus Keyplayer completed successfully. Ending\n")
+        sys.stdout.write("pyntacle Keyplayer completed successfully. Ending\n")
         sys.exit(0)

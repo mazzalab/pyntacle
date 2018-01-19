@@ -1,6 +1,6 @@
 # external libraries
 
-# Dedalus libraries
+# pyntacle libraries
 from exception.wrong_argument_error import WrongArgumentError
 from utils.modules_utils import *
 from config import *
@@ -10,7 +10,7 @@ This module uses igraph to call several module implementations and returns a lis
 '''
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The Dedalus Project"
+__copyright__ = "Copyright 2016, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"

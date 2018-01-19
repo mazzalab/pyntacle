@@ -38,7 +38,7 @@ class WidgetTestMetrics(unittest.TestCase):
             mt.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        fileout = glob.glob("test/test_sets/tmp/Dedalus*_global_metrics*")[0]
+        fileout = glob.glob("test/test_sets/tmp/pyntacle*_global_metrics*")[0]
         expected = 'test/test_sets/output/metrics/figure8_global.txt'
         self.assertEqual(getmd5(fileout), getmd5(expected),
                          'Wrong checksum for Metrics, global case')
@@ -55,7 +55,7 @@ class WidgetTestMetrics(unittest.TestCase):
             mt.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        fileout = glob.glob("test/test_sets/tmp/Dedalus*_local_metrics*")[0]
+        fileout = glob.glob("test/test_sets/tmp/pyntacle*_local_metrics*")[0]
         expected = 'test/test_sets/output/metrics/figure8_local.txt'
         self.assertEqual(getmd5(fileout), getmd5(expected),
                          'Wrong checksum for Metrics, local case')

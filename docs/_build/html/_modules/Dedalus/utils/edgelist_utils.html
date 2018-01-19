@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Dedalus.utils.edgelist_utils &mdash; Dedalus  documentation</title>
+  <title>pyntacle.utils.edgelist_utils &mdash; pyntacle  documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="Dedalus  documentation" href="../../../index.html"/>
+    <link rel="top" title="pyntacle  documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Dedalus
+            <a href="../../../index.html" class="icon icon-home"> pyntacle
           
 
           
@@ -88,7 +88,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../Dedalus.html">Dedalus package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyntacle.html">pyntacle package</a></li>
 </ul>
 
             
@@ -103,7 +103,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Dedalus</a>
+          <a href="../../../index.html">pyntacle</a>
         
       </nav>
 
@@ -135,7 +135,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>Dedalus.utils.edgelist_utils</li>
+      <li>pyntacle.utils.edgelist_utils</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -152,7 +152,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for Dedalus.utils.edgelist_utils</h1><div class="highlight"><pre>
+  <h1>Source code for pyntacle.utils.edgelist_utils</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Utilities made for common operations on edge lists input files</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -162,7 +162,7 @@
 <span class="kn">import</span> <span class="nn">os</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo, Mauro Truglio, Tommaso Mazza&quot;</span>
-<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The Dedalus Project&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The pyntacle Project&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ferenc Jordan&quot;</span><span class="p">]</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo&quot;</span>
@@ -190,7 +190,7 @@
 <span class="s2">  &quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="EglUtils"><a class="viewcode-back" href="../../../Dedalus.utils.edgelist_utils.html#Dedalus.utils.edgelist_utils.EglUtils">[docs]</a><span class="k">class</span> <span class="nc">EglUtils</span><span class="p">():</span>
+<div class="viewcode-block" id="EglUtils"><a class="viewcode-back" href="../../../pyntacle.utils.edgelist_utils.html#pyntacle.utils.edgelist_utils.EglUtils">[docs]</a><span class="k">class</span> <span class="nc">EglUtils</span><span class="p">():</span>
     <span class="n">logger</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -213,7 +213,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">edgl</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="EglUtils.egl_to_list"><a class="viewcode-back" href="../../../Dedalus.utils.edgelist_utils.html#Dedalus.utils.edgelist_utils.EglUtils.egl_to_list">[docs]</a>    <span class="k">def</span> <span class="nf">egl_to_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EglUtils.egl_to_list"><a class="viewcode-back" href="../../../pyntacle.utils.edgelist_utils.html#pyntacle.utils.edgelist_utils.EglUtils.egl_to_list">[docs]</a>    <span class="k">def</span> <span class="nf">egl_to_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Hidden utility to reparse an edgelist and store it into a list for edge list checks</span>
 
@@ -233,7 +233,7 @@
                 <span class="n">tmp</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sep</span><span class="p">)[:</span><span class="mi">2</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">edgl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="EglUtils.get_edgelist"><a class="viewcode-back" href="../../../Dedalus.utils.edgelist_utils.html#Dedalus.utils.edgelist_utils.EglUtils.get_edgelist">[docs]</a>    <span class="k">def</span> <span class="nf">get_edgelist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EglUtils.get_edgelist"><a class="viewcode-back" href="../../../pyntacle.utils.edgelist_utils.html#pyntacle.utils.edgelist_utils.EglUtils.get_edgelist">[docs]</a>    <span class="k">def</span> <span class="nf">get_edgelist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        return the edgelist object as a list of lists (useful for igraph porting)</span>
@@ -248,7 +248,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;the edgelist is not &quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="EglUtils.get_header"><a class="viewcode-back" href="../../../Dedalus.utils.edgelist_utils.html#Dedalus.utils.edgelist_utils.EglUtils.get_header">[docs]</a>    <span class="k">def</span> <span class="nf">get_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EglUtils.get_header"><a class="viewcode-back" href="../../../pyntacle.utils.edgelist_utils.html#pyntacle.utils.edgelist_utils.EglUtils.get_header">[docs]</a>    <span class="k">def</span> <span class="nf">get_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        return the header object as a list of string</span>
 
@@ -261,7 +261,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;header is not initialized&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="EglUtils.is_direct"><a class="viewcode-back" href="../../../Dedalus.utils.edgelist_utils.html#Dedalus.utils.edgelist_utils.EglUtils.is_direct">[docs]</a>    <span class="k">def</span> <span class="nf">is_direct</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EglUtils.is_direct"><a class="viewcode-back" href="../../../pyntacle.utils.edgelist_utils.html#pyntacle.utils.edgelist_utils.EglUtils.is_direct">[docs]</a>    <span class="k">def</span> <span class="nf">is_direct</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Function that returns a boolean if the edgelist contains at least one direct edge</span>
 <span class="sd">        </span>
@@ -285,9 +285,9 @@
 
         <span class="k">return</span> <span class="n">direct</span></div>
 
-<div class="viewcode-block" id="EglUtils.is_dedalus_ready"><a class="viewcode-back" href="../../../Dedalus.utils.edgelist_utils.html#Dedalus.utils.edgelist_utils.EglUtils.is_dedalus_ready">[docs]</a>    <span class="k">def</span> <span class="nf">is_dedalus_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EglUtils.is_pyntacle_ready"><a class="viewcode-back" href="../../../pyntacle.utils.edgelist_utils.html#pyntacle.utils.edgelist_utils.EglUtils.is_pyntacle_ready">[docs]</a>    <span class="k">def</span> <span class="nf">is_pyntacle_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Function that checks that the edgelist is good for dedalus</span>
+<span class="sd">        Function that checks that the edgelist is good for pyntacle</span>
 <span class="sd">        </span>
 <span class="sd">        :return: legit - a boolean; True if is the edgelist is a legit edgelist, false otherwise</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -309,7 +309,7 @@
         <span class="n">legit</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="n">legit</span></div>
 
-<div class="viewcode-block" id="EglUtils.to_undirect"><a class="viewcode-back" href="../../../Dedalus.utils.edgelist_utils.html#Dedalus.utils.edgelist_utils.EglUtils.to_undirect">[docs]</a>    <span class="k">def</span> <span class="nf">to_undirect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EglUtils.to_undirect"><a class="viewcode-back" href="../../../pyntacle.utils.edgelist_utils.html#pyntacle.utils.edgelist_utils.EglUtils.to_undirect">[docs]</a>    <span class="k">def</span> <span class="nf">to_undirect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        turn the edgelist to undirect (add reciprocal pairs if missing)</span>
 
@@ -329,7 +329,7 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">edgl</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edgl</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="EglUtils.set_edgelist_igraph"><a class="viewcode-back" href="../../../Dedalus.utils.edgelist_utils.html#Dedalus.utils.edgelist_utils.EglUtils.set_edgelist_igraph">[docs]</a>    <span class="k">def</span> <span class="nf">set_edgelist_igraph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EglUtils.set_edgelist_igraph"><a class="viewcode-back" href="../../../pyntacle.utils.edgelist_utils.html#pyntacle.utils.edgelist_utils.EglUtils.set_edgelist_igraph">[docs]</a>    <span class="k">def</span> <span class="nf">set_edgelist_igraph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Create a formatted edge list from the input edge list creating an edge list ready for igraph</span>
 <span class="sd">        &#39;&#39;&#39;</span>

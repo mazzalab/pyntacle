@@ -1,7 +1,7 @@
-Dedalus\.utils\.adjmatrix\_utils module
+pyntacle\.utils\.adjmatrix\_utils module
 =======================================
 
-.. automodule:: Dedalus.utils.adjmatrix_utils
+.. automodule:: pyntacle.utils.adjmatrix_utils
     :members:
     :undoc-members:
     :show-inheritance:

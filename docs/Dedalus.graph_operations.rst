@@ -1,7 +1,7 @@
-Dedalus\.graph\_operations package
+pyntacle\.graph\_operations package
 ==================================
 
-.. automodule:: Dedalus.graph_operations
+.. automodule:: pyntacle.graph_operations
     :members:
     :undoc-members:
     :show-inheritance:
@@ -11,6 +11,6 @@ Submodules
 
 .. toctree::
 
-   Dedalus.graph_operations.modules_finder
-   Dedalus.graph_operations.set_graphs
+   pyntacle.graph_operations.modules_finder
+   pyntacle.graph_operations.set_graphs
 

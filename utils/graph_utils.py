@@ -3,7 +3,7 @@ from config import *
 from igraph import Graph
 import numpy as np
 
-# Dedalus libraries
+# pyntacle libraries
 from exception.illegal_graph_size_error import IllegalGraphSizeError
 from exception.missing_attribute_error import MissingAttributeError
 from exception.notagraph_error import NotAGraphError
@@ -16,7 +16,7 @@ a series of generic utilities for an iGraph graph object
 '''
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The Dedalus Project"
+__copyright__ = "Copyright 2016, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -77,7 +77,7 @@ class GraphUtils():
         """
 
         if Graph.is_directed(self.__graph):
-            raise UnsupportedGrapherror("Input graph is direct, Dedalus supports only undirected graphs")
+            raise UnsupportedGrapherror("Input graph is direct, pyntacle supports only undirected graphs")
 
         if not Graph.is_simple(self.__graph):
             raise UnsupportedGrapherror("Input Graph contains self loops and multiple edges")

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Dedalus.io_stream.graph_to_dot &mdash; Dedalus  documentation</title>
+  <title>pyntacle.io_stream.graph_to_dot &mdash; pyntacle  documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="Dedalus  documentation" href="../../../index.html"/>
+    <link rel="top" title="pyntacle  documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Dedalus
+            <a href="../../../index.html" class="icon icon-home"> pyntacle
           
 
           
@@ -88,7 +88,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../Dedalus.html">Dedalus package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyntacle.html">pyntacle package</a></li>
 </ul>
 
             
@@ -103,7 +103,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Dedalus</a>
+          <a href="../../../index.html">pyntacle</a>
         
       </nav>
 
@@ -135,7 +135,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>Dedalus.io_stream.graph_to_dot</li>
+      <li>pyntacle.io_stream.graph_to_dot</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -152,7 +152,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for Dedalus.io_stream.graph_to_dot</h1><div class="highlight"><pre>
+  <h1>Source code for pyntacle.io_stream.graph_to_dot</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">from</span> <span class="nn">igraph</span> <span class="k">import</span> <span class="n">Graph</span>
@@ -161,7 +161,7 @@
 <span class="kn">from</span> <span class="nn">io_stream.igraph_exporter</span> <span class="k">import</span> <span class="n">IGraphExporter</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo, Mauro Truglio, Tommaso Mazza&quot;</span>
-<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The Dedalus Project&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The pyntacle Project&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ferenc Jordan&quot;</span><span class="p">]</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo&quot;</span>
@@ -189,7 +189,7 @@
 <span class="s2">  &quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="GraphToDot"><a class="viewcode-back" href="../../../Dedalus.io_stream.graph_to_dot.html#Dedalus.io_stream.graph_to_dot.GraphToDot">[docs]</a><span class="k">class</span> <span class="nc">GraphToDot</span><span class="p">(</span><span class="n">IGraphExporter</span><span class="p">):</span>
+<div class="viewcode-block" id="GraphToDot"><a class="viewcode-back" href="../../../pyntacle.io_stream.graph_to_dot.html#pyntacle.io_stream.graph_to_dot.GraphToDot">[docs]</a><span class="k">class</span> <span class="nc">GraphToDot</span><span class="p">(</span><span class="n">IGraphExporter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    It serializes and exports a Graph object to file, as adjacency list</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -201,7 +201,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">Graph</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">NotAGraphError</span><span class="p">(</span><span class="s2">&quot;Object is not a graph&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="GraphToDot.export_graph"><a class="viewcode-back" href="../../../Dedalus.io_stream.graph_to_dot.html#Dedalus.io_stream.graph_to_dot.GraphToDot.export_graph">[docs]</a>    <span class="k">def</span> <span class="nf">export_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="GraphToDot.export_graph"><a class="viewcode-back" href="../../../pyntacle.io_stream.graph_to_dot.html#pyntacle.io_stream.graph_to_dot.GraphToDot.export_graph">[docs]</a>    <span class="k">def</span> <span class="nf">export_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Take a graph object already instanced and save it to a dot file</span>
 

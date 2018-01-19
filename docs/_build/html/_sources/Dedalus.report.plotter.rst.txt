@@ -1,7 +1,7 @@
-Dedalus\.report\.plotter module
+pyntacle\.report\.plotter module
 ===============================
 
-.. automodule:: Dedalus.report.plotter
+.. automodule:: pyntacle.report.plotter
     :members:
     :undoc-members:
     :show-inheritance:

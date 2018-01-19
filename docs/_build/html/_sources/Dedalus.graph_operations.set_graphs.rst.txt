@@ -1,7 +1,7 @@
-Dedalus\.graph\_operations\.set\_graphs module
+pyntacle\.graph\_operations\.set\_graphs module
 ==============================================
 
-.. automodule:: Dedalus.graph_operations.set_graphs
+.. automodule:: pyntacle.graph_operations.set_graphs
     :members:
     :undoc-members:
     :show-inheritance:

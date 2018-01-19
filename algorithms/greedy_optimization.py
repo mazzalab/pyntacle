@@ -11,7 +11,7 @@ from utils.graph_utils import *
 from config import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2017, The Dedalus Project"
+__copyright__ = "Copyright 2017, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.3"
 __maintainer__ = "Daniele Capocefalo"

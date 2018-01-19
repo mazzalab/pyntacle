@@ -1,7 +1,7 @@
-Dedalus\.utils\.graph\_utils module
+pyntacle\.utils\.graph\_utils module
 ===================================
 
-.. automodule:: Dedalus.utils.graph_utils
+.. automodule:: pyntacle.utils.graph_utils
     :members:
     :undoc-members:
     :show-inheritance:

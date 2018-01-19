@@ -9,17 +9,17 @@ from config import *
 from importlib import util
 pycairo_check = util.find_spec("cairo")
 if pycairo_check is None:
-    raise EnvironmentError("Dedalus needs the pycairo library to be installed and available "
+    raise EnvironmentError("pyntacle needs the pycairo library to be installed and available "
                            "in order to produce plots. Please install it and try again.")
 from igraph import Graph, plot
 
 from exception.missing_attribute_error import MissingAttributeError
 from exception.wrong_argument_error import WrongArgumentError
-# Dedalus libraries
+# pyntacle libraries
 from utils import graph_utils
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The Dedalus Project"
+__copyright__ = "Copyright 2016, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -47,7 +47,7 @@ __license__ = u"""
 
 class PlotGraph():
     """
-    Rhis method creates a report according to the type of analysis run by Dedalus
+    Rhis method creates a report according to the type of analysis run by pyntacle
     """
 
     logger = None  # write logger to shell
@@ -375,7 +375,7 @@ class PlotGraph():
         formats = ["jpg", "pdf", "svg", "png"]
 
         if path is None:
-            path = os.path.join(os.getcwd(), "dedalus_plot.pdf")
+            path = os.path.join(os.getcwd(), "pyntacle_plot.pdf")
 
         else:
             if os.path.splitext(path)[-1][1:] not in formats:

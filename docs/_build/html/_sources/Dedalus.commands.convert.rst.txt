@@ -1,7 +1,7 @@
-Dedalus\.commands\.convert module
+pyntacle\.commands\.convert module
 =================================
 
-.. automodule:: Dedalus.commands.convert
+.. automodule:: pyntacle.commands.convert
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,7 +1,7 @@
-Dedalus\.misc\.graph\_load module
+pyntacle\.misc\.graph\_load module
 =================================
 
-.. automodule:: Dedalus.misc.graph_load
+.. automodule:: pyntacle.misc.graph_load
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,4 +1,4 @@
-# Dedalus libraries
+# pyntacle libraries
 from algorithms.greedy_optimization import *
 from algorithms.bruteforce_search import *
 from utils.graph_utils import *
@@ -7,7 +7,7 @@ import time
 from algorithms.key_player import _KeyplayerAttribute
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The Dedalus Project"
+__copyright__ = "Copyright 2016, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -184,7 +184,7 @@ class KeyPlayerWrapper():
 
     def run_greedy(self, key_player, kpsize: int, m=None):
         '''
-        Run Greedy optimization and wraps everything into a dictionary that will be passed to dedalus commands
+        Run Greedy optimization and wraps everything into a dictionary that will be passed to pyntacle commands
         
         :param key_player: a single KeyplayerAttribute or a list of KeyPlayerAttributes
         :param kpsize: an integer of kpsizes

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Dedalus.config &mdash; Dedalus  documentation</title>
+  <title>pyntacle.config &mdash; pyntacle  documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="Dedalus  documentation" href="../../index.html"/>
+    <link rel="top" title="pyntacle  documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> Dedalus
+            <a href="../../index.html" class="icon icon-home"> pyntacle
           
 
           
@@ -88,7 +88,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../Dedalus.html">Dedalus package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pyntacle.html">pyntacle package</a></li>
 </ul>
 
             
@@ -103,7 +103,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">Dedalus</a>
+          <a href="../../index.html">pyntacle</a>
         
       </nav>
 
@@ -135,7 +135,7 @@
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
-      <li>Dedalus.config</li>
+      <li>pyntacle.config</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -152,7 +152,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for Dedalus.config</h1><div class="highlight"><pre>
+  <h1>Source code for pyntacle.config</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">importlib</span>
@@ -170,7 +170,7 @@
 <span class="n">runtime_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">%m%Y%H%M&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="CursorAnimation"><a class="viewcode-back" href="../../Dedalus.config.html#Dedalus.config.CursorAnimation">[docs]</a><span class="k">class</span> <span class="nc">CursorAnimation</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+<div class="viewcode-block" id="CursorAnimation"><a class="viewcode-back" href="../../pyntacle.config.html#pyntacle.config.CursorAnimation">[docs]</a><span class="k">class</span> <span class="nc">CursorAnimation</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Just a waiting animation, common to several commands.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -184,14 +184,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-<div class="viewcode-block" id="CursorAnimation.run"><a class="viewcode-back" href="../../Dedalus.config.html#Dedalus.config.CursorAnimation.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CursorAnimation.run"><a class="viewcode-back" href="../../pyntacle.config.html#pyntacle.config.CursorAnimation.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag</span><span class="p">:</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Processing...&quot;</span><span class="p">,</span> <span class="p">)</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">animation_char</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">animation_char</span><span class="p">)]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CursorAnimation.stop"><a class="viewcode-back" href="../../Dedalus.config.html#Dedalus.config.CursorAnimation.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CursorAnimation.stop"><a class="viewcode-back" href="../../pyntacle.config.html#pyntacle.config.CursorAnimation.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">flag</span> <span class="o">=</span> <span class="kc">False</span></div></div>
 </pre></div>
 

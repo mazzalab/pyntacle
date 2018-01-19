@@ -12,7 +12,7 @@ from utils.add_attributes import AddAttributes
 from utils.graph_utils import GraphUtils
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The Dedalus Project"
+__copyright__ = "Copyright 2016, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -108,7 +108,7 @@ class SifToGraph(IGraphImporter):
 
                 else:
                     self.logger.warning(
-                        "an edge already exist between node {0} and node {1}. This should not happen, as Dedalus only supports simple graphs.\n Attribute \"__sif_interaction\n Will skip line {2}".format(
+                        "an edge already exist between node {0} and node {1}. This should not happen, as pyntacle only supports simple graphs.\n Attribute \"__sif_interaction\n Will skip line {2}".format(
                             first, second, i))
                     node_ids = GraphUtils(graph=graph).get_node_indices(node_names=[first, second])
                     graph.es(graph.get_eid(node_ids[0], node_ids[1]))["__sif_interaction"] = elem[1]
@@ -130,7 +130,7 @@ class SifToGraph(IGraphImporter):
 
                     else:
                         self.logger.warning(
-                            "an edge already exist between node {0} and node {1}. This should not happen, as Dedalus only supports simple graphs.\n Attribute \"__sif_interaction\n will be override".format(
+                            "an edge already exist between node {0} and node {1}. This should not happen, as pyntacle only supports simple graphs.\n Attribute \"__sif_interaction\n will be override".format(
                                 first, n))
                         node_ids = GraphUtils(graph=graph).get_node_indices(node_names=[first, n])
                         graph.es(graph.get_eid(node_ids[0], node_ids[1]))["__sif_interaction"] = interaction

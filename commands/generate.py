@@ -11,7 +11,7 @@ from report.plotter import *
 from warnings import simplefilter
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The Dedalus Project"
+__copyright__ = "Copyright 2016, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -206,7 +206,7 @@ class Generate():
                     "ERROR : The parameters you chose were invalid. Please check your command line. Quitting.\n")
 
         else:
-            raise Error("This should not appear. Contact Dedalus Developer for Debugging")
+            raise Error("This should not appear. Contact pyntacle Developer for Debugging")
 
         # Check provided dimensions' format
         if self.args.plot_dim:  # define custom format
@@ -299,11 +299,11 @@ class Generate():
         if not self.args.no_plot and graph.vcount() < 1000:
             sys.stdout.write("Drawing Generated Graph\n")
             # generates plot directory
-            plot_dir = os.path.join(self.args.directory, "Dedalus-Plots")
+            plot_dir = os.path.join(self.args.directory, "pyntacle-Plots")
 
             if os.path.isdir(plot_dir):
                 self.logging.warning(
-                    "A directory named \"Dedalus-Plots\" already exist, I may overwrite something in there")
+                    "A directory named \"pyntacle-Plots\" already exist, I may overwrite something in there")
 
             else:
                 os.mkdir(plot_dir)
@@ -360,9 +360,9 @@ class Generate():
 
         elif not self.args.no_plot and graph.vcount() >= 1000:
             self.logging.warning(
-                "Graph ({} nodes) exceeds Dedalus limits for plotting (maximum 1000 nodes). Will not draw Graph".format(
+                "Graph ({} nodes) exceeds pyntacle limits for plotting (maximum 1000 nodes). Will not draw Graph".format(
                     graph.vcount()))
             sys.exit(0)
         cursor.stop()
-        sys.stdout.write("Dedalus Generate completed successfully. Ending\n")
+        sys.stdout.write("pyntacle Generate completed successfully. Ending\n")
         sys.exit(0)

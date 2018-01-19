@@ -1,7 +1,7 @@
-Dedalus\.misc package
+pyntacle\.misc package
 =====================
 
-.. automodule:: Dedalus.misc
+.. automodule:: pyntacle.misc
     :members:
     :undoc-members:
     :show-inheritance:
@@ -11,7 +11,7 @@ Submodules
 
 .. toctree::
 
-   Dedalus.misc.binarycheck
-   Dedalus.misc.graph_load
-   Dedalus.misc.kp_runner
+   pyntacle.misc.binarycheck
+   pyntacle.misc.graph_load
+   pyntacle.misc.kp_runner
 

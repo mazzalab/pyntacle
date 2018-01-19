@@ -1,9 +1,9 @@
-.. Dedalus documentation master file, created by
+.. pyntacle documentation master file, created by
    sphinx-quickstart on Fri Nov 10 12:46:39 2017.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Dedalus' API documentation!
+Welcome to pyntacle' API documentation!
 =======================================
 
 .. toctree::
@@ -11,7 +11,7 @@ Welcome to Dedalus' API documentation!
    :caption: Contents:
 
    installation
-   Dedalus
+   pyntacle
 
 .. only:: html
 

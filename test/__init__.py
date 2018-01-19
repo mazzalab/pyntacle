@@ -1,5 +1,5 @@
 """
-Dedalus' tests manager script.
+pyntacle' tests manager script.
 
 """
 import sys

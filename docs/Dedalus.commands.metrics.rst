@@ -1,7 +1,7 @@
-Dedalus\.commands\.metrics module
+pyntacle\.commands\.metrics module
 =================================
 
-.. automodule:: Dedalus.commands.metrics
+.. automodule:: pyntacle.commands.metrics
     :members:
     :undoc-members:
     :show-inheritance:

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Dedalus.commands.metrics &mdash; Dedalus  documentation</title>
+  <title>pyntacle.commands.metrics &mdash; pyntacle  documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="Dedalus  documentation" href="../../../index.html"/>
+    <link rel="top" title="pyntacle  documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Dedalus
+            <a href="../../../index.html" class="icon icon-home"> pyntacle
           
 
           
@@ -88,7 +88,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../Dedalus.html">Dedalus package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyntacle.html">pyntacle package</a></li>
 </ul>
 
             
@@ -103,7 +103,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Dedalus</a>
+          <a href="../../../index.html">pyntacle</a>
         
       </nav>
 
@@ -135,7 +135,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>Dedalus.commands.metrics</li>
+      <li>pyntacle.commands.metrics</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -152,7 +152,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for Dedalus.commands.metrics</h1><div class="highlight"><pre>
+  <h1>Source code for pyntacle.commands.metrics</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="kn">from</span> <span class="nn">algorithms.global_topology</span> <span class="k">import</span> <span class="n">GlobalTopology</span><span class="p">,</span> <span class="n">_GlobalAttribute</span>
@@ -170,7 +170,7 @@
 <span class="kn">from</span> <span class="nn">utils.graph_utils</span> <span class="k">import</span> <span class="n">GraphUtils</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo, Mauro Truglio, Tommaso Mazza&quot;</span>
-<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The Dedalus Project&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The pyntacle Project&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ferenc Jordan&quot;</span><span class="p">]</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo&quot;</span>
@@ -197,7 +197,7 @@
 <span class="s2">  02110-1301 USA</span>
 <span class="s2">  &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Metrics"><a class="viewcode-back" href="../../../Dedalus.commands.metrics.html#Dedalus.commands.metrics.Metrics">[docs]</a><span class="k">class</span> <span class="nc">Metrics</span><span class="p">():</span>
+<div class="viewcode-block" id="Metrics"><a class="viewcode-back" href="../../../pyntacle.commands.metrics.html#pyntacle.commands.metrics.Metrics">[docs]</a><span class="k">class</span> <span class="nc">Metrics</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    **[EXPAND]**</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -211,7 +211,7 @@
                              <span class="s2">&quot;will not be produced.&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_plot</span> <span class="o">=</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="Metrics.run"><a class="viewcode-back" href="../../../Dedalus.commands.metrics.html#Dedalus.commands.metrics.Metrics.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Metrics.run"><a class="viewcode-back" href="../../../pyntacle.commands.metrics.html#pyntacle.commands.metrics.Metrics.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorAnimation</span><span class="p">()</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
@@ -221,7 +221,7 @@
             <span class="n">header</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="s1">&#39;which&#39;</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">Error</span><span class="p">(</span><span class="s2">&quot;usage: dedalus.py metrics {global, local} [options]&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">Error</span><span class="p">(</span><span class="s2">&quot;usage: pyntacle.py metrics {global, local} [options]&quot;</span><span class="p">)</span>
 
         <span class="c1"># Checking input file</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">input_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -239,7 +239,7 @@
                 <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">)))</span>
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Running Dedalus metrics, with arguments&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Running pyntacle metrics, with arguments&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
 
         <span class="c1"># Load Graph</span>
@@ -293,7 +293,7 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">which</span> <span class="o">==</span> <span class="s2">&quot;local&quot;</span><span class="p">:</span>
 
-            <span class="n">reporter</span> <span class="o">=</span> <span class="n">DedalusReporter</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span> <span class="c1">#init reporter</span>
+            <span class="n">reporter</span> <span class="o">=</span> <span class="n">pyntacleReporter</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span> <span class="c1">#init reporter</span>
 
             <span class="c1"># initialize local attribute method</span>
 
@@ -391,11 +391,11 @@
             <span class="c1"># create report for the selected metrics</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">nodes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">nodes_list</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
-                <span class="n">report_prefix</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;Dedalus&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;local_metrics&quot;</span><span class="p">,</span> <span class="s2">&quot;report&quot;</span><span class="p">,</span>
+                <span class="n">report_prefix</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;pyntacle&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;local_metrics&quot;</span><span class="p">,</span> <span class="s2">&quot;report&quot;</span><span class="p">,</span>
                                           <span class="n">runtime_date</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">report_prefix</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                    <span class="p">[</span><span class="s2">&quot;Dedalus&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;local_metrics_selected_nodes_report&quot;</span><span class="p">,</span>
+                    <span class="p">[</span><span class="s2">&quot;pyntacle&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;local_metrics_selected_nodes_report&quot;</span><span class="p">,</span>
                      <span class="n">runtime_date</span><span class="p">])</span>
 
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Producing report in </span><span class="si">{}</span><span class="s2"> format.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">report_format</span><span class="p">))</span>
@@ -424,11 +424,11 @@
                 <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Generating plots in </span><span class="si">{}</span><span class="s2"> format.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_format</span><span class="p">))</span>
                 
                 <span class="c1"># generates plot directory</span>
-                <span class="n">plot_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="s2">&quot;Dedalus-Plots&quot;</span><span class="p">)</span>
+                <span class="n">plot_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="s2">&quot;pyntacle-Plots&quot;</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">):</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                        <span class="s2">&quot;A directory named </span><span class="se">\&quot;</span><span class="s2">Dedalus-Plots</span><span class="se">\&quot;</span><span class="s2"> already exists, I may overwrite something in there&quot;</span><span class="p">)</span>
+                        <span class="s2">&quot;A directory named </span><span class="se">\&quot;</span><span class="s2">pyntacle-Plots</span><span class="se">\&quot;</span><span class="s2"> already exists, I may overwrite something in there&quot;</span><span class="p">)</span>
 
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -475,7 +475,7 @@
                 <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_layouts</span><span class="p">()</span>
 
                 <span class="n">plot_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                    <span class="p">[</span><span class="s2">&quot;Dedalus&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;local_metrics_plot_&quot;</span><span class="p">,</span>
+                    <span class="p">[</span><span class="s2">&quot;pyntacle&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;local_metrics_plot_&quot;</span><span class="p">,</span>
                      <span class="n">runtime_date</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_format</span><span class="p">]))</span>
                 <span class="n">plot_graph</span><span class="o">.</span><span class="n">plot_graph</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">plot_path</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="n">plot_size</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">edge_curved</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                       <span class="n">keep_aspect_ratio</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">vertex_label_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">vertex_frame_color</span><span class="o">=</span><span class="n">node_frames</span><span class="p">)</span>
@@ -522,9 +522,9 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_nodes</span><span class="p">:</span> <span class="c1">#create standard report for the whole graph</span>
                 <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Producing report</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-                <span class="n">reporter</span> <span class="o">=</span> <span class="n">DedalusReporter</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span>
+                <span class="n">reporter</span> <span class="o">=</span> <span class="n">pyntacleReporter</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span>
                 <span class="n">reporter</span><span class="o">.</span><span class="n">report_global_topology</span><span class="p">(</span><span class="n">global_attributes_list</span><span class="p">)</span>
-                <span class="n">report_prefix</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;Dedalus&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span> <span class="s2">&quot;metrics&quot;</span><span class="p">,</span> <span class="s2">&quot;report&quot;</span><span class="p">])</span>
+                <span class="n">report_prefix</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;pyntacle&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span> <span class="s2">&quot;metrics&quot;</span><span class="p">,</span> <span class="s2">&quot;report&quot;</span><span class="p">])</span>
 
                 <span class="n">report_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
                     <span class="p">[</span><span class="n">report_prefix</span><span class="p">,</span> <span class="n">runtime_date</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">report_format</span><span class="p">)</span>
@@ -565,10 +565,10 @@
                 <span class="n">sparseness_nonodes</span><span class="o">.</span><span class="n">completeness_legacy</span><span class="p">(</span><span class="n">recalculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
                 <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Producing report</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="n">reporter</span> <span class="o">=</span> <span class="n">DedalusReporter</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span> <span class="n">graph2</span><span class="o">=</span><span class="n">graph_nonodes</span><span class="p">)</span>
+                <span class="n">reporter</span> <span class="o">=</span> <span class="n">pyntacleReporter</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span> <span class="n">graph2</span><span class="o">=</span><span class="n">graph_nonodes</span><span class="p">)</span>
                 <span class="n">reporter</span><span class="o">.</span><span class="n">report_global_comparisons</span><span class="p">(</span><span class="n">attributes_list</span><span class="o">=</span><span class="n">global_attributes_list</span><span class="p">)</span>
 
-                <span class="n">report_prefix</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;Dedalus&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span> <span class="s2">&quot;metrics&quot;</span><span class="p">,</span> <span class="s2">&quot;nonodes&quot;</span><span class="p">,</span> <span class="s2">&quot;report&quot;</span><span class="p">])</span>
+                <span class="n">report_prefix</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;pyntacle&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span> <span class="s2">&quot;metrics&quot;</span><span class="p">,</span> <span class="s2">&quot;nonodes&quot;</span><span class="p">,</span> <span class="s2">&quot;report&quot;</span><span class="p">])</span>
 
                 <span class="n">report_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
                     <span class="p">[</span><span class="n">report_prefix</span><span class="p">,</span> <span class="n">runtime_date</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">report_format</span><span class="p">)</span>
@@ -584,11 +584,11 @@
                     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Generating Plot of input graph </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">input_file</span><span class="p">)))</span>
 
                 <span class="c1"># generates plot directory</span>
-                <span class="n">plot_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="s2">&quot;Dedalus-Plots&quot;</span><span class="p">)</span>
+                <span class="n">plot_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="s2">&quot;pyntacle-Plots&quot;</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">):</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                        <span class="s2">&quot;WARNING: A directory named </span><span class="se">\&quot;</span><span class="s2">Dedalus-Plots</span><span class="se">\&quot;</span><span class="s2"> already exists, I may overwrite something in there&quot;</span><span class="p">)</span>
+                        <span class="s2">&quot;WARNING: A directory named </span><span class="se">\&quot;</span><span class="s2">pyntacle-Plots</span><span class="se">\&quot;</span><span class="s2"> already exists, I may overwrite something in there&quot;</span><span class="p">)</span>
 
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">)</span>
@@ -603,7 +603,7 @@
                 <span class="n">no_nodes_frames</span> <span class="o">=</span> <span class="n">framepal</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
 
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_nodes</span><span class="p">:</span>
-                    <span class="n">plot_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;Dedalus&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="s2">&quot;global_metrics_plot_original&quot;</span><span class="p">,</span> <span class="n">runtime_date</span><span class="p">]),</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_format</span><span class="p">]))</span>
+                    <span class="n">plot_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;pyntacle&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="s2">&quot;global_metrics_plot_original&quot;</span><span class="p">,</span> <span class="n">runtime_date</span><span class="p">]),</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_format</span><span class="p">]))</span>
                     <span class="n">node_colours</span> <span class="o">=</span> <span class="p">[</span><span class="n">no_nodes_colour</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">nodes_list</span> <span class="k">else</span> <span class="n">other_nodes_colour</span> <span class="k">for</span> <span class="n">x</span>
                                     <span class="ow">in</span>
                                     <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()]</span>
@@ -618,7 +618,7 @@
                     <span class="n">node_colours</span> <span class="o">=</span> <span class="p">[</span><span class="n">other_nodes_colour</span><span class="p">]</span> <span class="o">*</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span>
                     <span class="n">node_frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">other_frame_colour</span><span class="p">]</span> <span class="o">*</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span>
                     <span class="n">node_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="n">other_nodes_size</span><span class="p">]</span> <span class="o">*</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span>
-                    <span class="n">plot_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;Dedalus&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="s2">&quot;global_metrics_plot&quot;</span><span class="p">,</span> <span class="n">runtime_date</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_format</span><span class="p">]))</span>
+                    <span class="n">plot_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;pyntacle&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="s2">&quot;global_metrics_plot&quot;</span><span class="p">,</span> <span class="n">runtime_date</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_format</span><span class="p">]))</span>
 
                 <span class="n">plot_graph</span> <span class="o">=</span> <span class="n">PlotGraph</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span>
                 <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_node_label</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>  <span class="c1"># assign node labels to graph</span>
@@ -651,7 +651,7 @@
                     <span class="c1"># define layout</span>
                     <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_layouts</span><span class="p">()</span>
 
-                    <span class="n">plot_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;Dedalus&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="s2">&quot;global_metrics_plot_nonodes&quot;</span><span class="p">,</span><span class="n">runtime_date</span><span class="p">]),</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_format</span><span class="p">]))</span>
+                    <span class="n">plot_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;pyntacle&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="s2">&quot;global_metrics_plot_nonodes&quot;</span><span class="p">,</span><span class="n">runtime_date</span><span class="p">]),</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_format</span><span class="p">]))</span>
 
                     <span class="n">plot_graph</span><span class="o">.</span><span class="n">plot_graph</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">plot_path</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="n">plot_size</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">edge_curved</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                           <span class="n">keep_aspect_ratio</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">vertex_label_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">vertex_frame_color</span><span class="o">=</span><span class="n">node_frames</span><span class="p">)</span>
@@ -668,7 +668,7 @@
             <span class="n">binary_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="n">report_prefix</span> <span class="o">+</span> <span class="s2">&quot;.graph&quot;</span><span class="p">)</span>
             <span class="n">GraphToBinary</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">binary_path</span><span class="p">)</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Dedalus Metrics completed successfully. Ending</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;pyntacle Metrics completed successfully. Ending</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div></div>
 </pre></div>
 

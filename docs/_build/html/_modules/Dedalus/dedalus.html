@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Dedalus.dedalus &mdash; Dedalus  documentation</title>
+  <title>pyntacle.pyntacle &mdash; pyntacle  documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="Dedalus  documentation" href="../../index.html"/>
+    <link rel="top" title="pyntacle  documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> Dedalus
+            <a href="../../index.html" class="icon icon-home"> pyntacle
           
 
           
@@ -88,7 +88,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../Dedalus.html">Dedalus package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pyntacle.html">pyntacle package</a></li>
 </ul>
 
             
@@ -103,7 +103,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">Dedalus</a>
+          <a href="../../index.html">pyntacle</a>
         
       </nav>
 
@@ -135,7 +135,7 @@
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
-      <li>Dedalus.dedalus</li>
+      <li>pyntacle.pyntacle</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -152,7 +152,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for Dedalus.dedalus</h1><div class="highlight"><pre>
+  <h1>Source code for pyntacle.pyntacle</h1><div class="highlight"><pre>
 <span></span><span class="c1"># todo list of todos:</span>
 <span class="c1"># todo import bruteforce algorithm in keyplayer</span>
 <span class="c1"># todo rivedi nomi metodi</span>
@@ -169,7 +169,7 @@
 <span class="kn">from</span> <span class="nn">exception.generic_error</span> <span class="k">import</span> <span class="n">Error</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo, Mauro Truglio, Tommaso Mazza&quot;</span>
-<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The Dedalus Project&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The pyntacle Project&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ferenc Jordan&quot;</span><span class="p">]</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo&quot;</span>
@@ -204,7 +204,7 @@
 
 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;nt&quot;</span><span class="p">:</span>
     <span class="n">init</span><span class="p">(</span><span class="n">convert</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="c1"># Dedalus libraries</span>
+<span class="c1"># pyntacle libraries</span>
 
 <span class="c1"># input format</span>
 <span class="kn">from</span> <span class="nn">io_stream.graph_to_adjacencymatrix</span> <span class="k">import</span> <span class="n">GraphToAdjacencyMatrix</span>
@@ -239,7 +239,7 @@
 
 <span class="c1"># todo: Controlla che tutte le opzioni stiano effettivamente negli USAGE</span>
 
-<div class="viewcode-block" id="App"><a class="viewcode-back" href="../../Dedalus.dedalus.html#Dedalus.dedalus.App">[docs]</a><span class="k">class</span> <span class="nc">App</span><span class="p">:</span>
+<div class="viewcode-block" id="App"><a class="viewcode-back" href="../../pyntacle.pyntacle.html#pyntacle.pyntacle.App">[docs]</a><span class="k">class</span> <span class="nc">App</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">tracebacklimit</span> <span class="o">=</span> <span class="mi">0</span>
@@ -250,10 +250,10 @@
 
         <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
             <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Main description&quot;</span><span class="p">,</span>
-            <span class="n">usage</span><span class="o">=</span><span class="n">Fore</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="s1">&#39;dedalus.py&#39;</span> <span class="o">+</span> <span class="n">Fore</span><span class="o">.</span><span class="n">GREEN</span> <span class="o">+</span> <span class="s1">&#39; &lt;command&gt;&#39;</span> <span class="o">+</span> <span class="n">Fore</span><span class="o">.</span><span class="n">RED</span>
+            <span class="n">usage</span><span class="o">=</span><span class="n">Fore</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="s1">&#39;pyntacle.py&#39;</span> <span class="o">+</span> <span class="n">Fore</span><span class="o">.</span><span class="n">GREEN</span> <span class="o">+</span> <span class="s1">&#39; &lt;command&gt;&#39;</span> <span class="o">+</span> <span class="n">Fore</span><span class="o">.</span><span class="n">RED</span>
                   <span class="o">+</span> <span class="s1">&#39;&#39;&#39; [&lt;args&gt;]</span>
 
-<span class="s1">The available commands in Dedalus are:</span><span class="se">\n</span><span class="s1">&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">RESET_ALL</span> <span class="o">+</span> <span class="mi">100</span> <span class="o">*</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span>
+<span class="s1">The available commands in pyntacle are:</span><span class="se">\n</span><span class="s1">&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">RESET_ALL</span> <span class="o">+</span> <span class="mi">100</span> <span class="o">*</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span>
                   <span class="n">Fore</span><span class="o">.</span><span class="n">GREEN</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">  keyplayer       &#39;</span> <span class="o">+</span> <span class="n">Fore</span><span class="o">.</span><span class="n">CYAN</span> <span class="o">+</span> <span class="s1">&#39;Find Best Key-Player Set of size X or get Key-Player metrics from a set of nodes&#39;</span> <span class="o">+</span>
                   <span class="n">Fore</span><span class="o">.</span><span class="n">GREEN</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">  metrics         &#39;</span> <span class="o">+</span> <span class="n">Fore</span><span class="o">.</span><span class="n">CYAN</span> <span class="o">+</span> <span class="s1">&#39;Get global metrics for the input graph or local metrics for a set of nodes&#39;</span> <span class="o">+</span>
                   <span class="n">Fore</span><span class="o">.</span><span class="n">GREEN</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">  convert         &#39;</span> <span class="o">+</span> <span class="n">Fore</span><span class="o">.</span><span class="n">CYAN</span> <span class="o">+</span> <span class="s1">&#39;Convert one graph stored into a file into another graph&#39;</span> <span class="o">+</span>
@@ -264,7 +264,7 @@
 
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;command&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;subcommand to run&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-v&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;verbosity level. -vvv is the highest level&quot;</span><span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-V&#39;</span><span class="p">,</span> <span class="s2">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;version&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;Dedalus v0.1 (alpha)&quot;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-V&#39;</span><span class="p">,</span> <span class="s2">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;version&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;pyntacle v0.1 (alpha)&quot;</span><span class="p">)</span>
 
         <span class="c1"># Detect verbosity</span>
         <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span>
@@ -288,13 +288,13 @@
         <span class="c1"># Use dispatch pattern to invoke method with same name</span>
         <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span><span class="p">)()</span>
 
-<div class="viewcode-block" id="App.keyplayer"><a class="viewcode-back" href="../../Dedalus.dedalus.html#Dedalus.dedalus.App.keyplayer">[docs]</a>    <span class="k">def</span> <span class="nf">keyplayer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="App.keyplayer"><a class="viewcode-back" href="../../pyntacle.pyntacle.html#pyntacle.pyntacle.App.keyplayer">[docs]</a>    <span class="k">def</span> <span class="nf">keyplayer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
             <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Key player calculator</span><span class="se">\n\n</span><span class="s1">Subcommands:</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="mi">90</span> <span class="o">*</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>
                         <span class="s1">&#39;  kp-finder</span><span class="se">\t</span><span class="s1">        find the best kp set of given metrics using a greedy algorithm</span><span class="se">\n</span><span class="s1">&#39;</span>
                         <span class="s1">&#39;  kp-info</span><span class="se">\t</span><span class="s1">        find kp metrics for user defined set of nodes</span><span class="se">\n\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="mi">90</span> <span class="o">*</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span>
             <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span><span class="p">,</span>
-            <span class="n">usage</span><span class="o">=</span><span class="n">Fore</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="s1">&#39;dedalus.py keyplayer&#39;</span>
+            <span class="n">usage</span><span class="o">=</span><span class="n">Fore</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="s1">&#39;pyntacle.py keyplayer&#39;</span>
                   <span class="o">+</span> <span class="n">Fore</span><span class="o">.</span><span class="n">GREEN</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="s1">&#39; {kp-finder, kp-info}&#39;</span> <span class="o">+</span> <span class="n">Fore</span><span class="o">.</span><span class="n">RED</span>
                   <span class="o">+</span> <span class="s1">&#39; [arguments]</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">RESET_ALL</span><span class="p">)</span>
 
@@ -342,7 +342,7 @@
 
         <span class="c1"># Subparser for the nodes case</span>
         <span class="n">nodes_case_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;kp-info&quot;</span><span class="p">,</span>
-                                                  <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;dedalus.py keyplayer kp-info [-h] [-f] [-v] [-d] [-m] [-a] [--save-binary] [--plot-format] [--plot-dim] [--no-plot] --input_file [FILE] --nodes NODES&#39;</span><span class="p">,</span>
+                                                  <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;pyntacle.py keyplayer kp-info [-h] [-f] [-v] [-d] [-m] [-a] [--save-binary] [--plot-format] [--plot-dim] [--no-plot] --input_file [FILE] --nodes NODES&#39;</span><span class="p">,</span>
                                                   <span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">parser</span><span class="p">],</span>
                                                   <span class="n">formatter_class</span><span class="o">=</span><span class="k">lambda</span> <span class="n">prog</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">HelpFormatter</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span>
                                                                                                       <span class="n">max_help_position</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
@@ -352,7 +352,7 @@
                                        <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="c1"># Subparser for greedy case</span>
         <span class="n">greedy_case_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;kp-finder&quot;</span><span class="p">,</span>
-                                                   <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;dedalus.py keyplayer kp-finder[-h] [-f] [-v] [-m] [-a] [--save-binary] [--plot-format] [--plot-dim] [--no-plot] --input_file [FILE] -k [K]&#39;</span><span class="p">,</span>
+                                                   <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;pyntacle.py keyplayer kp-finder[-h] [-f] [-v] [-m] [-a] [--save-binary] [--plot-format] [--plot-dim] [--no-plot] --input_file [FILE] -k [K]&#39;</span><span class="p">,</span>
                                                    <span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">parser</span><span class="p">],</span>
                                                    <span class="n">formatter_class</span><span class="o">=</span><span class="k">lambda</span> <span class="n">prog</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">HelpFormatter</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span>
                                                                                                        <span class="n">max_help_position</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
@@ -374,7 +374,7 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span> <span class="ow">or</span> <span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;kp-finder&#39;</span><span class="p">,</span> <span class="s1">&#39;kp-info&#39;</span><span class="p">)):</span>
             <span class="n">parser</span><span class="o">.</span><span class="n">print_help</span><span class="p">()</span>
             <span class="k">raise</span> <span class="n">Error</span><span class="p">(</span>
-                <span class="s1">&#39;Usage: dedalus.py keyplayer {kp-finder, kp-info} [arguments] (use --help for command description)&#39;</span><span class="p">)</span>
+                <span class="s1">&#39;Usage: pyntacle.py keyplayer {kp-finder, kp-info} [arguments] (use --help for command description)&#39;</span><span class="p">)</span>
 
         <span class="n">kp</span> <span class="o">=</span> <span class="n">kp_command</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
@@ -383,7 +383,7 @@
             <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Received SIGKILL from Keyboard</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="App.metrics"><a class="viewcode-back" href="../../Dedalus.dedalus.html#Dedalus.dedalus.App.metrics">[docs]</a>    <span class="k">def</span> <span class="nf">metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="App.metrics"><a class="viewcode-back" href="../../pyntacle.pyntacle.html#pyntacle.pyntacle.App.metrics">[docs]</a>    <span class="k">def</span> <span class="nf">metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
             <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Metrics Calculations at Global and local level</span><span class="se">\n\n</span><span class="s1">Subcommands:</span><span class="se">\n</span><span class="s1">&#39;</span>
@@ -391,7 +391,7 @@
                         <span class="s1">&#39;  local</span><span class="se">\t</span><span class="s1">      provides metrics for each node or for a suibset of nodes&#39;</span><span class="p">,</span>
 
             <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span><span class="p">,</span>
-            <span class="n">usage</span><span class="o">=</span><span class="n">Fore</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="s1">&#39;dedalus.py metrics&#39;</span> <span class="o">+</span> <span class="n">Fore</span><span class="o">.</span><span class="n">GREEN</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="s1">&#39; {global, local}&#39;</span> <span class="o">+</span> <span class="n">Fore</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span>
+            <span class="n">usage</span><span class="o">=</span><span class="n">Fore</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="s1">&#39;pyntacle.py metrics&#39;</span> <span class="o">+</span> <span class="n">Fore</span><span class="o">.</span><span class="n">GREEN</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="s1">&#39; {global, local}&#39;</span> <span class="o">+</span> <span class="n">Fore</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span>
                   <span class="s1">&#39; [arguments]&#39;</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">RESET_ALL</span><span class="p">)</span>
         <span class="c1"># NOT prefixing the argument with -- means it&#39;s not optional</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;--input_file&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
@@ -433,7 +433,7 @@
 
         <span class="c1"># Subparser for the nodes case</span>
         <span class="n">local_subparser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
-                                                <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;dedalus.py metrics local [-h] [-f] [-v] [-d] [-a] [--save-binary] [--plot-format] [--no-plot] --input_file [FILE] --nodes NODES&#39;</span><span class="p">,</span>
+                                                <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;pyntacle.py metrics local [-h] [-f] [-v] [-d] [-a] [--save-binary] [--plot-format] [--no-plot] --input_file [FILE] --nodes NODES&#39;</span><span class="p">,</span>
                                                 <span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">parser</span><span class="p">],</span>
                                                 <span class="n">formatter_class</span><span class="o">=</span><span class="k">lambda</span> <span class="n">prog</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">HelpFormatter</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span>
                                                                                                     <span class="n">max_help_position</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
@@ -449,7 +449,7 @@
 
         <span class="c1"># Subparser for greedy case</span>
         <span class="n">global_subparser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;global&quot;</span><span class="p">,</span>
-                                                 <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;dedalus.py metrics global [-h] [-f] [-v] [-d] [-a] [--save-binary] [--plot-format] [--no-plot] --input_file [FILE] -n/--no-nodes&#39;</span><span class="p">,</span>
+                                                 <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;pyntacle.py metrics global [-h] [-f] [-v] [-d] [-a] [--save-binary] [--plot-format] [--no-plot] --input_file [FILE] -n/--no-nodes&#39;</span><span class="p">,</span>
                                                  <span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">parser</span><span class="p">],</span>
                                                  <span class="n">formatter_class</span><span class="o">=</span><span class="k">lambda</span> <span class="n">prog</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">HelpFormatter</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span>
                                                                                                      <span class="n">max_help_position</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
@@ -464,9 +464,9 @@
         <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span> <span class="ow">or</span> <span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;global&#39;</span><span class="p">,</span> <span class="s1">&#39;local&#39;</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="n">Error</span><span class="p">(</span><span class="s1">&#39;usage: dedalus.py metrics {global, local} [arguments] (use --help for command description)&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">Error</span><span class="p">(</span><span class="s1">&#39;usage: pyntacle.py metrics {global, local} [arguments] (use --help for command description)&#39;</span><span class="p">)</span>
 
-        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;Running Dedalus metrics</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;Running pyntacle metrics</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
         <span class="n">mt</span> <span class="o">=</span> <span class="n">metrics_command</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
@@ -474,11 +474,11 @@
         <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Received SIGKILL from Keyboard</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="App.convert"><a class="viewcode-back" href="../../Dedalus.dedalus.html#Dedalus.dedalus.App.convert">[docs]</a>    <span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="App.convert"><a class="viewcode-back" href="../../pyntacle.pyntacle.html#pyntacle.pyntacle.App.convert">[docs]</a>    <span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
             <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Convert a graph stored in a file format to another format&#39;</span><span class="p">,</span>
             <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span><span class="p">,</span>
-            <span class="n">usage</span><span class="o">=</span><span class="n">Fore</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="s1">&#39;dedalus.py convert [arguments]&#39;</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">RESET_ALL</span><span class="p">)</span>
+            <span class="n">usage</span><span class="o">=</span><span class="n">Fore</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="s1">&#39;pyntacle.py convert [arguments]&#39;</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">RESET_ALL</span><span class="p">)</span>
 
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;--input_file&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                             <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Input format. </span><span class="se">\&#39;</span><span class="s2">adjmat</span><span class="se">\&#39;</span><span class="s2"> for adjacency matrix, </span><span class="se">\&#39;</span><span class="s2">edgelist</span><span class="se">\&#39;</span><span class="s2"> for edge list, </span><span class="se">\&#39;</span><span class="s2">sif</span><span class="se">\&#39;</span><span class="s2"> for Simple Interaction format, </span><span class="se">\&#39;</span><span class="s2">dot</span><span class="se">\&#39;</span><span class="s2"> for DOT file, </span><span class="se">\&#39;</span><span class="s2">bin</span><span class="se">\&#39;</span><span class="s2"> for binary file&quot;</span><span class="p">)</span>
@@ -511,13 +511,13 @@
         <span class="c1"># NOT prefixing the argument with -- means it&#39;s not optional</span>
         <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">Error</span><span class="p">(</span><span class="s1">&#39;usage: dedalus.py convert [arguments] (use --help for command description)&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">Error</span><span class="p">(</span><span class="s1">&#39;usage: pyntacle.py convert [arguments] (use --help for command description)&#39;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">format</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">format_dictionary</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">format</span><span class="p">]</span> <span class="o">==</span> <span class="n">format_dictionary</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">output_format</span><span class="p">]:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The output format specified is the same as the input format. Quitting.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Running Dedalus convert</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Running pyntacle convert</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="n">cv</span> <span class="o">=</span> <span class="n">convert_command</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
@@ -525,12 +525,12 @@
         <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Received SIGKILL from Keyboard</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="App.generate"><a class="viewcode-back" href="../../Dedalus.dedalus.html#Dedalus.dedalus.App.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="App.generate"><a class="viewcode-back" href="../../pyntacle.pyntacle.html#pyntacle.pyntacle.App.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
             <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Generate graphs based on specific topologies using the igraph Generator&#39;</span><span class="p">,</span>
             <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span><span class="p">,</span>
-            <span class="n">usage</span><span class="o">=</span><span class="n">Fore</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="s1">&#39;dedalus.py generate [arguments]&#39;</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">RESET_ALL</span><span class="p">)</span>
+            <span class="n">usage</span><span class="o">=</span><span class="n">Fore</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="s1">&#39;pyntacle.py generate [arguments]&#39;</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">RESET_ALL</span><span class="p">)</span>
 
         <span class="c1"># NOT prefixing the argument with -- means it&#39;s not optional</span>
 
@@ -567,7 +567,7 @@
         <span class="c1"># Subparser for the nodes case</span>
 
         <span class="n">random_subparser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;random&quot;</span><span class="p">,</span>
-                                                 <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;dedalus.py generate random [-h] [-v] [-o] [-d] [-n INT] [-p FLOAT] [--e INT] [--no-plot]&#39;</span><span class="p">,</span>
+                                                 <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;pyntacle.py generate random [-h] [-v] [-o] [-d] [-n INT] [-p FLOAT] [--e INT] [--no-plot]&#39;</span><span class="p">,</span>
                                                  <span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">parser</span><span class="p">],</span>
                                                  <span class="n">formatter_class</span><span class="o">=</span><span class="k">lambda</span> <span class="n">prog</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">HelpFormatter</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span>
                                                                                                      <span class="n">max_help_position</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
@@ -584,7 +584,7 @@
                                       <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The number of random edges that the random graph will have. Is excluded if -p is present&quot;</span><span class="p">)</span>
 
         <span class="n">scalefree_subparser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;scale-free&quot;</span><span class="p">,</span>
-                                                    <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;dedalus.py generate scale-free[-h] [-v] [-o] [-d] [-n INT] [-m INT] [--no-plot]&#39;</span><span class="p">,</span>
+                                                    <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;pyntacle.py generate scale-free[-h] [-v] [-o] [-d] [-n INT] [-m INT] [--no-plot]&#39;</span><span class="p">,</span>
                                                     <span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">parser</span><span class="p">],</span>
                                                     <span class="n">formatter_class</span><span class="o">=</span><span class="k">lambda</span> <span class="n">prog</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">HelpFormatter</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span>
                                                                                                         <span class="n">max_help_position</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
@@ -598,7 +598,7 @@
                                          <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of outgoing edges for each node in the scale-free graph. Must be a positive integer. If not specified, it will be chosen randomly between 10 and 100&quot;</span><span class="p">)</span>
 
         <span class="n">tree_subparser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;tree&quot;</span><span class="p">,</span>
-                                               <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;dedalus.py generate scale-free[-h] [-v] [-o] [-d] [-n INT] [-c INT] [--no-plot]&#39;</span><span class="p">,</span>
+                                               <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;pyntacle.py generate scale-free[-h] [-v] [-o] [-d] [-n INT] [-c INT] [--no-plot]&#39;</span><span class="p">,</span>
                                                <span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">parser</span><span class="p">],</span>
                                                <span class="n">formatter_class</span><span class="o">=</span><span class="k">lambda</span> <span class="n">prog</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">HelpFormatter</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span>
                                                                                                    <span class="n">max_help_position</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
@@ -611,7 +611,7 @@
                                     <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of Children per node branch. If not specified, will be a number between 2 and 10&quot;</span><span class="p">)</span>
 
         <span class="n">smallworld_subparser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;small-world&quot;</span><span class="p">,</span>
-                                                     <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;dedalus.py generate scale-free[-h] [-v] [-o] [-d] [-l INT] [-s INT] [-n INT] [-p FLOAT] [--no-plot]&#39;</span><span class="p">,</span>
+                                                     <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;pyntacle.py generate scale-free[-h] [-v] [-o] [-d] [-l INT] [-s INT] [-n INT] [-p FLOAT] [--no-plot]&#39;</span><span class="p">,</span>
                                                      <span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">parser</span><span class="p">],</span>
                                                      <span class="n">formatter_class</span><span class="o">=</span><span class="k">lambda</span> <span class="n">prog</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">HelpFormatter</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span>
                                                                                                          <span class="n">max_help_position</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
@@ -634,20 +634,20 @@
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span> <span class="ow">or</span> <span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;random&#39;</span><span class="p">,</span> <span class="s1">&#39;scale-free&#39;</span><span class="p">,</span> <span class="s1">&#39;tree&#39;</span><span class="p">,</span> <span class="s1">&#39;small-world&#39;</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">Error</span><span class="p">(</span>
-                <span class="s1">&#39;usage: dedalus.py generate {random, scale-free, tree, small-world} [arguments] (use --help for command description)&#39;</span><span class="p">)</span>
+                <span class="s1">&#39;usage: pyntacle.py generate {random, scale-free, tree, small-world} [arguments] (use --help for command description)&#39;</span><span class="p">)</span>
 
-        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;Running Dedalus generate</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;Running pyntacle generate</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="n">gen</span> <span class="o">=</span> <span class="n">generate_command</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">gen</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Received SIGKILL from Keyboard</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="App.communities"><a class="viewcode-back" href="../../Dedalus.dedalus.html#Dedalus.dedalus.App.communities">[docs]</a>    <span class="k">def</span> <span class="nf">communities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="App.communities"><a class="viewcode-back" href="../../pyntacle.pyntacle.html#pyntacle.pyntacle.App.communities">[docs]</a>    <span class="k">def</span> <span class="nf">communities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
             <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Divide your graph into modules using one of the provided algorithms for module detection and outputs a series of subgraphs</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
             <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span><span class="p">,</span>
-            <span class="n">usage</span><span class="o">=</span><span class="n">Fore</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="s1">&#39;dedalus.py communities&#39;</span> <span class="o">+</span> <span class="n">Fore</span><span class="o">.</span><span class="n">GREEN</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="s1">&#39; {fastgreedy, &#39;</span>
+            <span class="n">usage</span><span class="o">=</span><span class="n">Fore</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="s1">&#39;pyntacle.py communities&#39;</span> <span class="o">+</span> <span class="n">Fore</span><span class="o">.</span><span class="n">GREEN</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="s1">&#39; {fastgreedy, &#39;</span>
                                                                                                    <span class="s1">&#39;infomap, leading-eigenvector, community-walktrap} &#39;</span> <span class="o">+</span> <span class="n">Fore</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="s1">&#39;[arguments]&#39;</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">RESET_ALL</span><span class="p">)</span>
 
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;--input_file&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
@@ -708,7 +708,7 @@
         <span class="n">subparsers</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">)</span>
 
         <span class="n">fastgreedy_subparser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;fastgreedy&quot;</span><span class="p">,</span>
-                                                     <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;dedalus.py communities fastgreedy [-h] [-v] [-o] [-d] [-dr] [-m] [-M] [-c] [-C] [--weights] [--clusters] [--no-plot]&#39;</span><span class="p">,</span>
+                                                     <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;pyntacle.py communities fastgreedy [-h] [-v] [-o] [-d] [-dr] [-m] [-M] [-c] [-C] [--weights] [--clusters] [--no-plot]&#39;</span><span class="p">,</span>
                                                      <span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">parser</span><span class="p">],</span>
                                                      <span class="n">formatter_class</span><span class="o">=</span><span class="k">lambda</span> <span class="n">prog</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">HelpFormatter</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span>
                                                                                                          <span class="n">max_help_position</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
@@ -729,7 +729,7 @@
                                           <span class="n">help</span><span class="o">=</span><span class="s2">&quot;specify the name of the column attribute that will be used to divide module. If not specified, the first column after the edges in the weights file will be taken&quot;</span><span class="p">)</span>
 
         <span class="n">infomap_subparser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;infomap&quot;</span><span class="p">,</span>
-                                                  <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;dedalus.py communities infomap [-h] [-v] [-o] [-d] [-dr] [-m] [-M] [-c] [-C] [--no-plot]&#39;</span><span class="p">,</span>
+                                                  <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;pyntacle.py communities infomap [-h] [-v] [-o] [-d] [-dr] [-m] [-M] [-c] [-C] [--no-plot]&#39;</span><span class="p">,</span>
                                                   <span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">parser</span><span class="p">],</span>
                                                   <span class="n">formatter_class</span><span class="o">=</span><span class="k">lambda</span> <span class="n">prog</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">HelpFormatter</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span>
                                                                                                       <span class="n">max_help_position</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
@@ -738,7 +738,7 @@
         <span class="n">infomap_subparser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;infomap&#39;</span><span class="p">)</span>
 
         <span class="n">leading_eigenvector_subparser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;leading-eigenvector&quot;</span><span class="p">,</span>
-                                                              <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;dedalus.py communities leading-eigenvector [-h] [-v] [-o] [-d] [-dr] [-m] [-M] [-c] [-C] [--no-plot]&#39;</span><span class="p">,</span>
+                                                              <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;pyntacle.py communities leading-eigenvector [-h] [-v] [-o] [-d] [-dr] [-m] [-M] [-c] [-C] [--no-plot]&#39;</span><span class="p">,</span>
                                                               <span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">parser</span><span class="p">],</span>
                                                               <span class="n">formatter_class</span><span class="o">=</span><span class="k">lambda</span> <span class="n">prog</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">HelpFormatter</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span>
                                                                                                                   <span class="n">max_help_position</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
@@ -747,7 +747,7 @@
         <span class="n">leading_eigenvector_subparser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;leading-eigenvector&#39;</span><span class="p">)</span>
 
         <span class="n">community_walktrap_subparser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;community_walktrap&quot;</span><span class="p">,</span>
-                                                             <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;dedalus.py communities community-walktrap [-h] [-v] [-o] [-d] [-dr] [-m] [-M] [-c] [-C] [--no-plot]&#39;</span><span class="p">,</span>
+                                                             <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;pyntacle.py communities community-walktrap [-h] [-v] [-o] [-d] [-dr] [-m] [-M] [-c] [-C] [--no-plot]&#39;</span><span class="p">,</span>
                                                              <span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">parser</span><span class="p">],</span>
                                                              <span class="n">formatter_class</span><span class="o">=</span><span class="k">lambda</span> <span class="n">prog</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">HelpFormatter</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span>
                                                                                                                  <span class="n">max_help_position</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
@@ -775,9 +775,9 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span> <span class="ow">or</span> <span class="p">(</span>
                     <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;fastgreedy&#39;</span><span class="p">,</span> <span class="s1">&#39;infomap&#39;</span><span class="p">,</span> <span class="s1">&#39;leading-eigenvector&#39;</span><span class="p">,</span> <span class="s1">&#39;community-walktrap&#39;</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">Error</span><span class="p">(</span>
-                <span class="s1">&#39;usage: dedalus.py communities {fastgreedy, infomap, leading-eigenvector, community-walktrap} [arguments] (use --help for command description)&#39;</span><span class="p">)</span>
+                <span class="s1">&#39;usage: pyntacle.py communities {fastgreedy, infomap, leading-eigenvector, community-walktrap} [arguments] (use --help for command description)&#39;</span><span class="p">)</span>
 
-        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;Running Dedalus communities</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;Running pyntacle communities</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
         <span class="n">comm</span> <span class="o">=</span> <span class="n">communities_command</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
@@ -785,12 +785,12 @@
         <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Received SIGKILL from Keyboard</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="App.set"><a class="viewcode-back" href="../../Dedalus.dedalus.html#Dedalus.dedalus.App.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="App.set"><a class="viewcode-back" href="../../pyntacle.pyntacle.html#pyntacle.pyntacle.App.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
             <span class="n">description</span><span class="o">=</span><span class="s1">&#39;perform one of the 3 set operations: union, intersection, difference of two graphs on two input graphs</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
             <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span><span class="p">,</span>
-            <span class="n">usage</span><span class="o">=</span><span class="n">Fore</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="s1">&#39;dedalus.py set &#39;</span> <span class="o">+</span> <span class="n">Fore</span><span class="o">.</span><span class="n">GREEN</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="s1">&#39;{union, intersection,&#39;</span>
+            <span class="n">usage</span><span class="o">=</span><span class="n">Fore</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="s1">&#39;pyntacle.py set &#39;</span> <span class="o">+</span> <span class="n">Fore</span><span class="o">.</span><span class="n">GREEN</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="s1">&#39;{union, intersection,&#39;</span>
                                                                                             <span class="s1">&#39; difference}&#39;</span> <span class="o">+</span> <span class="n">Fore</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="s1">&#39; [arguments]&#39;</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">RESET_ALL</span><span class="p">)</span>
         <span class="c1"># NOT prefixing the argument with -- means it&#39;s not optional</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-1&#39;</span><span class="p">,</span> <span class="s1">&#39;--input-file-1&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
@@ -802,10 +802,10 @@
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-f&#39;</span><span class="p">,</span> <span class="s1">&#39;--format&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
                             <span class="n">choices</span><span class="o">=</span><span class="n">format_dictionary</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>
                             <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Input format of the input graphs. Allowed values are &#39;adjmat&#39; for adjacency matrix, &#39;edgelist&#39; for edge list, sif for Simple Interaction format, </span><span class="se">\&#39;</span><span class="s2">dot</span><span class="se">\&#39;</span><span class="s2"> for DOT file, </span><span class="se">\&#39;</span><span class="s2">bin</span><span class="se">\&#39;</span><span class="s2"> for boinary file&quot;</span>
-                                 <span class="s2">&quot;The two files must have the same format. If not, use Dedalus Convert to convert your files to the same format&quot;</span><span class="p">)</span>
+                                 <span class="s2">&quot;The two files must have the same format. If not, use pyntacle Convert to convert your files to the same format&quot;</span><span class="p">)</span>
 
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--no-header&quot;</span><span class="p">,</span> <span class="s2">&quot;-n&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-                            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Specify if the input file Does not contain an header. If one of the two input files has an header, be sure to remove or adding it using Dedalus Convert&quot;</span><span class="p">)</span>
+                            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Specify if the input file Does not contain an header. If one of the two input files has an header, be sure to remove or adding it using pyntacle Convert&quot;</span><span class="p">)</span>
 
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-d&#39;</span><span class="p">,</span> <span class="s2">&quot;--directory&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span>
                             <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Directory that will contain results (default is the current working directory). If the directory does not exist, we will create one&quot;</span><span class="p">)</span>
@@ -843,7 +843,7 @@
         <span class="n">subparsers</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">)</span>
 
         <span class="n">unite_subparser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;union&quot;</span><span class="p">,</span>
-                                                <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;dedalus.py set union [-1] [-2] [-h] [-v] [-o] [-d] [--output-format STR] [--output-separator] [--no-output-header] [--no-plot]&#39;</span><span class="p">,</span>
+                                                <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;pyntacle.py set union [-1] [-2] [-h] [-v] [-o] [-d] [--output-format STR] [--output-separator] [--no-output-header] [--no-plot]&#39;</span><span class="p">,</span>
                                                 <span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">parser</span><span class="p">],</span>
                                                 <span class="n">formatter_class</span><span class="o">=</span><span class="k">lambda</span> <span class="n">prog</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">HelpFormatter</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span>
                                                                                                     <span class="n">max_help_position</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
@@ -851,7 +851,7 @@
         <span class="n">unite_subparser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;union&#39;</span><span class="p">)</span>
 
         <span class="n">intersection_subparser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;intersection&quot;</span><span class="p">,</span>
-                                                       <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;dedalus.py set union [-1] [-2] [-h] [-v] [-o] [-d] [--output-format STR] [--output-separator] [--no-output-header] [--no-plot]&#39;</span><span class="p">,</span>
+                                                       <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;pyntacle.py set union [-1] [-2] [-h] [-v] [-o] [-d] [--output-format STR] [--output-separator] [--no-output-header] [--no-plot]&#39;</span><span class="p">,</span>
                                                        <span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">parser</span><span class="p">],</span>
                                                        <span class="n">formatter_class</span><span class="o">=</span><span class="k">lambda</span> <span class="n">prog</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">HelpFormatter</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span>
                                                                                                            <span class="n">max_help_position</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
@@ -859,7 +859,7 @@
         <span class="n">intersection_subparser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;intersection&#39;</span><span class="p">)</span>
 
         <span class="n">difference_subparser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;difference&quot;</span><span class="p">,</span>
-                                                     <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;dedalus.py set union [-1] [-2] [-h] [-v] [-o] [-d] [--output-format STR] [--output-separator] [--no-output-header] [--no-plot]&#39;</span><span class="p">,</span>
+                                                     <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;pyntacle.py set union [-1] [-2] [-h] [-v] [-o] [-d] [--output-format STR] [--output-separator] [--no-output-header] [--no-plot]&#39;</span><span class="p">,</span>
                                                      <span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">parser</span><span class="p">],</span>
                                                      <span class="n">formatter_class</span><span class="o">=</span><span class="k">lambda</span> <span class="n">prog</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">HelpFormatter</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span>
                                                                                                          <span class="n">max_help_position</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
@@ -870,9 +870,9 @@
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">5</span> <span class="ow">or</span> <span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;union&#39;</span><span class="p">,</span> <span class="s1">&#39;intersection&#39;</span><span class="p">,</span> <span class="s1">&#39;difference&#39;</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">Error</span><span class="p">(</span>
-                <span class="s1">&#39;usage: dedalus.py set {union, intersection, difference} [arguments] (use --help for command description)&#39;</span><span class="p">)</span>
+                <span class="s1">&#39;usage: pyntacle.py set {union, intersection, difference} [arguments] (use --help for command description)&#39;</span><span class="p">)</span>
 
-        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;Running Dedalus set</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;Running pyntacle set</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="nb">set</span> <span class="o">=</span> <span class="n">set_command</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="nb">set</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>

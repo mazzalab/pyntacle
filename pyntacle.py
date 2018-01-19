@@ -6,7 +6,7 @@
 # !/usr/bin/env python3.6
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The Dedalus Project"
+__copyright__ = "Copyright 2016, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -83,10 +83,10 @@ class App:
 
         parser = argparse.ArgumentParser(
             description="Main description",
-            usage=Fore.RED + Style.BRIGHT + 'dedalus.py' + Fore.GREEN + ' <command>' + Fore.RED
+            usage=Fore.RED + Style.BRIGHT + 'pyntacle.py' + Fore.GREEN + ' <command>' + Fore.RED
                   + ''' [<args>]
 
-The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
+The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                   Fore.GREEN + '\n  keyplayer       ' + Fore.CYAN + 'Find Best Key-Player Set of size X or get Key-Player metrics from a set of nodes' +
                   Fore.GREEN + '\n  metrics         ' + Fore.CYAN + 'Get global metrics for the input graph or local metrics for a set of nodes' +
                   Fore.GREEN + '\n  convert         ' + Fore.CYAN + 'Convert one graph stored into a file into another graph' +
@@ -97,7 +97,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         parser.add_argument('command', help='subcommand to run', type=lambda s: s.lower())
         parser.add_argument('-v', action="count", help="verbosity level. -vvv is the highest level")
-        parser.add_argument('-V', "--version", action="version", version="Dedalus v0.1 (alpha)")
+        parser.add_argument('-V', "--version", action="version", version="pyntacle v0.1 (alpha)")
 
         # Detect verbosity
         for arg in sys.argv:
@@ -127,7 +127,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
                         '  kp-finder\t        find the best kp set of given metrics using a greedy algorithm\n'
                         '  kp-info\t        find kp metrics for user defined set of nodes\n\n' + 90 * '-',
             formatter_class=argparse.RawDescriptionHelpFormatter,
-            usage=Fore.RED + Style.BRIGHT + 'dedalus.py keyplayer'
+            usage=Fore.RED + Style.BRIGHT + 'pyntacle.py keyplayer'
                   + Fore.GREEN + Style.BRIGHT + ' {kp-finder, kp-info}' + Fore.RED
                   + ' [arguments]\n' + Style.RESET_ALL)
 
@@ -175,7 +175,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         # Subparser for the nodes case
         nodes_case_parser = subparsers.add_parser("kp-info",
-                                                  usage='dedalus.py keyplayer kp-info [-h] [-f] [-v] [-d] [-m] [-a] [--save-binary] [--plot-format] [--plot-dim] [--no-plot] --input_file [FILE] --nodes NODES',
+                                                  usage='pyntacle.py keyplayer kp-info [-h] [-f] [-v] [-d] [-m] [-a] [--save-binary] [--plot-format] [--plot-dim] [--no-plot] --input_file [FILE] --nodes NODES',
                                                   add_help=False, parents=[parser],
                                                   formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                       max_help_position=100,
@@ -185,7 +185,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
                                        required=True)
         # Subparser for greedy case
         greedy_case_parser = subparsers.add_parser("kp-finder",
-                                                   usage='dedalus.py keyplayer kp-finder[-h] [-f] [-v] [-m] [-a] [--save-binary] [--plot-format] [--plot-dim] [--no-plot] --input_file [FILE] -k [K]',
+                                                   usage='pyntacle.py keyplayer kp-finder[-h] [-f] [-v] [-m] [-a] [--save-binary] [--plot-format] [--plot-dim] [--no-plot] --input_file [FILE] -k [K]',
                                                    add_help=False, parents=[parser],
                                                    formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                        max_help_position=100,
@@ -207,7 +207,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
         if len(sys.argv) < 4 or (sys.argv[2] not in ('kp-finder', 'kp-info')):
             parser.print_help()
             raise Error(
-                'Usage: dedalus.py keyplayer {kp-finder, kp-info} [arguments] (use --help for command description)')
+                'Usage: pyntacle.py keyplayer {kp-finder, kp-info} [arguments] (use --help for command description)')
 
         kp = kp_command(args)
         try:
@@ -224,7 +224,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
                         '  local\t      provides metrics for each node or for a suibset of nodes',
 
             formatter_class=argparse.RawDescriptionHelpFormatter,
-            usage=Fore.RED + Style.BRIGHT + 'dedalus.py metrics' + Fore.GREEN + Style.BRIGHT + ' {global, local}' + Fore.RED +
+            usage=Fore.RED + Style.BRIGHT + 'pyntacle.py metrics' + Fore.GREEN + Style.BRIGHT + ' {global, local}' + Fore.RED +
                   ' [arguments]' + Style.RESET_ALL)
         # NOT prefixing the argument with -- means it's not optional
         parser.add_argument('-i', '--input_file', metavar='',
@@ -266,7 +266,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         # Subparser for the nodes case
         local_subparser = subparsers.add_parser("local",
-                                                usage='dedalus.py metrics local [-h] [-f] [-v] [-d] [-a] [--save-binary] [--plot-format] [--no-plot] --input_file [FILE] --nodes NODES',
+                                                usage='pyntacle.py metrics local [-h] [-f] [-v] [-d] [-a] [--save-binary] [--plot-format] [--no-plot] --input_file [FILE] --nodes NODES',
                                                 add_help=False, parents=[parser],
                                                 formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                     max_help_position=100,
@@ -282,7 +282,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         # Subparser for greedy case
         global_subparser = subparsers.add_parser("global",
-                                                 usage='dedalus.py metrics global [-h] [-f] [-v] [-d] [-a] [--save-binary] [--plot-format] [--no-plot] --input_file [FILE] -n/--no-nodes',
+                                                 usage='pyntacle.py metrics global [-h] [-f] [-v] [-d] [-a] [--save-binary] [--plot-format] [--no-plot] --input_file [FILE] -n/--no-nodes',
                                                  add_help=False, parents=[parser],
                                                  formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                      max_help_position=100,
@@ -297,9 +297,9 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
         args = parser.parse_args(sys.argv[2:])
 
         if len(sys.argv) < 4 or (sys.argv[2] not in ('global', 'local')):
-            raise Error('usage: dedalus.py metrics {global, local} [arguments] (use --help for command description)')
+            raise Error('usage: pyntacle.py metrics {global, local} [arguments] (use --help for command description)')
 
-        sys.stdout.write('Running Dedalus metrics\n')
+        sys.stdout.write('Running pyntacle metrics\n')
         mt = metrics_command(args)
         try:
             mt.run()
@@ -310,7 +310,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser = argparse.ArgumentParser(
             description='Convert a graph stored in a file format to another format',
             formatter_class=argparse.RawDescriptionHelpFormatter,
-            usage=Fore.RED + Style.BRIGHT + 'dedalus.py convert [arguments]' + Style.RESET_ALL)
+            usage=Fore.RED + Style.BRIGHT + 'pyntacle.py convert [arguments]' + Style.RESET_ALL)
 
         parser.add_argument('-i', '--input_file', metavar="", required=True,
                             help="Input format. \'adjmat\' for adjacency matrix, \'edgelist\' for edge list, \'sif\' for Simple Interaction format, \'dot\' for DOT file, \'bin\' for binary file")
@@ -343,13 +343,13 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
         # NOT prefixing the argument with -- means it's not optional
         args = parser.parse_args(sys.argv[2:])
         if len(sys.argv) < 4:
-            raise Error('usage: dedalus.py convert [arguments] (use --help for command description)')
+            raise Error('usage: pyntacle.py convert [arguments] (use --help for command description)')
 
         if args.format is not None:
             if format_dictionary[args.format] == format_dictionary[args.output_format]:
                 log.error("The output format specified is the same as the input format. Quitting.\n")
                 sys.exit(0)
-        sys.stdout.write("Running Dedalus convert\n")
+        sys.stdout.write("Running pyntacle convert\n")
 
         cv = convert_command(args)
         try:
@@ -362,7 +362,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser = argparse.ArgumentParser(
             description='Generate graphs based on specific topologies using the igraph Generator',
             formatter_class=argparse.RawDescriptionHelpFormatter,
-            usage=Fore.RED + Style.BRIGHT + 'dedalus.py generate [arguments]' + Style.RESET_ALL)
+            usage=Fore.RED + Style.BRIGHT + 'pyntacle.py generate [arguments]' + Style.RESET_ALL)
 
         # NOT prefixing the argument with -- means it's not optional
 
@@ -399,7 +399,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
         # Subparser for the nodes case
 
         random_subparser = subparsers.add_parser("random",
-                                                 usage='dedalus.py generate random [-h] [-v] [-o] [-d] [-n INT] [-p FLOAT] [--e INT] [--no-plot]',
+                                                 usage='pyntacle.py generate random [-h] [-v] [-o] [-d] [-n INT] [-p FLOAT] [--e INT] [--no-plot]',
                                                  add_help=False, parents=[parser],
                                                  formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                      max_help_position=100,
@@ -416,7 +416,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
                                       help="The number of random edges that the random graph will have. Is excluded if -p is present")
 
         scalefree_subparser = subparsers.add_parser("scale-free",
-                                                    usage='dedalus.py generate scale-free[-h] [-v] [-o] [-d] [-n INT] [-m INT] [--no-plot]',
+                                                    usage='pyntacle.py generate scale-free[-h] [-v] [-o] [-d] [-n INT] [-m INT] [--no-plot]',
                                                     add_help=False, parents=[parser],
                                                     formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                         max_help_position=100,
@@ -430,7 +430,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
                                          help="Number of outgoing edges for each node in the scale-free graph. Must be a positive integer. If not specified, it will be chosen randomly between 10 and 100")
 
         tree_subparser = subparsers.add_parser("tree",
-                                               usage='dedalus.py generate scale-free[-h] [-v] [-o] [-d] [-n INT] [-c INT] [--no-plot]',
+                                               usage='pyntacle.py generate scale-free[-h] [-v] [-o] [-d] [-n INT] [-c INT] [--no-plot]',
                                                add_help=False, parents=[parser],
                                                formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                    max_help_position=100,
@@ -443,7 +443,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
                                     help="Number of Children per node branch. If not specified, will be a number between 2 and 10")
 
         smallworld_subparser = subparsers.add_parser("small-world",
-                                                     usage='dedalus.py generate scale-free[-h] [-v] [-o] [-d] [-l INT] [-s INT] [-n INT] [-p FLOAT] [--no-plot]',
+                                                     usage='pyntacle.py generate scale-free[-h] [-v] [-o] [-d] [-l INT] [-s INT] [-n INT] [-p FLOAT] [--no-plot]',
                                                      add_help=False, parents=[parser],
                                                      formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                          max_help_position=100,
@@ -466,9 +466,9 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         if len(sys.argv) < 4 or (sys.argv[2] not in ('random', 'scale-free', 'tree', 'small-world')):
             raise Error(
-                'usage: dedalus.py generate {random, scale-free, tree, small-world} [arguments] (use --help for command description)')
+                'usage: pyntacle.py generate {random, scale-free, tree, small-world} [arguments] (use --help for command description)')
 
-        sys.stdout.write('Running Dedalus generate\n')
+        sys.stdout.write('Running pyntacle generate\n')
         gen = generate_command(args)
         try:
             gen.run()
@@ -479,7 +479,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser = argparse.ArgumentParser(
             description='Divide your graph into modules using one of the provided algorithms for module detection and outputs a series of subgraphs\n',
             formatter_class=argparse.RawDescriptionHelpFormatter,
-            usage=Fore.RED + Style.BRIGHT + 'dedalus.py communities' + Fore.GREEN + Style.BRIGHT + ' {fastgreedy, '
+            usage=Fore.RED + Style.BRIGHT + 'pyntacle.py communities' + Fore.GREEN + Style.BRIGHT + ' {fastgreedy, '
                                                                                                    'infomap, leading-eigenvector, community-walktrap} ' + Fore.RED + '[arguments]' + Style.RESET_ALL)
 
         parser.add_argument('-i', '--input_file', metavar='',
@@ -540,7 +540,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
         subparsers = parser.add_subparsers(metavar='', help=argparse.SUPPRESS)
 
         fastgreedy_subparser = subparsers.add_parser("fastgreedy",
-                                                     usage='dedalus.py communities fastgreedy [-h] [-v] [-o] [-d] [-dr] [-m] [-M] [-c] [-C] [--weights] [--clusters] [--no-plot]',
+                                                     usage='pyntacle.py communities fastgreedy [-h] [-v] [-o] [-d] [-dr] [-m] [-M] [-c] [-C] [--weights] [--clusters] [--no-plot]',
                                                      add_help=False, parents=[parser],
                                                      formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                          max_help_position=100,
@@ -561,7 +561,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
                                           help="specify the name of the column attribute that will be used to divide module. If not specified, the first column after the edges in the weights file will be taken")
 
         infomap_subparser = subparsers.add_parser("infomap",
-                                                  usage='dedalus.py communities infomap [-h] [-v] [-o] [-d] [-dr] [-m] [-M] [-c] [-C] [--no-plot]',
+                                                  usage='pyntacle.py communities infomap [-h] [-v] [-o] [-d] [-dr] [-m] [-M] [-c] [-C] [--no-plot]',
                                                   add_help=False, parents=[parser],
                                                   formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                       max_help_position=100,
@@ -570,7 +570,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
         infomap_subparser.set_defaults(which='infomap')
 
         leading_eigenvector_subparser = subparsers.add_parser("leading-eigenvector",
-                                                              usage='dedalus.py communities leading-eigenvector [-h] [-v] [-o] [-d] [-dr] [-m] [-M] [-c] [-C] [--no-plot]',
+                                                              usage='pyntacle.py communities leading-eigenvector [-h] [-v] [-o] [-d] [-dr] [-m] [-M] [-c] [-C] [--no-plot]',
                                                               add_help=False, parents=[parser],
                                                               formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                                   max_help_position=100,
@@ -579,7 +579,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
         leading_eigenvector_subparser.set_defaults(which='leading-eigenvector')
 
         community_walktrap_subparser = subparsers.add_parser("community_walktrap",
-                                                             usage='dedalus.py communities community-walktrap [-h] [-v] [-o] [-d] [-dr] [-m] [-M] [-c] [-C] [--no-plot]',
+                                                             usage='pyntacle.py communities community-walktrap [-h] [-v] [-o] [-d] [-dr] [-m] [-M] [-c] [-C] [--no-plot]',
                                                              add_help=False, parents=[parser],
                                                              formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                                  max_help_position=100,
@@ -607,9 +607,9 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
         if len(sys.argv) < 4 or (
                     sys.argv[2] not in ('fastgreedy', 'infomap', 'leading-eigenvector', 'community-walktrap')):
             raise Error(
-                'usage: dedalus.py communities {fastgreedy, infomap, leading-eigenvector, community-walktrap} [arguments] (use --help for command description)')
+                'usage: pyntacle.py communities {fastgreedy, infomap, leading-eigenvector, community-walktrap} [arguments] (use --help for command description)')
 
-        sys.stdout.write('Running Dedalus communities\n')
+        sys.stdout.write('Running pyntacle communities\n')
 
         comm = communities_command(args)
         try:
@@ -622,7 +622,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser = argparse.ArgumentParser(
             description='perform one of the 3 set operations: union, intersection, difference of two graphs on two input graphs\n',
             formatter_class=argparse.RawDescriptionHelpFormatter,
-            usage=Fore.RED + Style.BRIGHT + 'dedalus.py set ' + Fore.GREEN + Style.BRIGHT + '{union, intersection,'
+            usage=Fore.RED + Style.BRIGHT + 'pyntacle.py set ' + Fore.GREEN + Style.BRIGHT + '{union, intersection,'
                                                                                             ' difference}' + Fore.RED + ' [arguments]' + Style.RESET_ALL)
         # NOT prefixing the argument with -- means it's not optional
         parser.add_argument('-1', '--input-file-1', metavar='',
@@ -634,10 +634,10 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument('-f', '--format', metavar='',
                             choices=format_dictionary.keys(),
                             help="Input format of the input graphs. Allowed values are 'adjmat' for adjacency matrix, 'edgelist' for edge list, sif for Simple Interaction format, \'dot\' for DOT file, \'bin\' for boinary file"
-                                 "The two files must have the same format. If not, use Dedalus Convert to convert your files to the same format")
+                                 "The two files must have the same format. If not, use pyntacle Convert to convert your files to the same format")
 
         parser.add_argument("--no-header", "-n", action="store_true",
-                            help="Specify if the input file Does not contain an header. If one of the two input files has an header, be sure to remove or adding it using Dedalus Convert")
+                            help="Specify if the input file Does not contain an header. If one of the two input files has an header, be sure to remove or adding it using pyntacle Convert")
 
         parser.add_argument('-d', "--directory", metavar='', default=os.getcwd(),
                             help="Directory that will contain results (default is the current working directory). If the directory does not exist, we will create one")
@@ -675,7 +675,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
         subparsers = parser.add_subparsers(metavar='', help=argparse.SUPPRESS)
 
         unite_subparser = subparsers.add_parser("union",
-                                                usage='dedalus.py set union [-1] [-2] [-h] [-v] [-o] [-d] [--output-format STR] [--output-separator] [--no-output-header] [--no-plot]',
+                                                usage='pyntacle.py set union [-1] [-2] [-h] [-v] [-o] [-d] [--output-format STR] [--output-separator] [--no-output-header] [--no-plot]',
                                                 add_help=False, parents=[parser],
                                                 formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                     max_help_position=100,
@@ -683,7 +683,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
         unite_subparser.set_defaults(which='union')
 
         intersection_subparser = subparsers.add_parser("intersection",
-                                                       usage='dedalus.py set union [-1] [-2] [-h] [-v] [-o] [-d] [--output-format STR] [--output-separator] [--no-output-header] [--no-plot]',
+                                                       usage='pyntacle.py set union [-1] [-2] [-h] [-v] [-o] [-d] [--output-format STR] [--output-separator] [--no-output-header] [--no-plot]',
                                                        add_help=False, parents=[parser],
                                                        formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                            max_help_position=100,
@@ -691,7 +691,7 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
         intersection_subparser.set_defaults(which='intersection')
 
         difference_subparser = subparsers.add_parser("difference",
-                                                     usage='dedalus.py set union [-1] [-2] [-h] [-v] [-o] [-d] [--output-format STR] [--output-separator] [--no-output-header] [--no-plot]',
+                                                     usage='pyntacle.py set union [-1] [-2] [-h] [-v] [-o] [-d] [--output-format STR] [--output-separator] [--no-output-header] [--no-plot]',
                                                      add_help=False, parents=[parser],
                                                      formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                          max_help_position=100,
@@ -702,9 +702,9 @@ The available commands in Dedalus are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         if len(sys.argv) <= 5 or (sys.argv[2] not in ('union', 'intersection', 'difference')):
             raise Error(
-                'usage: dedalus.py set {union, intersection, difference} [arguments] (use --help for command description)')
+                'usage: pyntacle.py set {union, intersection, difference} [arguments] (use --help for command description)')
 
-        sys.stdout.write('Running Dedalus set\n')
+        sys.stdout.write('Running pyntacle set\n')
         set = set_command(args)
         try:
             set.run()

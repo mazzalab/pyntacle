@@ -1,7 +1,7 @@
-Dedalus\.commands\.keyplayer module
+pyntacle\.commands\.keyplayer module
 ===================================
 
-.. automodule:: Dedalus.commands.keyplayer
+.. automodule:: pyntacle.commands.keyplayer
     :members:
     :undoc-members:
     :show-inheritance:

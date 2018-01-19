@@ -1,7 +1,7 @@
-Dedalus\.algorithms\.key\_player module
+pyntacle\.algorithms\.key\_player module
 =======================================
 
-.. automodule:: Dedalus.algorithms.key_player
+.. automodule:: pyntacle.algorithms.key_player
     :members:
     :undoc-members:
     :show-inheritance:

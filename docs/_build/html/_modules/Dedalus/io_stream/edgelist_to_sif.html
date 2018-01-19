@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Dedalus.io_stream.edgelist_to_sif &mdash; Dedalus  documentation</title>
+  <title>pyntacle.io_stream.edgelist_to_sif &mdash; pyntacle  documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="Dedalus  documentation" href="../../../index.html"/>
+    <link rel="top" title="pyntacle  documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Dedalus
+            <a href="../../../index.html" class="icon icon-home"> pyntacle
           
 
           
@@ -88,7 +88,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../Dedalus.html">Dedalus package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyntacle.html">pyntacle package</a></li>
 </ul>
 
             
@@ -103,7 +103,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Dedalus</a>
+          <a href="../../../index.html">pyntacle</a>
         
       </nav>
 
@@ -135,7 +135,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>Dedalus.io_stream.edgelist_to_sif</li>
+      <li>pyntacle.io_stream.edgelist_to_sif</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -152,7 +152,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for Dedalus.io_stream.edgelist_to_sif</h1><div class="highlight"><pre>
+  <h1>Source code for pyntacle.io_stream.edgelist_to_sif</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
@@ -165,7 +165,7 @@
 <span class="sd">&#39;&#39;&#39;</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo, Mauro Truglio, Tommaso Mazza&quot;</span>
-<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The Dedalus Project&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The pyntacle Project&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ferenc Jordan&quot;</span><span class="p">]</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo&quot;</span>
@@ -193,7 +193,7 @@
 <span class="s2">  &quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="EdgeListToCytoscape"><a class="viewcode-back" href="../../../Dedalus.io_stream.edgelist_to_sif.html#Dedalus.io_stream.edgelist_to_sif.EdgeListToCytoscape">[docs]</a><span class="k">class</span> <span class="nc">EdgeListToCytoscape</span><span class="p">():</span>
+<div class="viewcode-block" id="EdgeListToCytoscape"><a class="viewcode-back" href="../../../pyntacle.io_stream.edgelist_to_sif.html#pyntacle.io_stream.edgelist_to_sif.EdgeListToCytoscape">[docs]</a><span class="k">class</span> <span class="nc">EdgeListToCytoscape</span><span class="p">():</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This class converts an edge list into a sif file (simple interaction format) in the most basic way:</span>
 <span class="sd">    a tab delimited file in which each line represent an edge (so node A \t node B)</span>
@@ -217,7 +217,7 @@
 
             <span class="k">if</span> <span class="n">ismulti</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;The edge list is a multigraph. Be advised that it will not work with other Dedalus Features&quot;</span><span class="p">)</span>
+                    <span class="s2">&quot;The edge list is a multigraph. Be advised that it will not work with other pyntacle Features&quot;</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">infile</span> <span class="o">=</span> <span class="n">input_file</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">headerflag</span> <span class="o">=</span> <span class="n">header</span>
@@ -256,7 +256,7 @@
                 <span class="n">pair</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">separator</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">edgelist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span>  <span class="c1"># a list of lists</span>
 
-<div class="viewcode-block" id="EdgeListToCytoscape.get_sif"><a class="viewcode-back" href="../../../Dedalus.io_stream.edgelist_to_sif.html#Dedalus.io_stream.edgelist_to_sif.EdgeListToCytoscape.get_sif">[docs]</a>    <span class="k">def</span> <span class="nf">get_sif</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="EdgeListToCytoscape.get_sif"><a class="viewcode-back" href="../../../pyntacle.io_stream.edgelist_to_sif.html#pyntacle.io_stream.edgelist_to_sif.EdgeListToCytoscape.get_sif">[docs]</a>    <span class="k">def</span> <span class="nf">get_sif</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        **[EXPAND]**</span>
 <span class="sd">        </span>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Dedalus.utils.adjmatrix_utils &mdash; Dedalus  documentation</title>
+  <title>pyntacle.utils.adjmatrix_utils &mdash; pyntacle  documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="Dedalus  documentation" href="../../../index.html"/>
+    <link rel="top" title="pyntacle  documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Dedalus
+            <a href="../../../index.html" class="icon icon-home"> pyntacle
           
 
           
@@ -88,7 +88,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../Dedalus.html">Dedalus package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyntacle.html">pyntacle package</a></li>
 </ul>
 
             
@@ -103,7 +103,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Dedalus</a>
+          <a href="../../../index.html">pyntacle</a>
         
       </nav>
 
@@ -135,7 +135,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>Dedalus.utils.adjmatrix_utils</li>
+      <li>pyntacle.utils.adjmatrix_utils</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -152,7 +152,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for Dedalus.utils.adjmatrix_utils</h1><div class="highlight"><pre>
+  <h1>Source code for pyntacle.utils.adjmatrix_utils</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Utilities made for common adjacency matrix file operations</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -162,7 +162,7 @@
 <span class="kn">from</span> <span class="nn">config</span> <span class="k">import</span> <span class="o">*</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo, Mauro Truglio, Tommaso Mazza&quot;</span>
-<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The Dedalus Project&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The pyntacle Project&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ferenc Jordan&quot;</span><span class="p">]</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo&quot;</span>
@@ -190,7 +190,7 @@
 <span class="s2">  &quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="AdjmUtils"><a class="viewcode-back" href="../../../Dedalus.utils.adjmatrix_utils.html#Dedalus.utils.adjmatrix_utils.AdjmUtils">[docs]</a><span class="k">class</span> <span class="nc">AdjmUtils</span><span class="p">():</span>
+<div class="viewcode-block" id="AdjmUtils"><a class="viewcode-back" href="../../../pyntacle.utils.adjmatrix_utils.html#pyntacle.utils.adjmatrix_utils.AdjmUtils">[docs]</a><span class="k">class</span> <span class="nc">AdjmUtils</span><span class="p">():</span>
     <span class="n">logger</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -211,7 +211,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">sep</span> <span class="o">=</span> <span class="n">separator</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">header</span>  <span class="c1"># boolean to check if header is present</span>
 
-<div class="viewcode-block" id="AdjmUtils.is_squared"><a class="viewcode-back" href="../../../Dedalus.utils.adjmatrix_utils.html#Dedalus.utils.adjmatrix_utils.AdjmUtils.is_squared">[docs]</a>    <span class="k">def</span> <span class="nf">is_squared</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AdjmUtils.is_squared"><a class="viewcode-back" href="../../../pyntacle.utils.adjmatrix_utils.html#pyntacle.utils.adjmatrix_utils.AdjmUtils.is_squared">[docs]</a>    <span class="k">def</span> <span class="nf">is_squared</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Utilitiy to check if an adjaceny matrix is squared or not by checking if the number of lines</span>
 <span class="sd">        </span>
@@ -278,7 +278,7 @@
 
         <span class="k">return</span> <span class="n">outpath</span>
 
-<div class="viewcode-block" id="AdjmUtils.is_weighted"><a class="viewcode-back" href="../../../Dedalus.utils.adjmatrix_utils.html#Dedalus.utils.adjmatrix_utils.AdjmUtils.is_weighted">[docs]</a>    <span class="k">def</span> <span class="nf">is_weighted</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AdjmUtils.is_weighted"><a class="viewcode-back" href="../../../pyntacle.utils.adjmatrix_utils.html#pyntacle.utils.adjmatrix_utils.AdjmUtils.is_weighted">[docs]</a>    <span class="k">def</span> <span class="nf">is_weighted</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Function that returns a boolean telling whether the adjacency matrix is weighted or not</span>
 <span class="sd">        </span>
@@ -296,7 +296,7 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">weightbool</span></div>
 
-<div class="viewcode-block" id="AdjmUtils.remove_weigths"><a class="viewcode-back" href="../../../Dedalus.utils.adjmatrix_utils.html#Dedalus.utils.adjmatrix_utils.AdjmUtils.remove_weigths">[docs]</a>    <span class="k">def</span> <span class="nf">remove_weigths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AdjmUtils.remove_weigths"><a class="viewcode-back" href="../../../pyntacle.utils.adjmatrix_utils.html#pyntacle.utils.adjmatrix_utils.AdjmUtils.remove_weigths">[docs]</a>    <span class="k">def</span> <span class="nf">remove_weigths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Convert matrix to unweighted by setting every value different from 1 to 1 and write it to a new file</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -313,7 +313,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">__write_adjm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adjm</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span> <span class="n">appendix</span><span class="o">=</span><span class="s2">&quot;unweighted&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="AdjmUtils.is_direct"><a class="viewcode-back" href="../../../Dedalus.utils.adjmatrix_utils.html#Dedalus.utils.adjmatrix_utils.AdjmUtils.is_direct">[docs]</a>    <span class="k">def</span> <span class="nf">is_direct</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AdjmUtils.is_direct"><a class="viewcode-back" href="../../../pyntacle.utils.adjmatrix_utils.html#pyntacle.utils.adjmatrix_utils.AdjmUtils.is_direct">[docs]</a>    <span class="k">def</span> <span class="nf">is_direct</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Function to check whether an adjacency matrix is direct or not</span>
 <span class="sd">        </span>
@@ -330,7 +330,7 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">directbool</span></div>
 
-<div class="viewcode-block" id="AdjmUtils.make_undirect"><a class="viewcode-back" href="../../../Dedalus.utils.adjmatrix_utils.html#Dedalus.utils.adjmatrix_utils.AdjmUtils.make_undirect">[docs]</a>    <span class="k">def</span> <span class="nf">make_undirect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AdjmUtils.make_undirect"><a class="viewcode-back" href="../../../pyntacle.utils.adjmatrix_utils.html#pyntacle.utils.adjmatrix_utils.AdjmUtils.make_undirect">[docs]</a>    <span class="k">def</span> <span class="nf">make_undirect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Convert an undirect network to a direct one and write it to a new file</span>
 <span class="sd">        &#39;&#39;&#39;</span>

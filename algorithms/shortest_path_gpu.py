@@ -1,7 +1,7 @@
 # import os
-# from Dedalus.io_stream.adjacencymatrix_to_graph import AdjacencyMatrixToGraph
-from Dedalus.algorithms.local_topology import LocalTopology
-from Dedalus.graph_generator.graph_igraph_generator import ErdosRenyiGenerator
+# from pyntacle.io_stream.adjacencymatrix_to_graph import AdjacencyMatrixToGraph
+from pyntacle.algorithms.local_topology import LocalTopology
+from pyntacle.graph_generator.graph_igraph_generator import ErdosRenyiGenerator
 from numba import jit, cuda
 import numpy as np
 import time

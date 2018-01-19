@@ -1,7 +1,7 @@
-Dedalus\.misc\.binarycheck module
+pyntacle\.misc\.binarycheck module
 =================================
 
-.. automodule:: Dedalus.misc.binarycheck
+.. automodule:: pyntacle.misc.binarycheck
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,7 +1,7 @@
-Dedalus\.commands\.set module
+pyntacle\.commands\.set module
 =============================
 
-.. automodule:: Dedalus.commands.set
+.. automodule:: pyntacle.commands.set
     :members:
     :undoc-members:
     :show-inheritance:

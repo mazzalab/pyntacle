@@ -1,7 +1,7 @@
-Dedalus\.commands\.communities module
+pyntacle\.commands\.communities module
 =====================================
 
-.. automodule:: Dedalus.commands.communities
+.. automodule:: pyntacle.commands.communities
     :members:
     :undoc-members:
     :show-inheritance:

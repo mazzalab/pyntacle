@@ -1,7 +1,7 @@
-Dedalus\.report package
+pyntacle\.report package
 =======================
 
-.. automodule:: Dedalus.report
+.. automodule:: pyntacle.report
     :members:
     :undoc-members:
     :show-inheritance:
@@ -11,6 +11,6 @@ Submodules
 
 .. toctree::
 
-   Dedalus.report.plotter
-   Dedalus.report.reporter
+   pyntacle.report.plotter
+   pyntacle.report.reporter
 

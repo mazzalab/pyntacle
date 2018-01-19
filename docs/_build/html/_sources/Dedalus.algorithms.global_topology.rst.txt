@@ -1,7 +1,7 @@
-Dedalus\.algorithms\.global\_topology module
+pyntacle\.algorithms\.global\_topology module
 ============================================
 
-.. automodule:: Dedalus.algorithms.global_topology
+.. automodule:: pyntacle.algorithms.global_topology
     :members:
     :undoc-members:
     :show-inheritance:

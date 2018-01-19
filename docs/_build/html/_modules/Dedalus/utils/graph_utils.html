@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Dedalus.utils.graph_utils &mdash; Dedalus  documentation</title>
+  <title>pyntacle.utils.graph_utils &mdash; pyntacle  documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="Dedalus  documentation" href="../../../index.html"/>
+    <link rel="top" title="pyntacle  documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Dedalus
+            <a href="../../../index.html" class="icon icon-home"> pyntacle
           
 
           
@@ -88,7 +88,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../Dedalus.html">Dedalus package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyntacle.html">pyntacle package</a></li>
 </ul>
 
             
@@ -103,7 +103,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Dedalus</a>
+          <a href="../../../index.html">pyntacle</a>
         
       </nav>
 
@@ -135,7 +135,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>Dedalus.utils.graph_utils</li>
+      <li>pyntacle.utils.graph_utils</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -152,13 +152,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for Dedalus.utils.graph_utils</h1><div class="highlight"><pre>
+  <h1>Source code for pyntacle.utils.graph_utils</h1><div class="highlight"><pre>
 <span></span><span class="c1"># external libraries</span>
 <span class="kn">from</span> <span class="nn">config</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">igraph</span> <span class="k">import</span> <span class="n">Graph</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="c1"># Dedalus libraries</span>
+<span class="c1"># pyntacle libraries</span>
 <span class="kn">from</span> <span class="nn">exception.illegal_graph_size_error</span> <span class="k">import</span> <span class="n">IllegalGraphSizeError</span>
 <span class="kn">from</span> <span class="nn">exception.missing_attribute_error</span> <span class="k">import</span> <span class="n">MissingAttributeError</span>
 <span class="kn">from</span> <span class="nn">exception.notagraph_error</span> <span class="k">import</span> <span class="n">NotAGraphError</span>
@@ -171,7 +171,7 @@
 <span class="sd">&#39;&#39;&#39;</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo, Mauro Truglio, Tommaso Mazza&quot;</span>
-<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The Dedalus Project&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The pyntacle Project&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ferenc Jordan&quot;</span><span class="p">]</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo&quot;</span>
@@ -199,7 +199,7 @@
 <span class="s2">  &quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="GraphUtils"><a class="viewcode-back" href="../../../Dedalus.utils.graph_utils.html#Dedalus.utils.graph_utils.GraphUtils">[docs]</a><span class="k">class</span> <span class="nc">GraphUtils</span><span class="p">():</span>
+<div class="viewcode-block" id="GraphUtils"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils">[docs]</a><span class="k">class</span> <span class="nc">GraphUtils</span><span class="p">():</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    A series of methods that can be performed on graph and that can be accessed pretty quickly</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -224,7 +224,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span> <span class="o">=</span> <span class="n">graph</span>
 
-<div class="viewcode-block" id="GraphUtils.graph_checker"><a class="viewcode-back" href="../../../Dedalus.utils.graph_utils.html#Dedalus.utils.graph_utils.GraphUtils.graph_checker">[docs]</a>    <span class="k">def</span> <span class="nf">graph_checker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="GraphUtils.graph_checker"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.graph_checker">[docs]</a>    <span class="k">def</span> <span class="nf">graph_checker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **[EXPAND]**</span>
 <span class="sd">        </span>
@@ -232,7 +232,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">Graph</span><span class="o">.</span><span class="n">is_directed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">UnsupportedGrapherror</span><span class="p">(</span><span class="s2">&quot;Input graph is direct, Dedalus supports only undirected graphs&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">UnsupportedGrapherror</span><span class="p">(</span><span class="s2">&quot;Input graph is direct, pyntacle supports only undirected graphs&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">Graph</span><span class="o">.</span><span class="n">is_simple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">UnsupportedGrapherror</span><span class="p">(</span><span class="s2">&quot;Input Graph contains self loops and multiple edges&quot;</span><span class="p">)</span>
@@ -245,7 +245,7 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()[</span><span class="s2">&quot;name&quot;</span><span class="p">]))</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()[</span><span class="s2">&quot;name&quot;</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">UnsupportedGrapherror</span><span class="p">(</span><span class="s2">&quot;Node names must be unique, check the </span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2"> attribute in graph&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GraphUtils.check_index_list"><a class="viewcode-back" href="../../../Dedalus.utils.graph_utils.html#Dedalus.utils.graph_utils.GraphUtils.check_index_list">[docs]</a>    <span class="k">def</span> <span class="nf">check_index_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="p">):</span>
+<div class="viewcode-block" id="GraphUtils.check_index_list"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.check_index_list">[docs]</a>    <span class="k">def</span> <span class="nf">check_index_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **[EXPAND]**</span>
 <span class="sd">        </span>
@@ -270,7 +270,7 @@
 
         <span class="k">return</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="GraphUtils.check_name_list"><a class="viewcode-back" href="../../../Dedalus.utils.graph_utils.html#Dedalus.utils.graph_utils.GraphUtils.check_name_list">[docs]</a>    <span class="k">def</span> <span class="nf">check_name_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+<div class="viewcode-block" id="GraphUtils.check_name_list"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.check_name_list">[docs]</a>    <span class="k">def</span> <span class="nf">check_name_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **[EXPAND]**</span>
 <span class="sd">        </span>
@@ -297,7 +297,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;The names list contains duplicated node names, &quot;</span>
                                 <span class="s2">&quot;so there will be a double index in index list&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GraphUtils.attribute_in_nodes"><a class="viewcode-back" href="../../../Dedalus.utils.graph_utils.html#Dedalus.utils.graph_utils.GraphUtils.attribute_in_nodes">[docs]</a>    <span class="k">def</span> <span class="nf">attribute_in_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
+<div class="viewcode-block" id="GraphUtils.attribute_in_nodes"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.attribute_in_nodes">[docs]</a>    <span class="k">def</span> <span class="nf">attribute_in_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **[EXPAND]**</span>
 <span class="sd">        </span>
@@ -309,7 +309,7 @@
         <span class="k">if</span> <span class="n">attribute</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()</span><span class="o">.</span><span class="n">attributes</span><span class="p">():</span>
             <span class="k">raise</span> <span class="n">MissingAttributeError</span><span class="p">(</span><span class="s2">&quot;attribute specified is not present in graph nodes&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GraphUtils.attribute_in_edges"><a class="viewcode-back" href="../../../Dedalus.utils.graph_utils.html#Dedalus.utils.graph_utils.GraphUtils.attribute_in_edges">[docs]</a>    <span class="k">def</span> <span class="nf">attribute_in_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
+<div class="viewcode-block" id="GraphUtils.attribute_in_edges"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.attribute_in_edges">[docs]</a>    <span class="k">def</span> <span class="nf">attribute_in_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **[EXPAND]**</span>
 <span class="sd">        </span>
@@ -321,7 +321,7 @@
         <span class="k">if</span> <span class="n">attribute</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">es</span><span class="p">()</span><span class="o">.</span><span class="n">attributes</span><span class="p">():</span>
             <span class="k">raise</span> <span class="n">MissingAttributeError</span><span class="p">(</span><span class="s2">&quot;attribute specified is not present in graph edges&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GraphUtils.attribute_in_graph"><a class="viewcode-back" href="../../../Dedalus.utils.graph_utils.html#Dedalus.utils.graph_utils.GraphUtils.attribute_in_graph">[docs]</a>    <span class="k">def</span> <span class="nf">attribute_in_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
+<div class="viewcode-block" id="GraphUtils.attribute_in_graph"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.attribute_in_graph">[docs]</a>    <span class="k">def</span> <span class="nf">attribute_in_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **[EXPAND]**</span>
 <span class="sd">        </span>
@@ -333,7 +333,7 @@
         <span class="k">if</span> <span class="n">attribute</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">attributes</span><span class="p">():</span>
             <span class="k">raise</span> <span class="n">MissingAttributeError</span><span class="p">(</span><span class="s2">&quot;attribute specified is not present in graph&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GraphUtils.check_attribute_type"><a class="viewcode-back" href="../../../Dedalus.utils.graph_utils.html#Dedalus.utils.graph_utils.GraphUtils.check_attribute_type">[docs]</a>    <span class="k">def</span> <span class="nf">check_attribute_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">attribute_types</span><span class="p">):</span>
+<div class="viewcode-block" id="GraphUtils.check_attribute_type"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.check_attribute_type">[docs]</a>    <span class="k">def</span> <span class="nf">check_attribute_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">attribute_types</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Check that attributes are coherent and present in the graph</span>
 <span class="sd">        </span>
@@ -345,7 +345,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attribute</span><span class="p">,</span> <span class="n">attribute_types</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">MissingAttributeError</span><span class="p">(</span><span class="s2">&quot;the value </span><span class="si">{}</span><span class="s2"> is not a  legal AttributeType&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">attribute</span><span class="p">)))</span></div>
 
-<div class="viewcode-block" id="GraphUtils.check_attributes_types"><a class="viewcode-back" href="../../../Dedalus.utils.graph_utils.html#Dedalus.utils.graph_utils.GraphUtils.check_attributes_types">[docs]</a>    <span class="k">def</span> <span class="nf">check_attributes_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">attribute_types</span><span class="p">):</span>
+<div class="viewcode-block" id="GraphUtils.check_attributes_types"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.check_attributes_types">[docs]</a>    <span class="k">def</span> <span class="nf">check_attributes_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">attribute_types</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Check that attributes are coherent and present in the graph</span>
 <span class="sd">        </span>
@@ -364,7 +364,7 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="n">attribute_types</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="n">MissingAttributeError</span><span class="p">(</span><span class="s2">&quot;the value </span><span class="si">{}</span><span class="s2"> is not a  legal AttributeType&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">elem</span><span class="p">)))</span></div>
 
-<div class="viewcode-block" id="GraphUtils.get_node_names"><a class="viewcode-back" href="../../../Dedalus.utils.graph_utils.html#Dedalus.utils.graph_utils.GraphUtils.get_node_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_node_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<div class="viewcode-block" id="GraphUtils.get_node_names"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.get_node_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_node_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Convert a list of indices to a list of node names (the original ID)</span>
 <span class="sd">        </span>
@@ -377,7 +377,7 @@
 
         <span class="k">return</span> <span class="n">names_list</span></div>
 
-<div class="viewcode-block" id="GraphUtils.get_node_indices"><a class="viewcode-back" href="../../../Dedalus.utils.graph_utils.html#Dedalus.utils.graph_utils.GraphUtils.get_node_indices">[docs]</a>    <span class="k">def</span> <span class="nf">get_node_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<div class="viewcode-block" id="GraphUtils.get_node_indices"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.get_node_indices">[docs]</a>    <span class="k">def</span> <span class="nf">get_node_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Convert a list of names into a list of indices</span>
 <span class="sd">        </span>
@@ -400,7 +400,7 @@
 
         <span class="k">return</span> <span class="n">index_list</span></div>
 
-<div class="viewcode-block" id="GraphUtils.get_attribute_names"><a class="viewcode-back" href="../../../Dedalus.utils.graph_utils.html#Dedalus.utils.graph_utils.GraphUtils.get_attribute_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_attribute_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;graph&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<div class="viewcode-block" id="GraphUtils.get_attribute_names"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.get_attribute_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_attribute_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;graph&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **[EXPAND]**</span>
 <span class="sd">        </span>
@@ -446,7 +446,7 @@
 
         <span class="k">return</span> <span class="n">attribute_names</span></div>
 
-<div class="viewcode-block" id="GraphUtils.get_largest_component"><a class="viewcode-back" href="../../../Dedalus.utils.graph_utils.html#Dedalus.utils.graph_utils.GraphUtils.get_largest_component">[docs]</a>    <span class="k">def</span> <span class="nf">get_largest_component</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="GraphUtils.get_largest_component"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.get_largest_component">[docs]</a>    <span class="k">def</span> <span class="nf">get_largest_component</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the maximum component of a graph (a subrgraph of the original one)</span>
 <span class="sd">        </span>

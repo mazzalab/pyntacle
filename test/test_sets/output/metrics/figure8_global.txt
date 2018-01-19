@@ -1,4 +1,4 @@
-Dedalus Report: Metrics - Global Topology	
+pyntacle Report: Metrics - Global Topology
 graph name	figure_8	
 components	1	
 nodes	32	

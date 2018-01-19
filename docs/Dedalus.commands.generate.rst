@@ -1,7 +1,7 @@
-Dedalus\.commands\.generate module
+pyntacle\.commands\.generate module
 ==================================
 
-.. automodule:: Dedalus.commands.generate
+.. automodule:: pyntacle.commands.generate
     :members:
     :undoc-members:
     :show-inheritance:

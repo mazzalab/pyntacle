@@ -1,7 +1,7 @@
-Dedalus\.utils\.export\_attributes module
+pyntacle\.utils\.export\_attributes module
 =========================================
 
-.. automodule:: Dedalus.utils.export_attributes
+.. automodule:: pyntacle.utils.export_attributes
     :members:
     :undoc-members:
     :show-inheritance:

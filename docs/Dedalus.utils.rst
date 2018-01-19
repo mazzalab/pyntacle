@@ -1,7 +1,7 @@
-Dedalus\.utils package
+pyntacle\.utils package
 ======================
 
-.. automodule:: Dedalus.utils
+.. automodule:: pyntacle.utils
     :members:
     :undoc-members:
     :show-inheritance:
@@ -11,10 +11,10 @@ Submodules
 
 .. toctree::
 
-   Dedalus.utils.add_attributes
-   Dedalus.utils.adjmatrix_utils
-   Dedalus.utils.edgelist_utils
-   Dedalus.utils.export_attributes
-   Dedalus.utils.graph_utils
-   Dedalus.utils.modules_utils
+   pyntacle.utils.add_attributes
+   pyntacle.utils.adjmatrix_utils
+   pyntacle.utils.edgelist_utils
+   pyntacle.utils.export_attributes
+   pyntacle.utils.graph_utils
+   pyntacle.utils.modules_utils
 

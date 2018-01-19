@@ -1,7 +1,7 @@
-Dedalus\.dedalus module
+pyntacle\.pyntacle module
 =======================
 
-.. automodule:: Dedalus.dedalus
+.. automodule:: pyntacle.pyntacle
     :members:
     :undoc-members:
     :show-inheritance:

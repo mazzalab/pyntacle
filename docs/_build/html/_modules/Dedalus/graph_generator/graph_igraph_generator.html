@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Dedalus.graph_generator.graph_igraph_generator &mdash; Dedalus  documentation</title>
+  <title>pyntacle.graph_generator.graph_igraph_generator &mdash; pyntacle  documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="Dedalus  documentation" href="../../../index.html"/>
+    <link rel="top" title="pyntacle  documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Dedalus
+            <a href="../../../index.html" class="icon icon-home"> pyntacle
           
 
           
@@ -88,7 +88,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../Dedalus.html">Dedalus package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyntacle.html">pyntacle package</a></li>
 </ul>
 
             
@@ -103,7 +103,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Dedalus</a>
+          <a href="../../../index.html">pyntacle</a>
         
       </nav>
 
@@ -135,7 +135,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>Dedalus.graph_generator.graph_igraph_generator</li>
+      <li>pyntacle.graph_generator.graph_igraph_generator</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -152,7 +152,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for Dedalus.graph_generator.graph_igraph_generator</h1><div class="highlight"><pre>
+  <h1>Source code for pyntacle.graph_generator.graph_igraph_generator</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Generator classes of undirected graphs with known topologies.</span>
 <span class="sd">Envisioned models are: Erdos-Renyi, Scale-free, Tree and Small-world</span>
@@ -164,11 +164,11 @@
 <span class="kn">from</span> <span class="nn">igraph</span> <span class="k">import</span> <span class="n">Graph</span>
 <span class="kn">from</span> <span class="nn">config</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">exception.illegal_argument_number_error</span> <span class="k">import</span> <span class="n">IllegalArgumentNumberError</span>
-<span class="c1"># Dedalus Libraries</span>
+<span class="c1"># pyntacle Libraries</span>
 <span class="kn">from</span> <span class="nn">utils.add_attributes</span> <span class="k">import</span> <span class="n">AddAttributes</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo, Mauro Truglio, Tommaso Mazza&quot;</span>
-<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The Dedalus Project&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The pyntacle Project&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ferenc Jordan&quot;</span><span class="p">]</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo&quot;</span>
@@ -196,12 +196,12 @@
 <span class="s2">  &quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="randomword"><a class="viewcode-back" href="../../../Dedalus.graph_generator.graph_igraph_generator.html#Dedalus.graph_generator.graph_igraph_generator.randomword">[docs]</a><span class="k">def</span> <span class="nf">randomword</span><span class="p">(</span><span class="n">length</span><span class="p">):</span>
+<div class="viewcode-block" id="randomword"><a class="viewcode-back" href="../../../pyntacle.graph_generator.graph_igraph_generator.html#pyntacle.graph_generator.graph_igraph_generator.randomword">[docs]</a><span class="k">def</span> <span class="nf">randomword</span><span class="p">(</span><span class="n">length</span><span class="p">):</span>
     <span class="n">letters</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span>
     <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">letters</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="ErdosRenyiGenerator"><a class="viewcode-back" href="../../../Dedalus.graph_generator.graph_igraph_generator.html#Dedalus.graph_generator.graph_igraph_generator.ErdosRenyiGenerator">[docs]</a><span class="k">class</span> <span class="nc">ErdosRenyiGenerator</span><span class="p">:</span>
+<div class="viewcode-block" id="ErdosRenyiGenerator"><a class="viewcode-back" href="../../../pyntacle.graph_generator.graph_igraph_generator.html#pyntacle.graph_generator.graph_igraph_generator.ErdosRenyiGenerator">[docs]</a><span class="k">class</span> <span class="nc">ErdosRenyiGenerator</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class generator of Erdos-Renyi-based random graphs with a specified number of nodes and a probability of wiring</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -209,7 +209,7 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">log</span>
 
-<div class="viewcode-block" id="ErdosRenyiGenerator.generate"><a class="viewcode-back" href="../../../Dedalus.graph_generator.graph_igraph_generator.html#Dedalus.graph_generator.graph_igraph_generator.ErdosRenyiGenerator.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+<div class="viewcode-block" id="ErdosRenyiGenerator.generate"><a class="viewcode-back" href="../../../pyntacle.graph_generator.graph_igraph_generator.html#pyntacle.graph_generator.graph_igraph_generator.ErdosRenyiGenerator.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        It generates a random graph based on the Erdos-Renyi model</span>
 <span class="sd">        </span>
@@ -248,7 +248,7 @@
             <span class="k">return</span> <span class="n">graph</span></div></div>
 
 
-<div class="viewcode-block" id="BarabasiAlbertGenerator"><a class="viewcode-back" href="../../../Dedalus.graph_generator.graph_igraph_generator.html#Dedalus.graph_generator.graph_igraph_generator.BarabasiAlbertGenerator">[docs]</a><span class="k">class</span> <span class="nc">BarabasiAlbertGenerator</span><span class="p">:</span>
+<div class="viewcode-block" id="BarabasiAlbertGenerator"><a class="viewcode-back" href="../../../pyntacle.graph_generator.graph_igraph_generator.html#pyntacle.graph_generator.graph_igraph_generator.BarabasiAlbertGenerator">[docs]</a><span class="k">class</span> <span class="nc">BarabasiAlbertGenerator</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class generator of Erdos-Renyi-based random graphs with a specified number of nodes and a probability of wiring</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -256,7 +256,7 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">log</span>
 
-<div class="viewcode-block" id="BarabasiAlbertGenerator.generate"><a class="viewcode-back" href="../../../Dedalus.graph_generator.graph_igraph_generator.html#Dedalus.graph_generator.graph_igraph_generator.BarabasiAlbertGenerator.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+<div class="viewcode-block" id="BarabasiAlbertGenerator.generate"><a class="viewcode-back" href="../../../pyntacle.graph_generator.graph_igraph_generator.html#pyntacle.graph_generator.graph_igraph_generator.BarabasiAlbertGenerator.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        It generates a graph based on the Barabasi-Albert model</span>
 <span class="sd">        </span>
@@ -280,7 +280,7 @@
             <span class="k">return</span> <span class="n">graph</span></div></div>
 
 
-<div class="viewcode-block" id="TreeGenerator"><a class="viewcode-back" href="../../../Dedalus.graph_generator.graph_igraph_generator.html#Dedalus.graph_generator.graph_igraph_generator.TreeGenerator">[docs]</a><span class="k">class</span> <span class="nc">TreeGenerator</span><span class="p">:</span>
+<div class="viewcode-block" id="TreeGenerator"><a class="viewcode-back" href="../../../pyntacle.graph_generator.graph_igraph_generator.html#pyntacle.graph_generator.graph_igraph_generator.TreeGenerator">[docs]</a><span class="k">class</span> <span class="nc">TreeGenerator</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class generator of a Tree with a specified number of nodes and children of each node</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -288,7 +288,7 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">log</span>
 
-<div class="viewcode-block" id="TreeGenerator.generate"><a class="viewcode-back" href="../../../Dedalus.graph_generator.graph_igraph_generator.html#Dedalus.graph_generator.graph_igraph_generator.TreeGenerator.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+<div class="viewcode-block" id="TreeGenerator.generate"><a class="viewcode-back" href="../../../pyntacle.graph_generator.graph_igraph_generator.html#pyntacle.graph_generator.graph_igraph_generator.TreeGenerator.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        It generates a tree in which almost all vertices have the same number of children</span>
 <span class="sd">        </span>
@@ -312,7 +312,7 @@
             <span class="k">return</span> <span class="n">graph</span></div></div>
 
 
-<div class="viewcode-block" id="SmallWorldGenerator"><a class="viewcode-back" href="../../../Dedalus.graph_generator.graph_igraph_generator.html#Dedalus.graph_generator.graph_igraph_generator.SmallWorldGenerator">[docs]</a><span class="k">class</span> <span class="nc">SmallWorldGenerator</span><span class="p">:</span>
+<div class="viewcode-block" id="SmallWorldGenerator"><a class="viewcode-back" href="../../../pyntacle.graph_generator.graph_igraph_generator.html#pyntacle.graph_generator.graph_igraph_generator.SmallWorldGenerator">[docs]</a><span class="k">class</span> <span class="nc">SmallWorldGenerator</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class generator of Watts_Strogatz -based random graphs with a specified dimension of the lattice, the size of the</span>
 <span class="sd">    lattice along all dimensions, a value giving the distance (number of steps) within which two vertices</span>
@@ -322,7 +322,7 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">log</span>
 
-<div class="viewcode-block" id="SmallWorldGenerator.generate"><a class="viewcode-back" href="../../../Dedalus.graph_generator.graph_igraph_generator.html#Dedalus.graph_generator.graph_igraph_generator.SmallWorldGenerator.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+<div class="viewcode-block" id="SmallWorldGenerator.generate"><a class="viewcode-back" href="../../../pyntacle.graph_generator.graph_igraph_generator.html#pyntacle.graph_generator.graph_igraph_generator.SmallWorldGenerator.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        It generates a graph based on the Watts_Strogatz model</span>
 <span class="sd">        </span>

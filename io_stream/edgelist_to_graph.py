@@ -5,7 +5,7 @@ This class parses a serialized graph (adjacency list) and converts it into a Gra
 from igraph import *
 import pandas as pd
 
-# Dedalus Libraries
+# pyntacle Libraries
 from exception.wrong_argument_error import WrongArgumentError
 from io_stream.igraph_importer import IGraphImporter
 from utils import edgelist_utils
@@ -13,7 +13,7 @@ from utils.add_attributes import AddAttributes
 from config import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The Dedalus Project"
+__copyright__ = "Copyright 2016, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -68,7 +68,7 @@ class EdgeListToGraph(IGraphImporter):
 
         eglutils = edgelist_utils.EglUtils(file=file_name, header=header, separator=separator)
 
-        if not eglutils.is_dedalus_ready():
+        if not eglutils.is_pyntacle_ready():
             raise ValueError("Edgelist is a multigraph or there is some direct edge")
 
         graph = Graph()

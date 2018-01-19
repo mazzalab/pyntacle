@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Dedalus.algorithms.sparseness &mdash; Dedalus  documentation</title>
+  <title>pyntacle.algorithms.sparseness &mdash; pyntacle  documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="Dedalus  documentation" href="../../../index.html"/>
+    <link rel="top" title="pyntacle  documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Dedalus
+            <a href="../../../index.html" class="icon icon-home"> pyntacle
           
 
           
@@ -88,7 +88,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../Dedalus.html">Dedalus package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyntacle.html">pyntacle package</a></li>
 </ul>
 
             
@@ -103,7 +103,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Dedalus</a>
+          <a href="../../../index.html">pyntacle</a>
         
       </nav>
 
@@ -135,7 +135,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>Dedalus.algorithms.sparseness</li>
+      <li>pyntacle.algorithms.sparseness</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -152,7 +152,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for Dedalus.algorithms.sparseness</h1><div class="highlight"><pre>
+  <h1>Source code for pyntacle.algorithms.sparseness</h1><div class="highlight"><pre>
 <span></span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">this module implements several implementations of a sparseness index as proposed by two publications</span>
 <span class="sd">&#39;&#39;&#39;</span>
@@ -164,7 +164,7 @@
 <span class="kn">from</span> <span class="nn">config</span> <span class="k">import</span> <span class="o">*</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo, Mauro Truglio, Tommaso Mazza&quot;</span>
-<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The Dedalus Project&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The pyntacle Project&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ferenc Jordan&quot;</span><span class="p">]</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo&quot;</span>
@@ -198,7 +198,7 @@
     <span class="n">completeness</span> <span class="o">=</span> <span class="mi">2</span>
 
 
-<div class="viewcode-block" id="Sparseness"><a class="viewcode-back" href="../../../Dedalus.algorithms.sparseness.html#Dedalus.algorithms.sparseness.Sparseness">[docs]</a><span class="k">class</span> <span class="nc">Sparseness</span><span class="p">:</span>
+<div class="viewcode-block" id="Sparseness"><a class="viewcode-back" href="../../../pyntacle.algorithms.sparseness.html#pyntacle.algorithms.sparseness.Sparseness">[docs]</a><span class="k">class</span> <span class="nc">Sparseness</span><span class="p">:</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Computes the completeness index of a graph or subgraph according to two different theories proposed</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -225,7 +225,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span> <span class="o">=</span> <span class="n">graph</span>
 
-<div class="viewcode-block" id="Sparseness.get_graph"><a class="viewcode-back" href="../../../Dedalus.algorithms.sparseness.html#Dedalus.algorithms.sparseness.Sparseness.get_graph">[docs]</a>    <span class="k">def</span> <span class="nf">get_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Sparseness.get_graph"><a class="viewcode-back" href="../../../pyntacle.algorithms.sparseness.html#pyntacle.algorithms.sparseness.Sparseness.get_graph">[docs]</a>    <span class="k">def</span> <span class="nf">get_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the graph</span>
 <span class="sd">        </span>
@@ -233,7 +233,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span></div>
 
-<div class="viewcode-block" id="Sparseness.set_graph"><a class="viewcode-back" href="../../../Dedalus.algorithms.sparseness.html#Dedalus.algorithms.sparseness.Sparseness.set_graph">[docs]</a>    <span class="k">def</span> <span class="nf">set_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">deepcopy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Sparseness.set_graph"><a class="viewcode-back" href="../../../pyntacle.algorithms.sparseness.html#pyntacle.algorithms.sparseness.Sparseness.set_graph">[docs]</a>    <span class="k">def</span> <span class="nf">set_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">deepcopy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Replaces the internal graph object with a new one</span>
 <span class="sd">        </span>
@@ -245,7 +245,7 @@
                 <span class="k">del</span> <span class="n">graph</span><span class="p">[</span><span class="n">elem</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span> <span class="o">=</span> <span class="n">graph</span></div>
 
-<div class="viewcode-block" id="Sparseness.name_to_id"><a class="viewcode-back" href="../../../Dedalus.algorithms.sparseness.html#Dedalus.algorithms.sparseness.Sparseness.name_to_id">[docs]</a>    <span class="k">def</span> <span class="nf">name_to_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_name</span><span class="p">):</span>
+<div class="viewcode-block" id="Sparseness.name_to_id"><a class="viewcode-back" href="../../../pyntacle.algorithms.sparseness.html#pyntacle.algorithms.sparseness.Sparseness.name_to_id">[docs]</a>    <span class="k">def</span> <span class="nf">name_to_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves the node index given the node name or index</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -256,7 +256,7 @@
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">node_id</span><span class="o">=</span><span class="n">node_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>
             <span class="k">return</span> <span class="n">node_name</span></div>
 
-<div class="viewcode-block" id="Sparseness.completeness_legacy"><a class="viewcode-back" href="../../../Dedalus.algorithms.sparseness.html#Dedalus.algorithms.sparseness.Sparseness.completeness_legacy">[docs]</a>    <span class="k">def</span> <span class="nf">completeness_legacy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Sparseness.completeness_legacy"><a class="viewcode-back" href="../../../pyntacle.algorithms.sparseness.html#pyntacle.algorithms.sparseness.Sparseness.completeness_legacy">[docs]</a>    <span class="k">def</span> <span class="nf">completeness_legacy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Compute the completeness index as described by Mazza et al for an undirected graph.</span>
 <span class="sd">        Completeness is defined as the total number of edges / the total number of nonedges among all possible edges</span>
@@ -277,7 +277,7 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">[</span><span class="n">_SparsenessAttribute</span><span class="o">.</span><span class="n">completeness_legacy</span><span class="o">.</span><span class="n">name</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Sparseness.compactness"><a class="viewcode-back" href="../../../Dedalus.algorithms.sparseness.html#Dedalus.algorithms.sparseness.Sparseness.compactness">[docs]</a>    <span class="k">def</span> <span class="nf">compactness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Sparseness.compactness"><a class="viewcode-back" href="../../../pyntacle.algorithms.sparseness.html#pyntacle.algorithms.sparseness.Sparseness.compactness">[docs]</a>    <span class="k">def</span> <span class="nf">compactness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        We implement here the compactness index as described by Randìc and DeAlba (J. Chem. Inf. Comput. Sci., 1999)</span>
 <span class="sd">        </span>
@@ -300,7 +300,7 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">[</span><span class="n">_SparsenessAttribute</span><span class="o">.</span><span class="n">compactness</span><span class="o">.</span><span class="n">name</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Sparseness.completeness"><a class="viewcode-back" href="../../../Dedalus.algorithms.sparseness.html#Dedalus.algorithms.sparseness.Sparseness.completeness">[docs]</a>    <span class="k">def</span> <span class="nf">completeness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Sparseness.completeness"><a class="viewcode-back" href="../../../pyntacle.algorithms.sparseness.html#pyntacle.algorithms.sparseness.Sparseness.completeness">[docs]</a>    <span class="k">def</span> <span class="nf">completeness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recalculate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        We implement the denseness measure as implemented by XXX in Applied Mathematics **[EXPAND]**</span>
 <span class="sd">        </span>

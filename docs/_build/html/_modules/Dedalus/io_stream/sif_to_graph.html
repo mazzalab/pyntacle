@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Dedalus.io_stream.sif_to_graph &mdash; Dedalus  documentation</title>
+  <title>pyntacle.io_stream.sif_to_graph &mdash; pyntacle  documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="Dedalus  documentation" href="../../../index.html"/>
+    <link rel="top" title="pyntacle  documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Dedalus
+            <a href="../../../index.html" class="icon icon-home"> pyntacle
           
 
           
@@ -88,7 +88,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../Dedalus.html">Dedalus package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyntacle.html">pyntacle package</a></li>
 </ul>
 
             
@@ -103,7 +103,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Dedalus</a>
+          <a href="../../../index.html">pyntacle</a>
         
       </nav>
 
@@ -135,7 +135,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>Dedalus.io_stream.sif_to_graph</li>
+      <li>pyntacle.io_stream.sif_to_graph</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -152,7 +152,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for Dedalus.io_stream.sif_to_graph</h1><div class="highlight"><pre>
+  <h1>Source code for pyntacle.io_stream.sif_to_graph</h1><div class="highlight"><pre>
 <span></span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">this module import a sif file into n igraph graph</span>
 <span class="sd">&#39;&#39;&#39;</span>
@@ -167,7 +167,7 @@
 <span class="kn">from</span> <span class="nn">utils.graph_utils</span> <span class="k">import</span> <span class="n">GraphUtils</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo, Mauro Truglio, Tommaso Mazza&quot;</span>
-<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The Dedalus Project&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2016, The pyntacle Project&quot;</span>
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ferenc Jordan&quot;</span><span class="p">]</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo&quot;</span>
@@ -195,7 +195,7 @@
 <span class="s2">  &quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="SifToGraph"><a class="viewcode-back" href="../../../Dedalus.io_stream.sif_to_graph.html#Dedalus.io_stream.sif_to_graph.SifToGraph">[docs]</a><span class="k">class</span> <span class="nc">SifToGraph</span><span class="p">(</span><span class="n">IGraphImporter</span><span class="p">):</span>
+<div class="viewcode-block" id="SifToGraph"><a class="viewcode-back" href="../../../pyntacle.io_stream.sif_to_graph.html#pyntacle.io_stream.sif_to_graph.SifToGraph">[docs]</a><span class="k">class</span> <span class="nc">SifToGraph</span><span class="p">(</span><span class="n">IGraphImporter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This class parses a simple interaction format (SIF) and converts it into an igraph.Graph object</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -205,7 +205,7 @@
         <span class="c1"># super(SifToGraph, self).__init__()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">log</span>
 
-<div class="viewcode-block" id="SifToGraph.import_graph"><a class="viewcode-back" href="../../../Dedalus.io_stream.sif_to_graph.html#Dedalus.io_stream.sif_to_graph.SifToGraph.import_graph">[docs]</a>    <span class="k">def</span> <span class="nf">import_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<div class="viewcode-block" id="SifToGraph.import_graph"><a class="viewcode-back" href="../../../pyntacle.io_stream.sif_to_graph.html#pyntacle.io_stream.sif_to_graph.SifToGraph.import_graph">[docs]</a>    <span class="k">def</span> <span class="nf">import_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        It imports a serialized graph as sif file and converts it into a Graph object</span>
 <span class="sd">        </span>
@@ -265,7 +265,7 @@
 
                 <span class="k">else</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                        <span class="s2">&quot;an edge already exist between node </span><span class="si">{0}</span><span class="s2"> and node </span><span class="si">{1}</span><span class="s2">. This should not happen, as Dedalus only supports simple graphs.</span><span class="se">\n</span><span class="s2"> Attribute </span><span class="se">\&quot;</span><span class="s2">__sif_interaction</span><span class="se">\n</span><span class="s2"> Will skip line </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="s2">&quot;an edge already exist between node </span><span class="si">{0}</span><span class="s2"> and node </span><span class="si">{1}</span><span class="s2">. This should not happen, as pyntacle only supports simple graphs.</span><span class="se">\n</span><span class="s2"> Attribute </span><span class="se">\&quot;</span><span class="s2">__sif_interaction</span><span class="se">\n</span><span class="s2"> Will skip line </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                             <span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
                     <span class="n">node_ids</span> <span class="o">=</span> <span class="n">GraphUtils</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span><span class="o">.</span><span class="n">get_node_indices</span><span class="p">(</span><span class="n">node_names</span><span class="o">=</span><span class="p">[</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">])</span>
                     <span class="n">graph</span><span class="o">.</span><span class="n">es</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">get_eid</span><span class="p">(</span><span class="n">node_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">node_ids</span><span class="p">[</span><span class="mi">1</span><span class="p">]))[</span><span class="s2">&quot;__sif_interaction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">elem</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -287,7 +287,7 @@
 
                     <span class="k">else</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                            <span class="s2">&quot;an edge already exist between node </span><span class="si">{0}</span><span class="s2"> and node </span><span class="si">{1}</span><span class="s2">. This should not happen, as Dedalus only supports simple graphs.</span><span class="se">\n</span><span class="s2"> Attribute </span><span class="se">\&quot;</span><span class="s2">__sif_interaction</span><span class="se">\n</span><span class="s2"> will be override&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="s2">&quot;an edge already exist between node </span><span class="si">{0}</span><span class="s2"> and node </span><span class="si">{1}</span><span class="s2">. This should not happen, as pyntacle only supports simple graphs.</span><span class="se">\n</span><span class="s2"> Attribute </span><span class="se">\&quot;</span><span class="s2">__sif_interaction</span><span class="se">\n</span><span class="s2"> will be override&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                                 <span class="n">first</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
                         <span class="n">node_ids</span> <span class="o">=</span> <span class="n">GraphUtils</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span><span class="o">.</span><span class="n">get_node_indices</span><span class="p">(</span><span class="n">node_names</span><span class="o">=</span><span class="p">[</span><span class="n">first</span><span class="p">,</span> <span class="n">n</span><span class="p">])</span>
                         <span class="n">graph</span><span class="o">.</span><span class="n">es</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">get_eid</span><span class="p">(</span><span class="n">node_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">node_ids</span><span class="p">[</span><span class="mi">1</span><span class="p">]))[</span><span class="s2">&quot;__sif_interaction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">interaction</span>
