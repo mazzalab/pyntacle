@@ -17,12 +17,12 @@ from algorithms.global_topology import _GlobalAttribute
 from algorithms.key_player import _KeyplayerAttribute
 from algorithms.local_topology import _LocalAttribute
 from algorithms.sparseness import _SparsenessAttribute
-from exception.missing_attribute_error import MissingAttributeError
-from exception.wrong_argument_error import WrongArgumentError
+from exceptions.missing_attribute_error import MissingAttributeError
+from exceptions.wrong_argument_error import WrongArgumentError
 from utils import graph_utils  # swiss knife for graph utilities
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The pyntacle Project"
+__copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"

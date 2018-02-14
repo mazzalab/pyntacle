@@ -5,12 +5,12 @@ from enum import Enum
 from igraph import *
 from algorithms.global_topology import GlobalTopology
 from algorithms.local_topology import LocalTopology
-from exception.illegal_graph_size_error import IllegalGraphSizeError
-from exception.wrong_argument_error import WrongArgumentError
+from exceptions.illegal_graph_size_error import IllegalGraphSizeError
+from exceptions.wrong_argument_error import WrongArgumentError
 from config import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The pyntacle Project"
+__copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.2"
 __maintainer__ = "Daniele Capocefalo"
@@ -156,7 +156,7 @@ class KeyPlayer:
             self.__graph[_KeyplayerAttribute.DF.name] = 1 - (df_num / df_denum)
         return self.__graph[_KeyplayerAttribute.DF.name]
 
-    def mreach(self, m: int, index_list, recalculate=False) -> float:
+    def mreach(self, m: int, index_list: list, recalculate=False) -> float:
         """
         Calculates the m-reach (equation 12). The m-reach is defined as a count of the number of unique nodes reached
         by any member of the kp-set in m links or less.
@@ -178,9 +178,9 @@ class KeyPlayer:
                 """:type: int"""
 
                 lt = LocalTopology(self.__graph)
-                shortest_path_lengths = lt.shortest_path(index_list=index_list, recalculate=True)
+                shortest_path_lengths = lt.shortest_path_igraph(index_list=index_list, recalculate=True)
 
-                vminusk = set(self.__graph.vs.indices) - set(index_list)
+                vminusk = list(set(self.__graph.vs.indices) - set(index_list))
                 for j in vminusk:
                     for spl in shortest_path_lengths:
                         if spl[j] <= m:

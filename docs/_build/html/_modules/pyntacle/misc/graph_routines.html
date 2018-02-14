@@ -1,0 +1,339 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyntacle.misc.graph_routines &mdash; pyntacle  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="pyntacle  documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pyntacle
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyntacle.html">pyntacle package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pyntacle</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pyntacle.misc.graph_routines</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyntacle.misc.graph_routines</h1><div class="highlight"><pre>
+<span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo, Mauro Truglio, Tommaso Mazza&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2018, The pyntacle Project&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ferenc Jordan&quot;</span><span class="p">]</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;d.capocefalo@css-mendel.it&quot;</span>
+<span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Development&quot;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s2">&quot;27 February 2018&quot;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">  Copyright (C) 2016-2018  Tommaso Mazza &lt;t,mazza@css-mendel.it&gt;</span>
+<span class="s2">  Viale Regina Margherita 261, 00198 Rome, Italy</span>
+
+<span class="s2">  This program is free software; you can use and redistribute it under</span>
+<span class="s2">  the terms of the BY-NC-ND license as published by</span>
+<span class="s2">  Creative Commons; either version 4 of the License, or</span>
+<span class="s2">  (at your option) any later version.</span>
+
+<span class="s2">  This program is distributed in the hope that it will be useful,</span>
+<span class="s2">  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="s2">  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="s2">  License for more details.</span>
+
+<span class="s2">  You should have received a copy of the license along with this</span>
+<span class="s2">  work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.</span>
+<span class="s2">  &quot;&quot;&quot;</span>
+
+<span class="sd">&quot;&quot;&quot; **a series of decorators to improve the usability of some pyntacle&#39;s function, like </span>
+<span class="sd">checking if the `igraph.Graph` object is compatible with pyntacle&#39;s specifications, verify the presence of nodes </span>
+<span class="sd">in the input graph, give elapsed time of execution and so on&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">exceptions.illegal_graph_size_error</span> <span class="k">import</span> <span class="n">IllegalGraphSizeError</span>
+<span class="kn">from</span> <span class="nn">exceptions.unsupported_graph_error</span> <span class="k">import</span> <span class="n">UnsupportedGrapherror</span>
+<span class="kn">from</span> <span class="nn">exceptions.wrong_argument_error</span> <span class="k">import</span> <span class="n">WrongArgumentError</span>
+<span class="kn">from</span> <span class="nn">config</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">utils.graph_utils</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">wraps</span>
+<span class="c1"># todo recheck all the init properties of an igraph Graph (in IO)</span>
+
+<div class="viewcode-block" id="check_graph_consistency"><a class="viewcode-back" href="../../../pyntacle.misc.graph_routines.html#pyntacle.misc.graph_routines.check_graph_consistency">[docs]</a><span class="k">def</span> <span class="nf">check_graph_consistency</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decorator for the checking the structural integrity of a graph</span>
+<span class="sd">    General properties of an accepted Graph</span>
+
+<span class="sd">    :param func:</span>
+<span class="sd">    :return: the function (usually a static method) ready to be used for an igraph.Graph object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">func_wrapper</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">Graph</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">WrongArgumentError</span><span class="p">(</span><span class="s2">&quot;input is not an igraph.Graph object&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">IllegalGraphSizeError</span><span class="p">(</span><span class="s1">&#39;Input graph does not contain any vertex&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">graph</span><span class="o">.</span><span class="n">ecount</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">IllegalGraphSizeError</span><span class="p">(</span><span class="s2">&quot;Input Graph does not have any edges&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;name&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">attributes</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">MissingAttributeError</span><span class="p">(</span><span class="s2">&quot;Graph must have a </span><span class="se">\&quot;</span><span class="s2">graph_name</span><span class="se">\&quot;</span><span class="s2"> attribute&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;name&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="o">.</span><span class="n">attributes</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">MissingAttributeError</span><span class="p">(</span><span class="s2">&quot;Input graph does not have a </span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2"> attribute&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="kc">None</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">UnsupportedGrapherror</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2"> vertex attribute contains None values, all </span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2">s should &quot;</span>
+                                            <span class="s2">&quot;be initialized&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])):</span>
+                <span class="k">raise</span> <span class="n">UnsupportedGrapherror</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2"> vertex attribute should be unique to each vertex&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">Graph</span><span class="o">.</span><span class="n">is_directed</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">UnsupportedGrapherror</span><span class="p">(</span><span class="s2">&quot;Graph is direct; Pyntacle only supports direct graphs&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Graph</span><span class="o">.</span><span class="n">is_simple</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">UnsupportedGrapherror</span><span class="p">(</span>
+                <span class="s2">&quot;Input Graph contains self loops or multiple edges. Pyntacle only supports simple graphs.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">func_wrapper</span></div>
+
+
+<div class="viewcode-block" id="vertexdoctor"><a class="viewcode-back" href="../../../pyntacle.misc.graph_routines.html#pyntacle.misc.graph_routines.vertexdoctor">[docs]</a><span class="k">def</span> <span class="nf">vertexdoctor</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decorator for check whether the node name exists in a Graph and if the nodes are consisten within the graph</span>
+<span class="sd">    :param func: a function that takes in input a node name</span>
+<span class="sd">    :return: the function (usually a static method) ready to be used for an igraph.Graph object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">func_wrapper</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Node name must be a string or a list of strings&#39;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">):</span>
+                        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Node name list must contain only strings&#39;</span><span class="p">)</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">remains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]))</span>
+
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">remains</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> are not present in the input graph&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">remains</span><span class="p">))</span>
+
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">():</span>
+                            <span class="k">raise</span> <span class="n">WrongArgumentError</span><span class="p">(</span>
+                                <span class="s2">&quot;input node list is greater than the number of vertieces in the input graph (input nodes are </span><span class="si">{}</span><span class="s2">, graph vertices are </span><span class="si">{1}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                <span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">),</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">nodes</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]:</span>
+                        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> is not present in vertex names&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nodes</span><span class="p">))</span>
+                    <span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">nodes</span><span class="p">]</span> <span class="c1">#put it into a list directly</span>
+
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">func_wrapper</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Author.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

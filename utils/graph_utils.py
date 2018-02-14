@@ -4,19 +4,19 @@ from igraph import Graph
 import numpy as np
 
 # pyntacle libraries
-from exception.illegal_graph_size_error import IllegalGraphSizeError
-from exception.missing_attribute_error import MissingAttributeError
-from exception.notagraph_error import NotAGraphError
-from exception.unsupported_graph_error import UnsupportedGrapherror
-from exception.wrong_argument_error import WrongArgumentError
-from exception.multiple_solutions_error import MultipleSolutionsError
+from exceptions.illegal_graph_size_error import IllegalGraphSizeError
+from exceptions.missing_attribute_error import MissingAttributeError
+from exceptions.notagraph_error import NotAGraphError
+from exceptions.unsupported_graph_error import UnsupportedGrapherror
+from exceptions.wrong_argument_error import WrongArgumentError
+from exceptions.multiple_solutions_error import MultipleSolutionsError
 
 '''
 a series of generic utilities for an iGraph graph object
 '''
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The pyntacle Project"
+__copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -83,7 +83,7 @@ class GraphUtils():
             raise UnsupportedGrapherror("Input Graph contains self loops and multiple edges")
 
         if "name" not in self.__graph.vs().attributes():
-            raise KeyError("nodes must have the attribuite  \"name\"")
+            raise KeyError("nodes must have the attribute  \"name\"")
         if not all(isinstance(item, str) for item in self.__graph.vs()["name"]):
             raise TypeError("node \"name\" attribute must be a string")
 

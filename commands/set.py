@@ -2,7 +2,7 @@ import filecmp
 from warnings import simplefilter
 
 from config import *
-from exception.multiple_solutions_error import MultipleSolutionsError
+from exceptions.multiple_solutions_error import MultipleSolutionsError
 from graph_operations.set_graphs import GraphSetter
 from io_stream.graph_to_adjacencymatrix import GraphToAdjacencyMatrix
 from io_stream.graph_to_binary import GraphToBinary
@@ -14,7 +14,7 @@ from report.plotter import PlotGraph
 from utils.graph_utils import GraphUtils
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The pyntacle Project"
+__copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"

@@ -3,13 +3,13 @@ this module implements several implementations of a sparseness index as proposed
 '''
 
 from enum import Enum
-from exception.illegal_graph_size_error import IllegalGraphSizeError
+from exceptions.illegal_graph_size_error import IllegalGraphSizeError
 import igraph
 import math
 from config import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The pyntacle Project"
+__copyright__ = "Copyright 2016, The Dedalus Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -53,7 +53,7 @@ class Sparseness:
     def __init__(self, graph):
         """
         Initializes a graph for local properties calculation
-        
+
         :param Graph graph: Graph provided in input
         :raises IllegalGraphSizeError: if graph does not contain vertices or edges
         """
@@ -71,7 +71,7 @@ class Sparseness:
     def get_graph(self):
         """
         Returns the graph
-        
+
         :return: - A Graph data structure
         """
         return self.__graph
@@ -79,7 +79,7 @@ class Sparseness:
     def set_graph(self, graph, deepcopy=False):
         """
         Replaces the internal graph object with a new one
-        
+
         :param igraph.Graph graph: igraph.Graph object provided in input
         :param bool deepcopy: Flag determining shallow or deep copy of attributes of the graph
         """
@@ -103,7 +103,7 @@ class Sparseness:
         '''
         Compute the completeness index as described by Mazza et al for an undirected graph.
         Completeness is defined as the total number of edges / the total number of nonedges among all possible edges
-        
+
         :param recalculate: boolean; whether to recalculate the index or not for the whole graph
         :return: The completeness index of the graph
         '''
@@ -123,7 +123,7 @@ class Sparseness:
     def compactness(self, recalculate=False):
         '''
         We implement here the compactness index as described by Randìc and DeAlba (J. Chem. Inf. Comput. Sci., 1999)
-        
+
         :param recalculate: boolean; whether to recalculate the index or not for the whole graph
         :return: The compactness value for the whole graph
         '''
@@ -146,7 +146,7 @@ class Sparseness:
     def completeness(self, recalculate=False):
         '''
         We implement the denseness measure as implemented by XXX in Applied Mathematics **[EXPAND]**
-        
+
         :param recalculate: boolean; whether to recalculate the index or not for the whole graph
         :return: The completeness value for the whole graph
         '''

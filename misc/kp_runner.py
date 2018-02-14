@@ -1,21 +1,13 @@
-# pyntacle libraries
-from algorithms.greedy_optimization import *
-from algorithms.bruteforce_search import *
-from utils.graph_utils import *
-from config import *
-import time
-from algorithms.key_player import _KeyplayerAttribute
-
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The pyntacle Project"
+__copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "27 October 2016"
+__date__ = "27 February 2018"
 __license__ = u"""
-  Copyright (C) 20016-2017  Tommaso Mazza <t,mazza@css-mendel.it>
+  Copyright (C) 2016-2018  Tommaso Mazza <t,mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
 
   This program is free software; you can use and redistribute it under
@@ -32,6 +24,17 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+""" **a series of decorators to improve the usability of some pyntacle's function, like 
+checking if the `igraph.Graph` object is compatible with pyntacle's specifications, verify the presence of nodes 
+in the input graph, give elapsed time of execution and so on"""
+
+# pyntacle libraries
+from algorithms.greedy_optimization import *
+from algorithms.bruteforce_search import *
+from utils.graph_utils import *
+from config import *
+import time
+from algorithms.key_player import _KeyplayerAttribute
 
 class KeyPlayerWrapper():
     '''
@@ -153,14 +156,14 @@ class KeyPlayerWrapper():
                     # start = time.perf_counter()
                     kp_value = self.__kp(graph=self.__graph).DR(index_list=index_list, recalculate=recalculate)
                     # end = time.perf_counter()
-                    # print("--- DR - Elapsed time: {:.2f} seconds ---".format(end - start))
+                    # print("--- dR - Elapsed time: {:.2f} seconds ---".format(end - start))
 
         self.results[key_player] = (starting_value, kp_nodes, kp_value)
         #print(self.results)
 
     def run_pos_or_neg(self, choice: str, names_list=None, recalculate=False, m=None):
         '''
-        Computes kpp-neg (DF, F) and kpp-pos(DR, MREACH) metrics,store everything into a dictionary
+        Computes kpp-neg (DF, F) and kpp-pos(dR, MREACH) metrics,store everything into a dictionary
         
         :param choice: either "kpp pos" or "kpp neg"
         :param names_list: a list of node names
@@ -169,7 +172,7 @@ class KeyPlayerWrapper():
         '''
         choice = choice.lower()
         if choice == "kpp-pos":
-            # compute both DR and MREACH
+            # compute both dR and MREACH
             self.run_single_metrics(key_player=_KeyplayerAttribute.DR, names_list=names_list, recalculate=recalculate)
             self.run_single_metrics(key_player=_KeyplayerAttribute.MREACH, names_list=names_list,
                                     recalculate=recalculate, m=m)
@@ -226,7 +229,7 @@ class KeyPlayerWrapper():
                     go = GreedyOptimization(graph=self.__graph).optimize_kpp_pos(kpp_size=kpsize,
                                                                                  kpp_type=key_player)  # return a tuple(kp nodes, kpvalue)
                     end = time.perf_counter()
-                    print("--- Elapsed time (DR - GREEDY OPTIMIZATION): {:.2f} seconds ---".format(end - start))
+                    print("--- Elapsed time (dR - GREEDY OPTIMIZATION): {:.2f} seconds ---".format(end - start))
 
                 elif key_player == _KeyplayerAttribute.MREACH:
                     if not isinstance(m, int) or m <= 0:
@@ -327,7 +330,7 @@ class KeyPlayerWrapper():
                     go = BruteforceSearch(graph=self.__graph).bruteforce_reachability(kpp_size=kpsize,
                                                                                  kpp_type=key_player)  # return a tuple(kp nodes, kpvalue)
                     end = time.perf_counter()
-                    print("--- Elapsed time (DR - GREEDY OPTIMIZATION): {:.2f} seconds ---".format(end - start))
+                    print("--- Elapsed time (dR - GREEDY OPTIMIZATION): {:.2f} seconds ---".format(end - start))
 
                 elif key_player == _KeyplayerAttribute.MREACH:
                     if not isinstance(m, int) or m <= 0:

@@ -16,7 +16,7 @@ from io_stream.sif_to_graph import SifToGraph
 from utils.graph_utils import GraphUtils
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The pyntacle Project"
+__copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -46,8 +46,7 @@ def separator_detect(filename):
     """
     Uses csv.Sniffer to detect the delimiter in the
     first line of a table.
-    
-    :param filename: input file
+    :param str filename: input file
     :return: the separator as a string
     """
     with open(filename) as f:

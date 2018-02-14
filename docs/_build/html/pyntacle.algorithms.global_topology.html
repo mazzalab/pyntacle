@@ -1,0 +1,514 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyntacle.algorithms.global_topology module &mdash; pyntacle  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="pyntacle  documentation" href="index.html"/>
+        <link rel="up" title="pyntacle.algorithms package" href="pyntacle.algorithms.html"/>
+        <link rel="next" title="pyntacle.algorithms.global_topology_NEW module" href="pyntacle.algorithms.global_topology_NEW.html"/>
+        <link rel="prev" title="pyntacle.algorithms.bruteforce_search module" href="pyntacle.algorithms.bruteforce_search.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyntacle
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="pyntacle.html">pyntacle package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="pyntacle.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="pyntacle.algorithms.html">pyntacle.algorithms package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="pyntacle.algorithms.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.commands.html">pyntacle.commands package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.exceptions.html">pyntacle.exceptions package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.graph_generator.html">pyntacle.graph_generator package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.graph_operations.html">pyntacle.graph_operations package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.io_stream.html">pyntacle.io_stream package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.misc.html">pyntacle.misc package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.report.html">pyntacle.report package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.utils.html">pyntacle.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyntacle.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyntacle</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="pyntacle.html">pyntacle package</a> &raquo;</li>
+        
+          <li><a href="pyntacle.algorithms.html">pyntacle.algorithms package</a> &raquo;</li>
+        
+      <li>pyntacle.algorithms.global_topology module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/pyntacle.algorithms.global_topology.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-pyntacle.algorithms.global_topology">
+<span id="pyntacle-algorithms-global-topology-module"></span><h1>pyntacle.algorithms.global_topology module<a class="headerlink" href="#module-pyntacle.algorithms.global_topology" title="Permalink to this headline">¶</a></h1>
+<p>Calculator of global properties of graphs</p>
+<dl class="class">
+<dt id="pyntacle.algorithms.global_topology.GlobalTopology">
+<em class="property">class </em><code class="descname">GlobalTopology</code><span class="sig-paren">(</span><em>graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyntacle/algorithms/global_topology.html#GlobalTopology"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.global_topology.GlobalTopology" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Calculator of global properties of graphs <strong>[EXPAND]</strong></p>
+<dl class="method">
+<dt id="pyntacle.algorithms.global_topology.GlobalTopology.average_closeness">
+<code class="descname">average_closeness</code><span class="sig-paren">(</span><em>recalculate=False</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyntacle/algorithms/global_topology.html#GlobalTopology.average_closeness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.global_topology.GlobalTopology.average_closeness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the average closeness at a global level (divide each nodes’s closeness by the total number of nodes)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>recalculate</strong> (<em>bool</em>) – If True, the average closeness is recomputed regardless if it had been already computed</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The average closeness</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyntacle.algorithms.global_topology.GlobalTopology.average_degree">
+<code class="descname">average_degree</code><span class="sig-paren">(</span><em>recalculate=False</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyntacle/algorithms/global_topology.html#GlobalTopology.average_degree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.global_topology.GlobalTopology.average_degree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the average degree at a global level (divide each nodes’s degree by the total number of nodes)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>recalculate</strong> (<em>bool</em>) – If True, the average degree is recalculated regardless if it had been already computed</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The average degree</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyntacle.algorithms.global_topology.GlobalTopology.average_eccentricity">
+<code class="descname">average_eccentricity</code><span class="sig-paren">(</span><em>recalculate=False</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyntacle/algorithms/global_topology.html#GlobalTopology.average_eccentricity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.global_topology.GlobalTopology.average_eccentricity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the average eccentricity at a global level (divide each nodes’s eccentricity by the total number of nodes)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>recalculate</strong> (<em>bool</em>) – If True, the average eccentricity is recomputed regardless if it had been already computed</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The average eccentricity</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyntacle.algorithms.global_topology.GlobalTopology.average_path_length">
+<code class="descname">average_path_length</code><span class="sig-paren">(</span><em>recalculate=False</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyntacle/algorithms/global_topology.html#GlobalTopology.average_path_length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.global_topology.GlobalTopology.average_path_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the average shortest path of a graph</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>recalculate</strong> (<em>bool</em>) – If True, the average shortest path is recalculated regardless if it had been already computed</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The average path length of the graph</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyntacle.algorithms.global_topology.GlobalTopology.average_radiality">
+<code class="descname">average_radiality</code><span class="sig-paren">(</span><em>recalculate=False</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyntacle/algorithms/global_topology.html#GlobalTopology.average_radiality"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.global_topology.GlobalTopology.average_radiality" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the average radiality at a global level (divide each nodes’s radiality by the total number of nodes)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>recalculate</strong> (<em>bool</em>) – If True, the average radiality is recomputed regardless if it had been already computed</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The average radiality</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyntacle.algorithms.global_topology.GlobalTopology.average_radiality_reach">
+<code class="descname">average_radiality_reach</code><span class="sig-paren">(</span><em>recalculate=False</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyntacle/algorithms/global_topology.html#GlobalTopology.average_radiality_reach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.global_topology.GlobalTopology.average_radiality_reach" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the radiality reach at a global level (divide each nodes’s radiality reach by the total number of nodes)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>recalculate</strong> (<em>bool</em>) – If True, the average radiality reach is recomputed regardless if it had been already computed</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The average radiality</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyntacle.algorithms.global_topology.GlobalTopology.clustering_coefficient">
+<code class="descname">clustering_coefficient</code><span class="sig-paren">(</span><em>recalculate=False</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyntacle/algorithms/global_topology.html#GlobalTopology.clustering_coefficient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.global_topology.GlobalTopology.clustering_coefficient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the global transitivity (clustering coefficient) of the graph</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>recalculate</strong> (<em>bool</em>) – If True, the clustering coefficient is recalculated regardless if it had been already computed</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The transitivity of the graph</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyntacle.algorithms.global_topology.GlobalTopology.components">
+<code class="descname">components</code><span class="sig-paren">(</span><em>recalculate=False</em><span class="sig-paren">)</span> &#x2192; igraph.clustering.VertexClustering<a class="reference internal" href="_modules/pyntacle/algorithms/global_topology.html#GlobalTopology.components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.global_topology.GlobalTopology.components" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates clusters (connected components) for a given graph</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>recalculate</strong> (<em>bool</em>) – If True, the components are recalculated regardless if they had been already computed</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A VertexClustering data structure containing the clustering of the vertex set of a graph</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyntacle.algorithms.global_topology.GlobalTopology.density">
+<code class="descname">density</code><span class="sig-paren">(</span><em>loops=True</em>, <em>recalculate=False</em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/pyntacle/algorithms/global_topology.html#GlobalTopology.density"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.global_topology.GlobalTopology.density" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the density of the graph</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>loops</strong> (<em>bool</em>) – Whether to take loops into consideration</li>
+<li><strong>recalculate</strong> (<em>bool</em>) – If True, the density is recalculated regardless if it had been already computed</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The density (or the reciprocity) of the graph</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyntacle.algorithms.global_topology.GlobalTopology.diameter">
+<code class="descname">diameter</code><span class="sig-paren">(</span><em>recalculate=False</em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/pyntacle/algorithms/global_topology.html#GlobalTopology.diameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.global_topology.GlobalTopology.diameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the graph diameter</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>recalculate</strong> (<em>bool</em>) – If True, the diameter is recalculated regardless if it had been already computed</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The diameter of the graph</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyntacle.algorithms.global_topology.GlobalTopology.get_graph">
+<code class="descname">get_graph</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; igraph.Graph<a class="reference internal" href="_modules/pyntacle/algorithms/global_topology.html#GlobalTopology.get_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.global_topology.GlobalTopology.get_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the graph</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A Graph data structure</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyntacle.algorithms.global_topology.GlobalTopology.logger">
+<code class="descname">logger</code><em class="property"> = None</em><a class="headerlink" href="#pyntacle.algorithms.global_topology.GlobalTopology.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>type</em> – Logger</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyntacle.algorithms.global_topology.GlobalTopology.pi">
+<code class="descname">pi</code><span class="sig-paren">(</span><em>recalculate=False</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyntacle/algorithms/global_topology.html#GlobalTopology.pi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.global_topology.GlobalTopology.pi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pi is defined as the ratio between the total paths length and the diameter</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>recalculate</strong> (<em>bool</em>) – If True, the Pi value is recalculated regardless if it had been already computed</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The Pi of the graph</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyntacle.algorithms.global_topology.GlobalTopology.radius">
+<code class="descname">radius</code><span class="sig-paren">(</span><em>recalculate=False</em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/pyntacle/algorithms/global_topology.html#GlobalTopology.radius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.global_topology.GlobalTopology.radius" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the graph radius</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>recalculate</strong> (<em>bool</em>) – If True, the radius is recalculated regardless if it had been already computed</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The radius of the graph</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyntacle.algorithms.global_topology.GlobalTopology.set_graph">
+<code class="descname">set_graph</code><span class="sig-paren">(</span><em>graph</em>, <em>deepcopy=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyntacle/algorithms/global_topology.html#GlobalTopology.set_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.global_topology.GlobalTopology.set_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replaces the internal graph object with a new one</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>graph</strong> (<em>igraph.Graph</em>) – igraph.Graph object provided in input</li>
+<li><strong>deepcopy</strong> (<em>bool</em>) – Flag determining shallow or deep copy of attributes of the graph</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyntacle.algorithms.global_topology.GlobalTopology.weighted_clustering_coefficient">
+<code class="descname">weighted_clustering_coefficient</code><span class="sig-paren">(</span><em>recalculate=False</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyntacle/algorithms/global_topology.html#GlobalTopology.weighted_clustering_coefficient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.global_topology.GlobalTopology.weighted_clustering_coefficient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the weighted clustering coefficient, defined as the average of each node’s
+clustering coefficient weighted by its degree</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>recalculate</strong> (<em>bool</em>) – If True, the weighted clustering coefficient is recalculated regardless if it had been already computed</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The weighted clustering coefficient</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="pyntacle.algorithms.global_topology_NEW.html" class="btn btn-neutral float-right" title="pyntacle.algorithms.global_topology_NEW module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="pyntacle.algorithms.bruteforce_search.html" class="btn btn-neutral" title="pyntacle.algorithms.bruteforce_search module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Author.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/home/local/MENDEL/d.capocefalo/miniconda3/bin/ python3
 # -*- coding: utf-8 -*-
 #
 # pyntacle documentation build configuration file, created by
@@ -196,5 +196,3 @@ epub_copyright = copyright
 
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ['search.html']
-
-

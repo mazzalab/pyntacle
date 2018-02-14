@@ -5,14 +5,14 @@ This class parses a serialized graph (adjacency matrix) and converts it into a G
 import numpy as np
 from igraph import *
 from config import *
-from exception.unproperlyformattedfile_error import UnproperlyFormattedFileError
-from exception.wrong_argument_error import WrongArgumentError
+from exceptions.unproperlyformattedfile_error import UnproperlyFormattedFileError
+from exceptions.wrong_argument_error import WrongArgumentError
 from io_stream.igraph_importer import IGraphImporter
 from utils import adjmatrix_utils
 from utils.add_attributes import AddAttributes
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The pyntacle Project"
+__copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"

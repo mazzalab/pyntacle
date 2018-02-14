@@ -1,0 +1,330 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyntacle.algorithms.bruteforce_search module &mdash; pyntacle  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="pyntacle  documentation" href="index.html"/>
+        <link rel="up" title="pyntacle.algorithms package" href="pyntacle.algorithms.html"/>
+        <link rel="next" title="pyntacle.algorithms.global_topology module" href="pyntacle.algorithms.global_topology.html"/>
+        <link rel="prev" title="pyntacle.algorithms package" href="pyntacle.algorithms.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyntacle
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="pyntacle.html">pyntacle package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="pyntacle.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="pyntacle.algorithms.html">pyntacle.algorithms package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="pyntacle.algorithms.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.commands.html">pyntacle.commands package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.exceptions.html">pyntacle.exceptions package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.graph_generator.html">pyntacle.graph_generator package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.graph_operations.html">pyntacle.graph_operations package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.io_stream.html">pyntacle.io_stream package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.misc.html">pyntacle.misc package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.report.html">pyntacle.report package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.utils.html">pyntacle.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyntacle.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyntacle</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="pyntacle.html">pyntacle package</a> &raquo;</li>
+        
+          <li><a href="pyntacle.algorithms.html">pyntacle.algorithms package</a> &raquo;</li>
+        
+      <li>pyntacle.algorithms.bruteforce_search module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/pyntacle.algorithms.bruteforce_search.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-pyntacle.algorithms.bruteforce_search">
+<span id="pyntacle-algorithms-bruteforce-search-module"></span><h1>pyntacle.algorithms.bruteforce_search module<a class="headerlink" href="#module-pyntacle.algorithms.bruteforce_search" title="Permalink to this headline">¶</a></h1>
+<p>Brute-force search for the best kp-set.
+This algorithm makes all possible sets of nodes of a specified size and applies the KP-algorithm on them.
+It hence selects the KPP-set with the best score.</p>
+<dl class="class">
+<dt id="pyntacle.algorithms.bruteforce_search.BruteforceSearch">
+<em class="property">class </em><code class="descname">BruteforceSearch</code><span class="sig-paren">(</span><em>graph: igraph.Graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyntacle/algorithms/bruteforce_search.html#BruteforceSearch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.bruteforce_search.BruteforceSearch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Brute-force search for the best kp-set <strong>[EXPAND]</strong></p>
+<dl class="method">
+<dt id="pyntacle.algorithms.bruteforce_search.BruteforceSearch.bruteforce_fragmentation">
+<code class="descname">bruteforce_fragmentation</code><span class="sig-paren">(</span><em>kpp_size</em>, <em>kpp_type) -&gt; (&lt;class 'list'&gt;</em>, <em>&lt;class 'float'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyntacle/algorithms/bruteforce_search.html#BruteforceSearch.bruteforce_fragmentation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.bruteforce_search.BruteforceSearch.bruteforce_fragmentation" title="Permalink to this definition">¶</a></dt>
+<dd><p>It searches and finds the kpp-set of a predefined dimension that best disrupts the graph.
+It generates all the possible kpp-sets and calculates the fragmentation score of the residual graph, after
+having extracted the nodes belonging to the kpp-set.
+The best kpp-set will be the one that maximizes the fragmentation of the graph.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>kpp_size</strong> (<em>int</em>) – the size of the kpp-set</li>
+<li><strong>kpp_type</strong> (<em>KeyplayerAttribute.name</em>) – Either KeyplayerAttribute.DF or KeyplayerAttribute.F</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><ul class="simple">
+<li>S: <strong>[EXPAND]</strong></li>
+<li>best_fragmentation_score: <strong>[EXPAND]</strong></li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><strong>TypeError</strong> – When the kpp-set size is not an integer number</li>
+<li><a class="reference internal" href="pyntacle.exceptions.wrong_argument_error.html#pyntacle.exceptions.wrong_argument_error.WrongArgumentError" title="pyntacle.exceptions.wrong_argument_error.WrongArgumentError"><strong>WrongArgumentError</strong></a> – When the kpp-type argument is not of type KeyplayerAttribute.F or KeyplayerAttribute.DF</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyntacle.algorithms.bruteforce_search.BruteforceSearch.bruteforce_reachability">
+<code class="descname">bruteforce_reachability</code><span class="sig-paren">(</span><em>kpp_size</em>, <em>kpp_type</em>, <em>m=None) -&gt; (&lt;class 'list'&gt;</em>, <em>&lt;class 'float'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyntacle/algorithms/bruteforce_search.html#BruteforceSearch.bruteforce_reachability"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.bruteforce_search.BruteforceSearch.bruteforce_reachability" title="Permalink to this definition">¶</a></dt>
+<dd><p>It searches and finds the kpp-set of a predefined dimension that best reaches all other nodes over the graph.
+It generates all the possible kpp-sets and calculates their reachability scores.
+The best kpp-set will be the one that best reaches all other nodes of the graph.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p><strong>m-reach</strong>: min = 0 (unreachable); max = size(graph) - kpp_size (total reachability)</p>
+<p class="last"><strong>dR</strong>: min = 0 (unreachable); max = 1 (total reachability)</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>kpp_size</strong> (<em>int</em>) – size of the kpp-set</li>
+<li><strong>m</strong> (<em>int</em>) – maximum path length between the kpp-set and the other nodes of the graph</li>
+<li><strong>kpp_type</strong> (<em>KeyplayerAttribute.name</em>) – Either KeyplayerAttribute.mreach or KeyplayerAttribute.dR</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><strong>TypeError</strong> – When the kpp-set size is greater than the graph size</li>
+<li><a class="reference internal" href="pyntacle.exceptions.wrong_argument_error.html#pyntacle.exceptions.wrong_argument_error.WrongArgumentError" title="pyntacle.exceptions.wrong_argument_error.WrongArgumentError"><strong>WrongArgumentError</strong></a> – When the kpp-type argument is not of type KeyplayerAttribute.mreach or KeyplayerAttribute.dR</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="pyntacle.algorithms.global_topology.html" class="btn btn-neutral float-right" title="pyntacle.algorithms.global_topology module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="pyntacle.algorithms.html" class="btn btn-neutral" title="pyntacle.algorithms package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Author.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

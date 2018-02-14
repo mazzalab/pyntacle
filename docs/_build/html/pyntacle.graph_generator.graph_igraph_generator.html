@@ -1,0 +1,363 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyntacle.graph_generator.graph_igraph_generator module &mdash; pyntacle  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="pyntacle  documentation" href="index.html"/>
+        <link rel="up" title="pyntacle.graph_generator package" href="pyntacle.graph_generator.html"/>
+        <link rel="next" title="pyntacle.graph_operations package" href="pyntacle.graph_operations.html"/>
+        <link rel="prev" title="pyntacle.graph_generator.generator_classmethod module" href="pyntacle.graph_generator.generator_classmethod.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyntacle
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="pyntacle.html">pyntacle package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="pyntacle.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.algorithms.html">pyntacle.algorithms package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.commands.html">pyntacle.commands package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.exceptions.html">pyntacle.exceptions package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="pyntacle.graph_generator.html">pyntacle.graph_generator package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="pyntacle.graph_generator.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.graph_operations.html">pyntacle.graph_operations package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.io_stream.html">pyntacle.io_stream package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.misc.html">pyntacle.misc package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.report.html">pyntacle.report package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyntacle.utils.html">pyntacle.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyntacle.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyntacle</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="pyntacle.html">pyntacle package</a> &raquo;</li>
+        
+          <li><a href="pyntacle.graph_generator.html">pyntacle.graph_generator package</a> &raquo;</li>
+        
+      <li>pyntacle.graph_generator.graph_igraph_generator module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/pyntacle.graph_generator.graph_igraph_generator.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-pyntacle.graph_generator.graph_igraph_generator">
+<span id="pyntacle-graph-generator-graph-igraph-generator-module"></span><h1>pyntacle.graph_generator.graph_igraph_generator module<a class="headerlink" href="#module-pyntacle.graph_generator.graph_igraph_generator" title="Permalink to this headline">¶</a></h1>
+<p>Generator classes of undirected graphs with known topologies.
+Envisioned models are: Erdos-Renyi, Scale-free, Tree and Small-world</p>
+<dl class="class">
+<dt id="pyntacle.graph_generator.graph_igraph_generator.BarabasiAlbertGenerator">
+<em class="property">class </em><code class="descname">BarabasiAlbertGenerator</code><a class="reference internal" href="_modules/pyntacle/graph_generator/graph_igraph_generator.html#BarabasiAlbertGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.graph_generator.graph_igraph_generator.BarabasiAlbertGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class generator of Erdos-Renyi-based random graphs with a specified number of nodes and a probability of wiring</p>
+<dl class="method">
+<dt id="pyntacle.graph_generator.graph_igraph_generator.BarabasiAlbertGenerator.generate">
+<code class="descname">generate</code><span class="sig-paren">(</span><em>parameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyntacle/graph_generator/graph_igraph_generator.html#BarabasiAlbertGenerator.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.graph_generator.graph_igraph_generator.BarabasiAlbertGenerator.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>It generates a graph based on the Barabasi-Albert model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> – List of two parameters. 1: (int) the number of vertices, 2: (int) the number of outgoing edges</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The generated igraph.Graph object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyntacle.graph_generator.graph_igraph_generator.ErdosRenyiGenerator">
+<em class="property">class </em><code class="descname">ErdosRenyiGenerator</code><a class="reference internal" href="_modules/pyntacle/graph_generator/graph_igraph_generator.html#ErdosRenyiGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.graph_generator.graph_igraph_generator.ErdosRenyiGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class generator of Erdos-Renyi-based random graphs with a specified number of nodes and a probability of wiring</p>
+<dl class="method">
+<dt id="pyntacle.graph_generator.graph_igraph_generator.ErdosRenyiGenerator.generate">
+<code class="descname">generate</code><span class="sig-paren">(</span><em>parameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyntacle/graph_generator/graph_igraph_generator.html#ErdosRenyiGenerator.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.graph_generator.graph_igraph_generator.ErdosRenyiGenerator.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>It generates a random graph based on the Erdos-Renyi model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>parameters</strong> – List of two parameters. 1: (int) the number of vertices, 2: a(float) if specifying the probability of nodes connection, else an (int) if specifying the number of edges</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The generated igraph.Graph object</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><strong>TypeError</strong> – if the type of the input parameters is not correct</li>
+<li><strong>ValueError</strong> – if the value of the input parameters is not correct</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyntacle.graph_generator.graph_igraph_generator.SmallWorldGenerator">
+<em class="property">class </em><code class="descname">SmallWorldGenerator</code><a class="reference internal" href="_modules/pyntacle/graph_generator/graph_igraph_generator.html#SmallWorldGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.graph_generator.graph_igraph_generator.SmallWorldGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class generator of Watts_Strogatz -based random graphs with a specified dimension of the lattice, the size of the
+lattice along all dimensions, a value giving the distance (number of steps) within which two vertices
+will be connected and a rewiring probability</p>
+<dl class="method">
+<dt id="pyntacle.graph_generator.graph_igraph_generator.SmallWorldGenerator.generate">
+<code class="descname">generate</code><span class="sig-paren">(</span><em>parameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyntacle/graph_generator/graph_igraph_generator.html#SmallWorldGenerator.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.graph_generator.graph_igraph_generator.SmallWorldGenerator.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>It generates a graph based on the Watts_Strogatz model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> – List of 4 parameters. 1: (int) the dimension of the lattice, 2: (int) the size of the lattice along all dimensions, 3: (int) value giving the distance (number of steps) within which two vertices will be connected, 4: (float) rewiring probability</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The generated igraph.Graph object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyntacle.graph_generator.graph_igraph_generator.TreeGenerator">
+<em class="property">class </em><code class="descname">TreeGenerator</code><a class="reference internal" href="_modules/pyntacle/graph_generator/graph_igraph_generator.html#TreeGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.graph_generator.graph_igraph_generator.TreeGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class generator of a Tree with a specified number of nodes and children of each node</p>
+<dl class="method">
+<dt id="pyntacle.graph_generator.graph_igraph_generator.TreeGenerator.generate">
+<code class="descname">generate</code><span class="sig-paren">(</span><em>parameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyntacle/graph_generator/graph_igraph_generator.html#TreeGenerator.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.graph_generator.graph_igraph_generator.TreeGenerator.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>It generates a tree in which almost all vertices have the same number of children</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> – List of two parameters. 1: (int) the number of vertices, 2: (int) the number of children of a vertex in the graph</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The generated igraph.Graph object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="pyntacle.graph_generator.graph_igraph_generator.randomword">
+<code class="descname">randomword</code><span class="sig-paren">(</span><em>length</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyntacle/graph_generator/graph_igraph_generator.html#randomword"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.graph_generator.graph_igraph_generator.randomword" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="pyntacle.graph_operations.html" class="btn btn-neutral float-right" title="pyntacle.graph_operations package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="pyntacle.graph_generator.generator_classmethod.html" class="btn btn-neutral" title="pyntacle.graph_generator.generator_classmethod module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Author.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

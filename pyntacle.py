@@ -6,7 +6,7 @@
 # !/usr/bin/env python3.6
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The pyntacle Project"
+__copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -38,7 +38,7 @@ import random
 import sys
 import os
 
-from exception.generic_error import Error
+from exceptions.generic_error import Error
 
 
 

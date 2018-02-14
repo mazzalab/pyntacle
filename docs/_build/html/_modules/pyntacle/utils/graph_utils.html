@@ -1,0 +1,543 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyntacle.utils.graph_utils &mdash; pyntacle  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="pyntacle  documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pyntacle
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyntacle.html">pyntacle package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pyntacle</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pyntacle.utils.graph_utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyntacle.utils.graph_utils</h1><div class="highlight"><pre>
+<span></span><span class="c1"># external libraries</span>
+<span class="kn">from</span> <span class="nn">config</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">igraph</span> <span class="k">import</span> <span class="n">Graph</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1"># pyntacle libraries</span>
+<span class="kn">from</span> <span class="nn">exceptions.illegal_graph_size_error</span> <span class="k">import</span> <span class="n">IllegalGraphSizeError</span>
+<span class="kn">from</span> <span class="nn">exceptions.missing_attribute_error</span> <span class="k">import</span> <span class="n">MissingAttributeError</span>
+<span class="kn">from</span> <span class="nn">exceptions.notagraph_error</span> <span class="k">import</span> <span class="n">NotAGraphError</span>
+<span class="kn">from</span> <span class="nn">exceptions.unsupported_graph_error</span> <span class="k">import</span> <span class="n">UnsupportedGrapherror</span>
+<span class="kn">from</span> <span class="nn">exceptions.wrong_argument_error</span> <span class="k">import</span> <span class="n">WrongArgumentError</span>
+<span class="kn">from</span> <span class="nn">exceptions.multiple_solutions_error</span> <span class="k">import</span> <span class="n">MultipleSolutionsError</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">a series of generic utilities for an iGraph graph object</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo, Mauro Truglio, Tommaso Mazza&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2018, The pyntacle Project&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ferenc Jordan&quot;</span><span class="p">]</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;d.capocefalo@css-mendel.it&quot;</span>
+<span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Development&quot;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s2">&quot;27 October 2016&quot;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">  Copyright (C) 20016-2017  Tommaso Mazza &lt;t,mazza@css-mendel.it&gt;</span>
+<span class="s2">  Viale Regina Margherita 261, 00198 Rome, Italy</span>
+
+<span class="s2">  This program is free software; you can use and redistribute it under</span>
+<span class="s2">  the terms of the BY-NC-ND license as published by</span>
+<span class="s2">  Creative Commons; either version 4 of the License, or</span>
+<span class="s2">  (at your option) any later version.</span>
+
+<span class="s2">  This program is distributed in the hope that it will be useful,</span>
+<span class="s2">  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="s2">  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="s2">  GNU General Public License for more details.</span>
+
+<span class="s2">  You should have received a copy of the GNU General Public License</span>
+<span class="s2">  along with this program; if not, write to the Free Software</span>
+<span class="s2">  Foundation, Inc.,  51 Franklin Street, Fifth Floor, Boston, MA</span>
+<span class="s2">  02110-1301 USA</span>
+<span class="s2">  &quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="GraphUtils"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils">[docs]</a><span class="k">class</span> <span class="nc">GraphUtils</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A series of methods that can be performed on graph and that can be accessed pretty quickly</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot;:type: Logger&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">log</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">Graph</span><span class="p">):</span>  <span class="c1"># check that the object is a graph</span>
+            <span class="k">raise</span> <span class="n">NotAGraphError</span><span class="p">(</span><span class="s2">&quot;input graph is not a graph&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s2">&quot;This graph does not contain vertices&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">IllegalGraphSizeError</span><span class="p">(</span><span class="s2">&quot;This graph does not contain vertices&quot;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">graph</span><span class="o">.</span><span class="n">ecount</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s2">&quot;This graph does not contain edges&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">IllegalGraphSizeError</span><span class="p">(</span><span class="s2">&quot;This graph does not contain edges&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span> <span class="o">=</span> <span class="n">graph</span>
+
+<div class="viewcode-block" id="GraphUtils.graph_checker"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.graph_checker">[docs]</a>    <span class="k">def</span> <span class="nf">graph_checker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **[EXPAND]**</span>
+<span class="sd">        </span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">Graph</span><span class="o">.</span><span class="n">is_directed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">UnsupportedGrapherror</span><span class="p">(</span><span class="s2">&quot;Input graph is direct, pyntacle supports only undirected graphs&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Graph</span><span class="o">.</span><span class="n">is_simple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">UnsupportedGrapherror</span><span class="p">(</span><span class="s2">&quot;Input Graph contains self loops and multiple edges&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;name&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()</span><span class="o">.</span><span class="n">attributes</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;nodes must have the attribute  </span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()[</span><span class="s2">&quot;name&quot;</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;node </span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2"> attribute must be a string&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()[</span><span class="s2">&quot;name&quot;</span><span class="p">]))</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()[</span><span class="s2">&quot;name&quot;</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="n">UnsupportedGrapherror</span><span class="p">(</span><span class="s2">&quot;Node names must be unique, check the </span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2"> attribute in graph&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GraphUtils.check_index_list"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.check_index_list">[docs]</a>    <span class="k">def</span> <span class="nf">check_index_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **[EXPAND]**</span>
+<span class="sd">        </span>
+<span class="sd">        :param index_list:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;index list is not a list&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">index_list</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">WrongArgumentError</span><span class="p">(</span><span class="s2">&quot;List is empty&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">index_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ind</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;indices must be integers&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">index_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="o">.</span><span class="n">indices</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The input node index &#39;</span><span class="si">{}</span><span class="s2">&#39; does not exist in the graph&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">index_list</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="n">WrongArgumentError</span><span class="p">(</span><span class="s2">&quot;The input node index &#39;</span><span class="si">{}</span><span class="s2">&#39; does not exist in the graph&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">index_list</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="GraphUtils.check_name_list"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.check_name_list">[docs]</a>    <span class="k">def</span> <span class="nf">check_name_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **[EXPAND]**</span>
+<span class="sd">        </span>
+<span class="sd">        :param names_list:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
+        <span class="c1"># print(names_list)</span>
+        <span class="c1"># print (self.graph.vs()[&quot;name&quot;])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">names_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;node names list is not a list&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">names_list</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">WrongArgumentError</span><span class="p">(</span><span class="s2">&quot;List is empty&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;node names must be strings&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()[</span><span class="s2">&quot;name&quot;</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="n">MissingAttributeError</span><span class="p">(</span><span class="s2">&quot;node </span><span class="si">{}</span><span class="s2"> is not in vertex </span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2"> attribute&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">names_list</span><span class="p">)))</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">names_list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;The names list contains duplicated node names, &quot;</span>
+                                <span class="s2">&quot;so there will be a double index in index list&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GraphUtils.attribute_in_nodes"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.attribute_in_nodes">[docs]</a>    <span class="k">def</span> <span class="nf">attribute_in_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **[EXPAND]**</span>
+<span class="sd">        </span>
+<span class="sd">        :param attribute:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">attribute</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()</span><span class="o">.</span><span class="n">attributes</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">MissingAttributeError</span><span class="p">(</span><span class="s2">&quot;attribute specified is not present in graph nodes&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GraphUtils.attribute_in_edges"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.attribute_in_edges">[docs]</a>    <span class="k">def</span> <span class="nf">attribute_in_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **[EXPAND]**</span>
+<span class="sd">        </span>
+<span class="sd">        :param attribute:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">attribute</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">es</span><span class="p">()</span><span class="o">.</span><span class="n">attributes</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">MissingAttributeError</span><span class="p">(</span><span class="s2">&quot;attribute specified is not present in graph edges&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GraphUtils.attribute_in_graph"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.attribute_in_graph">[docs]</a>    <span class="k">def</span> <span class="nf">attribute_in_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **[EXPAND]**</span>
+<span class="sd">        </span>
+<span class="sd">        :param attribute:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">attribute</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">attributes</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">MissingAttributeError</span><span class="p">(</span><span class="s2">&quot;attribute specified is not present in graph&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GraphUtils.check_attribute_type"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.check_attribute_type">[docs]</a>    <span class="k">def</span> <span class="nf">check_attribute_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">attribute_types</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Check that attributes are coherent and present in the graph</span>
+<span class="sd">        </span>
+<span class="sd">        :param attribute: a the input attribute to be checked</span>
+<span class="sd">        :param attribute_types: a type of enumerator that will be screened</span>
+<span class="sd">        :raise ValueError: if the attribute type is not of the selected enumerator</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">attribute_types</span> <span class="o">=</span> <span class="p">(</span><span class="n">attribute_types</span><span class="p">,)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attribute</span><span class="p">,</span> <span class="n">attribute_types</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">MissingAttributeError</span><span class="p">(</span><span class="s2">&quot;the value </span><span class="si">{}</span><span class="s2"> is not a  legal AttributeType&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">attribute</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="GraphUtils.check_attributes_types"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.check_attributes_types">[docs]</a>    <span class="k">def</span> <span class="nf">check_attributes_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">attribute_types</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Check that attributes are coherent and present in the graph</span>
+<span class="sd">        </span>
+<span class="sd">        :param attributes_list: a list of attributes asked to be reported</span>
+<span class="sd">        :param attribute_types: a type of enumerator or a list of enumerators that will be screened</span>
+<span class="sd">        :raise ValueError: if the attribute type is not of the selected enumerator</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attribute_types</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">attribute_types</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">attribute_types</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">attribute_types</span> <span class="o">=</span> <span class="p">(</span><span class="n">attribute_types</span><span class="p">,)</span>
+
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">attributes_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="n">attribute_types</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">MissingAttributeError</span><span class="p">(</span><span class="s2">&quot;the value </span><span class="si">{}</span><span class="s2"> is not a  legal AttributeType&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">elem</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="GraphUtils.get_node_names"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.get_node_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_node_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Convert a list of indices to a list of node names (the original ID)</span>
+<span class="sd">        </span>
+<span class="sd">        :param index_list: a list of integers containing the index list</span>
+<span class="sd">        :return: a list of node names</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_index_list</span><span class="p">(</span><span class="n">index_list</span><span class="p">)</span>
+        <span class="n">names_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">(</span><span class="n">index_list</span><span class="p">)[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">names_list</span></div>
+
+<div class="viewcode-block" id="GraphUtils.get_node_indices"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.get_node_indices">[docs]</a>    <span class="k">def</span> <span class="nf">get_node_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Convert a list of names into a list of indices</span>
+<span class="sd">        </span>
+<span class="sd">        :param node_names: a list of strings containing all the node names</span>
+<span class="sd">        :return: an index list containing the indices of the input node names</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_name_list</span><span class="p">(</span><span class="n">node_names</span><span class="p">)</span>
+        <span class="n">index_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">node_names</span><span class="p">:</span>
+            <span class="n">select</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">select</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;name is not unique, node names must be unique, plese check your graph&quot;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">select</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>
+                <span class="n">index_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">index_list</span></div>
+
+<div class="viewcode-block" id="GraphUtils.get_attribute_names"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.get_attribute_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_attribute_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;graph&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        **[EXPAND]**</span>
+<span class="sd">        </span>
+<span class="sd">        :param attribute_list:</span>
+<span class="sd">        :param type:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
+
+        <span class="n">attribute_names</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;graph&quot;</span><span class="p">:</span>  <span class="c1"># search for graph attributes</span>
+            <span class="k">for</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="n">attribute_list</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">attr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">[</span><span class="n">attribute</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+                    <span class="n">attribute_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attribute</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">attr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Attribute specified has None value&quot;</span><span class="p">)</span>
+
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Attribute </span><span class="si">{}</span><span class="s2"> is not in graph&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">attribute</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;node&quot;</span><span class="p">:</span>  <span class="c1"># search for node attributes</span>
+            <span class="k">for</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="n">attribute_list</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">attribute</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()</span><span class="o">.</span><span class="n">attributes</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Attribute </span><span class="si">{}</span><span class="s2"> not present in nodee attributes&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">attribute</span><span class="p">))</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">attribute_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attribute</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;edge&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="n">attribute_list</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">attribute</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">es</span><span class="p">()</span><span class="o">.</span><span class="n">attributes</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Attribute </span><span class="si">{}</span><span class="s2"> not present in edge attributes&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">attribute</span><span class="p">))</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">attribute_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attribute</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;attribute type not supported. Legal options are </span><span class="se">\&quot;</span><span class="s2">graph</span><span class="se">\&quot;</span><span class="s2">, </span><span class="se">\&quot;</span><span class="s2">node</span><span class="se">\&quot;</span><span class="s2">, </span><span class="se">\&quot;</span><span class="s2">edge</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">attribute_names</span></div>
+
+<div class="viewcode-block" id="GraphUtils.get_largest_component"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.get_largest_component">[docs]</a>    <span class="k">def</span> <span class="nf">get_largest_component</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the maximum component of a graph (a subrgraph of the original one)</span>
+<span class="sd">        </span>
+<span class="sd">        :return: a graph object with the only the largest component. If more than one component if present</span>
+<span class="sd">        :raise MultipleSolutionserror: if there is more than one largest component</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Giving you only the largest component of the input graph&quot;</span><span class="p">)</span>
+
+        <span class="n">components</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">components</span><span class="p">()</span>
+
+        <span class="n">comp_len</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span> <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">components</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Graph has the following components: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">comp_len</span><span class="p">))))</span>
+
+        <span class="n">max_ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">comp_len</span><span class="p">)</span>
+
+        <span class="n">max_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">comp_len</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">max_ind</span><span class="p">]</span>
+
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">max_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MultipleSolutionsError</span><span class="p">(</span><span class="s2">&quot;there are </span><span class="si">{}</span><span class="s2"> largest components, cannot choose one&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">max_list</span><span class="p">)))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">subgraph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">induced_subgraph</span><span class="p">(</span><span class="n">components</span><span class="p">[</span><span class="n">max_ind</span><span class="p">])</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Largest component has </span><span class="si">{0}</span><span class="s2"> nodes and </span><span class="si">{1}</span><span class="s2"> edges (out of </span><span class="si">{2}</span><span class="s2"> nodes and </span><span class="si">{3}</span><span class="s2"> edges in total)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">subgraph</span><span class="o">.</span><span class="n">vcount</span><span class="p">(),</span> <span class="n">subgraph</span><span class="o">.</span><span class="n">ecount</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">ecount</span><span class="p">()))</span>
+
+            <span class="k">return</span> <span class="n">subgraph</span></div></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Author.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

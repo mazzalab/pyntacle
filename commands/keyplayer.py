@@ -1,6 +1,6 @@
 from algorithms.key_player import *
 from algorithms.key_player import _KeyplayerAttribute
-from exception.generic_error import Error
+from exceptions.generic_error import Error
 from io_stream.graph_to_binary import GraphToBinary
 from misc.graph_load import GraphLoad
 from misc.kp_runner import *
@@ -9,7 +9,7 @@ from report.reporter import *
 from utils.graph_utils import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The pyntacle Project"
+__copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -156,7 +156,7 @@ class KeyPlayer():
                 if self.args.type == 'pos' or self.args.type == 'all':
                     kp_runner.run_greedy(key_player=_KeyplayerAttribute.DR, kpsize=self.args.k_size)
                     sys.stdout.write(
-                        "Finding best set of kp-nodes of size {} using DR (kp pos measure)\n".format(
+                        "Finding best set of kp-nodes of size {} using dR (kp pos measure)\n".format(
                             self.args.k_size))
 
                     kp_runner.run_greedy(key_player=_KeyplayerAttribute.MREACH, kpsize=self.args.k_size,
@@ -182,7 +182,7 @@ class KeyPlayer():
                 if self.args.type == 'pos' or self.args.type == 'all':
                     kp_runner.run_bruteforce(key_player=_KeyplayerAttribute.DR, kpsize=self.args.k_size)
                     sys.stdout.write(
-                        "Finding best set of kp-nodes of size {} using DR (kp pos measure)\n".format(
+                        "Finding best set of kp-nodes of size {} using dR (kp pos measure)\n".format(
                             self.args.k_size))
 
                     kp_runner.run_bruteforce(key_player=_KeyplayerAttribute.MREACH, kpsize=self.args.k_size,
@@ -235,7 +235,7 @@ class KeyPlayer():
             if self.args.type == 'pos' or self.args.type == 'all':
                 kp_runner.run_pos_or_neg(choice="kpp-pos", names_list=self.args.nodes, recalculate=True,
                                          m=self.args.m_reach)
-                # sys.stdout.write('MR: {0}\t DR: {1}\n'.format(MR, DR))
+                # sys.stdout.write('MR: {0}\t dR: {1}\n'.format(MR, dR))
 
             results = kp_runner.get_results()
             sys.stdout.write("keyplayer metrics report for {} values:\n".format(self.args.type.upper()))
@@ -369,7 +369,7 @@ class KeyPlayer():
                     # node_shapes = ["triangle-up" if x["name"] in results[metric][1] else other_nodes_shape for x in graph.vs()]
                     # plot_graph.set_node_shapes(shapes=node_shapes)
 
-                elif metric.name == "DR":
+                elif metric.name == "dR":
                     dr_nodes_colour = pal[3]
                     dr_frames_colour = framepal[3]
 
