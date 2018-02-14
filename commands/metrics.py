@@ -5,8 +5,8 @@ from algorithms.local_topology import LocalTopology, _LocalAttribute
 from algorithms.sparseness import *
 from algorithms.sparseness import _SparsenessAttribute
 from config import *
-from exception.generic_error import Error
-from exception.multiple_solutions_error import MultipleSolutionsError
+from exceptions.generic_error import Error
+from exceptions.multiple_solutions_error import MultipleSolutionsError
 from io_stream.graph_to_binary import GraphToBinary
 from misc.graph_load import GraphLoad, separator_detect
 from report.plotter import *
@@ -15,7 +15,7 @@ from utils.add_attributes import AddAttributes
 from utils.graph_utils import GraphUtils
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The Dedalus Project"
+__copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -65,7 +65,7 @@ class Metrics():
             header = True
 
         if not hasattr(self.args, 'which'):
-            raise Error("usage: dedalus.py metrics {global, local} [options]")
+            raise Error("usage: pyntacle.py metrics {global, local} [options]")
 
         # Checking input file
         if self.args.input_file is None:
@@ -83,7 +83,7 @@ class Metrics():
                 os.path.abspath(self.args.directory)))
             os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
 
-        self.logging.debug('Running Dedalus metrics, with arguments')
+        self.logging.debug('Running pyntacle metrics, with arguments')
         self.logging.debug(self.args)
 
         # Load Graph
@@ -137,7 +137,7 @@ class Metrics():
 
         if self.args.which == "local":
 
-            reporter = DedalusReporter(graph=graph) #init reporter
+            reporter = pyntacleReporter(graph=graph) #init reporter
 
             # initialize local attribute method
 
@@ -235,11 +235,11 @@ class Metrics():
             # create report for the selected metrics
             if self.args.nodes is None:
                 nodes_list = graph.vs()["name"]
-                report_prefix = "_".join(["Dedalus", graph["name"][0], "local_metrics", "report",
+                report_prefix = "_".join(["pyntacle", graph["name"][0], "local_metrics", "report",
                                           runtime_date])
             else:
                 report_prefix = "_".join(
-                    ["Dedalus", graph["name"][0], "local_metrics_selected_nodes_report",
+                    ["pyntacle", graph["name"][0], "local_metrics_selected_nodes_report",
                      runtime_date])
 
             sys.stdout.write("Producing report in {} format.\n".format(self.args.report_format))
@@ -268,11 +268,11 @@ class Metrics():
                 sys.stdout.write("Generating plots in {} format.\n".format(self.args.plot_format))
                 
                 # generates plot directory
-                plot_dir = os.path.join(self.args.directory, "Dedalus-Plots")
+                plot_dir = os.path.join(self.args.directory, "pyntacle-Plots")
 
                 if os.path.isdir(plot_dir):
                     self.logging.warning(
-                        "A directory named \"Dedalus-Plots\" already exists, I may overwrite something in there")
+                        "A directory named \"pyntacle-Plots\" already exists, I may overwrite something in there")
 
                 else:
                     os.makedirs(plot_dir, exist_ok=True)
@@ -319,7 +319,7 @@ class Metrics():
                 plot_graph.set_layouts()
 
                 plot_path = os.path.join(plot_dir, ".".join(["_".join(
-                    ["Dedalus", graph["name"][0], "local_metrics_plot_",
+                    ["pyntacle", graph["name"][0], "local_metrics_plot_",
                      runtime_date]), self.args.plot_format]))
                 plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=True,
                                       keep_aspect_ratio=True, vertex_label_size=8, vertex_frame_color=node_frames)
@@ -366,9 +366,9 @@ class Metrics():
             if not self.args.no_nodes: #create standard report for the whole graph
                 sys.stdout.write("Producing report\n")
 
-                reporter = DedalusReporter(graph=graph)
+                reporter = pyntacleReporter(graph=graph)
                 reporter.report_global_topology(global_attributes_list)
-                report_prefix = "_".join(["Dedalus", graph["name"][0], "global", "metrics", "report"])
+                report_prefix = "_".join(["pyntacle", graph["name"][0], "global", "metrics", "report"])
 
                 report_path = os.path.join(self.args.directory, "_".join(
                     [report_prefix, runtime_date]) + self.args.report_format)
@@ -409,10 +409,10 @@ class Metrics():
                 sparseness_nonodes.completeness_legacy(recalculate=True)
 
                 sys.stdout.write("Producing report\n")
-                reporter = DedalusReporter(graph=graph, graph2=graph_nonodes)
+                reporter = pyntacleReporter(graph=graph, graph2=graph_nonodes)
                 reporter.report_global_comparisons(attributes_list=global_attributes_list)
 
-                report_prefix = "_".join(["Dedalus", graph["name"][0], "global", "metrics", "nonodes", "report"])
+                report_prefix = "_".join(["pyntacle", graph["name"][0], "global", "metrics", "nonodes", "report"])
 
                 report_path = os.path.join(self.args.directory, "_".join(
                     [report_prefix, runtime_date]) + self.args.report_format)
@@ -428,11 +428,11 @@ class Metrics():
                     sys.stdout.write("Generating Plot of input graph {}\n".format(os.path.basename(self.args.input_file)))
 
                 # generates plot directory
-                plot_dir = os.path.join(self.args.directory, "Dedalus-Plots")
+                plot_dir = os.path.join(self.args.directory, "pyntacle-Plots")
 
                 if os.path.isdir(plot_dir):
                     self.logging.warning(
-                        "WARNING: A directory named \"Dedalus-Plots\" already exists, I may overwrite something in there")
+                        "WARNING: A directory named \"pyntacle-Plots\" already exists, I may overwrite something in there")
 
                 else:
                     os.mkdir(plot_dir)
@@ -447,7 +447,7 @@ class Metrics():
                 no_nodes_frames = framepal[4]
 
                 if self.args.no_nodes:
-                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["Dedalus", graph["name"][0],"global_metrics_plot_original", runtime_date]),self.args.plot_format]))
+                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", graph["name"][0],"global_metrics_plot_original", runtime_date]),self.args.plot_format]))
                     node_colours = [no_nodes_colour if x["name"] in nodes_list else other_nodes_colour for x
                                     in
                                     graph.vs()]
@@ -462,7 +462,7 @@ class Metrics():
                     node_colours = [other_nodes_colour] * graph.vcount()
                     node_frames = [other_frame_colour] * graph.vcount()
                     node_sizes = [other_nodes_size] * graph.vcount()
-                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["Dedalus", graph["name"][0],"global_metrics_plot", runtime_date]), self.args.plot_format]))
+                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", graph["name"][0],"global_metrics_plot", runtime_date]), self.args.plot_format]))
 
                 plot_graph = PlotGraph(graph=graph)
                 plot_graph.set_node_label(labels=graph.vs()["name"])  # assign node labels to graph
@@ -495,7 +495,7 @@ class Metrics():
                     # define layout
                     plot_graph.set_layouts()
 
-                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["Dedalus", graph["name"][0],"global_metrics_plot_nonodes",runtime_date]),self.args.plot_format]))
+                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", graph["name"][0],"global_metrics_plot_nonodes",runtime_date]),self.args.plot_format]))
 
                     plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=True,
                                           keep_aspect_ratio=True, vertex_label_size=8, vertex_frame_color=node_frames)
@@ -512,5 +512,5 @@ class Metrics():
             binary_path = os.path.join(self.args.directory, report_prefix + ".graph")
             GraphToBinary(graph=graph).save(file_name=binary_path)
         cursor.stop()
-        sys.stdout.write("Dedalus Metrics completed successfully. Ending\n")
+        sys.stdout.write("pyntacle Metrics completed successfully. Ending\n")
         sys.exit(0)

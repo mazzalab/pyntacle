@@ -2,7 +2,7 @@
 import logging
 from graph_generator.graph_igraph_generator import randomword
 from igraph import Graph
-from exception.illegal_argument_number_error import IllegalArgumentNumberError
+from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
 from utils.add_attributes import AddAttributes
 
 class Generator():

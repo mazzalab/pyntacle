@@ -2,7 +2,7 @@ import filecmp
 from warnings import simplefilter
 
 from config import *
-from exception.multiple_solutions_error import MultipleSolutionsError
+from exceptions.multiple_solutions_error import MultipleSolutionsError
 from graph_operations.set_graphs import GraphSetter
 from io_stream.graph_to_adjacencymatrix import GraphToAdjacencyMatrix
 from io_stream.graph_to_binary import GraphToBinary
@@ -14,7 +14,7 @@ from report.plotter import PlotGraph
 from utils.graph_utils import GraphUtils
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The Dedalus Project"
+__copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -165,7 +165,7 @@ class Set():
                      runtime_date])
             else:
                 self.logging.critical(
-                    "This should not happen. Please contact Dedalus developers and send a log of the error.\nQuitting.")
+                    "This should not happen. Please contact pyntacle developers and send a log of the error.\nQuitting.")
                 sys.exit(1)
 
             sys.stdout.write("basename of output graph: {}\n".format(self.args.output_file))
@@ -178,7 +178,7 @@ class Set():
         # GraphSetter(graph1=graph1, graph2=graph2,new_name = new_name
         if self.args.which == "union":
             sys.stdout.write(
-                "Running Dedalus Union on input graph {} and  {}\n".format(self.args.input_file_1,
+                "Running pyntacle Union on input graph {} and  {}\n".format(self.args.input_file_1,
                                                                            self.args.input_file_2))
 
             output_graph = setter.union()
@@ -189,7 +189,7 @@ class Set():
 
         elif self.args.which == "intersection":
             sys.stdout.write(
-                "Running Dedalus Intersection on input graph {} and  {}\n".format(self.args.input_file_1,
+                "Running pyntacle Intersection on input graph {} and  {}\n".format(self.args.input_file_1,
                                                                                   self.args.input_file_2))
 
             output_graph = setter.intersection()
@@ -201,7 +201,7 @@ class Set():
 
         elif self.args.which == "difference":
             sys.stdout.write(
-                "Running Dedalus Intersection on input graph {} and  {}\n".format(self.args.input_file_1,
+                "Running pyntacle Intersection on input graph {} and  {}\n".format(self.args.input_file_1,
                                                                                   self.args.input_file_2))
 
             output_graph = setter.difference()
@@ -211,11 +211,11 @@ class Set():
 
         else:
             self.logging.critical(
-                "This should not happen. Please contact Dedalus developer and send a command line, along with a log. Quitting\n")
+                "This should not happen. Please contact pyntacle developer and send a command line, along with a log. Quitting\n")
             sys.exit(1)
 
         # print report to command line
-        sys.stdout.write("Dedalus Report on set Operation: {}\n".format(self.args.which))
+        sys.stdout.write("pyntacle Report on set Operation: {}\n".format(self.args.which))
         sys.stdout.write("Input Graphs\n")
 
         sys.stdout.write(
@@ -292,11 +292,11 @@ class Set():
         # producing plots
         if not self.args.no_plot:
             # generates plot directory
-            plot_dir = os.path.join(self.args.directory, "Dedalus-Plots")
+            plot_dir = os.path.join(self.args.directory, "pyntacle-Plots")
 
             if os.path.isdir(plot_dir):
                 self.logging.warning(
-                    "A directory named \"Dedalus-Plots\" already exists, I may overwrite something in there")
+                    "A directory named \"pyntacle-Plots\" already exists, I may overwrite something in there")
 
             else:
                 os.mkdir(plot_dir)
@@ -356,7 +356,7 @@ class Set():
 
                 # plot output graph
                 output_plot_path = os.path.join(plot_dir,
-                                                ".".join(["_".join(["Dedalus", self.args.output_file,
+                                                ".".join(["_".join(["pyntacle", self.args.output_file,
                                                                     runtime_date]),
                                                           self.args.plot_format]))
                 output_graph_plotter = PlotGraph(graph=output_graph)  # init plotter class
@@ -404,7 +404,7 @@ class Set():
 
         elif not self.args.no_plot and (graph1.vcount() >= 1000 or graph2.vcount() >= 1000):
             self.logging.warning(
-                "One of the two input Graphs exceeds Dedalus limits for plotting (maximum 1000 nodes). Will not draw Graph")
+                "One of the two input Graphs exceeds pyntacle limits for plotting (maximum 1000 nodes). Will not draw Graph")
         cursor.stop()
-        sys.stdout.write("Dedalus Set completed successfully\n")
+        sys.stdout.write("pyntacle Set completed successfully\n")
         sys.exit(0)

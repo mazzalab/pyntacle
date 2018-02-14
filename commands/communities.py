@@ -1,6 +1,6 @@
 from warnings import simplefilter
 
-from exception.multiple_solutions_error import MultipleSolutionsError
+from exceptions.multiple_solutions_error import MultipleSolutionsError
 from graph_operations.modules_finder import CommunityFinder
 from io_stream.graph_to_adjacencymatrix import GraphToAdjacencyMatrix
 # output format
@@ -14,7 +14,7 @@ from utils.add_attributes import AddAttributes
 from utils.modules_utils import ModuleUtils
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The Dedalus Project"
+__copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -253,7 +253,7 @@ class Communities():
 
         else:
             self.logging.critical(
-                "This should not happen. Please contact Dedalus Developers and send your command line, along with a log. Quitting\n.")
+                "This should not happen. Please contact pyntacle Developers and send your command line, along with a log. Quitting\n.")
             sys.exit(1)
 
         mods_report = []
@@ -264,7 +264,7 @@ class Communities():
         # print(mods_report)
         # input()
         sys.stdout.write(
-            "Dedalus - Community Finding Report:\nalgorithm:{0}\nTotal number of Modules Found:\t{1}\nIndex\tNodes\tEdges \tComponents\n{2}".format(
+            "pyntacle - Community Finding Report:\nalgorithm:{0}\nTotal number of Modules Found:\t{1}\nIndex\tNodes\tEdges \tComponents\n{2}".format(
                 algorithm, len(mods), "".join(mods_report)))
 
         # initialize Moduleutils class
@@ -347,7 +347,7 @@ class Communities():
 
         if self.args.output_file is None:
             # insert random name generator
-            self.args.output_file = "_".join(["Dedalus", graph["name"][0], algorithm])
+            self.args.output_file = "_".join(["pyntacle", graph["name"][0], algorithm])
             sys.stdout.write(
                 "output modules name not specified. Basename of the output modules will be {}\n".format(
                     self.args.output_file))
@@ -400,7 +400,7 @@ class Communities():
 
         # save the original graph into a binary file
         if self.args.save_binary:
-            binary_name = ".".join(["Dedalus_communities", "graph"])
+            binary_name = ".".join(["pyntacle_communities", "graph"])
             binary_path = os.path.join(self.args.directory, binary_name)
             sys.stdout.write(
                 "Storing the input graph with module labels into .graph file at path {}\n".format(
@@ -408,11 +408,11 @@ class Communities():
 
         if not self.args.no_plot:
 
-            plot_dir = os.path.join(self.args.directory, "Dedalus-Plots")
+            plot_dir = os.path.join(self.args.directory, "pyntacle-Plots")
 
             if os.path.isdir(plot_dir):
                 self.logging.warning(
-                    "A directory named \"Dedalus-Plots\" already exists, I may overwrite something in there")
+                    "A directory named \"pyntacle-Plots\" already exists, I may overwrite something in there")
 
             else:
                 os.mkdir(plot_dir)
@@ -427,7 +427,7 @@ class Communities():
                 sys.stdout.write("Generating plots in {} format.\n".format(self.args.plot_format))
 
                 main_plot_path = os.path.join(plot_dir, ".".join(["_".join(
-                    ["Dedalus", os.path.splitext(os.path.basename(self.args.input_file))[0], "modules",
+                    ["pyntacle", os.path.splitext(os.path.basename(self.args.input_file))[0], "modules",
                      runtime_date]), self.args.plot_format]))
 
                 # initialize general graph Drawer
@@ -457,7 +457,7 @@ class Communities():
                                          vertex_frame_color=bord_list)
             else:
                 sys.stdout.write(
-                    "Input Graph is above Dedalus Plotting limits ({} nodes, we support 1000 nodes). Will skip plotting this module.\n".format(
+                    "Input Graph is above pyntacle Plotting limits ({} nodes, we support 1000 nodes). Will skip plotting this module.\n".format(
                         graph.vcount()))
 
             if len(final_mods) > 20:
@@ -487,7 +487,7 @@ class Communities():
 
                 else:
                     sys.stdout.write(
-                        "Module {0} is above Dedalus Plotting limits ({1} nodes , we support 1000 nodes). Will skip plotting this module.\n".format(
+                        "Module {0} is above pyntacle Plotting limits ({1} nodes , we support 1000 nodes). Will skip plotting this module.\n".format(
                             i, comm.vcount()))
         cursor.stop()
         sys.stdout.write("Community Finding completed successfully. Ending\n")

@@ -5,13 +5,13 @@ import os
 from igraph import Graph
 from config import *
 
-from exception.illegal_argument_number_error import IllegalArgumentNumberError
-from exception.unsupported_graph_error import UnsupportedGrapherror
-# Dedalus Libraries
-from exception.wrong_argument_error import WrongArgumentError
+from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
+from exceptions.unsupported_graph_error import UnsupportedGrapherror
+# pyntacle Libraries
+from exceptions.wrong_argument_error import WrongArgumentError
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The Dedalus Project"
+__copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -80,7 +80,7 @@ class AddAttributes():
         
         :param attr:
         :return: an igraph.Graph object
-        :param sep: field separator fi input is a file
+        :param sep: field separator if input is a file
         '''
 
         if isinstance(attr, dict):
@@ -288,18 +288,14 @@ class AddAttributes():
 
         self.__graph.vs["__parent"] = self.__graph["name"]
 
-    def graph_initializer(self, graph_name: str, node_names=None):
-        '''
-        Generic method that wraps up th generic operations used when importing or creating a graph using igraph generator
-        
-        :param file_name:
+    def graph_initializer(self, graph_name: object, node_names: object = None) -> object:
+        """
+        **EXPAND**
+        :param graph_name:
         :param node_names:
         :return:
-        '''
-
-        '''
-            add graph name (from filename)
-        '''
+        """
+        self.__graph = Graph.as_undirected(self.__graph) #reconvert graph to directed
         if "name" not in self.__graph.attributes():
             self.logger.info("adding file name to graph name")
             self.add_graph_name(graph_name)
@@ -338,8 +334,6 @@ class AddAttributes():
         '''
         if "node_names" not in self.__graph.es().attributes():
             '''
-            
-            
             add edge vertices names as an attribute 'adjacent_vertices'
             '''
             self.logger.info("adding source and target names as \"node name\" attribute to edges")

@@ -1,23 +1,21 @@
-.. Dedalus documentation master file, created by
-   sphinx-quickstart on Fri Nov 10 12:46:39 2017.
+.. pyntacle documentation master file, created by
+   sphinx-quickstart on Mon Feb 12 15:50:15 2018.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Dedalus' API documentation!
-=======================================
+Welcome to pyntacle's documentation!
+====================================
 
 .. toctree::
    :maxdepth: 4
    :caption: Contents:
 
-   installation
-   Dedalus
+   pyntacle
 
-.. only:: html
 
-	Indices and tables
-	==================
+Indices and tables
+==================
 
-	* :ref:`genindex`
-	* :ref:`modindex`
-	* :ref:`search`
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

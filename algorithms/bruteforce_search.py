@@ -9,12 +9,12 @@ import itertools
 from igraph import Graph
 from algorithms.key_player import KeyPlayer, _KeyplayerAttribute
 # from exception.illegal_graph_size_error import IllegalGraphSizeError
-from exception.illegal_kppset_size_error import IllegalKppsetSizeError
+from exceptions.illegal_kppset_size_error import IllegalKppsetSizeError
 from utils.graph_utils import *
 from config import *
 
 __author__ = "Tommaso Mazza"
-__copyright__ = "Copyright 2017, The Dedalus Project"
+__copyright__ = "Copyright 2017, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Tommaso Mazza"
@@ -138,13 +138,13 @@ class BruteforceSearch:
         
         .. note:: **m-reach**: min = 0 (unreachable); max = size(graph) - kpp_size (total reachability)
             
-            **DR**: min = 0 (unreachable); max = 1 (total reachability)
+            **dR**: min = 0 (unreachable); max = 1 (total reachability)
         
         :param int kpp_size: size of the kpp-set
         :param int m: maximum path length between the kpp-set and the other nodes of the graph
-        :param KeyplayerAttribute.name kpp_type: Either KeyplayerAttribute.mreach or KeyplayerAttribute.DR
+        :param KeyplayerAttribute.name kpp_type: Either KeyplayerAttribute.mreach or KeyplayerAttribute.dR
         :raises TypeError: When the kpp-set size is greater than the graph size
-        :raises WrongArgumentError: When the kpp-type argument is not of type KeyplayerAttribute.mreach or KeyplayerAttribute.DR
+        :raises WrongArgumentError: When the kpp-type argument is not of type KeyplayerAttribute.mreach or KeyplayerAttribute.dR
         """
         if not isinstance(kpp_size, int):
             self.logger.error("The kpp_size argument ('{}') is not an integer number".format(kpp_size))
@@ -156,10 +156,10 @@ class BruteforceSearch:
 
         elif kpp_type != _KeyplayerAttribute.DR and kpp_type != _KeyplayerAttribute.MREACH:
             self.logger.error(
-                "The kpp_type argument ('{}') must be of type KeyplayerAttribute.DR or KeyplayerAttribute.MREACH".format(
+                "The kpp_type argument ('{}') must be of type KeyplayerAttribute.dR or KeyplayerAttribute.MREACH".format(
                     kpp_type))
             raise TypeError(
-                "The kpp_type argument ('{}') must be of type KeyplayerAttribute.DR or KeyplayerAttribute.MREACH".format(
+                "The kpp_type argument ('{}') must be of type KeyplayerAttribute.dR or KeyplayerAttribute.MREACH".format(
                     kpp_type))
 
         else:

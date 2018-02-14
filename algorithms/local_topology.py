@@ -4,17 +4,14 @@ Calculator of local properties of graphs
 
 # external libraries
 from enum import Enum
-
 from igraph import Graph
-
-# Dedalus Libraries
 from algorithms import global_topology
-from exception.wrong_argument_error import WrongArgumentError
+from exceptions.wrong_argument_error import WrongArgumentError
 from utils.graph_utils import GraphUtils
 from config import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The Dedalus Project"
+__copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -242,7 +239,7 @@ class LocalTopology:
 
             return self.__graph.vs[_LocalAttribute.eccentricity.name]
 
-    def shortest_path(self, index_list=None, recalculate=False):
+    def shortest_path_igraph(self, index_list=None, recalculate=False):
         """
         Calculates the shortest path lengths between all (or a specified list of) nodes in the graph and every other nodes
         
@@ -291,7 +288,7 @@ class LocalTopology:
             self.__graph_utils.check_index_list(index_list=index_list)
 
             self.logger.info("Calculating the radiality of nodes {}".format(index_list))
-            shortest_path_lengths = self.shortest_path(recalculate=True)
+            shortest_path_lengths = self.shortest_path_igraph(recalculate=True)
 
             for i in index_list:
                 if recalculate or _LocalAttribute.radiality.name not in self.__graph.vs[i].attributes() \
@@ -307,7 +304,7 @@ class LocalTopology:
             return self.__graph.vs.select(index_list)[_LocalAttribute.radiality.name]
 
         else:
-            shortest_path_lengths = self.shortest_path(recalculate=True)
+            shortest_path_lengths = self.shortest_path_igraph(recalculate=True)
             self.logger.info("Calculating the radiality of all nodes")
 
             for i in self.__graph.vs.indices:
@@ -355,6 +352,7 @@ class LocalTopology:
                             break
 
                     subg = self.__graph.induced_subgraph(vertices=comps[comp_ind])
+
                     if subg.ecount() > 0:  # control that the component is not made of node isolates
 
                         gt = global_topology.GlobalTopology(graph=subg)

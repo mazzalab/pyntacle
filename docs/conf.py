@@ -1,7 +1,7 @@
-#!/usr/bin/env python3
+#!/home/local/MENDEL/d.capocefalo/miniconda3/bin/ python3
 # -*- coding: utf-8 -*-
 #
-# Dedalus documentation build configuration file, created by
+# pyntacle documentation build configuration file, created by
 # sphinx-quickstart on Fri Nov 10 11:20:29 2017.
 #
 # This file is execfile()d with the current directory set to its
@@ -53,7 +53,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'Dedalus'
+project = 'pyntacle'
 copyright = '2017, Author'
 author = 'Author'
 
@@ -116,7 +116,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Dedalusdoc'
+htmlhelp_basename = 'pyntacledoc'
 
 #html_split_index = True
 html_domain_indices = False
@@ -149,7 +149,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'Dedalus.tex', 'Dedalus Documentation',
+    (master_doc, 'pyntacle.tex', 'pyntacle Documentation',
      'Author', 'manual'),
 ]
 
@@ -159,7 +159,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'dedalus', 'Dedalus Documentation',
+    (master_doc, 'pyntacle', 'pyntacle Documentation',
      [author], 1)
 ]
 
@@ -170,8 +170,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'Dedalus', 'Dedalus Documentation',
-     author, 'Dedalus', 'One line description of project.',
+    (master_doc, 'pyntacle', 'pyntacle Documentation',
+     author, 'pyntacle', 'One line description of project.',
      'Miscellaneous'),
 ]
 
@@ -196,5 +196,3 @@ epub_copyright = copyright
 
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ['search.html']
-
-

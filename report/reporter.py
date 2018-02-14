@@ -1,5 +1,5 @@
 '''
-this module handles all the reporting regarding Dedalus
+this module handles all the reporting regarding pyntacle
 '''
 
 # standard libraries
@@ -12,17 +12,17 @@ import xlsxwriter
 from igraph import Graph
 from numpy import isinf, median
 
-# Dedalus libraries
+# pyntacle libraries
 from algorithms.global_topology import _GlobalAttribute
 from algorithms.key_player import _KeyplayerAttribute
 from algorithms.local_topology import _LocalAttribute
 from algorithms.sparseness import _SparsenessAttribute
-from exception.missing_attribute_error import MissingAttributeError
-from exception.wrong_argument_error import WrongArgumentError
+from exceptions.missing_attribute_error import MissingAttributeError
+from exceptions.wrong_argument_error import WrongArgumentError
 from utils import graph_utils  # swiss knife for graph utilities
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The Dedalus Project"
+__copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -48,9 +48,9 @@ __license__ = u"""
   """
 
 
-class DedalusReporter():
+class pyntacleReporter():
     '''
-    This method creates a report according to the type of analysis run by Dedalus
+    This method creates a report according to the type of analysis run by pyntacle
     '''
 
     def __init__(self, graph: Graph, graph2=None):
@@ -85,7 +85,7 @@ class DedalusReporter():
 
         self.__report = []
 
-        self.__report.append([" ".join(["Dedalus", "Report:", report_type])])
+        self.__report.append([" ".join(["pyntacle", "Report:", report_type])])
 
         if report_type == "Metrics - Global Topology Comparison":
             if self.__graph2 is not None:
@@ -357,10 +357,10 @@ class DedalusReporter():
                 os.makedirs(reportdir, exist_ok=True)
 
         else:
-            self.logger.info("report path is not specified, using generic name \"dedalus_report\" "
+            self.logger.info("report path is not specified, using generic name \"pyntacle_report\" "
                              "on the current directory (tab-separated file")
 
-            report_path = os.path.join(os.path.abspath(os.getcwd()), "dedalus_report.tsv")
+            report_path = os.path.join(os.path.abspath(os.getcwd()), "pyntacle_report.tsv")
             extension = ".txt"
 
         if extension != ".xlsx":
@@ -386,7 +386,7 @@ class DedalusReporter():
             workbook.use_zip64()
             format = workbook.add_format()
 
-            worksheet = workbook.add_worksheet("Dedalus Report")
+            worksheet = workbook.add_worksheet("pyntacle Report")
 
             for row, elem in enumerate(self.__report):
                 for col, p in enumerate(elem):

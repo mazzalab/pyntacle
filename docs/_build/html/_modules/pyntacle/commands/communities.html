@@ -1,0 +1,713 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyntacle.commands.communities &mdash; pyntacle  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="pyntacle  documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pyntacle
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyntacle.html">pyntacle package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pyntacle</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pyntacle.commands.communities</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyntacle.commands.communities</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">simplefilter</span>
+
+<span class="kn">from</span> <span class="nn">exceptions.multiple_solutions_error</span> <span class="k">import</span> <span class="n">MultipleSolutionsError</span>
+<span class="kn">from</span> <span class="nn">graph_operations.modules_finder</span> <span class="k">import</span> <span class="n">CommunityFinder</span>
+<span class="kn">from</span> <span class="nn">io_stream.graph_to_adjacencymatrix</span> <span class="k">import</span> <span class="n">GraphToAdjacencyMatrix</span>
+<span class="c1"># output format</span>
+<span class="kn">from</span> <span class="nn">io_stream.graph_to_binary</span> <span class="k">import</span> <span class="n">GraphToBinary</span>
+<span class="kn">from</span> <span class="nn">io_stream.graph_to_dot</span> <span class="k">import</span> <span class="n">GraphToDot</span>
+<span class="kn">from</span> <span class="nn">io_stream.graph_to_edgelist</span> <span class="k">import</span> <span class="n">GraphToEdgeList</span>
+<span class="kn">from</span> <span class="nn">io_stream.graph_to_sif</span> <span class="k">import</span> <span class="n">GraphToSif</span>
+<span class="kn">from</span> <span class="nn">misc.graph_load</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">report.plotter</span> <span class="k">import</span> <span class="n">PlotGraph</span>
+<span class="kn">from</span> <span class="nn">utils.add_attributes</span> <span class="k">import</span> <span class="n">AddAttributes</span>
+<span class="kn">from</span> <span class="nn">utils.modules_utils</span> <span class="k">import</span> <span class="n">ModuleUtils</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo, Mauro Truglio, Tommaso Mazza&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;Copyright 2018, The pyntacle Project&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ferenc Jordan&quot;</span><span class="p">]</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.0.1&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Daniele Capocefalo&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;bioinformatics@css-mendel.it&quot;</span>
+<span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Development&quot;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s2">&quot;14 November 2016&quot;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">  Copyright (C) 20016-2017  Tommaso Mazza &lt;t,mazza@css-mendel.it&gt;</span>
+<span class="s2">  Viale Regina Margherita 261, 00198 Rome, Italy</span>
+
+<span class="s2">  This program is free software; you can use and redistribute it under</span>
+<span class="s2">  the terms of the BY-NC-ND license as published by</span>
+<span class="s2">  Creative Commons; either version 4 of the License, or</span>
+<span class="s2">  (at your option) any later version.</span>
+
+<span class="s2">  This program is distributed in the hope that it will be useful,</span>
+<span class="s2">  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="s2">  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="s2">  License for more details.</span>
+
+<span class="s2">  You should have received a copy of the license along with this</span>
+<span class="s2">  work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.</span>
+<span class="s2">  &quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="Communities"><a class="viewcode-back" href="../../../pyntacle.commands.communities.html#pyntacle.commands.communities.Communities">[docs]</a><span class="k">class</span> <span class="nc">Communities</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **[EXPAND]**</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logging</span> <span class="o">=</span> <span class="n">log</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+
+        <span class="c1"># Check for pycairo</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_plot</span> <span class="ow">and</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">find_spec</span><span class="p">(</span><span class="s2">&quot;cairo&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;WARNING: It seems that the pycairo library is not installed/available. Plots&quot;</span>
+                             <span class="s2">&quot;will not be produced.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_plot</span> <span class="o">=</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="Communities.run"><a class="viewcode-back" href="../../../pyntacle.commands.communities.html#pyntacle.commands.communities.Communities.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">CursorAnimation</span><span class="p">()</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">input_file</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;ERROR: Input file is missing. Quitting</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">input_file</span><span class="p">):</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;ERROR: path </span><span class="si">{}</span><span class="s2"> does not exist. Quitting</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">input_file</span><span class="p">))</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">input_header</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_header</span><span class="p">:</span>
+            <span class="n">input_header</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">input_format</span> <span class="o">=</span><span class="n">format_dictionary</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">format</span><span class="p">,</span> <span class="s2">&quot;NA&quot;</span><span class="p">)</span>
+
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">GraphLoad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">input_file</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="n">input_format</span><span class="p">,</span>
+                          <span class="n">header</span><span class="o">=</span><span class="n">input_header</span><span class="p">)</span><span class="o">.</span><span class="n">graph_load</span><span class="p">()</span>
+
+        <span class="c1"># init Utils global stuff</span>
+        <span class="n">utils</span> <span class="o">=</span> <span class="n">GraphUtils</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">largest_component</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">graph</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_largest_component</span><span class="p">()</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                    <span class="s2">&quot;Taking the largest component of the input graph as you requested (</span><span class="si">{}</span><span class="s2"> nodes, </span><span class="si">{}</span><span class="s2"> edges)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">(),</span> <span class="n">graph</span><span class="o">.</span><span class="n">ecount</span><span class="p">()))</span>
+
+
+            <span class="k">except</span> <span class="n">MultipleSolutionsError</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                    <span class="s2">&quot;The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the </span><span class="se">\&quot;</span><span class="s2">--largest-component</span><span class="se">\&quot;</span><span class="s2"> option. Quitting</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># initialize module finder method</span>
+        <span class="n">communities</span> <span class="o">=</span> <span class="n">CommunityFinder</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span>
+        <span class="c1"># initialize AddAttributes method</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="n">AddAttributes</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span>
+
+        <span class="c1"># define plot sizes</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_dim</span><span class="p">:</span>  <span class="c1"># define custom format</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_dim</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_dim</span><span class="p">)):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_dim</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_dim</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                        <span class="s2">&quot;Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_dim</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                        <span class="s2">&quot;Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">plot_size</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_dim</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># generate different formats according to graph size</span>
+            <span class="k">if</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">150</span><span class="p">:</span>
+                <span class="n">plot_size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">800</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">plot_size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1600</span><span class="p">,</span> <span class="mi">1600</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">which</span> <span class="o">==</span> <span class="s2">&quot;fastgreedy&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># import edge attributes</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights</span><span class="p">):</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Weights file </span><span class="si">{}</span><span class="s2"> does not exist. Quitting</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights</span><span class="p">))</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sep</span> <span class="o">=</span> <span class="n">separator_detect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">attrnames</span> <span class="o">=</span> <span class="n">attrs</span><span class="o">.</span><span class="n">add_edge_attributes</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">)</span>
+                        <span class="c1"># get attribute name</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights_name</span> <span class="o">=</span> <span class="n">attrnames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">es</span><span class="o">.</span><span class="n">attributes</span><span class="p">():</span>
+                                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">(</span>
+                                    <span class="s2">&quot;weight Name </span><span class="si">{}</span><span class="s2"> was not imported into Graph, check your weights file. Quitting</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights_name</span><span class="p">))</span>
+
+                        <span class="c1"># cast every weight to float</span>
+                        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">es</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights_name</span><span class="p">]:</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">graph</span><span class="o">.</span><span class="n">es</span><span class="p">(</span><span class="n">i</span><span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
+                            <span class="k">except</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                                    <span class="s2">&quot;cannnot convert </span><span class="si">{}</span><span class="s2"> to float, replacing it with NoneType&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">weight</span><span class="p">))</span>
+                                <span class="n">graph</span><span class="o">.</span><span class="n">es</span><span class="p">(</span><span class="n">i</span><span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights_name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+                        <span class="n">graph</span><span class="o">.</span><span class="n">es</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>
+                                                              <span class="n">graph</span><span class="o">.</span><span class="n">es</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights_name</span><span class="p">]]</span>
+
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                            <span class="s2">&quot;Something went wrong during the weights importing. See help and documentation. Quitting.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">clusters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">clusters</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">clusters</span><span class="p">)</span>
+
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;argument of </span><span class="se">\&quot;</span><span class="s2">--clusters</span><span class="se">\&quot;</span><span class="s2"> must be an integer. Quitting</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Running Community finding using fastgreedy algorithm</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">communities</span><span class="o">.</span><span class="n">fastgreedy</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights_name</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">clusters</span><span class="p">)</span>
+                <span class="n">mods</span> <span class="o">=</span> <span class="n">communities</span><span class="o">.</span><span class="n">get_modules</span><span class="p">()</span>
+                <span class="n">algorithm</span> <span class="o">=</span> <span class="s2">&quot;fastgreedy&quot;</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">which</span> <span class="o">==</span> <span class="s2">&quot;infomap&quot;</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Running Community finding using infomap algorithm</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">communities</span><span class="o">.</span><span class="n">infomap</span><span class="p">()</span>
+            <span class="n">mods</span> <span class="o">=</span> <span class="n">communities</span><span class="o">.</span><span class="n">get_modules</span><span class="p">()</span>
+            <span class="n">algorithm</span> <span class="o">=</span> <span class="s2">&quot;infomap&quot;</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">which</span> <span class="o">==</span> <span class="s2">&quot;leading-eigenvector&quot;</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Running Community finding using leading-eigenvector algorithm</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">communities</span><span class="o">.</span><span class="n">leading_eigenvector</span><span class="p">()</span>
+            <span class="n">mods</span> <span class="o">=</span> <span class="n">communities</span><span class="o">.</span><span class="n">get_modules</span><span class="p">()</span>
+            <span class="n">algorithm</span> <span class="o">=</span> <span class="s2">&quot;leading-eigenvector&quot;</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">which</span> <span class="o">==</span> <span class="s2">&quot;community-walktrap&quot;</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Running Community finding using community-walktrap algorithm</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">steps</span><span class="p">)</span>
+
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Argument of </span><span class="se">\&quot;</span><span class="s2">--steps</span><span class="se">\&quot;</span><span class="s2"> must be an integer. Quitting</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># import edge attributes</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights</span><span class="p">):</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Weights file </span><span class="si">{}</span><span class="s2"> does not exist. Quitting</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights</span><span class="p">))</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sep</span> <span class="o">=</span> <span class="n">separator_detect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">attrnames</span> <span class="o">=</span> <span class="n">attrs</span><span class="o">.</span><span class="n">add_edge_attributes</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">)</span>
+                        <span class="c1"># get attribute name</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights_name</span> <span class="o">=</span> <span class="n">attrnames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">es</span><span class="o">.</span><span class="n">attributes</span><span class="p">():</span>
+                                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">(</span>
+                                    <span class="s2">&quot;weight Name </span><span class="si">{}</span><span class="s2"> was not imported into Graph, check your weights file. Quitting</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights_name</span><span class="p">))</span>
+
+                        <span class="c1"># cast every weight to float</span>
+                        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">es</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights_name</span><span class="p">]:</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">graph</span><span class="o">.</span><span class="n">es</span><span class="p">(</span><span class="n">i</span><span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
+                            <span class="k">except</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                                    <span class="s2">&quot;cannnot convert </span><span class="si">{}</span><span class="s2"> to float, replacing it with NoneType&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">weight</span><span class="p">))</span>
+                                <span class="n">graph</span><span class="o">.</span><span class="n">es</span><span class="p">(</span><span class="n">i</span><span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights_name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                            <span class="s2">&quot;Something went wrong during the weights importing. See help and documentation. Quitting.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+                    <span class="n">graph</span><span class="o">.</span><span class="n">es</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>
+                                                          <span class="n">graph</span><span class="o">.</span><span class="n">es</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights_name</span><span class="p">]]</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">clusters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">clusters</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">clusters</span><span class="p">)</span>
+
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;argument of </span><span class="se">\&quot;</span><span class="s2">--clusters</span><span class="se">\&quot;</span><span class="s2"> must be an integer. Quitting</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                <span class="s2">&quot;Running Community finding using community walktrap algorithm at maximum </span><span class="si">{}</span><span class="s2"> steps</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">steps</span><span class="p">))</span>
+            <span class="n">communities</span><span class="o">.</span><span class="n">community_walktrap</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">weights_name</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">clusters</span><span class="p">,</span>
+                                           <span class="n">steps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">steps</span><span class="p">)</span>
+            <span class="n">mods</span> <span class="o">=</span> <span class="n">communities</span><span class="o">.</span><span class="n">get_modules</span><span class="p">()</span>
+            <span class="n">algorithm</span> <span class="o">=</span> <span class="s2">&quot;community-walktrap&quot;</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                <span class="s2">&quot;This should not happen. Please contact pyntacle Developers and send your command line, along with a log. Quitting</span><span class="se">\n</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">mods_report</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mods</span><span class="p">):</span>
+            <span class="n">mods_report</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">elem</span><span class="o">.</span><span class="n">vcount</span><span class="p">(),</span> <span class="n">elem</span><span class="o">.</span><span class="n">ecount</span><span class="p">(),</span> <span class="nb">len</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">components</span><span class="p">())]])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># print(mods_report)</span>
+        <span class="c1"># input()</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="s2">&quot;pyntacle - Community Finding Report:</span><span class="se">\n</span><span class="s2">algorithm:</span><span class="si">{0}</span><span class="se">\n</span><span class="s2">Total number of Modules Found:</span><span class="se">\t</span><span class="si">{1}</span><span class="se">\n</span><span class="s2">Index</span><span class="se">\t</span><span class="s2">Nodes</span><span class="se">\t</span><span class="s2">Edges </span><span class="se">\t</span><span class="s2">Components</span><span class="se">\n</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">algorithm</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">mods</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mods_report</span><span class="p">)))</span>
+
+        <span class="c1"># initialize Moduleutils class</span>
+        <span class="n">mod_utils</span> <span class="o">=</span> <span class="n">ModuleUtils</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="n">algorithm</span><span class="p">,</span> <span class="n">modules</span><span class="o">=</span><span class="n">mods</span><span class="p">)</span>
+        <span class="n">mod_utils</span><span class="o">.</span><span class="n">add_modules_info</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">min_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">max_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">min_components</span><span class="p">,</span>
+                                       <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">max_components</span><span class="p">]):</span>
+            <span class="n">init_mods</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mods</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">min_nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">min_nodes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">min_nodes</span><span class="p">)</span>
+
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;argument of </span><span class="se">\&quot;</span><span class="s2">--min-set</span><span class="se">\&quot;</span><span class="s2"> must be an integer. Quitting</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">max_nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">max_nodes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">max_nodes</span><span class="p">)</span>
+
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;argument of </span><span class="se">\&quot;</span><span class="s2">--max-set</span><span class="se">\&quot;</span><span class="s2"> must be an integer. Quitting</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">max_components</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">max_components</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">max_components</span><span class="p">)</span>
+
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;argument of </span><span class="se">\&quot;</span><span class="s2">--max-components</span><span class="se">\&quot;</span><span class="s2"> must be an integer. Quitting</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">min_components</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">min_components</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">min_components</span><span class="p">)</span>
+
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;argument of </span><span class="se">\&quot;</span><span class="s2">--min_components</span><span class="se">\&quot;</span><span class="s2"> must be an integer. Quitting</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">info</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;NA&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>
+                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">min_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">max_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">max_components</span><span class="p">,</span>
+                     <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">min_components</span><span class="p">)]</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                <span class="s2">&quot;Filtering Subgraphs according to your criteria:</span><span class="se">\n</span><span class="s2">minimum number of nodes per modules: </span><span class="si">{0}</span><span class="se">\n</span><span class="s2">maximum number of nodes per module: </span><span class="si">{1}</span><span class="se">\n</span><span class="s2">minimum number of components: </span><span class="si">{2}</span><span class="se">\n</span><span class="s2">maximum number of components: </span><span class="si">{3}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="o">*</span><span class="n">info</span><span class="p">))</span>
+
+            <span class="n">mod_utils</span><span class="o">.</span><span class="n">filter_subgraphs</span><span class="p">(</span><span class="n">min_nodes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">min_nodes</span><span class="p">,</span> <span class="n">max_nodes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">max_nodes</span><span class="p">,</span>
+                                       <span class="n">min_components</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">min_components</span><span class="p">,</span>
+                                       <span class="n">max_components</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">max_components</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Filtered out </span><span class="si">{0}</span><span class="s2"> modules. Keeping </span><span class="si">{1}</span><span class="s2"> modules. Producing Output.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mod_utils</span><span class="o">.</span><span class="n">modules</span><span class="p">)</span> <span class="o">-</span> <span class="n">init_mods</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">mod_utils</span><span class="o">.</span><span class="n">modules</span><span class="p">)))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;No modules to filter. Proceeding to writing modules.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">mod_utils</span><span class="o">.</span><span class="n">label_modules_in_graph</span><span class="p">()</span>
+        <span class="n">final_mods</span> <span class="o">=</span> <span class="n">mod_utils</span><span class="o">.</span><span class="n">get_modules</span><span class="p">()</span>
+
+        <span class="c1"># producing output graph</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_output_header</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Not creating header on output files as you requested</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">output_header</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output_header</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">):</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Warning: Output directory does not exists, will create one at </span><span class="si">{}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">)))</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># dictionary that stores the extension of the output file</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">output_format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">output_format</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">format</span>
+
+        <span class="n">out_form</span> <span class="o">=</span> <span class="n">format_dictionary</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">output_format</span><span class="p">,</span> <span class="s2">&quot;NA&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">output_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># insert random name generator</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;pyntacle&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">algorithm</span><span class="p">])</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                <span class="s2">&quot;output modules name not specified. Basename of the output modules will be </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">output_file</span><span class="p">))</span>
+
+        <span class="n">output_basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">output_file</span><span class="p">)</span>
+
+        <span class="c1"># output generated networks</span>
+        <span class="k">if</span> <span class="n">out_form</span> <span class="o">==</span> <span class="s2">&quot;adjm&quot;</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Creating Adjacency Matrix of each community</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">final_mods</span><span class="p">):</span>
+                <span class="n">output_path</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">output_basename</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
+                    <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">%m%Y%H%M&quot;</span><span class="p">)]),</span> <span class="n">out_form</span><span class="p">])</span>
+                <span class="n">GraphToAdjacencyMatrix</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">elem</span><span class="p">)</span><span class="o">.</span><span class="n">export_graph</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">output_separator</span><span class="p">,</span>
+                                                                <span class="n">file_name</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span>
+                                                                <span class="n">header</span><span class="o">=</span><span class="n">output_header</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">out_form</span> <span class="o">==</span> <span class="s2">&quot;egl&quot;</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Creating Edge List of each final community</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">final_mods</span><span class="p">):</span>
+                <span class="n">output_path</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">output_basename</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
+                    <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">%m%Y%H%M&quot;</span><span class="p">)]),</span> <span class="n">out_form</span><span class="p">])</span>
+                <span class="n">GraphToEdgeList</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">elem</span><span class="p">)</span><span class="o">.</span><span class="n">export_graph</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">output_separator</span><span class="p">,</span>
+                                                         <span class="n">file_name</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span>
+                                                         <span class="n">header</span><span class="o">=</span><span class="n">output_header</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">out_form</span> <span class="o">==</span> <span class="s2">&quot;sif&quot;</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Creating Simple Interaction File of each final community</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">final_mods</span><span class="p">):</span>
+                <span class="n">output_path</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">output_basename</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
+                    <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">%m%Y%H%M&quot;</span><span class="p">)]),</span> <span class="n">out_form</span><span class="p">])</span>
+                <span class="n">GraphToSif</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">elem</span><span class="p">)</span><span class="o">.</span><span class="n">export_graph</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">output_separator</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span>
+                                                    <span class="n">header</span><span class="o">=</span><span class="n">output_header</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">out_form</span> <span class="o">==</span> <span class="s2">&quot;dot&quot;</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Creating DOT File of the each final community</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">final_mods</span><span class="p">):</span>
+                <span class="n">output_path</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">output_basename</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
+                    <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">%m%Y%H%M&quot;</span><span class="p">)]),</span> <span class="n">out_form</span><span class="p">])</span>
+
+                <span class="c1"># Ignore ugly RuntimeWarnings while creating a dot</span>
+                <span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
+                <span class="n">GraphToDot</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">elem</span><span class="p">)</span><span class="o">.</span><span class="n">export_graph</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">output_path</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">out_form</span> <span class="o">==</span> <span class="s2">&quot;bin&quot;</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Storing each community into a .graph (binary) file</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">final_mods</span><span class="p">):</span>
+                <span class="n">output_path</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">output_basename</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
+                    <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">%m%Y%H%M&quot;</span><span class="p">)]),</span> <span class="n">out_form</span><span class="p">])</span>
+                <span class="n">GraphToBinary</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">elem</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">output_path</span><span class="p">)</span>
+
+        <span class="c1"># save the original graph into a binary file</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">save_binary</span><span class="p">:</span>
+            <span class="n">binary_name</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;pyntacle_communities&quot;</span><span class="p">,</span> <span class="s2">&quot;graph&quot;</span><span class="p">])</span>
+            <span class="n">binary_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="n">binary_name</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                <span class="s2">&quot;Storing the input graph with module labels into .graph file at path </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">binary_path</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">no_plot</span><span class="p">:</span>
+
+            <span class="n">plot_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="s2">&quot;pyntacle-Plots&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;A directory named </span><span class="se">\&quot;</span><span class="s2">pyntacle-Plots</span><span class="se">\&quot;</span><span class="s2"> already exists, I may overwrite something in there&quot;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">)</span>
+
+            <span class="n">avail_colours_fill</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="s2">&quot;Spectral&quot;</span><span class="p">,</span> <span class="n">n_colors</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span>
+                <span class="n">final_mods</span><span class="p">))</span><span class="o">.</span><span class="n">as_hex</span><span class="p">()</span>  <span class="c1"># available colours for node fill</span>
+            <span class="n">avail_colours_borders</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="s2">&quot;Spectral&quot;</span><span class="p">,</span> <span class="n">n_colors</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">final_mods</span><span class="p">),</span>
+                                                      <span class="n">desat</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">as_hex</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">:</span>
+
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Generating plots in </span><span class="si">{}</span><span class="s2"> format.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_format</span><span class="p">))</span>
+
+                <span class="n">main_plot_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="p">[</span><span class="s2">&quot;pyntacle&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">input_file</span><span class="p">))[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;modules&quot;</span><span class="p">,</span>
+                     <span class="n">runtime_date</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_format</span><span class="p">]))</span>
+
+                <span class="c1"># initialize general graph Drawer</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Drawing Original Graph with corresponding modules</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">graph_plotter</span> <span class="o">=</span> <span class="n">PlotGraph</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span>
+                <span class="n">graph_plotter</span><span class="o">.</span><span class="n">set_node_label</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+                <span class="n">graph_plotter</span><span class="o">.</span><span class="n">set_node_sizes</span><span class="p">([</span><span class="mi">30</span><span class="p">]</span> <span class="o">*</span> <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">())</span>
+
+                <span class="c1"># define different colours for each module</span>
+                <span class="n">not_in_module_colours</span> <span class="o">=</span> <span class="s2">&quot;#A9A9A9&quot;</span>
+                <span class="n">col_list</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">bord_list</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">():</span>
+                    <span class="n">module</span> <span class="o">=</span> <span class="n">elem</span><span class="p">[</span><span class="s2">&quot;__module&quot;</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">module</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">col_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">avail_colours_fill</span><span class="p">[</span><span class="n">module</span><span class="p">])</span>
+                        <span class="n">bord_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">avail_colours_borders</span><span class="p">[</span><span class="n">module</span><span class="p">])</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">col_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">not_in_module_colours</span><span class="p">)</span>
+                        <span class="n">bord_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">not_in_module_colours</span><span class="p">)</span>
+
+                <span class="n">graph_plotter</span><span class="o">.</span><span class="n">set_node_colours</span><span class="p">(</span><span class="n">col_list</span><span class="p">)</span>
+                <span class="n">graph_plotter</span><span class="o">.</span><span class="n">set_layouts</span><span class="p">()</span>
+                <span class="n">graph_plotter</span><span class="o">.</span><span class="n">plot_graph</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">main_plot_path</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="n">plot_size</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">edge_curved</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                         <span class="n">keep_aspect_ratio</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">vertex_label_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+                                         <span class="n">vertex_frame_color</span><span class="o">=</span><span class="n">bord_list</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                    <span class="s2">&quot;Input Graph is above pyntacle Plotting limits (</span><span class="si">{}</span><span class="s2"> nodes, we support 1000 nodes). Will skip plotting this module.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">()))</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">final_mods</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;The number of modules (</span><span class="si">{}</span><span class="s2">) is very high, hence the node colours of each module may be very similar&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="nb">len</span><span class="p">(</span><span class="n">final_mods</span><span class="p">)))</span>
+
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Drawing Each Module Separately</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">comm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">final_mods</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">comm</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">1000</span><span class="p">:</span>
+                    <span class="n">plotter</span> <span class="o">=</span> <span class="n">PlotGraph</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">comm</span><span class="p">)</span>
+                    <span class="n">plotter</span><span class="o">.</span><span class="n">set_node_label</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">comm</span><span class="o">.</span><span class="n">vs</span><span class="p">()[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+
+                    <span class="n">plotter</span><span class="o">.</span><span class="n">set_node_colours</span><span class="p">([</span><span class="n">avail_colours_fill</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">*</span> <span class="n">comm</span><span class="o">.</span><span class="n">vcount</span><span class="p">())</span>
+
+                    <span class="n">plotter</span><span class="o">.</span><span class="n">set_node_sizes</span><span class="p">([</span><span class="mi">30</span><span class="p">]</span> <span class="o">*</span> <span class="n">comm</span><span class="o">.</span><span class="n">vcount</span><span class="p">())</span>
+
+                    <span class="n">comm_plot_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_dir</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                        <span class="p">[</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
+                            <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">%m%Y%H%M&quot;</span><span class="p">)]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">plot_format</span><span class="p">]))</span>
+
+                    <span class="n">plotter</span><span class="o">.</span><span class="n">set_layouts</span><span class="p">()</span>
+                    <span class="n">plotter</span><span class="o">.</span><span class="n">plot_graph</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">comm_plot_path</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="n">plot_size</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">edge_curved</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                       <span class="n">keep_aspect_ratio</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">vertex_label_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+                                       <span class="n">vertex_frame_color</span><span class="o">=</span><span class="p">[</span><span class="n">avail_colours_borders</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">*</span> <span class="n">comm</span><span class="o">.</span><span class="n">vcount</span><span class="p">())</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                        <span class="s2">&quot;Module </span><span class="si">{0}</span><span class="s2"> is above pyntacle Plotting limits (</span><span class="si">{1}</span><span class="s2"> nodes , we support 1000 nodes). Will skip plotting this module.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">i</span><span class="p">,</span> <span class="n">comm</span><span class="o">.</span><span class="n">vcount</span><span class="p">()))</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Community Finding completed successfully. Ending</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Author.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

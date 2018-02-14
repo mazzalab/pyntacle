@@ -5,16 +5,16 @@ import pickle  # for working with binary files
 import re
 
 from misc.binarycheck import is_binary_file
-# dedalus libraries
+# pyntacle libraries
 from igraph import Graph
 from config import *
-from exception.illegal_graph_size_error import IllegalGraphSizeError
-from exception.wrong_argument_error import WrongArgumentError
+from exceptions.illegal_graph_size_error import IllegalGraphSizeError
+from exceptions.wrong_argument_error import WrongArgumentError
 from utils.add_attributes import AddAttributes
 from utils.graph_utils import GraphUtils
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2016, The Dedalus Project"
+__copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
