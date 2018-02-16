@@ -295,7 +295,9 @@ class AddAttributes():
         :param node_names:
         :return:
         """
-        self.__graph = Graph.as_undirected(self.__graph) #reconvert graph to directed
+
+        self.__graph.to_undirected() #reconvert graph to directed
+
         if "name" not in self.__graph.attributes():
             self.logger.info("adding file name to graph name")
             self.add_graph_name(graph_name)
@@ -345,3 +347,5 @@ class AddAttributes():
 
         if not "__sif_interaction" in self.__graph.es().attributes():
             self.__graph.es()["__sif_interaction"] = None
+
+        return self.__graph

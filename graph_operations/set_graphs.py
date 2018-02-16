@@ -1,23 +1,13 @@
-from igraph import Graph
-from utils.add_attributes import AddAttributes
-from utils.graph_utils import GraphUtils
-from config import *
-from collections import OrderedDict
-
-'''
-this module merges two graphs if they have any node names in common.
-'''
-
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
-__email__ = "bioinformatics@css-mendel.it"
+__email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "14 November 2016"
+__date__ = "27 February 2018"
 __license__ = u"""
-  Copyright (C) 20016-2017  Tommaso Mazza <t,mazza@css-mendel.it>
+  Copyright (C) 2016-2018  Tommaso Mazza <t,mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
 
   This program is free software; you can use and redistribute it under
@@ -34,6 +24,13 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+from igraph import Graph
+from utils.add_attributes import AddAttributes
+from utils.graph_utils import GraphUtils
+from config import *
+from collections import OrderedDict
+
+"""This module uses *set* operations to perform unions, difference and inntersection of two graphs following graph theories. Additionally, it preserves and import graph porperties and attriobutes"""
 
 class GraphSetter(object):
     def __init__(self, graph1: Graph, graph2: Graph, new_name):

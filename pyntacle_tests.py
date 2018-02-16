@@ -17,21 +17,15 @@
 # print(GlobalTopology.density(erd))
 
 from igraph import Graph
-from algorithms.local_topology_NEW import *
-from misc.enums import Implementations
-
-gg = Graph.Erdos_Renyi(10, 0.5)
-gg["name"] = "test"
-gg.vs["name"] = [str(x) for x in range(0,10)]
+from io_stream.importer_NEW import *
 
 
 
+path = "/home/local/MENDEL/d.capocefalo/Desktop/pyntacle-test/pippo.adjm"
 
+a = PyntacleImporter.AdjacencyMatrix(path, "\t", False)
 
-print(LocalTopology.shortest_path_pyntacle(graph=gg, nodes=None, implementation=Implementations.gpu))
-
-
-
+print(a)
 
 
 # print(len(aa.components()))

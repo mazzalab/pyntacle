@@ -1,7 +1,4 @@
-"""
-**[Description of the entire module here]**
-
-"""
+"""Decorators and functions used by internally by pyntacle to standardize its methods"""
 
 import sys
 import os

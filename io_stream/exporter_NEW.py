@@ -30,7 +30,7 @@ from config import *
 import pandas as pd
 import pickle
 
-class Exporter:
+class PyntacleExporter:
     """ export your igraph/Pyntacle object to a text file in the following formats:
     *Adjacency Matrix
     *Edge List

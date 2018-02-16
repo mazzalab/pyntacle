@@ -26,6 +26,7 @@ __license__ = u"""
 
 from igraph import Graph
 import pandas as pd
+import numpy as np
 import os
 import sys
 from config import *
@@ -42,9 +43,11 @@ from exceptions.unproperlyformattedfile_error import UnproperlyFormattedFileErro
 
 class PyntacleImporter:
     @staticmethod
-    @filechecker
-    @separator_sniffer
-    def adjacencymatrix(file, sep=None, header=True) -> (Graph, list):
+    #@filechecker
+
+    #
+    # @separator_sniffer
+    def AdjacencyMatrix(file, sep=None, header=True) -> (Graph, list):
         """
         Import an Adjacency matrix file to an `igraph.Graph` object ready to be used by Pyntacle's methods.
         for more specifications on Adjacency Matrix please visit [Ref]_
@@ -66,163 +69,163 @@ class PyntacleImporter:
             raise ValueError("Matrix is not squared")
 
         with open(file, "r") as adjmatrix:
+            #todo Mauro controlli che questa parte sul separatore fatto bene funziona?
             iterator = iter(adjmatrix.readline, '')
 
             first_line = next(iterator, None).rstrip()
             if sep not in first_line:
-                raise WrongArgumentError(
-                    'The specified separator "{}" is not present in the adjacency matrix file'.format(sep))
-            else:
-                n_cols = len(first_line.split(sep))
+                raise WrongArgumentError('The specified separator "{}" is not present in the adjacency matrix file'.format(sep))
+            # else:
+            #     n_cols = len(first_line.split(sep))
 
             if header:
                 #use pandas to parse this into
-                #todo replace numpy here with pandas
-                f = np.loadtxt(file, skiprows=1, usecols=(tuple(range(1, n_cols))), delimiter=sep)
-                node_names = open(file).readlines()[0].rstrip().split(sep)[1:]
+                f = pd.read_csv(filepath_or_buffer=file, sep=sep, index_col=0)
+                node_names = f.columns.values
 
             else:
-                #todo same as above
-                f = np.loadtxt(file, delimiter=sep)
-                node_names = [str(x) for x in list(range(0, len(f)))]
+                f = pd.read_csv(filepath_or_buffer=file, sep=sep, header=None)
+                node_names = [str(x) for x in range(0, len(f.columns))]
 
-            graph = Graph.Adjacency(f.tolist(), mode='undirected')
-            graph = Graph.simplify(graph, loops=True, multiple=False)
+            graph = Graph.Adjacency(f.values.tolist(), mode="UPPER")
 
             AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0],
                                                          node_names=node_names)
 
-        return graph
-
-    @staticmethod
-    @filechecker
-    @separator_sniffer
-    def EdgeList(file, sep=None, header=True):
-        """
-
-        :param file:
-        :param sep:
-        :param header:
-        :return:
-        """
-
-        eglutils = EglUtils(file=file, header=header, separator=sep)
-        graph = Graph()
-        """:type: Graph"""
-        graph.vs["name"] = []
-        if header:
-
-            adj = pd.read_csv(file, sep=sep, header=0)
-
-        else:
-            adj = pd.read_csv(file, sep=sep, header=None)
-
-        adj.values.sort()
-        adj = adj.drop_duplicates()
-
-        # add all vertices to graph
-        graph.add_vertices(list(set(adj[0].tolist() + adj[1].tolist())))
-        graph.add_edges([tuple(x) for x in adj.values])
+            print(graph.summary())
+            print(graph.attributes())
 
         return graph
 
-    @staticmethod
-    @filechecker
-    @separator_sniffer
-    def Sif(file, sep=None, header=True):
-        graph = Graph()
-        """:type: Graph"""
-        graph.vs["name"] = []
-
-        sif_list = [line.rstrip('\n').split(sep) for line in open(file_name, "r")]
-
-        """:type: list[str]"""
-
-        if header:
-            self.logger.info(
-                "storing second column of header as edge attribute \"__sif_interaction\". Interaction name can be found in the graph attribute \"__sif_interaction_name\"")
-            graph["__sif_interaction_name"] = sif_list[0][1]
-            graph.es()["__sif_interaction"] = None
-            del sif_list[0]
-
-        else:
-            graph["__sif_interaction_name"] = None
-
-        for i, elem in enumerate(sif_list):
-
-            if len(elem) == 0:
-                pass  # this should be an empty line
-
-            elif len(elem) == 1:  # add the single node as isolate
-                if elem[0] not in graph.vs()["name"]:
-                    graph.add_vertex(name=elem[0])
-
-            elif len(elem) == 3:
-
-                # print(elem)
-                first = elem[0]
-                second = elem[2]
-
-                if first not in graph.vs()["name"]:
-                    graph.add_vertex(name=first)
-
-                if second not in graph.vs()["name"]:
-                    graph.add_vertex(name=second)
-
-                if not graph.are_connected(first, second):
-                    graph.add_edge(source=first, target=second, __sif_interaction=elem[1])
-
-                else:
-                    self.logger.warning(
-                        "an edge already exist between node {0} and node {1}. This should not happen, as pyntacle only supports simple graphs.\n Attribute \"__sif_interaction\n Will skip line {2}".format(
-                            first, second, i))
-                    node_ids = GraphUtils(graph=graph).get_node_indices(node_names=[first, second])
-                    graph.es(graph.get_eid(node_ids[0], node_ids[1]))["__sif_interaction"] = elem[1]
-
-
-            elif len(elem) >= 4:
-                first = elem[0]
-                interaction = elem[1]
-                other_nodes = elem[2:]
-
-                if first not in graph.vs()["name"]:
-                    graph.add_vertex(name=first)
-
-                for n in other_nodes:
-                    if n not in graph.vs()["name"]:
-                        graph.add_vertex(name=n)
-                    if not graph.are_connected(first, n):
-                        graph.add_edge(source=first, target=n, __sif_interaction=interaction)
-
-                    else:
-                        self.logger.warning(
-                            "an edge already exist between node {0} and node {1}. This should not happen, as pyntacle only supports simple graphs.\n Attribute \"__sif_interaction\n will be override".format(
-                                first, n))
-                        node_ids = GraphUtils(graph=graph).get_node_indices(node_names=[first, n])
-                        graph.es(graph.get_eid(node_ids[0], node_ids[1]))["__sif_interaction"] = interaction
-
-            else:
-                self.logger.warning("line {} is malformed, hence it will be skipped".format(i))
-
-                # print(g.vs()["name"])
-
-        # add missing attribute to graph
-        AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file_name))[0])
-
-        '''
-        define graph as undirected
-        '''
-        graph = Graph.as_undirected(graph)
-        self.logger.info("Sif File imported")
-        return graph
+    # @staticmethod
+    # @filechecker
+    # @separator_sniffer
+    # def EdgeList(file, sep=None, header=True):
+    #     """
     #
-    @staticmethod
-    @filechecker
-    @separator_sniffer
-    def Dot():
-        pass
-
-    @staticmethod
-    @filechecker
-    def Binary():
-        pass
+    #     :param file:
+    #     :param sep:
+    #     :param header:
+    #     :return:
+    #     """
+    #
+    #     eglutils = EglUtils(file=file, header=header, separator=sep)
+    #     graph = Graph()
+    #     """:type: Graph"""
+    #     graph.vs["name"] = []
+    #     if header:
+    #
+    #         adj = pd.read_csv(file, sep=sep, header=0)
+    #
+    #     else:
+    #         adj = pd.read_csv(file, sep=sep, header=None)
+    #
+    #     adj.values.sort()
+    #     adj = adj.drop_duplicates()
+    #
+    #     # add all vertices to graph
+    #     graph.add_vertices(list(set(adj[0].tolist() + adj[1].tolist())))
+    #     graph.add_edges([tuple(x) for x in adj.values])
+    #
+    #     return graph
+    #
+    # @staticmethod
+    # @filechecker
+    # @separator_sniffer
+    # def Sif(file, sep=None, header=True):
+    #     graph = Graph()
+    #     """:type: Graph"""
+    #     graph.vs["name"] = []
+    #
+    #     sif_list = [line.rstrip('\n').split(sep) for line in open(file_name, "r")]
+    #
+    #     """:type: list[str]"""
+    #
+    #     if header:
+    #         self.logger.info(
+    #             "storing second column of header as edge attribute \"__sif_interaction\". Interaction name can be found in the graph attribute \"__sif_interaction_name\"")
+    #         graph["__sif_interaction_name"] = sif_list[0][1]
+    #         graph.es()["__sif_interaction"] = None
+    #         del sif_list[0]
+    #
+    #     else:
+    #         graph["__sif_interaction_name"] = None
+    #
+    #     for i, elem in enumerate(sif_list):
+    #
+    #         if len(elem) == 0:
+    #             pass  # this should be an empty line
+    #
+    #         elif len(elem) == 1:  # add the single node as isolate
+    #             if elem[0] not in graph.vs()["name"]:
+    #                 graph.add_vertex(name=elem[0])
+    #
+    #         elif len(elem) == 3:
+    #
+    #             # print(elem)
+    #             first = elem[0]
+    #             second = elem[2]
+    #
+    #             if first not in graph.vs()["name"]:
+    #                 graph.add_vertex(name=first)
+    #
+    #             if second not in graph.vs()["name"]:
+    #                 graph.add_vertex(name=second)
+    #
+    #             if not graph.are_connected(first, second):
+    #                 graph.add_edge(source=first, target=second, __sif_interaction=elem[1])
+    #
+    #             else:
+    #                 self.logger.warning(
+    #                     "an edge already exist between node {0} and node {1}. This should not happen, as pyntacle only supports simple graphs.\n Attribute \"__sif_interaction\n Will skip line {2}".format(
+    #                         first, second, i))
+    #                 node_ids = GraphUtils(graph=graph).get_node_indices(node_names=[first, second])
+    #                 graph.es(graph.get_eid(node_ids[0], node_ids[1]))["__sif_interaction"] = elem[1]
+    #
+    #
+    #         elif len(elem) >= 4:
+    #             first = elem[0]
+    #             interaction = elem[1]
+    #             other_nodes = elem[2:]
+    #
+    #             if first not in graph.vs()["name"]:
+    #                 graph.add_vertex(name=first)
+    #
+    #             for n in other_nodes:
+    #                 if n not in graph.vs()["name"]:
+    #                     graph.add_vertex(name=n)
+    #                 if not graph.are_connected(first, n):
+    #                     graph.add_edge(source=first, target=n, __sif_interaction=interaction)
+    #
+    #                 else:
+    #                     self.logger.warning(
+    #                         "an edge already exist between node {0} and node {1}. This should not happen, as pyntacle only supports simple graphs.\n Attribute \"__sif_interaction\n will be override".format(
+    #                             first, n))
+    #                     node_ids = GraphUtils(graph=graph).get_node_indices(node_names=[first, n])
+    #                     graph.es(graph.get_eid(node_ids[0], node_ids[1]))["__sif_interaction"] = interaction
+    #
+    #         else:
+    #             self.logger.warning("line {} is malformed, hence it will be skipped".format(i))
+    #
+    #             # print(g.vs()["name"])
+    #
+    #     # add missing attribute to graph
+    #     AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file_name))[0])
+    #
+    #     '''
+    #     define graph as undirected
+    #     '''
+    #     graph = Graph.as_undirected(graph)
+    #     self.logger.info("Sif File imported")
+    #     return graph
+    # #
+    # @staticmethod
+    # @filechecker
+    # @separator_sniffer
+    # def Dot():
+    #     pass
+    #
+    # @staticmethod
+    # @filechecker
+    # def Binary():
+    #     pass

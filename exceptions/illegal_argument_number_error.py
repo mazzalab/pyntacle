@@ -24,9 +24,9 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-"""
-Custom Exception class inherited from ValueError to be raised when the specified size graph is wrong
-"""
+from config import *
 
-class IllegalGraphSizeError(ValueError):
+""" exception that chacks that the argument number of arguments is passed to a function call """
+
+class IllegalArgumentNumberError(ValueError):
     pass

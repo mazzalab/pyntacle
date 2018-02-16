@@ -37,7 +37,7 @@ class Generator:
 
     @staticmethod
     @generatorscanner
-    def Random(params, name="Random", seed=None):
+    def Random(params, name="Random", seed=None) -> Graph:
         """
         Generate a Random Network by wrapping the Erdos-Renyi generator provided by igraph and makes it ready to be used
         for pyntacle. Node `name` attribute will be the relative index (represented as string), while the graph name it
@@ -77,7 +77,7 @@ class Generator:
 
     @staticmethod
     @generatorscanner
-    def ScaleFree(params, name="Scale_Free", seed=None):
+    def ScaleFree(params, name="Scale_Free", seed=None) -> Graph:
         """
         Generates a Scale-Free Network according to the Lazslo-Barabasi model by wrapping the Scale free network
         generator provided by igraph.
@@ -107,7 +107,7 @@ class Generator:
 
     @staticmethod
     @generatorscanner
-    def SmallWorld(params, name="SmallWorld", seed=None):
+    def SmallWorld(params, name="SmallWorld", seed=None) -> Graph:
         """
         Generates a Small World Network by wrapping the `Watts_Strogatz` function of `igraph`. `igraph` creates first
         a lattice
@@ -145,7 +145,7 @@ class Generator:
 
     @staticmethod
     @generatorscanner
-    def Tree(params, name="Tree", seed=None):
+    def Tree(params, name="Tree", seed=None) -> Graph:
         """
         Generates a Network that Follows a Tree scheme, as described in http://mathworld.wolfram.com/Tree.html. Each
         vertex wil have as many `children` vertices specifed by the second value in the "param" argument. This is a
