@@ -26,7 +26,7 @@ __license__ = u"""
 
 import algorithms.local_topology_NEW as lt
 from misc.graph_routines import check_graph_consistency
-from misc.enums import implementations as imps
+from misc.enums import Implementations as imps
 
 from statistics import mean
 
@@ -216,6 +216,7 @@ class GlobalTopology:
     @check_graph_consistency
     def average_shortest_path_length(graph, implementation=imps.igraph):
         """
+        computes the  average shortest path length as defined in https://en.wikipedia.org/wiki/Average_path_length
         :param graph:
         :param implementation:
         :return:
@@ -230,7 +231,13 @@ class GlobalTopology:
             avg_sp = Graph.average_path_length(graph,directed=False,unconn=False)
             return avg_sp
 
-        elif implementation == imps.gpu:
-            pass
-        elif implementation == imps.cpu:
-            pass
+        else:
+            if implementation == imps.gpu: #computes the average shortest path length using parallel implementation
+                sp = lt.LocalTopology.shortest_path_pyntacle(graph=graph, implementation=implementation.cpu)
+                den = graph.vcount() * (graph.vcount()-1)
+
+            elif implementation == imps.cpu:
+                sp = lt.LocalTopology.shortest_path_pyntacle(graph=graph, implementation=implementation.gpu)
+
+
+

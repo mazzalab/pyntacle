@@ -29,8 +29,8 @@ __license__ = u"""
 """
 
 from misc.graph_routines import *
-from misc.enums import implementations as imps
-from misc.enums import graph_type
+from misc.enums import Implementations as imps
+from misc.enums import GraphType
 from misc.sps_operations import *
 from utils.graph_utils import GraphUtils as ut
 from numba import jit, cuda, uint16
@@ -185,7 +185,7 @@ class LocalTopology:
 
             elif implementation == imps.cpu:
                 sps = LocalTopology.shortest_path_pyntacle(graph=graph, nodes=nodes,
-                                                           mode=graph_type.undirect_unweighted,
+                                                           mode=GraphType.undirect_unweighted,
                                                            implementation=implementation.cpu)
                 sps = sps.tolist()  # reconvert to a list of lists
                 sps = [[float('inf') if x == (graph.vcount()+1) else x for x in y] for y in sps]
@@ -404,7 +404,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def shortest_path_pyntacle(graph, nodes=None, mode=graph_type.undirect_unweighted,
+    def shortest_path_pyntacle(graph, nodes=None, mode=GraphType.undirect_unweighted,
                                implementation=imps.cpu) -> np.ndarray:
         """
         We implement here a phew ways to determine the shortest paths in a graph for a single node, a group of nodes or
@@ -416,7 +416,7 @@ class LocalTopology:
         :param nodes: if a node name, returns the degree of the input node. If a list of node names,
         the shortest path between the input nodes and all other nodes in the graph is returned for all node names.
         If None (default), the degree is computed for the whole graph.
-        :param graph_type mode: an enumerator containing the type of node to be implemented. Choices are:
+        :param GraphType mode: an enumerator containing the type of node to be implemented. Choices are:
         * **`graph_type.undirect_unweighted`**: perform shortest path search for an unweighted and undirect graph
         (default).
         * **`graph_type.undirect_weighted`**: shortest path for a weighted undirect network. In this case, the reserved
@@ -436,7 +436,7 @@ class LocalTopology:
         """
         #todo automatic implementation
 
-        if mode == graph_type.undirect_unweighted:
+        if mode == GraphType.undirect_unweighted:
             if nodes is None:
 
                 adjmat = np.array(list(graph.get_adjacency()), dtype=int)
@@ -455,13 +455,16 @@ class LocalTopology:
                     result = np.full_like(adjmat, graph.vcount()+1, dtype=np.uint16)
 
                     np.fill_diagonal(result,0) #fill the diagonal of the result object with zeros
+                    # print(adjmat)
+                    # print(result)
+                    # input()
 
-                    LocalTopology.__shortest_path_GPU__(adjmat=adjmat, nodes=nodes, result=result)
+                    LocalTopology.__shortest_path_GPU__(adjmat, nodes, result)
                     return result
 
                 else:
                     sys.stdout.write(
-                        "Implementation {} not available at the time using CPU, please come back soon "
+                        "Implementation {} not available at the time, please come back soon "
                         "for the modifed version".format(implementation.name))
                     sps = LocalTopology.__shortest_path_CPU__(adjmat=adjmat, nodes=nodes)
                     return sps
@@ -502,15 +505,17 @@ class LocalTopology:
 
     #todo rewrite to work only on upper or lower triangular matrix
     @staticmethod
-    @cuda.jit(argtypes='uint16[:, :](uint16[:], unint16[:, :])')
+    @cuda.jit(argtypes='uint16[:, :], (uint16[:], uint16[:, :])')
     def __shortest_path_GPU__(adjmat, nodes, result):
         """
+        Implements the floyd-warshall algorithm
 
         :param adjmat:
         :param nodes:
         :param result:
         :return:
         """
+        #todo doesn't work, result np.ndarray is unchanged
         # tx = cuda.threadIdx.x  # Thread ids in a 2D block
         # ty = cuda.threadIdx.y
         #
@@ -531,6 +536,7 @@ class LocalTopology:
             min_path = result[posx, posy]
 
             posXY = min_path
+
             if posXY > 2:
                 for k in range(0, adjmat.shape[0]):
                     posXK = adjmat[posx, k]

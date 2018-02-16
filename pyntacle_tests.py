@@ -1,9 +1,3 @@
-from algorithms.global_topology_NEW import *
-from algorithms.local_topology_NEW import *
-from igraph import Graph
-from misc.graph_routines import *
-import time
-
 #test for creating the new pyntacle iteration
 # erd = Graph.Erdos_Renyi(10, 0.5)
 # print(GlobalTopology.diameter(erd))
@@ -23,15 +17,18 @@ import time
 # print(GlobalTopology.density(erd))
 
 from igraph import Graph
+from algorithms.local_topology_NEW import *
+from misc.enums import Implementations
+
 gg = Graph.Erdos_Renyi(10, 0.5)
 gg["name"] = "test"
 gg.vs["name"] = [str(x) for x in range(0,10)]
 
 
-from algorithms.local_topology_NEW import *
 
 
-LocalTopology.shortest_path_pyntacle(graph=gg, nodes=None,implementation=implementation.gpu)
+
+print(LocalTopology.shortest_path_pyntacle(graph=gg, nodes=None, implementation=Implementations.gpu))
 
 
 

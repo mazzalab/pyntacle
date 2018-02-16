@@ -28,13 +28,12 @@ __license__ = u"""
 checking if the `igraph.Graph` object is compatible with pyntacle's specifications, verify the presence of nodes 
 in the input graph, give elapsed time of execution and so on"""
 
-
 from enum import Enum, auto
 
 """Contains all the enumerators used in pyntacle's methods"""
 
 
-class graph_type(Enum):
+class GraphType(Enum):
     """
     An enumerator that contains the different modes that will be used to compute internally the shortest path of a graph
     For the record, I still prefer the string method
@@ -45,11 +44,11 @@ class graph_type(Enum):
     direct_weighted = auto()
 
 
-class implementations(Enum):
+class Implementations(Enum):
     """
     this enumerator stores the different ways that can be used to parallelize the shortest path
     """
     cpu = auto()
     gpu = auto()
-    auto = auto()
+    automatic = auto()
     igraph = auto()

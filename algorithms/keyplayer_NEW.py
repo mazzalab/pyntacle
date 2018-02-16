@@ -164,7 +164,7 @@ class KeyPlayer:
         df_denum = number_nodes * (number_nodes - 1)
 
         shortest_path_lengths = lt.LocalTopology.shortest_path_pyntacle(graph=graph, nodes=None,
-                                                                        mode=lt.graph_type.undirect_unweighted,
+                                                                        mode=lt.GraphType.undirect_unweighted,
                                                                         implementation=lt.implementation.auto)
 
         if max_sp is not None:
