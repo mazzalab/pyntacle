@@ -90,7 +90,7 @@ class CommunityFinder:
 
         else:
             if not isinstance(weights, list) or weights not in self.__graph.es().attributes:
-                raise WrongArgumentError("Weights must be either a list or an edge graph attribute present in graph")
+                raise ValueError("Weights must be either a list or an edge graph attribute present in graph")
 
             else:
                 vertex_dendogram = Graph.community_walktrap(self.__graph, steps=steps, weights=weights)
