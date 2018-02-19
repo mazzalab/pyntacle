@@ -5,11 +5,7 @@ from warnings import simplefilter
 from config import *
 from io_stream.edgelist_to_sif import EdgeListToCytoscape
 # output format
-from io_stream.graph_to_adjacencymatrix import GraphToAdjacencyMatrix
-from io_stream.graph_to_binary import GraphToBinary
-from io_stream.graph_to_dot import GraphToDot
-from io_stream.graph_to_edgelist import GraphToEdgeList
-from io_stream.graph_to_sif import GraphToSif
+from io_stream.exporter_NEW import Exporter
 from misc.graph_load import GraphLoad, separator_detect
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
@@ -17,11 +13,11 @@ __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
-__email__ = "bioinformatics@css-mendel.it"
+__email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "14 November 2016"
+__date__ = "27 February 2018"
 __license__ = u"""
-  Copyright (C) 20016-2017  Tommaso Mazza <t,mazza@css-mendel.it>
+  Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
 
   This program is free software; you can use and redistribute it under
@@ -123,25 +119,21 @@ class Convert():
             if out_form == "adjm":
                 sys.stdout.write("Converting input file {0} to adjacency matrix at path {1} \n".format(
                     os.path.abspath(self.args.input_file), output_path))
-                GraphToAdjacencyMatrix(graph=graph).export_graph(sep=self.args.output_separator,
-                                                                 file_name=output_path,
-                                                                 header=output_header)
+                Exporter.AdjacencyMatrix(graph, output_path, sep=self.args.output_separator,
+                                         header=output_header)
 
             elif out_form == "egl":
                 sys.stdout.write(
                     "Converting input file {0} to edge list at path {1} \n".format(
                         os.path.abspath(self.args.input_file),
                         output_path))
-                GraphToEdgeList(graph=graph).export_graph(sep=self.args.output_separator,
-                                                          file_name=output_path,
-                                                          header=output_header)
+                Exporter.EdgeList(graph, output_path, sep=self.args.output_separator, header=output_header)
 
             elif out_form == "sif":
                 sys.stdout.write(
                     "Converting input file {0} to Simple Interaction Format (sif) at path {1} \n".format(
                         os.path.abspath(self.args.input_file), output_path))
-                GraphToSif(graph=graph).export_graph(sep=self.args.output_separator, file_name=output_path,
-                                                     header=output_header)
+                Exporter.Sif(graph, output_path, sep=self.args.output_separator, header=output_header)
 
             elif out_form == "dot":
                 # Ignore ugly RuntimeWarnings while converting to dot
@@ -150,14 +142,14 @@ class Convert():
                 sys.stdout.write(
                     "Converting input file {0} to dot file using igraph utilities at path {1} (output separator will be ignored)\n".format(
                         os.path.abspath(self.args.input_file), output_path))
-                GraphToDot(graph=graph).export_graph(file_name=output_path)
+                Exporter.Dot(graph, output_path)
 
 
             elif out_form == "graph":
                 sys.stdout.write(
                     "Converting input file {0} to a binary file at path {1} (output separator will be ignored)\n".format(
                         os.path.abspath(self.args.input_file), output_path))
-                GraphToBinary(graph=graph).save(file_name=output_path)
+                Exporter.Binary(graph, output_path)
 
             cursor.stop()
             sys.stdout.write("{} converted successfully\n".format(os.path.basename(self.args.input_file)))

@@ -2,15 +2,11 @@ from warnings import simplefilter
 
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 from graph_operations.modules_finder import CommunityFinder
-from io_stream.graph_to_adjacencymatrix import GraphToAdjacencyMatrix
-# output format
-from io_stream.graph_to_binary import GraphToBinary
-from io_stream.graph_to_dot import GraphToDot
-from io_stream.graph_to_edgelist import GraphToEdgeList
-from io_stream.graph_to_sif import GraphToSif
+from io_stream.exporter_NEW import Exporter
+
 from misc.graph_load import *
 from report.plotter import PlotGraph
-from utils.add_attributes import AddAttributes
+from io_stream.import_attributes import ImportAttributes
 from utils.modules_utils import ModuleUtils
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
@@ -18,11 +14,11 @@ __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
-__email__ = "bioinformatics@css-mendel.it"
+__email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "14 November 2016"
+__date__ = "27 February 2018"
 __license__ = u"""
-  Copyright (C) 20016-2017  Tommaso Mazza <t,mazza@css-mendel.it>
+  Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
 
   This program is free software; you can use and redistribute it under
@@ -93,8 +89,8 @@ class Communities():
 
         # initialize module finder method
         communities = CommunityFinder(graph=graph)
-        # initialize AddAttributes method
-        attrs = AddAttributes(graph=graph)
+        # initialize ImportAttributes method
+        attrs = ImportAttributes(graph=graph)
 
         # define plot sizes
         if self.args.plot_dim:  # define custom format
@@ -134,7 +130,7 @@ class Communities():
                 else:
                     sep = separator_detect(self.args.weights)
                     try:
-                        attrnames = attrs.add_edge_attributes(file_name=self.args.weight, sep=sep)
+                        attrnames = attrs.import_edge_attributes(file_name=self.args.weight, sep=sep)
                         # get attribute name
                         if self.args.weights_name is None:
                             self.args.weights_name = attrnames[0]
@@ -206,7 +202,7 @@ class Communities():
                 else:
                     sep = separator_detect(self.args.weights)
                     try:
-                        attrnames = attrs.add_edge_attributes(file_name=self.args.weight, sep=sep)
+                        attrnames = attrs.import_edge_attributes(file_name=self.args.weight, sep=sep)
                         # get attribute name
                         if self.args.weights_name is None:
                             self.args.weights_name = attrnames[0]
@@ -264,7 +260,8 @@ class Communities():
         # print(mods_report)
         # input()
         sys.stdout.write(
-            "pyntacle - Community Finding Report:\nalgorithm:{0}\nTotal number of Modules Found:\t{1}\nIndex\tNodes\tEdges \tComponents\n{2}".format(
+            "pyntacle - Community Finding Report:\nalgorithm:{0}\nTotal number of Modules Found:"
+            "\t{1}\nIndex\tNodes\tEdges \tComponents\n{2}".format(
                 algorithm, len(mods), "".join(mods_report)))
 
         # initialize Moduleutils class
@@ -311,7 +308,9 @@ class Communities():
                     (self.args.min_nodes, self.args.max_nodes, self.args.max_components,
                      self.args.min_components)]
             sys.stdout.write(
-                "Filtering Subgraphs according to your criteria:\nminimum number of nodes per modules: {0}\nmaximum number of nodes per module: {1}\nminimum number of components: {2}\nmaximum number of components: {3}\n".format(
+                "Filtering Subgraphs according to your criteria:\nminimum number of nodes per modules: {0}\n"
+                "maximum number of nodes per module: {1}\nminimum number of components: {2}\n"
+                "maximum number of components: {3}\n".format(
                     *info))
 
             mod_utils.filter_subgraphs(min_nodes=self.args.min_nodes, max_nodes=self.args.max_nodes,
@@ -360,26 +359,22 @@ class Communities():
             for i, elem in enumerate(final_mods):
                 output_path = ".".join(["_".join([output_basename, str(i), datetime.datetime.now().strftime(
                     "%d%m%Y%H%M")]), out_form])
-                GraphToAdjacencyMatrix(graph=elem).export_graph(sep=self.args.output_separator,
-                                                                file_name=output_path,
-                                                                header=output_header)
+                Exporter.AdjacencyMatrix(elem, output_path, sep=self.args.output_separator,
+                                         header=output_header)
 
         elif out_form == "egl":
             sys.stdout.write("Creating Edge List of each final community\n")
             for i, elem in enumerate(final_mods):
                 output_path = ".".join(["_".join([output_basename, str(i), datetime.datetime.now().strftime(
                     "%d%m%Y%H%M")]), out_form])
-                GraphToEdgeList(graph=elem).export_graph(sep=self.args.output_separator,
-                                                         file_name=output_path,
-                                                         header=output_header)
+                Exporter.EdgeList(elem, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "sif":
             sys.stdout.write("Creating Simple Interaction File of each final community\n")
             for i, elem in enumerate(final_mods):
                 output_path = ".".join(["_".join([output_basename, str(i), datetime.datetime.now().strftime(
                     "%d%m%Y%H%M")]), out_form])
-                GraphToSif(graph=elem).export_graph(sep=self.args.output_separator, file_name=output_path,
-                                                    header=output_header)
+                Exporter.Sif(elem, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "dot":
             sys.stdout.write("Creating DOT File of the each final community\n")
@@ -389,14 +384,14 @@ class Communities():
 
                 # Ignore ugly RuntimeWarnings while creating a dot
                 simplefilter("ignore", RuntimeWarning)
-                GraphToDot(graph=elem).export_graph(file_name=output_path)
+                Exporter.Dot(elem, output_path)
 
         elif out_form == "bin":
             sys.stdout.write("Storing each community into a .graph (binary) file\n")
             for i, elem in enumerate(final_mods):
                 output_path = ".".join(["_".join([output_basename, str(i), datetime.datetime.now().strftime(
                     "%d%m%Y%H%M")]), out_form])
-                GraphToBinary(graph=elem).save(file_name=output_path)
+                Exporter.Binary(elem, output_path)
 
         # save the original graph into a binary file
         if self.args.save_binary:

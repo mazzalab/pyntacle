@@ -1,17 +1,16 @@
 import pandas as pd
-
+from config import *
 from algorithms.global_topology import GlobalTopology, _GlobalAttribute
 from algorithms.local_topology import LocalTopology, _LocalAttribute
 from algorithms.sparseness import *
 from algorithms.sparseness import _SparsenessAttribute
-from config import *
 from exceptions.generic_error import Error
 from exceptions.multiple_solutions_error import MultipleSolutionsError
-from io_stream.graph_to_binary import GraphToBinary
+from io_stream.exporter_NEW import Exporter
 from misc.graph_load import GraphLoad, separator_detect
 from report.plotter import *
 from report.reporter import *
-from utils.add_attributes import AddAttributes
+from io_stream.import_attributes import ImportAttributes
 from utils.graph_utils import GraphUtils
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
@@ -19,11 +18,11 @@ __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
-__email__ = "bioinformatics@css-mendel.it"
+__email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "14 November 2016"
+__date__ = "27 February 2018"
 __license__ = u"""
-  Copyright (C) 20016-2017  Tommaso Mazza <t,mazza@css-mendel.it>
+  Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
 
   This program is free software; you can use and redistribute it under
@@ -217,9 +216,9 @@ class Metrics():
                                 "Using column 3 as edge weights for pagerank. Adding the other values as edge attributes, but they will not be used for pagerank computing\n")
                             weights_name = weights.columns[weightscol]  # store the name of the attribute
                             print("name", weights_name)
-                            AddAttributes(graph=graph).add_edge_attributes(file_name=self.args.weights,
+                            ImportAttributes(graph).import_edge_attributes(file_name=self.args.weights,
                                                                            sep=weights_sep,
-                                                                           mode=mode)  # todo sfixa questo
+                                                                           mode=mode)
                             print(list(graph.es))
                             weights_list = [float(x) if isinstance(x, str) else None for x in
                                             graph.es()[weights_name]]
@@ -510,7 +509,7 @@ class Metrics():
         if self.args.save_binary:
             sys.stdout.write("Saving graph to a Binary file\n")
             binary_path = os.path.join(self.args.directory, report_prefix + ".graph")
-            GraphToBinary(graph=graph).save(file_name=binary_path)
+            Exporter.Binary(graph, binary_path)
         cursor.stop()
         sys.stdout.write("pyntacle Metrics completed successfully. Ending\n")
         sys.exit(0)

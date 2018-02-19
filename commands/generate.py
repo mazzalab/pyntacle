@@ -2,11 +2,7 @@ from exceptions.generic_error import Error
 from config import *
 from exceptions.illegal_graph_size_error import IllegalGraphSizeError
 from graph_generator.graph_igraph_generator import *
-from io_stream.graph_to_binary import GraphToBinary
-from io_stream.graph_to_dot import GraphToDot
-from io_stream.graph_to_edgelist import GraphToEdgeList
-from io_stream.graph_to_sif import GraphToSif
-from io_stream.graph_to_adjacencymatrix import GraphToAdjacencyMatrix
+from io_stream.exporter_NEW import Exporter
 from report.plotter import *
 from warnings import simplefilter
 
@@ -15,11 +11,11 @@ __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
-__email__ = "bioinformatics@css-mendel.it"
+__email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "14 November 2016"
+__date__ = "27 February 2018"
 __license__ = u"""
-  Copyright (C) 20016-2017  Tommaso Mazza <t,mazza@css-mendel.it>
+  Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
 
   This program is free software; you can use and redistribute it under
@@ -270,31 +266,26 @@ class Generate():
         # output generated networks
         if out_form == "adjm":
             sys.stdout.write("Creating Adjacency Matrix of the generated graph\n")
-            GraphToAdjacencyMatrix(graph=graph).export_graph(sep=self.args.output_separator,
-                                                             file_name=output_path,
-                                                             header=output_header)
+            Exporter.AdjacencyMatrix(graph, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "egl":
             sys.stdout.write("Creating Edge List of the generated graph\n")
-            GraphToEdgeList(graph=graph).export_graph(sep=self.args.output_separator, file_name=output_path,
-                                                      header=output_header)
+            Exporter.EdgeList(graph, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "sif":
             sys.stdout.write("Creating Simple Interaction File of the generated graph\n")
-            GraphToSif(graph=graph).export_graph(sep=self.args.output_separator, file_name=output_path,
-                                                 header=output_header)
+            Exporter.Sif(graph, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "dot":
             sys.stdout.write("Creating DOT File of the generated graph\n")
 
             # Ignore ugly RuntimeWarnings while creating a dot
             simplefilter("ignore", RuntimeWarning)
-
-            GraphToDot(graph=graph).export_graph(file_name=output_path)
+            Exporter.Dot(graph, output_path)
 
         elif out_form == "graph":
             sys.stdout.write("Storing the created graph into a .graph (binary) file\n")
-            GraphToBinary(graph=graph).save(file_name=output_path)
+            Exporter.Binary(graph, output_path)
 
         if not self.args.no_plot and graph.vcount() < 1000:
             sys.stdout.write("Drawing Generated Graph\n")
