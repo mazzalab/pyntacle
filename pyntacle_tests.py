@@ -18,15 +18,16 @@
 
 from igraph import Graph
 from io_stream.importer_NEW import *
-
+from io_stream.adjacencymatrix_to_graph import AdjacencyMatrixToGraph
 
 
 path = "/home/local/MENDEL/d.capocefalo/Desktop/pyntacle-test/pippo.adjm"
 
 a = PyntacleImporter.AdjacencyMatrix(path, "\t", False)
 
-print(a)
-
+b = AdjacencyMatrixToGraph().import_graph(file_name=path,header=False, separator="\t")
+print(a.summary())
+print(b.summary())
 
 # print(len(aa.components()))
 # aa["graph_name"] = "test"
