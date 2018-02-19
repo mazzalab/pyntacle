@@ -30,6 +30,7 @@ in the input graph, give elapsed time of execution and so on"""
 
 
 from enum import Enum, auto
+from config import *
 
 """Contains all the enumerators used in pyntacle's methods"""
 
@@ -49,7 +50,27 @@ class implementations(Enum):
     """
     this enumerator stores the different ways that can be used to parallelize the shortest path
     """
+    igraph = auto()
     cpu = auto()
     gpu = auto()
     auto = auto()
-    igraph = auto()
+    
+class node_attributes(Enum):
+    """
+    this enumerator stores all the node attributes that can be instantiated by pyntacle
+    """
+    #todo aggiungi tutti
+    degree = auto()
+
+class graph_attributes(Enum):
+    """
+    this enumerator stores all the edge attributes that can be instantiated by pyntacle
+    """
+    #todo aggiungi tutti
+    pass
+
+class edge_attributes(Enum):
+    """
+    this enumerator stores all the edge attributes that can be instantiated by pyntacle
+    """
+    pass

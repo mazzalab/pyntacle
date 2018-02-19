@@ -51,200 +51,103 @@ class AddAttributes():
         else:
             self.__graph = graph
 
-    def __check_file(self, file_name: str, sep: str):
 
-        if not os.path.exists(file_name):
-            raise FileNotFoundError("File does not exist")
-
-        if sep is None:
-            self.logger.info("using \"\t\" as default separator")
-            sep = "\t"
-
-        with open(file_name, "r") as attrfile:
-            head = attrfile.readline()
-            '''
-            if this is a node, the header is not specified
-            '''
-            first = head.split(sep)[0]
-
-            if first in self.__graph.vs("name"):
-                self.logger.error("header is not specified")
-                raise ValueError("header is not specified")
-
-            return (file_name, sep)
-
-    def add_graph_attributes(self, attr, sep=None):
+    def add_graph_attributes(self, attr_name, attr):
 
         '''
         Add an attribute to a graph object
         
-        :param attr:
+        :param attr: any object being added as attribute
+        :param attr_name: string. The name of the attribute being imported
         :return: an igraph.Graph object
-        :param sep: field separator if input is a file
         '''
 
-        if isinstance(attr, dict):
-            for k in attr.keys():
-                if not isinstance(k, str):
-                    raise TypeError("attribute is not a string")
-                else:
-                    self.__graph[k] = attr[k]
+        if not isinstance(attr_name, str):
+            raise TypeError("Attribute name is not a string")
         else:
-            check = self.__check_file(file_name=attr, sep=sep)
-            infile = check[0]
-            sep = check[1]
-            with open(infile, "r") as attrfile:
-                next(attrfile)
-                for line in attrfile:
-                    self.__graph[line.strip().split(str(sep))[0]] = line.strip().split(str(sep))[1]
+            self.__graph[attr_name] = attr
 
-    def add_node_attributes(self, file_name: str, sep=None):
+    def add_node_attributes(self, attr_name, attr_list, nodes):
         '''
         This function takes an header file and, optionally, a separator, and add them to a graph imprted in __init
         
-        :param file_name: the name of an existing file name
-        :return: an igraph object with the attribute added (a string attribute)
-        '''
-        self.logger.info("Reading attributes from file %s and adding them to nodes" % file_name)
-        self.logger.warning("Attributes will be added as strings, so remember to convert them to proper types")
-
-        '''
-        check if file name is properly passed
+        :param attr_list: the object being added as attribute
+        :param attr_name: string. The name of the attribute being imported
+        :param nodes: list. Nodes to which attributes will be applied.
+        :return: an igraph object with the attribute added
         '''
 
-        check = self.__check_file(file_name=file_name, sep=sep)
-        infile = check[0]
-        sep = check[1]
-        with open(infile, "r") as attrfile:
-            last_pos = attrfile.tell()
-            # Checking if one or more attributes' names start with '__'. Avoids malicious injection.
-            if any(i.startswith('__') for i in attrfile.readline().rstrip().split(sep)):
-                raise KeyError(
-                    "One of the attributes in your attributes/weights file starts with __ (double underscore)."
-                    "This notation is reserved to private variables, please avoid using it.")
-            attrfile.seek(last_pos)
-            
-            # read the first line as header and store the attribute names
-            attrnames = [x for x in attrfile.readline().rstrip().split(sep)[1:]]
+        if not isinstance(attr_name, str):
+            raise TypeError("Attribute name is not a string")
+        
+        if attr_name.startswith('__'):
+            raise KeyError(
+                "One of the attributes being added starts with __ (double underscore)."
+                "This notation is reserved to private variables, please avoid using it.")
+        
+        assert len(attr_list) == len(nodes), "in add_node_attributes, length of attributes list cannot be " \
+                                             "different from length of list of nodes."
+        
+        count = 0
+        err_count = 0
+        for n, a in zip(nodes, attr_list):
+            select = self.__graph.vs.select(name=n)
+            count += 1
+            if len(select) == 0:
+                self.logger.warning("Node %s not found in graph" % n)
+                err_count += 1
+            elif len(select) == 1:
+                select[0][attr_name] = a
+            else:
+                self.logger.error("Node %s has multiple name hits, please check your attribute file" % n)
+                raise ValueError("Multiple node hits")
+        
+        if err_count == count:
+            raise WrongArgumentError("All the attributes pointed to non-existing nodes.")
+        else:
+            self.logger.info("Node attributes successfully added!")
 
-            names_list = set()
-            for line in attrfile:
-
-                if line in ['\n', '\r\n']:
-                    self.logger.warning("Skipping empty line")
-
-                else:
-                    tmp = line.rstrip().split(sep)
-                    name = tmp[0]
-                    attrs = tmp[1:]
-                    # select node with attribute name matching the node attribute "name"
-                    select = self.__graph.vs.select(name=name)
-
-                    if name not in names_list:
-                        names_list.add(name)
-                    else:
-                        self.logger.warning(
-                            "WARNING: Node {} has already been assigned an attribute, will be overwritten".format(name))
-
-                    if len(select) == 0:
-                        self.logger.warning("node %s not found in graph" % name)
-
-                    elif len(select) == 1:
-                        for i, obj in enumerate(attrs):
-                            select[0][attrnames[i]] = obj
-                    else:
-                        self.logger.error("Node %s has multiple name hits, please check your attribute file" % name)
-                        raise ValueError("multiple node hits")
-
-                    self.logger.info("Node attributes successfully added!")
-
-    def add_edge_attributes(self, file_name: str, sep=None, mode='standard'):
+    def add_edge_attributes(self, attr_name, attr_list, edges):
         """
         Add edge attributes specified in a file like (nodeA/nodeB/listofvalues)
         **[EXPAND DESCRIPTIONS OF PARAMS]**
-        
-        :param file_name:
-        :param sep:
-        :param mode:
+
+        :param attr_name: string. The name of the attribute being imported
+        :param attr_list: the object being added as attribute
+        :param edges: list. edges to which attributes will be applied.
         :return:
         """
-        check = self.__check_file(file_name=file_name, sep=sep)
-        infile = check[0]
-        sep = check[1]
-        edges_list = set()
-        print("IN ADD EDGE ATTRS. mode:", mode)
-        with open(infile, "r") as attrfile:
-            last_pos = attrfile.tell()
-            # Checking if one or more attributes' names start with '__'. Avoids malicious injection.
-            if any(i.startswith('__') for i in attrfile.readline().rstrip().split(sep)):
-                raise KeyError(
-                    "One of the attributes in your attributes/weights file starts with __ (double underscore)."
-                    "This notation is reserved to private variables, please avoid using it.")
-            attrfile.seek(last_pos)
-            if mode == 'standard':
-                attrnames = [x for x in attrfile.readline().rstrip().split(sep)[2:]]
-            elif mode == 'cytoscape':
-                attrnames = [x for x in attrfile.readline().rstrip().split(sep)[1:]]
-            print(attrnames)
-
-            for line in attrfile:
-                if line in ['\n', '\r\n']:
-                    self.logger.warning("Skipping empty line")
-
-                else:
-                    tmp = line.rstrip().split(sep)
-                    if mode == 'standard':
-                        perm_node_names = [(tmp[0], tmp[1]), (tmp[1], tmp[0])]
-                    elif mode == 'cytoscape':
-                        perm_node_names = [(tmp[0].split(' ')[0], tmp[0].split(' ')[2]),
-                                           (tmp[0].split(' ')[2], tmp[0].split(' ')[0])]
-
-                    if perm_node_names[0] not in edges_list and perm_node_names[1] not in edges_list:
-                        edges_list.add(perm_node_names[0])
-                        edges_list.add(perm_node_names[1])
-                    else:
-                        # This happens when the attribute list has a duplicate edge.
-                        self.logger.warning(
-                            "Edge {0}-{1} has already been assigned an attribute, will be overwritten".format(tmp[0],
-                                                                                                              tmp[1]))
-
-                    if mode == 'standard':
-                        attrs = tmp[2:]
-                    elif mode == 'cytoscape':
-                        attrs = tmp[1:]
-                    select = []
-                    match = self.__graph.es.select(node_names=perm_node_names[0])
-
-                    if len(match) != 0:
-                        select.append(match)
-
-                    match_inv = self.__graph.es.select(node_names=perm_node_names[1])
-                    if len(match_inv) != 0:
-                        select.append(match_inv)
-
-                    if len(select) == 1:
-                        for i, obj in enumerate(attrs):
-                            if obj.upper() in ['NONE', 'NA', '?']:
-                                select[0][attrnames[i]] = None
-                            else:
-                                select[0][attrnames[i]] = obj
-
-                    elif len(select) > 1:
-                        raise UnsupportedGrapherror(
-                            "More than one edge with the same name is present in the graph. Probably a Multigraph")
-                        # OVERWRITTEN AND REPLACED BY AN ERROR
-                        # This happens if the graph has duplicate edges. Should not happen.
-                        # self.logger.info(
-                        #     "Multiple edge hits (probably a multigraph). Adding the attributes to each edge")
-                        # for edge in select:
-                        #     for i, obj in enumerate(attrs):
-                        #         edge[attrnames[i]] = obj
-
-                    else:
-                        self.logger.warning("Edge (%s,%s) not found" % (tmp[0], tmp[1]))
-
-            self.logger.info("Edge attributes added")
-            return attrnames  # return the names of the attributes
+        if not isinstance(attr_name, str):
+            raise TypeError("Attribute name is not a string")
+        
+        # Checking if one or more attributes' names start with '__'. Avoids malicious injection.
+        if attr_name.startswith('__'):
+            raise KeyError(
+                "One of the attributes in your attributes/weights file starts with __ (double underscore)."
+                "This notation is reserved to private variables, please avoid using it.")
+        
+        assert len(attr_list) == len(edges), "in add_node_attributes, length of attributes list cannot be " \
+                                             "different from length of list of nodes."
+        count = 0
+        err_count = 0
+        for e, a in zip(edges, attr_list):
+            select = self.__graph.es.select(node_names=e)
+            count += 1
+            if len(select) == 0:
+                self.logger.warning("Edge %s not found in graph" %str(e))
+                err_count += 1
+            
+            elif len(select) == 1:
+                select[0][attr_name] = a
+                
+            else:
+                self.logger.error("Edge %s has multiple name hits, please check your attribute file" % str(e))
+                raise ValueError("Multiple edge hits")
+        
+        if err_count == count:
+            raise WrongArgumentError("All the attributes pointed to non-existing edges.")
+        else:
+            return attr_name  # return the names of the attributes
 
     def add_edge_names(self, readd=False):
         '''
@@ -260,7 +163,6 @@ class AddAttributes():
                 # print("{0}, {1}".format(self.__graph.vs[e[0]]["name"], self.__graph.vs[e[1]]["name"]))
                 edge_names.append((self.__graph.vs[e[0]]["name"], self.__graph.vs[e[1]]["name"]))
             self.__graph.es["node_names"] = edge_names
-
             # for edge in self.__graph.es():
             #     source = edge.source
             #     target = edge.target
@@ -288,14 +190,14 @@ class AddAttributes():
 
         self.__graph.vs["__parent"] = self.__graph["name"]
 
-    def graph_initializer(self, graph_name: object, node_names: object = None) -> object:
+    def graph_initializer(self, graph_name: object, node_names: object = None):
         """
         **EXPAND**
         :param graph_name:
         :param node_names:
         :return:
         """
-        self.__graph = Graph.as_undirected(self.__graph) #reconvert graph to directed
+        self.__graph.to_undirected() #reconvert graph to directed
         if "name" not in self.__graph.attributes():
             self.logger.info("adding file name to graph name")
             self.add_graph_name(graph_name)
@@ -338,7 +240,6 @@ class AddAttributes():
             '''
             self.logger.info("adding source and target names as \"node name\" attribute to edges")
             self.add_edge_names()
-
         # for sif file conversion purposes
         if not "__sif_interaction_name" in self.__graph.attributes():
             self.__graph["__sif_interaction_name"] = None

@@ -27,7 +27,7 @@ __license__ = u"""
 """
 **Compute Local Topology metrics for all nodes in the graph or for a set of nodes**
 """
-
+from config import *
 from misc.graph_routines import *
 from misc.enums import implementations as imps
 from misc.enums import graph_type
@@ -60,12 +60,8 @@ class LocalTopology:
 
         if nodes is None:
             return graph.degree()
-
         else:
-            if isinstance(nodes, str):
-                return [graph.degree(nodes)]
-            else:
-                return graph.degree(nodes)
+            return graph.degree(nodes)
 
     @staticmethod
     @check_graph_consistency
@@ -87,10 +83,7 @@ class LocalTopology:
             return graph.betweenness()
 
         else:
-            if isinstance(nodes, str):
-                return [graph.betweenness(nodes)]
-            else:
-                return graph.betweenness(nodes)
+            return graph.betweenness(nodes)
 
     @staticmethod
     @check_graph_consistency
@@ -111,10 +104,7 @@ class LocalTopology:
         if nodes is None:
             return graph.transitivity_local_undirected(mode="zero")
         else:
-            if isinstance(nodes, str):
-                return [graph.transitivity_local_undirected(vertices=nodes, mode="zero")]
-            else:
-                return graph.transitivity_local_undirected(vertices=nodes, mode="zero")
+            return graph.transitivity_local_undirected(vertices=nodes, mode="zero")
 
     @staticmethod
     @check_graph_consistency
@@ -134,12 +124,8 @@ class LocalTopology:
 
         if nodes is None:
             return graph.closeness()
-
         else:
-            if isinstance(nodes, str):
-                return [graph.closeness(vertices=nodes)]
-            else:
-                return graph.closeness(vertices=nodes)
+            return graph.closeness(vertices=nodes)
 
     @staticmethod
     @check_graph_consistency
@@ -159,12 +145,8 @@ class LocalTopology:
 
         if nodes is None:
             return [int(x) for x in graph.eccentricity()]
-
         else:
-            if isinstance(nodes, str):
-                return [int(graph.eccentricity(vertices=nodes))]
-            else:
-                return [int(x) for x in graph.eccentricity(vertices=nodes)]
+            return [int(x) for x in graph.eccentricity(vertices=nodes)]
 
     @staticmethod
     def __radiality_inner__(graph, nodes=None, implementation=imps.igraph) -> list:
@@ -201,7 +183,6 @@ class LocalTopology:
                         partial_sum += diameter + 1 - sp_length
 
                 rad.append(round(float(partial_sum / (num_nodes - 1)), 5))
-
 
             return rad
 
@@ -363,12 +344,12 @@ class LocalTopology:
 
             if not all(isinstance(x, float) for x in weights):
                 raise ValueError("Weights must be a list of floats")
+            
+            if len(weights) > graph.ecount():
+                raise ValueError("Weights must be equal or inferior to the total number of edges")
 
         if not (isinstance(damping, (float, int)) and (0 <= damping)):
             raise ValueError("Damping factor must be a float >= 0")
-
-        if len(weights) > graph.ecount():
-            raise ValueError("Weights must be equal or inferior to the total number of edges")
 
         return graph.pagerank(vertices=nodes, damping=damping, directed=False, weights=weights)
 
@@ -501,48 +482,52 @@ class LocalTopology:
         return adjmat
 
     #todo rewrite to work only on upper or lower triangular matrix
+    # @staticmethod
+    # @cuda.jit(argtypes='uint16[:, :](uint16[:], unint16[:, :])')
+    # def __shortest_path_GPU__(adjmat, nodes, result):
+    #     """
+    #
+    #     :param adjmat:
+    #     :param nodes:
+    #     :param result:
+    #     :return:
+    #     """
+    #     # tx = cuda.threadIdx.x  # Thread ids in a 2D block
+    #     # ty = cuda.threadIdx.y
+    #     #
+    #     # bx = cuda.blockIdx.x   # Block ids in a 2D grid
+    #     # by = cuda.blockIdx.y
+    #     #
+    #     # bdx = cuda.blockDim.x  # Block width, i.e. number of threads per block
+    #     # bdy = cuda.blockDim.y
+    #     #
+    #     # posx = tx + bx * bdx
+    #     # posy = ty + by * bdy
+    #
+    #     #  todo Tom: gestire nodi singoli e gruppi di nodi
+    #
+    #     posx, posy = cuda.grid(2)
+    #     graph_size = result.shape[0]
+    #     if posx < graph_size and posy < graph_size:  # Check array boundaries
+    #         min_path = result[posx, posy]
+    #
+    #         posXY = min_path
+    #         if posXY > 2:
+    #             for k in range(0, adjmat.shape[0]):
+    #                 posXK = adjmat[posx, k]
+    #                 posKY = adjmat[k, posy]
+    #
+    #                 if posXY > posXK + posKY:
+    #                     min_path = posXK + posKY
+    #
+    #                 if min_path == 2:
+    #                     break
+    #
+    #         result[posx, posy] = min_path
+
     @staticmethod
-    @cuda.jit(argtypes='uint16[:, :](uint16[:], unint16[:, :])')
     def __shortest_path_GPU__(adjmat, nodes, result):
-        """
-
-        :param adjmat:
-        :param nodes:
-        :param result:
-        :return:
-        """
-        # tx = cuda.threadIdx.x  # Thread ids in a 2D block
-        # ty = cuda.threadIdx.y
-        #
-        # bx = cuda.blockIdx.x   # Block ids in a 2D grid
-        # by = cuda.blockIdx.y
-        #
-        # bdx = cuda.blockDim.x  # Block width, i.e. number of threads per block
-        # bdy = cuda.blockDim.y
-        #
-        # posx = tx + bx * bdx
-        # posy = ty + by * bdy
-
-        #  todo Tom: gestire nodi singoli e gruppi di nodi
-
-        posx, posy = cuda.grid(2)
-        graph_size = result.shape[0]
-        if posx < graph_size and posy < graph_size:  # Check array boundaries
-            min_path = result[posx, posy]
-
-            posXY = min_path
-            if posXY > 2:
-                for k in range(0, adjmat.shape[0]):
-                    posXK = adjmat[posx, k]
-                    posKY = adjmat[k, posy]
-
-                    if posXY > posXK + posKY:
-                        min_path = posXK + posKY
-
-                    if min_path == 2:
-                        break
-
-            result[posx, posy] = min_path
+        pass
 
 # todo missing stuff:
 # todo shortest path cpu: single nodes or group of nodes

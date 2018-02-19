@@ -3,7 +3,7 @@ from warnings import simplefilter
 
 from config import *
 from exceptions.multiple_solutions_error import MultipleSolutionsError
-from graph_operations.set_graphs import GraphSetter
+from graph_operations.logic_ops import GraphSetter
 from io_stream.graph_to_adjacencymatrix import GraphToAdjacencyMatrix
 from io_stream.graph_to_binary import GraphToBinary
 from io_stream.graph_to_dot import GraphToDot
