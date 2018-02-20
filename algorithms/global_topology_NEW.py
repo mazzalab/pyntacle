@@ -27,8 +27,9 @@ __license__ = u"""
 import algorithms.local_topology_NEW as lt
 from misc.graph_routines import check_graph_consistency
 from misc.enums import Implementations as imps
-
 from statistics import mean
+from igraph import Graph
+import numpy as np
 
 #todo add pyntacle documentation link for minimum requirements in igraph
 
@@ -214,30 +215,54 @@ class GlobalTopology:
 
     @staticmethod
     @check_graph_consistency
-    def average_shortest_path_length(graph, implementation=imps.igraph):
+    def average_shortest_path_length(graph, implementation=imps.igraph) -> float:
         """
         computes the  average shortest path length as defined in https://en.wikipedia.org/wiki/Average_path_length
-        :param graph:
+        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
+        "Minimum requirements" specifications in pyntacle's manual. If the graph as more than one component, the average
+        shortest path length is the sum of each component's shortest path length (both directins are counted) divide by
+        by the total number of components. isolated nodes counts as a components but their distance to all other
+        members in the graph is 0
         :param implementation:
-        :return:
+        :return: a positive float representing the average shortest path length of the igraph object
         """
-        #todo complete this when all the shortest path length are done
 
         if not isinstance(implementation, imps):
             raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(imps)))
 
         if implementation == imps.igraph:
-            from igraph import Graph
             avg_sp = Graph.average_path_length(graph,directed=False,unconn=False)
             return avg_sp
 
         else:
-            if implementation == imps.gpu: #computes the average shortest path length using parallel implementation
-                sp = lt.LocalTopology.shortest_path_pyntacle(graph=graph, implementation=implementation.cpu)
-                den = graph.vcount() * (graph.vcount()-1)
+            #re-implement the average_path_length algorithm for a fully connected and a disconnected graph
+            if len(GlobalTopology.components(graph)) < 2:
+                sp = lt.LocalTopology.shortest_path_pyntacle(graph=graph, implementation=implementation)
+                # set all the shortest path greater than the total number of nodes to 0
+                sp[sp == graph.vcount() + 1] = 0
+                return round(np.sum(np.divide(sp, (graph.vcount() * (graph.vcount() - 1)))), 5)
 
-            elif implementation == imps.cpu:
-                sp = lt.LocalTopology.shortest_path_pyntacle(graph=graph, implementation=implementation.gpu)
+            else:
+                comps = graph.components()
+                sum = 0 #this will be averaged afterwards
+                for elem in comps:
+                    subg = graph.induced_subgraph(elem) #cdreate a subgraph with only the vertex returned by components()
+                    if subg.ecount() > 0:
+                        sp = lt.LocalTopology.shortest_path_pyntacle(graph=subg,implementation=implementation)
+                        sp[sp == subg.vcount() + 1] = 0
+                        sum += np.sum(sp)
+                return round(mean(sum, len(comps)),5)
+
+
+
+
+
+
+
+
+
+            #divide all the element in the matrix of shortest path to (total number of nodes*(total number of nodes -1)
+            #then sum all the elements and rpound them
 
 
 
