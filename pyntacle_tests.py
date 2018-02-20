@@ -19,15 +19,16 @@
 from igraph import Graph
 from io_stream.importer_NEW import *
 from io_stream.adjacencymatrix_to_graph import AdjacencyMatrixToGraph
+from algorithms.local_topology_NEW import LocalTopology
 
-
+from misc.enums import Implementations as imps
 path = "/home/local/MENDEL/d.capocefalo/Desktop/pyntacle-test/pippo.adjm"
 
-a = PyntacleImporter.AdjacencyMatrix(path, "\t", False)
+# a = PyntacleImporter.AdjacencyMatrix(path, "\t", False)
 
 b = AdjacencyMatrixToGraph().import_graph(file_name=path,header=False, separator="\t")
-print(a.summary())
-print(b.summary())
+
+bb = LocalTopology.shortest_path_pyntacle(b,None, implementation=imps.gpu)
 
 # print(len(aa.components()))
 # aa["graph_name"] = "test"

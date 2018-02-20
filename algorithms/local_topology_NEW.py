@@ -33,8 +33,9 @@ from misc.enums import Implementations as imps
 from misc.enums import GraphType
 from misc.sps_operations import *
 from utils.graph_utils import GraphUtils as ut
-from numba import jit, cuda, uint16
+from numba import cuda,jit
 import numpy as np
+
 
 
 class LocalTopology:
@@ -401,9 +402,11 @@ class LocalTopology:
 
         return sp
 
+
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
+    #todo check if i can see the environment variables so I don't have to recall cuda.is_available() every time
     def shortest_path_pyntacle(graph, nodes=None, mode=GraphType.undirect_unweighted,
                                implementation=imps.cpu) -> np.ndarray:
         """
@@ -434,7 +437,11 @@ class LocalTopology:
         :return: a numpy array storing the shortest path matrix for a single node, a list of nodes or all nodes in the
         graph
         """
-        #todo automatic implementation
+        #todo automatic implementation here
+
+        #todo check that the sp_numba is already here and if not import it (if conditions allow it)
+        if sys.modules.get("numba.cuda.initialize", "NOPE") != "NOPE" or cuda.is_available():
+            from algorithms.numba_gpu import Test
 
         if mode == GraphType.undirect_unweighted:
             if nodes is None:
@@ -448,19 +455,27 @@ class LocalTopology:
                     return sps
 
                 elif implementation == implementation.gpu:
-                    if nodes is None:
-                        nodes = list(range(0, graph.vcount()))
+                    #todo risistemare e testare su un altro gpu-enabled computer
+                    if gpu_import_flag or cuda.is_available():
+                        gpu_flag = True
 
-                    # create the result vector filled with 'inf' (the total number of nodes + 1)
-                    result = np.full_like(adjmat, graph.vcount()+1, dtype=np.uint16)
+                        #print(cuda.detect())
+                        from algorithms.numba_gpu import Test
 
-                    np.fill_diagonal(result,0) #fill the diagonal of the result object with zeros
-                    # print(adjmat)
-                    # print(result)
-                    # input()
+                        if nodes is None:
+                            nodes = list(range(0, graph.vcount()))
 
-                    LocalTopology.__shortest_path_GPU__(adjmat, nodes, result)
-                    return result
+                        # create the result vector filled with 'inf' (the total number of nodes + 1)
+                        result = np.full_like(adjmat, graph.vcount()+1, dtype=np.uint16)
+                        Test.__shortest_path_GPU__(adjmat, nodes, result)
+
+                        np.fill_diagonal(result,0) #fill the diagonal of the result object with zeros
+                        # print(adjmat)
+                        # print(result)
+                        # input()
+
+                        #LocalTopology.__shortest_path_GPU__(adjmat, nodes, result)
+                        return result
 
                 else:
                     sys.stdout.write(
@@ -503,52 +518,53 @@ class LocalTopology:
 
         return adjmat
 
-    #todo rewrite to work only on upper or lower triangular matrix
-    @staticmethod
-    @cuda.jit(argtypes='uint16[:, :], (uint16[:], uint16[:, :])')
-    def __shortest_path_GPU__(adjmat, nodes, result):
-        """
-        Implements the floyd-warshall algorithm
+    # #todo rewrite to work only on upper or lower triangular matrix
+    # @staticmethod
+    # @cuda.jit(argtypes='uint16[:, :], (uint16[:], uint16[:, :])')
+    # def __shortest_path_GPU__(adjmat, nodes, result):
+    #     """
+    #     Implements the floyd-warshall algorithm
+    #
+    #     :param adjmat:
+    #     :param nodes:
+    #     :param result:
+    #     :return:
+    #     """
+    #     #todo doesn't work, result np.ndarray is unchanged
+    #     # tx = cuda.threadIdx.x  # Thread ids in a 2D block
+    #     # ty = cuda.threadIdx.y
+    #     #
+    #     # bx = cuda.blockIdx.x   # Block ids in a 2D grid
+    #     # by = cuda.blockIdx.y
+    #     #
+    #     # bdx = cuda.blockDim.x  # Block width, i.e. number of threads per block
+    #     # bdy = cuda.blockDim.y
+    #     #
+    #     # posx = tx + bx * bdx
+    #     # posy = ty + by * bdy
+    #
+    #     #  todo Tom: gestire nodi singoli e gruppi di nodi
+    #
+    #     posx, posy = cuda.grid(2)
+    #     graph_size = result.shape[0]
+    #     if posx < graph_size and posy < graph_size:  # Check array boundaries
+    #         min_path = result[posx, posy]
+    #
+    #         posXY = min_path
+    #
+    #         if posXY > 2:
+    #             for k in range(0, adjmat.shape[0]):
+    #                 posXK = adjmat[posx, k]
+    #                 posKY = adjmat[k, posy]
+    #
+    #                 if posXY > posXK + posKY:
+    #                     min_path = posXK + posKY
+    #
+    #                 if min_path == 2:
+    #                     break
+    #
+    #         result[posx, posy] = min_path
 
-        :param adjmat:
-        :param nodes:
-        :param result:
-        :return:
-        """
-        #todo doesn't work, result np.ndarray is unchanged
-        # tx = cuda.threadIdx.x  # Thread ids in a 2D block
-        # ty = cuda.threadIdx.y
-        #
-        # bx = cuda.blockIdx.x   # Block ids in a 2D grid
-        # by = cuda.blockIdx.y
-        #
-        # bdx = cuda.blockDim.x  # Block width, i.e. number of threads per block
-        # bdy = cuda.blockDim.y
-        #
-        # posx = tx + bx * bdx
-        # posy = ty + by * bdy
-
-        #  todo Tom: gestire nodi singoli e gruppi di nodi
-
-        posx, posy = cuda.grid(2)
-        graph_size = result.shape[0]
-        if posx < graph_size and posy < graph_size:  # Check array boundaries
-            min_path = result[posx, posy]
-
-            posXY = min_path
-
-            if posXY > 2:
-                for k in range(0, adjmat.shape[0]):
-                    posXK = adjmat[posx, k]
-                    posKY = adjmat[k, posy]
-
-                    if posXY > posXK + posKY:
-                        min_path = posXK + posKY
-
-                    if min_path == 2:
-                        break
-
-            result[posx, posy] = min_path
 
 # todo missing stuff:
 # todo shortest path cpu: single nodes or group of nodes

@@ -29,5 +29,5 @@ Custom Exception class inherited from ValueError to be raised when there's more 
 that doesn't conotemplate one (e.g.: gtetting the largest component of a graph in graph_utils)
 """
 
-class MissingAttributeError(ValueError):
+class MultipleSolutionsError(ValueError):
     pass

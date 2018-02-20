@@ -28,7 +28,8 @@ __license__ = u"""
 from utils.modules_utils import *
 from config import *
 
-"""This module uses igraph to call several module implementations and returns a list of subgraph obtained from the input graph"""
+"""This tool uses the embedded methods in `igraph` to call several community finding algorithms and returns a list of 
+subgraph obtained from the input graph"""
 
 
 class CommunityFinder:

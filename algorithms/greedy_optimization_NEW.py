@@ -28,6 +28,7 @@ import random
 from algorithms.keyplayer_NEW import KeyPlayer as kp
 from misc.graph_routines import *
 from exceptions.illegal_kppset_size_error import IllegalKppsetSizeError
+from misc.enums import Implementations as imps
 
 """
 This Module covers the Greedy optimization algorithms for optimal kp-set calculation
@@ -41,6 +42,7 @@ class GreedyOptimization:
     Greedy optimization algorithms for optimal kp-set calculation
     """
     @staticmethod
+    @check_graph_consistency
     def kpp_neg_greedy(graph, kpp_size, kpp_type, seed=None, max_sp=None, implementation="pyntacle") -> (list, float):
         """
         It iteratively searches for a kpp-set of a predefined vertex set size, removes it and measures the residual
@@ -59,8 +61,6 @@ class GreedyOptimization:
                 * ciccio (int): intero de prova
                 * ciccio2 (float): float de prova
         """
-
-
         if not isinstance(kpp_size, int):
             raise TypeError("The kpp_size argument ('{}') is not an integer number".format(kpp_size))
 
@@ -75,7 +75,10 @@ class GreedyOptimization:
         if kpp_type not in kp_choices:
             raise ValueError("KP Metrics available are \"F\" and \"dF\", invalid option specified {}".format(kpp_type))
 
-        implementations = ["igraph", "pyntacle", "auto"]
+
+        #todo implementation is auto-detected
+        implementations = ["igraph", "pyntacle"]
+        #wrapper che mi restituisce implementazione
 
         if implementation not in implementations:
             raise ValueError("{0} is not valid. Available options are {1}".format(implementation, ",".format(implementations)))
@@ -105,9 +108,10 @@ class GreedyOptimization:
         temp_graph.delete_vertices(S)
 
         if kpp_type == "F":
-            fragmentation_score = kp.F(graph=graph)
+            fragmentation_score = kp.F(graph=graph) #initial scores
 
         else:
+            #todo ppassare l'implementtion che ho deciso
             fragmentation_score = kp.dF(graph=graph, implementation=implementation, max_sp=max_sp)
 
         kppset_score_pairs_history = {}
@@ -120,7 +124,7 @@ class GreedyOptimization:
             kppset_score_pairs = {}
             """:type: dic{(), float}"""
 
-            for si in S:
+            for si in enumerate(S):
                 temp_kpp_set = S.copy()
                 temp_kpp_set.remove(si)
 
@@ -136,20 +140,19 @@ class GreedyOptimization:
                         temp_graph = graph.copy()
                         temp_graph.delete_vertices(temp_kpp_set)
 
-
-                        #todo placeholder
-                        try:
-                            kp.set_graph(temp_graph, shallow_copy=True)
-
-                        except IllegalGraphSizeError:
-                            # This occurs whenever removing nodes deletes all edges, thus causing max fragmentation
-                            kppset_score_pairs[temp_kpp_set_tuple] = 1  # 1 = Max fragmentation
-                            kppset_score_pairs_history[temp_kpp_set_tuple] = 1  # 1 = Max fragmentation
+                        if kpp_type == "F":
+                            temp_kpp_func_value = kp.F(graph=temp_graph)  # initial scores
 
                         else:
-                            temp_kpp_func_value = kpp_func(recalculate=True)
-                            kppset_score_pairs[temp_kpp_set_tuple] = temp_kpp_func_value
-                            kppset_score_pairs_history[temp_kpp_set_tuple] = temp_kpp_func_value
+                            # todo ppassare l'implementtion che ho deciso
+                            temp_kpp_func_value = kp.dF(graph=temp_graph, implementation=implementation, max_sp=max_sp)
+
+                        #todo max scores should be in keyplayers (all nodes are disconnected)
+                        # kppset_score_pairs[temp_kpp_set_tuple] = 1  # 1 = Max fragmentation
+                        # kppset_score_pairs_history[temp_kpp_set_tuple] = 1  # 1 = Max fragmentation
+
+                        kppset_score_pairs[temp_kpp_set_tuple] = temp_kpp_func_value
+                        kppset_score_pairs_history[temp_kpp_set_tuple] = temp_kpp_func_value
 
                     temp_kpp_set.remove(notsi)
 

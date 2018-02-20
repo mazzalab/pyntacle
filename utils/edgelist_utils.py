@@ -82,7 +82,6 @@ class EglUtils():
 
         '''
         return the edgelist object as a list of lists (useful for igraph porting)
-
         :return: a tuple containing only the self.edgl object and the header
         '''
         if self.edgl is not None:
