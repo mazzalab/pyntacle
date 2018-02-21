@@ -33,7 +33,6 @@ from config import *
 from misc.binarycheck import *
 from utils.graph_utils import GraphUtils
 from misc.import_utils import *
-from misc.graph_load import *
 from utils.add_attributes import *
 from utils.adjmatrix_utils import AdjmUtils
 from utils.edgelist_utils import EglUtils
@@ -82,14 +81,13 @@ class PyntacleImporter:
             if header:
                 #use pandas to parse this into
                 f = pd.read_csv(filepath_or_buffer=file, sep=sep, index_col=0)
-                node_names = f.columns.values
+                node_names = f.columns.values.tolist()
 
             else:
                 f = pd.read_csv(filepath_or_buffer=file, sep=sep, header=None)
                 node_names = [str(x) for x in range(0, len(f.columns))]
 
             graph = Graph.Adjacency(f.values.tolist(), mode="UPPER")
-
             AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0],
                                                          node_names=node_names)
 
@@ -158,7 +156,6 @@ class PyntacleImporter:
         graph = Graph()
         graph.vs["name"] = []
 
-        sif_list = [line.rstrip('\n').split(sep) for line in open(file, "r")]
         sif_list = [line.rstrip('\n').split(sep) for line in open(file, "r")]
 
         """:type: list[str]"""
@@ -249,7 +246,7 @@ class PyntacleImporter:
         ''' initialize empty graph'''
 
         with open(file, "r") as dot_file:
-            sys.stdout.write("Importing dot file {}".format(os.path.basename(file_name)))
+            sys.stdout.write("Importing dot file {}".format(os.path.basename(file)))
             # check whether graph exists in the first line, as well as a '{'
             first_line = dot_file.readline().rstrip().split(" ")
             # print(first_line)

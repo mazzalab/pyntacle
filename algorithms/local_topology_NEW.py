@@ -421,8 +421,8 @@ class LocalTopology:
         #todo automatic implementation here
 
         #todo check that the sp_numba is already here and if not import it (if conditions allow it)
-        if sys.modules.get("numba.cuda.initialize", "NOPE") != "NOPE" or cuda.is_available():
-            from algorithms.numba_gpu import Test
+        # if sys.modules.get("numba.cuda.initialize", "NOPE") != "NOPE" or cuda.is_available():
+            # from algorithms.numba_gpu import Test
 
         if mode == GraphType.undirect_unweighted:
             if nodes is None:
@@ -437,26 +437,24 @@ class LocalTopology:
 
                 elif implementation == implementation.gpu:
                     #todo risistemare e testare su un altro gpu-enabled computer
-                    if gpu_import_flag or cuda.is_available():
-                        gpu_flag = True
 
-                        #print(cuda.detect())
-                        from algorithms.numba_gpu import Test
+                    #print(cuda.detect())
+                    from algorithms.numba_gpu import Test
 
-                        if nodes is None:
-                            nodes = list(range(0, graph.vcount()))
+                    if nodes is None:
+                        nodes = list(range(0, graph.vcount()))
 
-                        # create the result vector filled with 'inf' (the total number of nodes + 1)
-                        result = np.full_like(adjmat, graph.vcount()+1, dtype=np.uint16)
-                        Test.__shortest_path_GPU__(adjmat, nodes, result)
+                    # create the result vector filled with 'inf' (the total number of nodes + 1)
+                    result = np.full_like(adjmat, graph.vcount()+1, dtype=np.uint16)
+                    Test.__shortest_path_GPU__(adjmat, nodes, result)
 
-                        np.fill_diagonal(result,0) #fill the diagonal of the result object with zeros
-                        # print(adjmat)
-                        # print(result)
-                        # input()
+                    np.fill_diagonal(result,0) #fill the diagonal of the result object with zeros
+                    # print(adjmat)
+                    # print(result)
+                    # input()
 
-                        #LocalTopology.__shortest_path_GPU__(adjmat, nodes, result)
-                        return result
+                    #LocalTopology.__shortest_path_GPU__(adjmat, nodes, result)
+                    return result
 
                 else:
                     sys.stdout.write(

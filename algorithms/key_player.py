@@ -229,15 +229,3 @@ class KeyPlayer:
             else:
                 return self.__graph.vs[index_list[0]][_KeyplayerAttribute.DR.name]
 
-
-from io_stream.edgelist_to_graph import EdgeListToGraph as egl
-from io_stream.adjacencymatrix_to_graph import AdjacencyMatrixToGraph as adjm
-
-#graph = egl().import_graph(file_name="/home/d.capocefalo/Desktop/testdf.txt", header=False, separator="\t")
-# graph = adjm().import_graph(file_name="/home/d.capocefalo/Desktop/Celegans_Connectome_R-Rp.adjm", header=True, separator="\t")
-# print(KeyPlayer(graph).F(recalculate=True))
-from igraph import Graph as gg
-# sel = graph.vs().select(name_in=["AUAR", "AVER", "RIAR"])
-# index_list = [x.index for x in sel]
-# graph.delete_vertices(index_list)
-# print(KeyPlayer(graph).F(recalculate=True))

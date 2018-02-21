@@ -211,7 +211,6 @@ class AddAttributes():
                 self.__graph.vs()["name"] = [str(x.index) for x in self.__graph.vs()]
 
             else:
-
                 if not isinstance(node_names, list) or not all(isinstance(item, str) for item in node_names):
                     raise WrongArgumentError("node names must be a list of strings")
 

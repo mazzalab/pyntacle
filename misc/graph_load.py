@@ -107,7 +107,7 @@ class GraphLoad():
 
         elif self.file_format == 'adjm':
             try:
-                graph = PyntacleImporter.adjacencymatrix(file=self.input_file, sep=separator,
+                graph = PyntacleImporter.AdjacencyMatrix(file=self.input_file, sep=separator,
                                                               header=self.header)
             except (ValueError):
                 if not self.header: #in case header has been specified
