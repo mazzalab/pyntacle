@@ -3,12 +3,9 @@ this module import a sif file into n igraph graph
 '''
 from config import *
 import os
-
 from igraph import Graph
-
 from io_stream.igraph_importer import IGraphImporter
 from utils.add_attributes import AddAttributes
-
 from utils.graph_utils import GraphUtils
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
@@ -18,9 +15,9 @@ __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "27 October 2016"
+__date__ = "27 February 2018"
 __license__ = u"""
-  Copyright (C) 20016-2017  Tommaso Mazza <t,mazza@css-mendel.it>
+  Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
 
   This program is free software; you can use and redistribute it under

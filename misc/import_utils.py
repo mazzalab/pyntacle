@@ -3,11 +3,11 @@ __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
-__email__ = "bioinformatics@css-mendel.it"
+__email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "14 November 2016"
+__date__ = "27 February 2018"
 __license__ = u"""
-  Copyright (C) 20016-2017  Tommaso Mazza <t,mazza@css-mendel.it>
+  Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
 
   This program is free software; you can use and redistribute it under
@@ -28,9 +28,9 @@ __license__ = u"""
 from config import *
 import csv
 from igraph import Graph
-from utils.add_attributes import AddAttributes as ad
+from utils.add_attributes import AddAttributes
 from functools import wraps
-
+from misc.binarycheck import is_binary_file
 def filechecker(func):
     """
     decorator to check the integrity of an input file
@@ -48,6 +48,7 @@ def filechecker(func):
         return func(file, *args, **kwargs)
 
     return func_wrapper
+
 
 def separator_sniffer(func):
     """
@@ -75,22 +76,5 @@ def separator_sniffer(func):
                 raise ValueError("\"sep\" must be a string {} found".format(type(sep).__name__))
 
         return func(file,sep,*args, **kwargs)
-
-    return func_wrapper
-
-def graph_initializer(func):
-    """
-    initialize the output graph for the Importer class (takes the return value of an Importer and works on it)
-    :param func: one of the function for the `Importer` class
-    :return: the graph object modifies
-    """
-
-    @wraps(func)
-    def func_wrapper(file, *args, **kwargs):
-        graph, node_names = func(file, *args, **kwargs)
-        # print(graph)
-        ad(graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0], node_names=node_names)
-
-        return graph
 
     return func_wrapper

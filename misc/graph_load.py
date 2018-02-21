@@ -8,11 +8,7 @@ import numpy as np
 from misc.binarycheck import is_binary_file
 import re
 # pyntacle Libraries
-from io_stream.adjacencymatrix_to_graph import AdjacencyMatrixToGraph
-from io_stream.binary_to_graph import BinaryToGraph
-from io_stream.dot_to_graph import DotToGraph
-from io_stream.edgelist_to_graph import EdgeListToGraph
-from io_stream.sif_to_graph import SifToGraph
+from io_stream.importer_NEW import PyntacleImporter
 from utils.graph_utils import GraphUtils
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
@@ -22,9 +18,9 @@ __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "27 October 2016"
+__date__ = "27 February 2018"
 __license__ = u"""
-  Copyright (C) 20016-2017  Tommaso Mazza <t,mazza@css-mendel.it>
+  Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
 
   This program is free software; you can use and redistribute it under
@@ -94,8 +90,7 @@ class GraphLoad():
 
         # Graph import
         if self.file_format == 'egl':
-            graph = EdgeListToGraph().import_graph(file_name=self.input_file, header=self.header,
-                                                        separator=separator)
+            graph = PyntacleImporter.EdgeList(file_=self.input_file, sep=separator, header=self.header)
             # try:
             #     graph = EdgeListToGraph().import_graph(file_name=self.input_file, header=self.header,
             #                                            separator=separator)
@@ -112,8 +107,8 @@ class GraphLoad():
 
         elif self.file_format == 'adjm':
             try:
-                graph = AdjacencyMatrixToGraph().import_graph(file_name=self.input_file, header=self.header,
-                                                          separator=separator)
+                graph = PyntacleImporter.adjacencymatrix(file=self.input_file, sep=separator,
+                                                              header=self.header)
             except (ValueError):
                 if not self.header: #in case header has been specified
                     sys.stderr.write(
@@ -127,7 +122,7 @@ class GraphLoad():
         elif self.file_format == 'graph':
     
             try:
-                graph = BinaryToGraph().load_graph(self.input_file)
+                graph = PyntacleImporter.Binary(self.input_file)
                 separator = None
 
             except IOError:
@@ -139,7 +134,7 @@ class GraphLoad():
         elif self.file_format == 'dot':
 
             try:
-                graph = DotToGraph().import_graph(self.input_file)
+                graph = PyntacleImporter.Dot(self.input_file)
             except:
                 sys.stderr.write(
                     "Dot file is not supporter by our parser. Or other formatting errors has occured. Please check our documentation in order to check out DOT file specifications. Quitting.\n")
@@ -147,7 +142,7 @@ class GraphLoad():
 
         elif self.file_format == 'sif':
             try:
-                graph = SifToGraph().import_graph(file_name=self.input_file, header=self.header, sep=separator)
+                graph = PyntacleImporter.Sif(file=self.input_file, sep=separator, header=self.header)
             except:
                 sys.stderr.write(
                     "Sif is unproperly formatted or a header is present and --no-header was declared in input (also check if the separator is correct). Quitting.\n")

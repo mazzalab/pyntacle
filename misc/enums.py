@@ -7,7 +7,7 @@ __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
 __date__ = "27 February 2018"
 __license__ = u"""
-  Copyright (C) 2016-2018  Tommaso Mazza <t,mazza@css-mendel.it>
+  Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
 
   This program is free software; you can use and redistribute it under
@@ -29,6 +29,7 @@ checking if the `igraph.Graph` object is compatible with pyntacle's specificatio
 in the input graph, give elapsed time of execution and so on"""
 
 from enum import Enum, auto
+from config import *
 
 """Contains all the enumerators used in pyntacle's methods"""
 
@@ -48,7 +49,27 @@ class Implementations(Enum):
     """
     this enumerator stores the different ways that can be used to parallelize the shortest path
     """
+    igraph = auto()
     cpu = auto()
     gpu = auto()
-    automatic = auto()
-    igraph = auto()
+    auto = auto()
+
+class node_attributes(Enum):
+    """
+    this enumerator stores all the node attributes that can be instantiated by pyntacle
+    """
+    #todo aggiungi tutti
+    degree = auto()
+
+class graph_attributes(Enum):
+    """
+    this enumerator stores all the edge attributes that can be instantiated by pyntacle
+    """
+    #todo aggiungi tutti
+    pass
+
+class edge_attributes(Enum):
+    """
+    this enumerator stores all the edge attributes that can be instantiated by pyntacle
+    """
+    pass

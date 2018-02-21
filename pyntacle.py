@@ -2,7 +2,7 @@
 # todo import bruteforce algorithm in keyplayer
 # todo rivedi nomi metodi
 # todo implementa brute-force algorithm (Daniele) nella main + un wrapper (sempre daniele)
-
+# todo all'interno dei metodi, logger non va bene. Quando usato come libreria, non ho nessun messaggio. Aggiustare o passare a sys.stderr e sys.stdout
 # !/usr/bin/env python3.6
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
@@ -12,9 +12,9 @@ __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "27 October 2016"
+__date__ = "27 February 2018"
 __license__ = u"""
-  Copyright (C) 20016-2017  Tommaso Mazza <t,mazza@css-mendel.it>
+  Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
 
   This program is free software; you can use and redistribute it under
@@ -30,7 +30,6 @@ __license__ = u"""
   You should have received a copy of the license along with this
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
-
 
 # external libraries
 import argparse

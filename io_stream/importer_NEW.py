@@ -7,7 +7,7 @@ __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
 __date__ = "27 February 2018"
 __license__ = u"""
-  Copyright (C) 2016-2018  Tommaso Mazza <t,mazza@css-mendel.it>
+  Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
 
   This program is free software; you can use and redistribute it under
@@ -31,16 +31,17 @@ import pickle
 import numpy as np
 from config import *
 from misc.binarycheck import *
+from utils.graph_utils import GraphUtils
 from misc.import_utils import *
+from misc.graph_load import *
 from utils.add_attributes import *
 from utils.adjmatrix_utils import AdjmUtils
 from utils.edgelist_utils import EglUtils
-from utils.graph_utils import GraphUtils
 from exceptions.illegal_graph_size_error import IllegalGraphSizeError
 from exceptions.unproperlyformattedfile_error import UnproperlyFormattedFileError
 
 
-"Wraps up all the importersz for several type of network representation files"
+"Wraps up all the importers for several type of network representation files"
 
 
 class PyntacleImporter:
@@ -158,6 +159,9 @@ class PyntacleImporter:
         graph.vs["name"] = []
 
         sif_list = [line.rstrip('\n').split(sep) for line in open(file, "r")]
+        sif_list = [line.rstrip('\n').split(sep) for line in open(file, "r")]
+
+        """:type: list[str]"""
 
         if header:
             graph["__sif_interaction_name"] = sif_list[0][1]
@@ -223,8 +227,6 @@ class PyntacleImporter:
 
         # add missing attribute to graph
         AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
-
-        graph.to_undirected()
 
         sys.stdout.write("Sif File  from file {} imported\n".format(file))
 

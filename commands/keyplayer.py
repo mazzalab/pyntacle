@@ -1,23 +1,24 @@
+from config import *
 from algorithms.key_player import *
 from algorithms.key_player import _KeyplayerAttribute
 from exceptions.generic_error import Error
-from io_stream.graph_to_binary import GraphToBinary
-from misc.graph_load import GraphLoad
+from io_stream.exporter_NEW import Exporter
 from misc.kp_runner import *
 from report.plotter import *
 from report.reporter import *
 from utils.graph_utils import *
+from misc.graph_load import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Daniele Capocefalo"
-__email__ = "bioinformatics@css-mendel.it"
+__email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "14 November 2016"
+__date__ = "27 February 2018"
 __license__ = u"""
-  Copyright (C) 20016-2017  Tommaso Mazza <t,mazza@css-mendel.it>
+  Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
 
   This program is free software; you can use and redistribute it under
@@ -282,7 +283,7 @@ class KeyPlayer():
         if self.args.save_binary:
             sys.stdout.write("Saving graph to a Binary file\n")
             binary_path = os.path.join(self.args.directory, report_prefix + ".graph")
-            GraphToBinary(graph=graph).save(file_name=binary_path)
+            Exporter.Binary(graph, binary_path)
 
         # generate and output plot
         if not self.args.no_plot or graph.vcount() < 1000:

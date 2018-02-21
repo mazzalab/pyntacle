@@ -7,7 +7,7 @@ __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
 __date__ = "27 February 2018"
 __license__ = u"""
-  Copyright (C) 2016-2018  Tommaso Mazza <t,mazza@css-mendel.it>
+  Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
 
   This program is free software; you can use and redistribute it under
@@ -27,7 +27,7 @@ __license__ = u"""
 """
 **Compute Local Topology metrics for all nodes in the graph or for a set of nodes**
 """
-
+from config import *
 from misc.graph_routines import *
 from misc.enums import Implementations as imps
 from misc.enums import GraphType
@@ -61,12 +61,8 @@ class LocalTopology:
 
         if nodes is None:
             return graph.degree()
-
         else:
-            if isinstance(nodes, str):
-                return [graph.degree(nodes)]
-            else:
-                return graph.degree(nodes)
+            return graph.degree(nodes)
 
     @staticmethod
     @check_graph_consistency
@@ -88,10 +84,7 @@ class LocalTopology:
             return graph.betweenness()
 
         else:
-            if isinstance(nodes, str):
-                return [graph.betweenness(nodes)]
-            else:
-                return graph.betweenness(nodes)
+            return graph.betweenness(nodes)
 
     @staticmethod
     @check_graph_consistency
@@ -112,10 +105,7 @@ class LocalTopology:
         if nodes is None:
             return graph.transitivity_local_undirected(mode="zero")
         else:
-            if isinstance(nodes, str):
-                return [graph.transitivity_local_undirected(vertices=nodes, mode="zero")]
-            else:
-                return graph.transitivity_local_undirected(vertices=nodes, mode="zero")
+            return graph.transitivity_local_undirected(vertices=nodes, mode="zero")
 
     @staticmethod
     @check_graph_consistency
@@ -135,12 +125,8 @@ class LocalTopology:
 
         if nodes is None:
             return graph.closeness()
-
         else:
-            if isinstance(nodes, str):
-                return [graph.closeness(vertices=nodes)]
-            else:
-                return graph.closeness(vertices=nodes)
+            return graph.closeness(vertices=nodes)
 
     @staticmethod
     @check_graph_consistency
@@ -160,12 +146,8 @@ class LocalTopology:
 
         if nodes is None:
             return [int(x) for x in graph.eccentricity()]
-
         else:
-            if isinstance(nodes, str):
-                return [int(graph.eccentricity(vertices=nodes))]
-            else:
-                return [int(x) for x in graph.eccentricity(vertices=nodes)]
+            return [int(x) for x in graph.eccentricity(vertices=nodes)]
 
     @staticmethod
     def __radiality_inner__(graph, nodes=None, implementation=imps.igraph) -> list:
@@ -202,7 +184,6 @@ class LocalTopology:
                         partial_sum += diameter + 1 - sp_length
 
                 rad.append(round(float(partial_sum / (num_nodes - 1)), 5))
-
 
             return rad
 
@@ -365,11 +346,11 @@ class LocalTopology:
             if not all(isinstance(x, float) for x in weights):
                 raise ValueError("Weights must be a list of floats")
 
+            if len(weights) > graph.ecount():
+                raise ValueError("Weights must be equal or inferior to the total number of edges")
+
         if not (isinstance(damping, (float, int)) and (0 <= damping)):
             raise ValueError("Damping factor must be a float >= 0")
-
-        if len(weights) > graph.ecount():
-            raise ValueError("Weights must be equal or inferior to the total number of edges")
 
         return graph.pagerank(vertices=nodes, damping=damping, directed=False, weights=weights)
 
