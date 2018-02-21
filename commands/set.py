@@ -5,9 +5,9 @@ from config import *
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 from graph_operations.logic_ops import GraphSetter
 from io_stream.exporter_NEW import Exporter
-from misc.graph_load import GraphLoad
 from report.plotter import PlotGraph
 from utils.graph_utils import GraphUtils
+from misc.graph_load import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"

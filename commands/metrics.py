@@ -7,10 +7,10 @@ from algorithms.sparseness import _SparsenessAttribute
 from exceptions.generic_error import Error
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 from io_stream.exporter_NEW import Exporter
-from misc.graph_load import GraphLoad, separator_detect
 from report.plotter import *
 from report.reporter import *
 from io_stream.import_attributes import ImportAttributes
+from misc.graph_load import *
 from utils.graph_utils import GraphUtils
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"

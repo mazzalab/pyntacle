@@ -32,6 +32,7 @@ from config import *
 from misc.binarycheck import *
 from utils.graph_utils import GraphUtils
 from misc.import_utils import *
+from misc.graph_load import *
 from utils.add_attributes import *
 from utils.adjmatrix_utils import AdjmUtils
 from utils.edgelist_utils import EglUtils
@@ -135,7 +136,7 @@ class PyntacleImporter:
         """:type: Graph"""
         graph.vs["name"] = []
 
-        sif_list = [line.rstrip('\n').split(sep) for line in open(file_name, "r")]
+        sif_list = [line.rstrip('\n').split(sep) for line in open(file, "r")]
 
         """:type: list[str]"""
 
@@ -208,7 +209,7 @@ class PyntacleImporter:
                 # print(g.vs()["name"])
 
         # add missing attribute to graph
-        AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file_name))[0])
+        AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
 
         '''
         define graph as undirected

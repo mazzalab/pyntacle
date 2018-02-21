@@ -6,7 +6,7 @@ from config import *
 from io_stream.edgelist_to_sif import EdgeListToCytoscape
 # output format
 from io_stream.exporter_NEW import Exporter
-from misc.graph_load import GraphLoad, separator_detect
+from misc.graph_load import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"

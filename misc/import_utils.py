@@ -30,7 +30,7 @@ import csv
 from igraph import Graph
 from utils.add_attributes import AddAttributes
 from functools import wraps
-
+from misc.binarycheck import is_binary_file
 def filechecker(func):
     """
     decorator to check the integrity of an input file
@@ -48,6 +48,7 @@ def filechecker(func):
         return func(file, *args, **kwargs)
 
     return func_wrapper
+
 
 def separator_sniffer(func):
     """
@@ -75,22 +76,5 @@ def separator_sniffer(func):
                 raise ValueError("\"sep\" must be a string {} found".format(type(sep).__name__))
 
         return func(file,sep,*args, **kwargs)
-
-    return func_wrapper
-
-def graph_initializer(func):
-    """
-    initialize the output graph for the Importer class (takes the return value of an Importer and works on it)
-    :param func: one of the function for the `Importer` class
-    :return: the graph object modifies
-    """
-
-    @wraps(func)
-    def func_wrapper(file, *args, **kwargs):
-        graph, node_names = func(file, *args, **kwargs)
-        # print(graph)
-        AddAttributes(graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0], node_names=node_names)
-
-        return graph
 
     return func_wrapper

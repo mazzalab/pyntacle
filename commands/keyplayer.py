@@ -3,11 +3,11 @@ from algorithms.key_player import *
 from algorithms.key_player import _KeyplayerAttribute
 from exceptions.generic_error import Error
 from io_stream.exporter_NEW import Exporter
-from misc.graph_load import GraphLoad
 from misc.kp_runner import *
 from report.plotter import *
 from report.reporter import *
 from utils.graph_utils import *
+from misc.graph_load import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
