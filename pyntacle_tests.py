@@ -18,17 +18,22 @@
 
 from igraph import Graph
 from io_stream.importer_NEW import *
-from io_stream.adjacencymatrix_to_graph import AdjacencyMatrixToGraph
 from algorithms.local_topology_NEW import LocalTopology
 
-from misc.enums import Implementations as imps
-path = "/home/local/MENDEL/d.capocefalo/Desktop/pyntacle-test/pippo.adjm"
+from misc.enums import SP_implementations as imps
+path = "/home/local/MENDEL/d.capocefalo/Desktop/pyntacle-test/figure_8.adjm"
 
-# a = PyntacleImporter.AdjacencyMatrix(path, "\t", False)
+#a = PyntacleImporter.AdjacencyMatrix(path, "\t", True)
+#bb = LocalTopology.shortest_path_pyntacle(a,None, implementation=imps.gpu)
 
-b = AdjacencyMatrixToGraph().import_graph(file_name=path,header=False, separator="\t")
+# from igraph import Graph
+# gg = Graph.Barabasi(10, 2)
+# gg["name"] = "bar a bas i"
+# gg.vs()["name"] = [str(x) for x in range(0,10)]
+# gg.vs()["AHSTRONZO"] = ["ao", "bella", "so", "Lele", "se", "magnamo", "na", "surgelata", "?"]
+# gg.es()["simboli"] = ["io" "sono", "papa", "francesco", "il", "distruttore", "di", "mondi"]
 
-bb = LocalTopology.shortest_path_pyntacle(b,None, implementation=imps.gpu)
+# Graph.write_dot(gg, "testmauro.py")
 
 # print(len(aa.components()))
 # aa["graph_name"] = "test"

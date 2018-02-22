@@ -53,8 +53,8 @@ def check_graph_consistency(func):
         if graph.vcount() == 0:
             raise IllegalGraphSizeError('Input graph does not contain any vertex')
 
-        if graph.ecount() < 1:
-            raise IllegalGraphSizeError("Input Graph does not have any edges")
+        # if graph.ecount() < 1:
+        #     raise IllegalGraphSizeError("Input Graph does not have any edges")
 
         if "name" not in graph.attributes():
             raise MissingAttributeError("Graph must have a \"graph_name\" attribute")

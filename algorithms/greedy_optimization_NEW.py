@@ -24,17 +24,16 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+"""
+This Module covers the Greedy optimization algorithms for optimal kp-set calculation using Key-Players metrics developed by Borgatti
+"""
+
 import random
 from algorithms.keyplayer_NEW import KeyPlayer as kp
 from misc.graph_routines import *
 from exceptions.illegal_kppset_size_error import IllegalKppsetSizeError
-from misc.enums import Implementations as imps
-
-"""
-This Module covers the Greedy optimization algorithms for optimal kp-set calculation
-"""
-
-#from enum import Enum
+from misc.enums import KPPOSchoices, KPNEGchoices, SP_implementations
+from misc.kpfinding_utils import kpchecker
 
 
 class GreedyOptimization:
@@ -43,113 +42,84 @@ class GreedyOptimization:
     """
     @staticmethod
     @check_graph_consistency
-    def kpp_neg_greedy(graph, kpp_size, kpp_type, seed=None, max_sp=None, implementation="pyntacle") -> (list, float):
+    @kpchecker
+    def kpp_neg_greedy(graph, kpp_size, kpp_type, seed=None, max_sp=None) -> (list, float):
         """
         It iteratively searches for a kpp-set of a predefined vertex set size, removes it and measures the residual
         fragmentation score.
-        The best kpp-set will be that that maximizes the fragmentation.
+        The best kpp-set will be that that maximizes the fragmentation when the nodes are removed from the graph.
 
         Args:
             graph (igraph.Graph): an igraph.Graph object. The graph should have specific properties.
                 Please see the `Minimum requirements` specifications in pyntacle's manual
-                ciao sono AKKAPO
-            test (int): test de prova
+
+            kpp_size (int): the size of the optimal set found for the selected integer
+            kpp_type (KPNEGchoices): a KPNEGchoices enumerators. right now, F, and "dF" are available.
 
         Returns:
             KPSET(list), KPVALUE(float)
 
-                * ciccio (int): intero de prova
-                * ciccio2 (float): float de prova
+                * kpset (list): a list containing the node names of the optimal KPNEG set found
+                * kpvalue (float): float representing the kp score for the graph when the set is removed
         """
-        if not isinstance(kpp_size, int):
-            raise TypeError("The kpp_size argument ('{}') is not an integer number".format(kpp_size))
-
-        elif kpp_size >= graph.vcount():
-            raise IllegalKppsetSizeError("The kpp_size must be strictly less than the graph size")
-
-        kp_choices = ["F", "dF"]
-
-        if not isinstance(kpp_type, str):
-            raise ValueError("\"kpp_type\" must be a string, {} found".format(type(kpp_type)-__name__))
-
-        if kpp_type not in kp_choices:
-            raise ValueError("KP Metrics available are \"F\" and \"dF\", invalid option specified {}".format(kpp_type))
-
-
-        #todo implementation is auto-detected
-        implementations = ["igraph", "pyntacle"]
-        #wrapper che mi restituisce implementazione
-
-        if implementation not in implementations:
-            raise ValueError("{0} is not valid. Available options are {1}".format(implementation, ",".format(implementations)))
-
         if seed is not None:
-            if not isinstance(seed, int):
-                raise ValueError("seed must be an integer")
+            random.seed(seed)
 
-            else:
-                random.seed = seed
-
-        if max_sp is not None and not isinstance(max_sp, int) and max_sp > 1 and max_sp <= graph.vcount():
-            raise ValueError("\"max_sp\" must be an integer greater than one and lesser tan the total number of nodes")
+        #todo reminder che l'implementazione è automatica
 
         # Definition of the starting S and notS sets
-        node_indices = graph.vs.indices
+        node_indices = graph.vs.indices #retrieve the node indices of the whole graph
 
-        random.shuffle(node_indices)
-        S = node_indices[0:kpp_size]
+        random.shuffle(node_indices) #shuffle the node indices in order to subset each time a different starting set
+        S = node_indices[0:kpp_size] #initial node set
         """:type: list[int] """
-        S.sort()
+        S.sort() #sort the starting set in order to retrieve its size afterwards
 
-        notS = set(node_indices).difference(set(S))
+        notS = set(node_indices).difference(set(S)) #all the other indices in the graph that will be scanned
         """:type: list[int] """
 
+        # temporary copy of the graph from which the vertices that are selected as starting kpset will be removed
         temp_graph = graph.copy()
         temp_graph.delete_vertices(S)
 
-        if kpp_type == "F":
+        if kpp_type == KPNEGchoices.f:
             fragmentation_score = kp.F(graph=graph) #initial scores
 
         else:
-            #todo ppassare l'implementtion che ho deciso
-            fragmentation_score = kp.dF(graph=graph, implementation=implementation, max_sp=max_sp)
+            # call the initial graph score here using automatic implementation for SPs
+            fragmentation_score = kp.dF(graph=graph, max_sp=max_sp)
 
-        kppset_score_pairs_history = {}
+        kppset_score_pairs_history = {} #a dictionary that stores score pairs
         """:type: dic{(), float}"""
-        kppset_score_pairs_history[tuple(S)] = fragmentation_score
+        kppset_score_pairs_history[tuple(S)] = fragmentation_score #keep track of the initial kp scores after the initial set is removed
 
-        optimal_set_found = False
+        optimal_set_found = False #this becomes True when the maximum fragmentation is achieved
 
         while not optimal_set_found:
-            kppset_score_pairs = {}
+            kppset_score_pairs = {} #create a dictionary of solutions {tuple of solutions: score}
             """:type: dic{(), float}"""
 
-            for si in enumerate(S):
-                temp_kpp_set = S.copy()
-                temp_kpp_set.remove(si)
+            for si in enumerate(S):  #loop through all the node indices of the initial query
+                temp_kpp_set = S.copy()  #copy the list of original indices
+                temp_kpp_set.remove(si)  #remove the node of the current loop iteration
 
-                for notsi in notS:
-                    temp_kpp_set.append(notsi)
-                    temp_kpp_set.sort()  # necessary to avoid repetitions
-                    temp_kpp_set_tuple = tuple(temp_kpp_set)
+                for notsi in notS: #iterate all over the nodes not in the starting KPSET
+                    temp_kpp_set.append(notsi) #create a new KPSET by replacing the input node (si) with all the pther nodes
+                    temp_kpp_set.sort()  #necessary to avoid repetitions, we track the indices of the initial KP Set
+                    temp_kpp_set_tuple = tuple(temp_kpp_set)  #convert the set to tuple
 
-                    if temp_kpp_set_tuple in kppset_score_pairs_history:
-                        kppset_score_pairs[temp_kpp_set_tuple] = kppset_score_pairs_history[temp_kpp_set_tuple]
+                    if temp_kpp_set_tuple in kppset_score_pairs_history:  #if we already passed through this kpset, then:
+                        kppset_score_pairs[temp_kpp_set_tuple] = kppset_score_pairs_history[temp_kpp_set_tuple] #append this pair to the history of this kpset (1st for loop)
 
-                    else:
+                    else: #compute the KPNEG metrics for this new set
                         temp_graph = graph.copy()
                         temp_graph.delete_vertices(temp_kpp_set)
 
-                        if kpp_type == "F":
+                        if kpp_type == KPNEGchoices.F:
                             temp_kpp_func_value = kp.F(graph=temp_graph)  # initial scores
 
                         else:
-                            # todo ppassare l'implementtion che ho deciso
-                            temp_kpp_func_value = kp.dF(graph=temp_graph, implementation=implementation, max_sp=max_sp)
-
-                        #todo max scores should be in keyplayers (all nodes are disconnected)
-                        # kppset_score_pairs[temp_kpp_set_tuple] = 1  # 1 = Max fragmentation
-                        # kppset_score_pairs_history[temp_kpp_set_tuple] = 1  # 1 = Max fragmentation
+                            temp_kpp_func_value = kp.dF(graph=temp_graph, max_sp=max_sp)
 
                         kppset_score_pairs[temp_kpp_set_tuple] = temp_kpp_func_value
                         kppset_score_pairs_history[temp_kpp_set_tuple] = temp_kpp_func_value

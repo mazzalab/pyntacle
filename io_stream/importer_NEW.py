@@ -24,7 +24,6 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-from igraph import Graph
 import pandas as pd
 import re
 import pickle
@@ -33,7 +32,6 @@ from config import *
 from misc.binarycheck import *
 from utils.graph_utils import GraphUtils
 from misc.import_utils import *
-from misc.graph_load import *
 from utils.add_attributes import *
 from utils.adjmatrix_utils import AdjmUtils
 from utils.edgelist_utils import EglUtils
@@ -235,7 +233,7 @@ class PyntacleImporter:
     @staticmethod
     @filechecker
     @separator_sniffer
-    def Dot(file, sep=None, **kwargs):
+    def Dot(file,**kwargs):
         """
 
         :param file:
@@ -249,7 +247,7 @@ class PyntacleImporter:
         ''' initialize empty graph'''
 
         with open(file, "r") as dot_file:
-            sys.stdout.write("Importing dot file {}".format(os.path.basename(file_name)))
+            sys.stdout.write("Importing dot file {}".format(os.path.basename(file)))
             # check whether graph exists in the first line, as well as a '{'
             first_line = dot_file.readline().rstrip().split(" ")
             # print(first_line)
