@@ -182,7 +182,7 @@ Finally, extract the pyntacle [_source tar.gz_](https://github.com/mazzalab/pynt
 administrator:
 
 ```bash
-python3.5 setup.py install ln -s /opt/local/Library/Frameworks/Python.framework/Versions/3.5/bin/dedalus /opt/local/bin
+python3.5 setup.py install ln -s /opt/local/Library/Frameworks/Python.framework/Versions/3.5/bin/pyntacle /opt/local/bin
 ```
 
 ## Release history
