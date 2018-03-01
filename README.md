@@ -91,7 +91,7 @@ Finally, install the latest version of pyntacle:
 conda install -y -c bfxcss -c conda-forge pyntacle
 ```
 
-#### Installing pyntacle from source
+### Installing pyntacle from source
 Installing from source is advised for advanced users only. The following
 instructions were written for Mac OS v.11+ and a few major Linux
 distros. System requirements can vary for other distros/versions.
@@ -101,7 +101,7 @@ The source code can be downloaded from our
 .tar.gz file. Before trying to install pyntacle, there are system
 requirements that need to be satisfied on each platform.
 
-##### Debian, Ubuntu
+#### Debian, Ubuntu
 
 As a user with admin rights, run:
 
@@ -115,7 +115,7 @@ Finally, extract the pyntacle [_source tar.gz_](https://github.com/mazzalab/pynt
 python3 setup.py install
 ```
 
-##### Kubuntu
+#### Kubuntu
 
 As a user with admin rights, run:
 
@@ -135,7 +135,7 @@ extracted folder and run as an administrator:
 python3 setup.py install
 ```
 
-##### CentOS7
+#### CentOS7
 
 As an admin, you need to run:
 
@@ -150,7 +150,7 @@ extracted folder and run as an administrator:
 python3 setup.py install
 ```
 
-##### MacOS X
+#### MacOS X
 
 n order to compile from source, you need some of the tools that are
 conveniently packed in [XCode](https://itunes.apple.com/us/app/xcode/id497799835?mt=12) , which has to be downloaded and installed
@@ -189,7 +189,7 @@ python3.5 setup.py install ln -s /opt/local/Library/Frameworks/Python.framework/
 
 Changelog for current and past releases:
 
-##### 0.1.0:
+### 0.1.0:
 
 -  The first release of pyntacle.
 
