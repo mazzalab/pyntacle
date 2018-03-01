@@ -26,23 +26,30 @@ from graph_operations.octopus import *
 from igraph import Graph
 from io_stream.import_attributes import ImportAttributes
 from utils.add_attributes import AddAttributes
-from io_stream.importer_NEW import PyntacleImporter
+from io_stream.importer import PyntacleImporter
 from misc.graph_load import *
 
-# adjmatrix = GraphLoad('/home/m.truglio/Desktop/Compiti_Dedalus/figure_8.txt', "adjm", True).graph_load()
+# adjmatrix = GraphLoad('/home/m.truglio/Desktop/Compiti_Dedalus/edgelist.txt.sif', "sif", True).graph_load()
+# print(adjmatrix)
+# print(list(adjmatrix.es))
+# AddAttributes(adjmatrix).add_edge_attributes('colore_edge', ['nero'], [('1','0')])
+# print(list(adjmatrix.es))
+# input()
 
-adjmat = PyntacleImporter.AdjacencyMatrix(file='/home/m.truglio/Desktop/Compiti_Dedalus/figure_8.txt', sep='\t', header=True)
+
+
+mat = PyntacleImporter.Dot(file='/home/m.truglio/Desktop/Compiti_Dedalus/dummydot.txt', sep='\t', header=True)
 print("\nGraph in main")
-print(adjmat)
-
+print(mat)
 input()
-gg = Graph.Erdos_Renyi(10, 0.5)
-node_names = [str(x) for x in range(0,10)]
-AddAttributes(graph=gg).graph_initializer(graph_name="test", node_names=node_names)
-
-print("\nGraph in main")
-print(gg)
-input()
+# gg = Graph.Erdos_Renyi(10, 0.5)
+# node_names = [str(x) for x in range(0,10)]
+# print(node_names)
+# AddAttributes(graph=gg).graph_initializer(graph_name="test", node_names=node_names)
+# print(list(gg.es))
+# print("\nGraph in main")
+# print(gg)
+# input()
 
 # #Graph attribute da file
 # ImportAttributes(gg).import_graph_attributes('/home/m.truglio/Desktop/Compiti_Dedalus/graph_attributes.txt')
@@ -65,8 +72,8 @@ input()
 # print(gg.es["attributo1"])
 # print(gg.es["attributo2"])
 # #Edge attribute da oggetto
-# AddAttributes(gg).add_edge_attributes('colore_edge', ['nero', 'magenta'], [('0','1'), ('2', '5')])
-# print(gg.es["colore_edge"])
+AddAttributes(gg).add_edge_attributes('colore_edge', ['nero', 'magenta'], [('0','1'), ('2', '5')])
+print(gg.es["colore_edge"])
 
 
 #Test local topology

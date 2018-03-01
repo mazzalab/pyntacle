@@ -153,10 +153,11 @@ python3 setup.py install
 #### MacOS X
 
 n order to compile from source, you need some of the tools that are
-conveniently packed in [XCode](https://itunes.apple.com/us/app/xcode/id497799835?mt=12) , which has to be downloaded and installed
-from the Mac App Store. Once you have XCode - and you have opened at
-least once -, you will need to install the XCode Command Line Tools, by
-opening a terminal, typing:
+conveniently packed in
+[XCode](https://itunes.apple.com/us/app/xcode/id497799835?mt=12), which
+has to be downloaded and installed from the Mac App Store. Once you have
+XCode - and you have opened at least once -, you will need to install
+the XCode Command Line Tools, by opening a terminal, typing:
 
 ```bash
 xcode-select --install
