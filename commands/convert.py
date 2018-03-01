@@ -5,7 +5,7 @@ from warnings import simplefilter
 from config import *
 from io_stream.edgelist_to_sif import EdgeListToCytoscape
 # output format
-from io_stream.exporter_NEW import Exporter
+from io_stream.exporter import Exporter
 from misc.graph_load import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"

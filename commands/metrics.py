@@ -6,7 +6,7 @@ from algorithms.sparseness import *
 from algorithms.sparseness import _SparsenessAttribute
 from exceptions.generic_error import Error
 from exceptions.multiple_solutions_error import MultipleSolutionsError
-from io_stream.exporter_NEW import Exporter
+from io_stream.exporter import Exporter
 from report.plotter import *
 from report.reporter import *
 from io_stream.import_attributes import ImportAttributes

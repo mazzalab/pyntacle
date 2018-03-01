@@ -2,7 +2,7 @@ from config import *
 from algorithms.key_player import *
 from algorithms.key_player import _KeyplayerAttribute
 from exceptions.generic_error import Error
-from io_stream.exporter_NEW import Exporter
+from io_stream.exporter import Exporter
 from misc.kp_runner import *
 from report.plotter import *
 from report.reporter import *

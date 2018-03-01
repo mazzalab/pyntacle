@@ -4,7 +4,7 @@ from warnings import simplefilter
 from config import *
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 from graph_operations.logic_ops import GraphSetter
-from io_stream.exporter_NEW import Exporter
+from io_stream.exporter import Exporter
 from report.plotter import PlotGraph
 from utils.graph_utils import GraphUtils
 from misc.graph_load import *

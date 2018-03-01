@@ -117,6 +117,10 @@ class AddAttributes():
         :param edges: list. edges to which attributes will be applied.
         :return:
         """
+        # print("ENTER ADD EDGE ATTRS:")
+        # print(attr_name)
+        # print(attr_list)
+        # print(edges)
         if not isinstance(attr_name, str):
             raise TypeError("Attribute name is not a string")
         
@@ -126,12 +130,14 @@ class AddAttributes():
                 "One of the attributes in your attributes/weights file starts with __ (double underscore)."
                 "This notation is reserved to private variables, please avoid using it.")
         
-        assert len(attr_list) == len(edges), "in add_node_attributes, length of attributes list cannot be " \
+        assert len(attr_list) == len(edges), "in add_edge_attributes, length of attributes list cannot be " \
                                              "different from length of list of nodes."
         count = 0
         err_count = 0
         for e, a in zip(edges, attr_list):
             select = self.__graph.es.select(node_names=e)
+            if len(select) == 0:
+                select = self.__graph.es.select(node_names=(e[1], e[0]))
             count += 1
             if len(select) == 0:
                 self.logger.warning("Edge %s not found in graph" %str(e))
