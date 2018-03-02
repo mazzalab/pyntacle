@@ -26,8 +26,6 @@ __license__ = u"""
 import unittest
 import os, sys, glob
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
-from io_stream.importer import PyntacleImporter
-from io_stream.exporter import PyntacleExporter
 from test import getmd5, getmd5_bin
 from commands.communities import Communities as communities_command
 

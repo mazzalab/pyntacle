@@ -8,7 +8,7 @@ from test import getmd5, getmd5_bin
 
 class WidgetTestConvert(unittest.TestCase):
     def setUp(self):
-        self.graph1 = PyntacleImporter.AdjacencyMatrix(file='test/test_sets/input/figure8.txt', sep='\t', header=True)
+        self.graph = PyntacleImporter.AdjacencyMatrix(file='test/test_sets/input/figure_8.txt', sep='\t', header=True)
         
     def test_convert_sif(self):
         sys.stdout.write("Testing sif conversion\n")

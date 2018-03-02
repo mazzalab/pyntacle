@@ -42,6 +42,8 @@ class Generate():
     def __init__(self, args):
         self.logging = log
         self.args = args
+        if self.args.seed:
+            random.seed(self.args.seed)
 
     def run(self):
         cursor = CursorAnimation()
@@ -61,13 +63,12 @@ class Generate():
                     sys.exit(1)
 
             if not self.args.probability and self.args.edges:
-                self.args.edges = int(self.args.edges)
 
                 try:
                     self.args.edges = int(self.args.edges)
                     "Generating Graph with Scale Random Topology\nParameters:\nNumber of Nodes: {0}\nNumber of Edges: {1}\n".format(
                         self.args.nodes, self.args.edges)
-                    graph = Generator.Random([self.args.nodes, self.args.edges])
+                    graph = Generator.Random([self.args.nodes, self.args.edges], name="Random", seed=self.args.seed)
 
                 except (ValueError, TypeError, IllegalGraphSizeError):
                     sys.stderr.write(
@@ -91,12 +92,13 @@ class Generate():
                     sys.stdout.write(
                         "Generating Graph with Random Topology\nParameters:\nNumber of Nodes: {0}\nProbability of wiring: {1}\n".format(
                             self.args.nodes, self.args.probability))
-                    graph = Generator.Random([self.args.nodes, self.args.probability])
+                    graph = Generator.Random([self.args.nodes, self.args.probability], name="Random", seed=self.args.seed)
 
                 except (ValueError, TypeError, IllegalGraphSizeError):
                     sys.stderr.write(
                         "Number of nodes must be a positive integer greater than 2 and a probability must be a float between 0 and 1. Quitting\n")
                     sys.exit(1)
+                
         elif self.args.which == "scale-free":
             if self.args.nodes is None:
                 self.args.nodes = random.randint(100, 1000)
@@ -124,7 +126,7 @@ class Generate():
                 sys.stdout.write(
                     "Generating Graph with Scale Free Topology\nParameters:\nNumber of Nodes: {0}\nNumber of Outging edges: {1}\n".format(
                         self.args.nodes, self.args.outgoing_edges))
-                graph = Generator.ScaleFree([self.args.nodes, self.args.outgoing_edges])
+                graph = Generator.ScaleFree([self.args.nodes, self.args.outgoing_edges], name="ScaleFree", seed=self.args.seed)
 
             except (ValueError, TypeError, IllegalGraphSizeError):
                 sys.stderr.write(
@@ -159,7 +161,7 @@ class Generate():
                 sys.stdout.write(
                     "Generating Graph with Tree Topology\nParameters:\nNumber of Nodes: {0}\nChildren per Node: {1}\n".format(
                         self.args.nodes, self.args.children))
-                graph = Generator.Tree([self.args.nodes, self.args.children])
+                graph = Generator.Tree([self.args.nodes, self.args.children], name="Tree", seed=self.args.seed)
 
             except (ValueError, TypeError, IllegalGraphSizeError):
                 sys.stderr.write(
@@ -167,7 +169,12 @@ class Generate():
                 sys.exit(1)
 
         elif self.args.which == "small-world":
-
+            
+            if not self.args.lattice_size:
+                self.args.lattice_size = random.randint(2, 5)
+            if not self.args.nei:
+                self.args.nei = random.randint(1, 5)
+                
             if isinstance(self.args.lattice, str):
                 try:
                     self.args.lattice = int(self.args.lattice)
@@ -197,7 +204,7 @@ class Generate():
                     "Generating Graph with Small World Topology\nParameters:\nLattice Dimensions: {0}\nLattice Size: {1}\nNei (number of edges that connect each graph): {2}\nRewiring Probability: {3}\n".format(
                         self.args.lattice, self.args.lattice_size, self.args.nei, self.args.probability))
                 graph = Generator.SmallWorld(
-                    [self.args.lattice, self.args.lattice_size, self.args.nei, self.args.probability])
+                    [self.args.lattice, self.args.lattice_size, self.args.nei, self.args.probability], name="SmallWorld", seed=self.args.seed)
 
             except(TypeError, ValueError, IllegalArgumentNumberError):
                 sys.stderr.write(

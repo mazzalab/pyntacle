@@ -32,8 +32,8 @@ import random
 """ Decorators for the Generator Method """
 
 def generatorscanner(func):
-    @wraps
-    def func_wrapper(params, name, *args, **kwargs):
+    @wraps(func)
+    def func_wrapper(params, name="", *args, **kwargs):
         if not isinstance(params, list):
             raise TypeError("\"params\" argument must be a list, {} found".format(type(params).__name__))
 
