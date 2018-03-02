@@ -1,0 +1,304 @@
+/* Created by igraph 0.7.1 */
+graph {
+  graph [
+    name="['figure_8']"
+    __sif_interaction_name=0
+  ];
+  0 [
+    name=HS
+    __parent=figure_8
+  ];
+  1 [
+    name=BR
+    __parent=figure_8
+  ];
+  2 [
+    name=WD
+    __parent=figure_8
+  ];
+  3 [
+    name=PS
+    __parent=figure_8
+  ];
+  4 [
+    name=WS
+    __parent=figure_8
+  ];
+  5 [
+    name=KR
+    __parent=figure_8
+  ];
+  6 [
+    name=GM
+    __parent=figure_8
+  ];
+  7 [
+    name=BS3
+    __parent=figure_8
+  ];
+  8 [
+    name=SF
+    __parent=figure_8
+  ];
+  9 [
+    name=JE
+    __parent=figure_8
+  ];
+  10 [
+    name=LR
+    __parent=figure_8
+  ];
+  11 [
+    name=GS
+    __parent=figure_8
+  ];
+  12 [
+    name=DI
+    __parent=figure_8
+  ];
+  13 [
+    name=KA
+    __parent=figure_8
+  ];
+  14 [
+    name=DB
+    __parent=figure_8
+  ];
+  15 [
+    name=BW
+    __parent=figure_8
+  ];
+  16 [
+    name=PH
+    __parent=figure_8
+  ];
+  17 [
+    name=BM
+    __parent=figure_8
+  ];
+  18 [
+    name=HA
+    __parent=figure_8
+  ];
+  19 [
+    name=LK
+    __parent=figure_8
+  ];
+  20 [
+    name=CR
+    __parent=figure_8
+  ];
+  21 [
+    name=SR
+    __parent=figure_8
+  ];
+  22 [
+    name=HB
+    __parent=figure_8
+  ];
+  23 [
+    name=TO
+    __parent=figure_8
+  ];
+  24 [
+    name=MJ
+    __parent=figure_8
+  ];
+  25 [
+    name=WL
+    __parent=figure_8
+  ];
+  26 [
+    name=CD
+    __parent=figure_8
+  ];
+  27 [
+    name=BS
+    __parent=figure_8
+  ];
+  28 [
+    name=NP
+    __parent=figure_8
+  ];
+  29 [
+    name=EE
+    __parent=figure_8
+  ];
+  30 [
+    name=BS2
+    __parent=figure_8
+  ];
+  31 [
+    name=MG
+    __parent=figure_8
+  ];
+
+  3 -- 0 [
+    __sif_interaction=0
+  ];
+  5 -- 0 [
+    __sif_interaction=0
+  ];
+  2 -- 1 [
+    __sif_interaction=0
+  ];
+  5 -- 1 [
+    __sif_interaction=0
+  ];
+  6 -- 1 [
+    __sif_interaction=0
+  ];
+  7 -- 1 [
+    __sif_interaction=0
+  ];
+  3 -- 2 [
+    __sif_interaction=0
+  ];
+  5 -- 2 [
+    __sif_interaction=0
+  ];
+  6 -- 2 [
+    __sif_interaction=0
+  ];
+  7 -- 2 [
+    __sif_interaction=0
+  ];
+  8 -- 2 [
+    __sif_interaction=0
+  ];
+  18 -- 2 [
+    __sif_interaction=0
+  ];
+  4 -- 3 [
+    __sif_interaction=0
+  ];
+  5 -- 3 [
+    __sif_interaction=0
+  ];
+  6 -- 3 [
+    __sif_interaction=0
+  ];
+  7 -- 3 [
+    __sif_interaction=0
+  ];
+  5 -- 4 [
+    __sif_interaction=0
+  ];
+  6 -- 4 [
+    __sif_interaction=0
+  ];
+  7 -- 4 [
+    __sif_interaction=0
+  ];
+  6 -- 5 [
+    __sif_interaction=0
+  ];
+  7 -- 5 [
+    __sif_interaction=0
+  ];
+  8 -- 5 [
+    __sif_interaction=0
+  ];
+  9 -- 5 [
+    __sif_interaction=0
+  ];
+  7 -- 6 [
+    __sif_interaction=0
+  ];
+  8 -- 6 [
+    __sif_interaction=0
+  ];
+  8 -- 7 [
+    __sif_interaction=0
+  ];
+  9 -- 7 [
+    __sif_interaction=0
+  ];
+  10 -- 7 [
+    __sif_interaction=0
+  ];
+  12 -- 11 [
+    __sif_interaction=0
+  ];
+  13 -- 12 [
+    __sif_interaction=0
+  ];
+  18 -- 12 [
+    __sif_interaction=0
+  ];
+  16 -- 13 [
+    __sif_interaction=0
+  ];
+  15 -- 14 [
+    __sif_interaction=0
+  ];
+  16 -- 15 [
+    __sif_interaction=0
+  ];
+  17 -- 15 [
+    __sif_interaction=0
+  ];
+  17 -- 16 [
+    __sif_interaction=0
+  ];
+  21 -- 16 [
+    __sif_interaction=0
+  ];
+  18 -- 17 [
+    __sif_interaction=0
+  ];
+  19 -- 17 [
+    __sif_interaction=0
+  ];
+  20 -- 17 [
+    __sif_interaction=0
+  ];
+  21 -- 17 [
+    __sif_interaction=0
+  ];
+  22 -- 21 [
+    __sif_interaction=0
+  ];
+  23 -- 22 [
+    __sif_interaction=0
+  ];
+  26 -- 22 [
+    __sif_interaction=0
+  ];
+  28 -- 22 [
+    __sif_interaction=0
+  ];
+  29 -- 22 [
+    __sif_interaction=0
+  ];
+  24 -- 23 [
+    __sif_interaction=0
+  ];
+  27 -- 23 [
+    __sif_interaction=0
+  ];
+  28 -- 23 [
+    __sif_interaction=0
+  ];
+  27 -- 24 [
+    __sif_interaction=0
+  ];
+  26 -- 25 [
+    __sif_interaction=0
+  ];
+  27 -- 26 [
+    __sif_interaction=0
+  ];
+  28 -- 26 [
+    __sif_interaction=0
+  ];
+  28 -- 27 [
+    __sif_interaction=0
+  ];
+  30 -- 28 [
+    __sif_interaction=0
+  ];
+  31 -- 30 [
+    __sif_interaction=0
+  ];
+}

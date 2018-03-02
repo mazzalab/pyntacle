@@ -38,10 +38,17 @@ from misc.graph_load import *
 
 
 
-mat = PyntacleImporter.Dot(file='/home/m.truglio/Desktop/Compiti_Dedalus/dummydot.txt', sep='\t', header=True)
+mat = PyntacleImporter.AdjacencyMatrix(file='/home/m.truglio/Desktop/Compiti_Dedalus/figure_8.txt', sep='\t', header=True)
 print("\nGraph in main")
 print(mat)
-input()
+
+from graph_operations.modules_finder import CommunityFinder
+communities = CommunityFinder(graph=mat)
+attrs = ImportAttributes(graph=mat)
+
+
+
+
 # gg = Graph.Erdos_Renyi(10, 0.5)
 # node_names = [str(x) for x in range(0,10)]
 # print(node_names)
@@ -72,46 +79,46 @@ input()
 # print(gg.es["attributo1"])
 # print(gg.es["attributo2"])
 # #Edge attribute da oggetto
-AddAttributes(gg).add_edge_attributes('colore_edge', ['nero', 'magenta'], [('0','1'), ('2', '5')])
-print(gg.es["colore_edge"])
+# AddAttributes(gg).add_edge_attributes('colore_edge', ['nero', 'magenta'], [('0','1'), ('2', '5')])
+# print(gg.es["colore_edge"])
 
 
-#Test local topology
-Octopus.add_degree(gg)
-Octopus.add_betweenness(gg)
-Octopus.add_clustering_coefficient(gg)
-Octopus.add_closeness(gg, '3')
-Octopus.add_eccentricity(gg)
-Octopus.add_radiality(gg)
-Octopus.add_radiality_reach(gg)
-Octopus.add_eigenvector_centrality(gg)
-Octopus.add_pagerank(gg)
-Octopus.add_shortest_path_igraph(gg)
-Octopus.add_shortest_path(gg)
-
-Octopus.add_average_closeness(gg)
-Octopus.add_pi(gg)
-Octopus.add_average_shortest_path_length(gg)
-Octopus.add_average_radiality(gg)
-# print(LocalTopology.degree(gg, ['1','3']))
-#ggg
-print(gg)
-print("Degree", gg.vs["degree"])
-print("Betweenness", gg.vs["betweenness"])
-print("Clust coeff", gg.vs["clustering_coefficient"])
-print("Closeness", gg.vs["closeness"])
-print("Eccentricity", gg.vs["eccentricity"])
-print("Radiality reach", gg.vs["radiality_reach"])
-print("Eigenvector centrality", gg.vs["eigenvector_centrality"])
-print("Pagerank", gg.vs["pagerank"])
-print("shortest path igraph", gg.vs["shortest_path_igraph"])
-print("shortest path", gg.vs["shortest_path"])
-
-print("\nGraph attributes test")
-print("avg closeness", gg["average_closeness"])
-print("pi", gg["pi"])
-print("avg shortest path length", gg["average_shortest_path_length"])
-print("avg radiality", gg["average_radiality"])
+# #Test local topology
+# Octopus.add_degree(gg)
+# Octopus.add_betweenness(gg)
+# Octopus.add_clustering_coefficient(gg)
+# Octopus.add_closeness(gg, '3')
+# Octopus.add_eccentricity(gg)
+# Octopus.add_radiality(gg)
+# Octopus.add_radiality_reach(gg)
+# Octopus.add_eigenvector_centrality(gg)
+# Octopus.add_pagerank(gg)
+# Octopus.add_shortest_path_igraph(gg)
+# Octopus.add_shortest_path(gg)
+#
+# Octopus.add_average_closeness(gg)
+# Octopus.add_pi(gg)
+# Octopus.add_average_shortest_path_length(gg)
+# Octopus.add_average_radiality(gg)
+# # print(LocalTopology.degree(gg, ['1','3']))
+# #ggg
+# print(gg)
+# print("Degree", gg.vs["degree"])
+# print("Betweenness", gg.vs["betweenness"])
+# print("Clust coeff", gg.vs["clustering_coefficient"])
+# print("Closeness", gg.vs["closeness"])
+# print("Eccentricity", gg.vs["eccentricity"])
+# print("Radiality reach", gg.vs["radiality_reach"])
+# print("Eigenvector centrality", gg.vs["eigenvector_centrality"])
+# print("Pagerank", gg.vs["pagerank"])
+# print("shortest path igraph", gg.vs["shortest_path_igraph"])
+# print("shortest path", gg.vs["shortest_path"])
+#
+# print("\nGraph attributes test")
+# print("avg closeness", gg["average_closeness"])
+# print("pi", gg["pi"])
+# print("avg shortest path length", gg["average_shortest_path_length"])
+# print("avg radiality", gg["average_radiality"])
 #
 #
 

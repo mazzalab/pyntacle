@@ -52,7 +52,7 @@ if os.name == "nt":
 from report.reporter import *
 # Main commands wrappers
 from commands.keyplayer import KeyPlayer as kp_command
-from commands.metrics import Metrics as metrics_command
+# from commands.metrics import Metrics as metrics_command
 from commands.convert import Convert as convert_command
 from commands.generate import Generate as generate_command
 from commands.set import Set as set_command
@@ -565,7 +565,6 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                                   formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                       max_help_position=100,
                                                                                                       width=150))
-
         infomap_subparser.set_defaults(which='infomap')
 
         leading_eigenvector_subparser = subparsers.add_parser("leading-eigenvector",
@@ -574,16 +573,14 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                                               formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                                   max_help_position=100,
                                                                                                                   width=150))
-
         leading_eigenvector_subparser.set_defaults(which='leading-eigenvector')
 
-        community_walktrap_subparser = subparsers.add_parser("community_walktrap",
+        community_walktrap_subparser = subparsers.add_parser("community-walktrap",
                                                              usage='pyntacle.py communities community-walktrap [-h] [-v] [-o] [-d] [-dr] [-m] [-M] [-c] [-C] [--no-plot]',
                                                              add_help=False, parents=[parser],
                                                              formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                                  max_help_position=100,
                                                                                                                  width=150))
-
         community_walktrap_subparser.set_defaults(which='community-walktrap')
 
         community_walktrap_subparser.add_argument("--weights",
@@ -592,7 +589,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                                   help="Specify the number of modules that will be oupoutted by the module decomposition algorithm. If not specified, a maximized number of modules will be generated")
 
         community_walktrap_subparser.add_argument("--steps",
-                                                  help="Specify the length of random walks that will be used by the algorithm  to find modules. Default is 3.")
+                                                  help="Specify the length of random walks that will be used by the algorithm  to find modules. Default is 3.", default='3')
 
         community_walktrap_subparser.add_argument("--weights-format", choices=["standard", "cytoscape"], metavar="",
                                                   default="standard",

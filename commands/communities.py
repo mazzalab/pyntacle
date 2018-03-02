@@ -2,7 +2,7 @@ from warnings import simplefilter
 
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 from graph_operations.modules_finder import CommunityFinder
-from io_stream.exporter import Exporter
+from io_stream.exporter import PyntacleExporter
 from report.plotter import PlotGraph
 from io_stream.import_attributes import ImportAttributes
 from utils.modules_utils import ModuleUtils
@@ -43,7 +43,8 @@ class Communities():
     def __init__(self, args):
         self.logging = log
         self.args = args
-
+        if not self.args.output_separator:
+            self.args.output_separator = '\t'
         # Check for pycairo
         if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
             sys.stdout.write("WARNING: It seems that the pycairo library is not installed/available. Plots"
@@ -157,19 +158,21 @@ class Communities():
                         sys.stderr.write(
                             "Something went wrong during the weights importing. See help and documentation. Quitting.\n")
                         sys.exit(1)
+            else:
+                self.args.weights_name = None
 
-                if self.args.clusters is not None:
-                    try:
-                        self.args.clusters = int(self.args.clusters)
+            if self.args.clusters is not None:
+                try:
+                    self.args.clusters = int(self.args.clusters)
 
-                    except:
-                        sys.stderr.write("argument of \"--clusters\" must be an integer. Quitting\n")
-                        sys.exit(1)
+                except:
+                    sys.stderr.write("argument of \"--clusters\" must be an integer. Quitting\n")
+                    sys.exit(1)
 
-                sys.stdout.write("Running Community finding using fastgreedy algorithm\n")
-                communities.fastgreedy(weights=self.args.weights_name, n=self.args.clusters)
-                mods = communities.get_modules()
-                algorithm = "fastgreedy"
+            sys.stdout.write("Running Community finding using fastgreedy algorithm\n")
+            communities.fastgreedy(weights=self.args.weights_name, n=self.args.clusters)
+            mods = communities.get_modules()
+            algorithm = "fastgreedy"
 
         elif self.args.which == "infomap":
             sys.stdout.write("Running Community finding using infomap algorithm\n")
@@ -184,8 +187,6 @@ class Communities():
             algorithm = "leading-eigenvector"
 
         elif self.args.which == "community-walktrap":
-            sys.stdout.write("Running Community finding using community-walktrap algorithm\n")
-
             try:
                 self.args.steps = int(self.args.steps)
 
@@ -248,8 +249,8 @@ class Communities():
             algorithm = "community-walktrap"
 
         else:
-            self.logging.critical(
-                "This should not happen. Please contact pyntacle Developers and send your command line, along with a log. Quitting\n.")
+            self.logging.critical("This should not happen. Please contact pyntacle Developers and send your "
+                                  "command line, along with a log. Quitting\n.")
             sys.exit(1)
 
         mods_report = []
@@ -257,8 +258,6 @@ class Communities():
             mods_report.append(
                 "\t".join([str(x) for x in [i, elem.vcount(), elem.ecount(), len(elem.components())]]) + "\n")
 
-        # print(mods_report)
-        # input()
         sys.stdout.write(
             "pyntacle - Community Finding Report:\nalgorithm:{0}\nTotal number of Modules Found:"
             "\t{1}\nIndex\tNodes\tEdges \tComponents\n{2}".format(
@@ -359,7 +358,7 @@ class Communities():
             for i, elem in enumerate(final_mods):
                 output_path = ".".join(["_".join([output_basename, str(i), datetime.datetime.now().strftime(
                     "%d%m%Y%H%M")]), out_form])
-                Exporter.AdjacencyMatrix(elem, output_path, sep=self.args.output_separator,
+                PyntacleExporter.AdjacencyMatrix(elem, output_path, sep=self.args.output_separator,
                                          header=output_header)
 
         elif out_form == "egl":
@@ -367,14 +366,14 @@ class Communities():
             for i, elem in enumerate(final_mods):
                 output_path = ".".join(["_".join([output_basename, str(i), datetime.datetime.now().strftime(
                     "%d%m%Y%H%M")]), out_form])
-                Exporter.EdgeList(elem, output_path, sep=self.args.output_separator, header=output_header)
+                PyntacleExporter.EdgeList(elem, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "sif":
             sys.stdout.write("Creating Simple Interaction File of each final community\n")
             for i, elem in enumerate(final_mods):
                 output_path = ".".join(["_".join([output_basename, str(i), datetime.datetime.now().strftime(
                     "%d%m%Y%H%M")]), out_form])
-                Exporter.Sif(elem, output_path, sep=self.args.output_separator, header=output_header)
+                PyntacleExporter.Sif(elem, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "dot":
             sys.stdout.write("Creating DOT File of the each final community\n")
@@ -384,14 +383,14 @@ class Communities():
 
                 # Ignore ugly RuntimeWarnings while creating a dot
                 simplefilter("ignore", RuntimeWarning)
-                Exporter.Dot(elem, output_path)
+                PyntacleExporter.Dot(elem, output_path)
 
         elif out_form == "bin":
             sys.stdout.write("Storing each community into a .graph (binary) file\n")
             for i, elem in enumerate(final_mods):
                 output_path = ".".join(["_".join([output_basename, str(i), datetime.datetime.now().strftime(
                     "%d%m%Y%H%M")]), out_form])
-                Exporter.Binary(elem, output_path)
+                PyntacleExporter.Binary(elem, output_path)
 
         # save the original graph into a binary file
         if self.args.save_binary:
