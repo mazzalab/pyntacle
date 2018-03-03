@@ -8,7 +8,7 @@ import numpy as np
 from misc.binarycheck import is_binary_file
 import re
 # pyntacle Libraries
-from io_stream.importer_NEW import PyntacleImporter
+from io_stream.importer import PyntacleImporter
 from utils.graph_utils import GraphUtils
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
@@ -107,7 +107,7 @@ class GraphLoad():
 
         elif self.file_format == 'adjm':
             try:
-                graph = PyntacleImporter.adjacencymatrix(file=self.input_file, sep=separator,
+                graph = PyntacleImporter.AdjacencyMatrix(file=self.input_file, sep=separator,
                                                               header=self.header)
             except (ValueError):
                 if not self.header: #in case header has been specified

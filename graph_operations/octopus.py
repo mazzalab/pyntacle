@@ -27,8 +27,8 @@ __license__ = u"""
 from utils.add_attributes import AddAttributes
 from algorithms.local_topology_NEW import LocalTopology
 from algorithms.global_topology_NEW import GlobalTopology
-from misc.enums import graph_type
-from misc.enums import implementations as imps
+from misc.enums import GraphType
+from misc.enums import Implementations as imps
 from misc.sps_operations import ShortestPathModifier
 from config import *
 
@@ -165,7 +165,7 @@ class Octopus:
     @staticmethod
     ## Guarda il grafo e decide quale implementazione usare per lo shortest path, in automatico.
     # Per ora solo cpu ma piu' avanti aggiungi il resto
-    def add_shortest_path(graph, node_names=None, mode=graph_type.undirect_unweighted):
+    def add_shortest_path(graph, node_names=None, mode=GraphType.undirect_unweighted):
         implementation = imps.cpu #Todo: qui va creato il decisore che determina se usare gpu o cpu
        
         distances = LocalTopology.shortest_path_pyntacle(graph, node_names, mode, implementation).tolist()

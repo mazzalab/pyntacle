@@ -2,7 +2,7 @@ from exceptions.generic_error import Error
 from config import *
 from exceptions.illegal_graph_size_error import IllegalGraphSizeError
 from graph_generator.graph_igraph_generator import *
-from io_stream.exporter_NEW import Exporter
+from io_stream.exporter import Exporter
 from report.plotter import *
 from warnings import simplefilter
 

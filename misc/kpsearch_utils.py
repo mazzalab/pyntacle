@@ -39,7 +39,7 @@ def kpchecker(func):
     """
 
     @wraps(func)
-    def func_wrapper(graph, kpp_size, kpp_type, implementation, seed, max_sp, *args, **kwargs):
+    def func_wrapper(graph, kpp_size, kpp_type, seed, max_sp, *args, **kwargs):
         if not isinstance(kpp_size, int):
             raise TypeError("The kpp_size argument ('{}') is not an integer number".format(kpp_size))
 
@@ -58,6 +58,6 @@ def kpchecker(func):
             raise ValueError("\"max_sp\" must be an integer greater than one and lesser tan the total number of nodes")
 
         sys.stdout.write("All Good!\n")
-        return func(graph, kpp_size, kpp_type, implementation,seed, max_sp, *args, **kwargs)
+        return func(graph, kpp_size, kpp_type, seed, max_sp, *args, **kwargs)
 
     return func_wrapper

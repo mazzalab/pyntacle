@@ -37,9 +37,60 @@ from utils.adjmatrix_utils import AdjmUtils
 from utils.edgelist_utils import EglUtils
 from exceptions.illegal_graph_size_error import IllegalGraphSizeError
 from exceptions.unproperlyformattedfile_error import UnproperlyFormattedFileError
-
-
+from pyparsing import *
+from itertools import product
 "Wraps up all the importers for several type of network representation files"
+
+
+def dot_attrlist_to_dict(mylist):
+    mydict = {}
+    for i in range(0, len(mylist), 2):
+        key = mylist[i]
+        values = mylist[i + 1]
+
+        if key not in mydict:
+            mydict[key] = {}
+        for v in values:
+            mydict[key][v[0]] = v[1]
+
+    return mydict
+
+def dot_edgeattrlist_to_dict(mylist):
+    mydict = {}
+    for j in range(0, len(mylist)):
+        edge = mylist[j]
+        key = tuple(edge[0])
+
+        if len(key) > 2:
+            for n in range(0, len(key) - 1):
+                if (key[n], key[n + 1]) not in mydict:
+                    mydict[(key[n], key[n + 1])] = {}
+                if len(edge) == 2:
+                    values = edge[1]
+                    for v in values:
+                        mydict[(key[n], key[n + 1])][v[0]] = v[1]
+
+            continue
+        if any(isinstance(e, ParseResults) for e in key):
+            # This reads and explicitates the notation a -- {b c d} for edges
+            keys = product(key[0], key[1])
+            for k in keys:
+                if k not in mydict:
+                    mydict[k] = {}
+
+        else:
+            if key not in mydict:
+                mydict[key] = {}
+            if len(edge) > 1:
+                values = edge[1]
+                for v in values:
+                    mydict[key][v[0]] = v[1]
+            else:
+                continue
+                # for v in values:
+                #     mydict[key][v[0]] = v[1]
+
+    return mydict
 
 
 class PyntacleImporter:
@@ -80,14 +131,13 @@ class PyntacleImporter:
             if header:
                 #use pandas to parse this into
                 f = pd.read_csv(filepath_or_buffer=file, sep=sep, index_col=0)
-                node_names = f.columns.values
+                node_names = f.columns.values.tolist()
 
             else:
                 f = pd.read_csv(filepath_or_buffer=file, sep=sep, header=None)
                 node_names = [str(x) for x in range(0, len(f.columns))]
 
             graph = Graph.Adjacency(f.values.tolist(), mode="UPPER")
-
             AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0],
                                                          node_names=node_names)
 
@@ -157,7 +207,6 @@ class PyntacleImporter:
         graph.vs["name"] = []
 
         sif_list = [line.rstrip('\n').split(sep) for line in open(file, "r")]
-        sif_list = [line.rstrip('\n').split(sep) for line in open(file, "r")]
 
         """:type: list[str]"""
 
@@ -216,7 +265,7 @@ class PyntacleImporter:
                             "an edge already exist between node {0} and node {1}. This should not happen, as pyntacle only supports simple graphs.\n Attribute \"__sif_interaction\n will be overriden\n".format(
                                 first, n))
                         node_ids = GraphUtils(graph=graph).get_node_indices(node_names=[first, n])
-                        graph.es(graph.get_eid(node_ids[0], node_ids[1]))["__sif_interaction"] = interaction
+                        graph.es(graph.get_eid(node_ids[0], node_ids[1], directed=False))["__sif_interaction"] = interaction
 
             else:
                 sys.stdout.write("line {} is malformed, hence it will be skipped\n".format(i))
@@ -233,7 +282,7 @@ class PyntacleImporter:
     @staticmethod
     @filechecker
     @separator_sniffer
-    def Dot(file,**kwargs):
+    def Dot(file, sep=None, **kwargs):
         """
 
         :param file:
@@ -244,158 +293,97 @@ class PyntacleImporter:
 
         graph = Graph()
         graph.vs()["name"] = None
+        graph.es()["__sif_interaction"] = None
+
         ''' initialize empty graph'''
 
-        with open(file, "r") as dot_file:
-            sys.stdout.write("Importing dot file {}".format(os.path.basename(file)))
-            # check whether graph exists in the first line, as well as a '{'
-            first_line = dot_file.readline().rstrip().split(" ")
-            # print(first_line)
+        dotdata = open(file)
+        last_pos = dotdata.tell()
 
-            if len(first_line) <= 3:
+        header_comment = False
+        if dotdata.readline().startswith('/*'):
+            header_comment = True
+        dotdata.seek(last_pos)
+        if header_comment:
+            sys.stdout.write("HEADER PRESENT\n")
+            dotdata = dotdata.read().split("\n", 1)[1]
+        else:
+            sys.stdout.write("HEADER NOT PRESENT\n")
+            dotdata = dotdata.read()
 
-                if first_line[0].lower() != "graph":
-                    raise UnproperlyFormattedFileError("First line must have a graph statement "
-                                                       "at the beginning of the line")
-                if first_line[-1] != "{":
-                    raise UnproperlyFormattedFileError("first line must enhd with \"{\"")
+        # Parsing dot file
+        graph_beginning = 'graph' + Optional(Word(alphanums))('initial_name') + Word('{')
 
-                if len(first_line) == 3:
-                    AddAttributes(graph=graph).add_graph_attributes({"name": first_line[1]})
+        graph_element = 'graph'
+        graph_ATTR = Word(alphanums + '_"-') + Suppress('=') + Word(alphanums + '"_?-')
+        graph_indented_block = nestedExpr('[', '];', content=Group(graph_ATTR))
+        graph_elementBlock = graph_element + Optional(graph_indented_block)
 
+        node_element = Word(alphanums)
+        node_ATTR = Word(alphanums + '_"-') + Suppress('=') + Word(alphanums + '"_?-')
+        node_elementBlock = node_element + nestedExpr('[', '];', content=Group(node_ATTR))
+
+        edgeformat = Word(alphanums) | Suppress('{') + Group(
+            delimitedList(Word(alphanums), delim=White())) + Suppress('}')
+        edge_element = Group(
+            Word(alphanums) + OneOrMore(Optional(Suppress('->')) + Optional(Suppress('--')) + edgeformat))
+        edge_ATTR = Word(alphanums + '-_"') + Suppress('=') + Word(alphanums + '"-_?')
+        edge_indented_block = nestedExpr('[', ']', content=Group(edge_ATTR))
+        edge_elementBlock = Group(edge_element + Optional(edge_indented_block) + Suppress(';'))
+
+        graph_end = '}'
+
+        header_parser = graph_beginning + ZeroOrMore(
+            graph_elementBlock.setResultsName("graph_attrs_block", listAllMatches=False)) + \
+                        ZeroOrMore(node_elementBlock)("node_attrs_block") + \
+                        ZeroOrMore(edge_elementBlock)("edge_attrs_block") + graph_end
+
+        tokens = header_parser.parseString(dotdata)
+        # Converting lists to dictionaries
+        graph_attrs_dict = dot_attrlist_to_dict(tokens.graph_attrs_block)
+        node_attrs_dict = dot_attrlist_to_dict(tokens.node_attrs_block)
+        edge_attrs_dict = dot_edgeattrlist_to_dict(tokens.edge_attrs_block)
+
+        if tokens.initial_name:
+            graphname = tokens.initial_name
+        else:
+            graphname = os.path.splitext(os.path.basename(file))[0]
+
+        for a in graph_attrs_dict:
+            for k in graph_attrs_dict[a]:
+                AddAttributes(graph).add_graph_attributes(k, graph_attrs_dict[a][k])
+                if k == 'name':
+                    graphname = k
+
+        for a in node_attrs_dict:
+            for k in node_attrs_dict[a]:
+                if a not in graph.vs()["name"]:
+                    graph.add_vertex(name=a)
+                if k != 'name':
+                    AddAttributes(graph).add_node_attributes(k, [node_attrs_dict[a][k]], [a])
+
+        for a in edge_attrs_dict:
+            for n in a:
+                if n not in graph.vs()["name"]:
+                        graph.add_vertex(name=n)
+
+            if graph.are_connected(a[0], a[1]):
+                sys.stdout.write("An edge already exists between node %s and node %s,"
+                                 "skipping this edge (we recommend to check again your file\n" % (
+                                     a[0], a[1]))
             else:
-                raise UnproperlyFormattedFileError("graph must contain at max one unique name "
-                                                   "(use \"_\" for complex names")
+                graph.add_edge(source=a[0], target=a[1])
 
-            '''
-            split the file by semicolon and remove any trailing characters before or after an edge
-            '''
-            rest = dot_file.read().split(";")
-            rest = [x.rstrip() for x in rest]
-            rest = [x.lstrip(" ") for x in rest]
-            rest = [x.lstrip() for x in rest]
-            rest = [x.lstrip("\t") for x in rest]
+        if Graph.is_directed(graph):
+            sys.stdout.write("Converting graph to undirect\n")
+            graph.to_undirected()
 
-            if len(rest) < 1:
-                raise IOError("Dot file does not contains edges")
+        AddAttributes(graph=graph).graph_initializer(graph_name=graphname,
+                                                     node_names=graph.vs["name"])
 
-            if rest[-1] != "}":
-                raise UnproperlyFormattedFileError("dot file must contain an\"}\" at the end ")
-
-            else:
-                '''
-                remove last element parenthesis)
-                '''
-                del rest[-1]
-
-                '''
-                read node list
-                '''
-
-                for pair in rest:
-                    # print(pair)
-                    # print(rest)
-                    l = pair.split("--")
-                    l = [x.rstrip(" ") for x in l]
-                    l = [x.lstrip(" ") for x in l]
-                    # print(l)
-
-                    # parse edge labels
-                    attribute_flag = False
-                    print(l[-1])
-
-                    try:
-                        m = re.search(r"\[(.+?)\]", l[-1]).group(1)
-
-                        try:
-                            edge_attributes = re.findall(r"([A-Za-z0-9_]+)[\=]+([A-Za-z0-9_]+)", m)
-                            attribute_flag = True
-
-                        except AttributeError:
-                            raise UnproperlyFormattedFileError(
-                                "edge attributes are not formatted according to the dot standards")
-
-                    except AttributeError:
-                        sys.stdout.write("no square brackets for edge attributes found on pair %s\n" % pair)
-
-                    if l[0] not in graph.vs()["name"]:
-                        graph.add_vertex(name=l[0])
-
-                    if len(l) == 2:
-
-                        '''
-                        case 1:
-                        a -- b;
-                        a -- {a b c};
-                        '''
-
-                        if l[1][0] == "{" and l[1][-1] == "}":
-                            # print("culo")
-                            '''remove first and last parenthesis'''
-                            l[1] = l[1][1:-1]
-                            # print(l)
-                            l[1] = l[1].lstrip(" ")  # remove all blank characters (left and right)
-                            l[1] = l[1].rstrip(" ")
-                            if l[1] == "":
-                                raise UnproperlyFormattedFileError("dot file contains empty parenthesis")
-
-                            ls = l[1].split(" ")
-                            print(ls)
-
-                            for elem in ls:
-                                if elem not in graph.vs()["name"]:
-                                    graph.add_vertex(name=elem)
-
-                                if graph.are_connected(l[0], elem):
-                                    sys.stdout.write("An edge already exists between edge %s and edge %s,"
-                                                        "skipping this edge (we recommend to check again your file\n" % (
-                                                            l[0], elem))
-                                else:
-                                    graph.add_edge(source=l[0], target=elem)
-
-                        elif (l[1][0] == "{" and l[1][-1] != "}") or (l[1][0] != "{" and l[1][-1] == "}"):
-                            raise UnproperlyFormattedFileError("Missing one of the braces in edge list")
-
-                        else:
-
-                            if l[1] not in graph.vs()["name"]:
-                                graph.add_vertex(name=l[1])
-
-                            if graph.are_connected(l[0], l[1]):
-                                sys.stdout.write("An edge already exists between edge %s and edge %s,"
-                                                    "skipping this edge (we recommend to check again your file\n" % (
-                                                        l[0], l[1]))
-
-                            else:
-                                graph.add_edge(source=l[0], target=l[1])
-
-                    elif len(l) > 2:
-
-                        for i, n in enumerate(l):
-
-                            if n not in graph.vs()["name"]:
-                                graph.add_vertex(name=n)
-
-                            if i > 0:
-                                if graph.are_connected(l[i - 1], n):
-                                    sys.stdout.write("An edge already exists between edge %s and edge %s,"
-                                                        "skipping this edge (we recommend to check again your file\n" % (
-                                                            l[i - 1], n))
-                                else:
-                                    graph.add_edge(l[i - 1], n)
-                                    if attribute_flag:  # find out the edge just added
-                                        # to the network and add the attributes in edge attributes to it
-                                        source_index = graph.vs.select(name=l[i - 1])[0].index
-                                        target_index = graph.vs.select(name=n)[0].index
-                                        edge = graph.es.select(_source=source_index, _target=target_index)
-                                        for ed in edge:
-                                            for at in edge_attributes:
-                                                ed[at[0]] = at[1]
-
-                    else:
-                        raise UnproperlyFormattedFileError("edges do not match dot grammar")
-
-        AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
+        for a in edge_attrs_dict:
+            for k in edge_attrs_dict[a]:
+                AddAttributes(graph).add_edge_attributes(k, [edge_attrs_dict[a][k]], [a])
 
         sys.stdout.write("Dot File {} imported to a Graph Object\n".format(file))
         return graph

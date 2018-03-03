@@ -2,7 +2,7 @@ from warnings import simplefilter
 
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 from graph_operations.modules_finder import CommunityFinder
-from io_stream.exporter_NEW import Exporter
+from io_stream.exporter import Exporter
 from report.plotter import PlotGraph
 from io_stream.import_attributes import ImportAttributes
 from utils.modules_utils import ModuleUtils
