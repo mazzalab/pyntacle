@@ -56,6 +56,7 @@ class KeyPlayer:
         :return: The F measure of the graph as a float ranging between 0.0 and 1.0, where 0 is maximal disconnection
         (each node is an isolate) and 1 is maximum connection (the graph is complete)
         """
+        sys.stdout.write("############## Running F\n")
         if graph.ecount() == 0: #maximum F
             return 1.0
 
@@ -63,6 +64,7 @@ class KeyPlayer:
             return 0.0  #maximum F: it's a clique
 
         else:
+            print("QUA")
             num_nodes = graph.vcount()
 
             components = graph.components()
@@ -72,7 +74,7 @@ class KeyPlayer:
 
             f_num = sum(len(sk) * (len(sk) - 1) for sk in components)
             f_denum = num_nodes * (num_nodes - 1)
-
+            print(f_num, f_denum)
             f = 1 - (f_num / f_denum)
 
             return round(f, 5)
@@ -102,7 +104,8 @@ class KeyPlayer:
         """
         # todo implementation "auto" should consider graph parameters and use the correct implementation among the classical
         # todo and the GPU/CPU one
-
+        sys.stdout.write("!!!!!!!!!!!! Running df\n")
+        print("max sp",max_distances)
         if not isinstance(implementation, imps):
             raise TypeError("\"implementation\" must be of type \"imps\", {} found".format(type(implementation).__name__))
 
@@ -113,9 +116,12 @@ class KeyPlayer:
                 if not isinstance(max_distances, int):
                     raise TypeError("\"max_sp\" must be an integer greater than one")
 
-                if max_distances >= 1:
+                if not max_distances >= 1:
                     raise ValueError("\"max_sp\" must be an integer greater than one")
 
+                if max_distances > graph.vcount():
+                    raise ValueError("\"max_sp\" must be less or equal to the number of nodes in the graph")
+            
         if graph.ecount() == 0: #maximum F
             return 1.0
 
