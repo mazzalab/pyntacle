@@ -17,45 +17,21 @@
 # print(GlobalTopology.density(erd))
 
 from igraph import Graph
-from io_stream.importer_NEW import *
-from algorithms.local_topology_NEW import LocalTopology
+from io_stream.importer import PyntacleImporter
+from algorithms.greedy_optimization_NEW import GreedyOptimization as GO
+from algorithms.greedy_optimization import GreedyOptimization
+from misc.enums import KPNEGchoices
 
-from misc.enums import SP_implementations as imps
-path = "/home/local/MENDEL/d.capocefalo/Desktop/pyntacle-test/figure_8.adjm"
+path = "/home/local/MENDEL/d.capocefalo/Programming/pyntacle-test/figure_8.adjm"
 
-#a = PyntacleImporter.AdjacencyMatrix(path, "\t", True)
-#bb = LocalTopology.shortest_path_pyntacle(a,None, implementation=imps.gpu)
-
-# from igraph import Graph
-# gg = Graph.Barabasi(10, 2)
-# gg["name"] = "bar a bas i"
-# gg.vs()["name"] = [str(x) for x in range(0,10)]
-# gg.vs()["AHSTRONZO"] = ["ao", "bella", "so", "Lele", "se", "magnamo", "na", "surgelata", "?"]
-# gg.es()["simboli"] = ["io" "sono", "papa", "francesco", "il", "distruttore", "di", "mondi"]
-
-# Graph.write_dot(gg, "testmauro.py")
-
-# print(len(aa.components()))
-# aa["graph_name"] = "test"
-# bb = Graph.copy(aa)
-# bb.add_vertex("test")
-#
-# bb.add_vertex("test2")
-#
-# bb.add_edge(source="test", target="test2")
-# bb.add_vertex("isolato")
-#
-# # print (lt(graph=aa).radiality())
-# # print(LocalTopology.radiality(aa))
-# # print(LocalTopology.radiality_reach(bb, ["WD","BS2", "test"]))
-# #sp_classic = LocalTopology.shortest_path_igraph(graph=bb)
-#
-# from graph_generator.graph_igraph_generator import ErdosRenyiGenerator
-# gg = ErdosRenyiGenerator().generate([10,0.5])
-# gg["graph_name"] = "boh"
-# print(KeyPlayer.mreach(graph=gg,implementation="igraph", m=1, nodes=["0", "2"], max_sp=None))
-# #print(KeyPlayer.dF(graph=gg,implementation="igraph"))
-# print(KeyPlayer.mreach(graph=gg,implementation="pyntacle",m=1, nodes=["0", "2"], max_sp=None))
+a = PyntacleImporter.AdjacencyMatrix(path, "\t", True)
 
 
+import random
+random.seed(123)
 
+go = GreedyOptimization(graph=a).optimize_kpp_neg(kpp_size=3, kpp_type=KPNEGchoices.dF)
+print("kp-OLD:",go)
+
+gonew = GO.kpp_neg_greedy(a, 3, KPNEGchoices.dF, seed=123)
+print("kp-NEW",gonew)

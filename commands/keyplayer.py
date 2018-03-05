@@ -1,11 +1,10 @@
-from config import *
 from algorithms.key_player import *
 from algorithms.key_player import _KeyplayerAttribute
 from exceptions.generic_error import Error
 from io_stream.exporter import Exporter
-from misc.kp_runner import *
-from report.plotter import *
-from report.reporter import *
+from kp_tools.kp_runner import *
+from kp_tools.plotter import *
+from kp_tools.reporter import *
 from utils.graph_utils import *
 from misc.graph_load import *
 
@@ -239,7 +238,7 @@ class KeyPlayer():
                 # sys.stdout.write('MR: {0}\t dR: {1}\n'.format(MR, dR))
 
             results = kp_runner.get_results()
-            sys.stdout.write("keyplayer metrics report for {} values:\n".format(self.args.type.upper()))
+            sys.stdout.write("keyplayer metrics kp_tools for {} values:\n".format(self.args.type.upper()))
             for metric in results.keys():
 
                 if metric == _KeyplayerAttribute.F or metric == _KeyplayerAttribute.DF:
@@ -265,15 +264,15 @@ class KeyPlayer():
 
         # reporting and plotting part
 
-        sys.stdout.write("Producing report in {} format.\n".format(self.args.report_format))
+        sys.stdout.write("Producing kp_tools in {} format.\n".format(self.args.report_format))
 
         report_prefix = "_".join(
-            ["pyntacle", self.args.which, graph["name"][0], "kpsize", str(k_size), results.get("algorithm", "KP-Info"),"report", runtime_date])
+            ["pyntacle", self.args.which, graph["name"][0], "kpsize", str(k_size), results.get("algorithm", "KP-Info"),"kp_tools", runtime_date])
         report_path = os.path.join(self.args.directory, ".".join([report_prefix, self.args.report_format]))
 
         if os.path.exists(report_path):
             self.logging.warning(
-                "A report with the same name ({}) already exists, overwriting it".format
+                "A kp_tools with the same name ({}) already exists, overwriting it".format
                 (os.path.basename(report_path)))
 
         r = pyntacleReporter(graph=graph)
@@ -459,7 +458,7 @@ class KeyPlayer():
 
                 plot_graph.set_layouts(layout="fruchterman_reingold")
 
-                plot_path = os.path.join(plot_dir, "_".join(["keyplayer", graph["name"][0], "report", metric.name,
+                plot_path = os.path.join(plot_dir, "_".join(["keyplayer", graph["name"][0], "kp_tools", metric.name,
                                                              datetime.datetime.now().strftime(
                                                                  "%d%m%Y%H%M")]) + "." + plot_format)
                 if os.path.exists(plot_path):

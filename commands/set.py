@@ -5,7 +5,7 @@ from config import *
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 from graph_operations.logic_ops import GraphSetter
 from io_stream.exporter import Exporter
-from report.plotter import PlotGraph
+from kp_tools.plotter import PlotGraph
 from utils.graph_utils import GraphUtils
 from misc.graph_load import *
 
@@ -210,7 +210,7 @@ class Set():
                 "This should not happen. Please contact pyntacle developer and send a command line, along with a log. Quitting\n")
             sys.exit(1)
 
-        # print report to command line
+        # print kp_tools to command line
         sys.stdout.write("pyntacle Report on set Operation: {}\n".format(self.args.which))
         sys.stdout.write("Input Graphs\n")
 

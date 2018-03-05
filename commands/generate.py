@@ -3,7 +3,7 @@ from config import *
 from exceptions.illegal_graph_size_error import IllegalGraphSizeError
 from graph_generator.graph_igraph_generator import *
 from io_stream.exporter import Exporter
-from report.plotter import *
+from kp_tools.plotter import *
 from warnings import simplefilter
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"

@@ -66,6 +66,9 @@ class KeyPlayer:
             num_nodes = graph.vcount()
 
             components = graph.components()
+            # print ("components in KP NEW")
+            # print(components)
+            # input()
 
             f_num = sum(len(sk) * (len(sk) - 1) for sk in components)
             f_denum = num_nodes * (num_nodes - 1)
@@ -76,7 +79,7 @@ class KeyPlayer:
 
     @staticmethod
     @check_graph_consistency
-    def dF(graph, implementation=imps.auto, max_sp=None) -> float:
+    def dF(graph, implementation=imps.auto, max_distances=None) -> float:
         """
         A measure for computing the dF (a KPP-NEG Measure) ([Ref]_ equation 9). The DF is a measure of node connectivity
         among the graph and it's a measure of how nodes in the graph can be reached.
@@ -86,7 +89,7 @@ class KeyPlayer:
         [Ref] Borgatti, S.P. Comput Math Organiz Theor (2006) 12: 21. https://doi.org/10.1007/s10588-006-7084-x
         :param graph an igraph.Graph object that is checked at the beginning to be pyntacle compatible. See Pyntacle
         Documentation for the minimim requirements for this object.
-        :param int max_sp: The maximum shortest path length after which two nodes are considered disconnected
+        :param int max_distances: The maximum shortest path length after which two nodes are considered disconnected
         :param imps implementation: computes the shortest path using one of the two provided methods in LocalTopology
         choices are:
         *`imps.auto`: automatic implementation (default) chooses the best implementation according to the graph properties
@@ -104,13 +107,13 @@ class KeyPlayer:
             raise TypeError("\"implementation\" must be of type \"imps\", {} found".format(type(implementation).__name__))
 
         if implementation == imps.auto:
-            implementation = imps.igraph #todo this will return the correct implementation
+            implementation = imps.cpu #todo this will return the correct implementation
 
-        if max_sp is not None:
-                if not isinstance(max_sp, int):
+        if max_distances is not None:
+                if not isinstance(max_distances, int):
                     raise TypeError("\"max_sp\" must be an integer greater than one")
 
-                if max_sp >= 1:
+                if max_distances >= 1:
                     raise ValueError("\"max_sp\" must be an integer greater than one")
 
         if graph.ecount() == 0: #maximum F
@@ -118,19 +121,19 @@ class KeyPlayer:
 
         else:
             if implementation == imps.igraph:
-                return KeyPlayer.__dF_Borgatti(graph=graph, max_sp=max_sp)
+                return KeyPlayer.__dF_Borgatti(graph=graph, max_distances=max_distances)
 
             else:
-                return KeyPlayer.__dF_pyntacle(graph=graph, max_sp=max_sp)
+                return KeyPlayer.__dF_pyntacle(graph=graph, max_distances=max_distances)
 
     @staticmethod
-    def __dF_Borgatti(graph, max_sp=None) -> float:
+    def __dF_Borgatti(graph, max_distances=None) -> float:
         """
         reserved method for calculating the DF of a graph using standard igraph methods for the computation of
         the shortest path. This is literally the equation 9 in Borgatti's paper.
         :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
         "Minimum requirements" specifications in pyntacle's manual
-        :param int max_sp: The maximum shortest path length after which two nodes are considered disconnected
+        :param int max_distances: The maximum shortest path length after which two nodes are considered disconnected
         :return: a float representing the dF value for the selected graph
         """
 
@@ -138,8 +141,8 @@ class KeyPlayer:
         df_denum = number_nodes * (number_nodes - 1)
         shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph)
 
-        if max_sp is not None:
-            shortest_path_lengths = ShortestPathModifier.igraph_sp_to_inf(shortest_path_lengths, max_sp=max_sp)
+        if max_distances is not None:
+            shortest_path_lengths = ShortestPathModifier.igraph_sp_to_inf(shortest_path_lengths, max_distances=max_distances)
 
         df_num = 0
 
@@ -154,14 +157,14 @@ class KeyPlayer:
         return round(df, 5)
 
     @staticmethod
-    def __dF_pyntacle(graph, max_sp=None) -> float:
+    def __dF_pyntacle(graph, max_distances=None) -> float:
         """
         Implement the DF search using parallel computing we implemented in `LocalTopology.shortest_path_pyntacle` in
         order to speed up shortest path  search using either CPU or HPU accelerations (if nVidia compatible graphics
         are present).
         :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
         "Minimum requirements" specifications in pyntacle's manual
-        :param int max_sp: The maximum shortest path length after which two nodes are considered disconnected
+        :param int max_distances: The maximum shortest path length after which two nodes are considered disconnected
         :return: a float representing the dF value for the input graph.
         """
 
@@ -172,8 +175,8 @@ class KeyPlayer:
                                                                         mode=lt.GraphType.undirect_unweighted,
                                                                         implementation=imps.auto)
 
-        if max_sp is not None:
-            shortest_path_lengths = ShortestPathModifier.np_array_to_inf(shortest_path_lengths, max_sp=max_sp)
+        if max_distances is not None:
+            shortest_path_lengths = ShortestPathModifier.np_array_to_inf(shortest_path_lengths, max_distances=max_distances)
 
         rec = shortest_path_lengths[np.triu_indices(shortest_path_lengths.shape[0], k=1)]
         rec = rec.astype(dtype=float)
@@ -190,7 +193,7 @@ class KeyPlayer:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def mreach(graph, nodes, m, max_sp=None, implementation=imps.auto) -> int:
+    def mreach(graph, nodes, m, max_distances=None, implementation=imps.auto) -> int:
         """
         Calculates the m-reach ([Ref]_, equation 12). The m-reach is defined as a count of the number of unique nodes
         reached by any member of the kp-set in m links or less.
@@ -199,7 +202,7 @@ class KeyPlayer:
         "Minimum requirements" specifications in pyntacle's manual
         :param int m: an integer (greater than zero) representing the maximum m-reach distance
         :param nodes: a single node (as a string) or a list of nodes of the graph *(the ones stored  in the graph.vs["name"] object)* **(required)**
-        :param int max_sp: the maximum distance after that two nodes are considered disconnected
+        :param int max_distances: the maximum distance after that two nodes are considered disconnected
         :param str implementation: computes the shortest path using one of the two provided methods in LocalTopology
         choices are:
         *`imps.auto`: automatic implementation (default) chooses the best implementation according to the graph properties
@@ -217,11 +220,11 @@ class KeyPlayer:
         if not isinstance(implementation, imps):
             raise TypeError("\"implementation\" must be of type \"imps\", {} found".format(type(implementation).__name__))
 
-        if max_sp is not None:
-                if not isinstance(max_sp, int):
+        if max_distances is not None:
+                if not isinstance(max_distances, int):
                     raise TypeError("\"max_sp\" must be an integer greater than one")
 
-                if max_sp >= 1:
+                if max_distances >= 1:
                     raise ValueError("\"max_sp\" must be an integer greater than one")
 
         if implementation == imps.auto:
@@ -230,14 +233,14 @@ class KeyPlayer:
         if implementation == imps.igraph:
             shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph=graph)
 
-            if max_sp is not None:
-                shortest_path_lengths = ShortestPathModifier.igraph_sp_to_inf(shortest_path_lengths, max_sp)
+            if max_distances is not None:
+                shortest_path_lengths = ShortestPathModifier.igraph_sp_to_inf(shortest_path_lengths, max_distances)
 
         else:
             shortest_path_lengths = lt.LocalTopology.shortest_path_pyntacle(graph=graph, implementation=implementation)
 
-            if max_sp is not None:
-                shortest_path_lengths = ShortestPathModifier.np_array_to_inf(shortest_path_lengths,max_sp)
+            if max_distances is not None:
+                shortest_path_lengths = ShortestPathModifier.np_array_to_inf(shortest_path_lengths, max_distances)
 
         mreach = 0
 
@@ -255,7 +258,7 @@ class KeyPlayer:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def dR(graph, nodes, max_sp=None, implementation=imps.auto) -> float:
+    def dR(graph, nodes, max_distances=None, implementation=imps.auto) -> float:
         """
         Calculates the distance-weighted reach ([Ref]_, equation 14). The distance-weighted reach can be defined as the
         sum of the reciprocals of distances from the kp-set S to all nodes, where the distance from the set to a node is
@@ -264,7 +267,7 @@ class KeyPlayer:
         "Minimum requirements" specifications in pyntacle's manual
         :param nodes: a single node (as a string) or a list of nodes of the graph *(the ones stored  in the
         graph.vs["name"] object)* **(required)**
-        :param int max_sp: the maximum distance after that two nodes are considered disconnected
+        :param int max_distances: the maximum distance after that two nodes are considered disconnected
         :param str implementation: computes the shortest path using one of the two provided methods in LocalTopology
         choices are:
         *`imps.auto`: automatic implementation (default) chooses the best implementation according to the graph properties
@@ -276,11 +279,11 @@ class KeyPlayer:
         if not isinstance(implementation, imps):
             raise TypeError("\"implementation\" must be of type \"imps\", {} found".format(type(implementation).__name__))
 
-        if max_sp is not None :
-                if not isinstance(max_sp, int):
+        if max_distances is not None :
+                if not isinstance(max_distances, int):
                     raise TypeError("\"max_sp\" must be an integer greater than one")
 
-                if max_sp >= 1:
+                if max_distances >= 1:
                     raise ValueError("\"max_sp\" must be an integer greater than one")
 
         if implementation == imps.auto:
@@ -289,14 +292,14 @@ class KeyPlayer:
         if implementation == imps.igraph:
             shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph=graph)
 
-            if max_sp is not None:
-                shortest_path_lengths = ShortestPathModifier.igraph_sp_to_inf(shortest_path_lengths, max_sp)
+            if max_distances is not None:
+                shortest_path_lengths = ShortestPathModifier.igraph_sp_to_inf(shortest_path_lengths, max_distances)
 
         else:
             shortest_path_lengths = lt.LocalTopology.shortest_path_pyntacle(graph=graph, implementation=implementation)
 
-            if max_sp is not None:
-                shortest_path_lengths = ShortestPathModifier.np_array_to_inf(shortest_path_lengths,max_sp)
+            if max_distances is not None:
+                shortest_path_lengths = ShortestPathModifier.np_array_to_inf(shortest_path_lengths, max_distances)
 
         index_list = gu(graph=graph).get_node_indices(node_names=nodes)
         dr_num = 0

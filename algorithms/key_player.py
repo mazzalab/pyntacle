@@ -118,6 +118,9 @@ class KeyPlayer:
 
             bp = GlobalTopology(self.__graph)
             components = bp.components(recalculate=True)
+            # print("components kp OLD")
+            # print(components)
+            # input()
 
             f_num = sum(len(sk) * (len(sk) - 1) for sk in components)
             f_denum = num_nodes * (num_nodes - 1)
@@ -142,7 +145,7 @@ class KeyPlayer:
             df_denum = number_nodes * (number_nodes - 1)
             lt = LocalTopology(self.__graph)
 
-            shortest_path_lengths = lt.shortest_path(recalculate=True)
+            shortest_path_lengths = lt.shortest_path_igraph(recalculate=True)
             # print(shortest_path_lengths)
             df_num = 0
 

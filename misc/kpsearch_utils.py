@@ -28,18 +28,19 @@ from config import *
 from functools import wraps
 from exceptions.illegal_kppset_size_error import IllegalKppsetSizeError
 from misc.enums import KPPOSchoices, KPNEGchoices
+import random
 
 """ Utilities for checking the consistency of the parameters passed in greedy or bruteforce optimization """
 
-def kpchecker(func):
+def search_initializer(func):
     """
     checks that the arguments passed to the KP functions are correct according to the parameters passed
-    :param func: thje kp-function passed
+    :param func: the kp-function passed
     :return: the function checked for integrity to the KP-SEARCH function
     """
 
     @wraps(func)
-    def func_wrapper(graph, kpp_size, kpp_type, seed, max_sp, *args, **kwargs):
+    def func_wrapper(graph, kpp_size, kpp_type, seed, max_sp=None, *args, **kwargs):
         if not isinstance(kpp_size, int):
             raise TypeError("The kpp_size argument ('{}') is not an integer number".format(kpp_size))
 
@@ -50,14 +51,19 @@ def kpchecker(func):
         if seed is not None:
             if not isinstance(seed, int):
                 raise ValueError("seed must be an integer")
+            else:
+                random.seed(seed)
 
         if not isinstance(kpp_type, (KPPOSchoices, KPNEGchoices)):
             raise TypeError("\"kpp-type\" must be either a \"KPPOSchoices\" enumerator or a \"KPNEGchoices\",  {} found".format(type(kpp_type).__name__))
 
+
         if max_sp is not None and not isinstance(max_sp, int) and max_sp > 1 and max_sp <= graph.vcount():
             raise ValueError("\"max_sp\" must be an integer greater than one and lesser tan the total number of nodes")
 
-        sys.stdout.write("All Good!\n")
+        sys.stdout.write(
+            "Greedily-optimized search of a kpp-set of size {0} for metric {1}\n".format(kpp_size, kpp_type.name))
+
         return func(graph, kpp_size, kpp_type, seed, max_sp, *args, **kwargs)
 
     return func_wrapper

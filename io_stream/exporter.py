@@ -148,7 +148,7 @@ class PyntacleExporter:
         Default is `\t` (outputs a tab-separated file)
         :param header: if `True`, it searches for the reserved attributes "__sif_interaction_name" in graph attributes
         and for "__sif_interaction" in edge attributes and  writes them to file if the attributes are filled.
-        Otherwise, report a generic attribute and the "interacts_with" interaction to the SIF file.
+        Otherwise, kp_tools a generic attribute and the "interacts_with" interaction to the SIF file.
         :return: None
         """
 
