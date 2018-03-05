@@ -3,7 +3,7 @@ from warnings import simplefilter
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 from graph_operations.modules_finder import CommunityFinder
 from io_stream.exporter import PyntacleExporter
-from report.plotter import PlotGraph
+from kp_tools.plotter import PlotGraph
 from io_stream.import_attributes import ImportAttributes
 from utils.modules_utils import ModuleUtils
 from misc.graph_load import *

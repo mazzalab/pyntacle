@@ -26,7 +26,7 @@ __license__ = u"""
 
 import algorithms.local_topology_NEW as lt
 from misc.graph_routines import check_graph_consistency
-from misc.enums import Implementations as imps
+from misc.enums import SP_implementations as imps
 from statistics import mean
 from igraph import Graph
 import numpy as np

@@ -24,7 +24,6 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-from igraph import Graph
 import pandas as pd
 import re
 import pickle
@@ -48,12 +47,12 @@ def dot_attrlist_to_dict(mylist):
     for i in range(0, len(mylist), 2):
         key = mylist[i]
         values = mylist[i + 1]
-        
+
         if key not in mydict:
             mydict[key] = {}
         for v in values:
             mydict[key][v[0]] = v[1]
-    
+
     return mydict
 
 def dot_edgeattrlist_to_dict(mylist):
@@ -61,7 +60,7 @@ def dot_edgeattrlist_to_dict(mylist):
     for j in range(0, len(mylist)):
         edge = mylist[j]
         key = tuple(edge[0])
-        
+
         if len(key) > 2:
             for n in range(0, len(key) - 1):
                 if (key[n], key[n + 1]) not in mydict:
@@ -70,7 +69,7 @@ def dot_edgeattrlist_to_dict(mylist):
                     values = edge[1]
                     for v in values:
                         mydict[(key[n], key[n + 1])][v[0]] = v[1]
-            
+
             continue
         if any(isinstance(e, ParseResults) for e in key):
             # This reads and explicitates the notation a -- {b c d} for edges
@@ -78,7 +77,7 @@ def dot_edgeattrlist_to_dict(mylist):
             for k in keys:
                 if k not in mydict:
                     mydict[k] = {}
-        
+
         else:
             if key not in mydict:
                 mydict[key] = {}
@@ -90,7 +89,7 @@ def dot_edgeattrlist_to_dict(mylist):
                 continue
                 # for v in values:
                 #     mydict[key][v[0]] = v[1]
-    
+
     return mydict
 
 
@@ -344,18 +343,18 @@ class PyntacleImporter:
         graph_attrs_dict = dot_attrlist_to_dict(tokens.graph_attrs_block)
         node_attrs_dict = dot_attrlist_to_dict(tokens.node_attrs_block)
         edge_attrs_dict = dot_edgeattrlist_to_dict(tokens.edge_attrs_block)
-        
+
         if tokens.initial_name:
             graphname = tokens.initial_name
         else:
             graphname = os.path.splitext(os.path.basename(file))[0]
-            
+
         for a in graph_attrs_dict:
             for k in graph_attrs_dict[a]:
                 AddAttributes(graph).add_graph_attributes(k, graph_attrs_dict[a][k])
                 if k == 'name':
                     graphname = k
-                
+
         for a in node_attrs_dict:
             for k in node_attrs_dict[a]:
                 if a not in graph.vs()["name"]:
@@ -385,7 +384,7 @@ class PyntacleImporter:
         for a in edge_attrs_dict:
             for k in edge_attrs_dict[a]:
                 AddAttributes(graph).add_edge_attributes(k, [edge_attrs_dict[a][k]], [a])
-        
+
         sys.stdout.write("Dot File {} imported to a Graph Object\n".format(file))
         return graph
 

@@ -45,14 +45,28 @@ class GraphType(Enum):
     direct_weighted = auto()
 
 
-class Implementations(Enum):
+class SP_implementations(Enum):
     """
-    this enumerator stores the different ways that can be used to parallelize the shortest path
+    this enumerator stores the different ways that can be used to parallelize the shortest path search for a set of nodes
     """
     igraph = auto()
     cpu = auto()
     gpu = auto()
     auto = auto()
+
+class KPNEGchoices(Enum):
+    """
+    this enumerator stores the metrics that can be queried to Kpp-POS calculations
+    """
+    F = auto()
+    dF = auto()
+
+class KPPOSchoices(Enum):
+    """
+    this enumerator stores the metrics that can be queried to Kpp-POS calculations
+    """
+    mreach = auto()
+    dR = auto()
 
 class node_attributes(Enum):
     """

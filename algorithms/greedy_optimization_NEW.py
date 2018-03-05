@@ -24,18 +24,17 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-import random
+"""
+This Module covers the Greedy optimization algorithms for optimal kp-set calculation using Key-Players metrics developed by Borgatti
+"""
+
 from algorithms.keyplayer_NEW import KeyPlayer as kp
 from misc.graph_routines import *
-from exceptions.illegal_kppset_size_error import IllegalKppsetSizeError
-from misc.enums import Implementations as imps
-
-"""
-This Module covers the Greedy optimization algorithms for optimal kp-set calculation
-"""
-
-#from enum import Enum
-
+from exceptions.wrong_argument_error import WrongArgumentError
+from misc.enums import KPPOSchoices, KPNEGchoices, SP_implementations
+from misc.kpsearch_utils import search_initializer
+from utils.graph_utils import GraphUtils as gu
+import random
 
 class GreedyOptimization:
     """
@@ -43,120 +42,97 @@ class GreedyOptimization:
     """
     @staticmethod
     @check_graph_consistency
-    def kpp_neg_greedy(graph, kpp_size, kpp_type, seed=None, max_sp=None, implementation="pyntacle") -> (list, float):
+    @search_initializer #todo check why this doesn't work
+    def kpp_neg_greedy(graph, kpp_size, kpp_type, seed=None, max_sp=None) -> (list, float):
         """
         It iteratively searches for a kpp-set of a predefined vertex set size, removes it and measures the residual
-        fragmentation score.
-        The best kpp-set will be that that maximizes the fragmentation.
+        fragmentation score of the KPNEG metric queried (choices are available in misc/enums).
+        The best kpp-set will be that that maximizes the fragmentation when the nodes are removed from the graph.
+        Available KP NEG choices:
+        * KPNEGchoices.F: min = 0 (all nodes are isolates); max = 1 (network is a clique)
+        * KPNEGchoices.dF: min = 0 (all nodes are isolates and therefore not connected; max = 1
+        (The distance between each node pair is 1 hence the network is a clique)
 
         Args:
             graph (igraph.Graph): an igraph.Graph object. The graph should have specific properties.
                 Please see the `Minimum requirements` specifications in pyntacle's manual
-                ciao sono AKKAPO
-            test (int): test de prova
+
+            kpp_size (int): the size of the optimal set found for the selected integer
+            kpp_type (KPNEGchoices): a KPNEGchoices enumerators. right now, "F", and "dF" are available.
+            seed (int): a seed that can be defined in order to replicate results. Default is None
+            max_sp (int): an integer specifiying the maximum distance after that two nodes will be considered
+            disconnected. Useful when trying to find short range interactions.
 
         Returns:
             KPSET(list), KPVALUE(float)
-
-                * ciccio (int): intero de prova
-                * ciccio2 (float): float de prova
+                * kpset (list): a list containing the node names of the optimal KPNEG set found
+                * kpvalue (float): float representing the kp score for the graph when the set is removed
         """
-        if not isinstance(kpp_size, int):
-            raise TypeError("The kpp_size argument ('{}') is not an integer number".format(kpp_size))
 
-        elif kpp_size >= graph.vcount():
-            raise IllegalKppsetSizeError("The kpp_size must be strictly less than the graph size")
-
-        kp_choices = ["F", "dF"]
-
-        if not isinstance(kpp_type, str):
-            raise ValueError("\"kpp_type\" must be a string, {} found".format(type(kpp_type)-__name__))
-
-        if kpp_type not in kp_choices:
-            raise ValueError("KP Metrics available are \"F\" and \"dF\", invalid option specified {}".format(kpp_type))
-
-
-        #todo implementation is auto-detected
-        implementations = ["igraph", "pyntacle"]
-        #wrapper che mi restituisce implementazione
-
-        if implementation not in implementations:
-            raise ValueError("{0} is not valid. Available options are {1}".format(implementation, ",".format(implementations)))
-
-        if seed is not None:
-            if not isinstance(seed, int):
-                raise ValueError("seed must be an integer")
-
-            else:
-                random.seed = seed
-
-        if max_sp is not None and not isinstance(max_sp, int) and max_sp > 1 and max_sp <= graph.vcount():
-            raise ValueError("\"max_sp\" must be an integer greater than one and lesser tan the total number of nodes")
+        #todo reminder che l'implementazione è automatica
 
         # Definition of the starting S and notS sets
-        node_indices = graph.vs.indices
+        node_indices = graph.vs.indices #retrieve the node indices of the whole graph
 
-        random.shuffle(node_indices)
-        S = node_indices[0:kpp_size]
-        """:type: list[int] """
-        S.sort()
+        random.shuffle(node_indices) #shuffle the node indices in order to subset each time a different starting set
+        S = node_indices[0:kpp_size] #initial node set
 
-        notS = set(node_indices).difference(set(S))
-        """:type: list[int] """
+        S.sort() #sort the starting set in order to retrieve its size afterwards
 
+        notS = set(node_indices).difference(set(S)) #all the other indices in the graph that will be scanned
+
+        # temporary copy of the graph from which the vertices that are selected as starting kpset will be removed
         temp_graph = graph.copy()
         temp_graph.delete_vertices(S)
 
-        if kpp_type == "F":
+        if kpp_type == KPNEGchoices.F:
             fragmentation_score = kp.F(graph=graph) #initial scores
 
-        else:
-            #todo ppassare l'implementtion che ho deciso
-            fragmentation_score = kp.dF(graph=graph, implementation=implementation, max_sp=max_sp)
+        elif kpp_type == KPNEGchoices.dF:
+            # call the initial graph score here using automatic implementation for SPs
+            fragmentation_score = kp.dF(graph=graph, max_distances=max_sp)
+        else: #here all the other KPNEG functions we want to insert
+            sys.stdout.write("{} Not yet implemented, please come back later!".format(kpp_type.name))
+            sys.exit(0)
 
-        kppset_score_pairs_history = {}
+        kppset_score_pairs_history = {} #a dictionary that stores score pairs
         """:type: dic{(), float}"""
-        kppset_score_pairs_history[tuple(S)] = fragmentation_score
+        kppset_score_pairs_history[tuple(S)] = fragmentation_score #keep track of the initial kp scores after the initial set is removed
 
-        optimal_set_found = False
+        optimal_set_found = False #this becomes True when the maximum fragmentation is achieved
 
         while not optimal_set_found:
-            kppset_score_pairs = {}
+            kppset_score_pairs = {} #create a dictionary of solutions {tuple of solutions: score}
             """:type: dic{(), float}"""
 
-            for si in enumerate(S):
-                temp_kpp_set = S.copy()
-                temp_kpp_set.remove(si)
+            for si in S:  #loop through all the node indices of the initial query
+                temp_kpp_set = S.copy()  #copy the list of original indices
+                temp_kpp_set.remove(si)  #remove the node of the current loop iteration
 
-                for notsi in notS:
-                    temp_kpp_set.append(notsi)
-                    temp_kpp_set.sort()  # necessary to avoid repetitions
-                    temp_kpp_set_tuple = tuple(temp_kpp_set)
+                for notsi in notS: #iterate all over the nodes not in the starting KPSET
+                    temp_kpp_set.append(notsi) #create a new KPSET by replacing the input node (si) with all the pther nodes
+                    temp_kpp_set.sort()  #necessary to avoid repetitions, we track the indices of the initial KP Set
+                    temp_kpp_set_tuple = tuple(temp_kpp_set)  #convert the set to tuple
 
-                    if temp_kpp_set_tuple in kppset_score_pairs_history:
-                        kppset_score_pairs[temp_kpp_set_tuple] = kppset_score_pairs_history[temp_kpp_set_tuple]
+                    if temp_kpp_set_tuple in kppset_score_pairs_history:  #if we already passed through this kpset, then:
+                        kppset_score_pairs[temp_kpp_set_tuple] = kppset_score_pairs_history[temp_kpp_set_tuple] #append this pair to the history of this kpset (1st for loop)
 
-                    else:
-                        temp_graph = graph.copy()
+                    else: #compute the KPNEG metrics for this new set
+                        temp_graph = graph.copy() #create a new graph object and remove the modified kpp-set
                         temp_graph.delete_vertices(temp_kpp_set)
 
-                        if kpp_type == "F":
-                            temp_kpp_func_value = kp.F(graph=temp_graph)  # initial scores
+                        if kpp_type == KPNEGchoices.F:
+                            temp_kpp_func_value = kp.F(graph=temp_graph) #new modified scores
 
-                        else:
-                            # todo ppassare l'implementtion che ho deciso
-                            temp_kpp_func_value = kp.dF(graph=temp_graph, implementation=implementation, max_sp=max_sp)
+                        elif kpp_type == KPNEGchoices.dF:
+                            temp_kpp_func_value = kp.dF(graph=temp_graph, max_distances=max_sp)
 
-                        #todo max scores should be in keyplayers (all nodes are disconnected)
-                        # kppset_score_pairs[temp_kpp_set_tuple] = 1  # 1 = Max fragmentation
-                        # kppset_score_pairs_history[temp_kpp_set_tuple] = 1  # 1 = Max fragmentation
-
-                        kppset_score_pairs[temp_kpp_set_tuple] = temp_kpp_func_value
+                        kppset_score_pairs[temp_kpp_set_tuple] = temp_kpp_func_value #store the value in the dictionary
                         kppset_score_pairs_history[temp_kpp_set_tuple] = temp_kpp_func_value
 
-                    temp_kpp_set.remove(notsi)
+                    temp_kpp_set.remove(notsi) #remove the node
 
-            maxKpp = max(kppset_score_pairs, key=kppset_score_pairs.get)
+            maxKpp = max(kppset_score_pairs, key=kppset_score_pairs.get) #
             max_fragmentation = kppset_score_pairs[maxKpp]
 
             if max_fragmentation > fragmentation_score:
@@ -167,107 +143,103 @@ class GreedyOptimization:
                 optimal_set_found = True
 
         final = graph.vs(S)["name"]
-        print ("A optimal kpp-set of size {} is {} with score {}".format(kpp_size, final,
+        sys.stdout.write("A optimal kpp-set of size {} is {} with score {}\n".format(kpp_size, final,
                                                                          fragmentation_score))
-        return S, fragmentation_score
 
-    # @staticmethod
-    # def optimize_kpp_pos(self, kpp_size, kpp_type, m=None, seed=None) -> (list, float):
-    #     """
-    #     It iteratively searches for a kpp-set of a predefined dimension, with maximal reachability.
-    #     m-reach: min = 0 (unreachable); max = size(graph) - kpp_size (total reachability)
-    #     dR: min = 0 (unreachable); max = 1 (total reachability)
-    #
-    #     :param int kpp_size: size of the kpp-set
-    #     :param int m: maximum path length between the kpp-set and the other nodes of the graph
-    #     :param KeyplayerAttribute.name kpp_type: Either KeyplayerAttribute.mreach or KeyplayerAttribute.dR
-    #     :return: - S: **[EXPAND]**
-    #              - reachability_score: **[EXPAND]**
-    #     :raises TypeError: When the kpp-set size is greater than the graph size
-    #     :raises WrongArgumentError: When the kpp-type argument is not of type KeyplayerAttribute.mreach or KeyplayerAttribute.dR
-    #     """
-    #     if seed is not None:
-    #         if not isinstance(seed, int):
-    #             raise ValueError("seed must be an integer")
-    #
-    #         else:
-    #             seed(seed)
-    #
-    #     if not isinstance(kpp_size, int):
-    #         self.logger.error("The kpp_size argument ('{}') is not an integer number".format(kpp_size))
-    #         raise TypeError("The kpp_size argument ('{}') is not an integer number".format(kpp_size))
-    #
-    #     elif kpp_size >= self.__graph.vcount():
-    #         self.logger.error("The kpp_size must be strictly less than the graph size")
-    #         raise IllegalKppsetSizeError("The kpp_size must be strictly less than the graph size")
-    #
-    #     elif kpp_type != _KeyplayerAttribute.DR and kpp_type != _KeyplayerAttribute.MREACH:
-    #         self.logger.error(
-    #             "The kpp_type argument ('{}') must be of type KeyplayerAttribute.dR or KeyplayerAttribute.MREACH".format(
-    #                 kpp_type))
-    #         raise TypeError(
-    #             "The kpp_type argument ('{}') must be of type KeyplayerAttribute.dR or KeyplayerAttribute.MREACH".format(
-    #                 kpp_type))
-    #
-    #     else:
-    #         self.logger.info("Greedily-optimized search of a kpp-set of size {}".format(kpp_size))
-    #
-    #         # Definition of the starting S and notS sets
-    #         node_indices = self.__graph.vs.indices
-    #         random.shuffle(node_indices)
-    #         S = node_indices[0:kpp_size]
-    #         """:type : list[int] """
-    #         S.sort()
-    #         notS = set(node_indices).difference(set(S))
-    #         """:type : list[int] """
-    #
-    #         orig_graph = self.__graph.copy()
-    #         kp = KeyPlayer(graph=orig_graph)
-    #         if kpp_type == _KeyplayerAttribute.MREACH:
-    #             reachability_score = kp.mreach(m, index_list=S, recalculate=True)
-    #         else:
-    #             reachability_score = kp.DR(index_list=S, recalculate=True)
-    #
-    #         kppset_score_pairs_history = {}
-    #         """: type: dic{(), float}"""
-    #         kppset_score_pairs_history[tuple(S)] = reachability_score
-    #
-    #         optimal_set_found = False
-    #         while not optimal_set_found:
-    #             kppset_score_pairs = {}
-    #             """: type: dic{(), float}"""
-    #
-    #             for si in S:
-    #                 temp_kpp_set = S.copy()
-    #                 temp_kpp_set.remove(si)
-    #
-    #                 for notsi in notS:
-    #                     temp_kpp_set.append(notsi)
-    #                     temp_kpp_set.sort()
-    #                     temp_kpp_set_tuple = tuple(temp_kpp_set)
-    #                     if temp_kpp_set_tuple in kppset_score_pairs_history:
-    #                         kppset_score_pairs[temp_kpp_set_tuple] = kppset_score_pairs_history[temp_kpp_set_tuple]
-    #                     else:
-    #                         if kpp_type == _KeyplayerAttribute.MREACH:
-    #                             temp_kpp_func_value = kp.mreach(m, temp_kpp_set, recalculate=True)
-    #                         else:
-    #                             temp_kpp_func_value = kp.DR(temp_kpp_set, recalculate=True)
-    #
-    #                         kppset_score_pairs[temp_kpp_set_tuple] = temp_kpp_func_value
-    #                         kppset_score_pairs_history[temp_kpp_set_tuple] = temp_kpp_func_value
-    #
-    #                     temp_kpp_set.remove(notsi)
-    #
-    #             maxKpp = max(kppset_score_pairs, key=kppset_score_pairs.get)
-    #             max_reachability = kppset_score_pairs[maxKpp]
-    #
-    #             if max_reachability > reachability_score:
-    #                 S = list(maxKpp)
-    #                 notS = set(node_indices).difference(set(S))
-    #                 reachability_score = max_reachability
-    #             else:
-    #                 optimal_set_found = True
-    #         final = self.__graph.vs(S)["name"]
-    #         self.logger.info("A optimal kpp-set of size {} is {} with score {}".format(kpp_size, final,
-    #                                                                                    reachability_score))
-    #         return S, reachability_score
+        #this must be replaced when we find that greedy works
+        return final, round(fragmentation_score, 5)
+
+    @staticmethod
+    @check_graph_consistency
+    @search_initializer #todo solve the m problem in this decorator
+    def optimize_kpp_pos(graph, kpp_size, kpp_type, seed=None, max_sp=None, m=None) -> (list, float):
+        """
+        It iteratively searches for a kpp-set of a predefined dimension, with maximal reachability according to the
+        KPPOS metrics asked.
+        Available choices:
+        #. m-reach: min = 0 (unreachable); max = size(graph) - kpp_size (total reachability)
+        #. dR: min = 0 (unreachable); max = 1 (total reachability)
+
+        :param int kpp_size: size of the kpp-set
+        :param int m: maximum path length between the kpp-set and the other nodes of the graph
+        :param KeyplayerAttribute.name kpp_type: Either KeyplayerAttribute.mreach or KeyplayerAttribute.dR
+        :return: - S: **[EXPAND]**
+                 - reachability_score: **[EXPAND]**
+        :raises TypeError: When the kpp-set size is greater than the graph size
+        :raises WrongArgumentError: When the kpp-type argument is not of type KeyplayerAttribute.mreach or KeyplayerAttribute.dR
+        """
+
+        sys.stdout.write("Greedily-optimized search of a kpp-set of size {0} for metric {1}\n".format(kpp_size, kpp_type.name))
+
+        # Definition of the starting S and notS sets
+        node_indices = graph.vs.indices
+        random.shuffle(node_indices)
+        S = node_indices[0:kpp_size]
+        S_names = graph.vs(S)["name"] #take in input the node names
+        S.sort()
+        notS = set(node_indices).difference(set(S))
+
+        utils = gu(graph=graph)
+
+        if kpp_type == KPPOSchoices.mreach and m is None:
+            raise WrongArgumentError("\"m\" must be specified for m.reach")
+
+        if kpp_type == KPPOSchoices.mreach:
+            if not isinstance(m, int) and m <=0:
+                raise TypeError({"\"m\" must be a positive integer"})
+            else:
+                reachability_score = kp.mreach(graph=graph, nodes=S_names, m=m, max_distances=max_sp)
+
+        elif kpp_type == KPPOSchoices.dR:
+            reachability_score = kp.dR(graph=graph, nodes=S_names, max_distances=max_sp)
+
+        else: #dere all the other KPNEG functions we want to insert
+            sys.stdout.write("{} Not yet implemented, please come back later!".format(kpp_type.name))
+            sys.exit(0)
+
+        kppset_score_pairs_history = {}
+
+        kppset_score_pairs_history[tuple(S)] = reachability_score
+
+        optimal_set_found = False
+        while not optimal_set_found:
+            kppset_score_pairs = {}
+
+            for si in S:
+                temp_kpp_set = S.copy()
+                temp_kpp_set.remove(si)
+
+                for notsi in notS:
+                    temp_kpp_set.append(notsi)
+                    temp_kpp_set.sort()
+                    temp_kpp_set_tuple = tuple(temp_kpp_set)
+
+                    if temp_kpp_set_tuple in kppset_score_pairs_history:
+                        kppset_score_pairs[temp_kpp_set_tuple] = kppset_score_pairs_history[temp_kpp_set_tuple]
+
+                    else:
+                        temp_kpp_set_names = utils.get_node_names(index_list=temp_kpp_set)
+
+                        if kpp_type == KPPOSchoices.mreach:
+                            temp_kpp_func_value = kp.mreach(graph=graph, m=m, nodes=temp_kpp_set_names, max_distances=max_sp)
+                        elif kpp_type == KPPOSchoices.dR:
+                            temp_kpp_func_value = kp.dR(graph=graph, m=m, nodes=temp_kpp_set_names, max_distances=max_sp)
+
+                        kppset_score_pairs[temp_kpp_set_tuple] = temp_kpp_func_value
+                        kppset_score_pairs_history[temp_kpp_set_tuple] = temp_kpp_func_value
+
+                    temp_kpp_set.remove(notsi)
+
+            maxKpp = max(kppset_score_pairs, key=kppset_score_pairs.get)
+            max_reachability = kppset_score_pairs[maxKpp]
+
+            if max_reachability > reachability_score:
+                S = list(maxKpp)
+                notS = set(node_indices).difference(set(S))
+                reachability_score = max_reachability
+            else:
+                optimal_set_found = True
+        final = graph.vs(S)["name"]
+        sys.stdout.write("A optimal kpp-set of size {} is {} with score {}".format(kpp_size, final,
+                                                                                   reachability_score))
+        return final, round(reachability_score, 5)

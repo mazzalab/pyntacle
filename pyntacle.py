@@ -49,7 +49,7 @@ from colorama import Fore, Style, init
 if os.name == "nt":
     init(convert=True)
 
-from report.reporter import *
+from kp_tools.reporter import *
 # Main commands wrappers
 from commands.keyplayer import KeyPlayer as kp_command
 # from commands.metrics import Metrics as metrics_command
@@ -153,9 +153,9 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument('-d', "--directory", metavar='', default=os.getcwd(),
                             help="Directory that will contain results (default is the current working directory). If the directory does not exist, we will create one")
 
-        parser.add_argument('--report-format', '-r', metavar='', default="txt", choices=["txt", "csv", "xlsx", "tsv"],
+        parser.add_argument('--kp_tools-format', '-r', metavar='', default="txt", choices=["txt", "csv", "xlsx", "tsv"],
                             type=lambda s: s.lower(),
-                            help="Specify a different report format according to your tastes. \"txt\" and \"tsv\" are tab delimited format. Available formats:{txt, tsv, csv, xlsx}")
+                            help="Specify a different kp_tools format according to your tastes. \"txt\" and \"tsv\" are tab delimited format. Available formats:{txt, tsv, csv, xlsx}")
 
         parser.add_argument('--plot-format', choices=["svg", "pdf", "png"], default="pdf",
                             type=lambda s: s.lower(), metavar='',
@@ -239,8 +239,8 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument('-d', "--directory", default=os.getcwd(), metavar='',
                             help="Directory that will contain results (default is the current working directory). If the directory does not exist, it will be created")
 
-        parser.add_argument('--report-format', '-r', default="txt", choices=["txt", "csv", "xlsx", "tsv"],
-                            help="Specify a different report format according to your tastes. \"txt\" and \"tsv\" are tab delimited format. Available formats:{txt, tsv, csv, xlsx}")
+        parser.add_argument('--kp_tools-format', '-r', default="txt", choices=["txt", "csv", "xlsx", "tsv"],
+                            help="Specify a different kp_tools format according to your tastes. \"txt\" and \"tsv\" are tab delimited format. Available formats:{txt, tsv, csv, xlsx}")
 
         parser.add_argument('--plot-format', choices=["svg", "pdf", "png"], default="pdf",
                             type=lambda s: s.lower(),

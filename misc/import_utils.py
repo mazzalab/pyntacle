@@ -29,8 +29,8 @@ from config import *
 import csv
 from igraph import Graph
 from utils.add_attributes import AddAttributes
-from functools import wraps
 from misc.binarycheck import is_binary_file
+from functools import wraps
 def filechecker(func):
     """
     decorator to check the integrity of an input file

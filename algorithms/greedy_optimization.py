@@ -5,12 +5,13 @@ import random
 
 from igraph import Graph
 
-from algorithms.key_player import KeyPlayer, _KeyplayerAttribute
+from algorithms.key_player import KeyPlayer
 from exceptions.illegal_kppset_size_error import IllegalKppsetSizeError
 from utils.graph_utils import *
 from config import *
 from random import seed
-
+from misc.enums import KPNEGchoices, KPPOSchoices
+import random
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -55,6 +56,8 @@ class GreedyOptimization:
         """
         self.logger = log
 
+        random.seed(123)
+
         if graph.vcount() < 1:
             self.logger.fatal("This graph does not contain vertices")
             raise IllegalGraphSizeError("This graph does not contain vertices")
@@ -79,17 +82,11 @@ class GreedyOptimization:
         :raises TypeError: When the kpp-set size is not an integer number
         :raises WrongArgumentError: When the kpp-type argument is not of type KeyplayerAttribute.F or KeyplayerAttribute.DF
         """
-        if seed is not None:
-            if not isinstance(seed, int):
-                raise ValueError("seed must be an integer")
-
-            else:
-                seed(seed)
 
         if not isinstance(kpp_size, int):
             self.logger.error("The kpp_size argument ('{}') is not an integer number".format(kpp_size))
             raise TypeError("The kpp_size argument ('{}') is not an integer number".format(kpp_size))
-        elif kpp_type != _KeyplayerAttribute.F and kpp_type != _KeyplayerAttribute.DF:
+        elif kpp_type != KPNEGchoices.F and kpp_type != KPNEGchoices.dF:
             self.logger.error(
                 "The kpp_type argument ('{}') must be of type KeyplayerAttribute.F or KeyplayerAttribute.DF".format(
                     kpp_type))
@@ -114,7 +111,7 @@ class GreedyOptimization:
             temp_graph = self.__graph.copy()
             temp_graph.delete_vertices(S)
             kp = KeyPlayer(graph=temp_graph)
-            if kpp_type == _KeyplayerAttribute.F:
+            if kpp_type == KPNEGchoices.F:
                 kpp_func = kp.F
             else:
                 kpp_func = kp.DF
@@ -169,6 +166,8 @@ class GreedyOptimization:
             final = self.__graph.vs(S)["name"]
             self.logger.info("A optimal kpp-set of size {} is {} with score {}".format(kpp_size, final,
                                                                                        fragmentation_score))
+            S = self.__graph.vs(S)["name"]
+
             return S, fragmentation_score
 
     def optimize_kpp_pos(self, kpp_size, kpp_type, m=None, seed=None) -> (list, float):
@@ -222,7 +221,7 @@ class GreedyOptimization:
 
             orig_graph = self.__graph.copy()
             kp = KeyPlayer(graph=orig_graph)
-            if kpp_type == _KeyplayerAttribute.MREACH:
+            if kpp_type == KPPOSchoices.mreach:
                 reachability_score = kp.mreach(m, index_list=S, recalculate=True)
             else:
                 reachability_score = kp.DR(index_list=S, recalculate=True)
@@ -247,7 +246,7 @@ class GreedyOptimization:
                         if temp_kpp_set_tuple in kppset_score_pairs_history:
                             kppset_score_pairs[temp_kpp_set_tuple] = kppset_score_pairs_history[temp_kpp_set_tuple]
                         else:
-                            if kpp_type == _KeyplayerAttribute.MREACH:
+                            if kpp_type == KPPOSchoices.mreach:
                                 temp_kpp_func_value = kp.mreach(m, temp_kpp_set, recalculate=True)
                             else:
                                 temp_kpp_func_value = kp.DR(temp_kpp_set, recalculate=True)

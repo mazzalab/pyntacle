@@ -1,14 +1,14 @@
 import pandas as pd
 from config import *
-from algorithms.global_topology_NEW import GlobalTopology#, _GlobalAttribute
+from algorithms.global_topology_NEW import GlobalTopology, _GlobalAttribute
 from algorithms.local_topology_NEW import LocalTopology, _LocalAttribute
 from algorithms.sparseness_NEW import *
 from algorithms.sparseness import _SparsenessAttribute
 from exceptions.generic_error import Error
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 from io_stream.exporter import PyntacleExporter
-from report.plotter import *
-from report.reporter import *
+from kp_tools.plotter import *
+from kp_tools.reporter import *
 from io_stream.import_attributes import ImportAttributes
 from misc.graph_load import *
 from utils.graph_utils import GraphUtils
@@ -231,17 +231,17 @@ class Metrics():
                                 "weights file must contains at least two columns, the first should represent node names and the second ther respective weights. Quitting.\n")
                             sys.exit(1)
 
-            # create report for the selected metrics
+            # create kp_tools for the selected metrics
             if self.args.nodes is None:
                 nodes_list = graph.vs()["name"]
-                report_prefix = "_".join(["pyntacle", graph["name"][0], "local_metrics", "report",
+                report_prefix = "_".join(["pyntacle", graph["name"][0], "local_metrics", "kp_tools",
                                           runtime_date])
             else:
                 report_prefix = "_".join(
                     ["pyntacle", graph["name"][0], "local_metrics_selected_nodes_report",
                      runtime_date])
 
-            sys.stdout.write("Producing report in {} format.\n".format(self.args.report_format))
+            sys.stdout.write("Producing kp_tools in {} format.\n".format(self.args.report_format))
 
             report_path = os.path.join(self.args.directory, report_prefix + self.args.report_format)
 
@@ -362,12 +362,12 @@ class Metrics():
             sparseness.completeness_legacy(recalculate=True)
 
 
-            if not self.args.no_nodes: #create standard report for the whole graph
-                sys.stdout.write("Producing report\n")
+            if not self.args.no_nodes: #create standard kp_tools for the whole graph
+                sys.stdout.write("Producing kp_tools\n")
 
                 reporter = pyntacleReporter(graph=graph)
                 reporter.report_global_topology(global_attributes_list)
-                report_prefix = "_".join(["pyntacle", graph["name"][0], "global", "metrics", "report"])
+                report_prefix = "_".join(["pyntacle", graph["name"][0], "global", "metrics", "kp_tools"])
 
                 report_path = os.path.join(self.args.directory, "_".join(
                     [report_prefix, runtime_date]) + self.args.report_format)
@@ -407,11 +407,11 @@ class Metrics():
                 sparseness_nonodes.completeness(recalculate=True)
                 sparseness_nonodes.completeness_legacy(recalculate=True)
 
-                sys.stdout.write("Producing report\n")
+                sys.stdout.write("Producing kp_tools\n")
                 reporter = pyntacleReporter(graph=graph, graph2=graph_nonodes)
                 reporter.report_global_comparisons(attributes_list=global_attributes_list)
 
-                report_prefix = "_".join(["pyntacle", graph["name"][0], "global", "metrics", "nonodes", "report"])
+                report_prefix = "_".join(["pyntacle", graph["name"][0], "global", "metrics", "nonodes", "kp_tools"])
 
                 report_path = os.path.join(self.args.directory, "_".join(
                     [report_prefix, runtime_date]) + self.args.report_format)
