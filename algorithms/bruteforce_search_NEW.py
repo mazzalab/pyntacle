@@ -1,18 +1,3 @@
-"""
-Brute-force search for the best kp-set.
-This algorithm makes all possible sets of nodes of a specified size and applies the KP-algorithm on them.
-It hence selects the KPP-set with the best score.
-"""
-
-import itertools
-
-from igraph import Graph
-from algorithms.key_player import KeyPlayer, _KeyplayerAttribute
-# from exception.illegal_graph_size_error import IllegalGraphSizeError
-from exceptions.illegal_kppset_size_error import IllegalKppsetSizeError
-from utils.graph_utils import *
-from config import *
-
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -39,35 +24,32 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+"""
+Brute-force search for the best kp-set.
+This algorithm makes all possible combinations of node sets of a specified size and applies the KP-algorithm on them.
+It hence selects the KPP-set with the best score.
+"""
+
+import itertools
+
+from igraph import Graph
+from algorithms.key_player import KeyPlayer, _KeyplayerAttribute
+from exceptions.illegal_kppset_size_error import IllegalKppsetSizeError
+from misc.enums import KPPOSchoices, KPNEGchoices
+from misc.kpsearch_utils import greedy_search_initializer
+from misc.graph_routines import check_graph_consistency
+from utils.graph_utils import GraphUtils as gu
+from config import *
 
 class BruteforceSearch:
     """
     Brute-force search for the best kp-set **[EXPAND]**
     """
+    @staticmethod
+    @check_graph_consistency
+    @greedy_search_initializer
+    def bruteforce_fragmentation(graph, kpp_size, kpp_type, max_distances) -> (list, float):
 
-    __graph = None
-    """:type: Graph"""
-
-    def __init__(self, graph: Graph):
-        """
-        Initializes a graph for brute-force search of the best KP-set
-
-        :param Graph graph: Graph provided in input
-        :raises IllegalGraphSizeError: if the graph does not contain vertices or edges
-        """
-        self.logger = log
-
-        if graph.vcount() < 1:
-            self.logger.fatal("This graph does not contain vertices")
-            raise IllegalGraphSizeError("This graph does not contain vertices")
-        elif graph.ecount() < 1:
-            self.logger.fatal("This graph does not contain edges")
-            raise IllegalGraphSizeError("This graph does not contain edges")
-        else:
-            self.__graph = graph
-            GraphUtils(graph=self.__graph).graph_checker()
-
-    def bruteforce_fragmentation(self, kpp_size, kpp_type) -> (list, float):
         """
         It searches and finds the kpp-set of a predefined dimension that best disrupts the graph.
         It generates all the possible kpp-sets and calculates the fragmentation score of the residual graph, after
@@ -83,52 +65,39 @@ class BruteforceSearch:
         :raises TypeError: When the kpp-set size is not an integer number
         :raises WrongArgumentError: When the kpp-type argument is not of type KeyplayerAttribute.F or KeyplayerAttribute.DF
         """
-        if not isinstance(kpp_size, int):
-            self.logger.error("The kpp_size argument ('{}') is not an integer number".format(kpp_size))
-            raise TypeError("The kpp_size argument ('{}') is not an integer number".format(kpp_size))
 
-        elif kpp_type != _KeyplayerAttribute.F and kpp_type != _KeyplayerAttribute.DF:
-            self.logger.error(
-                "The kpp_type argument ('{}') must be of type KeyplayerAttribute.F or KeyplayerAttribute.DF".format(
-                    kpp_type))
-            raise TypeError(
-                "The kpp_type argument ('{}') must be of type KeyplayerAttribute.F or KeyplayerAttribute.DF".format(
-                    kpp_type))
+        # todo: enable multiple solutions
+        kppset_score_pairs = {}
+        """: type: dic{(), float}"""
 
-        elif kpp_size >= self.__graph.vcount():
-            self.logger.error("The kpp_size must be strictly less than the graph size")
-            raise IllegalKppsetSizeError("The kpp_size must be strictly less than the graph size")
+        # Generation of all combinations of nodes (all kpp-sets) of size kpp_size
+        node_indices = graph.vs.indices
+        allS = itertools.combinations(node_indices, kpp_size)
 
-        else:
-            self.logger.info("Brute-force search of the best kpp-set of size {}".format(kpp_size))
+        for S in allS:
+            temp_graph = graph.copy()
+            temp_graph.delete_vertices(S)
+            kp = KeyPlayer(graph=temp_graph)
+            if kpp_type == _KeyplayerAttribute.F:
+                kpp_func = kp.F
+            else:
+                kpp_func = kp.DF
 
-            kppset_score_pairs = {}
-            """: type: dic{(), float}"""
+            kppset_score_pairs[tuple(S)] = kpp_func(recalculate=True)
 
-            # Generation of all combinations of nodes (all kpp-sets) of size kpp_size
-            node_indices = self.__graph.vs.indices
-            allS = itertools.combinations(node_indices, kpp_size)
+        maxKpp = max(kppset_score_pairs, key=kppset_score_pairs.get)
+        S = list(maxKpp)
+        best_fragmentation_score = kppset_score_pairs[maxKpp]
 
-            for S in allS:
-                temp_graph = self.__graph.copy()
-                temp_graph.delete_vertices(S)
-                kp = KeyPlayer(graph=temp_graph)
-                if kpp_type == _KeyplayerAttribute.F:
-                    kpp_func = kp.F
-                else:
-                    kpp_func = kp.DF
+        final = graph.vs(S)["name"]
+        sys.stdout.write("The best kpp-set of size {} is {} with score {}".format(kpp_size, final,
+                                                                                  best_fragmentation_score))
+        # todo: Handle cases of dead heat kpp-set
+        return S, best_fragmentation_score
 
-                kppset_score_pairs[tuple(S)] = kpp_func(recalculate=True)
-
-            maxKpp = max(kppset_score_pairs, key=kppset_score_pairs.get)
-            S = list(maxKpp)
-            best_fragmentation_score = kppset_score_pairs[maxKpp]
-
-            final = self.__graph.vs(S)["name"]
-            self.logger.info("The best kpp-set of size {} is {} with score {}".format(kpp_size, final,
-                                                                                      best_fragmentation_score))
-            return S, best_fragmentation_score  # TODO: Handle cases of dead heat kpp-set
-
+    @staticmethod
+    @check_graph_consistency
+    @greedy_search_initializer
     def bruteforce_reachability(self, kpp_size, kpp_type, m=None) -> (list, float):
         """
         It searches and finds the kpp-set of a predefined dimension that best reaches all other nodes over the graph.
@@ -145,6 +114,7 @@ class BruteforceSearch:
         :raises TypeError: When the kpp-set size is greater than the graph size
         :raises WrongArgumentError: When the kpp-type argument is not of type KeyplayerAttribute.mreach or KeyplayerAttribute.dR
         """
+        # todo: enable multiple solutions
         if not isinstance(kpp_size, int):
             self.logger.error("The kpp_size argument ('{}') is not an integer number".format(kpp_size))
             raise TypeError("The kpp_size argument ('{}') is not an integer number".format(kpp_size))

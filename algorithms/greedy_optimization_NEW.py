@@ -32,7 +32,7 @@ from algorithms.keyplayer_NEW import KeyPlayer as kp
 from misc.graph_routines import *
 from exceptions.wrong_argument_error import WrongArgumentError
 from misc.enums import KPPOSchoices, KPNEGchoices, SP_implementations
-from misc.kpsearch_utils import search_initializer
+from misc.kpsearch_utils import greedy_search_initializer
 from utils.graph_utils import GraphUtils as gu
 import random
 
@@ -42,7 +42,7 @@ class GreedyOptimization:
     """
     @staticmethod
     @check_graph_consistency
-    @search_initializer #todo check why this doesn't work
+    @greedy_search_initializer #todo check why this doesn't work
     def kpp_neg_greedy(graph, kpp_size, kpp_type, seed=None, max_sp=None) -> (list, float):
         """
         It iteratively searches for a kpp-set of a predefined vertex set size, removes it and measures the residual
@@ -151,7 +151,7 @@ class GreedyOptimization:
 
     @staticmethod
     @check_graph_consistency
-    @search_initializer #todo solve the m problem in this decorator
+    @greedy_search_initializer #todo solve the m problem in this decorator
     def optimize_kpp_pos(graph, kpp_size, kpp_type, seed=None, max_sp=None, m=None) -> (list, float):
         """
         It iteratively searches for a kpp-set of a predefined dimension, with maximal reachability according to the

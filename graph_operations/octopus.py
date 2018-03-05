@@ -29,7 +29,7 @@ from algorithms.local_topology_NEW import LocalTopology
 from algorithms.global_topology_NEW import GlobalTopology
 from misc.enums import GraphType
 from misc.enums import Implementations as imps
-from misc.sps_operations import ShortestPathModifier
+from misc.shortest_path_modifications import ShortestPathModifier
 from config import *
 
 class Octopus:
