@@ -28,15 +28,14 @@ __license__ = u"""
 This Module covers the Greedy optimization algorithms for optimal kp-set calculation using Key-Players metrics developed by Borgatti
 """
 
+import random
+from functools import partial
 from algorithms.keyplayer_NEW import KeyPlayer as kp
 from misc.graph_routines import *
 from exceptions.wrong_argument_error import WrongArgumentError
-from misc.enums import KPPOSchoices, KPNEGchoices, SP_implementations
+from misc.enums import KPPOSchoices, KPNEGchoices
 from misc.kpsearch_utils import greedy_search_initializer
 from utils.graph_utils import GraphUtils as gu
-import random
-from functools import partial
-
 
 class GreedyOptimization:
     """
@@ -44,8 +43,8 @@ class GreedyOptimization:
     """
     @staticmethod
     @check_graph_consistency
-    @greedy_search_initializer #todo check why this doesn't work
-    def kpp_neg_greedy(graph, kpp_size, kpp_type, seed=None, max_sp=None) -> (list, float):
+    @greedy_search_initializer
+    def kpp_neg_greedy(graph, kpp_size, kpp_type, seed=None, max_distances=None) -> (list, float):
         """
         It iteratively searches for a kpp-set of a predefined vertex set size, removes it and measures the residual
         fragmentation score of the KPNEG metric queried (choices are available in misc/enums).
@@ -62,7 +61,7 @@ class GreedyOptimization:
             kpp_size (int): the size of the optimal set found for the selected integer
             kpp_type (KPNEGchoices): a KPNEGchoices enumerators. right now, "F", and "dF" are available.
             seed (int): a seed that can be defined in order to replicate results. Default is None
-            max_sp (int): an integer specifiying the maximum distance after that two nodes will be considered
+            max_distances (int): an integer specifiying the maximum distance after that two nodes will be considered
             disconnected. Useful when trying to find short range interactions.
 
         Returns:
@@ -72,6 +71,11 @@ class GreedyOptimization:
         """
 
         #todo reminder che l'implementazione è automatica
+        if kpp_type == KPNEGchoices.F or kpp_type == KPNEGchoices.dF:
+            if graph.ecount() == 0:
+                sys.stdout.write("Graph is consisted of isolates, so there's no optimal KP Set that can fragment the network. Returning an empty list.\n")
+                return [], 1.0
+
 
         # Definition of the starting S and notS sets
         node_indices = graph.vs.indices #retrieve the node indices of the whole graph
@@ -87,15 +91,14 @@ class GreedyOptimization:
         temp_graph = graph.copy()
         temp_graph.delete_vertices(S)
 
+
         if kpp_type == KPNEGchoices.F:
             type_func = partial(kp.F, graph=graph)
-    
-            #fragmentation_score = kp.F(graph=graph) #initial scores
 
         elif kpp_type == KPNEGchoices.dF:
-            type_func = partial(kp.dF, graph=graph, max_distances=max_sp)
+            type_func = partial(kp.dF, graph=graph, max_distances=max_distances)
             # call the initial graph score here using automatic implementation for SPs
-           # fragmentation_score = kp.dF(graph=graph, max_distances=max_sp)
+
         else: #here all the other KPNEG functions we want to insert
             sys.stdout.write("{} Not yet implemented, please come back later!".format(kpp_type.name))
             sys.exit(0)
@@ -133,16 +136,16 @@ class GreedyOptimization:
                         #
                         # elif kpp_type == KPNEGchoices.dF:
                         #     temp_kpp_func_value = kp.dF(graph=temp_graph, max_distances=max_sp)
-                        temp_kpp_func_value = type_func(graph=temp_graph
-                                                        )
+                        temp_kpp_func_value = type_func(graph=temp_graph)
                         kppset_score_pairs[temp_kpp_set_tuple] = temp_kpp_func_value #store the value in the dictionary
                         kppset_score_pairs_history[temp_kpp_set_tuple] = temp_kpp_func_value
 
                     temp_kpp_set.remove(notsi) #remove the node
 
-            maxKpp = max(kppset_score_pairs, key=kppset_score_pairs.get) #
+            maxKpp = max(kppset_score_pairs, key=kppset_score_pairs.get)
             max_fragmentation = kppset_score_pairs[maxKpp]
 
+            #todo Tommaso: how do we handle the case in which there is no optimal fragmentation score that maximize the initial fragmentation score?
             if max_fragmentation > fragmentation_score:
                 S = list(maxKpp)
                 notS = set(node_indices).difference(set(S))
@@ -160,7 +163,7 @@ class GreedyOptimization:
     @staticmethod
     @check_graph_consistency
     @greedy_search_initializer #todo solve the m problem in this decorator
-    def optimize_kpp_pos(graph, kpp_size, kpp_type, seed=None, max_sp=None, m=None) -> (list, float):
+    def optimize_kpp_pos(graph, kpp_size, kpp_type, seed=None, max_distances=None, m=None) -> (list, float):
         """
         It iteratively searches for a kpp-set of a predefined dimension, with maximal reachability according to the
         KPPOS metrics asked.
@@ -190,20 +193,22 @@ class GreedyOptimization:
         utils = gu(graph=graph)
 
         if kpp_type == KPPOSchoices.mreach and m is None:
-            raise WrongArgumentError("\"m\" must be specified for m.reach")
+            raise WrongArgumentError("\"m\" must be specified for mreach")
 
         if kpp_type == KPPOSchoices.mreach:
-            if not isinstance(m, int) and m <=0:
+            if not isinstance(m, int) or m <= 0:
                 raise TypeError({"\"m\" must be a positive integer"})
             else:
-                reachability_score = kp.mreach(graph=graph, nodes=S_names, m=m, max_distances=max_sp)
+                type_func = partial(kp.mreach, graph=graph, nodes=S_names, m=m, max_distances=max_distances)
 
         elif kpp_type == KPPOSchoices.dR:
-            reachability_score = kp.dR(graph=graph, nodes=S_names, max_distances=max_sp)
+            type_func = partial(kp.dR, graph=graph, nodes=S_names, max_distances=max_distances)
 
-        else: #dere all the other KPNEG functions we want to insert
+        else: #all the other KPNEG functions we want to insert
             sys.stdout.write("{} Not yet implemented, please come back later!".format(kpp_type.name))
             sys.exit(0)
+
+        reachability_score = type_func()
 
         kppset_score_pairs_history = {}
 
@@ -227,11 +232,7 @@ class GreedyOptimization:
 
                     else:
                         temp_kpp_set_names = utils.get_node_names(index_list=temp_kpp_set)
-
-                        if kpp_type == KPPOSchoices.mreach:
-                            temp_kpp_func_value = kp.mreach(graph=graph, m=m, nodes=temp_kpp_set_names, max_distances=max_sp)
-                        elif kpp_type == KPPOSchoices.dR:
-                            temp_kpp_func_value = kp.dR(graph=graph, m=m, nodes=temp_kpp_set_names, max_distances=max_sp)
+                        temp_kpp_func_value=type_func(graph=graph, nodes=temp_kpp_set_names, max_distances=max_distances)
 
                         kppset_score_pairs[temp_kpp_set_tuple] = temp_kpp_func_value
                         kppset_score_pairs_history[temp_kpp_set_tuple] = temp_kpp_func_value

@@ -56,15 +56,14 @@ class KeyPlayer:
         :return: The F measure of the graph as a float ranging between 0.0 and 1.0, where 0 is maximal disconnection
         (each node is an isolate) and 1 is maximum connection (the graph is complete)
         """
-        sys.stdout.write("############## Running F\n")
+        # sys.stdout.write("############## Running F ##############\n")
         if graph.ecount() == 0: #maximum F
             return 1.0
 
-        elif graph.clique_number() == graph.vcount:
+        elif graph.clique_number() == graph.vcount():
             return 0.0  #maximum F: it's a clique
 
         else:
-            print("QUA")
             num_nodes = graph.vcount()
 
             components = graph.components()
@@ -220,7 +219,7 @@ class KeyPlayer:
             raise TypeError("\"m\" must be an integer")
         if m < 1:
             raise ValueError("\"m\" must be greater than zero")
-        elif m >= graph.vcount() +1:
+        elif m >= graph.vcount() + 1:
             raise ValueError("\"m\" must be lesser than the total number of vertices plus one")
 
         if not isinstance(implementation, imps):

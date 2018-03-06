@@ -58,7 +58,6 @@ def greedy_search_initializer(func):
         if not isinstance(kpp_type, (KPPOSchoices, KPNEGchoices)):
             raise TypeError("\"kpp-type\" must be either a \"KPPOSchoices\" enumerator or a \"KPNEGchoices\",  {} found".format(type(kpp_type).__name__))
 
-
         if max_distances is not None and not isinstance(max_distances, int) and max_distances > 1 and max_distances <= graph.vcount():
             raise ValueError("\"max_sp\" must be an integer greater than one and lesser tan the total number of nodes")
 
