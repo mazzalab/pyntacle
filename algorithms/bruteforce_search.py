@@ -4,9 +4,6 @@ This algorithm makes all possible sets of nodes of a specified size and applies 
 It hence selects the KPP-set with the best score.
 """
 
-#testino git 
-
-
 import itertools
 
 from igraph import Graph
