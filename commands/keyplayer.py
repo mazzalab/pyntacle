@@ -1,7 +1,8 @@
+from config import *
 from algorithms.key_player import *
 from algorithms.key_player import _KeyplayerAttribute
 from exceptions.generic_error import Error
-from io_stream.exporter import Exporter
+from io_stream.exporter import PyntacleExporter
 from kp_tools.kp_runner import *
 from kp_tools.plotter import *
 from kp_tools.reporter import *
@@ -282,7 +283,7 @@ class KeyPlayer():
         if self.args.save_binary:
             sys.stdout.write("Saving graph to a Binary file\n")
             binary_path = os.path.join(self.args.directory, report_prefix + ".graph")
-            Exporter.Binary(graph, binary_path)
+            PyntacleExporter.Binary(graph, binary_path)
 
         # generate and output plot
         if not self.args.no_plot or graph.vcount() < 1000:

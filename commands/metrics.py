@@ -1,12 +1,12 @@
 import pandas as pd
 from config import *
-from algorithms.global_topology import GlobalTopology, _GlobalAttribute
-from algorithms.local_topology import LocalTopology, _LocalAttribute
-from algorithms.sparseness import *
+from algorithms.global_topology_NEW import GlobalTopology, _GlobalAttribute
+from algorithms.local_topology_NEW import LocalTopology, _LocalAttribute
+from algorithms.sparseness_NEW import *
 from algorithms.sparseness import _SparsenessAttribute
 from exceptions.generic_error import Error
 from exceptions.multiple_solutions_error import MultipleSolutionsError
-from io_stream.exporter import Exporter
+from io_stream.exporter import PyntacleExporter
 from kp_tools.plotter import *
 from kp_tools.reporter import *
 from io_stream.import_attributes import ImportAttributes
@@ -509,7 +509,7 @@ class Metrics():
         if self.args.save_binary:
             sys.stdout.write("Saving graph to a Binary file\n")
             binary_path = os.path.join(self.args.directory, report_prefix + ".graph")
-            Exporter.Binary(graph, binary_path)
+            PyntacleExporter.Binary(graph, binary_path)
         cursor.stop()
         sys.stdout.write("pyntacle Metrics completed successfully. Ending\n")
         sys.exit(0)

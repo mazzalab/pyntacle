@@ -4,7 +4,7 @@ from warnings import simplefilter
 from config import *
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 from graph_operations.logic_ops import GraphSetter
-from io_stream.exporter import Exporter
+from io_stream.exporter import PyntacleExporter
 from kp_tools.plotter import PlotGraph
 from utils.graph_utils import GraphUtils
 from misc.graph_load import *
@@ -256,26 +256,26 @@ class Set():
         # output generated networks
         if out_form == "adjm":
             sys.stdout.write("Creating Adjacency Matrix of the generated graph\n")
-            Exporter.AdjacencyMatrix(output_graph, output_path, sep=self.args.output_separator, header=output_header)
+            PyntacleExporter.AdjacencyMatrix(output_graph, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "egl":
             sys.stdout.write("Creating Edge List of the generated graph\n")
-            Exporter.EdgeList(output_graph, output_path, sep=self.args.output_separator, header=output_header)
+            PyntacleExporter.EdgeList(output_graph, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "sif":
             sys.stdout.write("Creating Simple Interaction File of the generated graph\n")
-            Exporter.Sif(output_graph, output_path, sep=self.args.output_separator, header=output_header)
+            PyntacleExporter.Sif(output_graph, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "dot":
             sys.stdout.write("Creating DOT File of the generated graph\n")
 
             # Ignore ugly RuntimeWarnings while creating a dot
             simplefilter("ignore", RuntimeWarning)
-            Exporter.Dot(output_graph, output_path)
+            PyntacleExporter.Dot(output_graph, output_path)
 
         elif out_form == "bin":
             sys.stdout.write("Storing the created graph into a .graph (binary) file\n")
-            Exporter.Binary(output_graph, output_path)
+            PyntacleExporter.Binary(output_graph, output_path)
 
         sys.stdout.write(
             "Path to the output graph after set operation: {}\n".format(os.path.abspath(output_path)))

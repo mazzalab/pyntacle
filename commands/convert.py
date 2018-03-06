@@ -5,7 +5,7 @@ from warnings import simplefilter
 from config import *
 from io_stream.edgelist_to_sif import EdgeListToCytoscape
 # output format
-from io_stream.exporter import Exporter
+from io_stream.exporter import PyntacleExporter
 from misc.graph_load import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
@@ -119,7 +119,7 @@ class Convert():
             if out_form == "adjm":
                 sys.stdout.write("Converting input file {0} to adjacency matrix at path {1} \n".format(
                     os.path.abspath(self.args.input_file), output_path))
-                Exporter.AdjacencyMatrix(graph, output_path, sep=self.args.output_separator,
+                PyntacleExporter.AdjacencyMatrix(graph, output_path, sep=self.args.output_separator,
                                          header=output_header)
 
             elif out_form == "egl":
@@ -127,13 +127,13 @@ class Convert():
                     "Converting input file {0} to edge list at path {1} \n".format(
                         os.path.abspath(self.args.input_file),
                         output_path))
-                Exporter.EdgeList(graph, output_path, sep=self.args.output_separator, header=output_header)
+                PyntacleExporter.EdgeList(graph, output_path, sep=self.args.output_separator, header=output_header)
 
             elif out_form == "sif":
                 sys.stdout.write(
                     "Converting input file {0} to Simple Interaction Format (sif) at path {1} \n".format(
                         os.path.abspath(self.args.input_file), output_path))
-                Exporter.Sif(graph, output_path, sep=self.args.output_separator, header=output_header)
+                PyntacleExporter.Sif(graph, output_path, sep=self.args.output_separator, header=output_header)
 
             elif out_form == "dot":
                 # Ignore ugly RuntimeWarnings while converting to dot
@@ -142,14 +142,14 @@ class Convert():
                 sys.stdout.write(
                     "Converting input file {0} to dot file using igraph utilities at path {1} (output separator will be ignored)\n".format(
                         os.path.abspath(self.args.input_file), output_path))
-                Exporter.Dot(graph, output_path)
+                PyntacleExporter.Dot(graph, output_path)
 
 
             elif out_form == "graph":
                 sys.stdout.write(
                     "Converting input file {0} to a binary file at path {1} (output separator will be ignored)\n".format(
                         os.path.abspath(self.args.input_file), output_path))
-                Exporter.Binary(graph, output_path)
+                PyntacleExporter.Binary(graph, output_path)
 
             cursor.stop()
             sys.stdout.write("{} converted successfully\n".format(os.path.basename(self.args.input_file)))

@@ -35,6 +35,8 @@ from misc.enums import KPPOSchoices, KPNEGchoices, SP_implementations
 from misc.kpsearch_utils import greedy_search_initializer
 from utils.graph_utils import GraphUtils as gu
 import random
+from functools import partial
+
 
 class GreedyOptimization:
     """
@@ -86,15 +88,20 @@ class GreedyOptimization:
         temp_graph.delete_vertices(S)
 
         if kpp_type == KPNEGchoices.F:
-            fragmentation_score = kp.F(graph=graph) #initial scores
+            type_func = partial(kp.F, graph=graph)
+    
+            #fragmentation_score = kp.F(graph=graph) #initial scores
 
         elif kpp_type == KPNEGchoices.dF:
+            type_func = partial(kp.dF, graph=graph, max_distances=max_sp)
             # call the initial graph score here using automatic implementation for SPs
-            fragmentation_score = kp.dF(graph=graph, max_distances=max_sp)
+           # fragmentation_score = kp.dF(graph=graph, max_distances=max_sp)
         else: #here all the other KPNEG functions we want to insert
             sys.stdout.write("{} Not yet implemented, please come back later!".format(kpp_type.name))
             sys.exit(0)
 
+        fragmentation_score = type_func(graph=graph)
+        
         kppset_score_pairs_history = {} #a dictionary that stores score pairs
         """:type: dic{(), float}"""
         kppset_score_pairs_history[tuple(S)] = fragmentation_score #keep track of the initial kp scores after the initial set is removed
@@ -121,12 +128,13 @@ class GreedyOptimization:
                         temp_graph = graph.copy() #create a new graph object and remove the modified kpp-set
                         temp_graph.delete_vertices(temp_kpp_set)
 
-                        if kpp_type == KPNEGchoices.F:
-                            temp_kpp_func_value = kp.F(graph=temp_graph) #new modified scores
-
-                        elif kpp_type == KPNEGchoices.dF:
-                            temp_kpp_func_value = kp.dF(graph=temp_graph, max_distances=max_sp)
-
+                        # if kpp_type == KPNEGchoices.F:
+                        #     temp_kpp_func_value = kp.F(graph=temp_graph) #new modified scores
+                        #
+                        # elif kpp_type == KPNEGchoices.dF:
+                        #     temp_kpp_func_value = kp.dF(graph=temp_graph, max_distances=max_sp)
+                        temp_kpp_func_value = type_func(graph=temp_graph
+                                                        )
                         kppset_score_pairs[temp_kpp_set_tuple] = temp_kpp_func_value #store the value in the dictionary
                         kppset_score_pairs_history[temp_kpp_set_tuple] = temp_kpp_func_value
 

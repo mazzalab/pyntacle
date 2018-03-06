@@ -73,7 +73,7 @@ class PyntacleExporter:
             adjmatrix.to_csv(path_or_buf=file, sep=sep, header=False, index=False)
 
 
-        sys.stdout.write("Graph successfully exporte to Adjacency Matrix at path: {}\n".format(os.path.abspath(file)))
+        sys.stdout.write("Graph successfully exported to Adjacency Matrix at path: {}\n".format(os.path.abspath(file)))
         return None
 
     @staticmethod

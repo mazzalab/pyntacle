@@ -52,7 +52,7 @@ if os.name == "nt":
 from kp_tools.reporter import *
 # Main commands wrappers
 from commands.keyplayer import KeyPlayer as kp_command
-from commands.metrics import Metrics as metrics_command
+# from commands.metrics import Metrics as metrics_command
 from commands.convert import Convert as convert_command
 from commands.generate import Generate as generate_command
 from commands.set import Set as set_command
@@ -359,9 +359,15 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
     def generate(self):
 
         parser = argparse.ArgumentParser(
-            description='Generate graphs based on specific topologies using the igraph Generator',
+            description='Generate graphs based on specific topologies using the igraph Generator\n\nSubcommands:\n'
+                        '  random\t      random generator\n'
+                        '  scale-free\t      scale-free generator\n'
+                        '  tree\t              tree generator\n'
+                        '  small-world\t      small-world generator',
             formatter_class=argparse.RawDescriptionHelpFormatter,
-            usage=Fore.RED + Style.BRIGHT + 'pyntacle.py generate [arguments]' + Style.RESET_ALL)
+            usage=Fore.RED + Style.BRIGHT + 'pyntacle.py generate' + Fore.GREEN + Style.BRIGHT +
+                  ' {random, scale-free, tree, small-world}' + Fore.RED +
+                  ' [arguments]' + Style.RESET_ALL+ Style.RESET_ALL)
 
         # NOT prefixing the argument with -- means it's not optional
 
@@ -371,7 +377,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument("--output-file", "-o",
                             help="base name of the output file. If not specified, a significant name  with a random code will be generated")
 
-        parser.add_argument("-u", "--output-format",
+        parser.add_argument("-u", "--output-format", metavar="",
                             choices=format_dictionary.keys(),
                             default='adjmat',
                             help='Desired output format. Default is \'adjmat\' (Adjacency Matrix')
@@ -384,7 +390,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         parser.add_argument('--plot-format', choices=["svg", "pdf", "png"], default="pdf",
                             type=lambda s: s.lower(),
-                            help="define the format of \"--draw-graph\". Choices are {svg, pdf, png}. Default is \"pdf\"")
+                            help="Define the format of \"--draw-graph\". Choices are {svg, pdf, png}. Default is \"pdf\"")
 
         parser.add_argument('--plot-dim',
                             help="Comma-separated format of your plot (default is 800,800 for graph <= 150 nodes and 1600,1600 for larger graphs")
@@ -392,30 +398,34 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument("--no-plot", action="store_true",
                             help="Do not output plots (recommended for graphs above 1k nodes)")
 
+        parser.add_argument("-S", "--seed", type=int, help="Seed (integer) for the random component of the generators. "
+                                                 "If set, for each seed the generator will always produce "
+                                                 "the same graph.", metavar="", default=None)
+        
         parser.add_argument('-v', action="count", help="verbosity level. -vvv is the highest level")
 
         subparsers = parser.add_subparsers(metavar='', help=argparse.SUPPRESS)
         # Subparser for the nodes case
 
         random_subparser = subparsers.add_parser("random",
-                                                 usage='pyntacle.py generate random [-h] [-v] [-o] [-d] [-n INT] [-p FLOAT] [--e INT] [--no-plot]',
+                                                 usage='pyntacle.py generate random [-h] [-v] [-o] [-d] [-n INT] [-S INT] [-p FLOAT] [--e INT] [--no-plot]',
                                                  add_help=False, parents=[parser],
                                                  formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                      max_help_position=100,
                                                                                                      width=150))
         random_subparser.set_defaults(which='random')
 
-        random_subparser.add_argument("-n", "--nodes",
+        random_subparser.add_argument("-n", "--nodes", type=int,
                                       help="number of nodes of the output graph. If not specified, will be a number between 30 and 300 (chosen randomly)")
 
         random_subparser.add_argument("-p", "--probability",
                                       help="Wiring probability of connecting each node pair. Must be a float between 0 and 1. Default is 0.5. Excludes --edges")
 
-        random_subparser.add_argument("-e", "--edges",
+        random_subparser.add_argument("-e", "--edges", type=int,
                                       help="The number of random edges that the random graph will have. Is excluded if -p is present")
 
         scalefree_subparser = subparsers.add_parser("scale-free",
-                                                    usage='pyntacle.py generate scale-free[-h] [-v] [-o] [-d] [-n INT] [-m INT] [--no-plot]',
+                                                    usage='pyntacle.py generate scale-free[-h] [-v] [-o] [-d] [-n INT] [-S INT] [-m INT] [--no-plot]',
                                                     add_help=False, parents=[parser],
                                                     formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                         max_help_position=100,
@@ -429,7 +439,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                          help="Number of outgoing edges for each node in the scale-free graph. Must be a positive integer. If not specified, it will be chosen randomly between 10 and 100")
 
         tree_subparser = subparsers.add_parser("tree",
-                                               usage='pyntacle.py generate scale-free[-h] [-v] [-o] [-d] [-n INT] [-c INT] [--no-plot]',
+                                               usage='pyntacle.py generate scale-free[-h] [-v] [-o] [-d] [-n INT] [-S INT] [-c INT] [--no-plot]',
                                                add_help=False, parents=[parser],
                                                formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                    max_help_position=100,
@@ -442,7 +452,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                     help="Number of Children per node branch. If not specified, will be a number between 2 and 10")
 
         smallworld_subparser = subparsers.add_parser("small-world",
-                                                     usage='pyntacle.py generate scale-free[-h] [-v] [-o] [-d] [-l INT] [-s INT] [-n INT] [-p FLOAT] [--no-plot]',
+                                                     usage='pyntacle.py generate scale-free[-h] [-v] [-o] [-d] [-l INT] [-S INT] [-s INT] [-n INT] [-p FLOAT] [--no-plot]',
                                                      add_help=False, parents=[parser],
                                                      formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                          max_help_position=100,
@@ -452,10 +462,10 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         smallworld_subparser.add_argument("-l", "--lattice", default=2,
                                           help="The lattice Dimensions. Defaulty is 2. It is highliy recommeneded not use small values,as lattices with great dimensions cannot be handeld by a normal Desktop")
 
-        smallworld_subparser.add_argument("-s", "--lattice-size", default=random.randint(2, 5),
+        smallworld_subparser.add_argument("-s", "--lattice-size", default=None,
                                           help="Dimension of the lattice among all dimension. Default is a number between 2 and 5. It is highly recommended to keep this number low")
 
-        smallworld_subparser.add_argument("-n", "--nei", default=random.randint(1, 5),
+        smallworld_subparser.add_argument("-n", "--nei", default=None,
                                           help="Number of steps in which two vertices will be connected. Default is choosen randomly between 2 and 5")
 
         smallworld_subparser.add_argument("-p", "--probability", default=0.5,
@@ -565,7 +575,6 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                                   formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                       max_help_position=100,
                                                                                                       width=150))
-
         infomap_subparser.set_defaults(which='infomap')
 
         leading_eigenvector_subparser = subparsers.add_parser("leading-eigenvector",
@@ -574,16 +583,14 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                                               formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                                   max_help_position=100,
                                                                                                                   width=150))
-
         leading_eigenvector_subparser.set_defaults(which='leading-eigenvector')
 
-        community_walktrap_subparser = subparsers.add_parser("community_walktrap",
+        community_walktrap_subparser = subparsers.add_parser("community-walktrap",
                                                              usage='pyntacle.py communities community-walktrap [-h] [-v] [-o] [-d] [-dr] [-m] [-M] [-c] [-C] [--no-plot]',
                                                              add_help=False, parents=[parser],
                                                              formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                                  max_help_position=100,
                                                                                                                  width=150))
-
         community_walktrap_subparser.set_defaults(which='community-walktrap')
 
         community_walktrap_subparser.add_argument("--weights",
@@ -592,7 +599,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                                   help="Specify the number of modules that will be oupoutted by the module decomposition algorithm. If not specified, a maximized number of modules will be generated")
 
         community_walktrap_subparser.add_argument("--steps",
-                                                  help="Specify the length of random walks that will be used by the algorithm  to find modules. Default is 3.")
+                                                  help="Specify the length of random walks that will be used by the algorithm  to find modules. Default is 3.", default='3')
 
         community_walktrap_subparser.add_argument("--weights-format", choices=["standard", "cytoscape"], metavar="",
                                                   default="standard",
