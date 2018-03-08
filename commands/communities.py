@@ -5,9 +5,9 @@ from graph_operations.modules_finder import CommunityFinder
 from io_stream.exporter import PyntacleExporter
 from kp_tools.plotter import PlotGraph
 from io_stream.import_attributes import ImportAttributes
-from utils.modules_utils import ModuleUtils
+from tools.modules_utils import ModuleUtils
 from misc.graph_load import *
-from utils.graph_utils import *
+from tools.graph_utils import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"

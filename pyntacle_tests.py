@@ -25,7 +25,7 @@ from graph_operations.octopus import *
 
 from igraph import Graph
 from io_stream.import_attributes import ImportAttributes
-from utils.add_attributes import AddAttributes
+from tools.add_attributes import AddAttributes
 from io_stream.importer import PyntacleImporter
 from misc.graph_load import *
 

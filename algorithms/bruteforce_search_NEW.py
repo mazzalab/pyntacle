@@ -37,7 +37,7 @@ from exceptions.wrong_argument_error import WrongArgumentError
 from misc.enums import KPPOSchoices, KPNEGchoices
 from misc.kpsearch_utils import greedy_search_initializer
 from misc.graph_routines import check_graph_consistency
-from utils.graph_utils import GraphUtils as gu
+from tools.graph_utils import GraphUtils as gu
 from config import *
 
 class BruteforceSearch:

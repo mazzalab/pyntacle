@@ -32,7 +32,7 @@ from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
 from exceptions.unsupported_graph_error import UnsupportedGrapherror
 # pyntacle Libraries
 from exceptions.wrong_argument_error import WrongArgumentError
-from utils.add_attributes import AddAttributes
+from tools.add_attributes import AddAttributes
 
 class ImportAttributes():
     logger = None

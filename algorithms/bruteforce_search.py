@@ -9,7 +9,7 @@ import itertools
 from igraph import Graph
 from algorithms.key_player import KeyPlayer, _KeyplayerAttribute
 from exceptions.illegal_kppset_size_error import IllegalKppsetSizeError
-from utils.graph_utils import *
+from tools.graph_utils import *
 from config import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"

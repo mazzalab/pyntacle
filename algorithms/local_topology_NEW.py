@@ -32,7 +32,7 @@ from misc.graph_routines import *
 from misc.enums import SP_implementations as imps
 from misc.enums import GraphType
 from misc.shortest_path_modifications import *
-from utils.graph_utils import GraphUtils as ut
+from tools.graph_utils import GraphUtils as ut
 from numba import cuda, jit, prange
 import numpy as np
 

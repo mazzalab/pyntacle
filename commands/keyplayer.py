@@ -6,7 +6,7 @@ from io_stream.exporter import PyntacleExporter
 from kp_tools.kp_runner_OLD import *
 from kp_tools.plotter import *
 from kp_tools.reporter import *
-from utils.graph_utils import *
+from tools.graph_utils import *
 from misc.graph_load import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"

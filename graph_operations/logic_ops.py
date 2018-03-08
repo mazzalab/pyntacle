@@ -1,6 +1,6 @@
 from igraph import Graph
-from utils.add_attributes import AddAttributes
-from utils.graph_utils import GraphUtils
+from tools.add_attributes import AddAttributes
+from tools.graph_utils import GraphUtils
 from config import *
 from collections import OrderedDict
 

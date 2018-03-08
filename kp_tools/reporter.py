@@ -19,7 +19,7 @@ from algorithms.local_topology import _LocalAttribute
 from algorithms.sparseness import _SparsenessAttribute
 from exceptions.missing_attribute_error import MissingAttributeError
 from exceptions.wrong_argument_error import WrongArgumentError
-from utils import graph_utils  # swiss knife for graph utilities
+from tools import graph_utils  # swiss knife for graph utilities
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"

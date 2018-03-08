@@ -7,7 +7,7 @@ from enum import Enum
 from igraph import Graph
 from algorithms import global_topology
 from exceptions.wrong_argument_error import WrongArgumentError
-from utils.graph_utils import GraphUtils
+from tools.graph_utils import GraphUtils
 from config import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"

@@ -30,7 +30,7 @@ __license__ = u"""
 
 import random
 from igraph import Graph
-from utils.add_attributes import AddAttributes as ad
+from tools.add_attributes import AddAttributes as ad
 from misc.generators_utils import *
 
 class Generator:

@@ -29,7 +29,7 @@ import sys
 
 import pandas as pd
 from config import *
-from utils import edgelist_utils
+from tools import edgelist_utils
 
 '''
 this class covers the processing of an edgelist to a  simple interaction format (sif) that can be passed to cytoscape

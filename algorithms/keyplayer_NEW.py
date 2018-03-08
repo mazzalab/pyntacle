@@ -26,7 +26,7 @@ __license__ = u"""
 
 import algorithms.local_topology_NEW as lt
 from misc.graph_routines import *
-from utils.graph_utils import GraphUtils as gu
+from tools.graph_utils import GraphUtils as gu
 from misc.shortest_path_modifications import *
 from misc.enums import SP_implementations as imps
 import numpy as np

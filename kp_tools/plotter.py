@@ -16,7 +16,7 @@ from igraph import Graph, plot
 from exceptions.missing_attribute_error import MissingAttributeError
 from exceptions.wrong_argument_error import WrongArgumentError
 # pyntacle libraries
-from utils import graph_utils
+from tools import graph_utils
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"

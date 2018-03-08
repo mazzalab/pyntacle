@@ -30,11 +30,11 @@ import pickle
 import numpy as np
 from config import *
 from misc.binarycheck import *
-from utils.graph_utils import GraphUtils
+from tools.graph_utils import GraphUtils
 from misc.import_utils import *
-from utils.add_attributes import *
-from utils.adjmatrix_utils import AdjmUtils
-from utils.edgelist_utils import EglUtils
+from tools.add_attributes import *
+from tools.adjmatrix_utils import AdjmUtils
+from tools.edgelist_utils import EglUtils
 from exceptions.illegal_graph_size_error import IllegalGraphSizeError
 from exceptions.unproperlyformattedfile_error import UnproperlyFormattedFileError
 from pyparsing import *

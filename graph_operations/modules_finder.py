@@ -25,7 +25,7 @@ __license__ = u"""
   """
 
 # pyntacle libraries
-from utils.modules_utils import *
+from tools.modules_utils import *
 from config import *
 
 """This tool uses the embedded methods in `igraph` to call several community finding algorithms and returns a list of 

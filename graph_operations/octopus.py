@@ -24,7 +24,7 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-from utils.add_attributes import AddAttributes
+from tools.add_attributes import AddAttributes
 from algorithms.local_topology_NEW import LocalTopology
 from algorithms.global_topology_NEW import GlobalTopology
 from misc.enums import GraphType

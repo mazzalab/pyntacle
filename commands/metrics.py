@@ -11,7 +11,7 @@ from kp_tools.plotter import *
 from kp_tools.reporter import *
 from io_stream.import_attributes import ImportAttributes
 from misc.graph_load import *
-from utils.graph_utils import GraphUtils
+from tools.graph_utils import GraphUtils
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"

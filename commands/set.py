@@ -6,7 +6,7 @@ from exceptions.multiple_solutions_error import MultipleSolutionsError
 from graph_operations.logic_ops import GraphSetter
 from io_stream.exporter import PyntacleExporter
 from kp_tools.plotter import PlotGraph
-from utils.graph_utils import GraphUtils
+from tools.graph_utils import GraphUtils
 from misc.graph_load import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"

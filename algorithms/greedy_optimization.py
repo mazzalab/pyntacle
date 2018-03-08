@@ -7,7 +7,7 @@ from igraph import Graph
 
 from algorithms.key_player import KeyPlayer
 from exceptions.illegal_kppset_size_error import IllegalKppsetSizeError
-from utils.graph_utils import *
+from tools.graph_utils import *
 from config import *
 from random import seed
 from misc.enums import KPNEGchoices, KPPOSchoices

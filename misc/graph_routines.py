@@ -32,7 +32,7 @@ from exceptions.illegal_graph_size_error import IllegalGraphSizeError
 from exceptions.unsupported_graph_error import UnsupportedGrapherror
 from exceptions.wrong_argument_error import WrongArgumentError
 from config import *
-from utils.graph_utils import *
+from tools.graph_utils import *
 import time
 from functools import wraps
 # todo recheck all the init properties of an igraph Graph (in IO)
