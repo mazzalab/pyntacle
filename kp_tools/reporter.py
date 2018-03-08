@@ -114,7 +114,7 @@ class pyntacleReporter():
         '''
         Creates a reporter for the KP metrics as a list of lists (stored in the self.kp_tools list
         
-        :param resultsdic: a dictionary of results as outputted by kp_runner.py
+        :param resultsdic: a dictionary of results as outputted by kp_runner_OLD.py
         '''
 
         # initialize empty kp_tools

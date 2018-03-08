@@ -44,7 +44,7 @@ class GreedyOptimization:
     @staticmethod
     @check_graph_consistency
     @greedy_search_initializer
-    def kpp_neg_greedy(graph, kpp_size, kpp_type, seed=None, max_distances=None) -> (list, float):
+    def fragmentation(graph, kpp_size, kpp_type, seed=None, max_distances=None) -> (list, float):
         """
         It iteratively searches for a kpp-set of a predefined vertex set size, removes it and measures the residual
         fragmentation score of the KPNEG metric queried (choices are available in misc/enums).
@@ -163,7 +163,7 @@ class GreedyOptimization:
     @staticmethod
     @check_graph_consistency
     @greedy_search_initializer #todo solve the m problem in this decorator
-    def optimize_kpp_pos(graph, kpp_size, kpp_type, seed=None, max_distances=None, m=None) -> (list, float):
+    def reachability(graph, kpp_size, kpp_type, seed=None, max_distances=None, m=None) -> (list, float):
         """
         It iteratively searches for a kpp-set of a predefined dimension, with maximal reachability according to the
         KPPOS metrics asked.

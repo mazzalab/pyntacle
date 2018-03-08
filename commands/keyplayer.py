@@ -3,7 +3,7 @@ from algorithms.key_player import *
 from algorithms.key_player import _KeyplayerAttribute
 from exceptions.generic_error import Error
 from io_stream.exporter import PyntacleExporter
-from kp_tools.kp_runner import *
+from kp_tools.kp_runner_OLD import *
 from kp_tools.plotter import *
 from kp_tools.reporter import *
 from utils.graph_utils import *
