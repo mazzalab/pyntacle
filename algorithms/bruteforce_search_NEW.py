@@ -47,7 +47,7 @@ class BruteforceSearch:
     @staticmethod
     @check_graph_consistency
     @greedy_search_initializer
-    def bruteforce_fragmentation(graph, kpp_size, kpp_type, max_distances=None) -> (list, float):
+    def fragmentation(graph, kpp_size, kpp_type, max_distances=None) -> (list, float):
         """
         It searches and finds the kpp-set of a predefined dimension that best disrupts the graph.
         It generates all the possible kpp-sets and calculates the fragmentation score of the residual graph, after
@@ -115,7 +115,7 @@ class BruteforceSearch:
     @staticmethod
     @check_graph_consistency
     @greedy_search_initializer
-    def bruteforce_reachability(graph, kpp_size, kpp_type, m=None, max_distances=None) -> (list, float):
+    def reachability(graph, kpp_size, kpp_type, m=None, max_distances=None) -> (list, float):
         """
         It searches and finds the kpp-set of a predefined dimension that best reaches all other nodes over the graph.
         It generates all the possible kpp-sets and calculates their reachability scores.
