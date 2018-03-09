@@ -4,7 +4,7 @@ from exceptions.illegal_graph_size_error import IllegalGraphSizeError
 from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
 from io_stream.generator import *
 from io_stream.exporter import PyntacleExporter
-from kp_tools.plotter import *
+from pyntacle_commands_utils.plotter import *
 from warnings import simplefilter
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"

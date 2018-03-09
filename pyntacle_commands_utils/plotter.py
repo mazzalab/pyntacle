@@ -47,7 +47,7 @@ __license__ = u"""
 
 class PlotGraph():
     """
-    Rhis method creates a kp_tools according to the type of analysis run by pyntacle
+    Rhis method creates a pyntacle_commands_utils according to the type of analysis run by pyntacle
     """
 
     logger = None  # write logger to shell

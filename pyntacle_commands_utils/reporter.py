@@ -50,7 +50,7 @@ __license__ = u"""
 
 class pyntacleReporter():
     '''
-    This method creates a kp_tools according to the type of analysis run by pyntacle
+    This method creates a pyntacle_commands_utils according to the type of analysis run by pyntacle
     '''
 
     def __init__(self, graph: Graph, graph2=None):
@@ -79,7 +79,7 @@ class pyntacleReporter():
             self.__utils2 = graph_utils.GraphUtils(graph=self.__graph2)
             self.__utils2.graph_checker()
 
-        self.__report = [] #initialize empty kp_tools
+        self.__report = [] #initialize empty pyntacle_commands_utils
 
     def __init_report(self, report_type: str):
 
@@ -100,7 +100,7 @@ class pyntacleReporter():
                 self.__report.append(["edges", self.__graph.ecount(), self.__graph2.ecount()])
 
             else:
-                raise ValueError("a second graph is not initialized in kp_tools, please re-instanciate the class adding the second graph")
+                raise ValueError("a second graph is not initialized in pyntacle_commands_utils, please re-instanciate the class adding the second graph")
         else:
             self.__report.append(["graph name", ",".join(self.__graph["name"])])
             self.__report.append(["components", len(self.__graph.components())])
@@ -112,12 +112,12 @@ class pyntacleReporter():
     def report_KP(self, resultsdic: dict, m=None):
 
         '''
-        Creates a reporter for the KP metrics as a list of lists (stored in the self.kp_tools list
+        Creates a reporter for the KP metrics as a list of lists (stored in the self.pyntacle_commands_utils list
         
         :param resultsdic: a dictionary of results as outputted by kp_runner_OLD.py
         '''
 
-        # initialize empty kp_tools
+        # initialize empty pyntacle_commands_utils
         self.__init_report(report_type="Key Player")
         self.__report.append(["\n"])
         self.__report.append(["-Run Info-"])
@@ -132,7 +132,7 @@ class pyntacleReporter():
                 self.__report.append(["Starting Value - F (whole graph): ", resultsdic[_KeyplayerAttribute.F][0]])
 
             else:
-                raise WrongArgumentError("Starting F must be specified for the kp_tools")
+                raise WrongArgumentError("Starting F must be specified for the pyntacle_commands_utils")
 
         if _KeyplayerAttribute.DF in resultsdic.keys():
 
@@ -140,7 +140,7 @@ class pyntacleReporter():
                 self.__report.append(["Starting Value - DF (whole graph): ", resultsdic[_KeyplayerAttribute.DF][0]])
 
             else:
-                raise WrongArgumentError("Starting F must be specified for the kp_tools")
+                raise WrongArgumentError("Starting F must be specified for the pyntacle_commands_utils")
 
         if _KeyplayerAttribute.MREACH in resultsdic.keys():
             if not isinstance(m, int):
@@ -166,7 +166,7 @@ class pyntacleReporter():
 
     def report_global_topology(self, attributes_list: list):
         '''
-        Create a kp_tools (as a list) containing all the global attributes list requested
+        Create a pyntacle_commands_utils (as a list) containing all the global attributes list requested
         
         :param attributes_list: a list of GlobalAttributes that must be reported
         :param graph_copy: a second graph to be reported
@@ -248,7 +248,7 @@ class pyntacleReporter():
 
         # fix the shortest path and add the following fields instead
 
-        self.__init_report(report_type="Metrics - Local Topology")  # initialize standard kp_tools
+        self.__init_report(report_type="Metrics - Local Topology")  # initialize standard pyntacle_commands_utils
         if len(node_names) > 1:
             self.__report.append(["Info on selected nodes"])
         else:
@@ -297,7 +297,7 @@ class pyntacleReporter():
 
                         else:
                             self.logger.warning(
-                                "node {0} is an isolate, therefore it will have no sp kp_tools for it, returning \"NA\" instead")
+                                "node {0} is an isolate, therefore it will have no sp pyntacle_commands_utils for it, returning \"NA\" instead")
                             elem.extend(("NA", "NA", "NA"))
 
                 else:
@@ -331,7 +331,7 @@ class pyntacleReporter():
 
     def get_report(self):
         '''
-        Return the self.kp_tools list in order to pass it to an external builder
+        Return the self.pyntacle_commands_utils list in order to pass it to an external builder
         
         :return: the self.__report object
         '''
@@ -342,7 +342,7 @@ class pyntacleReporter():
         extensionlist = [".txt", ".tsv", ".xlsx", ".csv"]
 
         if not self.__report:
-            raise EnvironmentError("a kp_tools must be created first using one of the several kp_tools functions")
+            raise EnvironmentError("a pyntacle_commands_utils must be created first using one of the several pyntacle_commands_utils functions")
 
         if report_path is not None:
             report_path = os.path.abspath(report_path)
@@ -353,11 +353,11 @@ class pyntacleReporter():
 
             reportdir = os.path.dirname(os.path.abspath(report_path))
             if not os.path.isdir(reportdir):
-                self.logger.warning("directory of kp_tools does not exists, creating it")
+                self.logger.warning("directory of pyntacle_commands_utils does not exists, creating it")
                 os.makedirs(reportdir, exist_ok=True)
 
         else:
-            self.logger.info("kp_tools path is not specified, using generic name \"pyntacle_report\" "
+            self.logger.info("pyntacle_commands_utils path is not specified, using generic name \"pyntacle_report\" "
                              "on the current directory (tab-separated file")
 
             report_path = os.path.join(os.path.abspath(os.getcwd()), "pyntacle_report.tsv")
@@ -368,7 +368,7 @@ class pyntacleReporter():
             with open(report_path, "w") as out:
 
                 if extension == ".tsv" or extension == ".txt":
-                    self.logger.info("creating a tab-delimited kp_tools")
+                    self.logger.info("creating a tab-delimited pyntacle_commands_utils")
 
                     for elem in self.__report:
                         elem.append("\n")
@@ -376,12 +376,12 @@ class pyntacleReporter():
                     out.writelines(["\t".join(x) for x in self.__report])
 
                 elif extension == ".csv":
-                    self.logger.info("creating csv kp_tools")
+                    self.logger.info("creating csv pyntacle_commands_utils")
                     writer = csv.writer(out)
                     writer.writerows(self.__report)
 
         else:
-            self.logger.info("creating an excel kp_tools")
+            self.logger.info("creating an excel pyntacle_commands_utils")
             workbook = xlsxwriter.Workbook(report_path, {'constant_memory': True})
             workbook.use_zip64()
             format = workbook.add_format()
