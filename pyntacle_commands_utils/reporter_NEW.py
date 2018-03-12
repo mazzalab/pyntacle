@@ -25,12 +25,11 @@ __license__ = u"""
   """
 
 from config import *
-import csv
-import os
-from math import isnan
-import xlsxwriter
+import csv, os, xlsxwriter
+from math import isnan, isinf
 from igraph import Graph
-from numpy import isinf, median
+from numpy import median
+from misc.enums import KPNEGchoices, KPPOSchoices,
 from algorithms.global_topology import _GlobalAttribute
 from algorithms.key_player import _KeyplayerAttribute
 from algorithms.local_topology import _LocalAttribute
@@ -40,7 +39,6 @@ from exceptions.wrong_argument_error import WrongArgumentError
 from tools import graph_utils  # swiss knife for graph utilities
 
 """ Utility to produce the report for the pyntacle commands """
-
 
 class pyntacleReporter():
     '''

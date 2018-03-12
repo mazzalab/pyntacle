@@ -37,7 +37,7 @@ this class covers the processing of an edgelist to a  simple interaction format 
 
 
 #todo rework all this
-class EdgeListToCytoscape():
+class EdgeListToCytoscape:
     '''
     This class converts an edge list into a sif file (simple interaction format) in the most basic way:
     a tab delimited file in which each line represent an edge (so node A \t node B)
@@ -47,7 +47,6 @@ class EdgeListToCytoscape():
         self.logger = log
 
         if not os.path.exists(input_file):
-            self.logger.error("The input file does not exist")
             raise FileNotFoundError("File does not exist")
 
         else:
