@@ -29,54 +29,42 @@ import csv, os, xlsxwriter
 from math import isnan, isinf
 from igraph import Graph
 from numpy import median
-from misc.enums import KPNEGchoices, KPPOSchoices,
+from misc.enums import KPNEGchoices, KPPOSchoices, Reports
 from algorithms.global_topology import _GlobalAttribute
 from algorithms.key_player import _KeyplayerAttribute
 from algorithms.local_topology import _LocalAttribute
 from algorithms.sparseness import _SparsenessAttribute
 from exceptions.missing_attribute_error import MissingAttributeError
 from exceptions.wrong_argument_error import WrongArgumentError
-from tools import graph_utils  # swiss knife for graph utilities
+from tools.graph_utils import GraphUtils as gu # swiss knife for graph utilities
 
-""" Utility to produce the report for the pyntacle commands """
+""" Utility to produce the report for global topology, local topology and modules """
 
 class pyntacleReporter():
-    '''
+    """
     This method creates a pyntacle_commands_utils according to the type of analysis run by pyntacle
-    '''
+    """
+    logger = None
 
-    def __init__(self, graph: Graph, graph2=None):
+    def __init__(self, graph: Graph, report_type:str):
         '''
-        Initialize a reporter function for the given graph
-
+        I
         :param graph: the target igraph Graph object
         '''
 
         self.logger = log
-        '''
-        check if graph has node names and they are unique
-        '''
 
         # store first graph
         self.__graph = graph
 
         # initialize graph utility class
-        self.__utils = graph_utils.GraphUtils(graph=self.__graph)
+        self.__utils = gu(graph=self.__graph)
         self.__utils.graph_checker()  # check that input graph is properly set
+        if not isinstance(report_type,)
 
-        if graph2 is not None and isinstance(graph2, Graph):
-            self.logger.info("adding second graph for comparison purposes")
-
-            self.__graph2 = graph2
-            self.__utils2 = graph_utils.GraphUtils(graph=self.__graph2)
-            self.__utils2.graph_checker()
-
-        self.__report = []  # initialize empty pyntacle_commands_utils
-
-    def __init_report(self, report_type: str):
-
+    def __init_report(self, report_type: Reports):
+        #todo riscrivere tutto con karma
         self.__report = []
-
         self.__report.append([" ".join(["pyntacle", "Report:", report_type])])
 
         if report_type == "Metrics - Global Topology Comparison":
