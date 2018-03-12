@@ -35,6 +35,7 @@ from misc.graph_routines import *
 from exceptions.wrong_argument_error import WrongArgumentError
 from misc.enums import KPPOSchoices, KPNEGchoices
 from misc.kpsearch_utils import greedy_search_initializer
+from misc.implementation_seeker import implementation_seeker
 from tools.graph_utils import GraphUtils as gu
 
 class GreedyOptimization:
@@ -96,7 +97,8 @@ class GreedyOptimization:
             type_func = partial(kp.F, graph=graph)
 
         elif kpp_type == KPNEGchoices.dF:
-            type_func = partial(kp.dF, graph=graph, max_distances=max_distances)
+            implementation = implementation_seeker(graph)
+            type_func = partial(kp.dF, graph=graph, max_distances=max_distances, implementation=implementation)
             # call the initial graph score here using automatic implementation for SPs
 
         else: #here all the other KPNEG functions we want to insert
@@ -195,14 +197,16 @@ class GreedyOptimization:
         if kpp_type == KPPOSchoices.mreach and m is None:
             raise WrongArgumentError("\"m\" must be specified for mreach")
 
+        implementation = implementation_seeker(graph) #call it here in order NOT to call the implementation seeker at each KP search
+
         if kpp_type == KPPOSchoices.mreach:
             if not isinstance(m, int) or m <= 0:
                 raise TypeError({"\"m\" must be a positive integer"})
             else:
-                type_func = partial(kp.mreach, graph=graph, nodes=S_names, m=m, max_distances=max_distances)
+                type_func = partial(kp.mreach, graph=graph, nodes=S_names, m=m, max_distances=max_distances, implementation=implementation)
 
         elif kpp_type == KPPOSchoices.dR:
-            type_func = partial(kp.dR, graph=graph, nodes=S_names, max_distances=max_distances)
+            type_func = partial(kp.dR, graph=graph, nodes=S_names, max_distances=max_distances, implementation=implementation)
 
         else: #all the other KPNEG functions we want to insert
             sys.stdout.write("{} Not yet implemented, please come back later!".format(kpp_type.name))
@@ -232,7 +236,7 @@ class GreedyOptimization:
 
                     else:
                         temp_kpp_set_names = utils.get_node_names(index_list=temp_kpp_set)
-                        temp_kpp_func_value=type_func(graph=graph, nodes=temp_kpp_set_names, max_distances=max_distances)
+                        temp_kpp_func_value=type_func(graph=graph, nodes=temp_kpp_set_names, max_distances=max_distances, implementation=implementation)
 
                         kppset_score_pairs[temp_kpp_set_tuple] = temp_kpp_func_value
                         kppset_score_pairs_history[temp_kpp_set_tuple] = temp_kpp_func_value

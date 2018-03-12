@@ -37,6 +37,7 @@ from exceptions.wrong_argument_error import WrongArgumentError
 from misc.enums import KPPOSchoices, KPNEGchoices
 from misc.kpsearch_utils import greedy_search_initializer
 from misc.graph_routines import check_graph_consistency
+from misc.implementation_seeker import implementation_seeker
 from tools.graph_utils import GraphUtils as gu
 from config import *
 
@@ -78,7 +79,8 @@ class BruteforceSearch:
             type_func = partial(KeyPlayer.F, graph=graph)
 
         elif kpp_type == KPNEGchoices.dF:
-            type_func = partial(KeyPlayer.dF, graph=graph, max_distances=max_distances)
+            implementation = implementation_seeker(graph) #call the correct implementation and pass it
+            type_func = partial(KeyPlayer.dF, graph=graph, max_distances=max_distances, implementation=implementation)
 
         else:  # here all the other KPNEG functions we want to insert
             sys.stdout.write("{} Not yet implemented, please come back later!".format(kpp_type.name))
@@ -134,6 +136,9 @@ class BruteforceSearch:
         if kpp_type == KPPOSchoices.mreach and isinstance(m, int) and m <= 0:
             raise TypeError({"\"m\" must be a positive integer"})
 
+        #find the correct implementation that will be passed to either one of the two KP metrics (in order to avoid the implementation seeker to find it at every iteration
+        implementation = implementation_seeker(graph)
+
         kppset_score_pairs = {} #dictionary that will store results
 
         # Generation of all combinations of nodes (all kpp-sets) of size equal to the kpp_size
@@ -146,10 +151,10 @@ class BruteforceSearch:
             nodes = utils.get_node_names(S)
 
             if kpp_type == KPPOSchoices.mreach:
-                reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distances=max_distances)
+                reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distances=max_distances, implementation=implementation)
 
             elif kpp_type == KPPOSchoices.dR:
-                reachability_score = KeyPlayer.dR(graph=graph, nodes=nodes, max_distances=max_distances)
+                reachability_score = KeyPlayer.dR(graph=graph, nodes=nodes, max_distances=max_distances, implementation=implementation)
 
             else:  # here all the other KPNEG functions we want to insert
                 sys.stdout.write("{} Not yet implemented, please come back later!".format(kpp_type.name))

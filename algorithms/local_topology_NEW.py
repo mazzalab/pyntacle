@@ -35,7 +35,7 @@ from misc.shortest_path_modifications import *
 from tools.graph_utils import GraphUtils as ut
 from numba import cuda, jit, prange
 import numpy as np
-
+from misc.implementation_seeker import implementation_seeker
 
 
 class LocalTopology:
@@ -389,7 +389,7 @@ class LocalTopology:
     @vertexdoctor
     #todo check if i can see the environment variables so I don't have to recall cuda.is_available() every time
     def shortest_path_pyntacle(graph, nodes=None, mode=GraphType.undirect_unweighted,
-                               implementation=imps.cpu) -> np.ndarray:
+                               implementation=imps.cpu):
         """
         We implement here a phew ways to determine the shortest paths in a graph for a single node, a group of nodes or
         all nodes in a graph. The shortest path search is performed using the Floyd-Warhsall algorithm and the numba
@@ -420,15 +420,17 @@ class LocalTopology:
         """
 
         if implementation == imps.auto:
-            implementation = imps.cpu #todo this should recall the 'automatic flag checker module (to be done)
+            implementation = implementation_seeker(graph) #todo this should recall the 'automatic flag checker module (to be done)
+
+        if implementation == imps.igraph: #recal the shortest_path_igraph
+            return LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
 
         elif implementation == imps.gpu:
-            # todo automatic implementation here
+
             if not cuda.is_available():
-                sys.stdout.write("GPU implementation is not available, using CPU instead")
                 implementation = imps.cpu
             else:
-                # todo check that the sp_numba is already here and if not import it (if conditions allow it)
+                # todo check that the sp_numba is already here and if not import it (if systems conditions allow it)
                 if sys.modules.get("algorithms.shortestpath_GPU", "Not imported") == "Not imported":
                     from algorithms.shortestpath_GPU import SPGpu as spg
 
@@ -506,7 +508,6 @@ class LocalTopology:
 
 # todo missing stuff:
 # todo shortest path cpu: single nodes or group of nodes
-# todo shortest path gpu: both
+# todo shortest path gpu: single nodes or group of nodes
 # todo all the other graphs
-
 # todo Mauro: specify numpy maximum allocation in RAM (in "Requirements")

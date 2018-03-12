@@ -26,11 +26,11 @@ __license__ = u"""
 
 import algorithms.local_topology_NEW as lt
 from misc.graph_routines import *
+from misc.implementation_seeker import implementation_seeker
 from tools.graph_utils import GraphUtils as gu
 from misc.shortest_path_modifications import *
 from misc.enums import SP_implementations as imps
 import numpy as np
-
 
 # todo add Pyntacle documentation link showing minim requirements for the igraph object to be used in within this module
 
@@ -109,7 +109,7 @@ class KeyPlayer:
             raise TypeError("\"implementation\" must be of type \"imps\", {} found".format(type(implementation).__name__))
 
         if implementation == imps.auto:
-            implementation = imps.cpu #todo this will return the correct implementation
+            implementation = implementation_seeker(graph) #todo this will return the correct implementation
 
         if max_distances is not None:
                 if not isinstance(max_distances, int):
@@ -233,7 +233,7 @@ class KeyPlayer:
                     raise ValueError("\"max_sp\" must be an integer greater than one")
 
         if implementation == imps.auto:
-            implementation = imps.igraph #todo this will return the correct implementation
+            implementation = implementation_seeker(graph) #todo this will return the correct implementation
 
         if implementation == imps.igraph:
             shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph=graph)
@@ -292,7 +292,7 @@ class KeyPlayer:
                     raise ValueError("\"max_sp\" must be an integer greater than one")
 
         if implementation == imps.auto:
-            implementation = imps.igraph #todo this will return the correct implementation
+            implementation = implementation_seeker(graph) #todo this will return the correct implementation
 
         if implementation == imps.igraph:
             shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph=graph)

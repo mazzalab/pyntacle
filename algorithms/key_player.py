@@ -217,7 +217,7 @@ class KeyPlayer:
                     or None in self.__graph.vs[index_list][_KeyplayerAttribute.DR.name]:
 
                 lt = LocalTopology(self.__graph)
-                shortest_path_lengths = lt.shortest_path(index_list=index_list, recalculate=True)
+                shortest_path_lengths = lt.shortest_path_igraph(index_list=index_list, recalculate=True)
 
                 dr_num = 0
                 """:type: float"""
