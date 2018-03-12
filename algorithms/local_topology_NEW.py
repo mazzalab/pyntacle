@@ -380,7 +380,6 @@ class LocalTopology:
 
         else:
             sp = graph.shortest_paths(source=nodes)
-
         return sp
 
 

@@ -159,24 +159,22 @@ class PyntacleImporter:
         :param bool header: Whether the header is present or not (default is *False*)
         :return: an `igraph.Graph` object.
         """
-
+        # Todo: non importa i nomi come stringhe, con e senza header. provare
         EglUtils(file=file, header=header, separator=sep).is_pyntacle_ready()
 
         graph = Graph() #initialize an empty graph that will be filled
-
-        graph.vs["name"] = []
+        
         if header:
 
-            adj = pd.read_csv(file, sep=sep, header=0)
+            adj = pd.read_csv(file, sep=sep, skiprows=1, header=None)
 
         else:
             adj = pd.read_csv(file, sep=sep, header=None)
-
+            
         adj.values.sort()
         adj = adj.drop_duplicates()
-
         # add all vertices to graph
-        graph.add_vertices(list(set(adj[0].tolist() + adj[1].tolist())))
+        graph.add_vertices(list(str(x) for x in set(adj[0].tolist() + adj[1].tolist())))
         graph.add_edges([tuple(x) for x in adj.values])
         #initialize the graph by calling the graph_initializer() method
         AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
@@ -305,10 +303,8 @@ class PyntacleImporter:
             header_comment = True
         dotdata.seek(last_pos)
         if header_comment:
-            sys.stdout.write("HEADER PRESENT\n")
             dotdata = dotdata.read().split("\n", 1)[1]
         else:
-            sys.stdout.write("HEADER NOT PRESENT\n")
             dotdata = dotdata.read()
 
         # Parsing dot file

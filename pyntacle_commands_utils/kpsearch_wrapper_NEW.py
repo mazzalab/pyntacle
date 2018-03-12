@@ -66,20 +66,28 @@ class KPWrapper:
         :param int m: if kpp_type is the m-reach, specifies the maximum distance for mreach to be computed
         :param int max_distances: maximum shortest path distance allowed (must be a positive integer greater than 0
         """
+        print("EEEEEEEE", kpp_type, m)
         if not isinstance(kpp_type, KPPOSchoices):
             raise TypeError("metric must be ones of the \"KPPOSchoices\" metrics, {} found".format(type(kpp_type).__name__))
 
+        print("Prima qui", nodes)
         if isinstance(nodes, str):
             nodes=[nodes]
         else:
-            if not isinstance(nodes, list) and  all(isinstance(x, str) for x in nodes):
+            if not isinstance(nodes, list) and not all(isinstance(x, str) for x in nodes):
                 raise ValueError("Nodes must be a list of string")
 
-        if not all(x in self.graph.vs(["name"]) for x in nodes):
-            raise KeyError("one of the nodes not in the vertex [\"name\"] attrobute. Are you sure those node names are correct?")
+        if not all(x in self.graph.vs()["name"] for x in nodes):
+            print(self.graph.vs()["name"])
+            print(nodes)
+            print("^QUI")
+            raise KeyError("one of the nodes not in the vertex [\"name\"] attribute. Are you sure those node names are correct?")
 
-        if not isinstance(m, int) and m <= 0 and kpp_type == KPPOSchoices.mreach:
-            raise ValueError("\"m\" must be specified for mreach and must be a positive integer")
+        if kpp_type == KPPOSchoices.mreach:
+            if not m:
+                raise ValueError("\"m\" must be a specified for mreach ")
+            elif not isinstance(m, int) or m <= 0 :
+                raise ValueError("\"m\" must be a positive integer for mreach ")
 
         self.logger.info("searching the KP POS values for metric {0} using nodes {1}".format(kpp_type.name, ",".join(nodes)))
         if kpp_type == KPPOSchoices.dR:
@@ -105,10 +113,10 @@ class KPWrapper:
         if isinstance(nodes, str):
             nodes = [nodes]
         else:
-            if not isinstance(nodes, list) and  all(isinstance(x, str) for x in nodes):
+            if not isinstance(nodes, list) and not all(isinstance(x, str) for x in nodes):
                 raise ValueError("Nodes must be a list of string")
 
-        if not all(x in self.graph.vs(["name"]) for x in nodes):
+        if not all(x in self.graph.vs()["name"] for x in nodes):
             raise KeyError("one of the nodes not in the vertex [\"name\"] attribute. Are you sure those node names are correct?")
 
         else:
@@ -167,7 +175,7 @@ class GOWrapper:
         :param int max_distances: maximum shortest path distance allowed in the shortest path matrix
         :param int seed: a seed that can be passed in order to replicate GO results
         """
-        if not isinstance(kpp_size, int) and kpp_size < 1:
+        if not isinstance(kpp_size, int) or kpp_size < 1:
             raise ValueError("\kpp_size\" must be a positive integer of size 1")
 
         if not isinstance(kpp_type, KPNEGchoices):
@@ -186,14 +194,17 @@ class GOWrapper:
         :param int seed: a seed that can be passed in order to replicate GO results
         :param int m: for the "mreach" metrics, a positive integer greatrer than one representing the maximum distance for mreach
         """
-        if not isinstance(kpp_size, int) and kpp_size < 1:
+        if not isinstance(kpp_size, int) or kpp_size < 1:
             raise ValueError("\kpp_size\" must be a positive integer of size 1")
 
         if not isinstance(kpp_type, KPPOSchoices):
             raise TypeError("\"kpp_type\" must be one of the KPPNEGchoices options available")
 
-        if not isinstance(m, int) and m <= 0 and kpp_type == KPPOSchoices.mreach:
-            raise ValueError("\"m\" must be specified for mreach and must be a positive integer")
+        if kpp_type == KPPOSchoices.mreach:
+            if not m:
+                raise ValueError("\"m\" must be a specified for mreach ")
+            elif not isinstance(m, int) or m <= 0 :
+                raise ValueError("\"m\" must be a positive integer for mreach ")
 
         go_results = self.go.reachability(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type, max_distances=max_distances, seed=seed, m=m)
         self.results[kpp_type.name] = [go_results[0], go_results[1]]
@@ -234,7 +245,7 @@ class BFWrapper:
         :param int max_distances: maximum shortest path distance allowed in the shortest path matrix
         """
 
-        if not isinstance(kpp_size, int) and kpp_size < 1:
+        if not isinstance(kpp_size, int) or kpp_size < 1:
             raise ValueError("\kpp_size\" must be a positive integer of size 1")
 
         if not isinstance(kpp_type, KPNEGchoices):
@@ -253,14 +264,17 @@ class BFWrapper:
         :param int max_distances: maximum shortest path distance allowed in the shortest path matrix
         :param int m: for the "mreach" metrics, a positive integer greatrer than one representing the maximum distance for mreach
         """
-        if not isinstance(kpp_size, int) and kpp_size < 1:
+        if not isinstance(kpp_size, int) or kpp_size < 1:
             raise ValueError("\kpp_size\" must be a positive integer of size 1")
 
         if not isinstance(kpp_type, KPPOSchoices):
             raise TypeError("\"kpp_type\" must be one of the KPPNEGchoices options available")
 
-        if not isinstance(m, int) and m <= 0 and kpp_type == KPPOSchoices.mreach:
-            raise ValueError("\"m\" must be specified for mreach and must be a positive integer")
+        if kpp_type == KPPOSchoices.mreach:
+            if not m:
+                raise ValueError("\"m\" must be a specified for mreach ")
+            elif not isinstance(m, int) or m <= 0 :
+                raise ValueError("\"m\" must be a positive integer for mreach ")
 
         bf_results = self.bf.reachability(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type,
                                           max_distances=max_distances, m=m)

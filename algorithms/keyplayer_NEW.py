@@ -295,13 +295,13 @@ class KeyPlayer:
             implementation = implementation_seeker(graph) #todo this will return the correct implementation
 
         if implementation == imps.igraph:
-            shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph=graph)
+            shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
 
             if max_distances is not None:
                 shortest_path_lengths = ShortestPathModifier.igraph_sp_to_inf(shortest_path_lengths, max_distances)
 
         else:
-            shortest_path_lengths = lt.LocalTopology.shortest_path_pyntacle(graph=graph, implementation=implementation)
+            shortest_path_lengths = lt.LocalTopology.shortest_path_pyntacle(graph=graph, implementation=implementation, nodes=nodes)
 
             if max_distances is not None:
                 shortest_path_lengths = ShortestPathModifier.np_array_to_inf(shortest_path_lengths, max_distances)
