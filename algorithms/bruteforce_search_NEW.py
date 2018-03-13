@@ -35,7 +35,7 @@ from functools import partial
 from algorithms.keyplayer_NEW import KeyPlayer
 from exceptions.wrong_argument_error import WrongArgumentError
 from misc.enums import KPPOSchoices, KPNEGchoices
-from misc.kpsearch_utils import greedy_search_initializer
+from misc.kpsearch_utils import bruteforce_search_initializer
 from misc.graph_routines import check_graph_consistency
 from misc.implementation_seeker import implementation_seeker
 from tools.graph_utils import GraphUtils as gu
@@ -47,7 +47,7 @@ class BruteforceSearch:
     """
     @staticmethod
     @check_graph_consistency
-    @greedy_search_initializer
+    @bruteforce_search_initializer
     def fragmentation(graph, kpp_size, kpp_type, max_distances=None) -> (list, float):
         """
         It searches and finds the kpp-set of a predefined dimension that best disrupts the graph.
@@ -116,8 +116,8 @@ class BruteforceSearch:
 
     @staticmethod
     @check_graph_consistency
-    @greedy_search_initializer
-    def reachability(graph, kpp_size, kpp_type, m=None, max_distances=None) -> (list, float):
+    @bruteforce_search_initializer
+    def reachability(graph, kpp_size, kpp_type, max_distances=None, m=None) -> (list, float):
         """
         It searches and finds the kpp-set of a predefined dimension that best reaches all other nodes over the graph.
         It generates all the possible kpp-sets and calculates their reachability scores.
@@ -146,10 +146,10 @@ class BruteforceSearch:
         allS = itertools.combinations(node_indices, kpp_size)
         #initialize graphUtils tool to retrieve  the node names from node indices
         utils = gu(graph=graph)
-
+        
         for S in allS:
-            nodes = utils.get_node_names(S)
-
+            nodes = utils.get_node_names(list(S))
+            
             if kpp_type == KPPOSchoices.mreach:
                 reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distances=max_distances, implementation=implementation)
 
@@ -164,8 +164,8 @@ class BruteforceSearch:
 
         #now the dictionary is filled with all the possible solutions. Time to find the maximal ones
         maxKpp = max(kppset_score_pairs.values()) #take the maximum value
-
-        result = [list(x) for x in kppset_score_pairs.keys() if x == maxKpp]
+        
+        result = [utils.get_node_names(list(x)) for x in kppset_score_pairs.keys() if kppset_score_pairs[x] == maxKpp]
 
         if len(result) > 1:
             sys.stdout.write("The best kpp-sets of size {} are {} with score {}\n".format(kpp_size, result, maxKpp))

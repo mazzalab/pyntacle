@@ -219,7 +219,6 @@ class GraphUtils():
         self.graph_checker()
         self.check_index_list(index_list)
         names_list = self.__graph.vs(index_list)["name"]
-
         return names_list
 
     def get_node_indices(self, node_names: list) -> list:

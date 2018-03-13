@@ -23,21 +23,26 @@ __license__ = u"""
   You should have received a copy of the license along with this
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
-
+from config import *
 from tools.add_attributes import AddAttributes
 from algorithms.local_topology_NEW import LocalTopology
 from algorithms.global_topology_NEW import GlobalTopology
+from misc.enums import *
 from misc.enums import GraphType
 from misc.enums import SP_implementations as imps
 from misc.shortest_path_modifications import ShortestPathModifier
-from config import *
+from pyntacle_commands_utils.kpsearch_wrapper_NEW import KPWrapper as kpw
+from pyntacle_commands_utils.kpsearch_wrapper_NEW import GOWrapper as gow
+from pyntacle_commands_utils.kpsearch_wrapper_NEW import BFWrapper as bfw
+
+from misc.enums import KPNEGchoices, KPPOSchoices
 
 class Octopus:
     
     #Global
     @staticmethod
     def add_diameter(graph):
-        AddAttributes(graph).add_graph_attributes('diameter', GlobalTopology.diameter(graph))
+        AddAttributes(graph).add_graph_attributes(GlobalAttribute.diameter.name, GlobalTopology.diameter(graph))
 
     @staticmethod
     def add_radius(graph):
@@ -173,3 +178,103 @@ class Octopus:
             node_names = graph.vs["name"]
         distances_with_inf = ShortestPathModifier.igraph_sp_to_inf(distances, graph.vcount()+1)
         AddAttributes(graph).add_node_attributes("shortest_path", distances_with_inf, node_names)
+
+    
+    
+    # KP
+    
+    @staticmethod
+    def add_F(graph, nodes):
+        kpobj = kpw(graph=graph)
+        kpobj.run_KPNeg(nodes, KPNEGchoices.F)
+        results_dict = kpobj.get_results()
+        AddAttributes(graph).add_graph_attributes('F', {tuple(results_dict['F'][0]): results_dict['F'][1]})
+
+    @staticmethod
+    def add_dF(graph, nodes, max_distances=None):
+        kpobj = kpw(graph=graph)
+        kpobj.run_KPNeg(nodes, KPNEGchoices.dF, max_distances=max_distances)
+        results_dict = kpobj.get_results()
+        AddAttributes(graph).add_graph_attributes('dF', {tuple(results_dict['dF'][0]): results_dict['dF'][1]})
+
+
+    @staticmethod
+    def add_dR(graph, nodes, max_distances=None):
+        kpobj = kpw(graph=graph)
+        kpobj.run_KPPos(nodes, KPPOSchoices.dR, max_distances=max_distances)
+        results_dict = kpobj.get_results()
+        AddAttributes(graph).add_graph_attributes('dR', {tuple(results_dict['dR'][0]): results_dict['dR'][1]})
+
+            
+    @staticmethod
+    def add_mreach(graph, nodes, m=None, max_distances=None):
+        kpobj = kpw(graph=graph)
+        kpobj.run_KPPos(nodes, KPPOSchoices.mreach,  m=m, max_distances=max_distances)
+        results_dict = kpobj.get_results()
+        attr_name = 'mreach_{}'.format(str(m))
+        AddAttributes(graph).add_graph_attributes(attr_name, {tuple(results_dict['mreach'][0]): results_dict['mreach'][1]})
+
+
+    # greedy
+    @staticmethod
+    def add_GO_F(graph, kpp_size, max_distances=None, seed=None):
+        kpobj = gow(graph=graph)
+        kpobj.run_fragmentation(kpp_size, KPNEGchoices.F, max_distances=max_distances, seed=seed)
+        results_dict = kpobj.get_results()
+        AddAttributes(graph).add_graph_attributes('F'+'_greedy', {tuple(results_dict['F'][0]): results_dict['F'][1]})
+
+    @staticmethod
+    def add_GO_dF(graph, kpp_size, max_distances=None, seed=None):
+        kpobj = gow(graph=graph)
+        kpobj.run_fragmentation(kpp_size, KPNEGchoices.dF, max_distances=max_distances, seed=seed)
+        results_dict = kpobj.get_results()
+        AddAttributes(graph).add_graph_attributes('dF'+'_greedy', {tuple(results_dict['dF'][0]): results_dict['dF'][1]})
+
+    @staticmethod
+    def add_GO_dR(graph, kpp_size, max_distances=None, seed=None):
+        kpobj = gow(graph=graph)
+        kpobj.run_reachability(kpp_size, KPPOSchoices.dR, max_distances=max_distances, seed=seed)
+        results_dict = kpobj.get_results()
+        AddAttributes(graph).add_graph_attributes('dR'+'_greedy', {tuple(results_dict['dR'][0]): results_dict['dR'][1]})
+
+    @staticmethod
+    def add_GO_mreach(graph, kpp_size, m=None, max_distances=None, seed=None):
+        kpobj = gow(graph=graph)
+        kpobj.run_reachability(kpp_size, KPPOSchoices.mreach, m=m, max_distances=max_distances, seed=seed)
+        results_dict = kpobj.get_results()
+        attr_name = 'mreach_{}_greedy'.format(str(m))
+        AddAttributes(graph).add_graph_attributes(attr_name, {tuple(results_dict['mreach'][0]): results_dict['mreach'][1]})
+        
+    
+    #bruteforce
+    
+    @staticmethod
+    def add_BF_F(graph, kpp_size, max_distances=None):
+        kpobj = bfw(graph=graph)
+        kpobj.run_fragmentation(kpp_size, KPNEGchoices.F, max_distances=max_distances)
+        results_dict = kpobj.get_results()
+        AddAttributes(graph).add_graph_attributes('F'+'_bruteforce', {tuple(tuple(x) for x in results_dict['F'][0]): results_dict['F'][1]})
+        
+    @staticmethod
+    def add_BF_dF(graph, kpp_size, max_distances=None):
+        kpobj = bfw(graph=graph)
+        kpobj.run_fragmentation(kpp_size, KPNEGchoices.dF, max_distances=max_distances)
+        results_dict = kpobj.get_results()
+        AddAttributes(graph).add_graph_attributes('dF'+'_bruteforce', {tuple(tuple(x) for x in results_dict['dF'][0]): results_dict['dF'][1]})
+    
+    @staticmethod
+    def add_BF_dR(graph, kpp_size, max_distances=None):
+        kpobj = bfw(graph=graph)
+        kpobj.run_reachability(kpp_size, KPPOSchoices.dR, max_distances=max_distances)
+        results_dict = kpobj.get_results()
+        AddAttributes(graph).add_graph_attributes('dR'+'_bruteforce', {tuple(tuple(x) for x in results_dict['dR'][0]): results_dict['dR'][1]})
+        
+    @staticmethod
+    def add_BF_mreach(graph, kpp_size, m=None, max_distances=None):
+        kpobj = bfw(graph=graph)
+        kpobj.run_reachability(kpp_size, KPPOSchoices.mreach, max_distances=max_distances, m=m)
+        results_dict = kpobj.get_results()
+        attr_name = 'mreach_{}_bruteforce'.format(str(m))
+        for k in results_dict:
+            print("Results:", k, tuple(results_dict['mreach'][0]), results_dict[k][1])
+        AddAttributes(graph).add_graph_attributes(attr_name, {tuple(tuple(x) for x in results_dict['mreach'][0]): results_dict['mreach'][1]})

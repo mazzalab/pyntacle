@@ -66,11 +66,9 @@ class KPWrapper:
         :param int m: if kpp_type is the m-reach, specifies the maximum distance for mreach to be computed
         :param int max_distances: maximum shortest path distance allowed (must be a positive integer greater than 0
         """
-        print("EEEEEEEE", kpp_type, m)
         if not isinstance(kpp_type, KPPOSchoices):
             raise TypeError("metric must be ones of the \"KPPOSchoices\" metrics, {} found".format(type(kpp_type).__name__))
 
-        print("Prima qui", nodes)
         if isinstance(nodes, str):
             nodes=[nodes]
         else:
@@ -78,14 +76,12 @@ class KPWrapper:
                 raise ValueError("Nodes must be a list of string")
 
         if not all(x in self.graph.vs()["name"] for x in nodes):
-            print(self.graph.vs()["name"])
-            print(nodes)
-            print("^QUI")
-            raise KeyError("one of the nodes not in the vertex [\"name\"] attribute. Are you sure those node names are correct?")
+            raise KeyError("one of the nodes not in the vertex [\"name\"] attribute. "
+                           "Are you sure those node names are correct?")
 
         if kpp_type == KPPOSchoices.mreach:
             if not m:
-                raise ValueError("\"m\" must be a specified for mreach ")
+                raise ValueError("\"m\" must be specified for mreach ")
             elif not isinstance(m, int) or m <= 0 :
                 raise ValueError("\"m\" must be a positive integer for mreach ")
 
@@ -122,9 +118,9 @@ class KPWrapper:
         else:
             copy = self.graph.copy()
             copy.delete_vertices(nodes)
-
-        self.logger.info(
-            "searching the KP NEG values for metric {0} using nodes {1}".format(kpp_type.name, ",".join(nodes)))
+            
+        sys.stdout.write(
+            "Searching the KP NEG values for metric {0} using nodes {1}\n".format(kpp_type.name, ",".join(nodes)))
 
         if kpp_type == KPNEGchoices.dF:
             single_result = self.kp.dF(graph=copy, max_distances=max_distances)
@@ -185,7 +181,7 @@ class GOWrapper:
         self.results[kpp_type.name] = [go_results[0], go_results[1]]
 
     @timeit
-    def run_reachability(self, kpp_size:int, kpp_type:KPNEGchoices,m=None, max_distances=None, seed=None):
+    def run_reachability(self, kpp_size:int, kpp_type:KPPOSchoices, m=None, max_distances=None, seed=None):
         """
         Wrapper around the Greedy Optimization Module that stores the greedy optimization results for KPPOS metrics
         :param int kpp_size: size of the kpp-set to be found
@@ -198,7 +194,7 @@ class GOWrapper:
             raise ValueError("\kpp_size\" must be a positive integer of size 1")
 
         if not isinstance(kpp_type, KPPOSchoices):
-            raise TypeError("\"kpp_type\" must be one of the KPPNEGchoices options available")
+            raise TypeError("\"kpp_type\" must be one of the KPPPOSchoices options available")
 
         if kpp_type == KPPOSchoices.mreach:
             if not m:
@@ -220,7 +216,7 @@ class GOWrapper:
 
 
 class BFWrapper:
-    @check_graph_consistency
+
     def __init__(self, graph: Graph):
         '''
         Initizialize the class
@@ -256,7 +252,7 @@ class BFWrapper:
         self.results[kpp_type.name] = [bf_results[0], bf_results[1]]
 
     @timeit
-    def run_reachability(self, kpp_size: int, kpp_type: KPNEGchoices, m=None, max_distances=None):
+    def run_reachability(self, kpp_size: int, kpp_type: KPPOSchoices, m=None, max_distances=None):
         """
         Wrapper around the Bruteforce Search Module that stores the greedy optimization results for KPPOS metrics
         :param int kpp_size: size of the kpp-set to be found
@@ -278,6 +274,7 @@ class BFWrapper:
 
         bf_results = self.bf.reachability(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type,
                                           max_distances=max_distances, m=m)
+
         self.results[kpp_type.name] = [bf_results[0], bf_results[1]]
 
     def get_results(self) -> dict:

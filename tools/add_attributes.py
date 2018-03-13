@@ -65,7 +65,14 @@ class AddAttributes():
         if not isinstance(attr_name, str):
             raise TypeError("Attribute name is not a string")
         else:
-            self.__graph[attr_name] = attr
+            if isinstance(attr, dict):
+                if attr_name in self.__graph.attributes():
+                    self.__graph[attr_name].update(attr)
+                else:
+                    self.__graph[attr_name] = attr
+
+            else:
+                self.__graph[attr_name] = attr
 
     def add_node_attributes(self, attr_name, attr_list, nodes):
         '''
@@ -80,6 +87,9 @@ class AddAttributes():
         if not isinstance(attr_name, str):
             raise TypeError("Attribute name is not a string")
         
+        if isinstance(nodes, str):
+            self.logger.warning("WARNING: converting string nodes to list of nodes")
+            nodes = [nodes]
         if attr_name.startswith('__'):
             raise KeyError(
                 "One of the attributes being added starts with __ (double underscore)."

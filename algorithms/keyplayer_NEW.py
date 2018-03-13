@@ -67,13 +67,9 @@ class KeyPlayer:
             num_nodes = graph.vcount()
 
             components = graph.components()
-            # print ("components in KP NEW")
-            # print(components)
-            # input()
 
             f_num = sum(len(sk) * (len(sk) - 1) for sk in components)
             f_denum = num_nodes * (num_nodes - 1)
-            print(f_num, f_denum)
             f = 1 - (f_num / f_denum)
 
             return round(f, 5)
@@ -103,8 +99,7 @@ class KeyPlayer:
         """
         # todo implementation "auto" should consider graph parameters and use the correct implementation among the classical
         # todo and the GPU/CPU one
-        sys.stdout.write("!!!!!!!!!!!! Running df\n")
-        print("max sp",max_distances)
+
         if not isinstance(implementation, imps):
             raise TypeError("\"implementation\" must be of type \"imps\", {} found".format(type(implementation).__name__))
 
@@ -236,13 +231,13 @@ class KeyPlayer:
             implementation = implementation_seeker(graph) #todo this will return the correct implementation
 
         if implementation == imps.igraph:
-            shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph=graph)
+            shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
 
             if max_distances is not None:
                 shortest_path_lengths = ShortestPathModifier.igraph_sp_to_inf(shortest_path_lengths, max_distances)
 
         else:
-            shortest_path_lengths = lt.LocalTopology.shortest_path_pyntacle(graph=graph, implementation=implementation)
+            shortest_path_lengths = lt.LocalTopology.shortest_path_pyntacle(graph=graph, implementation=implementation, nodes=nodes)
 
             if max_distances is not None:
                 shortest_path_lengths = ShortestPathModifier.np_array_to_inf(shortest_path_lengths, max_distances)
