@@ -105,6 +105,12 @@ class GlobalAttribute(Enum):
     completeness_XXX = auto()
     compactness = auto()
 
+class Reports(Enum):
+    Global = auto()
+    Local = auto()
+    KeyPlayer = auto()
+    Communities = auto()
+    Set = auto()
 
 class edge_attributes(Enum):
     """
