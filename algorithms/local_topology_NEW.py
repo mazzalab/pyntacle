@@ -456,7 +456,7 @@ class LocalTopology:
                         return sps
 
                 else:
-                    sys.stdout.write("Not yet available for a subset of nodes in the graph")
+                    sys.stdout.write("Not yet available for a subset of nodes in the graph\n")
                     sys.exit(0)
 
         else:

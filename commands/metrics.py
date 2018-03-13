@@ -1,7 +1,7 @@
 import pandas as pd
 from config import *
-from algorithms.global_topology_NEW import GlobalTopology, _GlobalAttribute
-from algorithms.local_topology_NEW import LocalTopology, _LocalAttribute
+from algorithms.global_topology_NEW import GlobalTopology
+from algorithms.local_topology_NEW import LocalTopology
 from algorithms.sparseness_NEW import *
 from algorithms.sparseness import _SparsenessAttribute
 from exceptions.generic_error import Error
@@ -247,7 +247,7 @@ class Metrics():
 
             if os.path.exists(report_path):
                 sys.stdout.write("WARNING: File {} already exists, overwriting it\n".format(report_path))
-
+            #todo: fix here urgently
             local_attributes_list = [_LocalAttribute.degree,
                                      _LocalAttribute.clustering_coefficient,
                                      _LocalAttribute.betweenness,
@@ -257,7 +257,7 @@ class Metrics():
                                      _LocalAttribute.radiality_reach,
                                      _LocalAttribute.eccentricity,
                                      _LocalAttribute.pagerank]
-
+            {LocalAttribute.degree.name:[[A, B, C], [10, 11, 12]]}
             reporter.report_local_topology(node_names=nodes_list, local_attributes_list=local_attributes_list)
 
             reporter.create_report(report_path=report_path)

@@ -40,12 +40,12 @@ def implementation_seeker(graph: Graph):
     """
 
     # todo: decide the thresholds that will be used for SP search decision
-    if graph.ecount() <= 150:  # random number
+    if graph.ecount() <= 3500:  # random number
         imp = SP_implementations.igraph  # default
 
     else:
         if not cuda.is_available():
-            sys.stdout.write("GPU implementation is not available, using CPU instead")
+            sys.stdout.write("GPU implementation is not available, using CPU instead\n")
 
             imp = SP_implementations.cpu
 

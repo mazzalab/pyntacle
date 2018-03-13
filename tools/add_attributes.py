@@ -127,10 +127,7 @@ class AddAttributes():
         :param edges: list. edges to which attributes will be applied.
         :return:
         """
-        # print("ENTER ADD EDGE ATTRS:")
-        # print(attr_name)
-        # print(attr_list)
-        # print(edges)
+
         if not isinstance(attr_name, str):
             raise TypeError("Attribute name is not a string")
         

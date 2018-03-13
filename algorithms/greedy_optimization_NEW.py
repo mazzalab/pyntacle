@@ -181,8 +181,7 @@ class GreedyOptimization:
         :raises TypeError: When the kpp-set size is greater than the graph size
         :raises WrongArgumentError: When the kpp-type argument is not of type KeyplayerAttribute.mreach or KeyplayerAttribute.dR
         """
-
-        sys.stdout.write("Greedily-optimized search of a kpp-set of size {0} for metric {1}\n".format(kpp_size, kpp_type.name))
+        # sys.stdout.write("Greedily-optimized search of a kpp-set of size {0} for metric {1}\n".format(kpp_size, kpp_type.name))
 
         # Definition of the starting S and notS sets
         node_indices = graph.vs.indices

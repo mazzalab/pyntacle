@@ -34,7 +34,6 @@ from misc.shortest_path_modifications import ShortestPathModifier
 from pyntacle_commands_utils.kpsearch_wrapper_NEW import KPWrapper as kpw
 from pyntacle_commands_utils.kpsearch_wrapper_NEW import GOWrapper as gow
 from pyntacle_commands_utils.kpsearch_wrapper_NEW import BFWrapper as bfw
-
 from misc.enums import KPNEGchoices, KPPOSchoices
 
 class Octopus:
@@ -275,6 +274,4 @@ class Octopus:
         kpobj.run_reachability(kpp_size, KPPOSchoices.mreach, max_distances=max_distances, m=m)
         results_dict = kpobj.get_results()
         attr_name = 'mreach_{}_bruteforce'.format(str(m))
-        for k in results_dict:
-            print("Results:", k, tuple(results_dict['mreach'][0]), results_dict[k][1])
         AddAttributes(graph).add_graph_attributes(attr_name, {tuple(tuple(x) for x in results_dict['mreach'][0]): results_dict['mreach'][1]})
