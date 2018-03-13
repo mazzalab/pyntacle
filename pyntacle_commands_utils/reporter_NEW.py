@@ -29,12 +29,7 @@ import csv, os, xlsxwriter
 from math import isnan, isinf
 from igraph import Graph
 from numpy import median
-from misc.enums import KPNEGchoices, KPPOSchoices, Reports
-from algorithms.global_topology import _GlobalAttribute
-from algorithms.key_player import _KeyplayerAttribute
-from algorithms.local_topology import _LocalAttribute
-from algorithms.sparseness import _SparsenessAttribute
-from exceptions.missing_attribute_error import MissingAttributeError
+from misc.enums import KPNEGchoices, KPPOSchoices, Reports, LocalAttribute, GlobalAttribute
 from exceptions.wrong_argument_error import WrongArgumentError
 from tools.graph_utils import GraphUtils as gu # swiss knife for graph utilities
 
@@ -46,11 +41,7 @@ class pyntacleReporter():
     """
     logger = None
 
-    def __init__(self, graph: Graph, report_type:str):
-        '''
-        I
-        :param graph: the target igraph Graph object
-        '''
+    def __init__(self, graph: Graph, report_type:Reports):
 
         self.logger = log
 
@@ -60,55 +51,45 @@ class pyntacleReporter():
         # initialize graph utility class
         self.__utils = gu(graph=self.__graph)
         self.__utils.graph_checker()  # check that input graph is properly set
-        if not isinstance(report_type,)
-
-    def __init_report(self, report_type: Reports):
-        #todo riscrivere tutto con karma
-        self.__report = []
-        self.__report.append([" ".join(["pyntacle", "Report:", report_type])])
-
-        if report_type == "Metrics - Global Topology Comparison":
-            if self.__graph2 is not None:
-                if self.__graph["name"] != self.__graph2["name"]:
-                    self.__report.append(
-                        ["graph name", ",".join(self.__graph["name"]), ",".join(self.__graph2["name"])])
-
-                else:
-                    self.__report.append(["graph name", ",".join(self.__graph["name"])])
-
-                self.__report.append(["components", len(self.__graph.components()), len(self.__graph2.components())])
-                self.__report.append(["nodes", self.__graph.vcount(), self.__graph2.vcount()])
-                self.__report.append(["edges", self.__graph.ecount(), self.__graph2.ecount()])
-
-            else:
-                raise ValueError(
-                    "a second graph is not initialized in pyntacle_commands_utils, please re-instanciate the class adding the second graph")
+        if not isinstance(report_type, Reports):
+            raise TypeError("report type must be on of the \"Reports\" enumerators, {} found".format(type(report_type).__name__))
         else:
-            self.__report.append(["graph name", ",".join(self.__graph["name"])])
-            self.__report.append(["components", len(self.__graph.components())])
-            self.__report.append(["nodes", self.__graph.vcount()])
-            self.__report.append(["edges", self.__graph.ecount()])
+            self.__report_type = report_type
 
-        self.__report.append(["\n"])
+    def __init_report(self):
+        #todo riscrivere tutto con karma
+        now = datetime.datetime.now()
+        dat = now.strftime("%d/%m/%Y %I:%M")
+        self.__report = []
+        self.__report.append(" ".join["pyntacle Report", dat])
+        self.__report.append("General Graph Information")
+        self.__report.append(["graph name", ",".join(self.__graph["name"])])
+        self.__report.append(["components", len(self.__graph.components())])
+        self.__report.append(["nodes", self.__graph.vcount()])
+        self.__report.append(["edges", self.__graph.ecount()])
+        self.__report.append(["\n\n"])
+        self.__report.append(": ".join(["Pyntacle Command", self.__report_type.name]))
 
-    def report_KP(self, resultsdic: dict, m=None):
+    def report_KP_Results(self, resultsdic: dict, m=None):
 
         '''
         Creates a reporter for the KP metrics as a list of lists (stored in the self.pyntacle_commands_utils list
-
         :param resultsdic: a dictionary of results as outputted by kp_runner_OLD.py
         '''
 
         # initialize empty pyntacle_commands_utils
-        self.__init_report(report_type="Key Player")
-        self.__report.append(["\n"])
+        self.__init_report()
         self.__report.append(["-Run Info-"])
-        self.__report.append(
-            ["Requested metrics:", ",".join([x.name for x in resultsdic.keys() if not isinstance(x, str)])])
+        self.__report.append(["Requested metrics:", ",".join([x.name for x in resultsdic.keys() if not isinstance(x, str)])])
 
         self.__report.append(
             ["Algorithm:", resultsdic.get("algorithm", "KP-INFO")])  # added by me to handle the type of algorithm used
         resultsdic.pop("algorithm", None)  # remove the key if present
+        #todo arrivato qua
+
+
+
+
 
         if _KeyplayerAttribute.F in resultsdic.keys():
 
