@@ -108,7 +108,9 @@ class GlobalAttribute(Enum):
 class Reports(Enum):
     Global = auto()
     Local = auto()
-    KeyPlayer = auto()
+    KPinfo = auto()
+    KP_greedy = auto()
+    KP_bruteforce = auto()
     Communities = auto()
     Set = auto()
 
