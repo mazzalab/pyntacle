@@ -55,50 +55,52 @@ class pyntacleReporter():
         self.__report_type = None #this wiull be instanced in create_report
         self.__report = [] #this will be used in create_report
 
-    def create_report(self, report_type: Reports, report: dict):
+    def create_report(self, report_type: Reports, report: OrderedDict):
         """
         initialize the report object by writing generic information on the input graph
         """
 
         if not isinstance(report_type, Reports):
-            raise TypeError("report type must be on of the \"Reports\" enumerators, {} found".format(type(report_type).__name__))
+            raise TypeError("\"report_type\" must be on of the \"Reports\" enumerators, {} found".format(type(report_type).__name__))
+
+        if not isinstance(report, OrderedDict):
+            raise ValueError("\"report\" must be an ordered Dictionary")
+
+
+        self.__report_type = report_type
+
+        now = datetime.datetime.now()
+        self.dat = now.strftime("%d/%m/%Y %I:%M")
+        self.__report = []
+        self.__report.append(" ".join["pyntacle Report", self.dat])
+        self.__report.append("General Graph Information")
+        self.__report.append(["graph name", ",".join(self.__graph["name"])])
+        self.__report.append(["components", len(self.__graph.components())])
+        self.__report.append(["nodes", self.__graph.vcount()])
+        self.__report.append(["edges", self.__graph.ecount()])
+        self.__report.append(["\n\n"])
+        self.__report.append(": ".join(["Pyntacle Command", report_type.name]))
+
+        if report_type == Reports.Local:
+            self.__local_report()
+        elif report_type == Reports.Global:
+            self.__global_report(reportdict=report)
+        elif report_type == Reports.KPinfo:
+            self.__KPinfo_report(reportdict=report)
+        elif report_type == Reports.KP_greedy:
+            self.__greedy_report(reportdict=report)
+        elif report_type == Reports.KP_bruteforce:
+            self.__bruteforce_report(reportdict=report)
+        elif report_type == Reports.Communities:
+            self.__communities_report()
 
         else:
-
-            self.__report_type = report_type
-
-            now = datetime.datetime.now()
-            self.dat = now.strftime("%d/%m/%Y %I:%M")
-            self.__report = []
-            self.__report.append(" ".join["pyntacle Report", self.dat])
-            self.__report.append("General Graph Information")
-            self.__report.append(["graph name", ",".join(self.__graph["name"])])
-            self.__report.append(["components", len(self.__graph.components())])
-            self.__report.append(["nodes", self.__graph.vcount()])
-            self.__report.append(["edges", self.__graph.ecount()])
-            self.__report.append(["\n\n"])
-            self.__report.append(": ".join(["Pyntacle Command", report_type.name]))
-
-            if report_type == Reports.Local:
-                self.__local_report()
-            elif report_type == Reports.Global:
-                self.__global_report()
-            elif report_type == Reports.KPinfo:
-                self.__KPinfo_report()
-            elif report_type == Reports.KP_greedy:
-                self.__greedy_report()
-            elif report_type == Reports.KP_bruteforce:
-                self.__bruteforce_report()
-            elif report_type == Reports.Communities:
-                self.__communities_report()
+            if report_type == Reports.Set:
+                self.logger.warning("Set operation needs another report builder, use the \"Report_Sets\" class contained in this module. Quitting")
+                sys.exit(1)
 
             else:
-                if report_type == Reports.Set:
-                    self.logger.warning("Set operation needs another report builder, use the \"Report_Sets\" class contained in this module. Quitting")
-                    sys.exit(1)
-
-                else:
-                    raise ValueError("Report specified does not exists")
+                raise ValueError("Report specified does not exists")
 
     def write_report(self, report_path=None) -> str:
         """
@@ -172,7 +174,15 @@ class pyntacleReporter():
     def __local_report(self, reportdict:OrderedDict):
         pass
     def __global_report(self, reportdict:OrderedDict):
-        pass
+        if not all(isinstance(x, GlobalAttribute) for x in reportdict.keys()):
+            raise TypeError("one of the keys in the report dictionary is not a GlobalAttribute")
+
+        self.__report.append(["Results: Global Topology Metrics for selected graphs"])
+        self.__report.append(["Metric", "Value"])
+
+        for k in reportdict.keys():
+            self.__report.append([k.name, str(reportdict[k])])
+
     def __KPinfo_report(self, reportdict:OrderedDict):
         """
         fill the *self.__report* object with all the values conatined in the KPINFO Run
@@ -206,55 +216,17 @@ class pyntacleReporter():
             else:
                 raise ValueError("Initial F must range between 0 and 1")
 
+        self.__report.append("Results: Key Player Metrics Info for selected node subset")
+        self.__report.append(["Metric", "Nodes", "Value"])
+
         for k in reportdict.keys():
-            if (k == KPNEGchoices.F or k == KPNEGchoices.dF) and reportdict[k][2] == 1.0:
+            if (k == KPNEGchoices.F or k == KPNEGchoices.dF) and reportdict[k][-1] == 1.0:
                 self.__report.append([k.name, "NA", "MAXIMUM FRAGMENTATION REACHED"])
 
             else:
                 self.__report.append([k.name, ",".join(reportdict[k][0]), str(reportdict[k][1])])
 
-    def __greedy_report(self, reportdict:dict):
-        """
-                fill the *self.__report* object with all the values contained in the Greedy Optimization Run
-                :param reportdict: a dictionary with KPPOSchoices or KPNEGchoices as  `keys` and a list as `values`
-                """
-
-        if not all(isinstance(x, (KPPOSchoices, KPPOSchoices)) for x in reportdict.keys()):
-            raise TypeError("one of the keys in the report dictionary is not a KPPOSchoices or KPNEGchoices")
-
-        if KPPOSchoices.mreach in reportdict.keys():
-            m = reportdict[KPPOSchoices.mreach][2]
-
-            if not isinstance(m, int) and m < 1:
-                raise ValueError("m must be a positive integer")
-            else:
-                self.__report.append(["maximum mreach distance", reportdict[KPPOSchoices.mreach][2]])
-
-        if KPNEGchoices.F in reportdict.keys():
-            init_F = reportdict[KPNEGchoices.F][2]
-
-            if 0.0 <= init_F <= 1.0:
-                self.__report.append(["initial F value (whole graph)", str(init_F)])
-            else:
-                raise ValueError("Initial F must range between 0 and 1")
-
-        if KPPOSchoices.dF in reportdict.keys():
-            init_dF = reportdict[KPNEGchoices.F][2]
-
-            if 0.0 <= init_dF <= 1.0:
-                self.__report.append(["initial F value (whole graph)", init_dF])
-            else:
-                raise ValueError("Initial F must range between 0 and 1")
-
-        for k in reportdict.keys():
-            if (k == KPNEGchoices.F or k == KPNEGchoices.dF) and reportdict[k][2] == 1.0:
-                self.__report.append([k.name, "NA", "MAXIMUM FRAGMENTATION REACHED"])
-
-            else:
-                self.__report.append([k.name, ",".join(reportdict[k][0]), str(reportdict[k][1])])
-
-    #todo sistema questo
-    def __bruteforce_report(self, reportdict:dict):
+    def __greedy_report(self, reportdict: OrderedDict):
         """
         fill the *self.__report* object with all the values contained in the Greedy Optimization Run
         :param reportdict: a dictionary with KPPOSchoices or KPNEGchoices as  `keys` and a list as `values`
@@ -287,19 +259,67 @@ class pyntacleReporter():
             else:
                 raise ValueError("Initial F must range between 0 and 1")
 
+        self.__report.append("Results: Greedily-Optimized Search")
+        self.__report.append(["Metric", "Nodes", "Value"])
+
         for k in reportdict.keys():
-            if (k == KPNEGchoices.F or k == KPNEGchoices.dF) and reportdict[k][2] == 1.0:
+            if (k == KPNEGchoices.F or k == KPNEGchoices.dF) and reportdict[k][-1] == 1.0:
+                self.__report.append([k.name, "NA", "MAXIMUM FRAGMENTATION REACHED"])
+
+            else:
+                self.__report.append([k.name, ",".join(reportdict[k][0]), str(reportdict[k][1])])
+
+    def __bruteforce_report(self, reportdict: OrderedDict):
+        """
+        fill the *self.__report* object with all the values contained in the Greedy Optimization Run
+        :param reportdict: a dictionary with KPPOSchoices or KPNEGchoices as  `keys` and a list as `values`
+        """
+
+        if not all(isinstance(x, (KPPOSchoices, KPPOSchoices)) for x in reportdict.keys()):
+            raise TypeError("one of the keys in the report dictionary is not a KPPOSchoices or KPNEGchoices")
+
+        if KPPOSchoices.mreach in reportdict.keys():
+            m = reportdict[KPPOSchoices.mreach][2]
+
+            if not isinstance(m, int) and m < 1:
+                raise ValueError("m must be a positive integer")
+            else:
+                self.__report.append(["maximum mreach distance", reportdict[KPPOSchoices.mreach][2]])
+
+        if KPNEGchoices.F in reportdict.keys():
+            init_F = reportdict[KPNEGchoices.F][2]
+
+            if 0.0 <= init_F <= 1.0:
+                self.__report.append(["initial F value (whole graph)", str(init_F)])
+            else:
+                raise ValueError("Initial F must range between 0 and 1")
+
+        if KPPOSchoices.dF in reportdict.keys():
+            init_dF = reportdict[KPNEGchoices.F][2]
+
+            if 0.0 <= init_dF <= 1.0:
+                self.__report.append(["initial F value (whole graph)", init_dF])
+            else:
+                raise ValueError("Initial F must range between 0 and 1")
+
+        self.__report.append("Results: Brute-force Search")
+        self.__report.append(["Metric", "Nodes", "Value"])
+
+        for k in reportdict.keys():
+            if (k == KPNEGchoices.F or k == KPNEGchoices.dF) and reportdict[k][-1] == 1.0:
                 self.__report.append([k.name, "NA", "MAXIMUM FRAGMENTATION REACHED"])
 
             else:
                 #in this case, the report dictionary can contain more than one set of nodes
                 if len(reportdict[k][0]) > 1:
-
-
+                    self.__report.append([k.name, ",".join(reportdict[k][0][0]), str(reportdict[k][1])])
+                    del reportdict[k][0][0]
+                    for elem in reportdict[k][0]:
+                        self.__report.append([[], ",".join(elem), str(reportdict[k][1])])
                 else:
                     self.__report.append([k.name, ",".join(reportdict[k][0]), str(reportdict[k][1])])
 
-    def __communities_report(self, reportdict:dict):
+    def __communities_report(self, reportdict: OrderedDict):
         pass
 
 
