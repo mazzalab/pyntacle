@@ -303,30 +303,30 @@ class pyntacleReporter():
         pass
 
 
-    def report_global_topology(self):
-        '''
-        Create a pyntacle_commands_utils (as a list) containing all the global attributes list requested
-
-        :param attributes_list: a list of GlobalAttributes that must be reported
-        :param graph_copy: a second graph to be reported
-        '''
-
-        self.__utils.check_attributes_types(attributes_list=attributes_list,
-                                            attribute_types=[_GlobalAttribute, _SparsenessAttribute])
-
-        attributes_names = self.__utils.get_attribute_names(attribute_list=attributes_list)
-
-        # print(attributes_names)
-
-        self.__init_report()
-
-        self.__report.append(["Metric Name", "Metric Value"])
-
-        for elem in attributes_names:
-            self.__report.append([elem, str(self.__graph[elem])])
-
-        # force each element of the list to be a string
-        self.__report = [[str(x) for x in y] for y in self.__report]
+    # def report_global_topology(self):
+    #     '''
+    #     Create a pyntacle_commands_utils (as a list) containing all the global attributes list requested
+    #
+    #     :param attributes_list: a list of GlobalAttributes that must be reported
+    #     :param graph_copy: a second graph to be reported
+    #     '''
+    #
+    #     self.__utils.check_attributes_types(attributes_list=attributes_list,
+    #                                         attribute_types=[_GlobalAttribute, _SparsenessAttribute])
+    #
+    #     attributes_names = self.__utils.get_attribute_names(attribute_list=attributes_list)
+    #
+    #     # print(attributes_names)
+    #
+    #     self.create_report()
+    #
+    #     self.__report.append(["Metric Name", "Metric Value"])
+    #
+    #     for elem in attributes_names:
+    #         self.__report.append([elem, str(self.__graph[elem])])
+    #
+    #     # force each element of the list to be a string
+    #     self.__report = [[str(x) for x in y] for y in self.__report]
 
     # def report_KP_Results(self, resultsdic: dict):
     #
