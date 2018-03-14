@@ -47,13 +47,16 @@ class pyntacleReporter():
         self.logger = log
 
         # store first graph
-        self.__graph = graph
+        self.graph = graph
 
         # initialize graph utility class
-        self.__utils = gu(graph=self.__graph)
-        self.__utils.graph_checker()  # check that input graph is properly set
-        self.__report_type = None #this wiull be instanced in create_report
-        self.__report = [] #this will be used in create_report
+        self.utils = gu(graph=self.graph)
+        self.utils.graph_checker()  # check that input graph is properly set
+        self.report_type = None #this wiull be instanced in create_report
+        self.report = [] #this will be used in create_report
+        now = datetime.datetime.now()
+        self.dat = now.strftime("%d/%m/%Y %I:%M")
+        
 
     def create_report(self, report_type: Reports, report: OrderedDict):
         """
@@ -68,21 +71,18 @@ class pyntacleReporter():
 
 
         self.__report_type = report_type
-
-        now = datetime.datetime.now()
-        self.dat = now.strftime("%d/%m/%Y %I:%M")
-        self.__report = []
-        self.__report.append(" ".join["pyntacle Report", self.dat])
-        self.__report.append("General Graph Information")
-        self.__report.append(["graph name", ",".join(self.__graph["name"])])
-        self.__report.append(["components", len(self.__graph.components())])
-        self.__report.append(["nodes", self.__graph.vcount()])
-        self.__report.append(["edges", self.__graph.ecount()])
-        self.__report.append(["\n\n"])
-        self.__report.append(": ".join(["Pyntacle Command", report_type.name]))
+        self.report = []
+        self.report.append(" ".join["pyntacle Report", self.dat])
+        self.report.append("General Graph Information")
+        self.report.append(["graph name", ",".join(self.graph["name"])])
+        self.report.append(["components", len(self.graph.components())])
+        self.report.append(["nodes", self.graph.vcount()])
+        self.report.append(["edges", self.graph.ecount()])
+        self.report.append(["\n\n"])
+        self.report.append(": ".join(["Pyntacle Command", report_type.name]))
 
         if report_type == Reports.Local:
-            self.__local_report()
+            self.__local_report(reportdict=report)
         elif report_type == Reports.Global:
             self.__global_report(reportdict=report)
         elif report_type == Reports.KPinfo:
@@ -114,7 +114,7 @@ class pyntacleReporter():
         """
         extensionlist = [".txt", ".tsv", ".xlsx", ".csv"]
 
-        if not self.__report:
+        if not self.report:
             raise EnvironmentError(
                 "a pyntacle_commands_utils must be created first using the \"create_report()\" function")
 
@@ -135,7 +135,7 @@ class pyntacleReporter():
             self.logger.info("pyntacle_commands_utils path is not specified, using generic name and saving file into "
                              "the current directory (as tab-separated file")
 
-            report_path = os.path.join(os.path.abspath(os.getcwd()), "_".join(["pyntacle_report", self.__graph["name"], self.__report_type.name, self.now])+".tsv")
+            report_path = os.path.join(os.path.abspath(os.getcwd()), "_".join(["pyntacle_report", self.graph["name"], self.__report_type.name, self.dat])+".tsv")
             extension = ".txt"
 
         if extension != ".xlsx":
@@ -145,15 +145,15 @@ class pyntacleReporter():
                 if extension == ".tsv" or extension == ".txt":
                     self.logger.info("writing pyntacle report to a tab-separated file (tsv)")
 
-                    for elem in self.__report:
+                    for elem in self.report:
                         elem.append("\n")
 
-                    out.writelines(["\t".join(x) for x in self.__report])
+                    out.writelines(["\t".join(x) for x in self.report])
 
                 elif extension == ".csv":
                     self.logger.info("writing pyntacle report to a comma-separated value file (csv)")
                     writer = csv.writer(out)
-                    writer.writerows(self.__report)
+                    writer.writerows(self.report)
 
         else:
             self.logger.info("writing pyntacle report to a an excel-Ready file (xlsx)")
@@ -163,7 +163,7 @@ class pyntacleReporter():
 
             worksheet = workbook.add_worksheet("pyntacle Report")
 
-            for row, elem in enumerate(self.__report):
+            for row, elem in enumerate(self.report):
                 for col, p in enumerate(elem):
                     worksheet.write(row, col, p, format)
 
@@ -172,16 +172,31 @@ class pyntacleReporter():
         return report_path
 
     def __local_report(self, reportdict:OrderedDict):
-        pass
+
+        nodes = reportdict.get("nodes")
+        if nodes is None:
+            nodes = self.graph.vs["name"]
+        else:
+            del reportdict["nodes"]
+
+        if not all(isinstance(x, LocalAttribute) for x in reportdict.keys()):
+            raise TypeError(("one of the keys in the report dictionary is not of type LocalAttribute (except nodes)"))
+        self.report.append(["Results: Local Topology Metrics in Pyntacle for each node queried"])
+        self.report.append(["Node Name"] + [x.name for x in reportdict.keys()])
+
+        #todo stuck here
+        for i, elem in enumerate(nodes):
+            pass
+
     def __global_report(self, reportdict:OrderedDict):
         if not all(isinstance(x, GlobalAttribute) for x in reportdict.keys()):
-            raise TypeError("one of the keys in the report dictionary is not a GlobalAttribute")
+            raise TypeError("one of the keys in the report dictionary is not of type GlobalAttribute")
 
-        self.__report.append(["Results: Global Topology Metrics for selected graphs"])
-        self.__report.append(["Metric", "Value"])
+        self.report.append(["Results: Global Topology Metrics for selected graphs"])
+        self.report.append(["Metric", "Value"])
 
         for k in reportdict.keys():
-            self.__report.append([k.name, str(reportdict[k])])
+            self.report.append([k.name, str(reportdict[k])])
 
     def __KPinfo_report(self, reportdict:OrderedDict):
         """
@@ -198,13 +213,13 @@ class pyntacleReporter():
             if not isinstance(m, int) and m < 1:
                 raise ValueError("m must be a positive integer")
             else:
-                self.__report.append(["maximum mreach distance", reportdict[KPPOSchoices.mreach][2]])
+                self.report.append(["maximum mreach distance", reportdict[KPPOSchoices.mreach][2]])
 
         if KPNEGchoices.F in reportdict.keys():
             init_F = reportdict[KPNEGchoices.F][2]
 
             if 0.0 <= init_F <= 1.0:
-                self.__report.append(["initial F value (whole graph)", str(init_F)])
+                self.report.append(["initial F value (whole graph)", str(init_F)])
             else:
                 raise ValueError("Initial F must range between 0 and 1")
 
@@ -212,19 +227,19 @@ class pyntacleReporter():
             init_dF = reportdict[KPNEGchoices.F][2]
 
             if 0.0 <= init_dF <= 1.0:
-                self.__report.append(["initial F value (whole graph)", init_dF])
+                self.report.append(["initial F value (whole graph)", init_dF])
             else:
                 raise ValueError("Initial F must range between 0 and 1")
 
-        self.__report.append("Results: Key Player Metrics Info for selected node subset")
-        self.__report.append(["Metric", "Nodes", "Value"])
+        self.report.append("Results: Key Player Metrics Info for selected subset of nodes")
+        self.report.append(["Metric", "Nodes", "Value"])
 
         for k in reportdict.keys():
             if (k == KPNEGchoices.F or k == KPNEGchoices.dF) and reportdict[k][-1] == 1.0:
-                self.__report.append([k.name, "NA", "MAXIMUM FRAGMENTATION REACHED"])
+                self.report.append([k.name, "NA", "MAXIMUM FRAGMENTATION REACHED"])
 
             else:
-                self.__report.append([k.name, ",".join(reportdict[k][0]), str(reportdict[k][1])])
+                self.report.append([k.name, ",".join(reportdict[k][0]), str(reportdict[k][1])])
 
     def __greedy_report(self, reportdict: OrderedDict):
         """
@@ -241,13 +256,13 @@ class pyntacleReporter():
             if not isinstance(m, int) and m < 1:
                 raise ValueError("m must be a positive integer")
             else:
-                self.__report.append(["maximum mreach distance", reportdict[KPPOSchoices.mreach][2]])
+                self.report.append(["maximum mreach distance", reportdict[KPPOSchoices.mreach][2]])
 
         if KPNEGchoices.F in reportdict.keys():
             init_F = reportdict[KPNEGchoices.F][2]
 
             if 0.0 <= init_F <= 1.0:
-                self.__report.append(["initial F value (whole graph)", str(init_F)])
+                self.report.append(["initial F value (whole graph)", str(init_F)])
             else:
                 raise ValueError("Initial F must range between 0 and 1")
 
@@ -255,19 +270,19 @@ class pyntacleReporter():
             init_dF = reportdict[KPNEGchoices.F][2]
 
             if 0.0 <= init_dF <= 1.0:
-                self.__report.append(["initial F value (whole graph)", init_dF])
+                self.report.append(["initial F value (whole graph)", init_dF])
             else:
                 raise ValueError("Initial F must range between 0 and 1")
 
-        self.__report.append("Results: Greedily-Optimized Search")
-        self.__report.append(["Metric", "Nodes", "Value"])
+        self.report.append("Results: Greedily-Optimized Search")
+        self.report.append(["Metric", "Nodes", "Value"])
 
         for k in reportdict.keys():
             if (k == KPNEGchoices.F or k == KPNEGchoices.dF) and reportdict[k][-1] == 1.0:
-                self.__report.append([k.name, "NA", "MAXIMUM FRAGMENTATION REACHED"])
+                self.report.append([k.name, "NA", "MAXIMUM FRAGMENTATION REACHED"])
 
             else:
-                self.__report.append([k.name, ",".join(reportdict[k][0]), str(reportdict[k][1])])
+                self.report.append([k.name, ",".join(reportdict[k][0]), str(reportdict[k][1])])
 
     def __bruteforce_report(self, reportdict: OrderedDict):
         """
@@ -284,13 +299,13 @@ class pyntacleReporter():
             if not isinstance(m, int) and m < 1:
                 raise ValueError("m must be a positive integer")
             else:
-                self.__report.append(["maximum mreach distance", reportdict[KPPOSchoices.mreach][2]])
+                self.report.append(["maximum mreach distance", reportdict[KPPOSchoices.mreach][2]])
 
         if KPNEGchoices.F in reportdict.keys():
             init_F = reportdict[KPNEGchoices.F][2]
 
             if 0.0 <= init_F <= 1.0:
-                self.__report.append(["initial F value (whole graph)", str(init_F)])
+                self.report.append(["initial F value (whole graph)", str(init_F)])
             else:
                 raise ValueError("Initial F must range between 0 and 1")
 
@@ -298,229 +313,27 @@ class pyntacleReporter():
             init_dF = reportdict[KPNEGchoices.F][2]
 
             if 0.0 <= init_dF <= 1.0:
-                self.__report.append(["initial F value (whole graph)", init_dF])
+                self.report.append(["initial F value (whole graph)", init_dF])
             else:
                 raise ValueError("Initial F must range between 0 and 1")
 
-        self.__report.append("Results: Brute-force Search")
-        self.__report.append(["Metric", "Nodes", "Value"])
+        self.report.append("Results: Brute-force Search")
+        self.report.append(["Metric", "Nodes", "Value"])
 
         for k in reportdict.keys():
             if (k == KPNEGchoices.F or k == KPNEGchoices.dF) and reportdict[k][-1] == 1.0:
-                self.__report.append([k.name, "NA", "MAXIMUM FRAGMENTATION REACHED"])
+                self.report.append([k.name, "NA", "MAXIMUM FRAGMENTATION REACHED"])
 
             else:
                 #in this case, the report dictionary can contain more than one set of nodes
                 if len(reportdict[k][0]) > 1:
-                    self.__report.append([k.name, ",".join(reportdict[k][0][0]), str(reportdict[k][1])])
+                    self.report.append([k.name, ",".join(reportdict[k][0][0]), str(reportdict[k][1])])
                     del reportdict[k][0][0]
                     for elem in reportdict[k][0]:
-                        self.__report.append([[], ",".join(elem), str(reportdict[k][1])])
+                        self.report.append([[], ",".join(elem), str(reportdict[k][1])])
                 else:
-                    self.__report.append([k.name, ",".join(reportdict[k][0]), str(reportdict[k][1])])
+                    self.report.append([k.name, ",".join(reportdict[k][0]), str(reportdict[k][1])])
 
     def __communities_report(self, reportdict: OrderedDict):
         pass
-
-
-    # def report_global_topology(self):
-    #     '''
-    #     Create a pyntacle_commands_utils (as a list) containing all the global attributes list requested
-    #
-    #     :param attributes_list: a list of GlobalAttributes that must be reported
-    #     :param graph_copy: a second graph to be reported
-    #     '''
-    #
-    #     self.__utils.check_attributes_types(attributes_list=attributes_list,
-    #                                         attribute_types=[_GlobalAttribute, _SparsenessAttribute])
-    #
-    #     attributes_names = self.__utils.get_attribute_names(attribute_list=attributes_list)
-    #
-    #     # print(attributes_names)
-    #
-    #     self.create_report()
-    #
-    #     self.__report.append(["Metric Name", "Metric Value"])
-    #
-    #     for elem in attributes_names:
-    #         self.__report.append([elem, str(self.__graph[elem])])
-    #
-    #     # force each element of the list to be a string
-    #     self.__report = [[str(x) for x in y] for y in self.__report]
-
-    # def report_KP_Results(self, resultsdic: dict):
-    #
-    #     '''
-    #     Creates a reporter for the KP metrics as a list of lists (stored in the self.pyntacle_commands_utils list
-    #     :param resultsdic: a dictionary of results as outputted by kp_runner_OLD.py
-    #     '''
-    #
-    #     # initialize empty pyntacle_commands_utils
-    #     self.__init_report()
-    #     self.__report.append(["--- Summary of Key Player search---"])
-    #
-    #     self.__report.append(["Requested metrics:", ",".join([x.name for x in resultsdic.keys()])])
-    #
-    #     self.__report.append(
-    #         ["Algorithm:", resultsdic.get("algorithm", "KP-INFO")])  # added by me to handle the type of algorithm used
-    #     resultsdic.pop("algorithm", None)  # remove the key if present
-    #     #todo arrivato qua
-    #
-    #
-    #     if _KeyplayerAttribute.F in resultsdic.keys():
-    #
-    #         if isinstance(resultsdic[_KeyplayerAttribute.F][0], float):
-    #             self.__report.append(["Starting Value - F (whole graph): ", resultsdic[_KeyplayerAttribute.F][0]])
-    #
-    #         else:
-    #             raise WrongArgumentError("Starting F must be specified for the pyntacle_commands_utils")
-    #
-    #     if _KeyplayerAttribute.DF in resultsdic.keys():
-    #
-    #         if isinstance(resultsdic[_KeyplayerAttribute.DF][0], float):
-    #             self.__report.append(["Starting Value - DF (whole graph): ", resultsdic[_KeyplayerAttribute.DF][0]])
-    #
-    #         else:
-    #             raise WrongArgumentError("Starting F must be specified for the pyntacle_commands_utils")
-    #
-    #     if _KeyplayerAttribute.MREACH in resultsdic.keys():
-    #         if not isinstance(m, int):
-    #             raise WrongArgumentError("\"m\" must be defined")
-    #
-    #         else:
-    #             self.__report.append(["MREACH Value: ", m])
-    #
-    #     self.__report.append(["\n"])
-    #     if _KeyplayerAttribute.MREACH in resultsdic.keys():
-    #         self.__report.append(["KP Measure", "KP Set", "KP Value", "Fraction of Nodes Reached (MREACH)"])
-    #     else:
-    #         self.__report.append(["KP Measure", "KP Set", "KP Value"])
-    #
-    #     for key in resultsdic.keys():
-    #         if key == _KeyplayerAttribute.MREACH:
-    #             perc_node_reached = (resultsdic[key][2] + m) / self.__graph.vcount()
-    #             self.__report.append(
-    #                 [key.name, ",".join(resultsdic[key][1]), resultsdic[key][2], round(perc_node_reached, 2)])
-    #
-    #         else:
-    #             self.__report.append([key.name, ",".join(resultsdic[key][1]), resultsdic[key][2]])
-    #     self.__report = [[str(x) for x in y] for y in self.__report]
-    #
-    # def report_sets(self):
-    #     pass
-    #
-    # def report_modules(self):
-    #     pass
-    #
-    #
-    # def report_local_topology(self, node_names: list, local_attributes_list: list):
-    #
-    #     '''
-    #     Report all the requested topological indices for the requested nodes
-    #
-    #     :param node_names: a list of node names (must be string)
-    #     :param local_attributes_list: a list of LocalAttribute parameter
-    #     '''
-    #
-    #     self.__utils.check_name_list(names_list=node_names)  # check integrity of node names
-    #
-    #     index_list = self.__utils.get_node_indices(node_names=node_names)
-    #
-    #     self.__utils.check_attributes_types(attributes_list=local_attributes_list, attribute_types=_LocalAttribute)
-    #
-    #     attribute_names = self.__utils.get_attribute_names(attribute_list=local_attributes_list, type="node")
-    #
-    #     attribute_header = []
-    #
-    #     for at in attribute_names:
-    #
-    #         if at == "shortest_path":
-    #             attribute_header.extend(
-    #                 ("average shortest path", "median shortest path", "maximum shortest path"))
-    #
-    #         else:
-    #             attribute_header.append(at)
-    #
-    #     # fix the shortest path and add the following fields instead
-    #
-    #     self.__init_report()  # initialize standard pyntacle_commands_utils
-    #     if len(node_names) > 1:
-    #         self.__report.append(["Info on selected nodes"])
-    #     else:
-    #         self.__report.append(["Info on selected node"])
-    #
-    #     header = ["Node Name"] + attribute_header
-    #
-    #     self.__report.append(header)
-    #
-    #     for index in index_list:
-    #
-    #         elem = []
-    #
-    #         node_name = self.__graph.vs(index)["name"][
-    #             0]  # get the node name (is a list of 1 element so we take the first element only
-    #         elem.append(node_name)
-    #
-    #         for attr in attribute_names:  # loop through the attributes
-    #             value = self.__graph.vs(index)[attr]  # should be the list corresponding to the queried attribute
-    #
-    #             if attr == "shortest_path":
-    #
-    #                 if value[0] is None:
-    #                     self.logger.warning("node {0} does not have attribute {1}, returning \"NA\"  instead".format(
-    #                         self.__graph.vs(index)["name"][0], attr))
-    #                     elem.extend(("NA", "NA", "NA", "NA"))
-    #
-    #                 else:
-    #
-    #                     sp = value[0]  # takes the list of shortest paths, should be a list of 1 element
-    #                     sum = 0
-    #
-    #                     cleaned_sp = [x for x in sp if not x <= 0 and not isinf(x) and not isnan(
-    #                         x)]  # remove everything that is a positive integer
-    #
-    #                     if cleaned_sp:
-    #
-    #                         for val in cleaned_sp:
-    #                             sum = sum + val
-    #
-    #                         av_sp = sum / len(cleaned_sp)
-    #
-    #                         med_sp = median(cleaned_sp)
-    #                         max_sp = max(cleaned_sp)
-    #                         elem.extend((av_sp, med_sp, max_sp))
-    #
-    #                     else:
-    #                         self.logger.warning(
-    #                             "node {0} is an isolate, therefore it will have no sp pyntacle_commands_utils for it, returning \"NA\" instead")
-    #                         elem.extend(("NA", "NA", "NA"))
-    #
-    #             else:
-    #
-    #                 if value[0] is None:
-    #
-    #                     self.logger.warning("node {0} does not have attribute {1}, returning \"NA\"  instead".format(
-    #                         self.__graph.vs(index)["name"][0], attr))
-    #                     elem.append("NA")
-    #
-    #                 elif isnan(value[0]):
-    #                     self.logger.warning(
-    #                         "node {0} has an infinite value for attribute {1}, returning \"nan\"".format(
-    #                             self.__graph.vs(index)["name"][0], attr))
-    #                     elem.append("nan")
-    #
-    #                 elif isinf(value[0]):
-    #                     self.logger.warning(
-    #                         "node {0} has an infinite value for attribute {1}, returning \"inf\"".format(
-    #                             self.__graph.vs(index)["name"][0], attr))
-    #                     elem.append("inf")
-    #
-    #                 else:
-    #                     elem.append(value[0])
-    #
-    #         self.__report.append(elem)
-    #
-    #     # force each element of the list to be a string
-    #     self.__report = [[str(x) for x in y] for y in self.__report]
-
 
