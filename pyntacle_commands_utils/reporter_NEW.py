@@ -117,6 +117,10 @@ class pyntacleReporter():
             raise EnvironmentError(
                 "a report must be created first using the \"create_report()\" function")
 
+        else:
+            #cast every elementy of the list of lists to string, just in case:
+            self.report = [ map(str,x) for x in self.report ]
+
         if format not in choices.keys():
             raise WrongArgumentError("file format {} is not supported".format(format))
 
@@ -199,7 +203,7 @@ class pyntacleReporter():
         self.report.append(["Metric", "Value"])
 
         for k in reportdict.keys():
-            self.report.append([k, str(reportdict[k])])
+            self.report.append([k, reportdict[k]])
 
     def __KPinfo_report(self, reportdict:OrderedDict):
         """
@@ -222,7 +226,7 @@ class pyntacleReporter():
             init_F = reportdict[KPNEGchoices.F.name][2]
 
             if 0.0 <= init_F <= 1.0:
-                self.report.append(["initial F value (whole graph)", str(init_F)])
+                self.report.append(["initial F value (whole graph)", init_F])
             else:
                 raise ValueError("Initial F must range between 0 and 1")
 
@@ -242,7 +246,7 @@ class pyntacleReporter():
                 self.report.append([k, "NA", "MAXIMUM FRAGMENTATION REACHED"])
 
             else:
-                self.report.append([k, ",".join(reportdict[k][0]), str(reportdict[k][1])])
+                self.report.append([k, ",".join(reportdict[k][0]), reportdict[k][1]])
 
     def __greedy_report(self, reportdict: OrderedDict):
         """
@@ -265,7 +269,7 @@ class pyntacleReporter():
             init_F = reportdict[KPNEGchoices.F.name][2]
 
             if 0.0 <= init_F <= 1.0:
-                self.report.append(["initial F value (whole graph)", str(init_F)])
+                self.report.append(["initial F value (whole graph)", init_F])
             else:
                 raise ValueError("Initial F must range between 0 and 1")
 
@@ -285,7 +289,7 @@ class pyntacleReporter():
                 self.report.append([k, "NA", "MAXIMUM FRAGMENTATION REACHED"])
 
             else:
-                self.report.append([k, ",".join(reportdict[k][0]), str(reportdict[k][1])])
+                self.report.append([k, ",".join(reportdict[k][0]), reportdict[k][1]])
 
     def __bruteforce_report(self, reportdict: OrderedDict):
         """
@@ -308,7 +312,7 @@ class pyntacleReporter():
             init_F = reportdict[KPNEGchoices.F.name][2]
 
             if 0.0 <= init_F <= 1.0:
-                self.report.append(["initial F value (whole graph)", str(init_F)])
+                self.report.append(["initial F value (whole graph)", init_F])
             else:
                 raise ValueError("Initial F must range between 0 and 1")
 
@@ -330,12 +334,12 @@ class pyntacleReporter():
             else:
                 #in this case, the report dictionary can contain more than one set of nodes
                 if len(reportdict[k][0]) > 1:
-                    self.report.append([k, ",".join(reportdict[k][0][0]), str(reportdict[k][1])])
+                    self.report.append([k, ",".join(reportdict[k][0][0]), reportdict[k][1]])
                     del reportdict[k][0][0]
                     for elem in reportdict[k][0]:
-                        self.report.append([[], ",".join(elem), str(reportdict[k][1])])
+                        self.report.append([[], ",".join(elem), reportdict[k][1]])
                 else:
-                    self.report.append([k, ",".join(reportdict[k][0]), str(reportdict[k][1])])
+                    self.report.append([k, ",".join(reportdict[k][0]), reportdict[k][1]])
 
     def __communities_report(self, reportdict: OrderedDict):
         pass
