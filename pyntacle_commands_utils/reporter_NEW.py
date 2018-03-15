@@ -72,14 +72,14 @@ class pyntacleReporter():
 
         self.__report_type = report_type
         self.report = []
-        self.report.append(" ".join(["pyntacle Report", self.dat]))
-        self.report.append("General Graph Information")
+        self.report.append([" ".join(["pyntacle Report", self.dat])])
+        self.report.append(["General Graph Information"])
         self.report.append(["graph name", ",".join(self.graph["name"])])
         self.report.append(["components", len(self.graph.components())])
         self.report.append(["nodes", self.graph.vcount()])
         self.report.append(["edges", self.graph.ecount()])
         self.report.append(["\n\n"])
-        self.report.append(": ".join(["Pyntacle Command", report_type.name]))
+        self.report.append([": ".join(["Pyntacle Command", report_type.name])])
 
         if report_type == Reports.Local:
             self.__local_report(reportdict=report)
@@ -91,8 +91,8 @@ class pyntacleReporter():
             self.__greedy_report(reportdict=report)
         elif report_type == Reports.KP_bruteforce:
             self.__bruteforce_report(reportdict=report)
-        elif report_type == Reports.Communities:
-            self.__communities_report()
+        # elif report_type == Reports.Communities:
+        #     self.__communities_report()
 
         else:
             if report_type == Reports.Set:
@@ -234,7 +234,7 @@ class pyntacleReporter():
             else:
                 raise ValueError("Initial dF must range between 0 and 1")
 
-        self.report.append("Results: Key Player Metrics Info for selected subset of nodes")
+        self.report.append(["Results: Key Player Metrics Info for selected subset of nodes"])
         self.report.append(["Metric", "Nodes", "Value"])
 
         for k in reportdict.keys():
@@ -277,7 +277,7 @@ class pyntacleReporter():
             else:
                 raise ValueError("Initial F must range between 0 and 1")
 
-        self.report.append("Results: Greedily-Optimized Search")
+        self.report.append(["Results: Greedily-Optimized Search"])
         self.report.append(["Metric", "Nodes", "Value"])
 
         for k in reportdict.keys():
@@ -320,7 +320,7 @@ class pyntacleReporter():
             else:
                 raise ValueError("Initial F must range between 0 and 1")
 
-        self.report.append("Results: Brute-force Search")
+        self.report.append(["Results: Brute-force Search"])
         self.report.append(["Metric", "Nodes", "Value"])
 
         for k in reportdict.keys():
