@@ -25,5 +25,21 @@ __license__ = u"""
   """
 
 from config import *
+import logging
+import os
+import random
 
-""" insert your method description here """
+# Checking presence of pycairo, needed for plotting
+from importlib import util
+pycairo_check = util.find_spec("cairo")
+if pycairo_check is None:
+    raise EnvironmentError("pyntacle needs the pycairo library to be installed and available "
+                           "in order to produce plots. Please install it and try again.")
+
+from igraph import Graph, plot
+
+from exceptions.missing_attribute_error import MissingAttributeError
+from exceptions.wrong_argument_error import WrongArgumentError
+from tools.graph_utils import GraphUtils as gu
+
+""" Utilities used by the pyntacle command line  to produce small reports"""

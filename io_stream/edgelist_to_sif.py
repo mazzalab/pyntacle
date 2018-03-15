@@ -24,17 +24,13 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-import os
-import sys
-
-import pandas as pd
-from config import *
-from tools import edgelist_utils
-
 '''
 this class covers the processing of an edgelist to a  simple interaction format (sif) that can be passed to cytoscape
 '''
 
+import pandas as pd
+from config import *
+from tools import edgelist_utils
 
 #todo rework all this
 class EdgeListToCytoscape:

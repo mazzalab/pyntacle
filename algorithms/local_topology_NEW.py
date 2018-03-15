@@ -25,7 +25,7 @@ __license__ = u"""
   """
 
 """
-**Compute Local Topology metrics for all nodes in the graph or for a set of nodes**
+Compute Local Topology metrics for all nodes in the graph or for a set of nodes
 """
 from config import *
 from math import isinf

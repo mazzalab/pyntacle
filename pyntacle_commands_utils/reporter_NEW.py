@@ -346,8 +346,16 @@ class pyntacleReporter():
                     self.report.append([k, ",".join(reportdict[k][0][0]), reportdict[k][1]])
 
     def __communities_report(self, reportdict: OrderedDict):
+        """
+        Report General information regarding the communities (nodes, edges, component, algorithm)
+        stored in the reportdic
+        :param reportdict: a dictionary from pyntacle communities
+        """
         self.report.append(["Results: Community finding in input graph"])
         self.report.append(["Algorithm:", reportdict["algorithm"]])
         self.report.append(["\n"])
-        self.report.append(["Metric", "Value"])
+        self.report.append(["Module", "Nodes", "Edges", "Components"])
+        del reportdict["algorithm"] #delete the dictionary algorithm
 
+        for k in reportdict.keys():
+            self.report.append([k, reportdict[k][0], reportdict[k][1], reportdict[k][2]])

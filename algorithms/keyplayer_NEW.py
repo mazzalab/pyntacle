@@ -24,6 +24,8 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+""" Utilities to compute KP Metrics described by Borgatti"""
+
 import algorithms.local_topology_NEW as lt
 from misc.graph_routines import *
 from misc.implementation_seeker import implementation_seeker
@@ -31,8 +33,6 @@ from tools.graph_utils import GraphUtils as gu
 from misc.shortest_path_modifications import *
 from misc.enums import SP_implementations as imps
 import numpy as np
-
-# todo add Pyntacle documentation link showing minim requirements for the igraph object to be used in within this module
 
 class KeyPlayer:
     """

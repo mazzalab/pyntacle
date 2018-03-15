@@ -105,17 +105,19 @@ class GlobalAttribute(Enum):
     completeness_XXX = auto()
     compactness = auto()
 
+class edge_attributes(Enum):
+    """
+    this enumerator stores all the edge attributes that can be instantiated by pyntacle
+    """
+    pass
+
 class Reports(Enum):
+    """
+    enumerator for the several type of reports available in the pyntacle command line utility
+    """
     Global = auto()
     Local = auto()
     KPinfo = auto()
     KP_greedy = auto()
     KP_bruteforce = auto()
     Communities = auto()
-    Set = auto()
-
-class edge_attributes(Enum):
-    """
-    this enumerator stores all the edge attributes that can be instantiated by pyntacle
-    """
-    pass

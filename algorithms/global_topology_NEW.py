@@ -24,14 +24,14 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+""" Class for computing the Global Properties of a graph"""
+
 import algorithms.local_topology_NEW as lt
 from misc.graph_routines import check_graph_consistency
 from misc.enums import SP_implementations as imps
 from statistics import mean
 from igraph import Graph
 import numpy as np
-
-#todo add pyntacle documentation link for minimum requirements in igraph
 
 class GlobalTopology:
     """

@@ -1,22 +1,4 @@
 # external libraries
-import logging
-import os
-import random
-
-from config import *
-
-# Checking presence of pycairo, needed for plotting
-from importlib import util
-pycairo_check = util.find_spec("cairo")
-if pycairo_check is None:
-    raise EnvironmentError("pyntacle needs the pycairo library to be installed and available "
-                           "in order to produce plots. Please install it and try again.")
-from igraph import Graph, plot
-
-from exceptions.missing_attribute_error import MissingAttributeError
-from exceptions.wrong_argument_error import WrongArgumentError
-# pyntacle libraries
-from tools import graph_utils
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
