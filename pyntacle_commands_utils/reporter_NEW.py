@@ -38,7 +38,7 @@ from collections import OrderedDict
 
 class pyntacleReporter():
     """
-    This method creates a pyntacle_commands_utils according to the type of analysis run by pyntacle
+    This method creates a report according to the type of analysis run by pyntacle
     """
     logger = None
 
@@ -72,7 +72,7 @@ class pyntacleReporter():
 
         self.__report_type = report_type
         self.report = []
-        self.report.append(" ".join["pyntacle Report", self.dat])
+        self.report.append(" ".join(["pyntacle Report", self.dat]))
         self.report.append("General Graph Information")
         self.report.append(["graph name", ",".join(self.graph["name"])])
         self.report.append(["components", len(self.graph.components())])
@@ -116,7 +116,7 @@ class pyntacleReporter():
 
         if not self.report:
             raise EnvironmentError(
-                "a pyntacle_commands_utils must be created first using the \"create_report()\" function")
+                "a report must be created first using the \"create_report()\" function")
 
         if report_path is not None:
             report_path = os.path.abspath(report_path)
@@ -128,11 +128,11 @@ class pyntacleReporter():
             reportdir = os.path.dirname(os.path.abspath(report_path))
 
             if not os.path.isdir(reportdir):
-                self.logger.warning("directory of pyntacle_commands_utils does not exists, creating it")
+                self.logger.warning("directory of report does not exist, creating it")
                 os.makedirs(reportdir, exist_ok=True)
 
         else:
-            self.logger.info("pyntacle_commands_utils path is not specified, using generic name and saving file into "
+            self.logger.info("report path is not specified, using generic name and saving file into "
                              "the current directory (as tab-separated file")
 
             report_path = os.path.join(os.path.abspath(os.getcwd()), "_".join(["pyntacle_report", self.graph["name"], self.__report_type.name, self.dat])+".tsv")
@@ -196,50 +196,50 @@ class pyntacleReporter():
         self.report.append(["Metric", "Value"])
 
         for k in reportdict.keys():
-            self.report.append([k.name, str(reportdict[k])])
+            self.report.append([k, str(reportdict[k])])
 
     def __KPinfo_report(self, reportdict:OrderedDict):
         """
         fill the *self.__report* object with all the values conatined in the KPINFO Run
         :param reportdict: a dictionary with KPPOSchoices or KPNEGchoices as  `keys` and a list as `values`
         """
+        # this doesn't work for now: keys are strings and not KP choices.
+        # if not all(isinstance(x, str) for x in reportdict.keys()):
+        #     raise TypeError("one of the keys in the report dictionary is not a KPPOSchoices or KPNEGchoices")
 
-        if not all(isinstance(x, (KPPOSchoices, KPPOSchoices)) for x in reportdict.keys()):
-            raise TypeError("one of the keys in the report dictionary is not a KPPOSchoices or KPNEGchoices")
-
-        if KPPOSchoices.mreach in reportdict.keys():
-            m = reportdict[KPPOSchoices.mreach][2]
+        if KPPOSchoices.mreach.name in reportdict.keys():
+            m = reportdict[KPPOSchoices.mreach.name][2]
 
             if not isinstance(m, int) and m < 1:
                 raise ValueError("m must be a positive integer")
             else:
-                self.report.append(["maximum mreach distance", reportdict[KPPOSchoices.mreach][2]])
+                self.report.append(["maximum mreach distance", reportdict[KPPOSchoices.mreach.name][2]])
 
-        if KPNEGchoices.F in reportdict.keys():
-            init_F = reportdict[KPNEGchoices.F][2]
+        if KPNEGchoices.F.name in reportdict.keys():
+            init_F = reportdict[KPNEGchoices.F.name][2]
 
             if 0.0 <= init_F <= 1.0:
                 self.report.append(["initial F value (whole graph)", str(init_F)])
             else:
                 raise ValueError("Initial F must range between 0 and 1")
 
-        if KPPOSchoices.dF in reportdict.keys():
-            init_dF = reportdict[KPNEGchoices.F][2]
+        if KPNEGchoices.dF.name in reportdict.keys():
+            init_dF = reportdict[KPNEGchoices.dF.name][2]
 
             if 0.0 <= init_dF <= 1.0:
-                self.report.append(["initial F value (whole graph)", init_dF])
+                self.report.append(["initial dF value (whole graph)", init_dF])
             else:
-                raise ValueError("Initial F must range between 0 and 1")
+                raise ValueError("Initial dF must range between 0 and 1")
 
         self.report.append("Results: Key Player Metrics Info for selected subset of nodes")
         self.report.append(["Metric", "Nodes", "Value"])
 
         for k in reportdict.keys():
-            if (k == KPNEGchoices.F or k == KPNEGchoices.dF) and reportdict[k][-1] == 1.0:
-                self.report.append([k.name, "NA", "MAXIMUM FRAGMENTATION REACHED"])
+            if (k == KPNEGchoices.F.name or k == KPNEGchoices.dF.name) and reportdict[k][-1] == 1.0:
+                self.report.append([k, "NA", "MAXIMUM FRAGMENTATION REACHED"])
 
             else:
-                self.report.append([k.name, ",".join(reportdict[k][0]), str(reportdict[k][1])])
+                self.report.append([k, ",".join(reportdict[k][0]), str(reportdict[k][1])])
 
     def __greedy_report(self, reportdict: OrderedDict):
         """
@@ -250,24 +250,24 @@ class pyntacleReporter():
         if not all(isinstance(x, (KPPOSchoices, KPPOSchoices)) for x in reportdict.keys()):
             raise TypeError("one of the keys in the report dictionary is not a KPPOSchoices or KPNEGchoices")
 
-        if KPPOSchoices.mreach in reportdict.keys():
-            m = reportdict[KPPOSchoices.mreach][2]
+        if KPPOSchoices.mreach.name in reportdict.keys():
+            m = reportdict[KPPOSchoices.mreach.name][2]
 
             if not isinstance(m, int) and m < 1:
                 raise ValueError("m must be a positive integer")
             else:
-                self.report.append(["maximum mreach distance", reportdict[KPPOSchoices.mreach][2]])
+                self.report.append(["maximum mreach distance", reportdict[KPPOSchoices.mreach.name][2]])
 
         if KPNEGchoices.F in reportdict.keys():
-            init_F = reportdict[KPNEGchoices.F][2]
+            init_F = reportdict[KPNEGchoices.F.name][2]
 
             if 0.0 <= init_F <= 1.0:
                 self.report.append(["initial F value (whole graph)", str(init_F)])
             else:
                 raise ValueError("Initial F must range between 0 and 1")
 
-        if KPPOSchoices.dF in reportdict.keys():
-            init_dF = reportdict[KPNEGchoices.F][2]
+        if KPNEGchoices.dF.name in reportdict.keys():
+            init_dF = reportdict[KPNEGchoices.dF.name][2]
 
             if 0.0 <= init_dF <= 1.0:
                 self.report.append(["initial F value (whole graph)", init_dF])
@@ -278,11 +278,11 @@ class pyntacleReporter():
         self.report.append(["Metric", "Nodes", "Value"])
 
         for k in reportdict.keys():
-            if (k == KPNEGchoices.F or k == KPNEGchoices.dF) and reportdict[k][-1] == 1.0:
-                self.report.append([k.name, "NA", "MAXIMUM FRAGMENTATION REACHED"])
+            if (k == KPNEGchoices.F.name or k == KPNEGchoices.dF.name) and reportdict[k][-1] == 1.0:
+                self.report.append([k, "NA", "MAXIMUM FRAGMENTATION REACHED"])
 
             else:
-                self.report.append([k.name, ",".join(reportdict[k][0]), str(reportdict[k][1])])
+                self.report.append([k, ",".join(reportdict[k][0]), str(reportdict[k][1])])
 
     def __bruteforce_report(self, reportdict: OrderedDict):
         """
@@ -290,27 +290,27 @@ class pyntacleReporter():
         :param reportdict: a dictionary with KPPOSchoices or KPNEGchoices as  `keys` and a list as `values`
         """
 
-        if not all(isinstance(x, (KPPOSchoices, KPPOSchoices)) for x in reportdict.keys()):
-            raise TypeError("one of the keys in the report dictionary is not a KPPOSchoices or KPNEGchoices")
+        # if not all(isinstance(x, (KPPOSchoices, KPPOSchoices)) for x in reportdict.keys()):
+        #     raise TypeError("one of the keys in the report dictionary is not a KPPOSchoices or KPNEGchoices")
 
-        if KPPOSchoices.mreach in reportdict.keys():
-            m = reportdict[KPPOSchoices.mreach][2]
+        if KPPOSchoices.mreach.name in reportdict.keys():
+            m = reportdict[KPPOSchoices.mreach.name][2]
 
             if not isinstance(m, int) and m < 1:
                 raise ValueError("m must be a positive integer")
             else:
-                self.report.append(["maximum mreach distance", reportdict[KPPOSchoices.mreach][2]])
+                self.report.append(["maximum mreach distance", reportdict[KPPOSchoices.mreach.name][2]])
 
-        if KPNEGchoices.F in reportdict.keys():
-            init_F = reportdict[KPNEGchoices.F][2]
+        if KPNEGchoices.F.name in reportdict.keys():
+            init_F = reportdict[KPNEGchoices.F.name][2]
 
             if 0.0 <= init_F <= 1.0:
                 self.report.append(["initial F value (whole graph)", str(init_F)])
             else:
                 raise ValueError("Initial F must range between 0 and 1")
 
-        if KPPOSchoices.dF in reportdict.keys():
-            init_dF = reportdict[KPNEGchoices.F][2]
+        if KPNEGchoices.dF.name in reportdict.keys():
+            init_dF = reportdict[KPNEGchoices.dF.name][2]
 
             if 0.0 <= init_dF <= 1.0:
                 self.report.append(["initial F value (whole graph)", init_dF])
@@ -321,18 +321,18 @@ class pyntacleReporter():
         self.report.append(["Metric", "Nodes", "Value"])
 
         for k in reportdict.keys():
-            if (k == KPNEGchoices.F or k == KPNEGchoices.dF) and reportdict[k][-1] == 1.0:
-                self.report.append([k.name, "NA", "MAXIMUM FRAGMENTATION REACHED"])
+            if (k == KPNEGchoices.F.name or k == KPNEGchoices.dF.name) and reportdict[k][-1] == 1.0:
+                self.report.append([k, "NA", "MAXIMUM FRAGMENTATION REACHED"])
 
             else:
                 #in this case, the report dictionary can contain more than one set of nodes
                 if len(reportdict[k][0]) > 1:
-                    self.report.append([k.name, ",".join(reportdict[k][0][0]), str(reportdict[k][1])])
+                    self.report.append([k, ",".join(reportdict[k][0][0]), str(reportdict[k][1])])
                     del reportdict[k][0][0]
                     for elem in reportdict[k][0]:
                         self.report.append([[], ",".join(elem), str(reportdict[k][1])])
                 else:
-                    self.report.append([k.name, ",".join(reportdict[k][0]), str(reportdict[k][1])])
+                    self.report.append([k, ",".join(reportdict[k][0]), str(reportdict[k][1])])
 
     def __communities_report(self, reportdict: OrderedDict):
         pass

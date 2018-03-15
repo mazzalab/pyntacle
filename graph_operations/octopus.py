@@ -216,9 +216,9 @@ class Octopus:
 
     # greedy
     @staticmethod
-    def add_GO_F(graph, kpp_size, max_distances=None, seed=None):
+    def add_GO_F(graph, kpp_size, seed=None):
         kpobj = gow(graph=graph)
-        kpobj.run_fragmentation(kpp_size, KPNEGchoices.F, max_distances=max_distances, seed=seed)
+        kpobj.run_fragmentation(kpp_size, KPNEGchoices.F, seed=seed)
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes('F'+'_greedy', {tuple(results_dict['F'][0]): results_dict['F'][1]})
 
