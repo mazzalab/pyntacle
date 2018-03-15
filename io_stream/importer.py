@@ -24,6 +24,8 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+"Wraps up all the importers for several type of network representation files (all the file formats supported by Pyntacle"
+
 import pandas as pd
 import re
 import pickle
@@ -39,8 +41,6 @@ from exceptions.illegal_graph_size_error import IllegalGraphSizeError
 from exceptions.unproperlyformattedfile_error import UnproperlyFormattedFileError
 from pyparsing import *
 from itertools import product
-"Wraps up all the importers for several type of network representation files"
-
 
 def dot_attrlist_to_dict(mylist):
     mydict = {}

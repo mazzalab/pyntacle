@@ -24,9 +24,7 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-
 """Generate Network with a specified toipology and make them pyntacle-ready"""
-
 
 import random
 from igraph import Graph

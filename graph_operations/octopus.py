@@ -23,6 +23,13 @@ __license__ = u"""
   You should have received a copy of the license along with this
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
+
+
+"""
+Octopus is a pyntacle command line utility that adds properties computed by pyntacle to the Graph, both at vertex and at
+a Graph level
+"""
+
 from config import *
 from tools.add_attributes import AddAttributes
 from algorithms.local_topology_NEW import LocalTopology

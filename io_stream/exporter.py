@@ -23,6 +23,9 @@ __license__ = u"""
   You should have received a copy of the license along with this
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
+"""
+Export the `igraph.Graph` object into one of the pyntacle-supported formats
+"""
 
 from misc.graph_routines import *
 from misc.export_utils import *

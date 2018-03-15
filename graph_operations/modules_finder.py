@@ -24,13 +24,11 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-# pyntacle libraries
-from tools.modules_utils import *
-from config import *
-
 """This tool uses the embedded methods in `igraph` to call several community finding algorithms and returns a list of 
 subgraph obtained from the input graph"""
 
+from tools.modules_utils import *
+from config import *
 
 class CommunityFinder:
     logger = None

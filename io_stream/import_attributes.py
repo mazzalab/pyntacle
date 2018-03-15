@@ -24,6 +24,10 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+"""
+Import attributes for an `igraph.Graph` object stored in a file and adds it to the Graph that has to be studied
+"""
+
 from igraph import Graph
 from config import *
 from collections import OrderedDict
