@@ -132,7 +132,12 @@ class pyntacleReporter():
             else:
                 report_dir = os.path.abspath(report_dir)
 
-        report_path = os.path.join(report_dir, "_".join(["pyntacle_report", self.graph["name"], self.__report_type.name, self.dat])+".tsv")
+        if len(self.graph["name"]) > 1:
+            self.logger.warning("using first \"name\" attribute of graph name since more than one is specified")
+
+        graphname = self.graph["name"][0]
+
+        report_path = os.path.join(report_dir, "_".join(["pyntacle_report", graphname, self.__report_type.name, self.dat])+".tsv")
 
         extension = choices[format]
 
