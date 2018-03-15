@@ -26,9 +26,7 @@ __license__ = u"""
 
 from config import *
 import csv, os, xlsxwriter
-from math import isnan, isinf
 from igraph import Graph
-from numpy import median
 from misc.enums import KPNEGchoices, KPPOSchoices, Reports, LocalAttribute, GlobalAttribute
 from exceptions.wrong_argument_error import WrongArgumentError
 from tools.graph_utils import GraphUtils as gu # swiss knife for graph utilities
@@ -93,16 +91,10 @@ class pyntacleReporter():
             self.__greedy_report(reportdict=report)
         elif report_type == Reports.KP_bruteforce:
             self.__bruteforce_report(reportdict=report)
-        # elif report_type == Reports.Communities:
-        #     self.__communities_report()
-
+        elif report_type == Reports.Communities:
+            self.__communities_report(reportdict=report)
         else:
-            if report_type == Reports.Set:
-                self.logger.warning("Set operation needs another report builder, use the \"Report_Sets\" class contained in this module. Quitting")
-                sys.exit(1)
-
-            else:
-                raise ValueError("Report specified does not exists")
+            raise ValueError("Report specified does not exists")
 
     def write_report(self, report_dir=None, format="tsv", choices=report_format) -> str:
         """
@@ -143,7 +135,7 @@ class pyntacleReporter():
 
         graphname = self.graph["name"][0]
 
-        report_path = os.path.join(report_dir, "_".join(["pyntacle_report", graphname, self.__report_type.name, self.dat])+".tsv")
+        report_path = os.path.join(report_dir, "_".join(["pyntacle_report", graphname, self.report_type.name, self.dat])+".tsv")
 
         extension = choices[format]
 
@@ -181,6 +173,13 @@ class pyntacleReporter():
         return report_path
 
     def __local_report(self, reportdict:OrderedDict):
+        """
+        Fill the `report` object  with information regarding the metrics for each node (nodes must be specified in
+        the reportdic `nodes' key. if that kjey is not specified, it will assume that the local metrics are
+        reported for all nodes)
+        :param reportdict: a report dictionary object with each local attribute as key and a list of values as value,
+        representing the corresponding the value of the metrics for the corresponding node
+        """
 
         nodes = reportdict.get("nodes")
         if nodes is None:
@@ -188,8 +187,6 @@ class pyntacleReporter():
         else:
             del reportdict["nodes"]
 
-        if not all(isinstance(x, LocalAttribute) for x in reportdict.keys()):
-            raise TypeError(("one of the keys in the report dictionary is not of type LocalAttribute (except nodes)"))
         self.report.append(["Results: Local Topology Metrics in Pyntacle for each node queried"])
         self.report.append(["Node Name"] + [x.name for x in reportdict.keys()])
 
@@ -203,8 +200,10 @@ class pyntacleReporter():
         self.report = self.report + addendum
 
     def __global_report(self, reportdict:OrderedDict):
-        if not all(isinstance(x, GlobalAttribute) for x in reportdict.keys()):
-            raise TypeError("one of the keys in the report dictionary is not of type GlobalAttribute")
+        """
+        Fill the `report` o0bject with information regarding all the global metrics stored in the reportdict object
+        :param reportdict: a dictionary like {name of the global metric: metric}
+        """
 
         self.report.append(["Results: Global Topology Metrics for selected graphs"])
         self.report.append(["Metric", "Value"])
@@ -349,5 +348,8 @@ class pyntacleReporter():
                     self.report.append([k, ",".join(reportdict[k][0]), reportdict[k][1]])
 
     def __communities_report(self, reportdict: OrderedDict):
-        pass
+        self.report.append(["Results: Community finding in input graph"])
+        self.report.append(["Algorithm:", reportdict["algorithm"]])
+        self.report.append(["\n"])
+        self.report.append(["Metric", "Value"])
 
