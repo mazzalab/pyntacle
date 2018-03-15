@@ -102,7 +102,7 @@ class pyntacleReporter():
             else:
                 raise ValueError("Report specified does not exists")
 
-    def write_report(self, report_path=None) -> str:
+    def write_report(self, report_dir=None, format="tsv", choices=report_format) -> str:
         """
         Create a text file containing the information created previously by the any of the *report* functions.
         By default, if the `report_path` function is not initialized, a generic name is created and a tab-separated file
@@ -112,37 +112,35 @@ class pyntacleReporter():
         :param str report_path: a :type: str containing a valid path to a file. If not specified (default is  None. Read above)
         :return: the path where the report is stored
         """
-        extensionlist = [".txt", ".tsv", ".xlsx", ".csv"]
 
         if not self.report:
             raise EnvironmentError(
                 "a pyntacle_commands_utils must be created first using the \"create_report()\" function")
 
-        if report_path is not None:
-            report_path = os.path.abspath(report_path)
-            extension = os.path.splitext(report_path.rstrip())[-1]  # take file name extension
+        if format not in choices.keys():
+            raise WrongArgumentError("file format {} is not supported".format(format))
 
-            if extension not in extensionlist:
-                raise WrongArgumentError("extension of file {} is not supported".format(extension))
-
-            reportdir = os.path.dirname(os.path.abspath(report_path))
-
-            if not os.path.isdir(reportdir):
-                self.logger.warning("directory of pyntacle_commands_utils does not exists, creating it")
-                os.makedirs(reportdir, exist_ok=True)
+        if report_dir is None:
+            self.logger.info("Directory not specified. Using current directory")
+            report_dir = os.path.abspath(os.getcwd())
 
         else:
-            self.logger.info("pyntacle_commands_utils path is not specified, using generic name and saving file into "
-                             "the current directory (as tab-separated file")
+            if not os.path.isdir(report_dir):
+                self.logger.warning("Specified directory does not exists, creating it")
+                os.makedirs(report_dir, exist_ok=True)
 
-            report_path = os.path.join(os.path.abspath(os.getcwd()), "_".join(["pyntacle_report", self.graph["name"], self.__report_type.name, self.dat])+".tsv")
-            extension = ".txt"
+            else:
+                report_dir = os.path.abspath(report_dir)
 
-        if extension != ".xlsx":
+        report_path = os.path.join(report_dir, "_".join(["pyntacle_report", self.graph["name"], self.__report_type.name, self.dat])+".tsv")
+
+        extension = choices[format]
+
+        if extension != "xlsx":
 
             with open(report_path, "w") as out:
 
-                if extension == ".tsv" or extension == ".txt":
+                if extension == "tsv":
                     self.logger.info("writing pyntacle report to a tab-separated file (tsv)")
 
                     for elem in self.report:
@@ -150,7 +148,7 @@ class pyntacleReporter():
 
                     out.writelines(["\t".join(x) for x in self.report])
 
-                elif extension == ".csv":
+                elif extension == "csv":
                     self.logger.info("writing pyntacle report to a comma-separated value file (csv)")
                     writer = csv.writer(out)
                     writer.writerows(self.report)
