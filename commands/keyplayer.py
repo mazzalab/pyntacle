@@ -54,6 +54,7 @@ class KeyPlayer():
                              "will not be produced.")
             self.args.no_plot = True
 
+        
     def run(self):
         cursor = CursorAnimation()
         cursor.daemon = True
@@ -135,7 +136,9 @@ class KeyPlayer():
     
             else:
                 plot_size = (1600, 1600)
-                
+        
+        r = pyntacleReporter(graph=graph)
+
         if self.args.which == 'kp-finder':
             k_size = self.args.k_size
             initial_results = {}
@@ -145,7 +148,7 @@ class KeyPlayer():
                 kp_runner = gow(graph=graph)
                 sys.stdout.write("Using Greedy Optimization Algorithm for searching optimal KP-Set\n")
 
-                if self.args.type == 'neg' or self.args.type == 'all':  # will not return nothing, as "get_results" will do it.
+                if self.args.type in (['F', 'neg', 'all']):
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using F (kp neg measure)\n".format(
                             self.args.k_size))
@@ -156,73 +159,85 @@ class KeyPlayer():
                         self.logging.warning("Initial value of F is 1. Skipping search.")
                         results[KPNEGchoices.F.name] = [[], 1, 1]
                         
+                if self.args.type in (['dF', 'neg', 'all']):
                     sys.stdout.write(
-                        "Finding best set of kp-nodes of size {} using DF (kp neg measure)\n".format(
+                        "Finding best set of kp-nodes of size {} using dF (kp neg measure)\n".format(
                             self.args.k_size))
-                    kp_runner.run_fragmentation(self.args.k_size, KPNEGchoices.dF,
-                                                max_distances=self.args.max_distances, seed=self.args.seed)
                     initial_results[KPNEGchoices.dF.name] = kpp.dF(graph)
+                    if initial_results[KPNEGchoices.dF.name] != 1:
+                        kp_runner.run_fragmentation(self.args.k_size, KPNEGchoices.dF,
+                                                max_distances=self.args.max_distances, seed=self.args.seed)
+                    else:
+                        self.logging.warning("Initial value of dF is 1. Skipping search.")
+                        results[KPNEGchoices.dF.name] = [[], 1, 1]
 
-                if self.args.type == 'pos' or self.args.type == 'all':
-                    kp_runner.run_reachability(self.args.k_size, KPPOSchoices.dR,
-                                               max_distances=self.args.max_distances, seed=self.args.seed)
+                if self.args.type in (['dR', 'pos', 'all']):
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using dR (kp pos measure)\n".format(
                             self.args.k_size))
-
-                    kp_runner.run_reachability(self.args.k_size, KPPOSchoices.mreach, m=self.args.m_reach,
+                    kp_runner.run_reachability(self.args.k_size, KPPOSchoices.dR,
                                                max_distances=self.args.max_distances, seed=self.args.seed)
-                    
+
+                if self.args.type in (['mreach', 'pos', 'all']):
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {0} using an MREACH measure of {1} (kp pos measure)\n".format(
                             self.args.k_size, self.args.m_reach))
+                    kp_runner.run_reachability(self.args.k_size, KPPOSchoices.mreach, m=self.args.m_reach,
+                                               max_distances=self.args.max_distances, seed=self.args.seed)
 
             elif self.args.implementation == "brute-force":
                 kp_runner = bfw(graph=graph)
                 sys.stdout.write("Using Brute Force for searching optimal KP-Set\n")
 
-                if self.args.type == 'neg' or self.args.type == 'all':  # will not return nothing, as "get_results" will do it.
+                if self.args.type in (['F', 'neg', 'all']):
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using F (kp neg measure)\n".format(
                             self.args.k_size))
                     initial_results[KPNEGchoices.F.name] = kpp.F(graph)
                     if initial_results[KPNEGchoices.F.name] != 1:
                         kp_runner.run_fragmentation(self.args.k_size, KPNEGchoices.F)
+
                     else:
                         self.logging.warning("Initial value of F is 1. Skipping search.")
                         results[KPNEGchoices.F.name] = [[], 1, 1]
-                        
+
+                if self.args.type in (['dF', 'neg', 'all']):
                     sys.stdout.write(
-                        "Finding best set of kp-nodes of size {} using DF (kp neg measure)\n".format(
+                        "Finding best set of kp-nodes of size {} using dF (kp neg measure)\n".format(
                             self.args.k_size))
-                    kp_runner.run_fragmentation(self.args.k_size, KPNEGchoices.dF,
-                                                max_distances=self.args.max_distances)
                     initial_results[KPNEGchoices.dF.name] = kpp.dF(graph)
+                    if initial_results[KPNEGchoices.dF.name] != 1:
+                        kp_runner.run_fragmentation(self.args.k_size, KPNEGchoices.dF,
+                                                    max_distances=self.args.max_distances)
+                    else:
+                        self.logging.warning("Initial value of dF is 1. Skipping search.")
+                        results[KPNEGchoices.dF.name] = [[], 1, 1]
 
-
-                if self.args.type == 'pos' or self.args.type == 'all':
-                    kp_runner.run_reachability(self.args.k_size, KPPOSchoices.dR,
-                                               max_distances=self.args.max_distances)
+                if self.args.type in (['dR', 'pos', 'all']):
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using dR (kp pos measure)\n".format(
                             self.args.k_size))
-
-                    kp_runner.run_reachability(self.args.k_size, KPPOSchoices.mreach, m=self.args.m_reach,
+                    kp_runner.run_reachability(self.args.k_size, KPPOSchoices.dR,
                                                max_distances=self.args.max_distances)
                     
+                if self.args.type in (['mreach', 'pos', 'all']):
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {0} using an MREACH measure of {1} (kp pos measure)\n".format(
                             self.args.k_size, self.args.m_reach))
+                    kp_runner.run_reachability(self.args.k_size, KPPOSchoices.mreach, m=self.args.m_reach,
+                                               max_distances=self.args.max_distances)
+                    
+
 
             else:
                 sys.stdout.write("Wrong implementation. Please contact pyntacle Developers and sent this error message, along with a command line and a log.\nQuitting.\n")
                 sys.exit(1)
-
+            
             sys.stdout.write("Search for the best kp set completed!\n")
 
             results.update(kp_runner.get_results())
-    
-            for kp in results.keys(): #ONJE OF THE keys represent the algorithm, so no else exit in here
+
+            for kp in results.keys(): #ONE OF THE keys represent the algorithm, so no else exit in here
 
                 if kp == KPNEGchoices.F.name or kp == KPNEGchoices.dF.name:
                     # joining initial results with final ones
@@ -249,6 +264,12 @@ class KeyPlayer():
                             self.args.k_size, self.args.m_reach, kp, results[kp][0],
                             results[kp][1], node_perc_reached))
 
+            if self.args.implementation == "brute-force":
+                r.create_report(report_type=Reports.KP_bruteforce, report=results)
+            elif self.args.implementation == "greedy":
+                r.create_report(report_type=Reports.KP_greedy, report=results)
+
+
 
         # kpinfo: compute kpmetrics for a set of predetermined nodes
         elif self.args.which == 'kp-info':
@@ -258,25 +279,23 @@ class KeyPlayer():
             results = OrderedDict()
 
             sys.stdout.write('\nNodes given as input: {}\n'.format(self.args.nodes))
-            if self.args.type == 'neg' or self.args.type == 'all':
+            if self.args.type in (['F', 'neg', 'all']):
                 initial_results[KPNEGchoices.F.name] = kpp.F(graph)
-                initial_results[KPNEGchoices.dF.name] = kpp.dF(graph)
+                kp_runner.run_KPNeg(self.args.nodes, KPNEGchoices.F)
 
-                kp_runner.run_KPNeg(self.args.nodes, KPNEGchoices.F, max_distances=self.args.max_distances)
+            if self.args.type in (['dF', 'neg', 'all']):
+                initial_results[KPNEGchoices.dF.name] = kpp.dF(graph)
                 kp_runner.run_KPNeg(self.args.nodes, KPNEGchoices.dF, max_distances=self.args.max_distances)
 
-                # sys.stdout.write('F: {0}\t DF: {1}\n'.format(F, DF))
-
-            if self.args.type == 'pos' or self.args.type == 'all':
+            if self.args.type in (['dR', 'pos', 'all']):
                 kp_runner.run_KPPos(self.args.nodes, KPPOSchoices.dR, max_distances=self.args.max_distances)
+                
+            if self.args.type in (['mreach', 'pos', 'all']):
                 kp_runner.run_KPPos(self.args.nodes, KPPOSchoices.mreach, m=self.args.m_reach,
                                     max_distances=self.args.max_distances)
-                # sys.stdout.write('MR: {0}\t dR: {1}\n'.format(MR, dR))
 
             results.update(kp_runner.get_results())
-            for r in results.keys():
-                print(r, type(r))
-            input('types')
+
             sys.stdout.write("Keyplayer metric(s) {}:\n".format(self.args.type.upper()))
             for metric in results.keys():
 
@@ -298,6 +317,8 @@ class KeyPlayer():
                     sys.stdout.write(
                         "{0} value for nodes {1} is {2}\n".format(metric, results[metric][0],
                                                                   results[metric][1]))
+            r.create_report(report_type=Reports.KPinfo, report=results)
+
         else:
             log.critical(
                 "This should not happen. Please contact pyntacle Developers and send your command line. Quitting\n.")
@@ -316,9 +337,7 @@ class KeyPlayer():
                 "A report with the same name ({}) already exists, overwriting it".format
                 (os.path.basename(report_path)))
         
-        r = pyntacleReporter(graph=graph)
-        r.create_report(report_type=Reports.KPinfo, report=results)
-        r.write_report(report_path=self.args.directory)
+        r.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
         if self.args.save_binary:
             sys.stdout.write("Saving graph to a Binary file\n")
@@ -505,8 +524,7 @@ class KeyPlayer():
                     sys.stdout.write(
                         "WARNING - A plot with the name ({}) already exists, overwriting it\n".format(
                             os.path.basename(plot_path)))
-                # print(plot_path)
-                # input()
+
                 plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=True,
                                       keep_aspect_ratio=True, vertex_label_size=8, vertex_frame_color=node_frames)
 

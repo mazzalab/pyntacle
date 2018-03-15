@@ -146,8 +146,9 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         
         parser.add_argument('-M', '--max_distances', metavar='', type=int, help='# EXPAND here - add that it is useless for F')
 
-        parser.add_argument('-t', "--type", metavar='', choices=['pos', 'neg', 'all'], default='all',
-                            help="kp algorithm to be executed. Choices: {pos, neg, all} Default is \"all\"")
+        parser.add_argument('-t', "--type", metavar='', choices=['pos', 'neg', 'all', 'F', 'dF', 'dR', 'mreach'], default='all',
+                            help="kp algorithm to be executed. Choices: {pos, neg, all, F, df, dR, mreach} Default is \"all\"")
+        
         parser.add_argument('--largest-component', action='store_true',
                             help='Use this option to perform Kp search only on the largest component of a graph. If two components of the same size exist, this will not work. Recommended for very fragmented network with only one large component')
 
