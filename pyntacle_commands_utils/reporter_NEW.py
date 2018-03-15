@@ -348,7 +348,8 @@ class pyntacleReporter():
     def __communities_report(self, reportdict: OrderedDict):
         """
         Report General information regarding the communities (nodes, edges, component, algorithm)
-        stored in the reportdic
+        stored in the reportdic. The reportdic **MUST** also contain a `algorithms` key that will be used to report the
+        type of algorithm used
         :param reportdict: a dictionary from pyntacle communities
         """
         self.report.append(["Results: Community finding in input graph"])

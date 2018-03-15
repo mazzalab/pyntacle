@@ -33,7 +33,7 @@ from config import *
 from tools import edgelist_utils
 
 #todo rework all this
-class EdgeListToCytoscape:
+class EdgeListToSif:
     '''
     This class converts an edge list into a sif file (simple interaction format) in the most basic way:
     a tab delimited file in which each line represent an edge (so node A \t node B)

@@ -159,8 +159,9 @@ class PyntacleImporter:
         :param bool header: Whether the header is present or not (default is *False*)
         :return: an `igraph.Graph` object.
         """
-        # Todo: non importa i nomi come stringhe, con e senza header. provare
-        EglUtils(file=file, header=header, separator=sep).is_pyntacle_ready()
+
+        if not EglUtils(file=file, header=header, separator=sep).is_pyntacle_ready():
+            raise UnproperlyFormattedFileError("Edgelist is not ready to be parsed by Pyntacle, fix it and then come back!")
 
         graph = Graph() #initialize an empty graph that will be filled
         

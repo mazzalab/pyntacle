@@ -3,7 +3,7 @@ import sys
 from warnings import simplefilter
 
 from config import *
-from io_stream.edgelist_to_sif import EdgeListToCytoscape
+from io_stream.edgelist_to_sif import EdgeListToSif
 # output format
 from io_stream.exporter import PyntacleExporter
 from misc.graph_load import *
@@ -104,7 +104,7 @@ class Convert():
 
             sys.stdout.write("Converting edgelist to sif. Path to the output file:{}\n".format(output_path))
 
-            EdgeListToCytoscape(input_file=self.args.input_file, header=header, separator=separator).get_sif(
+            EdgeListToSif(input_file=self.args.input_file, header=header, separator=separator).get_sif(
                 output_file=output_path, separator=separator, header=output_header)
 
         else:
