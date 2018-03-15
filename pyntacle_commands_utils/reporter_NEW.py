@@ -143,7 +143,7 @@ class pyntacleReporter():
 
         graphname = self.graph["name"][0]
 
-        report_path = os.path.join(report_dir, "_".join(["pyntacle_report", graphname, self.__report_type.name, self.dat])+".tsv")
+        report_path = os.path.join(report_dir, "_".join(["pyntacle_report", graphname, self.report_type.name, self.dat])+".tsv")
 
         extension = choices[format]
 
