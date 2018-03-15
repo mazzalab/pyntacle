@@ -234,14 +234,14 @@ class Metrics():
             # create pyntacle_commands_utils for the selected metrics
             if self.args.nodes is None:
                 nodes_list = graph.vs()["name"]
-                report_prefix = "_".join(["pyntacle", graph["name"][0], "local_metrics", "pyntacle_commands_utils",
+                report_prefix = "_".join(["pyntacle", graph["name"][0], "local_metrics", "report",
                                           runtime_date])
             else:
                 report_prefix = "_".join(
                     ["pyntacle", graph["name"][0], "local_metrics_selected_nodes_report",
                      runtime_date])
 
-            sys.stdout.write("Producing pyntacle_commands_utils in {} format.\n".format(self.args.report_format))
+            sys.stdout.write("Producing report in {} format.\n".format(self.args.report_format))
 
             report_path = os.path.join(self.args.directory, report_prefix + self.args.report_format)
 
@@ -362,12 +362,12 @@ class Metrics():
             sparseness.completeness_legacy(recalculate=True)
 
 
-            if not self.args.no_nodes: #create standard pyntacle_commands_utils for the whole graph
-                sys.stdout.write("Producing pyntacle_commands_utils\n")
+            if not self.args.no_nodes: #create standard report for the whole graph
+                sys.stdout.write("Producing report\n")
 
                 reporter = pyntacleReporter(graph=graph)
                 reporter.report_global_topology(global_attributes_list)
-                report_prefix = "_".join(["pyntacle", graph["name"][0], "global", "metrics", "pyntacle_commands_utils"])
+                report_prefix = "_".join(["pyntacle", graph["name"][0], "global", "metrics", "report"])
 
                 report_path = os.path.join(self.args.directory, "_".join(
                     [report_prefix, runtime_date]) + self.args.report_format)
@@ -407,11 +407,11 @@ class Metrics():
                 sparseness_nonodes.completeness(recalculate=True)
                 sparseness_nonodes.completeness_legacy(recalculate=True)
 
-                sys.stdout.write("Producing pyntacle_commands_utils\n")
+                sys.stdout.write("Producing report\n")
                 reporter = pyntacleReporter(graph=graph, graph2=graph_nonodes)
                 reporter.report_global_comparisons(attributes_list=global_attributes_list)
 
-                report_prefix = "_".join(["pyntacle", graph["name"][0], "global", "metrics", "nonodes", "pyntacle_commands_utils"])
+                report_prefix = "_".join(["pyntacle", graph["name"][0], "global", "metrics", "nonodes", "report"])
 
                 report_path = os.path.join(self.args.directory, "_".join(
                     [report_prefix, runtime_date]) + self.args.report_format)

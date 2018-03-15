@@ -103,12 +103,13 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
             if arg in ['-v', '-vv', '-vvv']:
                 verbosity = arg.count('v')
         # Logging levels setup
-        if verbosity == 1:
-            log.setLevel(logging.WARN)
-        elif verbosity == 2:
+        if verbosity == 2:
             log.setLevel(logging.INFO)
         elif verbosity >= 3:
             log.setLevel(logging.DEBUG)
+        else:
+            log.setLevel(logging.WARN)
+            
 
         # Continue parsing of the first two arguments
         args = parser.parse_args(sys.argv[1:2])
@@ -142,6 +143,8 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument('--no-header', default=False, action='store_true',
                             help='use this option if the input file has no header')
         parser.add_argument('-m', '--m-reach', metavar='', type=int, help='m value for m-reach')
+        
+        parser.add_argument('-M', '--max_distances', metavar='', type=int, help='# EXPAND here - add that it is useless for F')
 
         parser.add_argument('-t', "--type", metavar='', choices=['pos', 'neg', 'all'], default='all',
                             help="kp algorithm to be executed. Choices: {pos, neg, all} Default is \"all\"")
@@ -153,9 +156,9 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument('-d', "--directory", metavar='', default=os.getcwd(),
                             help="Directory that will contain results (default is the current working directory). If the directory does not exist, we will create one")
 
-        parser.add_argument('--pyntacle_commands_utils-format', '-r', metavar='', default="txt", choices=["txt", "csv", "xlsx", "tsv"],
+        parser.add_argument('--report-format', '-r', metavar='', default="txt", choices=["txt", "csv", "xlsx", "tsv"],
                             type=lambda s: s.lower(),
-                            help="Specify a different pyntacle_commands_utils format according to your tastes. \"txt\" and \"tsv\" are tab delimited format. Available formats:{txt, tsv, csv, xlsx}")
+                            help="Specify a different report format according to your tastes. \"txt\" and \"tsv\" are tab delimited format. Available formats:{txt, tsv, csv, xlsx}")
 
         parser.add_argument('--plot-format', choices=["svg", "pdf", "png"], default="pdf",
                             type=lambda s: s.lower(), metavar='',
@@ -184,7 +187,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                        required=True)
         # Subparser for greedy case
         greedy_case_parser = subparsers.add_parser("kp-finder",
-                                                   usage='pyntacle.py keyplayer kp-finder[-h] [-f] [-v] [-m] [-a] [--save-binary] [--plot-format] [--plot-dim] [--no-plot] --input_file [FILE] -k [K]',
+                                                   usage='pyntacle.py keyplayer kp-finder [-h] [-f] [-v] [-m] [-a] [--save-binary] [--plot-format] [--plot-dim] [--no-plot] --input_file [FILE] -k [K]',
                                                    add_help=False, parents=[parser],
                                                    formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                        max_help_position=100,
@@ -197,6 +200,9 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                         help='Type of implementation you want to find yourt keyplayer. Choices are \"greedy\" (default), \"brute-force\", '
                                              'using the greedy optimization described by Borgatti and \"brute-force\" in which the optimal solution is found')
 
+        greedy_case_parser.add_argument("-S", "--seed", type=int, help="Seed (integer) for the random component of the kp-finder (greedy implementation only). "
+                                                 "If set, for each seed the finder will always produce "
+                                                 "the same results.", metavar="", default=None)
         greedy_case_parser.set_defaults(which='kp-finder')
 
         # now that we're inside a subcommand, ignore the first
@@ -239,8 +245,8 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument('-d', "--directory", default=os.getcwd(), metavar='',
                             help="Directory that will contain results (default is the current working directory). If the directory does not exist, it will be created")
 
-        parser.add_argument('--pyntacle_commands_utils-format', '-r', default="txt", choices=["txt", "csv", "xlsx", "tsv"],
-                            help="Specify a different pyntacle_commands_utils format according to your tastes. \"txt\" and \"tsv\" are tab delimited format. Available formats:{txt, tsv, csv, xlsx}")
+        parser.add_argument('--report-format', '-r', default="txt", choices=["txt", "csv", "xlsx", "tsv"],
+                            help="Specify a different report format according to your tastes. \"txt\" and \"tsv\" are tab delimited format. Available formats:{txt, tsv, csv, xlsx}")
 
         parser.add_argument('--plot-format', choices=["svg", "pdf", "png"], default="pdf",
                             type=lambda s: s.lower(),

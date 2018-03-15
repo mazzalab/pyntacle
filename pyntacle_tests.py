@@ -115,7 +115,7 @@ print(mat.summary())
 
 #F
 
-# Octopus.add_F(mat, ['HS'])
+Octopus.add_F(mat, ['HS'])
 #
 # #dF
 #
@@ -139,7 +139,7 @@ print(mat.summary())
 # GO
 
 # # # go F
-# Octopus.add_GO_F(mat, 2)
+Octopus.add_GO_F(mat, 2)
 # #
 # # # go dF
 # Octopus.add_GO_dF(mat, 2)

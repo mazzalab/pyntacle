@@ -1,11 +1,16 @@
 from config import *
-from algorithms.key_player import *
-from algorithms.key_player import _KeyplayerAttribute
+from pyntacle_commands_utils.kpsearch_wrapper_NEW import KPWrapper as kpw
+from pyntacle_commands_utils.kpsearch_wrapper_NEW import GOWrapper as gow
+from pyntacle_commands_utils.kpsearch_wrapper_NEW import BFWrapper as bfw
+from algorithms.keyplayer_NEW import KeyPlayer as kpp
+from collections import OrderedDict
+from misc.enums import *
+
 from exceptions.generic_error import Error
 from io_stream.exporter import PyntacleExporter
-from pyntacle_commands_utils.kp_runner_OLD import *
+# from pyntacle_commands_utils.kp_runner_OLD import *
 from pyntacle_commands_utils.plotter import *
-from pyntacle_commands_utils.reporter import *
+from pyntacle_commands_utils.reporter_NEW import *
 from tools.graph_utils import *
 from misc.graph_load import *
 
@@ -85,7 +90,6 @@ class KeyPlayer():
 
         self.logging.debug('Running pyntacle keyplayer, with arguments')
         self.logging.debug(self.args)
-
         # Load Graph
         graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header).graph_load()
 
@@ -132,132 +136,168 @@ class KeyPlayer():
             else:
                 plot_size = (1600, 1600)
                 
-        # initialize keyplayer wrapper
-        kp_runner = KeyPlayerWrapper(
-            graph=graph)  # initialize keyplayer wrapper #will run KP metrics on behalf of us
-
         if self.args.which == 'kp-finder':
             k_size = self.args.k_size
+            initial_results = {}
+            results = OrderedDict()
             # Greedy optimization
             if self.args.implementation == "greedy":
-
+                kp_runner = gow(graph=graph)
                 sys.stdout.write("Using Greedy Optimization Algorithm for searching optimal KP-Set\n")
 
                 if self.args.type == 'neg' or self.args.type == 'all':  # will not return nothing, as "get_results" will do it.
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using F (kp neg measure)\n".format(
                             self.args.k_size))
-                    kp_runner.run_greedy(key_player=_KeyplayerAttribute.F, kpsize=self.args.k_size)
-
+                    initial_results[KPNEGchoices.F.name] = kpp.F(graph)
+                    if initial_results[KPNEGchoices.F.name] != 1:
+                        kp_runner.run_fragmentation(self.args.k_size, KPNEGchoices.F, seed=self.args.seed)
+                    else:
+                        self.logging.warning("Initial value of F is 1. Skipping search.")
+                        results[KPNEGchoices.F.name] = [[], 1, 1]
+                        
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using DF (kp neg measure)\n".format(
                             self.args.k_size))
-                    kp_runner.run_greedy(key_player=_KeyplayerAttribute.DF, kpsize=self.args.k_size)
+                    kp_runner.run_fragmentation(self.args.k_size, KPNEGchoices.dF,
+                                                max_distances=self.args.max_distances, seed=self.args.seed)
+                    initial_results[KPNEGchoices.dF.name] = kpp.dF(graph)
 
                 if self.args.type == 'pos' or self.args.type == 'all':
-                    kp_runner.run_greedy(key_player=_KeyplayerAttribute.DR, kpsize=self.args.k_size)
+                    kp_runner.run_reachability(self.args.k_size, KPPOSchoices.dR,
+                                               max_distances=self.args.max_distances, seed=self.args.seed)
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using dR (kp pos measure)\n".format(
                             self.args.k_size))
 
-                    kp_runner.run_greedy(key_player=_KeyplayerAttribute.MREACH, kpsize=self.args.k_size,
-                                         m=self.args.m_reach)
+                    kp_runner.run_reachability(self.args.k_size, KPPOSchoices.mreach, m=self.args.m_reach,
+                                               max_distances=self.args.max_distances, seed=self.args.seed)
+                    
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {0} using an MREACH measure of {1} (kp pos measure)\n".format(
                             self.args.k_size, self.args.m_reach))
 
             elif self.args.implementation == "brute-force":
+                kp_runner = bfw(graph=graph)
                 sys.stdout.write("Using Brute Force for searching optimal KP-Set\n")
 
                 if self.args.type == 'neg' or self.args.type == 'all':  # will not return nothing, as "get_results" will do it.
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using F (kp neg measure)\n".format(
                             self.args.k_size))
-                    kp_runner.run_bruteforce(key_player=_KeyplayerAttribute.F, kpsize=self.args.k_size)
-
+                    initial_results[KPNEGchoices.F.name] = kpp.F(graph)
+                    if initial_results[KPNEGchoices.F.name] != 1:
+                        kp_runner.run_fragmentation(self.args.k_size, KPNEGchoices.F)
+                    else:
+                        self.logging.warning("Initial value of F is 1. Skipping search.")
+                        results[KPNEGchoices.F.name] = [[], 1, 1]
+                        
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using DF (kp neg measure)\n".format(
                             self.args.k_size))
-                    kp_runner.run_bruteforce(key_player=_KeyplayerAttribute.DF, kpsize=self.args.k_size)
+                    kp_runner.run_fragmentation(self.args.k_size, KPNEGchoices.dF,
+                                                max_distances=self.args.max_distances)
+                    initial_results[KPNEGchoices.dF.name] = kpp.dF(graph)
+
 
                 if self.args.type == 'pos' or self.args.type == 'all':
-                    kp_runner.run_bruteforce(key_player=_KeyplayerAttribute.DR, kpsize=self.args.k_size)
+                    kp_runner.run_reachability(self.args.k_size, KPPOSchoices.dR,
+                                               max_distances=self.args.max_distances)
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using dR (kp pos measure)\n".format(
                             self.args.k_size))
 
-                    kp_runner.run_bruteforce(key_player=_KeyplayerAttribute.MREACH, kpsize=self.args.k_size,
-                                             m=self.args.m_reach)
+                    kp_runner.run_reachability(self.args.k_size, KPPOSchoices.mreach, m=self.args.m_reach,
+                                               max_distances=self.args.max_distances)
+                    
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {0} using an MREACH measure of {1} (kp pos measure)\n".format(
                             self.args.k_size, self.args.m_reach))
 
             else:
-                sys.stdout.write("Wrong implementatio. Please contact pyntacle Developers and sent this error message, along with a command line and a log.\nQuitting.\n")
+                sys.stdout.write("Wrong implementation. Please contact pyntacle Developers and sent this error message, along with a command line and a log.\nQuitting.\n")
                 sys.exit(1)
 
             sys.stdout.write("Search for the best kp set completed!\n")
 
-            results = kp_runner.get_results()
-
+            results.update(kp_runner.get_results())
+    
             for kp in results.keys(): #ONJE OF THE keys represent the algorithm, so no else exit in here
 
-                if kp == _KeyplayerAttribute.F or kp == _KeyplayerAttribute.DF:
+                if kp == KPNEGchoices.F.name or kp == KPNEGchoices.dF.name:
+                    # joining initial results with final ones
+                    results[kp].append(initial_results[kp])
+                    
                     sys.stdout.write(
-                        'kp set of size {0} for Key Player Metric {1} is {2} with value {3} (starting value is {4})\n'.format(
-                            self.args.k_size, kp.name, ",".join(results[kp][1]), results[kp][2],
-                            results[kp][0]))
+                        'kp set(s) of size {0} for Key Player Metric {1} is/are {2} with value {3} (starting value is {4})\n'.format(
+                            self.args.k_size, kp, results[kp][0], results[kp][1], results[kp][2]))
 
-                elif kp == _KeyplayerAttribute.DR:
-                    sys.stdout.write('kp set of size {0} for Key Player Metric {1} is {2} with value {3}\n'.format(
-                        self.args.k_size, kp.name, ",".join(results[kp][1]), results[kp][2]))
 
-                elif kp == _KeyplayerAttribute.MREACH:
-                    node_perc_reached = ((results[kp][2] + len(results[kp][1])) / graph.vcount()) * 100
+                elif kp == KPPOSchoices.dR.name:
+                    sys.stdout.write('kp set(s) of size {0} for Key Player Metric {1} is/are {2} with value {3}\n'.format(
+                        self.args.k_size, kp, results[kp][0], results[kp][1]))
+
+                elif kp == KPPOSchoices.mreach.name:
+                    results[kp].append(self.args.m_reach)
+                    node_perc_reached = ((self.args.k_size + results[kp][1]) / graph.vcount()) * 100
                     if node_perc_reached == 100:
                         node_perc_reached = int(node_perc_reached)
                     else:
                         node_perc_reached = round(node_perc_reached, 2)
-
                     sys.stdout.write(
-                        'kp set of size {0} with a reach of {1} for Key Player Metric {2} is {3} with value {4} (reaching the {5}% of nodes)\n'.format(
-                            self.args.k_size, self.args.m_reach, kp.name, ",".join(results[kp][1]),
-                            results[kp][2], node_perc_reached))
+                        'kp set(s) of size {0} with a reach of {1} for Key Player Metric {2} is/are {3} with value {4} (reaching the {5}% of nodes)\n'.format(
+                            self.args.k_size, self.args.m_reach, kp, results[kp][0],
+                            results[kp][1], node_perc_reached))
+
 
         # kpinfo: compute kpmetrics for a set of predetermined nodes
         elif self.args.which == 'kp-info':
             k_size = len(self.args.nodes)
+            initial_results = {}
+            kp_runner = kpw(graph=graph)
+            results = OrderedDict()
 
             sys.stdout.write('\nNodes given as input: {}\n'.format(self.args.nodes))
             if self.args.type == 'neg' or self.args.type == 'all':
-                kp_runner.run_pos_or_neg(choice="kpp-neg", names_list=self.args.nodes, recalculate=True)
+                initial_results[KPNEGchoices.F.name] = kpp.F(graph)
+                initial_results[KPNEGchoices.dF.name] = kpp.dF(graph)
+
+                kp_runner.run_KPNeg(self.args.nodes, KPNEGchoices.F, max_distances=self.args.max_distances)
+                kp_runner.run_KPNeg(self.args.nodes, KPNEGchoices.dF, max_distances=self.args.max_distances)
+
                 # sys.stdout.write('F: {0}\t DF: {1}\n'.format(F, DF))
 
             if self.args.type == 'pos' or self.args.type == 'all':
-                kp_runner.run_pos_or_neg(choice="kpp-pos", names_list=self.args.nodes, recalculate=True,
-                                         m=self.args.m_reach)
+                kp_runner.run_KPPos(self.args.nodes, KPPOSchoices.dR, max_distances=self.args.max_distances)
+                kp_runner.run_KPPos(self.args.nodes, KPPOSchoices.mreach, m=self.args.m_reach,
+                                    max_distances=self.args.max_distances)
                 # sys.stdout.write('MR: {0}\t dR: {1}\n'.format(MR, dR))
 
-            results = kp_runner.get_results()
-            sys.stdout.write("keyplayer metrics pyntacle_commands_utils for {} values:\n".format(self.args.type.upper()))
+            results.update(kp_runner.get_results())
+            for r in results.keys():
+                print(r, type(r))
+            input('types')
+            sys.stdout.write("Keyplayer metric(s) {}:\n".format(self.args.type.upper()))
             for metric in results.keys():
 
-                if metric == _KeyplayerAttribute.F or metric == _KeyplayerAttribute.DF:
+                if metric == KPNEGchoices.F.name or metric == KPNEGchoices.dF.name:
+                    results[metric].append(initial_results[metric])
                     sys.stdout.write(
-                        "starting value for {0} is {1}. removing nodes {2} gives a {0} value of {3}\n".format(
-                            metric.name, results[metric][0], self.args.nodes, results[metric][-1]))
+                        "Starting value for {0} is {1}. Removing nodes {2} gives a {0} value of {3}\n".format(
+                            metric, results[metric][2], self.args.nodes, results[metric][1]))
 
-                elif metric == _KeyplayerAttribute.MREACH:
-                    perc_node_reached = results[metric][-1] + len(self.args.nodes) / graph.vcount()
+                elif metric == KPPOSchoices.mreach.name:
+                    results[metric].append(self.args.m_reach)
+                    perc_node_reached = (results[metric][1] + len(self.args.nodes)) / graph.vcount() * 100
                     sys.stdout.write(
-                        "Nodes {0} have an {1} of {2}, meaning they can reach the {3}% of nodes in {4} steps\n".format(
-                            results[metric][1], metric.name, results[metric][-1], perc_node_reached,
+                        "Nodes {0} have an {1} of {2}, Meaning they can reach the {3}% of nodes in {4} steps\n".format(
+                            results[metric][0], metric, results[metric][1], perc_node_reached,
                             self.args.m_reach))
 
-                else:
+                else: #dR case
                     sys.stdout.write(
-                        "{0} value for nodes {1} is {2}\n".format(metric.name, results[metric][1],
-                                                                  results[metric][-1]))
+                        "{0} value for nodes {1} is {2}\n".format(metric, results[metric][0],
+                                                                  results[metric][1]))
         else:
             log.critical(
                 "This should not happen. Please contact pyntacle Developers and send your command line. Quitting\n.")
@@ -265,20 +305,20 @@ class KeyPlayer():
 
         # reporting and plotting part
 
-        sys.stdout.write("Producing pyntacle_commands_utils in {} format.\n".format(self.args.report_format))
+        sys.stdout.write("Producing report in {} format.\n".format(self.args.report_format))
 
         report_prefix = "_".join(
-            ["pyntacle", self.args.which, graph["name"][0], "kpsize", str(k_size), results.get("algorithm", "KP-Info"),"pyntacle_commands_utils", runtime_date])
+            ["pyntacle", self.args.which, graph["name"][0], "kpsize", str(k_size), results.get("algorithm", "KP-Info"),"report", runtime_date])
         report_path = os.path.join(self.args.directory, ".".join([report_prefix, self.args.report_format]))
 
         if os.path.exists(report_path):
             self.logging.warning(
-                "A pyntacle_commands_utils with the same name ({}) already exists, overwriting it".format
+                "A report with the same name ({}) already exists, overwriting it".format
                 (os.path.basename(report_path)))
-
+        
         r = pyntacleReporter(graph=graph)
-        r.report_KP(resultsdic=results, m=self.args.m_reach)
-        r.create_report(report_path=report_path)
+        r.create_report(report_type=Reports.KPinfo, report=results)
+        r.write_report(report_path=self.args.directory)
 
         if self.args.save_binary:
             sys.stdout.write("Saving graph to a Binary file\n")
@@ -299,7 +339,6 @@ class KeyPlayer():
             else:
                 os.mkdir(plot_dir)
 
-
             plot_graph = PlotGraph(graph=graph)
 
             plot_format = self.args.plot_format
@@ -317,7 +356,7 @@ class KeyPlayer():
 
             for metric in results:
 
-                if metric.name == "F":
+                if metric == "F":
 
                     f_nodes_colour = pal[0]
                     f_frames_colour = framepal[0]
@@ -334,7 +373,7 @@ class KeyPlayer():
                     # node_shapes = ["square" if x["name"] in results[metric][1] else other_nodes_shape for x in graph.vs()]
                     # plot_graph.set_node_shapes(shapes=node_shapes)
 
-                elif metric.name == "DF":
+                elif metric == "dF":
                     df_nodes_colour = pal[1]
                     df_frames_colour = framepal[1]
 
@@ -351,7 +390,7 @@ class KeyPlayer():
                     # node_shapes = ["rectangle" if x["name"] in results[metric][1] else other_nodes_shape for x in graph.vs()]
                     # plot_graph.set_node_shapes(shapes=node_shapes)
 
-                elif metric.name == "MREACH":
+                elif metric == "mreach":
                     mreach_nodes_colour = pal[4]
                     mreach_frames_colour = framepal[4]
                     # create a list of node colours
@@ -370,7 +409,7 @@ class KeyPlayer():
                     # node_shapes = ["triangle-up" if x["name"] in results[metric][1] else other_nodes_shape for x in graph.vs()]
                     # plot_graph.set_node_shapes(shapes=node_shapes)
 
-                elif metric.name == "dR":
+                elif metric == "dR":
                     dr_nodes_colour = pal[3]
                     dr_frames_colour = framepal[3]
 
@@ -401,7 +440,7 @@ class KeyPlayer():
 
                 #     print (edge.source(), edge.target())
                 # add recursive edge widths
-                if metric.name != "MREACH":
+                if metric != "mreach":
 
                     edge_widths = [5 if any(y in results[metric][1] for y in x["node_names"]) else other_edge_width for
                                    x in graph.es()]
@@ -441,7 +480,7 @@ class KeyPlayer():
                             for el in remaining_indices:
                                 try:
                                     mreach_edge_ids.append(graph.get_eid(elem, el))
-                                except InternalError:
+                                except Error:
                                     pass
 
                         # print (mreach_edge_ids)
@@ -459,7 +498,7 @@ class KeyPlayer():
 
                 plot_graph.set_layouts(layout="fruchterman_reingold")
 
-                plot_path = os.path.join(plot_dir, "_".join(["keyplayer", graph["name"][0], "pyntacle_commands_utils", metric.name,
+                plot_path = os.path.join(plot_dir, "_".join(["keyplayer", graph["name"][0], "report", metric,
                                                              datetime.datetime.now().strftime(
                                                                  "%d%m%Y%H%M")]) + "." + plot_format)
                 if os.path.exists(plot_path):
