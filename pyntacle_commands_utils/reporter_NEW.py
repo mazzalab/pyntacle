@@ -52,7 +52,7 @@ class pyntacleReporter():
         # initialize graph utility class
         self.utils = gu(graph=self.graph)
         self.utils.graph_checker()  # check that input graph is properly set
-        self.report_type = None #this wiull be instanced in create_report
+        self.report_type = None #this will be instanced in create_report
         self.report = [] #this will be used in create_report
         now = datetime.datetime.now()
         self.dat = now.strftime("%d-%m-%Y-%I:%M")
@@ -60,7 +60,10 @@ class pyntacleReporter():
 
     def create_report(self, report_type: Reports, report: OrderedDict):
         """
-        initialize the report object by writing generic information on the input graph
+        initialize the report object by writing generic information on the input graph and calling the internal report
+        creators, according to the value passed by the "Report" enumerator
+        :param Report  report_type: one of the type onside the "Report" enumerator
+        :param OrderedDict report: a dictionary containing all the information to be reported
         """
 
         if not isinstance(report_type, Reports):
@@ -69,8 +72,7 @@ class pyntacleReporter():
         if not isinstance(report, OrderedDict):
             raise ValueError("\"report\" must be an ordered Dictionary")
 
-
-        self.__report_type = report_type
+        self.report_type = report_type
         self.report = []
         self.report.append([" ".join(["pyntacle Report", self.dat])])
         self.report.append(["General Graph Information"])
@@ -79,7 +81,7 @@ class pyntacleReporter():
         self.report.append(["nodes", self.graph.vcount()])
         self.report.append(["edges", self.graph.ecount()])
         self.report.append(["\n\n"])
-        self.report.append([": ".join(["Pyntacle Command", report_type.name])])
+        self.report.append(["Pyntacle Command:", report_type.name])
 
         if report_type == Reports.Local:
             self.__local_report(reportdict=report)
@@ -189,9 +191,14 @@ class pyntacleReporter():
         self.report.append(["Results: Local Topology Metrics in Pyntacle for each node queried"])
         self.report.append(["Node Name"] + [x.name for x in reportdict.keys()])
 
-        #todo stuck here
+        addendum = [] #list that will be added to the self.report object
+
         for i, elem in enumerate(nodes):
-            pass
+            addendum.append([elem]) #append the node names to the appendum
+            for k in reportdict.keys():
+                addendum.append(reportdict[k][i]) #append the corresponding value to the node name
+
+        self.report = self.report + addendum
 
     def __global_report(self, reportdict:OrderedDict):
         if not all(isinstance(x, GlobalAttribute) for x in reportdict.keys()):
