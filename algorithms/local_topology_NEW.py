@@ -523,4 +523,9 @@ class LocalTopology:
 # todo shortest path cpu: single nodes or group of nodes
 # todo shortest path gpu: single nodes or group of nodes
 # todo all the other graphs
+# todo missing methods:
+#todo average sp length for each node
+#todo median sp_length for each node
+# todo max sp length for each node
+# todo min sp length for each node
 # todo Mauro: specify numpy maximum allocation in RAM (in "Requirements")
