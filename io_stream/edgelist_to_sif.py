@@ -33,6 +33,12 @@ from config import *
 from tools.edgelist_utils import EglUtils as egl
 from misc.import_utils import *
 from exceptions.unproperlyformattedfile_error import UnproperlyFormattedFileError
+# Checking presence of pycairo, needed for plotting
+from importlib import util
+pycairo_check = util.find_spec("cairo")
+if pycairo_check is None:
+    raise EnvironmentError("pyntacle needs the pycairo library to be installed and available "
+                           "in order to produce plots. Please install it and try again.")
 
 #todo rework all this
 class QuickConvert:
@@ -91,13 +97,6 @@ class QuickConvert:
                     self.separator = separator
 
             # check that the file contains 2 columns
-
-
-    def __edgelist_parser(self):
-        '''
-        Hidden function that stores and edgelist into a list of lists
-        '''
-
 
 
     def get_sif(self, output_file=None, separator=None, header=False):

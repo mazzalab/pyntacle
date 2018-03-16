@@ -26,6 +26,21 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+"""
+Utility to represent a graph into a plot that will be outputted by the pyntacle command line utils
+"""
+from config import *
+from igraph import Graph, plot
+import logging
+import os
+import random
+from tools.graph_utils import GraphUtils as gu
+from importlib import util
+pycairo_check = util.find_spec("cairo")
+if pycairo_check is None:
+    raise EnvironmentError("pyntacle needs the pycairo library to be installed and available "
+"in order to produce plots. Please install it and try again.")
+from exceptions.wrong_argument_error import WrongArgumentError
 
 class PlotGraph():
     """
@@ -33,33 +48,30 @@ class PlotGraph():
     """
 
     logger = None  # write logger to shell
-    """:type: logger"""
 
-    def __init__(self, graph: Graph):
+    def __init__(self, graph: Graph, seed=None):
         """
-        Initialize a reporter function for the given graph
-        
-        :param graph: the target igraph Graph object
+        Initialize the plotter function by importing the graph and (optionally) defining a seed for custom graph
+        reproducibility
+        :param Graph graph: the input `igraph.Graph` object
+        :param int seed: optionl: define a custom seed to reproduce the graph. plot. By default, a seed (1987) is stored
         """
 
         self.logger = log
-        '''
-        check if graph has node names and they are unique
-        '''
-        if "name" not in graph.vs().attributes():
-            raise AttributeError("\"name\" is not a node attribute, cannot compute name")
+        self.__graph = graph.copy()  # creates a copy of the graph to work on
+        self.utils = gu(graph=self.__graph)
+        self.utils.graph_checker()  # check that input graph is properly set
 
-        elif len(list(set(graph.vs()["name"]))) != len(graph.vs()["name"]):
-            raise AttributeError("node names are not unique")
+        if seed is not None:
+            if not isinstance(seed, int):
+                raise TypeError("Instance ust be a seed")
 
+            else:
+                self.seed = seed #initialize seed
         else:
-            if "name" not in graph.attributes():
-                raise MissingAttributeError("graph name is not defined")
-            self.__graph = graph.copy()  # creates a copy of the graph to work on
-            self.utils = graph_utils.GraphUtils(graph=self.__graph)  # initialize graph utilities
-            self.utils.graph_checker()  # check that input graph is properly set
+            self.seed = 1987 #use a special seed if it is not initialized
 
-        # initialize empty containers for the graph class
+        # initialize parameters to be passed to the plot function
         self.node_labels = []
         self.edge_labels = []
         self.node_colours = []
@@ -71,9 +83,8 @@ class PlotGraph():
 
     def set_node_label(self, labels: list):
         """
-        Take a list corresponding to node properties (e.g.: a graph attribute)
-        
-        :param: labels: a list of lables (must be strings)
+        Take a list corresponding to node properties (e.g.: a graph attribute) and assign it to the "label" function
+        :param: list labels: a list of lables (must be strings)
         """
 
         for elem in labels:
@@ -115,30 +126,37 @@ class PlotGraph():
 
         self.edge_labels = labels
 
-    def set_layouts(self, layout="fruchterman_reingold", **kwargs):
+
+    #todo sistema questo
+    def set_layouts(self, layout="auto", **kwargs):
         """
-        Define a series of layouts imported from the igraph package
-        
-        :param layout: one of the following layouts: "circle", "fruchterman_reingold"/"fr" (force directed), "kamada_kawai"/"kk" (force directed), "large_graph"/"lgl", "random", "reingold_tilford", "rt" (for trees). Default is fruchterman_reingold
+        Define a series of layouts imported from the igraph package in order to plot a given geometry
+        :param str layout: one of the following layouts: "circle",
+        "fruchterman_reingold"/"fr" (force directed),
+        "kamada_kawai"/"kk" (force directed), "large_graph"/"lgl",
+        "random",
+        "reingold_tilford",
+        "rt" (for trees).
+        Default is fruchterman_reingold
         :param kwargs: a list of parameters that can be passed to each of the layout method
         """
 
+        self.layout()
         try:
-            seed = random.seed(1987)
-
-            layout_dic = {"circle": Graph.layout_circle(self.__graph, **kwargs),
-                          "fruchterman_reingold": Graph.layout_fruchterman_reingold(self.__graph, seed=seed, **kwargs),
-                          "fr": Graph.layout_fruchterman_reingold(self.__graph, seed=seed, **kwargs),
-                          "kamada_kawai": Graph.layout_kamada_kawai(self.__graph, seed=seed, **kwargs),
-                          "kk": Graph.layout_kamada_kawai(self.__graph, seed=seed, **kwargs),
-                          "large_graph": Graph.layout_lgl(self.__graph, **kwargs),
-                          "lgl": Graph.layout_lgl(self.__graph,**kwargs),
-                          "random": Graph.layout_random(self.__graph,**kwargs),
-                          "reingold_tilford": Graph.layout_reingold_tilford(self.__graph, **kwargs),
-                          "rt": Graph.layout_reingold_tilford(self.__graph,**kwargs)}
+            layout_dic = {"auto":Graph.layout_auto(),
+                            "circle": Graph.layout_circle(self.__graph, **kwargs),
+                          "fruchterman_reingold": Graph.layout_fruchterman_reingold(self.__graph, seed=self.seed, **kwargs),
+                          "fr": Graph.layout_fruchterman_reingold(self.__graph, seed=self.seed, **kwargs),
+                          "kamada_kawai": Graph.layout_kamada_kawai(self.__graph, seed=self.seed, **kwargs),
+                          "kk": Graph.layout_kamada_kawai(self.__graph, seed=self.seed, **kwargs),
+                          "large_graph": Graph.layout_lgl(self.__graph, seed=self.seed, **kwargs),
+                          "lgl": Graph.layout_lgl(self.__graph, seed=self.seed, **kwargs),
+                          "random": Graph.layout_random(self.__graph, seed=self.seed,**kwargs),
+                          "reingold_tilford": Graph.layout_reingold_tilford(self.__graph, seed=self.seed,**kwargs),
+                          "rt": Graph.layout_reingold_tilford(self.__graph, seed=self.seed,**kwargs)}
 
         except TypeError:
-            raise WrongArgumentError("Invalid kwargs passed")
+            raise KeyError("Invalid kwargs passed")
 
         if layout.lower() not in layout_dic.keys():
             raise KeyError("layout specified is not available")
@@ -146,7 +164,7 @@ class PlotGraph():
         else:
             self.layout = layout_dic[layout.lower()]
 
-    def set_node_colours(self, colours, attribute=None):
+    def set_node_colours(self, colours:dict, attribute=None):
         """
         Assign a series of colours stored in a dictionary to the igraph plot, based on the attribute values
         
@@ -208,9 +226,8 @@ class PlotGraph():
             else:
                 raise MissingAttributeError("attribute must be specified")
 
-            '''
-            check that the input values in the colour dictioary belong to the specified attribute
-            '''
+
+            #check that the input values in the colour dictionary belong to the specified attribute
             for key in widths.keys():
                 if key not in values:
                     raise KeyError("one of the key in the dictionary does not belong to the specified graph attribute.")
@@ -394,5 +411,5 @@ class PlotGraph():
                 raise KeyError("param {} cannot be specified".format(key))
             else:
                 visual_style[key] = kwargs[key]
-
+        random.seed(self.seed)
         plot(self.__graph, **visual_style, target=path)
