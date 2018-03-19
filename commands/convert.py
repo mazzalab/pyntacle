@@ -1,11 +1,9 @@
 import os
 import sys
 from warnings import simplefilter
-
 from config import *
-from io_stream.edgelist_to_sif import EdgeListToCytoscape
-# output format
 from io_stream.exporter import PyntacleExporter
+from io_stream.converter import QuickConvert
 from misc.graph_load import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
@@ -37,7 +35,7 @@ __license__ = u"""
 
 class Convert():
     """
-    **[EXPAND]**
+    take input command line arguments in order to quickly convert one file format to another
     """
     def __init__(self, args):
         self.logging = log
@@ -98,14 +96,18 @@ class Convert():
         output_path = os.path.join(self.args.directory, ".".join([self.args.output_file, out_form]))
         init_graph = GraphLoad(input_file=self.args.input_file, file_format=format_dictionary.get(self.args.format, "NA"), header=header)
 
-        # special case: convert an edgelist to a sif file
-
-        if format_dictionary.get(self.args.format, "NA") == "egl" and  out_form == "sif":
+        # special cases:
+        #1: convert an edgelist to a sif file
+        if format_dictionary.get(self.args.format, "NA") == "egl" and out_form == "sif":
 
             sys.stdout.write("Converting edgelist to sif. Path to the output file:{}\n".format(output_path))
+            QuickConvert.EdgelistToSif(input_file=self.args.input_file,sep=self.args.output_separator, header=output_header, output_file=output_path)
 
-            EdgeListToCytoscape(input_file=self.args.input_file, header=header, separator=separator).get_sif(
-                output_file=output_path, separator=separator, header=output_header)
+        #2: convert a sif to an edgelist file
+        elif format_dictionary.get(self.args.format, "NA") == "sif" and out_form == "egl":
+            sys.stdout.write("Converting sif to edgelist. Path to the output file:{}\n".format(output_path))
+            QuickConvert.SifToEdgelist(input_file=self.args.input_file, sep=self.args.output_separator,
+                                       header=output_header, output_file=output_path)
 
         else:
 

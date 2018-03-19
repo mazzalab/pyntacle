@@ -137,7 +137,7 @@ class EglUtils():
     def is_pyntacle_ready(self):
         '''
         Function that checks that the edgelist is good for pyntacle
-        
+
         :return: legit - a boolean; True if is the edgelist is a legit edgelist, false otherwise
         '''
 

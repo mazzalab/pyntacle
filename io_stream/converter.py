@@ -29,12 +29,10 @@ Contains a series of quick file converters in order to parse one graph atored in
 another
 '''
 
-import pandas as pd
 from config import *
 from tools.edgelist_utils import EglUtils as egl
 from misc.io_utils import *
 from exceptions.unproperlyformattedfile_error import UnproperlyFormattedFileError
-
 
 class QuickConvert:
     '''
@@ -53,7 +51,7 @@ class QuickConvert:
         contains an header, it will be rewritten into the SIF file. The interaction that the SIF file requires will
         be a column named "Interaction" where each node is connected to any other using the *"interacts_with"* keyword.
         :param str input_file: a valid path to the input Edgelist
-        :param str separator: a string specifying the column separator for both input and output. If 'None' (default), we assume a \t separates each column.
+        :param str sep: a string specifying the column separator for both input and output. If 'None' (default), we assume a \t separates each column.
         :param bool header: rewrite the header into the output file. Default if 'False' (inut file contains no header)
         :param str output_file: The path where the resulting file will be stored.If None, the output file will be in the current directory,with the *.egl* extension and a small pseudoword before the inout basename.
         :return: the path to the output file
@@ -109,7 +107,7 @@ class QuickConvert:
         please visit `The official Cytoscape Documentation <http://manual.cytoscape.org/en/stable/Supported_Network_File_Formats.html> .
         **WARNING** If a header is present, the cells corresponding to column 1 and 3 will be rewritten.
         :param str input_file: a valid path to the input SIF file
-        :param str separator: a string specifying the column separator for both input and output. If 'None' (default), we assume a \t separates each column.
+        :param str sep: a string specifying the column separator for both input and output. If 'None' (default), we assume a \t separates each column.
         :param bool header: rewrite the header into the output file. Default if 'False' (inut file contains no header)
         :param str output_file: The path where the resulting file will be stored.If None, the output file will be in the current directory,with the *.egl* extension and a small pseudoword before the inout basename.
         :return: the path to the output file
