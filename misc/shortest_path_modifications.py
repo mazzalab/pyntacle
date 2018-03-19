@@ -24,7 +24,7 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-"""**Methods for shortest path operations**"""
+"""Methods for shortest path operations"""
 
 import numpy as np
 from config import *

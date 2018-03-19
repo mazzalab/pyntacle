@@ -24,14 +24,18 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-"""**Decorators for checking the integrity of files**"""
+"""A  set of decorators and other function useful for the io_stream/ utilities"""
+
 from config import *
 import csv
 from igraph import Graph
 from tools.add_attributes import AddAttributes
 from misc.binarycheck import is_binary_file
 from functools import wraps
-def filechecker(func):
+import string
+import random
+
+def input_file_checker(func):
     """
     decorator to check the integrity of an input file
     :param func:  function given in input
@@ -49,6 +53,20 @@ def filechecker(func):
 
     return func_wrapper
 
+def output_file_checker(func):
+    """contains a series of operations that can be perfoemrd in orderto verify the integrity of thr output file"""
+    @wraps(func)
+    def func_wrapper(graph, output_file, *args, **kwargs):
+        if not isinstance(output_file, str):
+            raise ValueError("\"file \" must be a string, {} found".format(type(output_file).__name__))
+
+        else:
+            if os.path.exists(os.path.abspath(output_file)):
+                sys.stdout.write("A file with the same name exists at {}, will overwrite".format(output_file))
+
+            return func(graph,output_file, *args, **kwargs)
+
+    return func_wrapper
 
 def separator_sniffer(func):
     """
@@ -78,3 +96,35 @@ def separator_sniffer(func):
         return func(file,sep,*args, **kwargs)
 
     return func_wrapper
+
+def generatorscanner(func):
+    """
+    Give a look at params'integrity for 'generators' functions. Raise Errors if something's not covered.
+    :param func: the input 'iostream.generators' function
+    :return: the input function, decorated
+    """
+    @wraps(func)
+    def func_wrapper(params, name="", *args, **kwargs):
+        if not isinstance(params, list):
+            raise TypeError("\"params\" argument must be a list, {} found".format(type(params).__name__))
+
+        if not isinstance(name, str):
+            raise TypeError("\"name\" argument must be a list, {} found".format(type(name).__name__))
+
+        for elem in params:
+            if not isinstance(elem, (int, float)):
+                raise TypeError("{} is not an integer or float, \"params\" must be numerical only")
+
+        return func(params, name, *args, **kwargs)
+
+    return func_wrapper
+
+def randomword(length, prefix=None):
+
+    letters = string.ascii_lowercase
+
+    if prefix is None:
+        return ''.join(random.choice(letters) for i in range(length))
+
+    else:
+        return "_".join([prefix, ''.join(random.choice(letters) for i in range(length))])

@@ -34,6 +34,7 @@ __license__ = u"""
   02110-1301 USA
   """
 
+import pandas as pd
 
 class EglUtils():
     logger = None
@@ -41,18 +42,23 @@ class EglUtils():
     def __init__(self, file: str, header: bool, separator=None):
         self.logger = log
 
-        if not os.path.exists(file):
-            self.logger.fatal("Input file does not exist")
-            raise FileNotFoundError
-
-        else:
-            self.eglfile = file
-
-        if separator == None:
+        if separator is None:
             self.sep = "\t"
             self.logger.info("using '\t' as standard separator")
+
         else:
             self.sep = separator
+
+        if not os.path.exists(file):
+            raise FileNotFoundError("Input file does not exist")
+
+        else:
+            checkfile = pd.read_csv(filepath_or_buffer=file, sep=self.sep)
+            if len(checkfile.columns) != 2:
+                self.logger.error("Input file is not an edgelist (does not have 2 columns")
+                sys.exit(1)
+
+            self.eglfile = file
 
         self.header = header
 
@@ -60,8 +66,7 @@ class EglUtils():
 
     def egl_to_list(self):
         '''
-        Hidden utility to reparse an edgelist and store it into a list for edge list checks
-
+        reparse an edgelist and store it into a list for edge list checks
         '''
 
         self.edgl = []
