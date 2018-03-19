@@ -226,8 +226,6 @@ class KeyPlayer():
                             self.args.k_size, self.args.m_reach))
                     kp_runner.run_reachability(self.args.k_size, KPPOSchoices.mreach, m=self.args.m_reach,
                                                max_distances=self.args.max_distances)
-                    
-
 
             else:
                 sys.stdout.write("Wrong implementation. Please contact pyntacle Developers and sent this error message, along with a command line and a log.\nQuitting.\n")
@@ -268,8 +266,6 @@ class KeyPlayer():
                 r.create_report(report_type=Reports.KP_bruteforce, report=results)
             elif self.args.implementation == "greedy":
                 r.create_report(report_type=Reports.KP_greedy, report=results)
-
-
 
         # kpinfo: compute kpmetrics for a set of predetermined nodes
         elif self.args.which == 'kp-info':
@@ -380,10 +376,9 @@ class KeyPlayer():
                     f_nodes_colour = pal[0]
                     f_frames_colour = framepal[0]
                     # create a list of node colours
-                    node_colours = [f_nodes_colour if x["name"] in results[metric][1] else other_nodes_colour
-                                    for x in
-                                    graph.vs()]
-                    node_frames = [f_frames_colour if x["name"] in results[metric][1] else other_frame_colour
+                    node_colours = [f_nodes_colour if x in results[metric][1] else other_nodes_colour
+                                    for x in graph.vs()]
+                    node_frames = [f_frames_colour if x in results[metric][1] else other_frame_colour
                                     for x in
                                     graph.vs()]
 

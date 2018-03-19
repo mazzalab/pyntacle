@@ -27,27 +27,27 @@ __license__ = u"""
   """
 
 """
-Utility to represent a graph into a plot that will be outputted by the pyntacle command line utils
+Reserved utility to represent a graph into a plot that will be outputted by the pyntacle command line utils
 """
+
 from config import *
 from igraph import Graph, plot
-import logging
 import os
 import random
-from tools.graph_utils import GraphUtils as gu
+from tools.graph_utils import GraphUtils as Gu
 from importlib import util
+
 pycairo_check = util.find_spec("cairo")
 if pycairo_check is None:
     raise EnvironmentError("pyntacle needs the pycairo library to be installed and available "
-"in order to produce plots. Please install it and try again.")
+                           "in order to produce plots. Please install it and try again.")
 from exceptions.wrong_argument_error import WrongArgumentError
 
 class PlotGraph():
     """
     This method creates a report according to the type of analysis run by pyntacle
     """
-
-    logger = None  # write logger to shell
+    logger = None
 
     def __init__(self, graph: Graph, seed=None):
         """
@@ -58,252 +58,127 @@ class PlotGraph():
         """
 
         self.logger = log
+
         self.graph = graph.copy()  # creates a copy of the graph to work on
-        self.utils = gu(graph=self.graph)
+        self.utils = Gu(graph=self.graph)
         self.utils.graph_checker()  # check that input graph is properly set
 
         if seed is not None:
             if not isinstance(seed, int):
-                raise TypeError("Instance ust be a seed")
+                raise TypeError("Seed must be an integer")
 
             else:
-                self.seed = seed #initialize seed
+                self.seed = seed  # initialize seed
         else:
-            self.seed = 1987 #use a special seed if it is not initialized
+            self.seed = 1987  # use a special seed if it is not initialized
 
+        # todo these will be erased once the methods are implemented
         # initialize parameters to be passed to the plot function
-        self.node_labels = []
-        self.edge_labels = []
-        self.node_colours = []
+        self.edge_labels  = []
         self.edge_widths = []
-        self.layout = None
+        self.layout = None #will be replaced by the layout function
         self.node_shapes = []
-        self.node_sizes = []
         self.edge_widths = []
 
-    def set_node_label(self, labels: list):
+    def set_node_label(self, labels:list, attribute="node_label"):
         """
-        Take a list corresponding to node properties (e.g.: a graph attribute) and assign it to the "label" function
-        :param: list labels: a list of lables (must be strings)
+        Take a list corresponding to node properties (e.g.: a graph attribute) and assign it to the "label" function.
+        **WARNING** the labelling is positional, so the first item in label should match the first node, the second
+        label the second node, and so on. Will raise a warning if the two list are not of the same length, and slice
+        the list if it's too long. Will also overwrite any attribute that matches the "attribute" parameter.
+        :param: list labels: a list of node labels (must be strings)
+        :param str attribute: a vertex attribute on which the node labels will be mapped to
         """
 
-        for elem in labels:
-            if not isinstance(elem, str):
-                raise ValueError("label must be strings")
+        if not isinstance(attribute, str):
+            raise TypeError("\"attribute\" must be a string")
+
+        if attribute in self.graph.attributes():
+            self.logger.warning("attribute {} already exists, will overwrite".format(attribute))
+            self.graph.vs()[attribute] = None
+
+        if not isinstance(labels, list):
+            raise TypeError("\"labels\" must be a string, {} found".format(type(labels).__name__))
+
+        if not all(isinstance(x, str) for x in labels):
+            raise ValueError("One of the items in \"labels\" is not a string")
 
         if len(labels) < self.graph.vcount():
             self.logger.warning(
-                "the labels specified does not cover all the node vertices, replacing missing labels with \"NA\"")
-            diff = self.graph.vcount() - len(labels)
-            labels = labels + "NA" * diff
+                "the labels specified does not cover all the node vertices, replacing missing labels with Nonetype")
 
         if len(labels) > self.graph.vcount():
             self.logger.warning("Labels specified exceeds the maximum number of vertices, slicing the labels list")
-            labels = labels[:self.graph.vcount() - 1]
+            labels = labels[:self.graph.vcount()]
 
-        self.node_labels = labels
+        self.graph.vs[attribute] = labels
 
-    def set_edge_label(self, labels: list):
+    #todo rifai
+    def set_node_colors(self, colors: list, attribute="color"):
         """
-        Take a list corresponding to edge properties (e.g.: a graph attribute) **[HUH?]**
-        
-        :param: labels: a list of lables (must be strings)
+        Take a list corresponding to node properties (e.g.: a graph attribute) and assign it to the "colors" pòasrameter
+        in the `igraph.plot`.
+        **WARNING** the labelling is positional, so the first item in "colors" should match the first node, the second
+        label the second node, and so on. Will raise a warning if the two list are not of the same length, and slice
+        the list if it's too long. Will also overwrite any attribute that matches the "attribute" parameter.
+        :param: list colors: a list of node colors (must be strings)
+        :param str attribute: a vertex attribute on which the node colors will be mapped to
         """
 
-        for elem in labels:
-            if not isinstance(elem, str):
-                raise ValueError("label must be strings")
+        if not isinstance(attribute, str):
+            raise TypeError("\"attribute\" must be a string")
 
-        if len(labels) < self.graph.ecount():
+        if attribute in self.graph.attributes():
+            self.logger.warning("attribute {} already exists, will overwrite".format(attribute))
+            self.graph.vs()[attribute] = None
+
+        if not isinstance(colors, list):
+            raise TypeError("\"colors\" must be a string, {} found".format(type(colors).__name__))
+
+        if not all(isinstance(x, str) for x in colors):
+            raise ValueError("One of the items in \"colors\" is not a string")
+
+        if len(colors) < self.graph.vcount():
             self.logger.warning(
-                "the labels specified does not cover all the node vertices, replacing missing labels with \"NA\"")
-            diff = self.graph.vcount() - len(labels)
-            labels = labels + ["NA" * diff]
+                "the labels specified does not cover all the node vertices, replacing missing labels with Nonetype")
 
-        if len(labels) > self.graph.ecount():
+        if len(colors) > self.graph.vcount():
             self.logger.warning("Labels specified exceeds the maximum number of vertices, slicing the labels list")
-            labels = labels[:self.graph.ecount() - 1]
+            colors = colors[:self.graph.vcount()]
 
-        self.edge_labels = labels
+        self.graph.vs[attribute] = colors
 
+    def set_node_sizes(self, sizes: list, attribute="size"):
+    """
+    Assign a series of sizes (positive floats or integers stored in a list) to the attribute specified in attribute
+    :param sizes:  a list containing positive floats or integers. Ideally, this will match the total number of nodes in the graph. If not, the list will be sliced or some  node won't have the "attribute" filled
+    :param str attribute: the name of the attribute in which the attribute will be stored.
+    """
 
-    #todo sistema questo
-    def set_layouts(self, layout="auto", **kwargs):
-        """
-        Define a series of layouts imported from the igraph package in order to plot a given geometry
-        :param str layout: one of the following layouts: "circle",
-        "auto" (automatic implementation, choosen by default by igraph using node density at a proxy),
-        "fruchterman_reingold"/"fr" (force directed),
-        "kamada_kawai"/"kk" (force directed), "large_graph"/"lgl",
-        "random",va
-        "reingold_tilford",
-        "rt" (for trees).
-        Default is fruchterman_reingold
-        :param kwargs: a list of parameters that can be passed to each of the layout method
-        """
+    if not isinstance(attribute, str):
+        raise TypeError("\"attribute\" must be a string, {} found".format(type(attribute).__name__))
 
-        try:
-            layout_dic = {"auto": Graph.layout_auto(), "circle": Graph.layout_circle(self.graph, **kwargs),
-                          "fruchterman_reingold": Graph.layout_fruchterman_reingold(self.graph, **kwargs),
-                          "fr": Graph.layout_fruchterman_reingold(self.graph, **kwargs),
-                          "kamada_kawai": Graph.layout_kamada_kawai(self.graph, **kwargs),
-                          "kk": Graph.layout_kamada_kawai(self.graph, **kwargs),
-                          "large_graph": Graph.layout_lgl(self.graph, **kwargs),
-                          "lgl": Graph.layout_lgl(self.graph, **kwargs),
-                          "random": Graph.layout_random(self.graph, **kwargs),
-                          "reingold_tilford": Graph.layout_reingold_tilford(self.graph, **kwargs),
-                          "rt": Graph.layout_reingold_tilford(self.graph, **kwargs)}
+    if attribute in self.graph.attributes():
+        self.logger.warning("attribute {} already exists, will overwrite".format(attribute))
+        self.graph.vs()[attribute] = None
 
-        except TypeError:
-            raise KeyError("Invalid kwargs passed")
+    if not isinstance(sizes, list):
+        raise TypeError("\"sizes\" must be a list, {} found".format(type(sizes).__name__))
 
-        if layout.lower() not in layout_dic.keys():
-            raise KeyError("layout specified is not available")
+    else:
+        if any(not isinstance(x, (float, int)) for x in sizes) and any( x < 0 for x in sizes):
+            raise ValueError("one of the element in sizes is not a  positive float or integer")
 
-        else:
-            self.layout = layout_dic[layout.lower()]
+    if len(sizes) < self.graph.vcount():
+        self.logger.warning("The length of the \"sizes\" is less than the total number of nodes ({}), some nnodes will not be affected by this parameter".format(self.graph.vcount()))
+    elif len(sizes) > self.graph.vcount:
+        self.logger.warning(
+            "The length of the \"sizes\" is greater than the total number of nodes ({}), slicing this list to the maximum number of nodes".format(self.graph.vcount()))
+        sizes = sizes[:self.graph.vcount()]
 
-    def set_node_colours(self, colours:dict, attribute=None):
-        """
-        Assign a series of colours stored in a dictionary (`param` **colours**) to the `ìgraph.plot` object
-        :param colours: either a dictionary whose keys are graph attributes and the colours are either RGB or
-        literal colour names e.g. {"vasco": "red"} with "vasco" being in self.graph.vs()["name"]
-        or a list of the same lenght as number of node with colours inside
-        :param attribute: if colours is a dictionary, must be specified
-        """
+    self.graph.vs()[attribute] = sizes
 
-        if isinstance(colours, dict):
-            if attribute is not None:
-                self.utils.attribute_in_nodes(attribute)
-                values = self.graph.vs()[attribute]
-
-            else:
-                raise MissingAttributeError("attribute must be specified")
-
-            '''
-            check that the input values in the colour dictioary belong to the specified attribute
-            '''
-            for key in colours.keys():
-                if key not in values:
-                    raise KeyError("one of the key in the dictionary does not belong to the specified graph attribute.")
-
-                if not isinstance(colours[key], str):
-                    raise ValueError("colour codes must be string (either literal colour names or hex RGB")
-
-            if len(colours.keys()) > len(values):
-                raise ValueError(
-                    "the number of attributes variable specified is greater than the total number of values for that "
-                    "attribute")
-
-            self.node_colours = [colours[attr] for attr in values]
-
-        elif isinstance(colours, list):
-            if len(colours) != self.graph.vcount():
-                raise ValueError("length of colour list must be equal to graph nodes number")
-
-            for elem in colours:
-                if not isinstance(elem, str):
-                    raise ValueError("colour list must be made of strings")
-
-            self.node_colours = colours
-
-        else:
-            raise WrongArgumentError("colours must be either a dictionary or a list, {} found".format(type(colours)))
-
-    def set_edge_widths(self, widths, attribute=None):
-        """
-        Assign a series of colours stored in a dictionary to the igraph plot, based on the attribute values
-        
-        :type widths: dict or list
-        :param widths: either a dictionary whose keys are graph attributes and the widths are either integers or floats e.g. {"foo": 0.4} with "vasco" being in self.graph.vs()["name"] or a list of the same length as number of node with widths inside
-        :param attribute: if colours is a dictionary, must be specified
-        """
-
-        if isinstance(widths, dict):
-            if attribute is not None:
-                self.utils.attribute_in_nodes(attribute)
-                values = self.graph.es()[attribute]
-            else:
-                raise MissingAttributeError("attribute must be specified")
-
-
-            #check that the input values in the colour dictionary belong to the specified attribute
-            for key in widths.keys():
-                if key not in values:
-                    raise KeyError("one of the key in the dictionary does not belong to the specified graph attribute.")
-
-                if not isinstance(widths[key], (float, int)):
-                    raise ValueError("width must be floats or integers")
-
-            if len(widths.keys()) > len(values):
-                raise ValueError(
-                    "the number of attributes variable specified is greater than the total number of values for that "
-                    "attribute")
-
-            self.edge_widths = [widths[attr] for attr in values]
-
-        elif isinstance(widths, list):
-            if len(widths) != self.graph.ecount():
-                raise ValueError("length of widths list must be equal to graph nodes number")
-
-            for elem in widths:
-                if not isinstance(elem, (int, float)) and elem <= 0:
-                    raise ValueError("widths list must be made either of positive floats or integers")
-
-            self.edge_widths = widths
-
-        else:
-            raise WrongArgumentError("widths must be either a dictionary or a list")
-
-    def set_node_sizes(self, sizes, attribute=None):
-        """
-        Assign a series of sizes stored as a list r a dictionary
-        
-        :type widths: dict or list
-        :param widths: either a dictionary whose keys are graph attributes and the widths are either integers or floats e.g. {"foo": 0.4} with "vasco" being in self.graph.vs()["name"] or a list of the same lenght as number of node with widths inside
-        :param attribute: if colours is a dictionary, must be specified
-        """
-
-        if isinstance(sizes, dict):
-            if attribute is not None:
-                self.utils.attribute_in_nodes(attribute)
-                values = self.graph.vs()[attribute]
-
-            else:
-                raise MissingAttributeError("attribute must be specified when sizes is a dictionary")
-            '''
-            check that the input values in the colour dictioary belong to the specified attribute
-            '''
-            for key in sizes.keys():
-                if key not in values:
-                    raise KeyError("one of the key in the dictionary does not belong to the specified graph attribute.")
-
-                if not isinstance(sizes[key], (float, int)):
-                    raise ValueError("sizes must be a float or integers")
-
-            if len(sizes.keys()) > len(values):
-                raise ValueError(
-                    "the number of attributes variable specified is greater than the total number of values for that "
-                    "attribute")
-
-            self.node_sizes = [sizes[attr] for attr in values]
-
-        elif isinstance(sizes, list):
-            if len(sizes) != self.graph.vcount():
-                raise ValueError("length of sizes list must be equal to graph nodes number")
-
-            for elem in sizes:
-                # print(sizes)
-                # input()
-                if not isinstance(elem, (float, int)) and elem <= 0:
-                    raise ValueError("sizes must be either float or integers")
-
-            self.node_sizes = sizes
-
-        else:
-            raise WrongArgumentError("colours must be either a dictionary or a list")
-
-    def set_node_shapes(self, shapes, attribute=None):
+    def set_node_shapes(self, shapes, attribute="shape"):
 
         """
         **[EXPAND]**
@@ -364,6 +239,159 @@ class PlotGraph():
         else:
             raise WrongArgumentError("colours must be either a dictionary or a list")
 
+        # todo rifai
+    def set_edge_widths(self, widths, attribute=None):
+        """
+        Assign a series of colours stored in a dictionary to the igraph plot, based on the attribute values
+
+        :type widths: dict or list
+        :param widths: either a dictionary whose keys are graph attributes and the widths are either integers or floats e.g. {"foo": 0.4} with "vasco" being in self.graph.vs()["name"] or a list of the same length as number of node with widths inside
+        :param attribute: if colours is a dictionary, must be specified
+        """
+
+        if isinstance(widths, dict):
+            if attribute is not None:
+                self.utils.attribute_in_nodes(attribute)
+                values = self.graph.es()[attribute]
+            else:
+                raise MissingAttributeError("attribute must be specified")
+
+            # check that the input values in the colour dictionary belong to the specified attribute
+            for key in widths.keys():
+                if key not in values:
+                    raise KeyError(
+                        "one of the key in the dictionary does not belong to the specified graph attribute.")
+
+                if not isinstance(widths[key], (float, int)):
+                    raise ValueError("width must be floats or integers")
+
+            if len(widths.keys()) > len(values):
+                raise ValueError(
+                    "the number of attributes variable specified is greater than the total number of values for that "
+                    "attribute")
+
+            self.edge_widths = [widths[attr] for attr in values]
+
+        elif isinstance(widths, list):
+            if len(widths) != self.graph.ecount():
+                raise ValueError("length of widths list must be equal to graph nodes number")
+
+            for elem in widths:
+                if not isinstance(elem, (int, float)) and elem <= 0:
+                    raise ValueError("widths list must be made either of positive floats or integers")
+
+            self.edge_widths = widths
+
+        else:
+            raise WrongArgumentError("widths must be either a dictionary or a list")
+
+    # todo rifai
+    def set_edge_label(self, labels: list, attribute="edge_label"):
+        """
+        Take a list corresponding to edge properties (e.g.: an edge attribute) and  assign it to the corresponding edges
+        **WARNING** the labelling is positional, so the first item in label should match the first edge, the second
+        label the second edge, and so on. Will raise a warning if the two list are not of the same length.
+        :param: labels: a list of lables (must be strings)
+        """
+
+        for elem in labels:
+            if not isinstance(elem, str):
+                raise ValueError("label must be strings")
+
+        if len(labels) < self.graph.ecount():
+            self.logger.warning(
+                "the labels specified does not cover all the node vertices, replacing missing labels with \"NA\"")
+            diff = self.graph.vcount() - len(labels)
+            labels = labels + ["NA" * diff]
+
+        if len(labels) > self.graph.ecount():
+            self.logger.warning("Labels specified exceeds the maximum number of vertices, slicing the labels list")
+            labels = labels[:self.graph.ecount() - 1]
+
+        self.edge_labels = labels
+
+    # todo rifai
+    def set_edge_widths(self, widths, attribute=None):
+        """
+        Assign a series of colours stored in a dictionary to the igraph plot, based on the attribute values
+
+        :type widths: dict or list
+        :param widths: either a dictionary whose keys are graph attributes and the widths are either integers or floats e.g. {"foo": 0.4} with "vasco" being in self.graph.vs()["name"] or a list of the same length as number of node with widths inside
+        :param attribute: if colours is a dictionary, must be specified
+        """
+
+        if isinstance(widths, dict):
+            if attribute is not None:
+                self.utils.attribute_in_nodes(attribute)
+                values = self.graph.es()[attribute]
+            else:
+                raise MissingAttributeError("attribute must be specified")
+
+            # check that the input values in the colour dictionary belong to the specified attribute
+            for key in widths.keys():
+                if key not in values:
+                    raise KeyError(
+                        "one of the key in the dictionary does not belong to the specified graph attribute.")
+
+                if not isinstance(widths[key], (float, int)):
+                    raise ValueError("width must be floats or integers")
+
+            if len(widths.keys()) > len(values):
+                raise ValueError(
+                    "the number of attributes variable specified is greater than the total number of values for that "
+                    "attribute")
+
+            self.edge_widths = [widths[attr] for attr in values]
+
+        elif isinstance(widths, list):
+            if len(widths) != self.graph.ecount():
+                raise ValueError("length of widths list must be equal to graph nodes number")
+
+            for elem in widths:
+                if not isinstance(elem, (int, float)) and elem <= 0:
+                    raise ValueError("widths list must be made either of positive floats or integers")
+
+            self.edge_widths = widths
+
+        else:
+            raise WrongArgumentError("widths must be either a dictionary or a list")
+
+    def set_layouts(self, layout="auto", **kwargs):
+        """
+        Define a series of layouts imported from the igraph package in order to plot a given geometry
+        :param str layout: one of the following layouts: "circle",
+        :param dict **kwargs: option values that will be passed to the layout functions. Will raise an error if the params passed are illegal for the given layout
+        "auto" (automatic implementation, choosen by default by igraph using node density at a proxy),
+        "fruchterman_reingold"/"fr" (force directed),
+        "kamada_kawai"/"kk" (force directed), "large_graph"/"lgl",
+        "random",va
+        "reingold_tilford",
+        "rt" (for trees).
+        Default is fruchterman_reingold
+        :param kwargs: a list of parameters that can be passed to each of the layout method
+        """
+
+        try:
+            layout_dic = {"auto": Graph.layout_auto(), "circle": Graph.layout_circle(self.graph, **kwargs),
+                          "fruchterman_reingold": Graph.layout_fruchterman_reingold(self.graph, **kwargs),
+                          "fr": Graph.layout_fruchterman_reingold(self.graph, **kwargs),
+                          "kamada_kawai": Graph.layout_kamada_kawai(self.graph, **kwargs),
+                          "kk": Graph.layout_kamada_kawai(self.graph, **kwargs),
+                          "large_graph": Graph.layout_lgl(self.graph, **kwargs),
+                          "lgl": Graph.layout_lgl(self.graph, **kwargs),
+                          "random": Graph.layout_random(self.graph, **kwargs),
+                          "reingold_tilford": Graph.layout_reingold_tilford(self.graph, **kwargs),
+                          "rt": Graph.layout_reingold_tilford(self.graph, **kwargs)}
+
+        except TypeError:
+            raise KeyError("Invalid kwargs passed")
+
+        if layout.lower() not in layout_dic.keys():
+            raise KeyError("layout specified is not available")
+
+        else:
+            self.layout = layout_dic[layout.lower()]
+
     def plot_graph(self, path=None, **kwargs):
         '''
         Plot graph to a specific file, in several formats. Available formats: "jpg", "pdf", "svg", "png"
@@ -413,3 +441,10 @@ class PlotGraph():
                 visual_style[key] = kwargs[key]
         random.seed(self.seed)
         plot(self.graph, **visual_style, target=path)
+
+    def get_graph(self):
+        """
+        Returns the modified `igraph.Graph` object
+        :return Graph: the igraph.Graph object with the label added and used for plotting
+        """
+        return self.graph
