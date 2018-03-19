@@ -93,7 +93,7 @@ class QuickConvert:
                 outfile.write(sep.join([couple[0], "interacts_with", couple[1]]) + "\n")
 
         sys.stdout.write("file successfully converted\n")
-        return output_file
+        return None
 
     @staticmethod
     @input_file_checker
@@ -150,4 +150,4 @@ class QuickConvert:
         with open(output_file, "w") as outfile:
             outfile.writelines(egl)
 
-        return output_file
+        return None
