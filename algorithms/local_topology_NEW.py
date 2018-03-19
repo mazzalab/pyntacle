@@ -328,7 +328,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def pagerank(graph, nodes, weights=None, damping=0.85) -> list:
+    def pagerank(graph, nodes=None, weights=None, damping=0.85) -> list:
         """
         Computes the Google PageRank algorithm from the input node(s), or for all nodes in the graph if it's not
         specified. The PageRank algorithm is a modifed version of the eigenvector centrality. It highlights the
@@ -359,8 +359,11 @@ class LocalTopology:
 
         if not (isinstance(damping, (float, int)) and (0 <= damping)):
             raise ValueError("Damping factor must be a float >= 0")
-
-        return graph.pagerank(vertices=nodes, damping=damping, directed=False, weights=weights)
+        
+        if nodes is not None:
+            nodes = ut(graph).get_node_indices(nodes)
+        
+        return graph.pagerank(vertices=nodes, damping=damping, directed=False, weights=weights, implementation="arpack")
 
     @staticmethod
     @check_graph_consistency
