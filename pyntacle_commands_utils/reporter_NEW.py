@@ -112,7 +112,13 @@ class pyntacleReporter():
                 "a report must be created first using the \"create_report()\" function")
 
         else:
+            print(list(self.report))
             #cast every elementy of the list of lists to string, just in case:
+            for x in self.report:
+                print(x)
+                list(map(str, x))
+            input()
+
             self.report = [ list(map(str,x)) for x in self.report ]
 
         if format not in choices.keys():
@@ -180,21 +186,26 @@ class pyntacleReporter():
         """
 
         nodes = reportdict.get("nodes")
+
         if nodes is None:
             nodes = self.graph.vs["name"]
         else:
+            nodes = nodes.split(',')
             del reportdict["nodes"]
 
         self.report.append(["Results: Local Topology Metrics in Pyntacle for each node queried"])
-        self.report.append(["Node Name"] + [x.name for x in reportdict.keys()])
-
+        self.report.append(["Node Name"] + [x for x in reportdict.keys()])
+        print("NODES!", nodes)
         addendum = [] #list that will be added to the self.report object
-
         for i, elem in enumerate(nodes):
-            addendum.append([elem]) #append the node names to the appendum
+            print(i, elem)
+            temp = []
+            temp.append(elem) #append the node names to the appendum
             for k in reportdict.keys():
-                addendum.append(reportdict[k][i]) #append the corresponding value to the node name
-
+                temp.append(reportdict[k][i]) #append the corresponding value to the node name
+            addendum.append(temp)
+        print("ADDENDUM", addendum)
+        input()
         self.report = self.report + addendum
 
     def __global_report(self, reportdict:OrderedDict):

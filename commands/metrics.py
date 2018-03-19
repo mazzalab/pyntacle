@@ -4,7 +4,6 @@ from misc.enums import *
 from algorithms.global_topology_NEW import GlobalTopology
 from algorithms.local_topology_NEW import LocalTopology
 from algorithms.sparseness_NEW import *
-from algorithms.sparseness import _SparsenessAttribute
 from exceptions.generic_error import Error
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 from io_stream.exporter import PyntacleExporter
@@ -133,8 +132,6 @@ class Metrics():
             else:
                 plot_size = (1600, 1600)
 
-        self.args.report_format = "." + self.args.report_format
-
         if self.args.which == "local":
 
             reporter = pyntacleReporter(graph=graph) #init reporter
@@ -144,8 +141,6 @@ class Metrics():
             if self.args.nodes is not None:
                 sys.stdout.write("Computing local metrics for nodes {}\n".format(self.args.nodes))
                 nodes_list = self.args.nodes.split(",")
-                index_list = utils.get_node_indices(node_names=nodes_list)
-                # print(index_list)
 
                 try:
                     utils.check_name_list(nodes_list)  # to check everything's in order
@@ -245,19 +240,24 @@ class Metrics():
 
             if os.path.exists(report_path):
                 sys.stdout.write("WARNING: File {} already exists, overwriting it\n".format(report_path))
-
-            local_attributes_dict = OrderedDict({LocalAttribute.degree.name: LocalTopology.degree(graph=graph, nodes=self.args.nodes),
-                 LocalAttribute.clustering_coefficient.name: LocalTopology.clustering_coefficient(graph=graph, nodes=self.args.nodes),
-                 LocalAttribute.betweenness.name: LocalTopology.betweenness(graph=graph, nodes=self.args.nodes),
-                 LocalAttribute.closeness.name: LocalTopology.closeness(graph=graph, nodes=self.args.nodes),
-                 LocalAttribute.radiality.name: LocalTopology.radiality(graph=graph, nodes=self.args.nodes),
-                 LocalAttribute.radiality_reach.name: LocalTopology.radiality_reach(graph=graph, nodes=self.args.nodes),
-                 LocalAttribute.eccentricity.name: LocalTopology.eccentricity(graph=graph, nodes=self.args.nodes),
-                 LocalAttribute.pagerank.name: LocalTopology.pagerank(graph=graph, nodes=self.args.nodes, weights=weights, damping=self.args.damping_factor)})
+            
+            print('NODES LIST', nodes_list)
+            input()
+            local_attributes_dict = OrderedDict({LocalAttribute.degree.name: LocalTopology.degree(graph=graph, nodes=nodes_list),
+                 LocalAttribute.clustering_coefficient.name: LocalTopology.clustering_coefficient(graph=graph, nodes=nodes_list),
+                 LocalAttribute.betweenness.name: LocalTopology.betweenness(graph=graph, nodes=nodes_list),
+                 LocalAttribute.closeness.name: LocalTopology.closeness(graph=graph, nodes=nodes_list),
+                 LocalAttribute.radiality.name: LocalTopology.radiality(graph=graph, nodes=nodes_list),
+                 LocalAttribute.radiality_reach.name: LocalTopology.radiality_reach(graph=graph, nodes=nodes_list),
+                 LocalAttribute.eccentricity.name: LocalTopology.eccentricity(graph=graph, nodes=nodes_list),
+                 LocalAttribute.eigenvector_centrality.name : LocalTopology.eigenvector_centrality(graph=graph, nodes=nodes_list),
+                 LocalAttribute.pagerank.name: LocalTopology.pagerank(graph=graph, nodes=nodes_list, weights=weights, damping=self.args.damping_factor)})
             
             if self.args.nodes:
                 local_attributes_dict["nodes"] = self.args.nodes
             
+            print("LOCAL ATTR DICT:", local_attributes_dict)
+            input()
             reporter.create_report(Reports.Local, local_attributes_dict)
             reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
@@ -326,53 +326,54 @@ class Metrics():
                 sys.stdout.write("The graph has too many nodes ({}). Can't draw graph\n".format(graph.vcount()))
 
         elif self.args.which == "global":
+            
+            sys.stdout.write("Computing global Metrics for whole graph\n")
 
-            #define all global attributes that will be found
-            global_attributes_list = [_GlobalAttribute.average_degree, _GlobalAttribute.average_path_length,
-                                      _GlobalAttribute.diameter, _GlobalAttribute.density,
-                                      _GlobalAttribute.clustering_coefficient,
-                                      _GlobalAttribute.weighted_clustering_coefficient,
-                                      _GlobalAttribute.average_eccentricity, _GlobalAttribute.average_radiality,
-                                      _GlobalAttribute.average_radiality_reach, _GlobalAttribute.average_closeness,
-                                      _GlobalAttribute.pi,
-                                      _SparsenessAttribute.completeness,
-                                      _SparsenessAttribute.completeness_legacy,
-                                      _SparsenessAttribute.compactness]
+            global_attributes_dict = OrderedDict({GlobalAttribute.average_shortest_path_length.name: GlobalTopology.average_shortest_path_length(graph=graph),
+                                                 GlobalAttribute.diameter.name: GlobalTopology.diameter(graph=graph),
+                                                 GlobalAttribute.components.name: GlobalTopology.components(graph=graph),
+                                                 GlobalAttribute.radius.name: GlobalTopology.radius(graph=graph),
+                                                 GlobalAttribute.density.name: GlobalTopology.density(graph=graph),
+                                                 GlobalAttribute.pi.name: GlobalTopology.pi(graph=graph),
+                                                 GlobalAttribute.average_clustering_coefficient.name: GlobalTopology.average_clustering_coefficient(graph=graph),
+                                                 GlobalAttribute.weighted_clustering_coefficient.name: GlobalTopology.weighted_clustering_coefficient(graph=graph),
+                                                 GlobalAttribute.average_degree.name: GlobalTopology.average_degree(graph=graph),
+                                                 GlobalAttribute.average_closeness.name: GlobalTopology.average_closeness(graph=graph),
+                                                 GlobalAttribute.average_eccentricity.name: GlobalTopology.average_eccentricity(graph=graph),
+                                                 GlobalAttribute.average_radiality.name: GlobalTopology.average_radiality(graph=graph),
+                                                 GlobalAttribute.average_radiality_reach.name: GlobalTopology.average_radiality_reach(graph=graph),
+                                                 GlobalAttribute.completeness_mazza.name: Sparseness.completeness_Mazza(graph=graph),
+                                                 GlobalAttribute.completeness_XXX.name: Sparseness.completeness_XXX(graph=graph),
+                                                 GlobalAttribute.compactness.name: Sparseness.compactness(graph=graph)
+                                                 })
 
             #find metrics for the whole graph (without removing nodes)
-            sys.stdout.write("Computing global Metrics for whole graph\n")
-            global_topology = GlobalTopology(graph=graph)
-            sparseness = Sparseness(graph=graph)
-
-            global_topology.clustering_coefficient(recalculate=True)
-
-            global_topology.weighted_clustering_coefficient(recalculate=True)
-            global_topology.average_closeness(recalculate=True)
-            global_topology.average_degree(recalculate=True)
-            global_topology.average_eccentricity(recalculate=True)
-            global_topology.average_radiality(recalculate=True)
-            global_topology.average_radiality_reach(recalculate=True)
-            global_topology.average_path_length(recalculate=True)
-            global_topology.density(recalculate=True)
-            global_topology.diameter(recalculate=True)
-            global_topology.pi(recalculate=True)
-            sparseness.compactness(recalculate=True)
-            sparseness.completeness(recalculate=True)
-            sparseness.completeness_legacy(recalculate=True)
+            # global_topology = GlobalTopology(graph=graph)
+            # sparseness = Sparseness(graph=graph)
+            #
+            # global_topology.clustering_coefficient(recalculate=True)
+            #
+            # global_topology.weighted_clustering_coefficient(recalculate=True)
+            # global_topology.average_closeness(recalculate=True)
+            # global_topology.average_degree(recalculate=True)
+            # global_topology.average_eccentricity(recalculate=True)
+            # global_topology.average_radiality(recalculate=True)
+            # global_topology.average_radiality_reach(recalculate=True)
+            # global_topology.average_path_length(recalculate=True)
+            # global_topology.density(recalculate=True)
+            # global_topology.diameter(recalculate=True)
+            # global_topology.pi(recalculate=True)
+            # sparseness.compactness(recalculate=True)
+            # sparseness.completeness(recalculate=True)
+            # sparseness.completeness_legacy(recalculate=True)
 
 
             if not self.args.no_nodes: #create standard report for the whole graph
                 sys.stdout.write("Producing report\n")
 
-                reporter = pyntacleReporter(graph=graph)
-                reporter.report_global_topology(global_attributes_list)
-                report_prefix = "_".join(["pyntacle", graph["name"][0], "global", "metrics", "report"])
-
-                report_path = os.path.join(self.args.directory, "_".join(
-                    [report_prefix, runtime_date]) + self.args.report_format)
-
-                reporter.report_global_topology(global_attributes_list)
-                reporter.create_report(report_path=report_path)
+                reporter = pyntacleReporter(graph=graph)  # init reporter
+                reporter.create_report(Reports.Global, global_attributes_dict)
+                reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
             else:
 
@@ -387,35 +388,49 @@ class Metrics():
                 graph_nonodes = graph.copy()
                 graph_nonodes.delete_vertices(index_list) #remove target nodes
 
-                global_topology_nonodes= GlobalTopology(graph_nonodes)
-                sparseness_nonodes = Sparseness(graph_nonodes)
-
-                global_topology_nonodes.clustering_coefficient(recalculate=True)
-                global_topology_nonodes.weighted_clustering_coefficient(recalculate=True)
-                global_topology_nonodes.average_closeness(recalculate=True)
-                global_topology_nonodes.average_degree(recalculate=True)
-                global_topology_nonodes.average_eccentricity(recalculate=True)
-                global_topology_nonodes.average_radiality(recalculate=True)
-                global_topology_nonodes.average_radiality_reach(recalculate=True)
-                global_topology_nonodes.average_path_length(recalculate=True)
-                global_topology_nonodes.density(recalculate=True)
-                global_topology_nonodes.diameter(recalculate=True)
-                global_topology_nonodes.pi(recalculate=True)
-
-                sparseness_nonodes.compactness(recalculate=True)
-                sparseness_nonodes.completeness(recalculate=True)
-                sparseness_nonodes.completeness_legacy(recalculate=True)
+                global_attributes_dict_nonodes = OrderedDict({
+                         GlobalAttribute.average_shortest_path_length.name: GlobalTopology.average_shortest_path_length(graph=graph_nonodes),
+                         GlobalAttribute.diameter.name: GlobalTopology.diameter(graph=graph_nonodes),
+                         GlobalAttribute.components.name: GlobalTopology.components(graph=graph_nonodes),
+                         GlobalAttribute.radius.name: GlobalTopology.radius(graph=graph_nonodes),
+                         GlobalAttribute.density.name: GlobalTopology.density(graph=graph_nonodes),
+                         GlobalAttribute.pi.name: GlobalTopology.pi(graph=graph_nonodes),
+                         GlobalAttribute.average_clustering_coefficient.name: GlobalTopology.average_clustering_coefficient(graph=graph_nonodes),
+                         GlobalAttribute.weighted_clustering_coefficient.name: GlobalTopology.weighted_clustering_coefficient(graph=graph_nonodes),
+                         GlobalAttribute.average_degree.name: GlobalTopology.average_degree(graph=graph_nonodes),
+                         GlobalAttribute.average_closeness.name: GlobalTopology.average_closeness(graph=graph_nonodes),
+                         GlobalAttribute.average_eccentricity.name: GlobalTopology.average_eccentricity(graph=graph_nonodes),
+                         GlobalAttribute.average_radiality.name: GlobalTopology.average_radiality(graph=graph_nonodes),
+                         GlobalAttribute.average_radiality_reach.name: GlobalTopology.average_radiality_reach(graph=graph_nonodes),
+                         GlobalAttribute.completeness_mazza.name: Sparseness.completeness_Mazza(graph=graph_nonodes),
+                         GlobalAttribute.completeness_XXX.name: Sparseness.completeness_XXX(graph=graph_nonodes),
+                         GlobalAttribute.compactness.name: Sparseness.compactness(graph=graph_nonodes)
+                         })
+                
+                # global_topology_nonodes= GlobalTopology(graph_nonodes)
+                # sparseness_nonodes = Sparseness(graph_nonodes)
+                #
+                # global_topology_nonodes.clustering_coefficient(recalculate=True)
+                # global_topology_nonodes.weighted_clustering_coefficient(recalculate=True)
+                # global_topology_nonodes.average_closeness(recalculate=True)
+                # global_topology_nonodes.average_degree(recalculate=True)
+                # global_topology_nonodes.average_eccentricity(recalculate=True)
+                # global_topology_nonodes.average_radiality(recalculate=True)
+                # global_topology_nonodes.average_radiality_reach(recalculate=True)
+                # global_topology_nonodes.average_path_length(recalculate=True)
+                # global_topology_nonodes.density(recalculate=True)
+                # global_topology_nonodes.diameter(recalculate=True)
+                # global_topology_nonodes.pi(recalculate=True)
+                #
+                # sparseness_nonodes.compactness(recalculate=True)
+                # sparseness_nonodes.completeness(recalculate=True)
+                # sparseness_nonodes.completeness_legacy(recalculate=True)
 
                 sys.stdout.write("Producing report\n")
-                reporter = pyntacleReporter(graph=graph, graph2=graph_nonodes)
-                reporter.report_global_comparisons(attributes_list=global_attributes_list)
-
-                report_prefix = "_".join(["pyntacle", graph["name"][0], "global", "metrics", "nonodes", "report"])
-
-                report_path = os.path.join(self.args.directory, "_".join(
-                    [report_prefix, runtime_date]) + self.args.report_format)
-
-                reporter.create_report(report_path=report_path)
+                graph_nonodes["name"][0] += '_without_nodes'
+                reporter = pyntacleReporter(graph=graph_nonodes)  # init reporter
+                reporter.create_report(Reports.Global, global_attributes_dict)
+                reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
             if not self.args.no_plot and graph.vcount() < 1000:
 
