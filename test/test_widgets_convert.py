@@ -14,28 +14,28 @@ class WidgetTestConvert(unittest.TestCase):
         sys.stdout.write("Testing sif conversion\n")
         fileout = 'test/test_sets/tmp/test.sif'
         expected = 'test/test_sets/output/convert/figure8.sif'
-        PyntacleExporter.Sif(graph=self.graph, file=fileout, sep='\t', header=True)
+        PyntacleExporter.Sif(graph=self.graph, output_file=fileout, sep='\t', header=True)
         self.assertEqual(getmd5(fileout), getmd5(expected), 'Wrong checksum for Convert, sif case')
     
     def test_convert_egl(self):
         sys.stdout.write("Testing egl conversion\n")
         fileout = 'test/test_sets/tmp/test.egl'
         expected = 'test/test_sets/output/convert/figure8.egl'
-        PyntacleExporter.EdgeList(graph=self.graph, file=fileout, sep='\t', header=True)
+        PyntacleExporter.EdgeList(graph=self.graph, output_file=fileout, sep='\t', header=True)
         self.assertEqual(getmd5(fileout), getmd5(expected), 'Wrong checksum for Convert, edgelist case')
 
     def test_convert_bin(self):
         sys.stdout.write("Testing bin conversion\n")
         fileout = 'test/test_sets/tmp/test.graph'
         expected = 'test/test_sets/output/convert/figure8.graph'
-        PyntacleExporter.Binary(graph=self.graph, file=fileout)
+        PyntacleExporter.Binary(graph=self.graph, output_file=fileout)
         self.assertEqual(getmd5_bin(fileout), getmd5_bin(expected), 'Wrong checksum for Convert, binary case')
 
     def test_convert_dot(self):
         sys.stdout.write("Testing dot conversion\n")
         fileout = 'test/test_sets/tmp/test.dot'
         expected = 'test/test_sets/output/convert/figure8.dot'
-        PyntacleExporter.Dot(graph=self.graph, file=fileout)
+        PyntacleExporter.Dot(graph=self.graph, output_file=fileout)
         self.assertEqual(getmd5(fileout), getmd5(expected),
                          'Wrong checksum for Convert, dot case')
 
@@ -43,7 +43,7 @@ class WidgetTestConvert(unittest.TestCase):
         sys.stdout.write("Testing adjm conversion\n")
         fileout = 'test/test_sets/tmp/test.adjm'
         expected = 'test/test_sets/input/figure_8.txt'
-        PyntacleExporter.AdjacencyMatrix(graph=self.graph, file=fileout, sep='\t', header=True)
+        PyntacleExporter.AdjacencyMatrix(graph=self.graph, output_file=fileout, sep='\t', header=True)
         self.assertEqual(getmd5(fileout), getmd5(expected),
                          'Wrong checksum for Convert, adjm case')
         

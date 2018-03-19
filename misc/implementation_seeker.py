@@ -29,7 +29,7 @@ from misc.enums import SP_implementations
 from igraph import Graph
 from numba import cuda
 
-""" Choose the best shortest path implementation based on Graph criterion """
+"""Choose the best shortest path implementation based on Graph criterion"""
 
 
 def implementation_seeker(graph: Graph):

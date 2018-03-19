@@ -58,8 +58,8 @@ class PlotGraph():
         """
 
         self.logger = log
-        self.__graph = graph.copy()  # creates a copy of the graph to work on
-        self.utils = gu(graph=self.__graph)
+        self.graph = graph.copy()  # creates a copy of the graph to work on
+        self.utils = gu(graph=self.graph)
         self.utils.graph_checker()  # check that input graph is properly set
 
         if seed is not None:
@@ -91,15 +91,15 @@ class PlotGraph():
             if not isinstance(elem, str):
                 raise ValueError("label must be strings")
 
-        if len(labels) < self.__graph.vcount():
+        if len(labels) < self.graph.vcount():
             self.logger.warning(
                 "the labels specified does not cover all the node vertices, replacing missing labels with \"NA\"")
-            diff = self.__graph.vcount() - len(labels)
+            diff = self.graph.vcount() - len(labels)
             labels = labels + "NA" * diff
 
-        if len(labels) > self.__graph.vcount():
+        if len(labels) > self.graph.vcount():
             self.logger.warning("Labels specified exceeds the maximum number of vertices, slicing the labels list")
-            labels = labels[:self.__graph.vcount() - 1]
+            labels = labels[:self.graph.vcount() - 1]
 
         self.node_labels = labels
 
@@ -114,15 +114,15 @@ class PlotGraph():
             if not isinstance(elem, str):
                 raise ValueError("label must be strings")
 
-        if len(labels) < self.__graph.ecount():
+        if len(labels) < self.graph.ecount():
             self.logger.warning(
                 "the labels specified does not cover all the node vertices, replacing missing labels with \"NA\"")
-            diff = self.__graph.vcount() - len(labels)
+            diff = self.graph.vcount() - len(labels)
             labels = labels + ["NA" * diff]
 
-        if len(labels) > self.__graph.ecount():
+        if len(labels) > self.graph.ecount():
             self.logger.warning("Labels specified exceeds the maximum number of vertices, slicing the labels list")
-            labels = labels[:self.__graph.ecount() - 1]
+            labels = labels[:self.graph.ecount() - 1]
 
         self.edge_labels = labels
 
@@ -132,28 +132,27 @@ class PlotGraph():
         """
         Define a series of layouts imported from the igraph package in order to plot a given geometry
         :param str layout: one of the following layouts: "circle",
+        "auto" (automatic implementation, choosen by default by igraph using node density at a proxy),
         "fruchterman_reingold"/"fr" (force directed),
         "kamada_kawai"/"kk" (force directed), "large_graph"/"lgl",
-        "random",
+        "random",va
         "reingold_tilford",
         "rt" (for trees).
         Default is fruchterman_reingold
         :param kwargs: a list of parameters that can be passed to each of the layout method
         """
 
-        self.layout()
         try:
-            layout_dic = {"auto":Graph.layout_auto(),
-                            "circle": Graph.layout_circle(self.__graph, **kwargs),
-                          "fruchterman_reingold": Graph.layout_fruchterman_reingold(self.__graph, seed=self.seed, **kwargs),
-                          "fr": Graph.layout_fruchterman_reingold(self.__graph, seed=self.seed, **kwargs),
-                          "kamada_kawai": Graph.layout_kamada_kawai(self.__graph, seed=self.seed, **kwargs),
-                          "kk": Graph.layout_kamada_kawai(self.__graph, seed=self.seed, **kwargs),
-                          "large_graph": Graph.layout_lgl(self.__graph, seed=self.seed, **kwargs),
-                          "lgl": Graph.layout_lgl(self.__graph, seed=self.seed, **kwargs),
-                          "random": Graph.layout_random(self.__graph, seed=self.seed,**kwargs),
-                          "reingold_tilford": Graph.layout_reingold_tilford(self.__graph, seed=self.seed,**kwargs),
-                          "rt": Graph.layout_reingold_tilford(self.__graph, seed=self.seed,**kwargs)}
+            layout_dic = {"auto": Graph.layout_auto(), "circle": Graph.layout_circle(self.graph, **kwargs),
+                          "fruchterman_reingold": Graph.layout_fruchterman_reingold(self.graph, **kwargs),
+                          "fr": Graph.layout_fruchterman_reingold(self.graph, **kwargs),
+                          "kamada_kawai": Graph.layout_kamada_kawai(self.graph, **kwargs),
+                          "kk": Graph.layout_kamada_kawai(self.graph, **kwargs),
+                          "large_graph": Graph.layout_lgl(self.graph, **kwargs),
+                          "lgl": Graph.layout_lgl(self.graph, **kwargs),
+                          "random": Graph.layout_random(self.graph, **kwargs),
+                          "reingold_tilford": Graph.layout_reingold_tilford(self.graph, **kwargs),
+                          "rt": Graph.layout_reingold_tilford(self.graph, **kwargs)}
 
         except TypeError:
             raise KeyError("Invalid kwargs passed")
@@ -166,16 +165,17 @@ class PlotGraph():
 
     def set_node_colours(self, colours:dict, attribute=None):
         """
-        Assign a series of colours stored in a dictionary to the igraph plot, based on the attribute values
-        
-        :param colours: either a dictionary whose keys are graph attributes and the colours are either RGB or literal colour names e.g. {"vasco": "red"} with "vasco" being in self.graph.vs()["name"] or a list of the same lenght as number of node with colours inside
+        Assign a series of colours stored in a dictionary (`param` **colours**) to the `ìgraph.plot` object
+        :param colours: either a dictionary whose keys are graph attributes and the colours are either RGB or
+        literal colour names e.g. {"vasco": "red"} with "vasco" being in self.graph.vs()["name"]
+        or a list of the same lenght as number of node with colours inside
         :param attribute: if colours is a dictionary, must be specified
         """
 
         if isinstance(colours, dict):
             if attribute is not None:
                 self.utils.attribute_in_nodes(attribute)
-                values = self.__graph.vs()[attribute]
+                values = self.graph.vs()[attribute]
 
             else:
                 raise MissingAttributeError("attribute must be specified")
@@ -198,7 +198,7 @@ class PlotGraph():
             self.node_colours = [colours[attr] for attr in values]
 
         elif isinstance(colours, list):
-            if len(colours) != self.__graph.vcount():
+            if len(colours) != self.graph.vcount():
                 raise ValueError("length of colour list must be equal to graph nodes number")
 
             for elem in colours:
@@ -222,7 +222,7 @@ class PlotGraph():
         if isinstance(widths, dict):
             if attribute is not None:
                 self.utils.attribute_in_nodes(attribute)
-                values = self.__graph.es()[attribute]
+                values = self.graph.es()[attribute]
             else:
                 raise MissingAttributeError("attribute must be specified")
 
@@ -243,7 +243,7 @@ class PlotGraph():
             self.edge_widths = [widths[attr] for attr in values]
 
         elif isinstance(widths, list):
-            if len(widths) != self.__graph.ecount():
+            if len(widths) != self.graph.ecount():
                 raise ValueError("length of widths list must be equal to graph nodes number")
 
             for elem in widths:
@@ -267,7 +267,7 @@ class PlotGraph():
         if isinstance(sizes, dict):
             if attribute is not None:
                 self.utils.attribute_in_nodes(attribute)
-                values = self.__graph.vs()[attribute]
+                values = self.graph.vs()[attribute]
 
             else:
                 raise MissingAttributeError("attribute must be specified when sizes is a dictionary")
@@ -289,7 +289,7 @@ class PlotGraph():
             self.node_sizes = [sizes[attr] for attr in values]
 
         elif isinstance(sizes, list):
-            if len(sizes) != self.__graph.vcount():
+            if len(sizes) != self.graph.vcount():
                 raise ValueError("length of sizes list must be equal to graph nodes number")
 
             for elem in sizes:
@@ -318,7 +318,7 @@ class PlotGraph():
         if isinstance(shapes, dict):
             if attribute is not None:
                 self.utils.attribute_in_nodes(attribute)
-                values = self.__graph.vs()[attribute]
+                values = self.graph.vs()[attribute]
 
             else:
                 raise MissingAttributeError("attribute must be specified")
@@ -349,7 +349,7 @@ class PlotGraph():
             self.node_shapes = [shapes[attr] for attr in values]
 
         elif isinstance(shapes, list):
-            if len(shapes) != self.__graph.vcount():
+            if len(shapes) != self.graph.vcount():
                 raise ValueError("length of shapes list must be equal to graph nodes number")
 
             for elem in shapes:
@@ -412,4 +412,4 @@ class PlotGraph():
             else:
                 visual_style[key] = kwargs[key]
         random.seed(self.seed)
-        plot(self.__graph, **visual_style, target=path)
+        plot(self.graph, **visual_style, target=path)

@@ -33,7 +33,7 @@ import numpy as np
 from config import *
 from misc.binarycheck import *
 from tools.graph_utils import GraphUtils
-from misc.import_utils import *
+from misc.io_utils import *
 from tools.add_attributes import *
 from tools.adjmatrix_utils import AdjmUtils
 from tools.edgelist_utils import EglUtils
@@ -95,7 +95,7 @@ def dot_edgeattrlist_to_dict(mylist):
 
 class PyntacleImporter:
     @staticmethod
-    @filechecker
+    @input_file_checker
     @separator_sniffer
     def AdjacencyMatrix(file, sep=None, header=True) -> Graph:
         """
@@ -145,32 +145,32 @@ class PyntacleImporter:
             return graph
 
     @staticmethod
-    @filechecker
+    @input_file_checker
     @separator_sniffer
-    def EdgeList(file, sep=None, header=False):
+    def EdgeList(input_file, sep=None, header=False):
         """
         Take an edge list and turns it into an `igraph.Graph` object that stores the input edge list. An Edge List is a
         text file that represnt all the edges in a graph with a scheme, *nodeA* **separator** *nodeB*. We accept
         undirected edge list, so the node pairs must be repeated twice, with the node names inverted (so a line with
         *nodeB* **separator** *nodeB* must be present or it will raise an error.
-        :param str file: a valid path to the Edge List File
+        :param str input_file: a valid path to the Edge List File
         :param sep: if None(default) we will try to guess the separator. Otherwise, you can place the string
         representing the rows and columns separator.
         :param bool header: Whether the header is present or not (default is *False*)
         :return: an `igraph.Graph` object.
         """
 
-        if not EglUtils(file=file, header=header, separator=sep).is_pyntacle_ready():
+        if not EglUtils(file=input_file, header=header, separator=sep).is_pyntacle_ready():
             raise UnproperlyFormattedFileError("Edgelist is not ready to be parsed by Pyntacle, fix it and then come back!")
 
         graph = Graph() #initialize an empty graph that will be filled
         
         if header:
 
-            adj = pd.read_csv(file, sep=sep, skiprows=1, header=None)
+            adj = pd.read_csv(input_file, sep=sep, skiprows=1, header=None)
 
         else:
-            adj = pd.read_csv(file, sep=sep, header=None)
+            adj = pd.read_csv(input_file, sep=sep, header=None)
             
         adj.values.sort()
         adj = adj.drop_duplicates()
@@ -178,12 +178,12 @@ class PyntacleImporter:
         graph.add_vertices(list(str(x) for x in set(adj[0].tolist() + adj[1].tolist())))
         graph.add_edges([tuple(x) for x in adj.values])
         #initialize the graph by calling the graph_initializer() method
-        AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
-        sys.stdout.write("Edge List from file {} imported\n".format(file))
+        AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(input_file))[0])
+        sys.stdout.write("Edge List from file {} imported\n".format(input_file))
         return graph
 
     @staticmethod
-    @filechecker
+    @input_file_checker
     @separator_sniffer
     def Sif(file, sep=None, header=True) -> Graph:
         """
@@ -279,7 +279,7 @@ class PyntacleImporter:
         return graph
 
     @staticmethod
-    @filechecker
+    @input_file_checker
     @separator_sniffer
     def Dot(file, sep=None, **kwargs):
         """
@@ -386,7 +386,7 @@ class PyntacleImporter:
         return graph
 
     @staticmethod
-    @filechecker
+    @input_file_checker
     def Binary(file) -> Graph:
         """
         Reload a binary file that stores an `igraph.Graph` object and makes it ready to be used for pyntacle (if it's

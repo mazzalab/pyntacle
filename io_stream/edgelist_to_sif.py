@@ -75,12 +75,6 @@ class EdgeListToCytoscape():
                 else:
                     self.separator = separator
 
-            # check that the file contains 2 columns
-            checkfile = pd.read_csv(filepath_or_buffer=self.infile, sep=self.separator)
-            if len(checkfile.columns) != 2:
-                self.logger.error("Input file is not an edgelist (does not have 2 columns")
-                sys.exit(1)
-
     def __edgelist_parser(self):
         '''
         Hidden function that stores and edgelist into a list of lists

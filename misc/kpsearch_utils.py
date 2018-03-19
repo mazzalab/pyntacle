@@ -30,7 +30,7 @@ from exceptions.illegal_kppset_size_error import IllegalKppsetSizeError
 from misc.enums import KPPOSchoices, KPNEGchoices
 import random
 
-""" Utilities for checking the consistency of the parameters passed in greedy or bruteforce optimization """
+"""Utilities for checking the consistency of the parameters passed in greedy or bruteforce optimization"""
 
 def greedy_search_initializer(func):
     """
