@@ -1,5 +1,6 @@
 import pandas as pd
 from config import *
+from misc.enums import *
 from algorithms.global_topology_NEW import GlobalTopology
 from algorithms.local_topology_NEW import LocalTopology
 from algorithms.sparseness_NEW import *
@@ -8,7 +9,7 @@ from exceptions.generic_error import Error
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 from io_stream.exporter import PyntacleExporter
 from pyntacle_commands_utils.plotter import *
-from pyntacle_commands_utils.reporter import *
+from pyntacle_commands_utils.reporter_NEW import *
 from io_stream.import_attributes import ImportAttributes
 from misc.graph_load import *
 from tools.graph_utils import GraphUtils
@@ -138,9 +139,7 @@ class Metrics():
 
             reporter = pyntacleReporter(graph=graph) #init reporter
 
-            # initialize local attribute method
 
-            local_attributes = LocalTopology(graph=graph)
 
             if self.args.nodes is not None:
                 sys.stdout.write("Computing local metrics for nodes {}\n".format(self.args.nodes))
@@ -160,14 +159,15 @@ class Metrics():
                 sys.stdout.write("Computing local metrics for all nodes in the graph\n")
                 index_list = None
 
-            local_attributes.degree(index_list=index_list, recalculate=True)
-            local_attributes.clustering_coefficient(index_list=index_list, recalculate=True)
-            local_attributes.betweenness(index_list=index_list, recalculate=True)
-            local_attributes.closeness(index_list=index_list, recalculate=True)
-            local_attributes.radiality(index_list=index_list, recalculate=True)
-            local_attributes.radiality_reach(index_list=index_list, recalculate=True)
-            local_attributes.eccentricity(index_list=index_list, recalculate=True)
-            local_attributes.shortest_path(index_list=index_list, recalculate=True)
+            # LocalTopology.degree(.degree(graph,index_list=index_list, recalculate=True)
+            # local_attributes.clustering_coefficient(graph,index_list=index_list, recalculate=True)
+            # local_attributes.betweenness(graph,index_list=index_list, recalculate=True)
+            # local_attributes.closeness(graph,index_list=index_list, recalculate=True)
+            # local_attributes.radiality(graph,index_list=index_list, recalculate=True)
+            # local_attributes.radiality_reach(graph,index_list=index_list, recalculate=True)
+            # local_attributes.eccentricity(graph,index_list=index_list, recalculate=True)
+            # local_attributes.shortest_path_pyntacle(graph,index_list=index_list, recalculate=True)
+            # local_attributes.shortest_path_igraph(graph,index_list=index_list, recalculate=True)
 
             if self.args.damping_factor < 0.0 and self.args.damping_factor > 1.0:
                 self.logging.error("damping factor must be betweeen 0 and 1")
@@ -175,62 +175,60 @@ class Metrics():
 
             else:
 
-                if self.args.weights is None:
-
-                    local_attributes.pagerank(index_list=index_list, weights=None,
-                                              damping=self.args.damping_factor,
-                                              recalculate=True)
-
-                else:
+                if not self.args.weights is None:
                     if not os.path.exists(self.args.weights):
                         sys.stderr.write(
                             "Input file {} does not exist. Quitting.\n".format(self.args.weights))
                         sys.exit(1)
 
                     else:
+                        #todo: qui va importattributes
                         sys.stdout.write("Adding Edge Weights from file {}\n".format(self.args.weights))
-
-                        weights_sep = separator_detect(self.args.weights)
-                        graph = GraphLoad(self.args.input_file, self.args.format, header).graph_load()
-
-                        weights = pd.read_csv(filepath_or_buffer=self.args.weights, sep=weights_sep)
-
-                        # Check attributes file's format
-                        if any(i in weights.iloc[0, 0] for i in ' ()'):
-                            mode = 'cytoscape'
-                            weightscol = 1
-                        else:
-                            mode = 'standard'
-                            weightscol = 2
                         
-                        # convert the weights to floats
-                        try:
-                            [float(x) for x in weights[weights.columns[weightscol]].values]
-
-                        except (ValueError, TypeError) as errs:
-                            sys.stderr.write("Weights must be float or integers. Quitting\n")
-                            sys.exit(1)
-
-                        if len(weights.columns) >= 2:
-                            self.logging.warning(
-                                "Using column 3 as edge weights for pagerank. Adding the other values as edge attributes, but they will not be used for pagerank computing\n")
-                            weights_name = weights.columns[weightscol]  # store the name of the attribute
-                            print("name", weights_name)
-                            ImportAttributes(graph).import_edge_attributes(file_name=self.args.weights,
-                                                                           sep=weights_sep,
-                                                                           mode=mode)
-                            print(list(graph.es))
-                            weights_list = [float(x) if isinstance(x, str) else None for x in
-                                            graph.es()[weights_name]]
-
-                            local_attributes.pagerank(index_list=index_list, weights=weights_list,
-                                                      damping=self.args.damping_factor, recalculate=True)
-
-                        else:
-                            sys.stderr(
-                                "weights file must contains at least two columns, the first should represent node names and the second ther respective weights. Quitting.\n")
-                            sys.exit(1)
-
+                        ImportAttributes(graph=graph).import_node_attributes(self.args.weights, sep=separator_detect(self.args.weights))
+                        weights = graph.vs()["weights"]
+                        # graph = GraphLoad(self.args.input_file, self.args.format, header).graph_load()
+                        #
+                        # weights = pd.read_csv(filepath_or_buffer=self.args.weights, sep=weights_sep)
+                        #
+                        # # Check attributes file's format
+                        # if any(i in weights.iloc[0, 0] for i in ' ()'):
+                        #     mode = 'cytoscape'
+                        #     weightscol = 1
+                        # else:
+                        #     mode = 'standard'
+                        #     weightscol = 2
+                        #
+                        # # convert the weights to floats
+                        # try:
+                        #     [float(x) for x in weights[weights.columns[weightscol]].values]
+                        #
+                        # except (ValueError, TypeError) as errs:
+                        #     sys.stderr.write("Weights must be float or integers. Quitting\n")
+                        #     sys.exit(1)
+                        #
+                        # if len(weights.columns) >= 2:
+                        #     self.logging.warning(
+                        #         "Using column 3 as edge weights for pagerank. Adding the other values as edge attributes, but they will not be used for pagerank computing\n")
+                        #     weights_name = weights.columns[weightscol]  # store the name of the attribute
+                        #     print("name", weights_name)
+                        #     ImportAttributes(graph).import_edge_attributes(file_name=self.args.weights,
+                        #                                                    sep=weights_sep,
+                        #                                                    mode=mode)
+                        #     print(list(graph.es))
+                        #     weights_list = [float(x) if isinstance(x, str) else None for x in
+                        #                     graph.es()[weights_name]]
+                        #     #
+                        #     # local_attributes.pagerank(index_list=index_list, weights=weights_list,
+                        #     #                           damping=self.args.damping_factor, recalculate=True)
+                        #
+                        # else:
+                        #     sys.stderr(
+                        #         "weights file must contains at least two columns, the first should represent node names and the second ther respective weights. Quitting.\n")
+                        #     sys.exit(1)
+                else:
+                    weights = None
+                    
             # create pyntacle_commands_utils for the selected metrics
             if self.args.nodes is None:
                 nodes_list = graph.vs()["name"]
@@ -247,20 +245,21 @@ class Metrics():
 
             if os.path.exists(report_path):
                 sys.stdout.write("WARNING: File {} already exists, overwriting it\n".format(report_path))
-            #todo: fix here urgently
-            local_attributes_list = [_LocalAttribute.degree,
-                                     _LocalAttribute.clustering_coefficient,
-                                     _LocalAttribute.betweenness,
-                                     _LocalAttribute.shortest_path,
-                                     _LocalAttribute.closeness,
-                                     _LocalAttribute.radiality,
-                                     _LocalAttribute.radiality_reach,
-                                     _LocalAttribute.eccentricity,
-                                     _LocalAttribute.pagerank]
-            {LocalAttribute.degree.name:[[A, B, C], [10, 11, 12]]}
-            reporter.report_local_topology(node_names=nodes_list, local_attributes_list=local_attributes_list)
 
-            reporter.create_report(report_path=report_path)
+            local_attributes_dict = OrderedDict({LocalAttribute.degree.name: LocalTopology.degree(graph=graph, nodes=self.args.nodes),
+                 LocalAttribute.clustering_coefficient.name: LocalTopology.clustering_coefficient(graph=graph, nodes=self.args.nodes),
+                 LocalAttribute.betweenness.name: LocalTopology.betweenness(graph=graph, nodes=self.args.nodes),
+                 LocalAttribute.closeness.name: LocalTopology.closeness(graph=graph, nodes=self.args.nodes),
+                 LocalAttribute.radiality.name: LocalTopology.radiality(graph=graph, nodes=self.args.nodes),
+                 LocalAttribute.radiality_reach.name: LocalTopology.radiality_reach(graph=graph, nodes=self.args.nodes),
+                 LocalAttribute.eccentricity.name: LocalTopology.eccentricity(graph=graph, nodes=self.args.nodes),
+                 LocalAttribute.pagerank.name: LocalTopology.pagerank(graph=graph, nodes=self.args.nodes, weights=weights, damping=self.args.damping_factor)})
+            
+            if self.args.nodes:
+                local_attributes_dict["nodes"] = self.args.nodes
+            
+            reporter.create_report(Reports.Local, local_attributes_dict)
+            reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
             if not self.args.no_plot and graph.vcount() < 1000:
     

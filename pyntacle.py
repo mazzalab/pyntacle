@@ -52,7 +52,7 @@ if os.name == "nt":
 from pyntacle_commands_utils.reporter import *
 # Main commands wrappers
 from commands.keyplayer import KeyPlayer as kp_command
-# from commands.metrics import Metrics as metrics_command
+from commands.metrics import Metrics as metrics_command
 from commands.convert import Convert as convert_command
 from commands.generate import Generate as generate_command
 from commands.set import Set as set_command
@@ -281,7 +281,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                      help='A specific set of comma-separated list of nodes (e.g. --nodes 1,2,3,4) on which compute local metrics. Default is set for all nodes')
         local_subparser.add_argument("--damping-factor", default=0.85, type=float,
                                      help="for pagerank, specify a damping factor (default is 0.85)")
-        local_subparser.add_argument("--weights", "-w", type=str,
+        local_subparser.add_argument("--weights", "-w", type=str, default=None,
                                      help="for pagerank, an optional file of edge attributes with an header and relative node names of the edge on the first two columns that will be used. See documentation for examples.17esimo")
 
         local_subparser.set_defaults(which='local')

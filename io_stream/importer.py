@@ -190,7 +190,7 @@ class PyntacleImporter:
         Import a Simple Interaction File (**SIF**) usually used by tools like Cytoscape to visualize and analyze networks
         inside the Cytoscape Framework, as well as by other Cytscape-like applications. For information regarding the SIF
         file specification, visit: `The Official Cytoscape Page`_. Here, we accept Cytoscape file **with the interaction
-        type in between the two node columns** (e.g. NodeA *separator* **INTERACTION** NodeB). The interaction type and
+        type in between the two node columns** (e.g. NodeA *separator* **INTERACTION** *separator* NodeB). The interaction type and
         (if present) the header associated to the interaction will be stored in the edge attribute `__sif_interaction`
         and `__sif_interaction_name` respectively.
         _The Official Cytoscape Page: http://wiki.cytoscape.org/Cytoscape_User_Manual/Network_Formats.
