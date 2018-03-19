@@ -98,7 +98,7 @@ class QuickConvert:
     @staticmethod
     @input_file_checker
     @separator_sniffer
-    def SifToEdgelist(input_file:str, sep=None, header=False, output_file=None) -> str:
+    def SifToEdgelist(input_file:str, sep=None, header=False, output_file=None):
         """
         Converts a Simple Interaction Format file (*SIF*) to an undirected edgelist readable by pyntacle. **CONDITIONS FOR CONVERSIONS:**
         We assume the SIF file contains at least 3 columns, with the *source* nodes in the 1st column and the *target*
