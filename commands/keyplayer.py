@@ -411,12 +411,9 @@ class KeyPlayer():
                     mreach_nodes_colour = pal[4]
                     mreach_frames_colour = framepal[4]
                     # create a list of node colors
-                    print(results)
-                    print(results[metric])
                     node_colors = [mreach_nodes_colour if x["name"] in results[metric][0] else other_nodes_colour for x in graph.vs()]
                     node_frames = [mreach_frames_colour if x["name"] in results[metric][0] else other_frame_colour for x in graph.vs()]
-                    print(node_colors)
-                    input()
+
 
                     plot_graph.set_node_colors(colors=node_colors)
 
@@ -493,9 +490,7 @@ class KeyPlayer():
                             # print(step_before)
     
                             mreach_edge_ids = []
-                            print(step_before)
-                            print("Remaining:", remaining_indices)
-                            input()
+
                             for elem in step_before:
                                 for el in remaining_indices:
                                     if Graph.are_connected(graph, elem, el):
