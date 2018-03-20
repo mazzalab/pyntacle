@@ -41,7 +41,7 @@ from misc.enums import KPNEGchoices, KPPOSchoices
 
 
 #
-mat = PyntacleImporter.AdjacencyMatrix(file='/mnt/clusterstorage/data01/Daniele/Projects/Pyntacle (old Dedalus)/Dedalus_Benchmarking/data/Real/figure_8.adjm', sep='\t', header=True)
+mat = PyntacleImporter.Binary(file='/home/m.truglio/Desktop/provamauro/pyntaclebin/pyntacle_kp-finder_figure_8_kpsize_2_KP-Info_report_20-03-2018_04:08.graph')
 print("\nGraph in main")
 print(mat.summary())
 
@@ -115,7 +115,7 @@ print(mat.summary())
 
 #F
 
-Octopus.add_F(mat, ['HS'])
+# Octopus.add_F(mat, ['HS'])
 #
 # #dF
 #
@@ -139,7 +139,7 @@ Octopus.add_F(mat, ['HS'])
 # GO
 
 # # # go F
-Octopus.add_GO_F(mat, 2)
+# Octopus.add_GO_F(mat, 2)
 # #
 # # # go dF
 # Octopus.add_GO_dF(mat, 2)
@@ -157,34 +157,38 @@ Octopus.add_GO_F(mat, 2)
 #
 #
 # bf F
-Octopus.add_BF_F(mat, 2)
+# Octopus.add_BF_F(mat, 2)
 
 # bf dF
-Octopus.add_BF_dF(mat, 2)
+# Octopus.add_BF_dF(mat, 2)
 
 # bf dR
-Octopus.add_BF_dR(mat, 2)
+# Octopus.add_BF_dR(mat, 2)
 
 # bf dR
-Octopus.add_BF_mreach(mat, 2, 1)
+# Octopus.add_BF_mreach(mat, 2, 1)
 # Octopus.add_BF_mreach(mat, 3, 3)
 
 
-print("\n\nGraph attributes kp:")
+print("\n\nGraph attributes:")
 for attr in mat.attributes():
     print(attr, mat[attr])
+    
+print("\n\nNode attributes:")
+for attr in mat.vs.attributes():
+    print(attr,'\n', mat.vs.get_attribute_values(attr))
     
     
     
 # old BF
 
-from algorithms.bruteforce_search import BruteforceSearch
-from algorithms.key_player import KeyPlayer, _KeyplayerAttribute
-
-print(BruteforceSearch(mat).bruteforce_fragmentation(kpp_size=2, kpp_type=_KeyplayerAttribute.F))
-print(BruteforceSearch(mat).bruteforce_fragmentation(kpp_size=2, kpp_type=_KeyplayerAttribute.DF))
-print(BruteforceSearch(mat).bruteforce_reachability(kpp_size=2, kpp_type=_KeyplayerAttribute.DR))
-print(BruteforceSearch(mat).bruteforce_reachability(kpp_size=2, kpp_type=_KeyplayerAttribute.MREACH, m=1))
+# from algorithms.bruteforce_search import BruteforceSearch
+# from algorithms.key_player import KeyPlayer, _KeyplayerAttribute
+#
+# print(BruteforceSearch(mat).bruteforce_fragmentation(kpp_size=2, kpp_type=_KeyplayerAttribute.F))
+# print(BruteforceSearch(mat).bruteforce_fragmentation(kpp_size=2, kpp_type=_KeyplayerAttribute.DF))
+# print(BruteforceSearch(mat).bruteforce_reachability(kpp_size=2, kpp_type=_KeyplayerAttribute.DR))
+# print(BruteforceSearch(mat).bruteforce_reachability(kpp_size=2, kpp_type=_KeyplayerAttribute.MREACH, m=1))
 
 
 # print(len(aa.components()))

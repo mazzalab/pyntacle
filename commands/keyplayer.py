@@ -345,7 +345,7 @@ class KeyPlayer():
             if self.args.which == "kp-info":
                 bin_type = "kpinfo"
             else:
-                if self.args.implementation == "bruteforce":
+                if self.args.implementation == "brute-force":
                     bin_type = "bruteforce"
                     bf = True
 
@@ -422,7 +422,6 @@ class KeyPlayer():
             other_nodes_size = 25
             # other_nodes_shape = "circle"
             other_edge_width = 1
-
 
             for metric in results:
                 if self.args.which == 'kp-finder' and self.args.implementation == "brute-force":

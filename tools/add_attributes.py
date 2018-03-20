@@ -114,7 +114,7 @@ class AddAttributes():
         if err_count == count:
             raise WrongArgumentError("All the attributes pointed to non-existing nodes.")
         else:
-            self.logger.info("Node attributes successfully added!")
+            self.logger.info("Node attribute {} successfully added!".format(attr_name))
 
     def add_edge_attributes(self, attr_name, attr_list, edges):
         """

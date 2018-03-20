@@ -122,6 +122,14 @@ class Octopus:
         AddAttributes(graph).add_graph_attributes('average_shortest_path_length',
                                                   GlobalTopology.average_shortest_path_length(graph,
                                                                                               implementation))
+        
+    @staticmethod
+    @check_graph_consistency
+    def add_median_shortest_path_length(graph):
+        implementation = imps.igraph  # Todo: qui va creato il decisore che determina se usare gpu o cpu
+        AddAttributes(graph).add_graph_attributes('median_shortest_path_length',
+                                                  GlobalTopology.median_shortest_path_length(graph,
+                                                                                              implementation))
     # Local
     @staticmethod
     @check_graph_consistency
@@ -208,7 +216,41 @@ class Octopus:
         distances_with_inf = ShortestPathModifier.igraph_sp_to_inf(distances, graph.vcount()+1)
         AddAttributes(graph).add_node_attributes("shortest_path", distances_with_inf, node_names)
 
-    
+    @staticmethod
+    @check_graph_consistency
+    def add_average_shortest_path_length(graph, node_names=None, exclude_inf=True, implementation=imps.auto):
+        if node_names is None:
+            node_names = graph.vs["name"]
+        AddAttributes(graph).add_node_attributes('average_shortest_path_length',
+                                                 LocalTopology.average_shortest_path_length(graph, node_names, exclude_inf, implementation), node_names)
+
+ 
+    @staticmethod
+    @check_graph_consistency
+    def add_median_shortest_path_length(graph, node_names=None, exclude_inf=True, implementation=imps.auto):
+        if node_names is None:
+            node_names = graph.vs["name"]
+        AddAttributes(graph).add_node_attributes('mediane_shortest_path_length',
+                                                 LocalTopology.median_shortest_path_length(graph, node_names, exclude_inf, implementation), node_names)
+
+    @staticmethod
+    @check_graph_consistency
+    def add_maximum_shortest_path_length(graph, node_names=None, exclude_inf=True, implementation=imps.auto):
+        if node_names is None:
+            node_names = graph.vs["name"]
+        AddAttributes(graph).add_node_attributes('maximum_shortest_path_length',
+                                                 LocalTopology.maximum_shortest_path_length(graph, node_names, exclude_inf, implementation), node_names)
+
+    @staticmethod
+    @check_graph_consistency
+    def add_minimum_shortest_path_length(graph, node_names=None, exclude_inf=True, implementation=imps.auto):
+        if node_names is None:
+            node_names = graph.vs["name"]
+        AddAttributes(graph).add_node_attributes('minimum_shortest_path_length',
+                                                 LocalTopology.minimum_shortest_path_length(graph, node_names, exclude_inf, implementation), node_names)
+
+   
+    # Metrics
     
     @staticmethod
     @check_graph_consistency
@@ -231,6 +273,7 @@ class Octopus:
         AddAttributes(graph).add_graph_attributes('F_kpinfo', {tuple(results_dict['F'][0]): results_dict['F'][1]})
 
     @staticmethod
+    @check_graph_consistency
     def add__kp_dF(graph, nodes, max_distances=None):
         kpobj = kpw(graph=graph)
         kpobj.run_KPNeg(nodes, KPNEGchoices.dF, max_distances=max_distances)
@@ -239,6 +282,7 @@ class Octopus:
 
 
     @staticmethod
+    @check_graph_consistency
     def add_kp_dR(graph, nodes, max_distances=None):
         kpobj = kpw(graph=graph)
         kpobj.run_KPPos(nodes, KPPOSchoices.dR, max_distances=max_distances)
@@ -246,6 +290,7 @@ class Octopus:
         AddAttributes(graph).add_graph_attributes('dR_kpinfo', {tuple(results_dict['dR'][0]): results_dict['dR'][1]})
 
     @staticmethod
+    @check_graph_consistency
     def add_kp_mreach(graph, nodes, m=None, max_distances=None):
         kpobj = kpw(graph=graph)
         kpobj.run_KPPos(nodes, KPPOSchoices.mreach,  m=m, max_distances=max_distances)

@@ -54,7 +54,7 @@ class pyntacleReporter():
         self.report_type = None #this will be instanced in create_report
         self.report = [] #this will be used in create_report
         now = datetime.datetime.now()
-        self.dat = now.strftime("%d-%m-%Y-%I:%M")
+        self.dat = runtime_date
         
     def create_report(self, report_type: Reports, report: OrderedDict):
         """
