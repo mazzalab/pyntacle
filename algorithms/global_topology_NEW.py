@@ -32,6 +32,8 @@ from misc.enums import SP_implementations as imps
 from statistics import mean
 from igraph import Graph
 import numpy as np
+from misc.implementation_seeker import implementation_seeker
+
 
 class GlobalTopology:
     """
@@ -186,7 +188,7 @@ class GlobalTopology:
 
     @staticmethod
     @check_graph_consistency
-    def average_radiality_reach(graph: Graph, implementation=imps.igraph) -> float:
+    def average_radiality_reach(graph: Graph, implementation=imps.auto) -> float:
         """
         Computes the average radiality reach, defined as the mean for all the radiality  reach values for each node
         in the graph. Radiality Reach is defined here as the radiality for each node in each component weighted for the
@@ -202,11 +204,17 @@ class GlobalTopology:
         nVidia graphics)
         :return: a float representing the average of the radiality reach of all nodes in the graph.
         """
+        if not isinstance(implementation, imps):
+            raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(imps)))
+
+        if implementation == imps.auto:
+            implementation = implementation_seeker(graph=graph)
+
         return round(mean(Lt.LocalTopology.radiality_reach(graph=graph, nodes=None, implementation=implementation)), 5)
 
     @staticmethod
     @check_graph_consistency
-    def average_shortest_path_length(graph: Graph, implementation=imps.igraph) -> float:
+    def average_shortest_path_length(graph: Graph, implementation=imps.auto) -> float:
         """
         computes the  average shortest path length as defined in https://en.wikipedia.org/wiki/Average_path_length
         :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
@@ -214,12 +222,17 @@ class GlobalTopology:
         shortest path length is the sum of each component's shortest path length (both directins are counted) divide by
         by the total number of components. isolated nodes counts as a components but their distance to all other
         members in the graph is 0
-        :param implementation:
+        :param implementation: the way the shortest path will be computed. Implementations are stored in `misc.enums`
+        The default implementation is `imps.auto`, which automatically identifies the best implementation based on both the graph structure and the hardware specifications
         :return: a positive float representing the average shortest path length of the igraph object
         """
 
+
         if not isinstance(implementation, imps):
             raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(imps)))
+
+        if implementation == imps.auto:
+            implementation = implementation_seeker(graph=graph)
 
         if implementation == imps.igraph:
             avg_sp = Graph.average_path_length(graph,directed=False,unconn=False)
@@ -227,7 +240,7 @@ class GlobalTopology:
 
         else:
             #re-implement the average_path_length algorithm for a fully connected and a disconnected graph
-            if len(GlobalTopology.components(graph)) < 2:
+            if GlobalTopology.components(graph) < 2:
                 sp = Lt.LocalTopology.shortest_path_pyntacle(graph=graph, implementation=implementation)
                 # set all the shortest path greater than the total number of nodes to 0
                 sp[sp == graph.vcount() + 1] = 0
@@ -246,8 +259,32 @@ class GlobalTopology:
 
     @staticmethod
     @check_graph_consistency
-    def median_shortest_path_length(graph: Graph, implementation=imps.igraph) -> float:
-        pass
+    def median_shortest_path_length(graph: Graph, implementation=imps.auto) -> float:
+        """
+        Computes the median shortest path length across all shortest paths obtained from local topology. This is useful
+        if it is needed to estimate the tendence of the shortest path distances
+        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
+        "Minimum requirements" specifications in pyntacle's manual. If the graph as more than one component, the average
+        shortest path length is the sum of each component's shortest path length (both directins are counted) divide by
+        by the total number of components. isolated nodes counts as a components but their distance to all other
+        members in the graph is 0
+        :param implementation: the way the shortest path will be computed. Implementations are stored in `misc.enums`
+        The default implementation is `imps.auto`, which automatically identifies the best implementation based on both the graph structure and the hardware specifications
+        :return: the median shortest path length across all shortest path distances
+        """
+        if not isinstance(implementation, imps):
+            raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(imps)))
+
+        if implementation == imps.auto:
+            implementation = implementation_seeker(graph)
+
+        if implementation == imps.igraph:
+            sps = Lt.LocalTopology.shortest_path_igraph(graph=graph)
+            print(sps)
+            input()
+            sps = np.array(sps)
+
+        else:
 
 
 
@@ -255,8 +292,9 @@ class GlobalTopology:
 
 
 
-            #divide all the element in the matrix of shortest path to (total number of nodes*(total number of nodes -1)
-            #then sum all the elements and rpound them
+
+        #divide all the element in the matrix of shortest path to (total number of nodes*(total number of nodes -1)
+        #then sum all the elements and rpound them
 
 
 
