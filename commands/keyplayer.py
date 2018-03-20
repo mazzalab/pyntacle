@@ -334,7 +334,7 @@ class KeyPlayer():
                 (os.path.basename(report_path)))
         
         r.write_report(report_dir=self.args.directory, format=self.args.report_format)
-
+        
         if self.args.save_binary:
             sys.stdout.write("Saving graph to a Binary file\n")
             binary_path = os.path.join(self.args.directory, report_prefix + ".graph")
@@ -371,7 +371,7 @@ class KeyPlayer():
 
 
             for metric in results:
-                if self.args.implementation == "brute-force":
+                if self.args.which == 'kp-finder' and self.args.implementation == "brute-force":
                     results[metric][0] = list(chain(*results[metric][0]))
                     
                 if metric == "F":

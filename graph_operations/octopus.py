@@ -34,6 +34,7 @@ from config import *
 from tools.add_attributes import AddAttributes
 from algorithms.local_topology_NEW import LocalTopology
 from algorithms.global_topology_NEW import GlobalTopology
+from algorithms.keyplayer_NEW import KeyPlayer
 from misc.enums import *
 from misc.enums import GraphType
 from misc.enums import SP_implementations as imps
@@ -187,37 +188,45 @@ class Octopus:
 
     
     
+    @staticmethod
+    def add_F(graph):
+        AddAttributes(graph).add_graph_attributes('F', KeyPlayer.F(graph))
+ 
+    @staticmethod
+    def add_dF(graph, max_distances=None):
+        AddAttributes(graph).add_graph_attributes('dF', KeyPlayer.dF(graph, implementation=imps.auto, max_distances=max_distances))
+    
     # KP
     
     @staticmethod
-    def add_F(graph, nodes):
+    def add_kp_F(graph, nodes):
         kpobj = kpw(graph=graph)
         kpobj.run_KPNeg(nodes, KPNEGchoices.F)
         results_dict = kpobj.get_results()
-        AddAttributes(graph).add_graph_attributes('F', {tuple(results_dict['F'][0]): results_dict['F'][1]})
+        AddAttributes(graph).add_graph_attributes('F_kpinfo', {tuple(results_dict['F'][0]): results_dict['F'][1]})
 
     @staticmethod
-    def add_dF(graph, nodes, max_distances=None):
+    def add__kp_dF(graph, nodes, max_distances=None):
         kpobj = kpw(graph=graph)
         kpobj.run_KPNeg(nodes, KPNEGchoices.dF, max_distances=max_distances)
         results_dict = kpobj.get_results()
-        AddAttributes(graph).add_graph_attributes('dF', {tuple(results_dict['dF'][0]): results_dict['dF'][1]})
+        AddAttributes(graph).add_graph_attributes('dF_kpinfo', {tuple(results_dict['dF'][0]): results_dict['dF'][1]})
 
 
     @staticmethod
-    def add_dR(graph, nodes, max_distances=None):
+    def add_kp_dR(graph, nodes, max_distances=None):
         kpobj = kpw(graph=graph)
         kpobj.run_KPPos(nodes, KPPOSchoices.dR, max_distances=max_distances)
         results_dict = kpobj.get_results()
-        AddAttributes(graph).add_graph_attributes('dR', {tuple(results_dict['dR'][0]): results_dict['dR'][1]})
+        AddAttributes(graph).add_graph_attributes('dR_kpinfo', {tuple(results_dict['dR'][0]): results_dict['dR'][1]})
 
             
     @staticmethod
-    def add_mreach(graph, nodes, m=None, max_distances=None):
+    def add_kp_mreach(graph, nodes, m=None, max_distances=None):
         kpobj = kpw(graph=graph)
         kpobj.run_KPPos(nodes, KPPOSchoices.mreach,  m=m, max_distances=max_distances)
         results_dict = kpobj.get_results()
-        attr_name = 'mreach_{}'.format(str(m))
+        attr_name = 'mreach_{}_kpinfo'.format(str(m))
         AddAttributes(graph).add_graph_attributes(attr_name, {tuple(results_dict['mreach'][0]): results_dict['mreach'][1]})
 
 
