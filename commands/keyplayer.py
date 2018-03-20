@@ -12,6 +12,7 @@ from io_stream.exporter import PyntacleExporter
 from pyntacle_commands_utils.plotter import *
 from pyntacle_commands_utils.reporter import *
 from tools.graph_utils import *
+from tools.add_attributes import AddAttributes
 from misc.graph_load import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
@@ -336,7 +337,60 @@ class KeyPlayer():
         r.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
         if self.args.save_binary:
+            #reproduce octopus behaviour by adding kp information to the graph before saving it
             sys.stdout.write("Saving graph to a Binary file\n")
+            #step 1: decidee the type of the implementation
+
+            bf = False
+            if self.args.which == "kp-info":
+                bin_type = "kpinfo"
+            else:
+                if self.args.implementation == "bruteforce":
+                    bin_type = "bruteforce"
+                    bf = True
+
+                else:
+                    bin_type = "greedy"
+
+            queried_stuff = results.keys()
+            if KPNEGchoices.F.name in queried_stuff:
+                if KPNEGchoices.F.name in graph.attributes():
+                    sys.stdout.write("{} already present, will overwrite".format(KPNEGchoices.F.name))
+                graph[KPNEGchoices.F.name] = results[KPNEGchoices.F.name][-1] #initial F value
+                k = "_".join([KPNEGchoices.F.name, bin_type])
+
+                if bf:
+                    AddAttributes(graph).add_graph_attributes(k, {tuple(tuple(x) for x in results[KPNEGchoices.F.name][0]): results[KPNEGchoices.F.name][1]})
+                else:
+                    AddAttributes(graph).add_graph_attributes(k,{tuple(results[KPNEGchoices.F.name][0]): results[KPNEGchoices.F.name][1]})
+
+            if KPNEGchoices.dF.name in queried_stuff:
+                graph[KPNEGchoices.dF.name] = results[KPNEGchoices.dF.name][-1]  #initial dF value
+                k = "_".join([KPNEGchoices.dF.name, bin_type])
+
+                if bf:
+                    AddAttributes(graph).add_graph_attributes(k, {tuple(tuple(x) for x in results[KPNEGchoices.dF.name][0]): results[KPNEGchoices.dF.name][1]})
+                else:
+                    AddAttributes(graph).add_graph_attributes(k,{tuple(results[KPNEGchoices.dF.name][0]):results[KPNEGchoices.dF.name][1]})
+
+            if KPPOSchoices.dR.name in queried_stuff:
+                k = "_".join([KPPOSchoices.dR.name, bin_type])
+                if bf:
+                    AddAttributes(graph).add_graph_attributes(k, {
+                        tuple(tuple(x) for x in results[KPPOSchoices.dR.name][0]): results[KPPOSchoices.dR.name][1]})
+                else:
+                    AddAttributes(graph).add_graph_attributes(k,{tuple(results[KPPOSchoices.dR.name][0]):results[KPPOSchoices.dR.name][1]})
+
+            if KPPOSchoices.mreach.name in queried_stuff:
+                k = "_".join([KPPOSchoices.mreach.name, str(results[KPPOSchoices.mreach.name][-1]), bin_type])
+
+                if bf:
+                    AddAttributes(graph).add_graph_attributes(k, {
+                        tuple(tuple(x) for x in results[KPPOSchoices.mreach.name][0]): results[KPPOSchoices.mreach.name][1]})
+                else:
+                    AddAttributes(graph).add_graph_attributes(k, {
+                        tuple(results[KPPOSchoices.mreach.name][0]): results[KPPOSchoices.mreach.name][1]})
+
             binary_path = os.path.join(self.args.directory, report_prefix + ".graph")
             PyntacleExporter.Binary(graph, binary_path)
 

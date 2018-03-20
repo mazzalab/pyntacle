@@ -283,6 +283,7 @@ class PlotGraph():
         Default is fruchterman_reingold
         :param kwargs: a list of parameters that can be passed to each of the layout method
         """
+        #todo does not plot the same graph (even with seed)
 
         try:
             layout_dic = {"auto": Graph.layout_auto(self.graph, **kwargs), "circle": Graph.layout_circle(self.graph, **kwargs),
@@ -308,7 +309,6 @@ class PlotGraph():
     def plot_graph(self, path=None, **kwargs):
         '''
         Plot graph to a specific file. Available formats: "jpg", "pdf", "svg", "png"
-        
         :param path: optional - a path in which results will be plotted (deafulat is the current working directory)
         '''
 

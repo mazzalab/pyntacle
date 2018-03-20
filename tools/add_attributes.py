@@ -53,14 +53,13 @@ class AddAttributes():
 
 
     def add_graph_attributes(self, attr_name, attr):
-
-        '''
+        """
         Add an attribute to a graph object
-        
+
         :param attr: any object being added as attribute
         :param attr_name: string. The name of the attribute being imported
         :return: an igraph.Graph object
-        '''
+        """
 
         if not isinstance(attr_name, str):
             raise TypeError("Attribute name is not a string")
@@ -75,14 +74,14 @@ class AddAttributes():
                 self.__graph[attr_name] = attr
 
     def add_node_attributes(self, attr_name, attr_list, nodes):
-        '''
+        """
         This function takes an header file and, optionally, a separator, and add them to a graph imprted in __init
-        
+
         :param attr_list: the object being added as attribute
         :param attr_name: string. The name of the attribute being imported
         :param nodes: list. Nodes to which attributes will be applied.
         :return: an igraph object with the attribute added
-        '''
+        """
 
         if not isinstance(attr_name, str):
             raise TypeError("Attribute name is not a string")
@@ -163,11 +162,11 @@ class AddAttributes():
             return attr_name  # return the names of the attributes
 
     def add_edge_names(self, readd=False):
-        '''
+        """
         Add adjacent edge as attribute stored in a tuple to each edge
-        
+
         :return: an igraph.Graph object with the node attribute ""
-        '''
+        """
 
         if readd is True or "node_names" not in self.__graph.es.attributes():
             self.logger.info("adding attribute \'node_names\' to each edge (will be stored as a tuple)")
@@ -186,18 +185,18 @@ class AddAttributes():
             self.logger.info("attribute \'node_names\' already exist")
 
     def add_graph_name(self, namestring):
-        '''
+        """
         Assign a name to a graph (or replace it)
-        '''
+        """
 
         self.logger.info("adding attribute \'name\' to the graph")
 
         self.__graph["name"] = [namestring]
 
     def add_parent_name(self):
-        '''
+        """
         Add the graph's name to each vertex, as the "__parent" attribute
-        '''
+        """
 
         self.logger.info("adding reserved attribute \'__parent\' to the vertices")
 
