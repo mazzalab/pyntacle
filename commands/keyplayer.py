@@ -368,8 +368,6 @@ class KeyPlayer():
                 graph[KPNEGchoices.dF.name] = results[KPNEGchoices.dF.name][-1]  #initial dF value
                 k = "_".join([KPNEGchoices.dF.name, bin_type])
 
-
-
                 if bf:
                     AddAttributes(graph).add_graph_attributes(k, {tuple(tuple(x) for x in results[KPNEGchoices.dF.name][0]): results[KPNEGchoices.dF.name][1]})
                 else:
