@@ -5,7 +5,7 @@ from pyntacle_commands_utils.kpsearch_wrapper import BFWrapper as bfw
 from algorithms.keyplayer_NEW import KeyPlayer as kpp
 from collections import OrderedDict
 from misc.enums import *
-
+from itertools import chain
 from exceptions.generic_error import Error
 from io_stream.exporter import PyntacleExporter
 # from pyntacle_commands_utils.kp_runner_OLD import *
@@ -357,7 +357,7 @@ class KeyPlayer():
             plot_graph = PlotGraph(graph=graph)
 
             plot_format = self.args.plot_format
-            plot_graph.set_node_label(labels=graph.vs()["name"])  # assign node labels to graph
+            plot_graph.set_node_labels(labels=graph.vs()["name"])  # assign node labels to graph
 
             pal = sns.color_palette("Accent", 8).as_hex()
             framepal = sns.color_palette("Accent", 8, desat=0.5).as_hex()
@@ -369,16 +369,19 @@ class KeyPlayer():
             # other_nodes_shape = "circle"
             other_edge_width = 1
 
-            for metric in results:
 
+            for metric in results:
+                if self.args.implementation == "brute-force":
+                    results[metric][0] = list(chain(*results[metric][0]))
+                    
                 if metric == "F":
 
                     f_nodes_colour = pal[0]
                     f_frames_colour = framepal[0]
                     # create a list of node colors
-                    node_colors = [f_nodes_colour if x in results[metric][1] else other_nodes_colour
+                    node_colors = [f_nodes_colour if x in results[metric][0] else other_nodes_colour
                                     for x in graph.vs()]
-                    node_frames = [f_frames_colour if x in results[metric][1] else other_frame_colour
+                    node_frames = [f_frames_colour if x in results[metric][0] else other_frame_colour
                                     for x in
                                     graph.vs()]
 
@@ -392,10 +395,10 @@ class KeyPlayer():
                     df_frames_colour = framepal[1]
 
                     # create a list of node colors
-                    node_colors = [df_nodes_colour if x["name"] in results[metric][1] else other_nodes_colour
+                    node_colors = [df_nodes_colour if x["name"] in results[metric][0] else other_nodes_colour
                                     for x in
                                     graph.vs()]
-                    node_frames = [df_frames_colour if x["name"] in results[metric][1] else other_frame_colour
+                    node_frames = [df_frames_colour if x["name"] in results[metric][0] else other_frame_colour
                                    for x in
                                    graph.vs()]
 
@@ -408,14 +411,12 @@ class KeyPlayer():
                     mreach_nodes_colour = pal[4]
                     mreach_frames_colour = framepal[4]
                     # create a list of node colors
-                    node_colors = [
-                        mreach_nodes_colour if x["name"] in results[metric][1] else other_nodes_colour for x
-                        in
-                        graph.vs()]
-
-                    node_frames = [mreach_frames_colour if x["name"] in results[metric][1] else other_frame_colour
-                                   for x in
-                                   graph.vs()]
+                    print(results)
+                    print(results[metric])
+                    node_colors = [mreach_nodes_colour if x["name"] in results[metric][0] else other_nodes_colour for x in graph.vs()]
+                    node_frames = [mreach_frames_colour if x["name"] in results[metric][0] else other_frame_colour for x in graph.vs()]
+                    print(node_colors)
+                    input()
 
                     plot_graph.set_node_colors(colors=node_colors)
 
@@ -428,10 +429,10 @@ class KeyPlayer():
                     dr_frames_colour = framepal[3]
 
                     # create a list of node colors
-                    node_colors = [dr_nodes_colour if x["name"] in results[metric][1] else other_nodes_colour
+                    node_colors = [dr_nodes_colour if x["name"] in results[metric][0] else other_nodes_colour
                                     for x in
                                     graph.vs()]
-                    node_frames = [dr_frames_colour if x["name"] in results[metric][1] else other_frame_colour
+                    node_frames = [dr_frames_colour if x["name"] in results[metric][0] else other_frame_colour
                                    for x in
                                    graph.vs()]
 
@@ -447,7 +448,7 @@ class KeyPlayer():
                         "This should not happen. Please contact pyntacle developer and send a command line, along with a log. Quitting\n")
                     sys.exit(1)
 
-                node_sizes = [35 if x["name"] in results[metric][1] else other_nodes_size for x in graph.vs()]
+                node_sizes = [35 if x["name"] in results[metric][0] else other_nodes_size for x in graph.vs()]
 
                 plot_graph.set_node_sizes(sizes=node_sizes)
                 # print (other_edge_width)
@@ -456,55 +457,58 @@ class KeyPlayer():
                 # add recursive edge widths
                 if metric != "mreach":
 
-                    edge_widths = [5 if any(y in results[metric][1] for y in x["node_names"]) else other_edge_width for
+                    edge_widths = [5 if any(y in results[metric][0] for y in x["node_names"]) else other_edge_width for
                                    x in graph.es()]
 
                 else:
-                    mreach_nodes = results[metric][1]
-                    # get node indices of corresponding kpset
-                    indices = GraphUtils(graph=graph).get_node_indices(mreach_nodes)
-
-                    edge_widths = [other_edge_width for x in
-                                   range(0, graph.ecount())]  # define a starting list of values
-
-                    mreach_width = (self.args.m_reach * 2) + 2  # maxium and minimum boundaries for edge width
-                    # print(mreach_width)
-
-                    if mreach_width > 10:
-                        sys.stdout.write(
-                            "WARNING - you choose a very high value of m-reach, the edge with may be too big, hence obscuring a great part of the plot\n")
-
-                    memory_indices = indices
-                    step_before = indices
-
-                    for i in range(1, self.args.m_reach + 1):
+                    if self.args.m_reach > 5:
+                        edge_widths = [5 if any(y in results[metric][0] for y in x["node_names"])
+                                       else other_edge_width for x in graph.es()]
+                        sys.stdout.write("WARNING - you chose a very high value of m-reach, the edge width "
+                                         "may be too big, hence it will not be represented dynamically.\n")
+                    else:
+                        mreach_nodes = results[metric][0]
+                        # get node indices of corresponding kpset
+                        indices = GraphUtils(graph=graph).get_node_indices(mreach_nodes)
+    
+                        edge_widths = [other_edge_width] * graph.ecount()  # define a starting list of values
+    
+                        mreach_width = (self.args.m_reach * 2) + 2  # maxium and minimum boundaries for edge width
                         # print(mreach_width)
-                        neighbours = Graph.neighborhood(graph, vertices=indices)
-                        # print(neighbours)
-
-                        indices = [y for x in neighbours for y in x]  # flat out list of indices
-                        # print(indices)
-                        remaining_indices = list(set(indices) - set(memory_indices))
-
-                        # print(remaining_indices)
-                        # print(step_before)
-
-                        mreach_edge_ids = []
-                        for elem in step_before:
-                            for el in remaining_indices:
-                                try:
-                                    mreach_edge_ids.append(graph.get_eid(elem, el))
-                                except Error:
-                                    pass
-
-                        # print (mreach_edge_ids)
-                        for edge in mreach_edge_ids:
-                            edge_widths[edge] = mreach_width
-
-                        # finally
-                        mreach_width = mreach_width - 2
-                        memory_indices = memory_indices + remaining_indices
-                        step_before = remaining_indices
+    
+    
+                        memory_indices = indices
+                        step_before = indices
+    
+                        for i in range(1, self.args.m_reach + 1):
+                            # print(mreach_width)
+                            neighbours = Graph.neighborhood(graph, vertices=indices)
+                            # print(neighbours)
+    
+                            indices = list(chain(*neighbours)) # flat out list of indices
+                            # print(indices)
+                            remaining_indices = list(set(indices) - set(memory_indices))
+    
+                            # print(remaining_indices)
+                            # print(step_before)
+    
+                            mreach_edge_ids = []
+                            print(step_before)
+                            print("Remaining:", remaining_indices)
+                            input()
+                            for elem in step_before:
+                                for el in remaining_indices:
+                                    if Graph.are_connected(graph, elem, el):
+                                        mreach_edge_ids.append(graph.get_eid(elem, el))
+    
+                            # print (mreach_edge_ids)
+                            for edge in mreach_edge_ids:
+                                edge_widths[edge] = mreach_width
+    
+                            # finally
+                            mreach_width = mreach_width - 2
+                            memory_indices = memory_indices + remaining_indices
+                            step_before = remaining_indices
 
                         # sys.exit()
 
@@ -512,9 +516,7 @@ class KeyPlayer():
 
                 plot_graph.set_layouts(layout="fruchterman_reingold")
 
-                plot_path = os.path.join(plot_dir, "_".join(["keyplayer", graph["name"][0], "report", metric,
-                                                             datetime.datetime.now().strftime(
-                                                                 "%d%m%Y%H%M")]) + "." + plot_format)
+                plot_path = os.path.join(plot_dir, "_".join(["keyplayer", graph["name"][0], "report", metric, runtime_date]) + "." + plot_format)
                 if os.path.exists(plot_path):
                     sys.stdout.write(
                         "WARNING - A plot with the name ({}) already exists, overwriting it\n".format(

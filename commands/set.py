@@ -317,7 +317,7 @@ class Set():
 
             # set input graph node labels
             graph1_plotter.set_node_labels(labels=graph1.vs()["name"])
-            graph2_plotter.set_node_label(labels=graph2.vs()["name"])
+            graph2_plotter.set_node_labels(labels=graph2.vs()["name"])
 
             # set input graph node colors
             graph1_plotter.set_node_colors(colors=[graph_1_colour] * graph1.vcount())
@@ -384,7 +384,7 @@ class Set():
                     node_intersection_size if parent_g1 in v["__parent"] and parent_g2 in v[
                         "__parent"] else input_graph_node_size for v in output_graph.vs()])
 
-                output_graph_plotter.set_node_label(labels=output_graph.vs()["name"])
+                output_graph_plotter.set_node_labels(labels=output_graph.vs()["name"])
                 output_graph_plotter.set_layouts()
                 output_graph_plotter.plot_graph(path=output_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
                                                 keep_aspect_ratio=True, vertex_label_size=6,

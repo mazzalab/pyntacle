@@ -285,7 +285,7 @@ class PlotGraph():
         """
 
         try:
-            layout_dic = {"auto": Graph.layout_auto(), "circle": Graph.layout_circle(self.graph, **kwargs),
+            layout_dic = {"auto": Graph.layout_auto(self.graph, **kwargs), "circle": Graph.layout_circle(self.graph, **kwargs),
                           "fruchterman_reingold": Graph.layout_fruchterman_reingold(self.graph, **kwargs),
                           "fr": Graph.layout_fruchterman_reingold(self.graph, **kwargs),
                           "kamada_kawai": Graph.layout_kamada_kawai(self.graph, **kwargs),
@@ -328,7 +328,7 @@ class PlotGraph():
         if self.layout is not None:
             visual_style["layout"] = self.layout
 
-        additional_params = ["bbox", "margin", "edge_curved", "vertex_frame_color", "keep_aspect_ratio"]
+        additional_params = ["bbox", "margin", "edge_curved", "vertex_label_size", "vertex_frame_color", "keep_aspect_ratio"]
 
         if kwargs:
             for key in kwargs:
@@ -336,8 +336,7 @@ class PlotGraph():
                     raise KeyError("param {} cannot be specified".format(key))
                 else:
                     visual_style[key] = kwargs[key]
-
-        random.seed(self.seed)
+        
         plot(self.graph, **visual_style, target=path)
 
     def get_graph(self):

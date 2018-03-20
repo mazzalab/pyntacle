@@ -126,8 +126,8 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                         '  kp-info\t        find kp metrics for user defined set of nodes\n\n' + 90 * '-',
             formatter_class=argparse.RawDescriptionHelpFormatter,
             usage=Fore.RED + Style.BRIGHT + 'pyntacle.py keyplayer'
-                  + Fore.GREEN + Style.BRIGHT + ' {kp-finder, kp-info}' + Fore.RED
-                  + ' [arguments]\n' + Style.RESET_ALL)
+                  + Fore.GREEN + Style.BRIGHT + ' {kp-finder, kp-info}'
+                  + Fore.LIGHTBLUE_EX + ' --type {pos | neg | all | F | dF | dR | mreach}' + Fore.RED + ' [arguments]\n' + Style.RESET_ALL)
 
         # NOT prefixing the argument with -- means it's not optional
         parser.add_argument('-i', '--input_file', metavar='',
@@ -145,7 +145,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument('-M', '--max_distances', metavar='', type=int, help='# EXPAND here - add that it is useless for F')
 
         parser.add_argument('-t', "--type", metavar='', choices=['pos', 'neg', 'all', 'F', 'dF', 'dR', 'mreach'], default='all',
-                            help="kp algorithm to be executed. Choices: {pos, neg, all, F, df, dR, mreach} Default is \"all\"")
+                            help="kp algorithm to be executed. Choices: {pos, neg, all, F, dF, dR, mreach} Default is \"all\"")
         
         parser.add_argument('--largest-component', action='store_true',
                             help='Use this option to perform Kp search only on the largest component of a graph. If two components of the same size exist, this will not work. Recommended for very fragmented network with only one large component')
@@ -174,35 +174,35 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         subparsers = parser.add_subparsers(metavar='', help=argparse.SUPPRESS)
 
-        # Subparser for the nodes case
-        nodes_case_parser = subparsers.add_parser("kp-info",
-                                                  usage='pyntacle.py keyplayer kp-info [-h] [-f] [-v] [-d] [-m] [-a] [--save-binary] [--plot-format] [--plot-dim] [--no-plot] --input_file [FILE] --nodes NODES',
+        # Subparser for the kp-info case
+        info_case_parser = subparsers.add_parser("kp-info",
+                                                  usage='pyntacle.py keyplayer kp-info [-h] [-f] [-d] [-m] [-v] [--save-binary] [--plot-format] [--plot-dim] [--no-plot] --type [TYPE] --input_file [FILE] --nodes NODES',
                                                   add_help=False, parents=[parser],
                                                   formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                       max_help_position=100,
                                                                                                       width=150))
-        nodes_case_parser.set_defaults(which='kp-info')
-        nodes_case_parser.add_argument("--nodes", help='comma-separated list of nodes (e.g. --nodes 1,2,3,4)',
+        info_case_parser.set_defaults(which='kp-info')
+        info_case_parser.add_argument("--nodes", help='comma-separated list of nodes (e.g. --nodes 1,2,3,4)',
                                        required=True)
-        # Subparser for greedy case
-        greedy_case_parser = subparsers.add_parser("kp-finder",
-                                                   usage='pyntacle.py keyplayer kp-finder [-h] [-f] [-v] [-m] [-a] [--save-binary] [--plot-format] [--plot-dim] [--no-plot] --input_file [FILE] -k [K]',
+        # Subparser for kp-finder case
+        finder_case_parser = subparsers.add_parser("kp-finder",
+                                                   usage='pyntacle.py keyplayer kp-finder [-h] [-f] [-d] [-m] [-v] [-I] [-S] [--save-binary] [--plot-format] [--plot-dim] [--no-plot] --type [TYPE] --input_file [FILE] -k [K]',
                                                    add_help=False, parents=[parser],
                                                    formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                        max_help_position=100,
                                                                                                        width=150))
-        greedy_case_parser.add_argument('-k', '--k-size', metavar='', type=int, default=2,
+        finder_case_parser.add_argument('-k', '--k-size', metavar='', type=int, default=2,
                                         help='size of the set for greedy optimization (default is 2)', required=True)
 
-        greedy_case_parser.add_argument('-I', '--implementation', metavar='', type=str, default="greedy",
+        finder_case_parser.add_argument('-I', '--implementation', metavar='', type=str, default="greedy",
                                         choices=["brute-force", "greedy"],
                                         help='Type of implementation you want to find yourt keyplayer. Choices are \"greedy\" (default), \"brute-force\", '
                                              'using the greedy optimization described by Borgatti and \"brute-force\" in which the optimal solution is found')
 
-        greedy_case_parser.add_argument("-S", "--seed", type=int, help="Seed (integer) for the random component of the kp-finder (greedy implementation only). "
+        finder_case_parser.add_argument("-S", "--seed", type=int, help="Seed (integer) for the random component of the kp-finder (greedy implementation only). "
                                                  "If set, for each seed the finder will always produce "
                                                  "the same results.", metavar="", default=None)
-        greedy_case_parser.set_defaults(which='kp-finder')
+        finder_case_parser.set_defaults(which='kp-finder')
 
         # now that we're inside a subcommand, ignore the first
         # TWO args, ie the command and subcommand
@@ -284,7 +284,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         local_subparser.set_defaults(which='local')
 
-        # Subparser for greedy case
+        # Subparser for global case
         global_subparser = subparsers.add_parser("global",
                                                  usage='pyntacle.py metrics global [-h] [-f] [-v] [-d] [-a] [--save-binary] [--plot-format] [--no-plot] --input_file [FILE] -n/--no-nodes',
                                                  add_help=False, parents=[parser],

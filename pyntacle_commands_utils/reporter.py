@@ -34,6 +34,7 @@ from collections import OrderedDict
 
 """ Utility to produce the report for global topology, local topology and modules """
 
+
 class pyntacleReporter():
     """
     This method creates a report according to the type of analysis run by pyntacle
@@ -55,7 +56,6 @@ class pyntacleReporter():
         now = datetime.datetime.now()
         self.dat = now.strftime("%d-%m-%Y-%I:%M")
         
-
     def create_report(self, report_type: Reports, report: OrderedDict):
         """
         initialize the report object by writing generic information on the input graph and calling the internal report
@@ -112,12 +112,9 @@ class pyntacleReporter():
                 "a report must be created first using the \"create_report()\" function")
 
         else:
-            print(list(self.report))
             #cast every elementy of the list of lists to string, just in case:
             for x in self.report:
-                print(x)
                 list(map(str, x))
-            input()
 
             self.report = [ list(map(str,x)) for x in self.report ]
 
@@ -195,17 +192,13 @@ class pyntacleReporter():
 
         self.report.append(["Results: Local Topology Metrics in Pyntacle for each node queried"])
         self.report.append(["Node Name"] + [x for x in reportdict.keys()])
-        print("NODES!", nodes)
         addendum = [] #list that will be added to the self.report object
         for i, elem in enumerate(nodes):
-            print(i, elem)
             temp = []
             temp.append(elem) #append the node names to the appendum
             for k in reportdict.keys():
                 temp.append(reportdict[k][i]) #append the corresponding value to the node name
             addendum.append(temp)
-        print("ADDENDUM", addendum)
-        input()
         self.report = self.report + addendum
 
     def __global_report(self, reportdict:OrderedDict):
@@ -216,9 +209,9 @@ class pyntacleReporter():
 
         self.report.append(["Results: Global Topology Metrics for selected graphs"])
         self.report.append(["Metric", "Value"])
-
         for k in reportdict.keys():
             self.report.append([k, reportdict[k]])
+        
 
     def __KPinfo_report(self, reportdict:OrderedDict):
         """

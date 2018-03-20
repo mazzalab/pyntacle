@@ -343,7 +343,7 @@ class Generate():
 
             node_colors = [other_nodes_colour] * graph.vcount()
             plot_graph.set_node_colors(colors=node_colors)
-            plot_graph.set_node_label(labels=graph.vs()["name"])  # assign node labels to graph
+            plot_graph.set_node_labels(labels=graph.vs()["name"])  # assign node labels to graph
             node_sizes = [other_nodes_size] * graph.vcount()
             plot_graph.set_node_sizes(sizes=node_sizes)
             frame_vertex_colour = [frame_vertex_colour]*graph.vcount()

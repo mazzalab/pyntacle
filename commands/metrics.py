@@ -136,8 +136,6 @@ class Metrics():
 
             reporter = pyntacleReporter(graph=graph) #init reporter
 
-
-
             if self.args.nodes is not None:
                 sys.stdout.write("Computing local metrics for nodes {}\n".format(self.args.nodes))
                 nodes_list = self.args.nodes.split(",")
@@ -152,19 +150,8 @@ class Metrics():
 
             else:
                 sys.stdout.write("Computing local metrics for all nodes in the graph\n")
-                index_list = None
 
-            # LocalTopology.degree(.degree(graph,index_list=index_list, recalculate=True)
-            # local_attributes.clustering_coefficient(graph,index_list=index_list, recalculate=True)
-            # local_attributes.betweenness(graph,index_list=index_list, recalculate=True)
-            # local_attributes.closeness(graph,index_list=index_list, recalculate=True)
-            # local_attributes.radiality(graph,index_list=index_list, recalculate=True)
-            # local_attributes.radiality_reach(graph,index_list=index_list, recalculate=True)
-            # local_attributes.eccentricity(graph,index_list=index_list, recalculate=True)
-            # local_attributes.shortest_path_pyntacle(graph,index_list=index_list, recalculate=True)
-            # local_attributes.shortest_path_igraph(graph,index_list=index_list, recalculate=True)
-
-            if self.args.damping_factor < 0.0 and self.args.damping_factor > 1.0:
+            if self.args.damping_factor < 0.0 or self.args.damping_factor > 1.0:
                 self.logging.error("damping factor must be betweeen 0 and 1")
                 sys.exit(1)
 
@@ -241,8 +228,6 @@ class Metrics():
             if os.path.exists(report_path):
                 sys.stdout.write("WARNING: File {} already exists, overwriting it\n".format(report_path))
             
-            print('NODES LIST', nodes_list)
-            input()
             local_attributes_dict = OrderedDict({LocalAttribute.degree.name: LocalTopology.degree(graph=graph, nodes=nodes_list),
                  LocalAttribute.clustering_coefficient.name: LocalTopology.clustering_coefficient(graph=graph, nodes=nodes_list),
                  LocalAttribute.betweenness.name: LocalTopology.betweenness(graph=graph, nodes=nodes_list),
@@ -256,8 +241,6 @@ class Metrics():
             if self.args.nodes:
                 local_attributes_dict["nodes"] = self.args.nodes
             
-            print("LOCAL ATTR DICT:", local_attributes_dict)
-            input()
             reporter.create_report(Reports.Local, local_attributes_dict)
             reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
@@ -276,7 +259,7 @@ class Metrics():
                     os.makedirs(plot_dir, exist_ok=True)
 
                 plot_graph = PlotGraph(graph=graph)
-                plot_graph.set_node_label(labels=graph.vs()["name"])  # assign node labels to graph
+                plot_graph.set_node_labels(labels=graph.vs()["name"])  # assign node labels to graph
 
                 pal = sns.color_palette("Accent", 8).as_hex()
                 framepal = sns.color_palette("Accent", 8, desat=0.5).as_hex()
@@ -347,36 +330,14 @@ class Metrics():
                                                  GlobalAttribute.compactness.name: Sparseness.compactness(graph=graph)
                                                  })
 
-            #find metrics for the whole graph (without removing nodes)
-            # global_topology = GlobalTopology(graph=graph)
-            # sparseness = Sparseness(graph=graph)
-            #
-            # global_topology.clustering_coefficient(recalculate=True)
-            #
-            # global_topology.weighted_clustering_coefficient(recalculate=True)
-            # global_topology.average_closeness(recalculate=True)
-            # global_topology.average_degree(recalculate=True)
-            # global_topology.average_eccentricity(recalculate=True)
-            # global_topology.average_radiality(recalculate=True)
-            # global_topology.average_radiality_reach(recalculate=True)
-            # global_topology.average_path_length(recalculate=True)
-            # global_topology.density(recalculate=True)
-            # global_topology.diameter(recalculate=True)
-            # global_topology.pi(recalculate=True)
-            # sparseness.compactness(recalculate=True)
-            # sparseness.completeness(recalculate=True)
-            # sparseness.completeness_legacy(recalculate=True)
+            sys.stdout.write("Producing report\n")
 
+            reporter = pyntacleReporter(graph=graph)  # init reporter
+            reporter.create_report(Reports.Global, global_attributes_dict)
+            reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
-            if not self.args.no_nodes: #create standard report for the whole graph
-                sys.stdout.write("Producing report\n")
-
-                reporter = pyntacleReporter(graph=graph)  # init reporter
-                reporter.create_report(Reports.Global, global_attributes_dict)
-                reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
-
-            else:
-
+            if self.args.no_nodes:  # create an additional report for the graph minus the selected nodes
+    
                 sys.stdout.write("Removing nodes {} from input graph and computing global metrics\n".format(self.args.no_nodes))
                 nodes_list = self.args.no_nodes.split(",")
 
@@ -389,6 +350,7 @@ class Metrics():
                 graph_nonodes.delete_vertices(index_list) #remove target nodes
 
                 global_attributes_dict_nonodes = OrderedDict({
+                         'Removed nodes': ','.join(nodes_list),
                          GlobalAttribute.average_shortest_path_length.name: GlobalTopology.average_shortest_path_length(graph=graph_nonodes),
                          GlobalAttribute.diameter.name: GlobalTopology.diameter(graph=graph_nonodes),
                          GlobalAttribute.components.name: GlobalTopology.components(graph=graph_nonodes),
@@ -406,30 +368,11 @@ class Metrics():
                          GlobalAttribute.completeness_XXX.name: Sparseness.completeness_XXX(graph=graph_nonodes),
                          GlobalAttribute.compactness.name: Sparseness.compactness(graph=graph_nonodes)
                          })
-                
-                # global_topology_nonodes= GlobalTopology(graph_nonodes)
-                # sparseness_nonodes = Sparseness(graph_nonodes)
-                #
-                # global_topology_nonodes.clustering_coefficient(recalculate=True)
-                # global_topology_nonodes.weighted_clustering_coefficient(recalculate=True)
-                # global_topology_nonodes.average_closeness(recalculate=True)
-                # global_topology_nonodes.average_degree(recalculate=True)
-                # global_topology_nonodes.average_eccentricity(recalculate=True)
-                # global_topology_nonodes.average_radiality(recalculate=True)
-                # global_topology_nonodes.average_radiality_reach(recalculate=True)
-                # global_topology_nonodes.average_path_length(recalculate=True)
-                # global_topology_nonodes.density(recalculate=True)
-                # global_topology_nonodes.diameter(recalculate=True)
-                # global_topology_nonodes.pi(recalculate=True)
-                #
-                # sparseness_nonodes.compactness(recalculate=True)
-                # sparseness_nonodes.completeness(recalculate=True)
-                # sparseness_nonodes.completeness_legacy(recalculate=True)
 
                 sys.stdout.write("Producing report\n")
                 graph_nonodes["name"][0] += '_without_nodes'
                 reporter = pyntacleReporter(graph=graph_nonodes)  # init reporter
-                reporter.create_report(Reports.Global, global_attributes_dict)
+                reporter.create_report(Reports.Global, global_attributes_dict_nonodes)
                 reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
             if not self.args.no_plot and graph.vcount() < 1000:
@@ -460,7 +403,7 @@ class Metrics():
                 no_nodes_frames = framepal[4]
 
                 if self.args.no_nodes:
-                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", graph["name"][0],"global_metrics_plot_original", runtime_date]),self.args.plot_format]))
+                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", re.sub('_without_nodes', '', graph["name"][0]),"global_metrics_plot", runtime_date]),self.args.plot_format]))
                     node_colors = [no_nodes_colour if x["name"] in nodes_list else other_nodes_colour for x
                                     in
                                     graph.vs()]
@@ -478,7 +421,7 @@ class Metrics():
                     plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", graph["name"][0],"global_metrics_plot", runtime_date]), self.args.plot_format]))
 
                 plot_graph = PlotGraph(graph=graph)
-                plot_graph.set_node_label(labels=graph.vs()["name"])  # assign node labels to graph
+                plot_graph.set_node_labels(labels=graph.vs()["name"])  # assign node labels to graph
 
                 plot_graph.set_node_colors(colors=node_colors)
                 plot_graph.set_node_sizes(sizes=node_sizes)
@@ -495,7 +438,7 @@ class Metrics():
                 if self.args.no_nodes:
 
                     plot_graph = PlotGraph(graph=graph_nonodes)
-                    plot_graph.set_node_label(labels=graph_nonodes.vs()["name"])  # assign node labels to graph
+                    plot_graph.set_node_labels(labels=graph_nonodes.vs()["name"])  # assign node labels to graph
 
                     # print(graph_copy.vs()["name"])
                     node_colors = [other_nodes_colour] * graph_nonodes.vcount()
@@ -508,7 +451,7 @@ class Metrics():
                     # define layout
                     plot_graph.set_layouts()
 
-                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", graph["name"][0],"global_metrics_plot_nonodes",runtime_date]),self.args.plot_format]))
+                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", graph["name"][0], "global_metrics_plot",runtime_date]),self.args.plot_format]))
 
                     plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
                                           keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=node_frames)
