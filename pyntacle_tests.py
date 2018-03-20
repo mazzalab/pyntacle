@@ -28,8 +28,8 @@ from io_stream.import_attributes import ImportAttributes
 from tools.add_attributes import AddAttributes
 from io_stream.importer import PyntacleImporter
 from misc.graph_load import *
-from pyntacle_commands_utils.kpsearch_wrapper_NEW import KPWrapper as kpw
-from pyntacle_commands_utils.kpsearch_wrapper_NEW import GOWrapper as gow
+from pyntacle_commands_utils.kpsearch_wrapper import KPWrapper as kpw
+from pyntacle_commands_utils.kpsearch_wrapper import GOWrapper as gow
 
 from misc.enums import KPNEGchoices, KPPOSchoices
 # adjmatrix = GraphLoad('/home/m.truglio/Desktop/Compiti_Dedalus/edgelist.txt.sif', "sif", True).graph_load()

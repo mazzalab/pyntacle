@@ -8,7 +8,7 @@ from exceptions.generic_error import Error
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 from io_stream.exporter import PyntacleExporter
 from pyntacle_commands_utils.plotter import *
-from pyntacle_commands_utils.reporter_NEW import *
+from pyntacle_commands_utils.reporter import *
 from io_stream.import_attributes import ImportAttributes
 from misc.graph_load import *
 from tools.graph_utils import GraphUtils

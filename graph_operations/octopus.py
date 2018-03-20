@@ -38,9 +38,9 @@ from misc.enums import *
 from misc.enums import GraphType
 from misc.enums import SP_implementations as imps
 from misc.shortest_path_modifications import ShortestPathModifier
-from pyntacle_commands_utils.kpsearch_wrapper_NEW import KPWrapper as kpw
-from pyntacle_commands_utils.kpsearch_wrapper_NEW import GOWrapper as gow
-from pyntacle_commands_utils.kpsearch_wrapper_NEW import BFWrapper as bfw
+from pyntacle_commands_utils.kpsearch_wrapper import KPWrapper as kpw
+from pyntacle_commands_utils.kpsearch_wrapper import GOWrapper as gow
+from pyntacle_commands_utils.kpsearch_wrapper import BFWrapper as bfw
 from misc.enums import KPNEGchoices, KPPOSchoices
 
 class Octopus:

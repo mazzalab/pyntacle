@@ -1,7 +1,7 @@
 from config import *
-from pyntacle_commands_utils.kpsearch_wrapper_NEW import KPWrapper as kpw
-from pyntacle_commands_utils.kpsearch_wrapper_NEW import GOWrapper as gow
-from pyntacle_commands_utils.kpsearch_wrapper_NEW import BFWrapper as bfw
+from pyntacle_commands_utils.kpsearch_wrapper import KPWrapper as kpw
+from pyntacle_commands_utils.kpsearch_wrapper import GOWrapper as gow
+from pyntacle_commands_utils.kpsearch_wrapper import BFWrapper as bfw
 from algorithms.keyplayer_NEW import KeyPlayer as kpp
 from collections import OrderedDict
 from misc.enums import *
@@ -10,7 +10,7 @@ from exceptions.generic_error import Error
 from io_stream.exporter import PyntacleExporter
 # from pyntacle_commands_utils.kp_runner_OLD import *
 from pyntacle_commands_utils.plotter import *
-from pyntacle_commands_utils.reporter_NEW import *
+from pyntacle_commands_utils.reporter import *
 from tools.graph_utils import *
 from misc.graph_load import *
 
