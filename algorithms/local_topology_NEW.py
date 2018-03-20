@@ -48,7 +48,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def degree(graph :Graph, nodes=None) -> list:
+    def degree(graph: Graph, nodes=None) -> list:
         """
         Computes the degree for a single node, a list of nodes or for all nodes in the Graph. The degree is defined as
         the number of incident edges to a single nodes.
@@ -68,7 +68,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def betweenness(graph :Graph, nodes=None) -> list:
+    def betweenness(graph: Graph, nodes=None) -> list:
         """
         Computes the betwenness for a single node, a list of nodes or for all nodes in the Graph.
         The degree is defined as the ratio of the number of shortest path that passes through the node
@@ -90,7 +90,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def clustering_coefficient(graph :Graph, nodes=None) -> list:
+    def clustering_coefficient(graph: Graph, nodes=None) -> list:
         """
         Computes the clustering coefficient for a single node, a list of nodes or for all nodes in the Graph.
         The clustering coefficient is defined as the number of triangles formed among the node's neighbours over the
@@ -111,7 +111,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def closeness(graph :Graph, nodes=None) -> list:
+    def closeness(graph: Graph, nodes=None) -> list:
         """
         Computes the clustering coefficient for a single node, a list of nodes or for all nodes in the Graph.
         The closeness is defined as the sum of the length of the shortest paths passing through the node(s)
@@ -132,7 +132,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def eccentricity(graph :Graph, nodes=None) -> list:
+    def eccentricity(graph: Graph, nodes=None) -> list:
         """
         Computes the eccentricity for a single node, a list of nodes or for all nodes in the Graph.
         The eccentricity is defined as the maximum of all the distances (shortest path) between the node(s)
@@ -151,7 +151,7 @@ class LocalTopology:
             return [int(x) for x in graph.eccentricity(vertices=nodes)]
 
     @staticmethod
-    def __radiality_inner__(graph :Graph, nodes=None, implementation=imps.auto) -> list:
+    def __radiality_inner__(graph: Graph, nodes=None, implementation=imps.auto) -> list:
         """
         inner class that handles the radiality calculus (without throwing any error)
         """
@@ -198,7 +198,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def radiality(graph :Graph, nodes=None, implementation=imps.auto) -> list:
+    def radiality(graph: Graph, nodes=None, implementation=imps.auto) -> list:
         """
         Computes the radiality for a single node, a list of nodes or for all nodes in the Graph. The radiality of a node
         (v) is calculated by computing the shortest path between the node v and all other nodes in the graph. The value
@@ -225,7 +225,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def radiality_reach(graph :Graph, nodes=None, implementation=imps.auto) -> list:
+    def radiality_reach(graph: Graph, nodes=None, implementation=imps.auto) -> list:
         """
         Computes the radiality reach for a single node, a list of nodes or for all nodes in the Graph.
         The radiality reach is a weighted measure of the canonical radiality and it is recommended for disconnected
@@ -328,7 +328,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def pagerank(graph :Graph, nodes=None, weights=None, damping=0.85) -> list:
+    def pagerank(graph: Graph, nodes=None, weights=None, damping=0.85) -> list:
         """
         Computes the Google PageRank algorithm from the input node(s), or for all nodes in the graph if it's not
         specified. The PageRank algorithm is a modifed version of the eigenvector centrality. It highlights the
@@ -369,7 +369,7 @@ class LocalTopology:
     @check_graph_consistency
     @vertexdoctor
     #todo check if i can see the environment variables so I don't have to recall cuda.is_available() every time
-    def shortest_path_pyntacle(graph :Graph, nodes=None, mode=GraphType.undirect_unweighted,
+    def shortest_path_pyntacle(graph: Graph, nodes=None, mode=GraphType.undirect_unweighted,
                                implementation=imps.cpu) -> np.ndarray:
         """
         We implement here a few ways to determine the shortest paths in a graph for a single node, a group of nodes or
@@ -495,7 +495,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def shortest_path_igraph(graph :Graph, nodes=None) -> list:
+    def shortest_path_igraph(graph: Graph, nodes=None) -> list:
         """
         Computes the shortest path for a single node, a list of nodes or for all nodes in the Graph using the Dijkstra's
         implementation of the igraph Package (works on a single CPU core). The shortest path is the minimum distance

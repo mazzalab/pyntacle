@@ -54,7 +54,7 @@ class AddAttributes():
 
     def add_graph_attributes(self, attr_name, attr):
 
-        '''Z
+        '''
         Add an attribute to a graph object
         
         :param attr: any object being added as attribute
