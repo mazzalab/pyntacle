@@ -39,8 +39,6 @@ import os
 
 from exceptions.generic_error import Error
 
-
-
 if sys.version_info <= (3, 4):
     sys.exit('Python < 3.4 is not supported. Please use "python3" instead or update your python version.')
 
