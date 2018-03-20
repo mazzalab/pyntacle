@@ -335,7 +335,7 @@ class KeyPlayer():
                 (os.path.basename(report_path)))
         
         r.write_report(report_dir=self.args.directory, format=self.args.report_format)
-
+        
         if self.args.save_binary:
             #reproduce octopus behaviour by adding kp information to the graph before saving it
             sys.stdout.write("Saving graph to a Binary file\n")
@@ -425,7 +425,7 @@ class KeyPlayer():
 
 
             for metric in results:
-                if self.args.implementation == "brute-force":
+                if self.args.which == 'kp-finder' and self.args.implementation == "brute-force":
                     results[metric][0] = list(chain(*results[metric][0]))
                     
                 if metric == "F":
@@ -465,12 +465,9 @@ class KeyPlayer():
                     mreach_nodes_colour = pal[4]
                     mreach_frames_colour = framepal[4]
                     # create a list of node colors
-                    print(results)
-                    print(results[metric])
                     node_colors = [mreach_nodes_colour if x["name"] in results[metric][0] else other_nodes_colour for x in graph.vs()]
                     node_frames = [mreach_frames_colour if x["name"] in results[metric][0] else other_frame_colour for x in graph.vs()]
-                    print(node_colors)
-                    input()
+
 
                     plot_graph.set_node_colors(colors=node_colors)
 
@@ -547,9 +544,7 @@ class KeyPlayer():
                             # print(step_before)
     
                             mreach_edge_ids = []
-                            print(step_before)
-                            print("Remaining:", remaining_indices)
-                            input()
+
                             for elem in step_before:
                                 for el in remaining_indices:
                                     if Graph.are_connected(graph, elem, el):
