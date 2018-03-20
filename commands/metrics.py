@@ -290,25 +290,25 @@ class Metrics():
                     selected_nodes_colour = pal[0]
                     selected_nodes_frames = framepal[0]
 
-                    node_colours = [selected_nodes_colour if x["name"] in nodes_list else other_nodes_colour
+                    node_colors = [selected_nodes_colour if x["name"] in nodes_list else other_nodes_colour
                                     for x in
                                     graph.vs()]
                     node_frames = [selected_nodes_frames if x["name"] in nodes_list else other_frame_colour
                                     for x in
                                     graph.vs()]
 
-                    #print(node_colours)
+                    #print(node_colors)
 
-                    plot_graph.set_node_colours(colours=node_colours)
+                    plot_graph.set_node_colors(colors=node_colors)
 
                     node_sizes = [45 if x["name"] in nodes_list else other_nodes_size for x in graph.vs()]
                     plot_graph.set_node_sizes(sizes=node_sizes)
 
                 else:
                     # sys.stdout.write("Plotting network\n".format(nodes_list))
-                    node_colours = [other_nodes_colour] * graph.vcount()
+                    node_colors = [other_nodes_colour] * graph.vcount()
                     node_frames = [other_frame_colour] * graph.vcount()
-                    plot_graph.set_node_colours(colours=node_colours)
+                    plot_graph.set_node_colors(colors=node_colors)
 
                     node_sizes = [other_nodes_size] * graph.vcount()
                     plot_graph.set_node_sizes(sizes=node_sizes)
@@ -320,7 +320,7 @@ class Metrics():
                     ["pyntacle", graph["name"][0], "local_metrics_plot_",
                      runtime_date]), self.args.plot_format]))
                 plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
-                                      keep_aspect_ratio=True, vertex_label_size=8, vertex_frame_color=node_frames)
+                                      keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=node_frames)
 
             elif not self.args.no_plot and graph.vcount() >= 1000:
                 sys.stdout.write("The graph has too many nodes ({}). Can't draw graph\n".format(graph.vcount()))
@@ -461,7 +461,7 @@ class Metrics():
 
                 if self.args.no_nodes:
                     plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", graph["name"][0],"global_metrics_plot_original", runtime_date]),self.args.plot_format]))
-                    node_colours = [no_nodes_colour if x["name"] in nodes_list else other_nodes_colour for x
+                    node_colors = [no_nodes_colour if x["name"] in nodes_list else other_nodes_colour for x
                                     in
                                     graph.vs()]
                     node_frames = [no_nodes_frames if x["name"] in nodes_list else other_frame_colour for x
@@ -472,7 +472,7 @@ class Metrics():
                                   graph.vs()]
 
                 else:
-                    node_colours = [other_nodes_colour] * graph.vcount()
+                    node_colors = [other_nodes_colour] * graph.vcount()
                     node_frames = [other_frame_colour] * graph.vcount()
                     node_sizes = [other_nodes_size] * graph.vcount()
                     plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", graph["name"][0],"global_metrics_plot", runtime_date]), self.args.plot_format]))
@@ -480,17 +480,17 @@ class Metrics():
                 plot_graph = PlotGraph(graph=graph)
                 plot_graph.set_node_label(labels=graph.vs()["name"])  # assign node labels to graph
 
-                plot_graph.set_node_colours(colours=node_colours)
+                plot_graph.set_node_colors(colors=node_colors)
                 plot_graph.set_node_sizes(sizes=node_sizes)
 
-                plot_graph.set_node_colours(colours=node_colours)
+                plot_graph.set_node_colors(colors=node_colors)
                 plot_graph.set_node_sizes(sizes=node_sizes)
 
                 # define layout
                 plot_graph.set_layouts()
 
                 plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
-                                      keep_aspect_ratio=True, vertex_label_size=8, vertex_frame_color=node_frames)
+                                      keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=node_frames)
 
                 if self.args.no_nodes:
 
@@ -498,11 +498,11 @@ class Metrics():
                     plot_graph.set_node_label(labels=graph_nonodes.vs()["name"])  # assign node labels to graph
 
                     # print(graph_copy.vs()["name"])
-                    node_colours = [other_nodes_colour] * graph_nonodes.vcount()
+                    node_colors = [other_nodes_colour] * graph_nonodes.vcount()
                     node_frames = [other_frame_colour] * graph_nonodes.vcount()
                     node_sizes = [other_nodes_size] * graph_nonodes.vcount()
 
-                    plot_graph.set_node_colours(colours=node_colours)
+                    plot_graph.set_node_colors(colors=node_colors)
                     plot_graph.set_node_sizes(sizes=node_sizes)
 
                     # define layout
@@ -511,7 +511,7 @@ class Metrics():
                     plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", graph["name"][0],"global_metrics_plot_nonodes",runtime_date]),self.args.plot_format]))
 
                     plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
-                                          keep_aspect_ratio=True, vertex_label_size=8, vertex_frame_color=node_frames)
+                                          keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=node_frames)
 
             elif not self.args.no_plot and graph.vcount() >= 1000:
                 sys.stdout.write("The graph has too many nodes ({}). Can't draw graph\n".format(graph.vcount()))

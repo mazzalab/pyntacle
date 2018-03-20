@@ -375,14 +375,14 @@ class KeyPlayer():
 
                     f_nodes_colour = pal[0]
                     f_frames_colour = framepal[0]
-                    # create a list of node colours
-                    node_colours = [f_nodes_colour if x in results[metric][1] else other_nodes_colour
+                    # create a list of node colors
+                    node_colors = [f_nodes_colour if x in results[metric][1] else other_nodes_colour
                                     for x in graph.vs()]
                     node_frames = [f_frames_colour if x in results[metric][1] else other_frame_colour
                                     for x in
                                     graph.vs()]
 
-                    plot_graph.set_node_colours(colours=node_colours)
+                    plot_graph.set_node_colors(colors=node_colors)
 
                     # node_shapes = ["square" if x["name"] in results[metric][1] else other_nodes_shape for x in graph.vs()]
                     # plot_graph.set_node_shapes(shapes=node_shapes)
@@ -391,15 +391,15 @@ class KeyPlayer():
                     df_nodes_colour = pal[1]
                     df_frames_colour = framepal[1]
 
-                    # create a list of node colours
-                    node_colours = [df_nodes_colour if x["name"] in results[metric][1] else other_nodes_colour
+                    # create a list of node colors
+                    node_colors = [df_nodes_colour if x["name"] in results[metric][1] else other_nodes_colour
                                     for x in
                                     graph.vs()]
                     node_frames = [df_frames_colour if x["name"] in results[metric][1] else other_frame_colour
                                    for x in
                                    graph.vs()]
 
-                    plot_graph.set_node_colours(colours=node_colours)
+                    plot_graph.set_node_colors(colors=node_colors)
 
                     # node_shapes = ["rectangle" if x["name"] in results[metric][1] else other_nodes_shape for x in graph.vs()]
                     # plot_graph.set_node_shapes(shapes=node_shapes)
@@ -407,8 +407,8 @@ class KeyPlayer():
                 elif metric == "mreach":
                     mreach_nodes_colour = pal[4]
                     mreach_frames_colour = framepal[4]
-                    # create a list of node colours
-                    node_colours = [
+                    # create a list of node colors
+                    node_colors = [
                         mreach_nodes_colour if x["name"] in results[metric][1] else other_nodes_colour for x
                         in
                         graph.vs()]
@@ -417,7 +417,7 @@ class KeyPlayer():
                                    for x in
                                    graph.vs()]
 
-                    plot_graph.set_node_colours(colours=node_colours)
+                    plot_graph.set_node_colors(colors=node_colors)
 
 
                     # node_shapes = ["triangle-up" if x["name"] in results[metric][1] else other_nodes_shape for x in graph.vs()]
@@ -427,15 +427,15 @@ class KeyPlayer():
                     dr_nodes_colour = pal[3]
                     dr_frames_colour = framepal[3]
 
-                    # create a list of node colours
-                    node_colours = [dr_nodes_colour if x["name"] in results[metric][1] else other_nodes_colour
+                    # create a list of node colors
+                    node_colors = [dr_nodes_colour if x["name"] in results[metric][1] else other_nodes_colour
                                     for x in
                                     graph.vs()]
                     node_frames = [dr_frames_colour if x["name"] in results[metric][1] else other_frame_colour
                                    for x in
                                    graph.vs()]
 
-                    plot_graph.set_node_colours(colours=node_colours)
+                    plot_graph.set_node_colors(colors=node_colors)
 
                     # node_shapes = ["triangle-down" if x["name"] in results[metric][1] else other_nodes_shape for x in
                     #                graph.vs()]
@@ -521,7 +521,7 @@ class KeyPlayer():
                             os.path.basename(plot_path)))
 
                 plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
-                                      keep_aspect_ratio=True, vertex_label_size=8, vertex_frame_color=node_frames)
+                                      keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=node_frames)
 
         elif graph.vcount() >= 1000:
             sys.stdout.write("The graph has too many nodes ({}). Can't draw graph\n".format(graph.vcount()))

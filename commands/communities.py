@@ -411,9 +411,9 @@ class Communities():
             else:
                 os.mkdir(plot_dir)
 
-            avail_colours_fill = sns.color_palette("Spectral", n_colors=len(
-                final_mods)).as_hex()  # available colours for node fill
-            avail_colours_borders = sns.color_palette("Spectral", n_colors=len(final_mods),
+            avail_colors_fill = sns.color_palette("Spectral", n_colors=len(
+                final_mods)).as_hex()  # available colors for node fill
+            avail_colors_borders = sns.color_palette("Spectral", n_colors=len(final_mods),
                                                       desat=0.5).as_hex()
 
             if graph.vcount() < 1000:
@@ -427,27 +427,27 @@ class Communities():
                 # initialize general graph Drawer
                 sys.stdout.write("Drawing Original Graph with corresponding modules\n")
                 graph_plotter = PlotGraph(graph=graph)
-                graph_plotter.set_node_label(labels=graph.vs()["name"])
+                graph_plotter.set_node_labels(labels=graph.vs()["name"])
                 graph_plotter.set_node_sizes([30] * graph.vcount())
 
-                # define different colours for each module
-                not_in_module_colours = "#A9A9A9"
+                # define different colors for each module
+                not_in_module_colors = "#A9A9A9"
                 col_list = []
                 bord_list = []
                 for elem in graph.vs():
                     module = elem["__module"]
                     if module is not None:
-                        col_list.append(avail_colours_fill[module])
-                        bord_list.append(avail_colours_borders[module])
+                        col_list.append(avail_colors_fill[module])
+                        bord_list.append(avail_colors_borders[module])
 
                     else:
-                        col_list.append(not_in_module_colours)
-                        bord_list.append(not_in_module_colours)
+                        col_list.append(not_in_module_colors)
+                        bord_list.append(not_in_module_colors)
 
-                graph_plotter.set_node_colours(col_list)
+                graph_plotter.set_node_colors(col_list)
                 graph_plotter.set_layouts()
                 graph_plotter.plot_graph(path=main_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
-                                         keep_aspect_ratio=True, vertex_label_size=8,
+                                         keep_aspect_ratio=True, vertex_label_size=6,
                                          vertex_frame_color=bord_list)
             else:
                 sys.stdout.write(
@@ -456,7 +456,7 @@ class Communities():
 
             if len(final_mods) > 20:
                 self.logging.warning(
-                    "The number of modules ({}) is very high, hence the node colours of each module may be very similar".format(
+                    "The number of modules ({}) is very high, hence the node colors of each module may be very similar".format(
                         len(final_mods)))
 
             sys.stdout.write("Drawing Each Module Separately\n")
@@ -464,9 +464,9 @@ class Communities():
             for i, comm in enumerate(final_mods):
                 if comm.vcount() <= 1000:
                     plotter = PlotGraph(graph=comm)
-                    plotter.set_node_label(labels=comm.vs()["name"])
+                    plotter.set_node_labels(labels=comm.vs()["name"])
 
-                    plotter.set_node_colours([avail_colours_fill[i]] * comm.vcount())
+                    plotter.set_node_colors([avail_colors_fill[i]] * comm.vcount())
 
                     plotter.set_node_sizes([30] * comm.vcount())
 
@@ -476,8 +476,8 @@ class Communities():
 
                     plotter.set_layouts()
                     plotter.plot_graph(path=comm_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
-                                       keep_aspect_ratio=True, vertex_label_size=8,
-                                       vertex_frame_color=[avail_colours_borders[i]] * comm.vcount())
+                                       keep_aspect_ratio=True, vertex_label_size=6,
+                                       vertex_frame_color=[avail_colors_borders[i]] * comm.vcount())
 
                 else:
                     sys.stdout.write(

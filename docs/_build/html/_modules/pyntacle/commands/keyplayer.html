@@ -474,15 +474,15 @@
 
                     <span class="n">f_nodes_colour</span> <span class="o">=</span> <span class="n">pal</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                     <span class="n">f_frames_colour</span> <span class="o">=</span> <span class="n">framepal</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="c1"># create a list of node colours</span>
-                    <span class="n">node_colours</span> <span class="o">=</span> <span class="p">[</span><span class="n">f_nodes_colour</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="n">metric</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="n">other_nodes_colour</span>
+                    <span class="c1"># create a list of node colors</span>
+                    <span class="n">node_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">f_nodes_colour</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="n">metric</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="n">other_nodes_colour</span>
                                     <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>
                                     <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()]</span>
                     <span class="n">node_frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">f_frames_colour</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="n">metric</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="n">other_frame_colour</span>
                                     <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>
                                     <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()]</span>
 
-                    <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_node_colours</span><span class="p">(</span><span class="n">colours</span><span class="o">=</span><span class="n">node_colours</span><span class="p">)</span>
+                    <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_node_colors</span><span class="p">(</span><span class="n">colors</span><span class="o">=</span><span class="n">node_colors</span><span class="p">)</span>
 
                     <span class="c1"># node_shapes = [&quot;square&quot; if x[&quot;name&quot;] in results[metric][1] else other_nodes_shape for x in graph.vs()]</span>
                     <span class="c1"># plot_graph.set_node_shapes(shapes=node_shapes)</span>
@@ -491,15 +491,15 @@
                     <span class="n">df_nodes_colour</span> <span class="o">=</span> <span class="n">pal</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
                     <span class="n">df_frames_colour</span> <span class="o">=</span> <span class="n">framepal</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-                    <span class="c1"># create a list of node colours</span>
-                    <span class="n">node_colours</span> <span class="o">=</span> <span class="p">[</span><span class="n">df_nodes_colour</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="n">metric</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="n">other_nodes_colour</span>
+                    <span class="c1"># create a list of node colors</span>
+                    <span class="n">node_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">df_nodes_colour</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="n">metric</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="n">other_nodes_colour</span>
                                     <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>
                                     <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()]</span>
                     <span class="n">node_frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">df_frames_colour</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="n">metric</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="n">other_frame_colour</span>
                                    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>
                                    <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()]</span>
 
-                    <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_node_colours</span><span class="p">(</span><span class="n">colours</span><span class="o">=</span><span class="n">node_colours</span><span class="p">)</span>
+                    <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_node_colors</span><span class="p">(</span><span class="n">colors</span><span class="o">=</span><span class="n">node_colors</span><span class="p">)</span>
 
                     <span class="c1"># node_shapes = [&quot;rectangle&quot; if x[&quot;name&quot;] in results[metric][1] else other_nodes_shape for x in graph.vs()]</span>
                     <span class="c1"># plot_graph.set_node_shapes(shapes=node_shapes)</span>
@@ -507,8 +507,8 @@
                 <span class="k">elif</span> <span class="n">metric</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;MREACH&quot;</span><span class="p">:</span>
                     <span class="n">mreach_nodes_colour</span> <span class="o">=</span> <span class="n">pal</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
                     <span class="n">mreach_frames_colour</span> <span class="o">=</span> <span class="n">framepal</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
-                    <span class="c1"># create a list of node colours</span>
-                    <span class="n">node_colours</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="c1"># create a list of node colors</span>
+                    <span class="n">node_colors</span> <span class="o">=</span> <span class="p">[</span>
                         <span class="n">mreach_nodes_colour</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="n">metric</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="n">other_nodes_colour</span> <span class="k">for</span> <span class="n">x</span>
                         <span class="ow">in</span>
                         <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()]</span>
@@ -517,7 +517,7 @@
                                    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>
                                    <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()]</span>
 
-                    <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_node_colours</span><span class="p">(</span><span class="n">colours</span><span class="o">=</span><span class="n">node_colours</span><span class="p">)</span>
+                    <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_node_colors</span><span class="p">(</span><span class="n">colors</span><span class="o">=</span><span class="n">node_colors</span><span class="p">)</span>
 
 
                     <span class="c1"># node_shapes = [&quot;triangle-up&quot; if x[&quot;name&quot;] in results[metric][1] else other_nodes_shape for x in graph.vs()]</span>
@@ -527,15 +527,15 @@
                     <span class="n">dr_nodes_colour</span> <span class="o">=</span> <span class="n">pal</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
                     <span class="n">dr_frames_colour</span> <span class="o">=</span> <span class="n">framepal</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
 
-                    <span class="c1"># create a list of node colours</span>
-                    <span class="n">node_colours</span> <span class="o">=</span> <span class="p">[</span><span class="n">dr_nodes_colour</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="n">metric</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="n">other_nodes_colour</span>
+                    <span class="c1"># create a list of node colors</span>
+                    <span class="n">node_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">dr_nodes_colour</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="n">metric</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="n">other_nodes_colour</span>
                                     <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>
                                     <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()]</span>
                     <span class="n">node_frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">dr_frames_colour</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="n">metric</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="n">other_frame_colour</span>
                                    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>
                                    <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()]</span>
 
-                    <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_node_colours</span><span class="p">(</span><span class="n">colours</span><span class="o">=</span><span class="n">node_colours</span><span class="p">)</span>
+                    <span class="n">plot_graph</span><span class="o">.</span><span class="n">set_node_colors</span><span class="p">(</span><span class="n">colors</span><span class="o">=</span><span class="n">node_colors</span><span class="p">)</span>
 
                     <span class="c1"># node_shapes = [&quot;triangle-down&quot; if x[&quot;name&quot;] in results[metric][1] else other_nodes_shape for x in</span>
                     <span class="c1">#                graph.vs()]</span>

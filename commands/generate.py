@@ -341,8 +341,8 @@ class Generate():
                 other_nodes_colour = pal[0]
                 frame_vertex_colour = framepal[0]
 
-            node_colours = [other_nodes_colour] * graph.vcount()
-            plot_graph.set_node_colours(colours=node_colours)
+            node_colors = [other_nodes_colour] * graph.vcount()
+            plot_graph.set_node_colors(colors=node_colors)
             plot_graph.set_node_label(labels=graph.vs()["name"])  # assign node labels to graph
             node_sizes = [other_nodes_size] * graph.vcount()
             plot_graph.set_node_sizes(sizes=node_sizes)
@@ -355,7 +355,7 @@ class Generate():
                 self.logging.warning(
                     "A path with the same name already exist. I will overwrite current drawing")
 
-            plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2, keep_aspect_ratio=True, vertex_label_size=8, vertex_frame_color=frame_vertex_colour)
+            plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2, keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=frame_vertex_colour)
 
         elif not self.args.no_plot and graph.vcount() >= 1000:
             self.logging.warning(

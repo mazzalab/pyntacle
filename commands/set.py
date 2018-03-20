@@ -316,20 +316,20 @@ class Set():
             graph_2_frame = framepal[3]
 
             # set input graph node labels
-            graph1_plotter.set_node_label(labels=graph1.vs()["name"])
+            graph1_plotter.set_node_labels(labels=graph1.vs()["name"])
             graph2_plotter.set_node_label(labels=graph2.vs()["name"])
 
-            # set input graph node colours
-            graph1_plotter.set_node_colours(colours=[graph_1_colour] * graph1.vcount())
-            graph2_plotter.set_node_colours(colours=[graph_2_colour] * graph2.vcount())
+            # set input graph node colors
+            graph1_plotter.set_node_colors(colors=[graph_1_colour] * graph1.vcount())
+            graph2_plotter.set_node_colors(colors=[graph_2_colour] * graph2.vcount())
 
             # set input graphs node sizes
             graph1_plotter.set_node_sizes(sizes=[input_graph_node_size] * graph1.vcount())
             graph2_plotter.set_node_sizes(sizes=[input_graph_node_size] * graph2.vcount())
 
             # set input graph vertex colors
-            graph_1_frame_colours = [graph_1_frame] * graph1.vcount()
-            graph_2_frame_colours = [graph_2_frame] * graph1.vcount()
+            graph_1_frame_colors = [graph_1_frame] * graph1.vcount()
+            graph_2_frame_colors = [graph_2_frame] * graph1.vcount()
 
             # define layouts
             graph1_plotter.set_layouts()
@@ -337,11 +337,11 @@ class Set():
 
             # plot input graphs
             graph1_plotter.plot_graph(path=graph1_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
-                                      keep_aspect_ratio=True, vertex_label_size=8,
-                                      vertex_frame_color=graph_1_frame_colours)
+                                      keep_aspect_ratio=True, vertex_label_size=6,
+                                      vertex_frame_color=graph_1_frame_colors)
             graph2_plotter.plot_graph(path=graph2_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
-                                      keep_aspect_ratio=True, vertex_label_size=8,
-                                      vertex_frame_color=graph_2_frame_colours)
+                                      keep_aspect_ratio=True, vertex_label_size=6,
+                                      vertex_frame_color=graph_2_frame_colors)
 
             if output_graph.vcount() > 0:
 
@@ -379,7 +379,7 @@ class Set():
                         intersection_frame_color_list.append(graph_2_frame)
 
 
-                output_graph_plotter.set_node_colours(colours=intersection_node_color_list)
+                output_graph_plotter.set_node_colors(colors=intersection_node_color_list)
                 output_graph_plotter.set_node_sizes(sizes=[
                     node_intersection_size if parent_g1 in v["__parent"] and parent_g2 in v[
                         "__parent"] else input_graph_node_size for v in output_graph.vs()])
@@ -387,7 +387,7 @@ class Set():
                 output_graph_plotter.set_node_label(labels=output_graph.vs()["name"])
                 output_graph_plotter.set_layouts()
                 output_graph_plotter.plot_graph(path=output_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
-                                                keep_aspect_ratio=True, vertex_label_size=8,
+                                                keep_aspect_ratio=True, vertex_label_size=6,
                                                 vertex_frame_color=intersection_frame_color_list)
 
             else:
