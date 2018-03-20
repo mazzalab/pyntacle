@@ -1,18 +1,3 @@
-import pandas as pd
-from config import *
-from misc.enums import *
-from algorithms.global_topology_NEW import GlobalTopology
-from algorithms.local_topology_NEW import LocalTopology
-from algorithms.sparseness_NEW import *
-from exceptions.generic_error import Error
-from exceptions.multiple_solutions_error import MultipleSolutionsError
-from io_stream.exporter import PyntacleExporter
-from pyntacle_commands_utils.plotter import *
-from pyntacle_commands_utils.reporter import *
-from io_stream.import_attributes import ImportAttributes
-from misc.graph_load import *
-from tools.graph_utils import GraphUtils
-
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -38,6 +23,22 @@ __license__ = u"""
   You should have received a copy of the license along with this
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
+
+import pandas as pd
+from config import *
+from misc.enums import *
+from algorithms.global_topology_NEW import GlobalTopology
+from algorithms.local_topology_NEW import LocalTopology
+from algorithms.sparseness_NEW import *
+from exceptions.generic_error import Error
+from exceptions.multiple_solutions_error import MultipleSolutionsError
+from io_stream.exporter import PyntacleExporter
+from pyntacle_commands_utils.plotter import *
+from pyntacle_commands_utils.reporter import *
+from io_stream.import_attributes import ImportAttributes
+from misc.graph_load import *
+from tools.graph_utils import GraphUtils
+from tools.add_attributes import AddAttributes
 
 
 class Metrics():
@@ -138,10 +139,9 @@ class Metrics():
 
             if self.args.nodes is not None:
                 sys.stdout.write("Computing local metrics for nodes {}\n".format(self.args.nodes))
-                nodes_list = self.args.nodes.split(",")
 
                 try:
-                    utils.check_name_list(nodes_list)  # to check everything's in order
+                    utils.check_name_list(self.args.nodes.split(","))  # to check everything's in order
 
                 except MissingAttributeError:
                     self.logging.error(
@@ -217,6 +217,7 @@ class Metrics():
                 report_prefix = "_".join(["pyntacle", graph["name"][0], "local_metrics", "report",
                                           runtime_date])
             else:
+                nodes_list = self.args.nodes.split(",")
                 report_prefix = "_".join(
                     ["pyntacle", graph["name"][0], "local_metrics_selected_nodes_report",
                      runtime_date])
@@ -331,13 +332,18 @@ class Metrics():
                                                  })
 
             sys.stdout.write("Producing report\n")
-
+            report_prefix = "_".join(
+                ["pyntacle", graph["name"][0], "global_metrics_report",
+                 runtime_date])
+            
             reporter = pyntacleReporter(graph=graph)  # init reporter
             reporter.create_report(Reports.Global, global_attributes_dict)
             reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
             if self.args.no_nodes:  # create an additional report for the graph minus the selected nodes
-    
+                report_prefix_nonodes = "_".join(["pyntacle", graph["name"][0], "global_metrics_nonodes", "report",
+                                          runtime_date])
+                
                 sys.stdout.write("Removing nodes {} from input graph and computing global metrics\n".format(self.args.no_nodes))
                 nodes_list = self.args.no_nodes.split(",")
 
@@ -464,9 +470,34 @@ class Metrics():
             sys.exit(1)
 
         if self.args.save_binary:
+
+            binary_path = os.path.join(self.args.directory, report_prefix.replace('_report_', '_') + ".graph")
+            # elif self.args.no_nodes:
+            # nodes_list = graph_nonodes.vs()
+            if self.args.which == 'local':
+                if self.args.nodes:
+                    nodes_list = self.args.nodes.split(",")
+                else:
+                    nodes_list = graph.vs["name"]
+                for key in local_attributes_dict:
+                    AddAttributes(graph).add_node_attributes(key, local_attributes_dict[key], nodes_list)
+
+            elif self.args.which == 'global':
+                if self.args.no_nodes:
+                    binary_path_nonodes = os.path.join(self.args.directory, report_prefix_nonodes.replace('_report_', '_') + ".graph")
+                    sys.stdout.write("Since the --no-nodes option was selected to calculate the global metrics, a second graph without those "
+                                     "nodes and said metrics will be saved in a second Binary file.\n".format(os.path.basename(binary_path_nonodes)))
+                    for key in global_attributes_dict_nonodes:
+                        AddAttributes(graph_nonodes).add_graph_attributes(key, global_attributes_dict_nonodes[key])
+                    
+                    PyntacleExporter.Binary(graph_nonodes, binary_path_nonodes)
+
+                for key in global_attributes_dict:
+                    AddAttributes(graph).add_graph_attributes(key, global_attributes_dict[key])
+                    
             sys.stdout.write("Saving graph to a Binary file\n")
-            binary_path = os.path.join(self.args.directory, report_prefix + ".graph")
             PyntacleExporter.Binary(graph, binary_path)
+
         cursor.stop()
         sys.stdout.write("pyntacle Metrics completed successfully. Ending\n")
         sys.exit(0)

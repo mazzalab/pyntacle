@@ -345,7 +345,7 @@ class KeyPlayer():
             if self.args.which == "kp-info":
                 bin_type = "kpinfo"
             else:
-                if self.args.implementation == "bruteforce":
+                if self.args.implementation == "brute-force":
                     bin_type = "bruteforce"
                     bf = True
 
@@ -367,8 +367,6 @@ class KeyPlayer():
             if KPNEGchoices.dF.name in queried_stuff:
                 graph[KPNEGchoices.dF.name] = results[KPNEGchoices.dF.name][-1]  #initial dF value
                 k = "_".join([KPNEGchoices.dF.name, bin_type])
-
-
 
                 if bf:
                     AddAttributes(graph).add_graph_attributes(k, {tuple(tuple(x) for x in results[KPNEGchoices.dF.name][0]): results[KPNEGchoices.dF.name][1]})
@@ -424,7 +422,6 @@ class KeyPlayer():
             other_nodes_size = 25
             # other_nodes_shape = "circle"
             other_edge_width = 1
-
 
             for metric in results:
                 if self.args.which == 'kp-finder' and self.args.implementation == "brute-force":

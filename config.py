@@ -40,7 +40,7 @@ format_dictionary = {"adjmat": "adjm", "edgelist": "egl", "sif": "sif", "dot": "
                      "edge_list": "egl", "adjacency_matrix": "adjm"}
 report_format = {"tsv" : "tsv", "txt": "tsv", "csv" : "csv", "xlsx" : "xlsx", "xlx": "xlsx"}
 
-runtime_date = datetime.datetime.now().strftime("%d-%m-%Y_%H%M")
+runtime_date = datetime.datetime.now().strftime("%d-%m-%Y_%I:%M")
 
 
 class CursorAnimation(threading.Thread):
