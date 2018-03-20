@@ -39,7 +39,7 @@ class GlobalTopology:
     """
     @staticmethod
     @check_graph_consistency
-    def diameter(graph) -> int:
+    def diameter(graph :Graph) -> int:
         """
         Method that returns the diameter of a graph. The diameter is defined as the maximum among all eccentricites
         in a graph. If the graph consists of isolates, we defined  the diameter as zero (the inverse of infinity).
@@ -55,7 +55,7 @@ class GlobalTopology:
 
     @staticmethod
     @check_graph_consistency
-    def radius(graph) -> int:
+    def radius(graph :Graph) -> int:
         """
         Method that returns the radius of a graph. The radius  of a graph is defined as the minimum among
         all eccentricites in a graph. If the graph consists of more than one component, the radius of the smallest
@@ -70,7 +70,7 @@ class GlobalTopology:
 
     @staticmethod
     @check_graph_consistency
-    def components(graph) -> int:
+    def components(graph :Graph) -> int:
         """
         Returns the number of components in a graph.
         :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
@@ -82,7 +82,7 @@ class GlobalTopology:
 
     @staticmethod
     @check_graph_consistency
-    def density(graph) -> float:
+    def density(graph :Graph) -> float:
         """
         Computes the density of a graph. The density of a graph is defined as the ratio between the 2(number of edges)
         in the input graph and the number of possible edges in a graph (number of nodes(number of nodes -1))
@@ -96,7 +96,7 @@ class GlobalTopology:
 
     @staticmethod
     @check_graph_consistency
-    def pi(graph) -> float:
+    def pi(graph :Graph) -> float:
         """
         Returs the pi of a graph. Pi is defined as the ratio between the total edges and the diameter.
         :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
@@ -108,7 +108,7 @@ class GlobalTopology:
 
     @staticmethod
     @check_graph_consistency
-    def average_clustering_coefficient(graph) -> float:
+    def average_clustering_coefficient(graph :Graph) -> float:
         """
         Computes the average clustering coefficient among all nodes in a graph (the mean of the clustering coefficient
         :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
@@ -121,7 +121,7 @@ class GlobalTopology:
 
     @staticmethod
     @check_graph_consistency
-    def weighted_clustering_coefficient(graph) -> float:
+    def weighted_clustering_coefficient(graph :Graph) -> float:
         """
         Computes the weighted clustering coefficient among all nodes in a graph. The Weighted clustering coefficient is
         defined as the average (mean) of each node's clustering coefficient weighted by its degree.
@@ -134,7 +134,7 @@ class GlobalTopology:
 
     @staticmethod
     @check_graph_consistency
-    def average_degree(graph) -> float:
+    def average_degree(graph :Graph) -> float:
         """
         Returns the average degree of the input graph. The average degree is the mean of the degree for each node in
         the graph.
@@ -147,7 +147,7 @@ class GlobalTopology:
 
     @staticmethod
     @check_graph_consistency
-    def average_closeness(graph) -> float:
+    def average_closeness(graph :Graph) -> float:
         """
         Returns the average closeness of the input graph. This is done by computing the mean of each node's closeness
         (the sum of the length of the shortest path between each node and all the other nodes in the graph)
@@ -174,7 +174,7 @@ class GlobalTopology:
 
     @staticmethod
     @check_graph_consistency
-    def average_radiality(graph, implementation=imps.igraph) -> float:
+    def average_radiality(graph :Graph, implementation=imps.igraph) -> float:
         """
         Computes the average radiality, defined as the mean for all the radiality values for each node in the graph.
         **WARNING** Average Radiality doesn't work when the graph has more than one component
@@ -195,7 +195,7 @@ class GlobalTopology:
 
     @staticmethod
     @check_graph_consistency
-    def average_radiality_reach(graph, implementation=imps.igraph) -> float:
+    def average_radiality_reach(graph :Graph, implementation=imps.igraph) -> float:
         """
         Computes the average radiality reach, defined as the mean for all the radiality  reach values for each node
         in the graph. Radiality Reach is defined here as the radiality for each node in each component weighted for the
@@ -215,7 +215,7 @@ class GlobalTopology:
 
     @staticmethod
     @check_graph_consistency
-    def average_shortest_path_length(graph, implementation=imps.igraph) -> float:
+    def average_shortest_path_length(graph :Graph, implementation=imps.igraph) -> float:
         """
         computes the  average shortest path length as defined in https://en.wikipedia.org/wiki/Average_path_length
         :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
@@ -253,7 +253,10 @@ class GlobalTopology:
                         sum += np.sum(sp)
                 return round(mean(sum, len(comps)),5)
 
-
+    @staticmethod
+    @check_graph_consistency
+    def median_shortest_path_length(graph :Graph, implementation=imps.igraph) -> float:
+        pass
 
 
 
