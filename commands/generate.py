@@ -355,7 +355,7 @@ class Generate():
                 self.logging.warning(
                     "A path with the same name already exist. I will overwrite current drawing")
 
-            plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=True, keep_aspect_ratio=True, vertex_label_size=8, vertex_frame_color=frame_vertex_colour)
+            plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2, keep_aspect_ratio=True, vertex_label_size=8, vertex_frame_color=frame_vertex_colour)
 
         elif not self.args.no_plot and graph.vcount() >= 1000:
             self.logging.warning(

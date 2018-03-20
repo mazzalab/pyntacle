@@ -336,10 +336,10 @@ class Set():
             graph2_plotter.set_layouts()
 
             # plot input graphs
-            graph1_plotter.plot_graph(path=graph1_plot_path, bbox=plot_size, margin=20, edge_curved=True,
+            graph1_plotter.plot_graph(path=graph1_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
                                       keep_aspect_ratio=True, vertex_label_size=8,
                                       vertex_frame_color=graph_1_frame_colours)
-            graph2_plotter.plot_graph(path=graph2_plot_path, bbox=plot_size, margin=20, edge_curved=True,
+            graph2_plotter.plot_graph(path=graph2_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
                                       keep_aspect_ratio=True, vertex_label_size=8,
                                       vertex_frame_color=graph_2_frame_colours)
 
@@ -386,7 +386,7 @@ class Set():
 
                 output_graph_plotter.set_node_label(labels=output_graph.vs()["name"])
                 output_graph_plotter.set_layouts()
-                output_graph_plotter.plot_graph(path=output_plot_path, bbox=plot_size, margin=20, edge_curved=True,
+                output_graph_plotter.plot_graph(path=output_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
                                                 keep_aspect_ratio=True, vertex_label_size=8,
                                                 vertex_frame_color=intersection_frame_color_list)
 

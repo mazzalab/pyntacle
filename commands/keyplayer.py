@@ -520,7 +520,7 @@ class KeyPlayer():
                         "WARNING - A plot with the name ({}) already exists, overwriting it\n".format(
                             os.path.basename(plot_path)))
 
-                plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=True,
+                plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
                                       keep_aspect_ratio=True, vertex_label_size=8, vertex_frame_color=node_frames)
 
         elif graph.vcount() >= 1000:

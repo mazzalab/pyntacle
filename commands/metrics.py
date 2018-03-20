@@ -319,7 +319,7 @@ class Metrics():
                 plot_path = os.path.join(plot_dir, ".".join(["_".join(
                     ["pyntacle", graph["name"][0], "local_metrics_plot_",
                      runtime_date]), self.args.plot_format]))
-                plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=True,
+                plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
                                       keep_aspect_ratio=True, vertex_label_size=8, vertex_frame_color=node_frames)
 
             elif not self.args.no_plot and graph.vcount() >= 1000:
@@ -489,7 +489,7 @@ class Metrics():
                 # define layout
                 plot_graph.set_layouts()
 
-                plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=True,
+                plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
                                       keep_aspect_ratio=True, vertex_label_size=8, vertex_frame_color=node_frames)
 
                 if self.args.no_nodes:
@@ -510,7 +510,7 @@ class Metrics():
 
                     plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", graph["name"][0],"global_metrics_plot_nonodes",runtime_date]),self.args.plot_format]))
 
-                    plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=True,
+                    plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
                                           keep_aspect_ratio=True, vertex_label_size=8, vertex_frame_color=node_frames)
 
             elif not self.args.no_plot and graph.vcount() >= 1000:

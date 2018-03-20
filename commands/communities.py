@@ -446,7 +446,7 @@ class Communities():
 
                 graph_plotter.set_node_colours(col_list)
                 graph_plotter.set_layouts()
-                graph_plotter.plot_graph(path=main_plot_path, bbox=plot_size, margin=20, edge_curved=True,
+                graph_plotter.plot_graph(path=main_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
                                          keep_aspect_ratio=True, vertex_label_size=8,
                                          vertex_frame_color=bord_list)
             else:
@@ -475,7 +475,7 @@ class Communities():
                             "%d%m%Y%H%M")]), self.args.plot_format]))
 
                     plotter.set_layouts()
-                    plotter.plot_graph(path=comm_plot_path, bbox=plot_size, margin=20, edge_curved=True,
+                    plotter.plot_graph(path=comm_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
                                        keep_aspect_ratio=True, vertex_label_size=8,
                                        vertex_frame_color=[avail_colours_borders[i]] * comm.vcount())
 
