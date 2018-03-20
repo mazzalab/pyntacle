@@ -27,7 +27,7 @@ __license__ = u"""
 """
 Reserved utility to represent a graph into a plot that will be outputted by the pyntacle command line utils
 """
-
+import datetime
 from config import *
 from igraph import Graph, plot
 import os
@@ -307,7 +307,7 @@ class PlotGraph():
 
     def plot_graph(self, path=None, **kwargs):
         '''
-        Plot graph to a specific file, in several formats. Available formats: "jpg", "pdf", "svg", "png"
+        Plot graph to a specific file. Available formats: "jpg", "pdf", "svg", "png"
         
         :param path: optional - a path in which results will be plotted (deafulat is the current working directory)
         '''
@@ -315,7 +315,10 @@ class PlotGraph():
         formats = ["jpg", "pdf", "svg", "png"]
 
         if path is None:
-            path = os.path.join(os.getcwd(), "pyntacle_plot.pdf")
+            now = datetime.datetime.now()
+            now = now.strftime("%d-%m-%A_%H%M")
+            path = os.path.join(os.getcwd(), "pyntacle_plot" + now + ".pdf")
+            self.logger.info("plot will be stored as PDF at path {}".format(path))
 
         else:
             if os.path.splitext(path)[-1][1:] not in formats:
@@ -325,33 +328,15 @@ class PlotGraph():
         if self.layout is not None:
             visual_style["layout"] = self.layout
 
-        if self.node_labels:
-            visual_style["vertex_label"] = self.node_labels
+        additional_params = ["bbox", "margin", "edge_curved", "vertex_frame_color", "keep_aspect_ratio"]
 
-        if self.edge_labels:
-            visual_style["edge_label"] = self.node_labels
+        if kwargs:
+            for key in kwargs:
+                if key not in additional_params:
+                    raise KeyError("param {} cannot be specified".format(key))
+                else:
+                    visual_style[key] = kwargs[key]
 
-        if self.edge_widths:
-            visual_style["edge_width"] = self.edge_widths
-
-        if self.node_sizes:
-            visual_style["vertex_size"] = self.node_sizes
-
-        if self.node_shapes:
-            visual_style["vertex_shape"] = self.node_shapes
-
-        if self.node_colours:
-            visual_style["vertex_color"] = self.node_colours
-
-        additional_params = ["bbox", "margin", "edge_curved", "vertex_frame_color", "keep_aspect_ratio",
-                             "vertex_label_size"]
-
-        for key in kwargs:
-
-            if key not in additional_params:
-                raise KeyError("param {} cannot be specified".format(key))
-            else:
-                visual_style[key] = kwargs[key]
         random.seed(self.seed)
         plot(self.graph, **visual_style, target=path)
 
