@@ -644,7 +644,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         parser.add_argument('-f', '--format', metavar='',
                             choices=format_dictionary.keys(),
-                            help="Input format of the input graphs. Allowed values are 'adjmat' for adjacency matrix, 'edgelist' for edge list, sif for Simple Interaction format, \'dot\' for DOT file, \'bin\' for boinary file"
+                            help="Input format of the input graphs. Allowed values are 'adjmat' for adjacency matrix, 'edgelist' for edge list, sif for Simple Interaction format, \'dot\' for DOT file, \'bin\' for binary file. "
                                  "The two files must have the same format. If not, use pyntacle Convert to convert your files to the same format")
 
         parser.add_argument("--no-header", "-n", action="store_true",
@@ -681,6 +681,8 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument('--largest-component', action='store_true',
                             help='Use this option to perform a set operation only on the largest component of a graph. If two components of the same size exist, this will not work. Recommended for very fragmented network with only one large component')
 
+        parser.add_argument('--report-format', '-r', default="txt", choices=["txt", "csv", "xlsx", "tsv"],
+                            help="Specify a different report format according to your tastes. \"txt\" and \"tsv\" are tab delimited format. Available formats:{txt, tsv, csv, xlsx}")
 
 
         subparsers = parser.add_subparsers(metavar='', help=argparse.SUPPRESS)

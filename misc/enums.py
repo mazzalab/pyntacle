@@ -121,3 +121,4 @@ class Reports(Enum):
     KP_greedy = auto()
     KP_bruteforce = auto()
     Communities = auto()
+    Set = auto()

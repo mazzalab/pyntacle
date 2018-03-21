@@ -6,6 +6,8 @@ from exceptions.multiple_solutions_error import MultipleSolutionsError
 from graph_operations.logic_ops import GraphSetter
 from io_stream.exporter import PyntacleExporter
 from pyntacle_commands_utils.plotter import PlotGraph
+from pyntacle_commands_utils.reporter import *
+from misc.enums import Reports
 from tools.graph_utils import GraphUtils
 from misc.graph_load import *
 
@@ -172,6 +174,7 @@ class Set():
         # NOT prefixing the argument with -- means it's not optional
 
         # GraphSetter(graph1=graph1, graph2=graph2,new_name = new_name
+        
         if self.args.which == "union":
             sys.stdout.write(
                 "Running pyntacle Union on input graph {} and  {}\n".format(self.args.input_file_1,
@@ -197,7 +200,7 @@ class Set():
 
         elif self.args.which == "difference":
             sys.stdout.write(
-                "Running pyntacle Intersection on input graph {} and  {}\n".format(self.args.input_file_1,
+                "Running pyntacle Difference on input graph {} and  {}\n".format(self.args.input_file_1,
                                                                                   self.args.input_file_2))
 
             output_graph = setter.difference()
@@ -209,6 +212,7 @@ class Set():
             self.logging.critical(
                 "This should not happen. Please contact pyntacle developer and send a command line, along with a log. Quitting\n")
             sys.exit(1)
+
 
         # print pyntacle_commands_utils to command line
         sys.stdout.write("pyntacle Report on set Operation: {}\n".format(self.args.which))
@@ -362,6 +366,7 @@ class Set():
                 intersection_node_color_list = []
                 intersection_frame_color_list = []
 
+                intersection_set = []
                 for v in output_graph.vs():
                     parent_g1 = graph1["name"][0]
                     parent_g2 = graph2["name"][0]
@@ -369,7 +374,8 @@ class Set():
                     if parent_g1 in v["__parent"] and parent_g2 in v["__parent"]:
                         intersection_node_color_list.append(node_intersection_colour)
                         intersection_frame_color_list.append(node_intersection_frame)
-
+                        intersection_set.append(v["name"])
+                        
                     elif parent_g1 in v["__parent"] and not parent_g2 in v["__parent"]:
                         intersection_node_color_list.append(graph_1_colour)
                         intersection_frame_color_list.append(graph_1_frame)
@@ -396,6 +402,38 @@ class Set():
         elif not self.args.no_plot and (graph1.vcount() >= 1000 or graph2.vcount() >= 1000):
             self.logging.warning(
                 "One of the two input Graphs exceeds pyntacle limits for plotting (maximum 1000 nodes). Will not draw Graph")
+        
+        
+        # Report
+        reporter1 = pyntacleReporter(graph=graph1)  # init reporter1
+        reporter2 = pyntacleReporter(graph=graph2)  # init reporter2
+        reporter_final = pyntacleReporter(graph=output_graph)
+        
+        set1_attr_dict = OrderedDict()
+        set2_attr_dict = OrderedDict()
+        setF_attr_dict = OrderedDict()
+
+        if self.args.which == 'intersection':
+            setF_attr_dict['Nodes in common:'] = (len(intersection_set), ','.join(intersection_set))
+        reporter1.create_report(Reports.Set, set1_attr_dict)
+        reporter2.create_report(Reports.Set, set2_attr_dict)
+        reporter_final.create_report(Reports.Set, setF_attr_dict)
+        
+        reporter1.report[1] = ['\n--- Graph 1 ---']
+        reporter2.report[1] = ['--- Graph 2 ---']
+        del(reporter1.report[-1])
+        del(reporter2.report[-1])
+        del(reporter1.report[0])
+        del(reporter2.report[0])
+        del(reporter_final.report[0])
+        for e in reporter_final.report:
+            if e[0] == 'Pyntacle Command:':
+                e[1] = e[1] + ' ' + self.args.which
+        
+        reporter_final.report[0] = ['\n--- Resulting Graph ---']
+        reporter1.report.extend(reporter2.report)
+        reporter1.report.extend(reporter_final.report)
+        reporter1.write_report(report_dir=self.args.directory, format=self.args.report_format)
         cursor.stop()
         sys.stdout.write("pyntacle Set completed successfully\n")
         sys.exit(0)

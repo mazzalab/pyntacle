@@ -93,6 +93,8 @@ class pyntacleReporter():
             self.__bruteforce_report(reportdict=report)
         elif report_type == Reports.Communities:
             self.__communities_report(reportdict=report)
+        elif report_type == Reports.Set:
+            self.__set_report(reportdict=report)
         else:
             raise ValueError("Report specified does not exists")
 
@@ -112,7 +114,7 @@ class pyntacleReporter():
                 "a report must be created first using the \"create_report()\" function")
 
         else:
-            #cast every elementy of the list of lists to string, just in case:
+            #cast every element of the list of lists to string, just in case:
             for x in self.report:
                 list(map(str, x))
 
@@ -135,10 +137,13 @@ class pyntacleReporter():
 
         if len(self.graph["name"]) > 1:
             self.logger.warning("using first \"name\" attribute of graph name since more than one is specified")
-
+        
         graphname = self.graph["name"][0]
-
-        report_path = os.path.join(report_dir, "_".join(["pyntacle_report", graphname, self.report_type.name, self.dat])+".tsv")
+        
+        if self.report_type.name == 'Set':
+            report_path = os.path.join(report_dir, "_".join(["pyntacle_report", self.report_type.name, self.dat])+".tsv")
+        else:
+            report_path = os.path.join(report_dir, "_".join(["pyntacle_report", graphname, self.report_type.name, self.dat])+".tsv")
 
         extension = choices[format]
 
@@ -364,3 +369,7 @@ class pyntacleReporter():
 
         for k in reportdict.keys():
             self.report.append([k, reportdict[k][0], reportdict[k][1], reportdict[k][2]])
+            
+    def __set_report(self, reportdict: OrderedDict):
+        for k in reportdict.keys():
+            self.report.append([k, reportdict[k][0], reportdict[k][1]])
