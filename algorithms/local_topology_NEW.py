@@ -523,27 +523,53 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def average_shortest_path_length(graph: Graph, nodes=None, exclude_inf=True, implementation=imps.auto) -> list:
+    def average_shortest_path_length(graph: Graph, nodes=None, implementation=imps.auto) -> list:
+        """
+
+        :param graph:
+        :param nodes:
+        :param implementation:
+        :return:
+        """
         pass
 
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
     def median_shortest_path_length(graph: Graph, nodes=None, exclude_inf=True, implementation=imps.auto) -> list:
-        pass
+        """
+
+        :param graph:
+        :param nodes:
+        :param exclude_inf:
+        :param implementation:
+        :return:
+        """
 
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
     def maximum_shortest_path_length(graph: Graph, nodes=None, exclude_inf=True, implementation=imps.auto) -> list:
+        """
+        Given a node or a set of nodes, computes the maximum shortest path from that node to each node pairs connected
+        to that node. If the node is an isolate, `nan` is returned. Useful when we have to determint ehe max distance
+        between a node and all other nodes.
+        :param Graph graph: an `igraph.Graph` object. The graph should have specific properties. Please see the
+        "Minimum requirements" specifications in pyntacle's manual
+        :param nodes: if a node name, returns the degree of the input node. If a list of node names,
+        the shortest path between the input nodes and all other nodes in the graph is returned for all node names.
+        If None (default), the degree is computed for the whole graph.
+        :param implementation :an enumerator containing the type of parallelization that will be used. Choices are:
+        * **`implementation.cpu`**: parallelize the SP search using the maximum number of threads available on the CPU
+        * **`implementation.gpu`**: parallelize the SP search using a GPU implementation and nVidia Graphics.
+        **TO BE IMPLEMENTED**
+        **CAUTION**: this will not work if the GPU is not present or CUDA compatible.
+        * **`implementation.auto`**: performs the shortest path using criteria defined by us, according to the machine
+        specifications and the graph topology.
+        :return: a list containing the maximum shortest path for each node (if nodes=None) or aa list containing all the
+        maximum shortest path lengths for each node
+        """
         pass
-
-    @staticmethod
-    @check_graph_consistency
-    @vertexdoctor
-    def minimum_shortest_path_length(graph: Graph, nodes=None, implementation=imps.auto) -> list:
-        pass
-
 # todo missing stuff:
 # todo shortest path cpu: single nodes or group of nodes
 # todo shortest path gpu: single nodes or group of nodes
@@ -552,5 +578,5 @@ class LocalTopology:
 #todo average sp length for each node
 #todo median sp_length for each node
 # todo max sp length for each node
-# todo min sp length for each node
 # todo Mauro: specify numpy maximum allocation in RAM (in "Requirements")
+#todo Mauro. specify number of cores (COU) for numba
