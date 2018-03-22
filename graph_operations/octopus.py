@@ -233,15 +233,6 @@ class Octopus:
             node_names = graph.vs["name"]
         AddAttributes(graph).add_node_attributes('mediane_shortest_path_length',
                                                  LocalTopology.median_shortest_path_length(graph, node_names, exclude_inf, implementation), node_names)
-
-    @staticmethod
-    @check_graph_consistency
-    def add_maximum_shortest_path_length(graph, node_names=None, exclude_inf=True, implementation=imps.auto):
-        if node_names is None:
-            node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes('maximum_shortest_path_length',
-                                                 LocalTopology.maximum_shortest_path_length(graph, node_names, exclude_inf, implementation), node_names)
-
    
     # Metrics
     

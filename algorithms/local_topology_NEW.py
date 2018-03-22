@@ -29,13 +29,14 @@ Compute Local Topology metrics for all nodes in the graph or for a set of nodes
 """
 from config import *
 from math import isinf
+from numba import cuda, jit, prange
+import numpy as np
+import statistics
 from misc.graph_routines import *
 from misc.enums import SP_implementations as imps
 from misc.enums import GraphType
 from misc.shortest_path_modifications import *
 from tools.graph_utils import GraphUtils as ut
-from numba import cuda, jit, prange
-import numpy as np
 from misc.implementation_seeker import implementation_seeker
 
 
@@ -401,6 +402,7 @@ class LocalTopology:
         """
 
         if implementation == imps.auto:
+            #todo check if this
             implementation = implementation_seeker(graph) #call the "search" for an automatic implementation
 
         if implementation == imps.gpu:
@@ -525,36 +527,9 @@ class LocalTopology:
     @vertexdoctor
     def average_shortest_path_length(graph: Graph, nodes=None, implementation=imps.auto) -> list:
         """
-
-        :param graph:
-        :param nodes:
-        :param implementation:
-        :return:
-        """
-        pass
-
-    @staticmethod
-    @check_graph_consistency
-    @vertexdoctor
-    def median_shortest_path_length(graph: Graph, nodes=None, exclude_inf=True, implementation=imps.auto) -> list:
-        """
-
-        :param graph:
-        :param nodes:
-        :param exclude_inf:
-        :param implementation:
-        :return:
-        """
-
-    @staticmethod
-    @check_graph_consistency
-    @vertexdoctor
-    def maximum_shortest_path_length(graph: Graph, nodes=None, exclude_inf=True, implementation=imps.auto) -> list:
-        """
-        Given a node or a set of nodes, computes the maximum shortest path from that node to each node pairs connected
-        to that node. If the node is an isolate, `nan` is returned. Useful when we have to determint ehe max distance
-        between a node and all other nodes.
-        :param Graph graph: an `igraph.Graph` object. The graph should have specific properties. Please see the
+        Computes the average of connected shortest path for each a single node, a lists of nodes or all nodes in the
+        'igraph.Graph' object if 'None' (default).
+        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
         "Minimum requirements" specifications in pyntacle's manual
         :param nodes: if a node name, returns the degree of the input node. If a list of node names,
         the shortest path between the input nodes and all other nodes in the graph is returned for all node names.
@@ -566,17 +541,78 @@ class LocalTopology:
         **CAUTION**: this will not work if the GPU is not present or CUDA compatible.
         * **`implementation.auto`**: performs the shortest path using criteria defined by us, according to the machine
         specifications and the graph topology.
-        :return: a list containing the maximum shortest path for each node (if nodes=None) or aa list containing all the
-        maximum shortest path lengths for each node
+        :return: a list of floats with the average shortest path lists of each connected nodes. If a node is an isolate, 'nan' will be returned.
         """
-        pass
+        if implementation == imps.auto:
+            implementation  = implementation_seeker()
+
+        if implementation == imps.igraph:
+            sps = LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
+            avg_sps = []
+            for elem in sps:
+                elem = [x for x in elem if not(isinf(x)) and x > 0]
+                if len(elem) > 0:
+                    avg_sps.append(sum(elem) / float(len(elem)))
+                else:
+                    avg_sps.append(float("nan"))
+        else: #np array
+            sps = LocalTopology.shortest_path_pyntacle(graph=graph, nodes=nodes)
+            sps[sps == 0] = np.nan
+            var = sps[sps > graph.vcount()] == np.nan
+            avg_sps = np.nanmean(var, axis=0)
+            avg_sps = avg_sps.tolist()
+
+        return avg_sps
+
+    @staticmethod
+    @check_graph_consistency
+    @vertexdoctor
+    def median_shortest_path_length(graph: Graph, nodes=None, implementation=imps.auto) -> list:
+        """
+        Computes the median among connected shortest path for each a single node, a lists of nodes or all nodes in the
+        'igraph.Graph' object if 'None' (default).
+        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
+        "Minimum requirements" specifications in pyntacle's manual
+        :param nodes: if a node name, returns the degree of the input node. If a list of node names,
+        the shortest path between the input nodes and all other nodes in the graph is returned for all node names.
+        If None (default), the degree is computed for the whole graph.
+        :param implementation :an enumerator containing the type of parallelization that will be used. Choices are:
+        * **`implementation.cpu`**: parallelize the SP search using the maximum number of threads available on the CPU
+        * **`implementation.gpu`**: parallelize the SP search using a GPU implementation and nVidia Graphics.
+        **TO BE IMPLEMENTED**
+        **CAUTION**: this will not work if the GPU is not present or CUDA compatible.
+        * **`implementation.auto`**: performs the shortest path using criteria defined by us, according to the machine
+        specifications and the graph topology.
+        :return: a list of floats with the median shortest path(s) of each connected nodes. If a node is an isolate, 'nan' will be returned.
+        """
+
+        if implementation == imps.auto:
+            implementation = implementation_seeker()
+
+        if implementation == imps.igraph:
+            sps = LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
+            avg_sps = []
+            for elem in sps:
+                elem = [x for x in elem if not (isinf(x)) and x > 0] #remove disconnected nodes and diagonal
+                if len(elem) > 0:
+                    avg_sps.append(statistics.median(elem))
+                else:
+                    avg_sps.append(float("nan"))
+
+        else:  # np array
+            sps = LocalTopology.shortest_path_pyntacle(graph=graph, nodes=nodes)
+            sps[sps == 0] = np.nan
+            var = sps[sps > graph.vcount()] == np.nan
+            avg_sps = np.nanmedian(var, axis=0)
+            avg_sps = avg_sps.tolist()
+
+        return avg_sps
+
 # todo missing stuff:
 # todo shortest path cpu: single nodes or group of nodes
 # todo shortest path gpu: single nodes or group of nodes
 # todo all the other graphs
+# todo automatic implementation becomes global
 # todo missing methods:
-#todo average sp length for each node
-#todo median sp_length for each node
-# todo max sp length for each node
 # todo Mauro: specify numpy maximum allocation in RAM (in "Requirements")
-#todo Mauro. specify number of cores (COU) for numba
+# todo Mauro. specify number of cores (COU) for numba

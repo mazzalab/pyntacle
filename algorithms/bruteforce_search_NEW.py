@@ -173,3 +173,6 @@ class BruteforceSearch:
             sys.stdout.write("The best kpp-sets of size {} is {} with score {}\n".format(kpp_size, result, maxKpp))
 
         return result, round(maxKpp, 5)
+
+#todo missing stuff:
+#todo Tom: implement bruteforce parallel you wrote pleaseeeee!
