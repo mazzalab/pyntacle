@@ -42,15 +42,16 @@ if pycairo_check is None:
 
 class PlotGraph():
     """
-    This method creates a report according to the type of analysis run by pyntacle
+    This method prepare the igraph.Graph object to be plotted into a file into several formats, by setting proper
+    attributes defined by igraph and by defining other external properties such as layouts.
     """
     logger = None
 
     def __init__(self, graph: Graph, seed=None):
         """
         Initialize the plotter function by importing the graph and (optionally) defining a seed for custom graph
-        reproducibility
-        :param Graph graph: the input `igraph.Graph` object
+        reproducibility. Will not touch the input `igraph.Graph`, that will  therefore be copied.
+        :param Graph graph: the input `igraph.Graph` object. Will be copied into this method in order to preserve the integrity of the input graph
         :param int seed: optionl: define a custom seed to reproduce the graph. plot. By default, a seed (1987) is stored
         """
 
@@ -73,10 +74,13 @@ class PlotGraph():
 
     def set_node_labels(self, labels: list):
         """
-        Take a list corresponding to node properties (e.g.: a graph attribute) and assign it to the "" function.
-        **WARNING** the labelling is positional, so the first item in label should match the first node, the second
-        label the second node, and so on. Will raise a warning if the two list are not of the same length, and slice
-        the list if it's too long. Will also overwrite any attribute that matches the "attribute" parameter.
+        Take a list corresponding to node labels that you want to represent in the plot (e.g., node ["name"] attribute)
+        and assign it to the "label" attribute in order to be recognized by the `igraph.plot` function.
+        **WARNING if a node attribute named "label" exists, will be cancelled and overwritten.
+        **WARNING** the labelling is positional, so the first item in `labels` should match the first node, the second
+        label the second node, and so on.
+        **WARNING** if the `labels` list is shorter than the total number of nodes, remaining nodes won't have a label
+        in plot. On the other hand, if the list is longer, it wil be sliced.
         :param: list labels: a list of node labels (must be strings)
         """
 
@@ -104,11 +108,14 @@ class PlotGraph():
 
     def set_node_colors(self, colors: list):
         """
-        Take a list corresponding to node properties (e.g.: a graph attribute) and assign it to the "colors" pòasrameter
-        in the `igraph.plot`.
-        **WARNING** the coloring is positional, so the first item in "colors" should match the first node, the second
-        color the second node, and so on. Will raise a warning if the two list are not of the same length, and slice
-        the list if it's too long. Will also overwrite any attribute that matches the "attribute" parameter.
+        Take a list corresponding to node colors. (either the literal name, e.g. "white" or the RGB color e.g.#F0000)
+        that you want to represent in the plot and assign it to the "color"  node attribute  in the `igraph.Graph` object
+        in order to be recognized by the `igraph.plot` function.
+        **WARNING if a node attribute named "color" exists, will be cancelled and overwritten.
+        **WARNING** the coloring is positional, so the first item in `colors`should match the first node, the second
+        label the second node, and so on.
+        **WARNING** if the `colors` list is shorter than the total number of nodes, remaining nodes won't be colored
+        in plot (defaul is "red"). On the other hand, if the list is longer, it wil be sliced.
         :param: list colors: a list of node colors (must be strings)
         """
 
@@ -136,11 +143,14 @@ class PlotGraph():
 
     def set_node_sizes(self, sizes: list):
         """
-        Take a list corresponding to node properties (e.g.: a graph attribute) and assign it to the "sizes" parameter
-        in the `igraph.plot` object.
-        **WARNING** thenode sizing is assigned positionally, so the first item in "sizes" should match the first node,
-        the second label the second node, and so on. Will raise a warning if the two list are not of the same length,
-        and slice the list if it's too long. Will also overwrite any attribute that matches the "attribute" parameter.
+        Take a list corresponding to node sizes. (positive float or integers)
+        that you want to represent in the plot and assign it to the "size"  node attribute  in the `igraph.Graph` object
+        in order to be recognized by the `igraph.plot` function.
+        **WARNING if a node attribute named "size" exists, will be cancelled and overwritten.
+        **WARNING** the sizing is positional, so the first item in `sizes`should match the first node, the second
+        label the second node, and so on.
+        **WARNING** if the `sizes` list is shorter than the total number of nodes, remaining nodes will. have the default
+        size. On the other hand, if the list is longer, it wil be sliced.
         :param: list sizes: a list of node sizes (must be positive integers or floats)
         """
         if "size" in self.graph.vs.attributes():
@@ -167,8 +177,8 @@ class PlotGraph():
 
     def set_node_shapes(self, shapes:list):
         """
-        Take a list corresponding to node properties (e.g.: a graph attribute) in order to assign it to the "shapes" parameter
-        in the `igraph.plot` object. Available shapes are:
+        Take a list corresponding to node shapes in order to assign it to the "shape" node attribute, so it will be
+        recognized by the `igraph.plot` object. Available shapes that will be plotted are:
         **rectangle*
         **circle*
         **triangle-up*
@@ -176,10 +186,11 @@ class PlotGraph():
         **square*
         **hidden* (node won't be shown)
         other values are not supported.
-        **WARNING** the node shaping is assigned positionally, so the first item in "sizes" should match the first node,
-        the second label the second node, and so on. Will raise a warning if the two list are not of the same length,
-        and slice the list if it's too long. Will also overwrite any attribute that matches the "attribute" parameter.
-        :param: list shapes: a list of node shapes (must be positive integers or floats)
+        **WARNING if a node attribute named "shapes" exists, will be cancelled and overwritten
+        **WARNING** the node shaping is assigned positionally, so the first item in "shapes" should match the first node,
+        the second shape the second node, and so on. Will raise a warning if the two list are not of the same length,
+        and slice the list if it's too long.
+        :param: list shapes: a list of node shapes (must be strings)
         """
 
         shapes_legal_values = ["rectangle", "circle", "hidden", "triangle-up", "triangle-down", "square"]
@@ -211,10 +222,14 @@ class PlotGraph():
 
     def set_edge_label(self, labels: list):
         """
-        Take a list corresponding to edge properties (e.g.: an edge attribute) and  assign it to the corresponding edges
-        **WARNING** the labelling is positional, so the first item in label should match the first edge, the second
-        label the second edge, and so on. Will raise a warning if the two list are not of the same length.
-        :param: labels: a list of lables (must be strings)
+        Take a list corresponding to edge labels that you want to represent in the plot (e.g., edge ["name"] attribute,
+        if present) and assign it to the "label" edge attribute in order to be recognized by the `igraph.plot` function.
+        **WARNING if an edge attribute named "labels" exists, will be cancelled and overwritten
+        **WARNING** the labelling is positional, so the first item in `labels` should match the first edge, the second
+        edge the second node, and so on.
+        **WARNING** if the `labels` list is shorter than the total number of edges, remaining edges won't have a label
+        in plot. On the other hand, if the list is longer, it wil be sliced.
+        :param: list labels: a list of edge labels (must be strings)
         """
 
         if "label" in self.graph.es.attributes():
@@ -241,10 +256,12 @@ class PlotGraph():
 
     def set_edge_widths(self, widths: list):
         """
-        Take a list corresponding to edge properties (e.g.: an edge attribute) and  assign it to the corresponding edges
-        **WARNING** the labelling is positional, so the first item in label should match the first edge, the second
-        label the second edge, and so on. Will raise a warning if the two list are not of the same length.
-        :param: labels: a list of lables (must be strings)
+        Take a list if positive floats or integers  and  assign it to the corresponding edges
+        **WARNING if an edge attribute named "widths" exists, will be cancelled and overwritten
+        **WARNING** the width assignment is positional, so the first item in `widths` should match the first edge,
+        the second width the second edge, and so on.
+        **WARNING** if the `widhts` list is shorter than the total number of edges, remaining edges won't have a label
+        in plot. On the other hand, if the list is longer, it wil be sliced.
         """
 
         if "width" in self.graph.es.attributes():
@@ -269,18 +286,18 @@ class PlotGraph():
 
         self.graph.es["width"] = widths
 
-    def set_layouts(self, layout="auto", **kwargs):
+    def set_layouts(self, layout="fruchterman_reingold", **kwargs):
         """
         Define a series of layouts imported from the igraph package in order to plot a given geometry
-        :param str layout: one of the following layouts: "circle",
-        :param dict **kwargs: option values that will be passed to the layout functions. Will raise an error if the params passed are illegal for the given layout
-        "auto" (automatic implementation, choosen by default by igraph using node density at a proxy),
-        "fruchterman_reingold"/"fr" (force directed),
-        "kamada_kawai"/"kk" (force directed), "large_graph"/"lgl",
-        "random",va
-        "reingold_tilford",
-        "rt" (for trees).
-        Default is fruchterman_reingold
+        :param str layout: one of the following layouts:
+        *"circle": circular layout
+        *"auto": automatic implementation, chosen by default by `igraph` using node density at a proxy,
+        *"fruchterman_reingold"/"fr": force directed, useful for scale free graphs
+        *"kamada_kawai"/"kk" (force directed), "large_graph"/"lgl",
+        *"random", assign the node and the edges randomly in space
+        *"reingold_tilford","rt". useful for tree representation.
+        By Default, "fruchterman_reingold" is selected.
+        :param str layout: a type of layout that will be assigned to the `layout` parameter in the `igraph.plot` object
         :param kwargs: a list of parameters that can be passed to each of the layout method
         """
         #todo does not plot the same graph (even with seed)
