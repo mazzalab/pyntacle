@@ -351,7 +351,7 @@ class LocalTopology:
             if not isinstance(weights, list):
                 raise TypeError("Weights must be a list of floats")
 
-            if not all(isinstance(x, float) for x in weights):
+            if not all(isinstance(x, (float, type(None))) for x in weights):
                 raise ValueError("Weights must be a list of floats")
 
             if len(weights) > graph.ecount():
@@ -362,7 +362,7 @@ class LocalTopology:
         
         if nodes is not None:
             nodes = ut(graph).get_node_indices(nodes)
-        
+
         return graph.pagerank(vertices=nodes, damping=damping, directed=False, weights=weights, implementation="arpack")
 
     @staticmethod

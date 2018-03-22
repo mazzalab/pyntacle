@@ -164,50 +164,11 @@ class Metrics():
                         sys.exit(1)
 
                     else:
-                        #todo: qui va importattributes
+                        #Needs a file that has a 'weights' column.
                         sys.stdout.write("Adding Edge Weights from file {}\n".format(self.args.weights))
-                        
-                        ImportAttributes(graph=graph).import_node_attributes(self.args.weights, sep=separator_detect(self.args.weights))
-                        weights = graph.vs()["weights"]
-                        # graph = GraphLoad(self.args.input_file, self.args.format, header).graph_load()
-                        #
-                        # weights = pd.read_csv(filepath_or_buffer=self.args.weights, sep=weights_sep)
-                        #
-                        # # Check attributes file's format
-                        # if any(i in weights.iloc[0, 0] for i in ' ()'):
-                        #     mode = 'cytoscape'
-                        #     weightscol = 1
-                        # else:
-                        #     mode = 'standard'
-                        #     weightscol = 2
-                        #
-                        # # convert the weights to floats
-                        # try:
-                        #     [float(x) for x in weights[weights.columns[weightscol]].values]
-                        #
-                        # except (ValueError, TypeError) as errs:
-                        #     sys.stderr.write("Weights must be float or integers. Quitting\n")
-                        #     sys.exit(1)
-                        #
-                        # if len(weights.columns) >= 2:
-                        #     self.logging.warning(
-                        #         "Using column 3 as edge weights for pagerank. Adding the other values as edge attributes, but they will not be used for pagerank computing\n")
-                        #     weights_name = weights.columns[weightscol]  # store the name of the attribute
-                        #     print("name", weights_name)
-                        #     ImportAttributes(graph).import_edge_attributes(file_name=self.args.weights,
-                        #                                                    sep=weights_sep,
-                        #                                                    mode=mode)
-                        #     print(list(graph.es))
-                        #     weights_list = [float(x) if isinstance(x, str) else None for x in
-                        #                     graph.es()[weights_name]]
-                        #     #
-                        #     # local_attributes.pagerank(index_list=index_list, weights=weights_list,
-                        #     #                           damping=self.args.damping_factor, recalculate=True)
-                        #
-                        # else:
-                        #     sys.stderr(
-                        #         "weights file must contains at least two columns, the first should represent node names and the second ther respective weights. Quitting.\n")
-                        #     sys.exit(1)
+                        ImportAttributes(graph=graph).import_edge_attributes(self.args.weights, sep=separator_detect(self.args.weights), mode=self.args.weights_format)
+                        weights = [float(x) if x!=None else 1.0 for x in graph.es()["weights"]]
+
                 else:
                     weights = None
                     

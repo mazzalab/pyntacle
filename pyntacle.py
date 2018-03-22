@@ -280,7 +280,11 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         local_subparser.add_argument("--damping-factor", default=0.85, type=float,
                                      help="for pagerank, specify a damping factor (default is 0.85)")
         local_subparser.add_argument("--weights", "-w", type=str, default=None,
-                                     help="for pagerank, an optional file of edge attributes with an header and relative node names of the edge on the first two columns that will be used. See documentation for examples.17esimo")
+                                     help="for pagerank, an optional file of edge attributes with an header and relative node names of the edge on the first two columns that will be used. See documentation for examples.")
+        
+        local_subparser.add_argument("--weights-format", choices=["standard", "cytoscape"], metavar="",
+                                          default="standard",
+                                          help="Specify the format of the input weight attributes file. Choices are \"standard\" for standard edge attributes file (a dataframe) or \"cytoscape\" for Cytoscape edge attribute file. Default is \"default\"")
 
         local_subparser.set_defaults(which='local')
 
@@ -570,9 +574,6 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         fastgreedy_subparser.add_argument("--weights-format", choices=["standard", "cytoscape"], metavar="",
                                           default="standard",
                                           help="Specify the format of the input weight attributes file. Choices are \"standard\" for standard edge attributes file (a dataframe) or \"cytoscape\" for Cytoscape edge attribute file. Default is \"default\"")
-
-        fastgreedy_subparser.add_argument("--weights-name", choices=["default", "cytoscape"], metavar="",
-                                          help="specify the name of the column attribute that will be used to divide module. If not specified, the first column after the edges in the weights file will be taken")
 
         infomap_subparser = subparsers.add_parser("infomap",
                                                   usage='pyntacle.py communities infomap [-h] [-v] [-o] [-d] [-dr] [-m] [-M] [-c] [-C] [--no-plot]',

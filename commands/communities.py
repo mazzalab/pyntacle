@@ -91,7 +91,6 @@ class Communities():
         # initialize module finder method
         communities = CommunityFinder(graph=graph)
         # initialize ImportAttributes method
-        attrs = ImportAttributes(graph=graph)
 
         # define plot sizes
         if self.args.plot_dim:  # define custom format
@@ -129,38 +128,12 @@ class Communities():
                     sys.exit(1)
 
                 else:
-                    sep = separator_detect(self.args.weights)
-                    try:
-                        attrnames = attrs.import_edge_attributes(file_name=self.args.weight, sep=sep)
-                        # get attribute name
-                        if self.args.weights_name is None:
-                            self.args.weights_name = attrnames[0]
+                    ImportAttributes(graph=graph).import_edge_attributes(self.args.weights, sep=separator_detect(self.args.weights), mode=self.args.weights_format)
+                    weights = [float(x) if x != None else 1.0 for x in graph.es()["weights"]]
 
-                        else:
-                            if self.args.weights_name not in graph.es.attributes():
-                                sys.stderr(
-                                    "weight Name {} was not imported into Graph, check your weights file. Quitting\n".format(
-                                        self.args.weights_name))
-
-                        # cast every weight to float
-                        for i, weight in graph.es()[self.args.weights_name]:
-                            try:
-                                graph.es(i)[self.args.weights_name] = float(weight)
-                            except:
-                                self.logging.warning(
-                                    "cannnot convert {} to float, replacing it with NoneType".format(weight))
-                                graph.es(i)[self.args.weights_name] = None
-
-                        graph.es()[self.args.weights_name] = [float(x) if x is not None else None for x in
-                                                              graph.es()[self.args.weights_name]]
-
-                    except:
-                        sys.stderr.write(
-                            "Something went wrong during the weights importing. See help and documentation. Quitting.\n")
-                        sys.exit(1)
             else:
-                self.args.weights_name = None
-
+                weights = None
+                
             if self.args.clusters is not None:
                 try:
                     self.args.clusters = int(self.args.clusters)
@@ -170,7 +143,7 @@ class Communities():
                     sys.exit(1)
 
             sys.stdout.write("Running Community finding using fastgreedy algorithm\n")
-            communities.fastgreedy(weights=self.args.weights_name, n=self.args.clusters)
+            communities.fastgreedy(weights=weights, n=self.args.clusters)
             mods = communities.get_modules()
             algorithm = "fastgreedy"
 
@@ -201,36 +174,11 @@ class Communities():
                     sys.exit(1)
 
                 else:
-                    sep = separator_detect(self.args.weights)
-                    try:
-                        attrnames = attrs.import_edge_attributes(file_name=self.args.weight, sep=sep)
-                        # get attribute name
-                        if self.args.weights_name is None:
-                            self.args.weights_name = attrnames[0]
+                    ImportAttributes(graph=graph).import_edge_attributes(self.args.weights, sep=separator_detect(self.args.weights), mode=self.args.weights_format)
+                    weights = [float(x) if x != None else 1.0 for x in graph.es()["weights"]]
 
-
-                        else:
-                            if self.args.weights_name not in graph.es.attributes():
-                                sys.stderr(
-                                    "weight Name {} was not imported into Graph, check your weights file. Quitting\n".format(
-                                        self.args.weights_name))
-
-                        # cast every weight to float
-                        for i, weight in graph.es()[self.args.weights_name]:
-                            try:
-                                graph.es(i)[self.args.weights_name] = float(weight)
-                            except:
-                                self.logging.warning(
-                                    "cannnot convert {} to float, replacing it with NoneType".format(weight))
-                                graph.es(i)[self.args.weights_name] = None
-
-                    except:
-                        sys.stderr.write(
-                            "Something went wrong during the weights importing. See help and documentation. Quitting.\n")
-                        sys.exit(1)
-
-                    graph.es()[self.args.weights_name] = [float(x) if x is not None else None for x in
-                                                          graph.es()[self.args.weights_name]]
+            else:
+                weights = None
 
             if self.args.clusters is not None:
                 try:
@@ -243,7 +191,7 @@ class Communities():
             sys.stdout.write(
                 "Running Community finding using community walktrap algorithm at maximum {} steps\n".format(
                     self.args.steps))
-            communities.community_walktrap(weights=self.args.weights_name, n=self.args.clusters,
+            communities.community_walktrap(weights=weights, n=self.args.clusters,
                                            steps=self.args.steps)
             mods = communities.get_modules()
             algorithm = "community-walktrap"

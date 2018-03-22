@@ -123,13 +123,14 @@ class Octopus:
                                                   GlobalTopology.average_shortest_path_length(graph,
                                                                                               implementation))
         
-    @staticmethod
-    @check_graph_consistency
-    def add_median_shortest_path_length(graph):
-        implementation = imps.igraph  # Todo: qui va creato il decisore che determina se usare gpu o cpu
-        AddAttributes(graph).add_graph_attributes('median_shortest_path_length',
-                                                  GlobalTopology.median_shortest_path_length(graph,
-                                                                                              implementation))
+    # @staticmethod
+    # @check_graph_consistency
+    # def add_median_shortest_path_length(graph):
+    #     implementation = imps.igraph  # Todo: qui va creato il decisore che determina se usare gpu o cpu
+    #     AddAttributes(graph).add_graph_attributes('median_shortest_path_length',
+    #                                               GlobalTopology.median_shortest_path_length(graph,
+    #                                                                                           implementation))
+    
     # Local
     @staticmethod
     @check_graph_consistency
@@ -240,14 +241,6 @@ class Octopus:
             node_names = graph.vs["name"]
         AddAttributes(graph).add_node_attributes('maximum_shortest_path_length',
                                                  LocalTopology.maximum_shortest_path_length(graph, node_names, exclude_inf, implementation), node_names)
-
-    @staticmethod
-    @check_graph_consistency
-    def add_minimum_shortest_path_length(graph, node_names=None, exclude_inf=True, implementation=imps.auto):
-        if node_names is None:
-            node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes('minimum_shortest_path_length',
-                                                 LocalTopology.minimum_shortest_path_length(graph, node_names, exclude_inf, implementation), node_names)
 
    
     # Metrics

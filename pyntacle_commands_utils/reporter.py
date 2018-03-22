@@ -371,5 +371,7 @@ class pyntacleReporter():
             self.report.append([k, reportdict[k][0], reportdict[k][1], reportdict[k][2]])
             
     def __set_report(self, reportdict: OrderedDict):
+        print(reportdict)
+        input()
         for k in reportdict.keys():
-            self.report.append([k, reportdict[k][0], reportdict[k][1]])
+            self.report.append([k, reportdict[k]])

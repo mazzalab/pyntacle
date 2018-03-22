@@ -27,8 +27,8 @@ __license__ = u"""
 """This tool uses the embedded methods in `igraph` to call several community finding algorithms and returns a list of 
 subgraph obtained from the input graph"""
 
-from tools.modules_utils import *
 from config import *
+from tools.modules_utils import *
 
 class CommunityFinder:
     logger = None
@@ -88,7 +88,7 @@ class CommunityFinder:
             self.__modules = modules.subgraphs()
 
         else:
-            if not isinstance(weights, list) or weights not in self.__graph.es().attributes:
+            if not isinstance(weights, list) or 'weights' not in self.__graph.es.attributes():
                 raise ValueError("Weights must be either a list or an edge graph attribute present in graph")
 
             else:

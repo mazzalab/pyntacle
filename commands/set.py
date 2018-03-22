@@ -414,7 +414,8 @@ class Set():
         setF_attr_dict = OrderedDict()
 
         if self.args.which == 'intersection':
-            setF_attr_dict['Nodes in common:'] = (len(intersection_set), ','.join(intersection_set))
+            setF_attr_dict['\nCommon Nodes'] = 'Node names'#(len(intersection_set), ','.join(intersection_set))
+            setF_attr_dict[len(intersection_set)] = ','.join(intersection_set)
         reporter1.create_report(Reports.Set, set1_attr_dict)
         reporter2.create_report(Reports.Set, set2_attr_dict)
         reporter_final.create_report(Reports.Set, setF_attr_dict)
@@ -423,7 +424,6 @@ class Set():
         reporter2.report[1] = ['--- Graph 2 ---']
         del(reporter1.report[-1])
         del(reporter2.report[-1])
-        del(reporter1.report[0])
         del(reporter2.report[0])
         del(reporter_final.report[0])
         for e in reporter_final.report:
