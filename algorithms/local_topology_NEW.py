@@ -427,7 +427,7 @@ class LocalTopology:
             else:
                 if nodes is None:
 
-                    adjmat = np.array(list(graph.get_adjacency()), dtype=int)
+                    adjmat = np.array(list(graph.get_adjacency()), dtype=np.uint16)
                     adjmat[adjmat == 0] = graph.vcount() + 1  # set zero values to the max possible path length + 1
                     np.fill_diagonal(adjmat, 0)  # set diagonal values to 0 (no distance from itself)
 
