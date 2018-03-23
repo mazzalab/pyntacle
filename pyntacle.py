@@ -36,7 +36,9 @@ import argparse
 import random
 import sys
 import os
-
+from numba import cuda
+from multiprocessing import cpu_count
+from psutil import virtual_memory
 from exceptions.generic_error import Error
 
 if sys.version_info <= (3, 4):
@@ -46,7 +48,8 @@ from colorama import Fore, Style, init
 
 if os.name == "nt":
     init(convert=True)
-
+    
+from config import *
 from pyntacle_commands_utils.reporter import *
 # Main commands wrappers
 from commands.keyplayer import KeyPlayer as kp_command
@@ -55,7 +58,6 @@ from commands.convert import Convert as convert_command
 from commands.generate import Generate as generate_command
 from commands.set import Set as set_command
 from commands.communities import Communities as communities_command
-from config import *
 
 
 def _check_value(self, action, value):
@@ -111,7 +113,12 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         # Continue parsing of the first two arguments
         args = parser.parse_args(sys.argv[1:2])
-
+        
+        # Add system info
+        args.n_cpus = cpu_count()
+        args.mem = virtual_memory().total
+        args.cuda = cuda.is_available()
+        
         if not hasattr(self, args.command):
             print('Unrecognized command')
             parser.print_help()
@@ -207,7 +214,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         # now that we're inside a subcommand, ignore the first
         # TWO args, ie the command and subcommand
         args = parser.parse_args(sys.argv[2:])
-
+        
         if len(sys.argv) < 4 or (sys.argv[2] not in ('kp-finder', 'kp-info')):
             parser.print_help()
             raise Error(
