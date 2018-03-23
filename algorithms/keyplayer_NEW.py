@@ -193,7 +193,7 @@ class KeyPlayer:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def mreach(graph, nodes, m, max_distances=None, implementation=imps.auto) -> int:
+    def mreach(graph, nodes, m, max_distances=None, implementation=imps.auto, sp_matrix=None) -> int:
         """
         Calculates the m-reach ([Ref]_, equation 12). The m-reach is defined as a count of the number of unique nodes
         reached by any member of the kp-set in m links or less.
@@ -208,6 +208,7 @@ class KeyPlayer:
         *`imps.auto`: automatic implementation (default) chooses the best implementation according to the graph properties
         *`imps.igraqh`: use the default shortest path implementation in igraph (performs on a single core)
         *`imps.pyntacle` (default): computes sp using Floyd-Warshall algorithm with HPC computing in order to get a matrix
+        :param np.ndarray sp_matrix: if implementation is either cpu or gpu, you can pass the matrix of shortest paths instead of recomputing it. if None, the matrix of the shortest paths will be recomputed
         :return: an integer representing the number of nodes reached by the inpu node(s) in  m steps or less
         """
         if not isinstance(m, int):
@@ -227,6 +228,8 @@ class KeyPlayer:
                 if max_distances >= 1:
                     raise ValueError("\"max_sp\" must be an integer greater than one")
 
+        index_list = gu(graph=graph).get_node_indices(node_names=nodes)
+
         if implementation == imps.auto:
             implementation = implementation_seeker(graph) #todo this will return the correct implementation
 
@@ -237,14 +240,21 @@ class KeyPlayer:
                 shortest_path_lengths = ShortestPathModifier.igraph_sp_to_inf(shortest_path_lengths, max_distances)
 
         else:
-            shortest_path_lengths = lt.LocalTopology.shortest_path_pyntacle(graph=graph, implementation=implementation, nodes=nodes)
+            if sp_matrix is None:
+                shortest_path_lengths = lt.LocalTopology.shortest_path_pyntacle(graph=graph, implementation=implementation, nodes=nodes)
+
+            else:
+                if not isinstance(sp_matrix, np.ndarray):
+                    raise ValueError("\"sp_matrix\" must be a numpy.ndarray object")
+
+                else:
+                    shortest_path_lengths = sp_matrix[index_list, :]
 
             if max_distances is not None:
                 shortest_path_lengths = ShortestPathModifier.np_array_to_inf(shortest_path_lengths, max_distances)
 
         mreach = 0
 
-        index_list = gu(graph=graph).get_node_indices(node_names=nodes)
         vminusk = set(graph.vs.indices) - set(index_list)
 
         for j in vminusk:
@@ -258,7 +268,7 @@ class KeyPlayer:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def dR(graph, nodes, max_distances=None, implementation=imps.auto) -> float:
+    def dR(graph, nodes, max_distances=None, implementation=imps.auto, sp_matrix=None) -> float:
         """
         Calculates the distance-weighted reach ([Ref]_, equation 14). The distance-weighted reach can be defined as the
         sum of the reciprocals of distances from the kp-set S to all nodes, where the distance from the set to a node is
@@ -272,7 +282,8 @@ class KeyPlayer:
         choices are:
         *`imps.auto`: automatic implementation (default) chooses the best implementation according to the graph properties
         *`imps.igraqh`: use the default shortest path implementation in igraph (performs on a single core)
-        *`imps.pyntacle` (default): computes sp using Floyd-Warshall algorithm with HPC computing in order to get a matrix
+        *`imps.pyntacle` (default): use the result provided by the LocalTopology.shortest_path_pyntacle (must be called separately)
+        :param np.ndarray sp_matrix: if implementation is either cpu or gpu, you can pass the matrix of shortest paths instead of recomputing it. if None, the matrix of the shortest paths will be recomputed
         :return: a float representing he distance-weighted reach measure of the graph
         """
 
@@ -289,25 +300,43 @@ class KeyPlayer:
         if implementation == imps.auto:
             implementation = implementation_seeker(graph)
 
+        index_list = gu(graph=graph).get_node_indices(node_names=nodes)
+
         if implementation == imps.igraph:
             shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
 
             if max_distances is not None:
                 shortest_path_lengths = ShortestPathModifier.igraph_sp_to_inf(shortest_path_lengths, max_distances)
 
-        else:
-            shortest_path_lengths = lt.LocalTopology.shortest_path_pyntacle(graph=graph, implementation=implementation, nodes=nodes)
+            dr_num = 0
+            vminusk = set(graph.vs.indices) - set(index_list)
+            for j in vminusk:
+                dKj = min(spl[j] for spl in shortest_path_lengths)
+                dr_num += 1 / dKj
+
+            dr = dr_num / float(graph.vcount())
+            return dr
+
+        else: #we must provide a full matrix of shortest paths BEFORE searching for the single nodes
+            if sp_matrix is None:
+                shortest_path_lengths = lt.LocalTopology.shortest_path_pyntacle(graph=graph, nodes=nodes, implementation=implementation)
+
+            else:
+                if not isinstance(sp_matrix, np.ndarray):
+                    raise ValueError("\"sp_matrix\" must be a numpy.ndarray object")
+
+                else:
+                    shortest_path_lengths = sp_matrix[index_list,:]
 
             if max_distances is not None:
-                shortest_path_lengths = ShortestPathModifier.np_array_to_inf(shortest_path_lengths, max_distances)
+                shortest_path_lengths = ShortestPathModifier.np_array_to_inf(sp_matrix, max_distances)
 
-        index_list = gu(graph=graph).get_node_indices(node_names=nodes)
-        dr_num = 0
-        vminusk = set(graph.vs.indices) - set(index_list)
+            dr_num = 0
+            vminusk = set(graph.vs.indices) - set(index_list)
+            for j in vminusk:
+                dKj = min(spl[j] for spl in shortest_path_lengths)
+                dr_num += 1 / dKj
 
-        for j in vminusk:
-            dKj = min(spl[j] for spl in shortest_path_lengths)
-            dr_num += 1 / dKj
+            dr = dr_num / float(graph.vcount())
+            return dr
 
-        dr = dr_num / float(graph.vcount())
-        return dr

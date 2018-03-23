@@ -34,10 +34,11 @@ import itertools
 from functools import partial
 from algorithms.keyplayer_NEW import KeyPlayer
 from exceptions.wrong_argument_error import WrongArgumentError
-from misc.enums import KPPOSchoices, KPNEGchoices
+from misc.enums import KPPOSchoices, KPNEGchoices, SP_implementations
 from misc.kpsearch_utils import bruteforce_search_initializer
 from misc.graph_routines import check_graph_consistency
 from misc.implementation_seeker import implementation_seeker
+from algorithms.local_topology_NEW import LocalTopology as Lt
 from tools.graph_utils import GraphUtils as gu
 from config import *
 
@@ -67,8 +68,6 @@ class BruteforceSearch:
             if graph.ecount() == 0:
                 sys.stdout.write("Graph is consisted of isolates, so there's no optimal KP Set that can fragment the network. Returning an empty list.\n")
                 return [], 1.0
-
-        # todo: enable multiple solutions
         kppset_score_pairs = {}
 
         # Generation of all combinations of nodes (all kpp-sets) of size kpp_size
@@ -149,12 +148,26 @@ class BruteforceSearch:
         
         for S in allS:
             nodes = utils.get_node_names(list(S))
-            
+
+
+
             if kpp_type == KPPOSchoices.mreach:
-                reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distances=max_distances, implementation=implementation)
+                if implementation != SP_implementations.igraph:
+                    sp_matrix = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
+                    reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distances=max_distances,
+                                                          implementation=implementation, sp_matrix=sp_matrix)
+                else:
+                    reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distances=max_distances,
+                                                          implementation=implementation)
 
             elif kpp_type == KPPOSchoices.dR:
-                reachability_score = KeyPlayer.dR(graph=graph, nodes=nodes, max_distances=max_distances, implementation=implementation)
+                if implementation != SP_implementations.igraph:
+                    sp_matrix = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
+                    reachability_score = KeyPlayer.dR(graph=graph, nodes=nodes, max_distances=max_distances,
+                                                      implementation=implementation, sp_matrix=sp_matrix)
+                else:
+                    reachability_score = KeyPlayer.dR(graph=graph, nodes=nodes, max_distances=max_distances,
+                                                      implementation=implementation)
 
             else:  # here all the other KPNEG functions we want to insert
                 sys.stdout.write("{} Not yet implemented, please come back later!".format(kpp_type.name))

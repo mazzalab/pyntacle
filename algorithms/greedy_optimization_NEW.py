@@ -31,9 +31,10 @@ This Module covers the Greedy optimization algorithms for optimal kp-set calcula
 import random
 from functools import partial
 from algorithms.keyplayer_NEW import KeyPlayer as kp
+from algorithms.local_topology_NEW import LocalTopology as Lt
 from misc.graph_routines import *
 from exceptions.wrong_argument_error import WrongArgumentError
-from misc.enums import KPPOSchoices, KPNEGchoices
+from misc.enums import KPPOSchoices, KPNEGchoices, SP_implementations
 from misc.kpsearch_utils import greedy_search_initializer
 from misc.implementation_seeker import implementation_seeker
 from tools.graph_utils import GraphUtils as gu
@@ -93,7 +94,6 @@ class GreedyOptimization:
         temp_graph = graph.copy()
         temp_graph.delete_vertices(S)
 
-
         if kpp_type == KPNEGchoices.F:
             type_func = partial(kp.F, graph=graph)
 
@@ -109,14 +109,12 @@ class GreedyOptimization:
         fragmentation_score = type_func(graph=graph)
         
         kppset_score_pairs_history = {} #a dictionary that stores score pairs
-        """:type: dic{(), float}"""
         kppset_score_pairs_history[tuple(S)] = fragmentation_score #keep track of the initial kp scores after the initial set is removed
 
         optimal_set_found = False #this becomes True when the maximum fragmentation is achieved
 
         while not optimal_set_found:
             kppset_score_pairs = {} #create a dictionary of solutions {tuple of solutions: score}
-            """:type: dic{(), float}"""
 
             for si in S:  #loop through all the node indices of the initial query
                 temp_kpp_set = S.copy()  #copy the list of original indices
@@ -203,10 +201,21 @@ class GreedyOptimization:
             if not isinstance(m, int) or m <= 0:
                 raise TypeError({"\"m\" must be a positive integer"})
             else:
-                type_func = partial(kp.mreach, graph=graph, nodes=S_names, m=m, max_distances=max_distances, implementation=implementation)
+                if implementation != SP_implementations.igraph:
+                    sps = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
 
+                    type_func = partial(kp.mreach, graph=graph, nodes=S_names, m=m, max_distances=max_distances,
+                                        implementation=implementation, sp_matrix=sps)
+                else:
+                    type_func = partial(kp.mreach, graph=graph, nodes=S_names, m=m, max_distances=max_distances,
+                                        implementation=implementation)
         elif kpp_type == KPPOSchoices.dR:
-            type_func = partial(kp.dR, graph=graph, nodes=S_names, max_distances=max_distances, implementation=implementation)
+            if implementation != SP_implementations.igraph:
+                sps = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
+                type_func = partial(kp.dR, graph=graph, nodes=S_names, max_distances=max_distances, implementation=implementation, sp_matrix=sps)
+            else:
+                type_func = partial(kp.mreach, graph=graph, nodes=S_names, m=m, max_distances=max_distances,
+                                    implementation=implementation)
 
         else: #all the other KPNEG functions we want to insert
             sys.stdout.write("{} Not yet implemented, please come back later!".format(kpp_type.name))

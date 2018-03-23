@@ -47,21 +47,6 @@ class SPGpu:
         *shape* of the input adjacency matrix
         :return:
         """
-        #todo doesn't work, result np.ndarray is unchanged
-        # tx = cuda.threadIdx.x  # Thread ids in a 2D block
-        # ty = cuda.threadIdx.y
-        #
-        # bx = cuda.blockIdx.x   # Block ids in a 2D grid
-        # by = cuda.blockIdx.y
-        #
-        # bdx = cuda.blockDim.x  # Block width, i.e. number of threads per block
-        # bdy = cuda.blockDim.y
-        #
-        # posx = tx + bx * bdx
-        # posy = ty + by * bdy
-
-        #  todo Tom: gestire nodi singoli e gruppi di nodi
-
         posx, posy = cuda.grid(2)
         graph_size = result.shape[0]
         if posx < graph_size and posy < graph_size:  # Check array boundaries
