@@ -24,15 +24,15 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+""" Utilities to compute KP Metrics described by Borgatti"""
+
 import algorithms.local_topology_NEW as lt
 from misc.graph_routines import *
-from utils.graph_utils import GraphUtils as gu
+from misc.implementation_seeker import implementation_seeker
+from tools.graph_utils import GraphUtils as gu
 from misc.shortest_path_modifications import *
 from misc.enums import SP_implementations as imps
 import numpy as np
-
-
-# todo add Pyntacle documentation link showing minim requirements for the igraph object to be used in within this module
 
 class KeyPlayer:
     """
@@ -56,23 +56,20 @@ class KeyPlayer:
         :return: The F measure of the graph as a float ranging between 0.0 and 1.0, where 0 is maximal disconnection
         (each node is an isolate) and 1 is maximum connection (the graph is complete)
         """
+        # sys.stdout.write("############## Running F ##############\n")
         if graph.ecount() == 0: #maximum F
             return 1.0
 
-        elif graph.clique_number() == graph.vcount:
+        elif graph.clique_number() == graph.vcount():
             return 0.0  #maximum F: it's a clique
 
         else:
             num_nodes = graph.vcount()
 
             components = graph.components()
-            # print ("components in KP NEW")
-            # print(components)
-            # input()
 
             f_num = sum(len(sk) * (len(sk) - 1) for sk in components)
             f_denum = num_nodes * (num_nodes - 1)
-
             f = 1 - (f_num / f_denum)
 
             return round(f, 5)
@@ -107,15 +104,18 @@ class KeyPlayer:
             raise TypeError("\"implementation\" must be of type \"imps\", {} found".format(type(implementation).__name__))
 
         if implementation == imps.auto:
-            implementation = imps.cpu #todo this will return the correct implementation
+            implementation = implementation_seeker(graph) #todo this will return the correct implementation
 
         if max_distances is not None:
                 if not isinstance(max_distances, int):
                     raise TypeError("\"max_sp\" must be an integer greater than one")
 
-                if max_distances >= 1:
+                if not max_distances >= 1:
                     raise ValueError("\"max_sp\" must be an integer greater than one")
 
+                if max_distances > graph.vcount():
+                    raise ValueError("\"max_sp\" must be less or equal to the number of nodes in the graph")
+            
         if graph.ecount() == 0: #maximum F
             return 1.0
 
@@ -214,7 +214,7 @@ class KeyPlayer:
             raise TypeError("\"m\" must be an integer")
         if m < 1:
             raise ValueError("\"m\" must be greater than zero")
-        elif m >= graph.vcount() +1:
+        elif m >= graph.vcount() + 1:
             raise ValueError("\"m\" must be lesser than the total number of vertices plus one")
 
         if not isinstance(implementation, imps):
@@ -228,16 +228,16 @@ class KeyPlayer:
                     raise ValueError("\"max_sp\" must be an integer greater than one")
 
         if implementation == imps.auto:
-            implementation = imps.igraph #todo this will return the correct implementation
+            implementation = implementation_seeker(graph) #todo this will return the correct implementation
 
         if implementation == imps.igraph:
-            shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph=graph)
+            shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
 
             if max_distances is not None:
                 shortest_path_lengths = ShortestPathModifier.igraph_sp_to_inf(shortest_path_lengths, max_distances)
 
         else:
-            shortest_path_lengths = lt.LocalTopology.shortest_path_pyntacle(graph=graph, implementation=implementation)
+            shortest_path_lengths = lt.LocalTopology.shortest_path_pyntacle(graph=graph, implementation=implementation, nodes=nodes)
 
             if max_distances is not None:
                 shortest_path_lengths = ShortestPathModifier.np_array_to_inf(shortest_path_lengths, max_distances)
@@ -287,16 +287,16 @@ class KeyPlayer:
                     raise ValueError("\"max_sp\" must be an integer greater than one")
 
         if implementation == imps.auto:
-            implementation = imps.igraph #todo this will return the correct implementation
+            implementation = implementation_seeker(graph)
 
         if implementation == imps.igraph:
-            shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph=graph)
+            shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
 
             if max_distances is not None:
                 shortest_path_lengths = ShortestPathModifier.igraph_sp_to_inf(shortest_path_lengths, max_distances)
 
         else:
-            shortest_path_lengths = lt.LocalTopology.shortest_path_pyntacle(graph=graph, implementation=implementation)
+            shortest_path_lengths = lt.LocalTopology.shortest_path_pyntacle(graph=graph, implementation=implementation, nodes=nodes)
 
             if max_distances is not None:
                 shortest_path_lengths = ShortestPathModifier.np_array_to_inf(shortest_path_lengths, max_distances)

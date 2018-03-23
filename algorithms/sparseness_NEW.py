@@ -25,7 +25,7 @@ __license__ = u"""
   """
 
 """
-**Give a measure of sparseness of a graph using 3 different metrics studied in the past few years**
+Give a measure of sparseness of a graph using 3 different metrics studied in the past few years
 """
 
 import math
@@ -67,6 +67,7 @@ class Sparseness:
         "Minimum requirements" specifications in pyntacle's manual
         :return:
         """
+        #todo change this here and in enums
         root_k = graph.vcount()  # k is a dimension of the adjacency matrix (so the square of the vcount)
         k = math.pow(root_k, 2)
         first_part = root_k - 1  # (root(k)-1)

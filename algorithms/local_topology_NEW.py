@@ -25,17 +25,19 @@ __license__ = u"""
   """
 
 """
-**Compute Local Topology metrics for all nodes in the graph or for a set of nodes**
+Compute Local Topology metrics for all nodes in the graph or for a set of nodes
 """
 from config import *
+from math import isinf
+from numba import cuda, jit, prange
+import numpy as np
+import statistics
 from misc.graph_routines import *
 from misc.enums import SP_implementations as imps
 from misc.enums import GraphType
 from misc.shortest_path_modifications import *
-from utils.graph_utils import GraphUtils as ut
-from numba import cuda, jit, prange
-import numpy as np
-
+from tools.graph_utils import GraphUtils as ut
+from misc.implementation_seeker import implementation_seeker
 
 
 class LocalTopology:
@@ -47,7 +49,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def degree(graph, nodes=None) -> list:
+    def degree(graph: Graph, nodes=None) -> list:
         """
         Computes the degree for a single node, a list of nodes or for all nodes in the Graph. The degree is defined as
         the number of incident edges to a single nodes.
@@ -67,7 +69,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def betweenness(graph, nodes=None) -> list:
+    def betweenness(graph: Graph, nodes=None) -> list:
         """
         Computes the betwenness for a single node, a list of nodes or for all nodes in the Graph.
         The degree is defined as the ratio of the number of shortest path that passes through the node
@@ -89,7 +91,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def clustering_coefficient(graph, nodes=None) -> list:
+    def clustering_coefficient(graph: Graph, nodes=None) -> list:
         """
         Computes the clustering coefficient for a single node, a list of nodes or for all nodes in the Graph.
         The clustering coefficient is defined as the number of triangles formed among the node's neighbours over the
@@ -110,7 +112,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def closeness(graph, nodes=None) -> list:
+    def closeness(graph: Graph, nodes=None) -> list:
         """
         Computes the clustering coefficient for a single node, a list of nodes or for all nodes in the Graph.
         The closeness is defined as the sum of the length of the shortest paths passing through the node(s)
@@ -131,7 +133,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def eccentricity(graph, nodes=None) -> list:
+    def eccentricity(graph: Graph, nodes=None) -> list:
         """
         Computes the eccentricity for a single node, a list of nodes or for all nodes in the Graph.
         The eccentricity is defined as the maximum of all the distances (shortest path) between the node(s)
@@ -150,7 +152,7 @@ class LocalTopology:
             return [int(x) for x in graph.eccentricity(vertices=nodes)]
 
     @staticmethod
-    def __radiality_inner__(graph, nodes=None, implementation=imps.igraph) -> list:
+    def __radiality_inner__(graph: Graph, nodes=None, implementation=imps.auto) -> list:
         """
         inner class that handles the radiality calculus (without throwing any error)
         """
@@ -159,9 +161,13 @@ class LocalTopology:
                 "Implementation specified does not exists. Please choose among the following options {}".format(
                     ",".join(list(imps.__members__))))
         else:
+
             diameter = graph.diameter()
             num_nodes = graph.vcount()
             rad = []  # list that will store radiality values
+
+            if implementation == imps.auto:
+                implementation = implementation_seeker(graph)
 
             if implementation == imps.igraph:
                 sps = LocalTopology.shortest_path_igraph(graph, nodes=nodes)  # recall the shortest path function here
@@ -173,9 +179,12 @@ class LocalTopology:
                 sps = sps.tolist()  # reconvert to a list of lists
                 sps = [[float('inf') if x == (graph.vcount()+1) else x for x in y] for y in sps]
 
-            elif implementation == imps.gpu:
-                sys.stdout.write("Implementation {} not yet implemented\n".format(implementation))
-                sys.exit()
+            else: #GPU case
+                sps = LocalTopology.shortest_path_pyntacle(graph=graph, nodes=nodes,
+                                                           mode=GraphType.undirect_unweighted,
+                                                           implementation=implementation.gpu)
+                sps = sps.tolist()  # reconvert to a list of lists
+                sps = [[float('inf') if x == (graph.vcount() + 1) else x for x in y] for y in sps]
 
             for sp in sps:  # loop through the shortest path of each node name
                 partial_sum = 0
@@ -190,7 +199,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def radiality(graph, nodes=None, implementation=imps.igraph) -> list:
+    def radiality(graph: Graph, nodes=None, implementation=imps.auto) -> list:
         """
         Computes the radiality for a single node, a list of nodes or for all nodes in the Graph. The radiality of a node
         (v) is calculated by computing the shortest path between the node v and all other nodes in the graph. The value
@@ -217,7 +226,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def radiality_reach(graph, nodes=None, implementation=imps.igraph) -> list:
+    def radiality_reach(graph: Graph, nodes=None, implementation=imps.auto) -> list:
         """
         Computes the radiality reach for a single node, a list of nodes or for all nodes in the Graph.
         The radiality reach is a weighted measure of the canonical radiality and it is recommended for disconnected
@@ -320,7 +329,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def pagerank(graph, nodes, weights=None, damping=0.85) -> list:
+    def pagerank(graph: Graph, nodes=None, weights=None, damping=0.85) -> list:
         """
         Computes the Google PageRank algorithm from the input node(s), or for all nodes in the graph if it's not
         specified. The PageRank algorithm is a modifed version of the eigenvector centrality. It highlights the
@@ -343,7 +352,7 @@ class LocalTopology:
             if not isinstance(weights, list):
                 raise TypeError("Weights must be a list of floats")
 
-            if not all(isinstance(x, float) for x in weights):
+            if not all(isinstance(x, (float, type(None))) for x in weights):
                 raise ValueError("Weights must be a list of floats")
 
             if len(weights) > graph.ecount():
@@ -351,13 +360,154 @@ class LocalTopology:
 
         if not (isinstance(damping, (float, int)) and (0 <= damping)):
             raise ValueError("Damping factor must be a float >= 0")
+        
+        if nodes is not None:
+            nodes = ut(graph).get_node_indices(nodes)
 
-        return graph.pagerank(vertices=nodes, damping=damping, directed=False, weights=weights)
+        return graph.pagerank(vertices=nodes, damping=damping, directed=False, weights=weights, implementation="arpack")
 
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def shortest_path_igraph(graph, nodes=None) -> list:
+    #todo check if i can see the environment variables so I don't have to recall cuda.is_available() every time
+    def shortest_path_pyntacle(graph: Graph, nodes=None, mode=GraphType.undirect_unweighted,
+                               implementation=imps.cpu) -> np.ndarray:
+        """
+        We implement here a few ways to determine the shortest paths in a graph for a single node, a group of nodes or
+        all nodes in a graph. The shortest path search is performed using the Floyd-Warhsall algorithm and the numba
+        library for HPC computing in order to parallelize the search as quickly as possible. Currently we support the
+        use
+        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
+        "Minimum requirements" specifications in pyntacle's manual
+        :param nodes: if a node name, returns the degree of the input node. If a list of node names,
+        the shortest path between the input nodes and all other nodes in the graph is returned for all node names.
+        If None (default), the degree is computed for the whole graph.
+        :param GraphType mode: an enumerator containing the type of node to be implemented. Choices are:
+        * **`graph_type.undirect_unweighted`**: perform shortest path search for an unweighted and undirect graph
+        (default).
+        * **`graph_type.undirect_weighted`**: shortest path for a weighted undirect network. In this case, the reserved
+        attribute "__weight" at the edge level must be present and filled. **TO BE IMPLEMENTED**
+        * **`graph_type_direct_unweighted`**: unweighted direct graph **TO BE IMPLEMENTED**
+        * **`graph type_direct_weighted`**: weighted directed graph. In this case, the reserved attribute "__weight"
+        at the edge level must be present and filled. **TO BE IMPLEMENTED**
+        :param implementation :an enumerator containing the type of parallelization that will be used. Choices are:
+        * **`implementation.cpu`**: parallelize the SP search using the maximum number of threads available on the CPU
+        * **`implementation.gpu`**: parallelize the SP search using a GPU implementation and nVidia Graphics.
+        **TO BE IMPLEMENTED**
+        **CAUTION**: this will not work if the GPU is not present or CUDA compatible.
+        * **`implementation.auto`**: performs the shortest path using criteria defined by us, according to the machine
+        specifications and the graph topology.
+        :return: a numpy array storing the shortest path matrix for a single node, a list of nodes or all nodes in the
+        graph
+        """
+
+        if implementation == imps.auto:
+            raise ValueError("Implementation \"auto\" not available here, you must have already decided your implementation"
+                             "before caling this method")
+
+        #todo mauro this should be handle outside this
+        if implementation == imps.gpu:
+
+            if not cuda.is_available():
+                implementation = imps.cpu
+
+            else:
+                if sys.modules.get("algorithms.shortestpath_GPU", "Not imported") == "Not imported":
+                    from algorithms.shortestpath_GPU import SPGpu
+
+        if mode == GraphType.undirect_unweighted:
+
+            if implementation == imps.igraph:
+                sys.stdout.write("using igraph implementation instead of our implementations\n")
+                sps = LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
+                sps = [[graph.vcount()+1 if isinf(x) else x for x in y] for y in sps]
+                sps = np.array(sps)
+                return sps
+
+            else:
+                if nodes is None:
+
+                    adjmat = np.array(list(graph.get_adjacency()), dtype=np.uint16)
+                    adjmat[adjmat == 0] = graph.vcount() + 1  # set zero values to the max possible path length + 1
+                    np.fill_diagonal(adjmat, 0)  # set diagonal values to 0 (no distance from itself)
+
+                    if implementation == implementation.cpu:
+                        sps = LocalTopology.__shortest_path_CPU__(adjmat=adjmat)
+                        return sps
+
+                    elif implementation == implementation.gpu:
+                        if nodes is None:
+                            nodes = list(range(0, graph.vcount()))
+
+                        else:
+                            nodes = ut(graph=graph).get_node_indices(nodes)
+
+                        # create the result vector filled with 'inf' (the total number of nodes + 1)
+                        result = np.full_like(adjmat, graph.vcount()+1, dtype=np.uint16)
+                        SPGpu.shortest_path_GPU(adjmat, nodes, result) #todo is there any case in which the shortest path GPU is not imported?
+
+                        np.fill_diagonal(result, 0) #fill the diagonal of the result object with zeros
+
+                        if len(nodes) < graph.vcount():
+                            result = result[nodes, :]
+
+                        #LocalTopology.__shortest_path_GPU__(adjmat, nodes, result)
+                        return result
+
+                    else:
+                        sys.stdout.write(
+                            "Implementation {} not available at the time, please come back soon "
+                            "for the modifed version".format(implementation.name))
+                        sps = LocalTopology.__shortest_path_CPU__(adjmat=adjmat, nodes=nodes)
+                        return sps
+
+                else:
+                    sys.stdout.write("Not yet available for a subset of nodes in the graph\n")
+                    sys.exit(0)
+
+        else:
+            sys.stdout.write("Shortest path for {} not yet implemented, come back soon!\n".format(mode.name))
+            sys.exit(0)
+
+    @staticmethod
+    @jit(nopython=True, parallel=True, cache=True)
+    def __shortest_path_CPU__(adjmat, nodes=None) -> np.ndarray:
+        """
+        Calculate the shortest paths of a graph for aa single nodes, a set of nodes or all nodes in the graph using
+        'Floyd-Warshall Implementation <https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm>'_. The forumla
+        is implemented using the numba library and allows for parallelization using CPU cores.
+        :param np.ndarray adjmat: a numpy.ndarray containing the adjacency matrix of a graph. Disconnected nodes in the
+        matrix are represented as the total number of nodes in the graph + 1, while the diagonal must contain zeroes.
+        Default is True (a numpy array is returned)
+        :return: a numpy array
+        """
+        # todo Tom: gestire nodi singoli e gruppi di nodi
+        # todo Tom controlla i prange
+
+        v = adjmat.shape[0]
+        if nodes is None:
+            for k in range(0, v):
+                for i in prange(v):
+                    for j in range(0, v):
+                        if adjmat[i, j] <= 2:
+                            continue
+                        if adjmat[i, j] > adjmat[i, k] + adjmat[k, j]:
+                            adjmat[i, j] = adjmat[i, k] + adjmat[k, j]
+        else:
+            for k in range(0, v):
+                for i in nodes:
+                    for j in range(0, v):
+                        if adjmat[i, j] <= 2:
+                            continue
+                        if adjmat[i, j] > adjmat[i, k] + adjmat[k, j]:
+                            adjmat[i, j] = adjmat[i, k] + adjmat[k, j]
+
+        return adjmat
+
+    @staticmethod
+    @check_graph_consistency
+    @vertexdoctor
+    def shortest_path_igraph(graph: Graph, nodes=None) -> list:
         """
         Computes the shortest path for a single node, a list of nodes or for all nodes in the Graph using the Dijkstra's
         implementation of the igraph Package (works on a single CPU core). The shortest path is the minimum distance
@@ -380,133 +530,99 @@ class LocalTopology:
 
         else:
             sp = graph.shortest_paths(source=nodes)
-
         return sp
-
 
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    #todo check if i can see the environment variables so I don't have to recall cuda.is_available() every time
-    def shortest_path_pyntacle(graph, nodes=None, mode=GraphType.undirect_unweighted,
-                               implementation=imps.cpu) -> np.ndarray:
+    def average_shortest_path_length(graph: Graph, nodes=None, implementation=imps.auto) -> list:
         """
-        We implement here a phew ways to determine the shortest paths in a graph for a single node, a group of nodes or
-        all nodes in a graph. The shortest path search is performed using the Floyd-Warhsall algorithm and the numba
-        library for HPC computing in order to parallelize the search as quickly as possible. Currently we support the
-        use
+        Computes the average of connected shortest path for each a single node, a lists of nodes or all nodes in the
+        'igraph.Graph' object if 'None' (default).
         :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
         "Minimum requirements" specifications in pyntacle's manual
         :param nodes: if a node name, returns the degree of the input node. If a list of node names,
         the shortest path between the input nodes and all other nodes in the graph is returned for all node names.
         If None (default), the degree is computed for the whole graph.
-        :param GraphType mode: an enumerator containing the type of node to be implemented. Choices are:
-        * **`graph_type.undirect_unweighted`**: perform shortest path search for an unweighted and undirect graph
-        (default).
-        * **`graph_type.undirect_weighted`**: shortest path for a weighted undirect network. In this case, the reserved
-        attribute "__weight" at the edge level must be present and filled. **TO BE IMPLEMENTED**
-        * **`graph_type_direct_unweighted`**: unweighted direct graph **TO BE IMPLEMENTED**
-        * **`graph type_direct_weighted`**: weighted directed graph. In this case, the reserved attribute "__weight"
-        at the edge level must be present and filled. **TO BE IMPLEMENTED**
         :param implementation :an enumerator containing the type of parallelization that will be used. Choices are:
         * **`implementation.cpu`**: parallelize the SP search using the maximum number of threads available on the CPU
         * **`implementation.gpu`**: parallelize the SP search using a GPU implementation and nVidia Graphics.
         **TO BE IMPLEMENTED**
         **CAUTION**: this will not work if the GPU is not present or CUDA compatible.
-        * **`implementation.auto`**: performs the shortest path using criteria defined by us, according to the machine specifications
-        and the graph topology.
-        :return: a numpy array storing the shortest path matrix for a single node, a list of nodes or all nodes in the
-        graph
+        * **`implementation.auto`**: performs the shortest path using criteria defined by us, according to the machine
+        specifications and the graph topology.
+        :return: a list of floats with the average shortest path lists of each connected nodes. If a node is an isolate, 'nan' will be returned.
+        """
+        if implementation == imps.auto:
+            implementation  = implementation_seeker()
+
+        if implementation == imps.igraph:
+            sps = LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
+            avg_sps = []
+            for elem in sps:
+                elem = [x for x in elem if not(isinf(x)) and x > 0]
+                if len(elem) > 0:
+                    avg_sps.append(sum(elem) / float(len(elem)))
+                else:
+                    avg_sps.append(float("nan"))
+        else: #np array
+            sps = LocalTopology.shortest_path_pyntacle(graph=graph, nodes=nodes)
+            sps[sps == 0] = np.nan
+            var = sps[sps > graph.vcount()] == np.nan
+            avg_sps = np.nanmean(var, axis=0)
+            avg_sps = avg_sps.tolist()
+
+        return avg_sps
+
+    @staticmethod
+    @check_graph_consistency
+    @vertexdoctor
+    def median_shortest_path_length(graph: Graph, nodes=None, implementation=imps.auto) -> list:
+        """
+        Computes the median among connected shortest path for each a single node, a lists of nodes or all nodes in the
+        'igraph.Graph' object if 'None' (default).
+        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
+        "Minimum requirements" specifications in pyntacle's manual
+        :param nodes: if a node name, returns the degree of the input node. If a list of node names,
+        the shortest path between the input nodes and all other nodes in the graph is returned for all node names.
+        If None (default), the degree is computed for the whole graph.
+        :param implementation :an enumerator containing the type of parallelization that will be used. Choices are:
+        * **`implementation.cpu`**: parallelize the SP search using the maximum number of threads available on the CPU
+        * **`implementation.gpu`**: parallelize the SP search using a GPU implementation and nVidia Graphics.
+        **TO BE IMPLEMENTED**
+        **CAUTION**: this will not work if the GPU is not present or CUDA compatible.
+        * **`implementation.auto`**: performs the shortest path using criteria defined by us, according to the machine
+        specifications and the graph topology.
+        :return: a list of floats with the median shortest path(s) of each connected nodes. If a node is an isolate, 'nan' will be returned.
         """
 
         if implementation == imps.auto:
-            implementation = imps.cpu #todo this should recall the 'automatic flag checker module (to be done)
+            implementation = implementation_seeker()
 
-        elif implementation == imps.gpu:
-            # todo automatic implementation here
-            if not cuda.is_available():
-                sys.stdout.write("GPU implementation is not available, using CPU instead")
-                implementation = imps.cpu
-            else:
-                # todo check that the sp_numba is already here and if not import it (if conditions allow it)
-                if sys.modules.get("algorithms.shortestpath_GPU", "Not imported") == "Not imported":
-                    from algorithms.shortestpath_GPU import SPGpu as spg
-
-        if mode == GraphType.undirect_unweighted:
-            if nodes is None:
-
-                adjmat = np.array(list(graph.get_adjacency()), dtype=int)
-                adjmat[adjmat == 0] = graph.vcount() + 1  # set zero values to the max possible path length + 1
-                np.fill_diagonal(adjmat, 0)  # set diagonal values to 0 (no distance from itself)
-
-                if implementation == implementation.cpu:
-                    sps = LocalTopology.__shortest_path_CPU__(adjmat=adjmat)
-                    return sps
-
-                elif implementation == implementation.gpu:
-                    #todo risistemare e testare su un altro gpu-enabled computer
-
-                    if nodes is None:
-                        nodes = list(range(0, graph.vcount()))
-
-                    # create the result vector filled with 'inf' (the total number of nodes + 1)
-                    result = np.full_like(adjmat, graph.vcount()+1, dtype=np.uint16)
-                    spg.shortest_path_GPU(adjmat, nodes, result)
-
-                    np.fill_diagonal(result,0) #fill the diagonal of the result object with zeros
-                    # print(adjmat)
-                    # print(result)
-                    # input()
-
-                    #LocalTopology.__shortest_path_GPU__(adjmat, nodes, result)
-                    return result
-
+        if implementation == imps.igraph:
+            sps = LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
+            avg_sps = []
+            for elem in sps:
+                elem = [x for x in elem if not (isinf(x)) and x > 0] #remove disconnected nodes and diagonal
+                if len(elem) > 0:
+                    avg_sps.append(statistics.median(elem))
                 else:
-                    sys.stdout.write(
-                        "Implementation {} not available at the time, please come back soon "
-                        "for the modifed version".format(implementation.name))
-                    sps = LocalTopology.__shortest_path_CPU__(adjmat=adjmat, nodes=nodes)
-                    return sps
+                    avg_sps.append(float("nan"))
 
-            else:
-                sys.stdout.write("Not yet available for a subset of nodes in the graph")
-                sys.exit(0)
+        else:  # np array
+            sps = LocalTopology.shortest_path_pyntacle(graph=graph, nodes=nodes)
+            sps[sps == 0] = np.nan
+            var = sps[sps > graph.vcount()] == np.nan
+            avg_sps = np.nanmedian(var, axis=0)
+            avg_sps = avg_sps.tolist()
 
-        else:
-            sys.stdout.write("Shortest path for {} not yet implemented, come back soon!\n".format(mode.name))
-            sys.exit(0)
-
-    @staticmethod
-    @jit(nopython=True, parallel=True)
-    def __shortest_path_CPU__(adjmat, nodes=None) -> np.ndarray:
-        """
-        Calculate the shortest paths of a graph for aa single nodes, a set of nodes or all nodes in the graph using
-        'Floyd-Warshall Implementation <https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm>'_. The forumla
-        is implemented using the numba library and allows for parallelization using CPU cores.
-        :param np.ndarray adjmat: a numpy.ndarray containing the adjacency matrix of a graph. Disconnected nodes in the
-        matrix are represented as the total number of nodes in the graph + 1, while the diagonal must contain zeroes.
-        Default is True (a numpy array is returned)
-        :return: a numpy array
-        """
-        # todo Tom: gestire nodi singoli e gruppi di nodi
-        # todo Tom controlla i prange
-
-        v = adjmat.shape[0]
-        if nodes is None:
-            for k in range(0, v):
-                for i in prange(0, v):
-                    for j in range(0, v):
-                        if adjmat[i, j] <= 2:
-                            continue
-                        if adjmat[i, j] > adjmat[i, k] + adjmat[k, j]:
-                            adjmat[i, j] = adjmat[i, k] + adjmat[k, j]
-
-        return adjmat
-
+        return avg_sps
 
 # todo missing stuff:
 # todo shortest path cpu: single nodes or group of nodes
-# todo shortest path gpu: both
+# todo shortest path gpu: single nodes or group of nodes
 # todo all the other graphs
-
+# todo automatic implementation becomes global
+# todo missing methods:
 # todo Mauro: specify numpy maximum allocation in RAM (in "Requirements")
+# todo Mauro. specify number of cores (COU) for numba

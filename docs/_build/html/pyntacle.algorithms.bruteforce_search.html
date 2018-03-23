@@ -186,8 +186,8 @@ It hence selects the KPP-set with the best score.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Brute-force search for the best kp-set <strong>[EXPAND]</strong></p>
 <dl class="method">
-<dt id="pyntacle.algorithms.bruteforce_search.BruteforceSearch.bruteforce_fragmentation">
-<code class="descname">bruteforce_fragmentation</code><span class="sig-paren">(</span><em>kpp_size</em>, <em>kpp_type) -&gt; (&lt;class 'list'&gt;</em>, <em>&lt;class 'float'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyntacle/algorithms/bruteforce_search.html#BruteforceSearch.bruteforce_fragmentation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.bruteforce_search.BruteforceSearch.bruteforce_fragmentation" title="Permalink to this definition">¶</a></dt>
+<dt id="pyntacle.algorithms.bruteforce_search.BruteforceSearch.fragmentation">
+<code class="descname">fragmentation</code><span class="sig-paren">(</span><em>kpp_size</em>, <em>kpp_type) -&gt; (&lt;class 'list'&gt;</em>, <em>&lt;class 'float'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyntacle/algorithms/bruteforce_search.html#BruteforceSearch.fragmentation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.bruteforce_search.BruteforceSearch.fragmentation" title="Permalink to this definition">¶</a></dt>
 <dd><p>It searches and finds the kpp-set of a predefined dimension that best disrupts the graph.
 It generates all the possible kpp-sets and calculates the fragmentation score of the residual graph, after
 having extracted the nodes belonging to the kpp-set.
@@ -220,8 +220,8 @@ The best kpp-set will be the one that maximizes the fragmentation of the graph.<
 </dd></dl>
 
 <dl class="method">
-<dt id="pyntacle.algorithms.bruteforce_search.BruteforceSearch.bruteforce_reachability">
-<code class="descname">bruteforce_reachability</code><span class="sig-paren">(</span><em>kpp_size</em>, <em>kpp_type</em>, <em>m=None) -&gt; (&lt;class 'list'&gt;</em>, <em>&lt;class 'float'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyntacle/algorithms/bruteforce_search.html#BruteforceSearch.bruteforce_reachability"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.bruteforce_search.BruteforceSearch.bruteforce_reachability" title="Permalink to this definition">¶</a></dt>
+<dt id="pyntacle.algorithms.bruteforce_search.BruteforceSearch.reachability">
+<code class="descname">reachability</code><span class="sig-paren">(</span><em>kpp_size</em>, <em>kpp_type</em>, <em>m=None) -&gt; (&lt;class 'list'&gt;</em>, <em>&lt;class 'float'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyntacle/algorithms/bruteforce_search.html#BruteforceSearch.reachability"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.algorithms.bruteforce_search.BruteforceSearch.reachability" title="Permalink to this definition">¶</a></dt>
 <dd><p>It searches and finds the kpp-set of a predefined dimension that best reaches all other nodes over the graph.
 It generates all the possible kpp-sets and calculates their reachability scores.
 The best kpp-set will be the one that best reaches all other nodes of the graph.</p>

@@ -1,9 +1,10 @@
 from exceptions.generic_error import Error
 from config import *
 from exceptions.illegal_graph_size_error import IllegalGraphSizeError
-from graph_generator.graph_igraph_generator import *
-from io_stream.exporter import Exporter
-from kp_tools.plotter import *
+from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
+from io_stream.generator import *
+from io_stream.exporter import PyntacleExporter
+from pyntacle_commands_utils.plotter import *
 from warnings import simplefilter
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
@@ -40,6 +41,8 @@ class Generate():
     def __init__(self, args):
         self.logging = log
         self.args = args
+        if self.args.seed:
+            random.seed(self.args.seed)
 
     def run(self):
         cursor = CursorAnimation()
@@ -59,13 +62,12 @@ class Generate():
                     sys.exit(1)
 
             if not self.args.probability and self.args.edges:
-                self.args.edges = int(self.args.edges)
 
                 try:
                     self.args.edges = int(self.args.edges)
                     "Generating Graph with Scale Random Topology\nParameters:\nNumber of Nodes: {0}\nNumber of Edges: {1}\n".format(
                         self.args.nodes, self.args.edges)
-                    graph = ErdosRenyiGenerator().generate([self.args.nodes, self.args.edges])
+                    graph = Generator.Random([self.args.nodes, self.args.edges], name="Random", seed=self.args.seed)
 
                 except (ValueError, TypeError, IllegalGraphSizeError):
                     sys.stderr.write(
@@ -89,12 +91,13 @@ class Generate():
                     sys.stdout.write(
                         "Generating Graph with Random Topology\nParameters:\nNumber of Nodes: {0}\nProbability of wiring: {1}\n".format(
                             self.args.nodes, self.args.probability))
-                    graph = ErdosRenyiGenerator().generate([self.args.nodes, self.args.probability])
+                    graph = Generator.Random([self.args.nodes, self.args.probability], name="Random", seed=self.args.seed)
 
                 except (ValueError, TypeError, IllegalGraphSizeError):
                     sys.stderr.write(
                         "Number of nodes must be a positive integer greater than 2 and a probability must be a float between 0 and 1. Quitting\n")
                     sys.exit(1)
+                
         elif self.args.which == "scale-free":
             if self.args.nodes is None:
                 self.args.nodes = random.randint(100, 1000)
@@ -122,7 +125,7 @@ class Generate():
                 sys.stdout.write(
                     "Generating Graph with Scale Free Topology\nParameters:\nNumber of Nodes: {0}\nNumber of Outging edges: {1}\n".format(
                         self.args.nodes, self.args.outgoing_edges))
-                graph = BarabasiAlbertGenerator().generate([self.args.nodes, self.args.outgoing_edges])
+                graph = Generator.ScaleFree([self.args.nodes, self.args.outgoing_edges], name="ScaleFree", seed=self.args.seed)
 
             except (ValueError, TypeError, IllegalGraphSizeError):
                 sys.stderr.write(
@@ -157,7 +160,7 @@ class Generate():
                 sys.stdout.write(
                     "Generating Graph with Tree Topology\nParameters:\nNumber of Nodes: {0}\nChildren per Node: {1}\n".format(
                         self.args.nodes, self.args.children))
-                graph = TreeGenerator().generate([self.args.nodes, self.args.children])
+                graph = Generator.Tree([self.args.nodes, self.args.children], name="Tree", seed=self.args.seed)
 
             except (ValueError, TypeError, IllegalGraphSizeError):
                 sys.stderr.write(
@@ -165,7 +168,12 @@ class Generate():
                 sys.exit(1)
 
         elif self.args.which == "small-world":
-
+            
+            if not self.args.lattice_size:
+                self.args.lattice_size = random.randint(2, 5)
+            if not self.args.nei:
+                self.args.nei = random.randint(1, 5)
+                
             if isinstance(self.args.lattice, str):
                 try:
                     self.args.lattice = int(self.args.lattice)
@@ -194,8 +202,8 @@ class Generate():
                 sys.stdout.write(
                     "Generating Graph with Small World Topology\nParameters:\nLattice Dimensions: {0}\nLattice Size: {1}\nNei (number of edges that connect each graph): {2}\nRewiring Probability: {3}\n".format(
                         self.args.lattice, self.args.lattice_size, self.args.nei, self.args.probability))
-                graph = SmallWorldGenerator().generate(
-                    [self.args.lattice, self.args.lattice_size, self.args.nei, self.args.probability])
+                graph = Generator.SmallWorld(
+                    [self.args.lattice, self.args.lattice_size, self.args.nei, self.args.probability], name="SmallWorld", seed=self.args.seed)
 
             except(TypeError, ValueError, IllegalArgumentNumberError):
                 sys.stderr.write(
@@ -266,26 +274,26 @@ class Generate():
         # output generated networks
         if out_form == "adjm":
             sys.stdout.write("Creating Adjacency Matrix of the generated graph\n")
-            Exporter.AdjacencyMatrix(graph, output_path, sep=self.args.output_separator, header=output_header)
+            PyntacleExporter.AdjacencyMatrix(graph, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "egl":
             sys.stdout.write("Creating Edge List of the generated graph\n")
-            Exporter.EdgeList(graph, output_path, sep=self.args.output_separator, header=output_header)
+            PyntacleExporter.EdgeList(graph, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "sif":
             sys.stdout.write("Creating Simple Interaction File of the generated graph\n")
-            Exporter.Sif(graph, output_path, sep=self.args.output_separator, header=output_header)
+            PyntacleExporter.Sif(graph, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "dot":
             sys.stdout.write("Creating DOT File of the generated graph\n")
 
             # Ignore ugly RuntimeWarnings while creating a dot
             simplefilter("ignore", RuntimeWarning)
-            Exporter.Dot(graph, output_path)
+            PyntacleExporter.Dot(graph, output_path)
 
         elif out_form == "graph":
             sys.stdout.write("Storing the created graph into a .graph (binary) file\n")
-            Exporter.Binary(graph, output_path)
+            PyntacleExporter.Binary(graph, output_path)
 
         if not self.args.no_plot and graph.vcount() < 1000:
             sys.stdout.write("Drawing Generated Graph\n")
@@ -333,9 +341,9 @@ class Generate():
                 other_nodes_colour = pal[0]
                 frame_vertex_colour = framepal[0]
 
-            node_colours = [other_nodes_colour] * graph.vcount()
-            plot_graph.set_node_colours(colours=node_colours)
-            plot_graph.set_node_label(labels=graph.vs()["name"])  # assign node labels to graph
+            node_colors = [other_nodes_colour] * graph.vcount()
+            plot_graph.set_node_colors(colors=node_colors)
+            plot_graph.set_node_labels(labels=graph.vs()["name"])  # assign node labels to graph
             node_sizes = [other_nodes_size] * graph.vcount()
             plot_graph.set_node_sizes(sizes=node_sizes)
             frame_vertex_colour = [frame_vertex_colour]*graph.vcount()
@@ -347,7 +355,7 @@ class Generate():
                 self.logging.warning(
                     "A path with the same name already exist. I will overwrite current drawing")
 
-            plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=True, keep_aspect_ratio=True, vertex_label_size=8, vertex_frame_color=frame_vertex_colour)
+            plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2, keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=frame_vertex_colour)
 
         elif not self.args.no_plot and graph.vcount() >= 1000:
             self.logging.warning(

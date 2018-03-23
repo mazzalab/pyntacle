@@ -24,14 +24,15 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-import algorithms.local_topology_NEW as lt
+""" Class for computing the Global Properties of a graph"""
+
+import algorithms.local_topology_NEW as Lt
 from misc.graph_routines import check_graph_consistency
 from misc.enums import SP_implementations as imps
 from statistics import mean
 from igraph import Graph
 import numpy as np
-
-#todo add pyntacle documentation link for minimum requirements in igraph
+from misc.implementation_seeker import implementation_seeker
 
 class GlobalTopology:
     """
@@ -39,7 +40,7 @@ class GlobalTopology:
     """
     @staticmethod
     @check_graph_consistency
-    def diameter(graph) -> int:
+    def diameter(graph: Graph) -> int:
         """
         Method that returns the diameter of a graph. The diameter is defined as the maximum among all eccentricites
         in a graph. If the graph consists of isolates, we defined  the diameter as zero (the inverse of infinity).
@@ -52,10 +53,9 @@ class GlobalTopology:
         """
         return graph.diameter()
 
-
     @staticmethod
     @check_graph_consistency
-    def radius(graph) -> int:
+    def radius(graph: Graph) -> int:
         """
         Method that returns the radius of a graph. The radius  of a graph is defined as the minimum among
         all eccentricites in a graph. If the graph consists of more than one component, the radius of the smallest
@@ -67,10 +67,9 @@ class GlobalTopology:
 
         return int(graph.radius())
 
-
     @staticmethod
     @check_graph_consistency
-    def components(graph) -> int:
+    def components(graph: Graph) -> int:
         """
         Returns the number of components in a graph.
         :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
@@ -79,10 +78,9 @@ class GlobalTopology:
         """
         return len(graph.components())
 
-
     @staticmethod
     @check_graph_consistency
-    def density(graph) -> float:
+    def density(graph: Graph) -> float:
         """
         Computes the density of a graph. The density of a graph is defined as the ratio between the 2(number of edges)
         in the input graph and the number of possible edges in a graph (number of nodes(number of nodes -1))
@@ -93,10 +91,9 @@ class GlobalTopology:
 
         return round(graph.density(), 5)
 
-
     @staticmethod
     @check_graph_consistency
-    def pi(graph) -> float:
+    def pi(graph: Graph) -> float:
         """
         Returs the pi of a graph. Pi is defined as the ratio between the total edges and the diameter.
         :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
@@ -105,10 +102,9 @@ class GlobalTopology:
         """
         return round(graph.ecount()/graph.diameter(), 5)
 
-
     @staticmethod
     @check_graph_consistency
-    def average_clustering_coefficient(graph) -> float:
+    def average_clustering_coefficient(graph: Graph) -> float:
         """
         Computes the average clustering coefficient among all nodes in a graph (the mean of the clustering coefficient
         :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
@@ -118,10 +114,9 @@ class GlobalTopology:
         """
         return round(graph.transitivity_avglocal_undirected(), 5)
 
-
     @staticmethod
     @check_graph_consistency
-    def weighted_clustering_coefficient(graph) -> float:
+    def weighted_clustering_coefficient(graph: Graph) -> float:
         """
         Computes the weighted clustering coefficient among all nodes in a graph. The Weighted clustering coefficient is
         defined as the average (mean) of each node's clustering coefficient weighted by its degree.
@@ -131,10 +126,9 @@ class GlobalTopology:
         """
         return round(graph.transitivity_undirected(), 5)
 
-
     @staticmethod
     @check_graph_consistency
-    def average_degree(graph) -> float:
+    def average_degree(graph: Graph) -> float:
         """
         Returns the average degree of the input graph. The average degree is the mean of the degree for each node in
         the graph.
@@ -144,10 +138,9 @@ class GlobalTopology:
         """
         return round(mean(graph.degree()), 5)
 
-
     @staticmethod
     @check_graph_consistency
-    def average_closeness(graph) -> float:
+    def average_closeness(graph: Graph) -> float:
         """
         Returns the average closeness of the input graph. This is done by computing the mean of each node's closeness
         (the sum of the length of the shortest path between each node and all the other nodes in the graph)
@@ -156,12 +149,11 @@ class GlobalTopology:
         :return: a float representing the average closeness of a graph
         """
 
-        return round(mean(lt.LocalTopology.closeness(graph=graph)), 5)
-
+        return round(mean(Lt.LocalTopology.closeness(graph=graph)), 5)
 
     @staticmethod
     @check_graph_consistency
-    def average_eccentricity(graph) -> float:
+    def average_eccentricity(graph: Graph) -> float:
         """
         Returns the average eccentricity of the input graph. This is done by computing the mean of each
         node's eccentricity (the maximum distance from each node to all other nodes in the graph)
@@ -170,11 +162,11 @@ class GlobalTopology:
         :return: a float representing the average eccentricity of a graph
         """
 
-        return round(mean(lt.LocalTopology.eccentricity(graph=graph)), 5)
+        return round(mean(Lt.LocalTopology.eccentricity(graph=graph)), 5)
 
     @staticmethod
     @check_graph_consistency
-    def average_radiality(graph, implementation=imps.igraph) -> float:
+    def average_radiality(graph: Graph, implementation=imps.auto) -> float:
         """
         Computes the average radiality, defined as the mean for all the radiality values for each node in the graph.
         **WARNING** Average Radiality doesn't work when the graph has more than one component
@@ -191,11 +183,15 @@ class GlobalTopology:
         nVidia graphics)
         :return: a float representing the average of the radiality of all nodes in the graph.
         """
-        return round(mean(lt.LocalTopology.radiality(graph, nodes=None, implementation=implementation)), 5)
+
+        if implementation == imps.auto:
+            implementation = implementation_seeker(graph=graph)
+
+        return round(mean(Lt.LocalTopology.radiality(graph, nodes=None, implementation=implementation)), 5)
 
     @staticmethod
     @check_graph_consistency
-    def average_radiality_reach(graph, implementation=imps.igraph) -> float:
+    def average_radiality_reach(graph: Graph, implementation=imps.auto) -> float:
         """
         Computes the average radiality reach, defined as the mean for all the radiality  reach values for each node
         in the graph. Radiality Reach is defined here as the radiality for each node in each component weighted for the
@@ -211,11 +207,17 @@ class GlobalTopology:
         nVidia graphics)
         :return: a float representing the average of the radiality reach of all nodes in the graph.
         """
-        return round(mean(lt.LocalTopology.radiality_reach(graph=graph, nodes=None, implementation=implementation)), 5)
+        if not isinstance(implementation, imps):
+            raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(imps)))
+
+        if implementation == imps.auto:
+            implementation = implementation_seeker(graph=graph)
+
+        return round(mean(Lt.LocalTopology.radiality_reach(graph=graph, nodes=None, implementation=implementation)), 5)
 
     @staticmethod
     @check_graph_consistency
-    def average_shortest_path_length(graph, implementation=imps.igraph) -> float:
+    def average_shortest_path_length(graph: Graph, implementation=imps.auto) -> float:
         """
         computes the  average shortest path length as defined in https://en.wikipedia.org/wiki/Average_path_length
         :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
@@ -223,12 +225,17 @@ class GlobalTopology:
         shortest path length is the sum of each component's shortest path length (both directins are counted) divide by
         by the total number of components. isolated nodes counts as a components but their distance to all other
         members in the graph is 0
-        :param implementation:
+        :param implementation: the way the shortest path will be computed. Implementations are stored in `misc.enums`
+        The default implementation is `imps.auto`, which automatically identifies the best implementation based on both the graph structure and the hardware specifications
         :return: a positive float representing the average shortest path length of the igraph object
         """
 
+
         if not isinstance(implementation, imps):
             raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(imps)))
+
+        if implementation == imps.auto:
+            implementation = implementation_seeker(graph=graph)
 
         if implementation == imps.igraph:
             avg_sp = Graph.average_path_length(graph,directed=False,unconn=False)
@@ -236,8 +243,8 @@ class GlobalTopology:
 
         else:
             #re-implement the average_path_length algorithm for a fully connected and a disconnected graph
-            if len(GlobalTopology.components(graph)) < 2:
-                sp = lt.LocalTopology.shortest_path_pyntacle(graph=graph, implementation=implementation)
+            if GlobalTopology.components(graph) < 2:
+                sp = Lt.LocalTopology.shortest_path_pyntacle(graph=graph, implementation=implementation)
                 # set all the shortest path greater than the total number of nodes to 0
                 sp[sp == graph.vcount() + 1] = 0
                 return round(np.sum(np.divide(sp, (graph.vcount() * (graph.vcount() - 1)))), 5)
@@ -248,21 +255,28 @@ class GlobalTopology:
                 for elem in comps:
                     subg = graph.induced_subgraph(elem) #cdreate a subgraph with only the vertex returned by components()
                     if subg.ecount() > 0:
-                        sp = lt.LocalTopology.shortest_path_pyntacle(graph=subg,implementation=implementation)
+                        sp = Lt.LocalTopology.shortest_path_pyntacle(graph=subg, implementation=implementation)
                         sp[sp == subg.vcount() + 1] = 0
                         sum += np.sum(sp)
                 return round(mean(sum, len(comps)),5)
 
+    @staticmethod
+    @check_graph_consistency
+    def median_shortest_path_length(graph: Graph) -> float:
+        """
+        Computes the median shortest path length across all shortest paths obtained from 'LocalTopology'. This is useful
+        if it is needed to estimate the trend of the shortest path distances
+        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
+        "Minimum requirements" specifications in pyntacle's manual. If the graph as more than one component, the average
+        shortest path length is the sum of each component's shortest path length (both directins are counted) divide by
+        by the total number of components. isolated nodes counts as a components but their distance to all other
+        members in the graph is 0
+        :return: the median shortest path length across all shortest path distances
+        """
+        #if not isinstance(implementation, imps):
+        #    raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(imps)))
 
+        sps = Lt.LocalTopology.shortest_path_igraph(graph=graph)
+        sps = np.array(sps)
 
-
-
-
-
-
-
-            #divide all the element in the matrix of shortest path to (total number of nodes*(total number of nodes -1)
-            #then sum all the elements and rpound them
-
-
-
+        return np.median(sps[sps != 0])

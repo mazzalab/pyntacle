@@ -1,13 +1,3 @@
-from igraph import Graph
-from utils.add_attributes import AddAttributes
-from utils.graph_utils import GraphUtils
-from config import *
-from collections import OrderedDict
-
-'''
-this module merges two graphs if they have any node names in common.
-'''
-
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -34,6 +24,15 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+"""
+this module merges two graphs if they have any node names in common.
+"""
+
+from igraph import Graph
+from tools.add_attributes import AddAttributes
+from tools.graph_utils import GraphUtils
+from config import *
+from collections import OrderedDict
 
 class GraphSetter(object):
     def __init__(self, graph1: Graph, graph2: Graph, new_name):

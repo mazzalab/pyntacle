@@ -24,23 +24,23 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+"Wraps up all the importers for several type of network representation files (all the file formats supported by Pyntacle"
+
 import pandas as pd
 import re
 import pickle
 import numpy as np
 from config import *
 from misc.binarycheck import *
-from utils.graph_utils import GraphUtils
-from misc.import_utils import *
-from utils.add_attributes import *
-from utils.adjmatrix_utils import AdjmUtils
-from utils.edgelist_utils import EglUtils
+from tools.graph_utils import GraphUtils
+from misc.io_utils import *
+from tools.add_attributes import *
+from tools.adjmatrix_utils import AdjmUtils
+from tools.edgelist_utils import EglUtils
 from exceptions.illegal_graph_size_error import IllegalGraphSizeError
 from exceptions.unproperlyformattedfile_error import UnproperlyFormattedFileError
 from pyparsing import *
 from itertools import product
-"Wraps up all the importers for several type of network representation files"
-
 
 def dot_attrlist_to_dict(mylist):
     mydict = {}
@@ -95,7 +95,7 @@ def dot_edgeattrlist_to_dict(mylist):
 
 class PyntacleImporter:
     @staticmethod
-    @filechecker
+    @input_file_checker
     @separator_sniffer
     def AdjacencyMatrix(file, sep=None, header=True) -> Graph:
         """
@@ -145,53 +145,52 @@ class PyntacleImporter:
             return graph
 
     @staticmethod
-    @filechecker
+    @input_file_checker
     @separator_sniffer
-    def EdgeList(file, sep=None, header=False):
+    def EdgeList(input_file, sep=None, header=False):
         """
         Take an edge list and turns it into an `igraph.Graph` object that stores the input edge list. An Edge List is a
         text file that represnt all the edges in a graph with a scheme, *nodeA* **separator** *nodeB*. We accept
         undirected edge list, so the node pairs must be repeated twice, with the node names inverted (so a line with
         *nodeB* **separator** *nodeB* must be present or it will raise an error.
-        :param str file: a valid path to the Edge List File
+        :param str input_file: a valid path to the Edge List File
         :param sep: if None(default) we will try to guess the separator. Otherwise, you can place the string
         representing the rows and columns separator.
         :param bool header: Whether the header is present or not (default is *False*)
         :return: an `igraph.Graph` object.
         """
 
-        EglUtils(file=file, header=header, separator=sep).is_pyntacle_ready()
+        if not EglUtils(file=input_file, header=header, separator=sep).is_pyntacle_ready():
+            raise UnproperlyFormattedFileError("Edgelist is not ready to be parsed by Pyntacle, fix it and then come back!")
 
         graph = Graph() #initialize an empty graph that will be filled
-
-        graph.vs["name"] = []
+        
         if header:
 
-            adj = pd.read_csv(file, sep=sep, header=0)
+            adj = pd.read_csv(input_file, sep=sep, skiprows=1, header=None)
 
         else:
-            adj = pd.read_csv(file, sep=sep, header=None)
-
+            adj = pd.read_csv(input_file, sep=sep, header=None)
+            
         adj.values.sort()
         adj = adj.drop_duplicates()
-
         # add all vertices to graph
-        graph.add_vertices(list(set(adj[0].tolist() + adj[1].tolist())))
+        graph.add_vertices(list(str(x) for x in set(adj[0].tolist() + adj[1].tolist())))
         graph.add_edges([tuple(x) for x in adj.values])
         #initialize the graph by calling the graph_initializer() method
-        AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
-        sys.stdout.write("Edge List from file {} imported\n".format(file))
+        AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(input_file))[0])
+        sys.stdout.write("Edge List from file {} imported\n".format(input_file))
         return graph
 
     @staticmethod
-    @filechecker
+    @input_file_checker
     @separator_sniffer
     def Sif(file, sep=None, header=True) -> Graph:
         """
         Import a Simple Interaction File (**SIF**) usually used by tools like Cytoscape to visualize and analyze networks
         inside the Cytoscape Framework, as well as by other Cytscape-like applications. For information regarding the SIF
         file specification, visit: `The Official Cytoscape Page`_. Here, we accept Cytoscape file **with the interaction
-        type in between the two node columns** (e.g. NodeA *separator* **INTERACTION** NodeB). The interaction type and
+        type in between the two node columns** (e.g. NodeA *separator* **INTERACTION** *separator* NodeB). The interaction type and
         (if present) the header associated to the interaction will be stored in the edge attribute `__sif_interaction`
         and `__sif_interaction_name` respectively.
         _The Official Cytoscape Page: http://wiki.cytoscape.org/Cytoscape_User_Manual/Network_Formats.
@@ -280,7 +279,7 @@ class PyntacleImporter:
         return graph
 
     @staticmethod
-    @filechecker
+    @input_file_checker
     @separator_sniffer
     def Dot(file, sep=None, **kwargs):
         """
@@ -305,10 +304,8 @@ class PyntacleImporter:
             header_comment = True
         dotdata.seek(last_pos)
         if header_comment:
-            sys.stdout.write("HEADER PRESENT\n")
             dotdata = dotdata.read().split("\n", 1)[1]
         else:
-            sys.stdout.write("HEADER NOT PRESENT\n")
             dotdata = dotdata.read()
 
         # Parsing dot file
@@ -389,7 +386,7 @@ class PyntacleImporter:
         return graph
 
     @staticmethod
-    @filechecker
+    @input_file_checker
     def Binary(file) -> Graph:
         """
         Reload a binary file that stores an `igraph.Graph` object and makes it ready to be used for pyntacle (if it's

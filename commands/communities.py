@@ -2,12 +2,12 @@ from warnings import simplefilter
 
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 from graph_operations.modules_finder import CommunityFinder
-from io_stream.exporter import Exporter
-from kp_tools.plotter import PlotGraph
+from io_stream.exporter import PyntacleExporter
+from pyntacle_commands_utils.plotter import PlotGraph
 from io_stream.import_attributes import ImportAttributes
-from utils.modules_utils import ModuleUtils
+from tools.modules_utils import ModuleUtils
 from misc.graph_load import *
-from utils.graph_utils import *
+from tools.graph_utils import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
@@ -43,7 +43,8 @@ class Communities():
     def __init__(self, args):
         self.logging = log
         self.args = args
-
+        if not self.args.output_separator:
+            self.args.output_separator = '\t'
         # Check for pycairo
         if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
             sys.stdout.write("WARNING: It seems that the pycairo library is not installed/available. Plots"
@@ -90,7 +91,6 @@ class Communities():
         # initialize module finder method
         communities = CommunityFinder(graph=graph)
         # initialize ImportAttributes method
-        attrs = ImportAttributes(graph=graph)
 
         # define plot sizes
         if self.args.plot_dim:  # define custom format
@@ -128,48 +128,24 @@ class Communities():
                     sys.exit(1)
 
                 else:
-                    sep = separator_detect(self.args.weights)
-                    try:
-                        attrnames = attrs.import_edge_attributes(file_name=self.args.weight, sep=sep)
-                        # get attribute name
-                        if self.args.weights_name is None:
-                            self.args.weights_name = attrnames[0]
+                    ImportAttributes(graph=graph).import_edge_attributes(self.args.weights, sep=separator_detect(self.args.weights), mode=self.args.weights_format)
+                    weights = [float(x) if x != None else 1.0 for x in graph.es()["weights"]]
 
-                        else:
-                            if self.args.weights_name not in graph.es.attributes():
-                                sys.stderr(
-                                    "weight Name {} was not imported into Graph, check your weights file. Quitting\n".format(
-                                        self.args.weights_name))
+            else:
+                weights = None
+                
+            if self.args.clusters is not None:
+                try:
+                    self.args.clusters = int(self.args.clusters)
 
-                        # cast every weight to float
-                        for i, weight in graph.es()[self.args.weights_name]:
-                            try:
-                                graph.es(i)[self.args.weights_name] = float(weight)
-                            except:
-                                self.logging.warning(
-                                    "cannnot convert {} to float, replacing it with NoneType".format(weight))
-                                graph.es(i)[self.args.weights_name] = None
+                except:
+                    sys.stderr.write("argument of \"--clusters\" must be an integer. Quitting\n")
+                    sys.exit(1)
 
-                        graph.es()[self.args.weights_name] = [float(x) if x is not None else None for x in
-                                                              graph.es()[self.args.weights_name]]
-
-                    except:
-                        sys.stderr.write(
-                            "Something went wrong during the weights importing. See help and documentation. Quitting.\n")
-                        sys.exit(1)
-
-                if self.args.clusters is not None:
-                    try:
-                        self.args.clusters = int(self.args.clusters)
-
-                    except:
-                        sys.stderr.write("argument of \"--clusters\" must be an integer. Quitting\n")
-                        sys.exit(1)
-
-                sys.stdout.write("Running Community finding using fastgreedy algorithm\n")
-                communities.fastgreedy(weights=self.args.weights_name, n=self.args.clusters)
-                mods = communities.get_modules()
-                algorithm = "fastgreedy"
+            sys.stdout.write("Running Community finding using fastgreedy algorithm\n")
+            communities.fastgreedy(weights=weights, n=self.args.clusters)
+            mods = communities.get_modules()
+            algorithm = "fastgreedy"
 
         elif self.args.which == "infomap":
             sys.stdout.write("Running Community finding using infomap algorithm\n")
@@ -184,8 +160,6 @@ class Communities():
             algorithm = "leading-eigenvector"
 
         elif self.args.which == "community-walktrap":
-            sys.stdout.write("Running Community finding using community-walktrap algorithm\n")
-
             try:
                 self.args.steps = int(self.args.steps)
 
@@ -200,36 +174,11 @@ class Communities():
                     sys.exit(1)
 
                 else:
-                    sep = separator_detect(self.args.weights)
-                    try:
-                        attrnames = attrs.import_edge_attributes(file_name=self.args.weight, sep=sep)
-                        # get attribute name
-                        if self.args.weights_name is None:
-                            self.args.weights_name = attrnames[0]
+                    ImportAttributes(graph=graph).import_edge_attributes(self.args.weights, sep=separator_detect(self.args.weights), mode=self.args.weights_format)
+                    weights = [float(x) if x != None else 1.0 for x in graph.es()["weights"]]
 
-
-                        else:
-                            if self.args.weights_name not in graph.es.attributes():
-                                sys.stderr(
-                                    "weight Name {} was not imported into Graph, check your weights file. Quitting\n".format(
-                                        self.args.weights_name))
-
-                        # cast every weight to float
-                        for i, weight in graph.es()[self.args.weights_name]:
-                            try:
-                                graph.es(i)[self.args.weights_name] = float(weight)
-                            except:
-                                self.logging.warning(
-                                    "cannnot convert {} to float, replacing it with NoneType".format(weight))
-                                graph.es(i)[self.args.weights_name] = None
-
-                    except:
-                        sys.stderr.write(
-                            "Something went wrong during the weights importing. See help and documentation. Quitting.\n")
-                        sys.exit(1)
-
-                    graph.es()[self.args.weights_name] = [float(x) if x is not None else None for x in
-                                                          graph.es()[self.args.weights_name]]
+            else:
+                weights = None
 
             if self.args.clusters is not None:
                 try:
@@ -242,14 +191,14 @@ class Communities():
             sys.stdout.write(
                 "Running Community finding using community walktrap algorithm at maximum {} steps\n".format(
                     self.args.steps))
-            communities.community_walktrap(weights=self.args.weights_name, n=self.args.clusters,
+            communities.community_walktrap(weights=weights, n=self.args.clusters,
                                            steps=self.args.steps)
             mods = communities.get_modules()
             algorithm = "community-walktrap"
 
         else:
-            self.logging.critical(
-                "This should not happen. Please contact pyntacle Developers and send your command line, along with a log. Quitting\n.")
+            self.logging.critical("This should not happen. Please contact pyntacle Developers and send your "
+                                  "command line, along with a log. Quitting\n.")
             sys.exit(1)
 
         mods_report = []
@@ -257,8 +206,6 @@ class Communities():
             mods_report.append(
                 "\t".join([str(x) for x in [i, elem.vcount(), elem.ecount(), len(elem.components())]]) + "\n")
 
-        # print(mods_report)
-        # input()
         sys.stdout.write(
             "pyntacle - Community Finding Report:\nalgorithm:{0}\nTotal number of Modules Found:"
             "\t{1}\nIndex\tNodes\tEdges \tComponents\n{2}".format(
@@ -359,7 +306,7 @@ class Communities():
             for i, elem in enumerate(final_mods):
                 output_path = ".".join(["_".join([output_basename, str(i), datetime.datetime.now().strftime(
                     "%d%m%Y%H%M")]), out_form])
-                Exporter.AdjacencyMatrix(elem, output_path, sep=self.args.output_separator,
+                PyntacleExporter.AdjacencyMatrix(elem, output_path, sep=self.args.output_separator,
                                          header=output_header)
 
         elif out_form == "egl":
@@ -367,14 +314,14 @@ class Communities():
             for i, elem in enumerate(final_mods):
                 output_path = ".".join(["_".join([output_basename, str(i), datetime.datetime.now().strftime(
                     "%d%m%Y%H%M")]), out_form])
-                Exporter.EdgeList(elem, output_path, sep=self.args.output_separator, header=output_header)
+                PyntacleExporter.EdgeList(elem, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "sif":
             sys.stdout.write("Creating Simple Interaction File of each final community\n")
             for i, elem in enumerate(final_mods):
                 output_path = ".".join(["_".join([output_basename, str(i), datetime.datetime.now().strftime(
                     "%d%m%Y%H%M")]), out_form])
-                Exporter.Sif(elem, output_path, sep=self.args.output_separator, header=output_header)
+                PyntacleExporter.Sif(elem, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "dot":
             sys.stdout.write("Creating DOT File of the each final community\n")
@@ -384,14 +331,14 @@ class Communities():
 
                 # Ignore ugly RuntimeWarnings while creating a dot
                 simplefilter("ignore", RuntimeWarning)
-                Exporter.Dot(elem, output_path)
+                PyntacleExporter.Dot(elem, output_path)
 
         elif out_form == "bin":
             sys.stdout.write("Storing each community into a .graph (binary) file\n")
             for i, elem in enumerate(final_mods):
                 output_path = ".".join(["_".join([output_basename, str(i), datetime.datetime.now().strftime(
                     "%d%m%Y%H%M")]), out_form])
-                Exporter.Binary(elem, output_path)
+                PyntacleExporter.Binary(elem, output_path)
 
         # save the original graph into a binary file
         if self.args.save_binary:
@@ -412,9 +359,9 @@ class Communities():
             else:
                 os.mkdir(plot_dir)
 
-            avail_colours_fill = sns.color_palette("Spectral", n_colors=len(
-                final_mods)).as_hex()  # available colours for node fill
-            avail_colours_borders = sns.color_palette("Spectral", n_colors=len(final_mods),
+            avail_colors_fill = sns.color_palette("Spectral", n_colors=len(
+                final_mods)).as_hex()  # available colors for node fill
+            avail_colors_borders = sns.color_palette("Spectral", n_colors=len(final_mods),
                                                       desat=0.5).as_hex()
 
             if graph.vcount() < 1000:
@@ -428,27 +375,27 @@ class Communities():
                 # initialize general graph Drawer
                 sys.stdout.write("Drawing Original Graph with corresponding modules\n")
                 graph_plotter = PlotGraph(graph=graph)
-                graph_plotter.set_node_label(labels=graph.vs()["name"])
+                graph_plotter.set_node_labels(labels=graph.vs()["name"])
                 graph_plotter.set_node_sizes([30] * graph.vcount())
 
-                # define different colours for each module
-                not_in_module_colours = "#A9A9A9"
+                # define different colors for each module
+                not_in_module_colors = "#A9A9A9"
                 col_list = []
                 bord_list = []
                 for elem in graph.vs():
                     module = elem["__module"]
                     if module is not None:
-                        col_list.append(avail_colours_fill[module])
-                        bord_list.append(avail_colours_borders[module])
+                        col_list.append(avail_colors_fill[module])
+                        bord_list.append(avail_colors_borders[module])
 
                     else:
-                        col_list.append(not_in_module_colours)
-                        bord_list.append(not_in_module_colours)
+                        col_list.append(not_in_module_colors)
+                        bord_list.append(not_in_module_colors)
 
-                graph_plotter.set_node_colours(col_list)
+                graph_plotter.set_node_colors(col_list)
                 graph_plotter.set_layouts()
-                graph_plotter.plot_graph(path=main_plot_path, bbox=plot_size, margin=20, edge_curved=True,
-                                         keep_aspect_ratio=True, vertex_label_size=8,
+                graph_plotter.plot_graph(path=main_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
+                                         keep_aspect_ratio=True, vertex_label_size=6,
                                          vertex_frame_color=bord_list)
             else:
                 sys.stdout.write(
@@ -457,7 +404,7 @@ class Communities():
 
             if len(final_mods) > 20:
                 self.logging.warning(
-                    "The number of modules ({}) is very high, hence the node colours of each module may be very similar".format(
+                    "The number of modules ({}) is very high, hence the node colors of each module may be very similar".format(
                         len(final_mods)))
 
             sys.stdout.write("Drawing Each Module Separately\n")
@@ -465,9 +412,9 @@ class Communities():
             for i, comm in enumerate(final_mods):
                 if comm.vcount() <= 1000:
                     plotter = PlotGraph(graph=comm)
-                    plotter.set_node_label(labels=comm.vs()["name"])
+                    plotter.set_node_labels(labels=comm.vs()["name"])
 
-                    plotter.set_node_colours([avail_colours_fill[i]] * comm.vcount())
+                    plotter.set_node_colors([avail_colors_fill[i]] * comm.vcount())
 
                     plotter.set_node_sizes([30] * comm.vcount())
 
@@ -476,9 +423,9 @@ class Communities():
                             "%d%m%Y%H%M")]), self.args.plot_format]))
 
                     plotter.set_layouts()
-                    plotter.plot_graph(path=comm_plot_path, bbox=plot_size, margin=20, edge_curved=True,
-                                       keep_aspect_ratio=True, vertex_label_size=8,
-                                       vertex_frame_color=[avail_colours_borders[i]] * comm.vcount())
+                    plotter.plot_graph(path=comm_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
+                                       keep_aspect_ratio=True, vertex_label_size=6,
+                                       vertex_frame_color=[avail_colors_borders[i]] * comm.vcount())
 
                 else:
                     sys.stdout.write(

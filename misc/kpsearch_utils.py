@@ -30,7 +30,7 @@ from exceptions.illegal_kppset_size_error import IllegalKppsetSizeError
 from misc.enums import KPPOSchoices, KPNEGchoices
 import random
 
-""" Utilities for checking the consistency of the parameters passed in greedy or bruteforce optimization """
+"""Utilities for checking the consistency of the parameters passed in greedy or bruteforce optimization"""
 
 def greedy_search_initializer(func):
     """
@@ -58,7 +58,6 @@ def greedy_search_initializer(func):
         if not isinstance(kpp_type, (KPPOSchoices, KPNEGchoices)):
             raise TypeError("\"kpp-type\" must be either a \"KPPOSchoices\" enumerator or a \"KPNEGchoices\",  {} found".format(type(kpp_type).__name__))
 
-
         if max_distances is not None and not isinstance(max_distances, int) and max_distances > 1 and max_distances <= graph.vcount():
             raise ValueError("\"max_sp\" must be an integer greater than one and lesser tan the total number of nodes")
 
@@ -79,6 +78,7 @@ def bruteforce_search_initializer(func):
 
     @wraps(func)
     def func_wrapper(graph, kpp_size, kpp_type, max_distances=None, *args, **kwargs):
+
         if not isinstance(kpp_size, int):
             raise TypeError("The kpp_size argument ('{}') is not an integer number".format(kpp_size))
 

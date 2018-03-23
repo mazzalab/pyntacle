@@ -68,22 +68,57 @@ class KPPOSchoices(Enum):
     mreach = auto()
     dR = auto()
 
-class node_attributes(Enum):
+class LocalAttribute(Enum):
     """
     this enumerator stores all the node attributes that can be instantiated by pyntacle
     """
-    #todo aggiungi tutti
     degree = auto()
+    betweenness = auto()
+    radiality = auto()
+    radiality_reach = auto()
+    eccentricity = auto()
+    pagerank = auto()
+    shortestpaths = auto()
+    eigenvector_centrality = auto()
+    closeness = auto()
+    clustering_coefficient = auto()
 
-class graph_attributes(Enum):
+class GlobalAttribute(Enum):
     """
     this enumerator stores all the edge attributes that can be instantiated by pyntacle
     """
-    #todo aggiungi tutti
-    pass
+    average_shortest_path_length = auto()
+    median_shortest_path_length = auto()
+    diameter = auto()
+    components = auto()
+    radius = auto()
+    density = auto()
+    pi = auto()
+    average_clustering_coefficient = auto()
+    weighted_clustering_coefficient = auto()
+    average_degree = auto()
+    average_closeness = auto()
+    average_eccentricity = auto()
+    average_radiality = auto()
+    average_radiality_reach = auto()
+    completeness_mazza = auto()
+    completeness_XXX = auto()
+    compactness = auto()
 
 class edge_attributes(Enum):
     """
     this enumerator stores all the edge attributes that can be instantiated by pyntacle
     """
     pass
+
+class Reports(Enum):
+    """
+    enumerator for the several type of reports available in the pyntacle command line utility
+    """
+    Global = auto()
+    Local = auto()
+    KPinfo = auto()
+    KP_greedy = auto()
+    KP_bruteforce = auto()
+    Communities = auto()
+    Set = auto()

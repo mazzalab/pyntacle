@@ -1,18 +1,3 @@
-import pandas as pd
-from config import *
-from algorithms.global_topology import GlobalTopology, _GlobalAttribute
-from algorithms.local_topology import LocalTopology, _LocalAttribute
-from algorithms.sparseness import *
-from algorithms.sparseness import _SparsenessAttribute
-from exceptions.generic_error import Error
-from exceptions.multiple_solutions_error import MultipleSolutionsError
-from io_stream.exporter import Exporter
-from kp_tools.plotter import *
-from kp_tools.reporter import *
-from io_stream.import_attributes import ImportAttributes
-from misc.graph_load import *
-from utils.graph_utils import GraphUtils
-
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -38,6 +23,22 @@ __license__ = u"""
   You should have received a copy of the license along with this
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
+
+import pandas as pd
+from config import *
+from misc.enums import *
+from algorithms.global_topology_NEW import GlobalTopology
+from algorithms.local_topology_NEW import LocalTopology
+from algorithms.sparseness_NEW import *
+from exceptions.generic_error import Error
+from exceptions.multiple_solutions_error import MultipleSolutionsError
+from io_stream.exporter import PyntacleExporter
+from pyntacle_commands_utils.plotter import *
+from pyntacle_commands_utils.reporter import *
+from io_stream.import_attributes import ImportAttributes
+from misc.graph_load import *
+from tools.graph_utils import GraphUtils
+from tools.add_attributes import AddAttributes
 
 
 class Metrics():
@@ -132,24 +133,15 @@ class Metrics():
             else:
                 plot_size = (1600, 1600)
 
-        self.args.report_format = "." + self.args.report_format
-
         if self.args.which == "local":
 
             reporter = pyntacleReporter(graph=graph) #init reporter
 
-            # initialize local attribute method
-
-            local_attributes = LocalTopology(graph=graph)
-
             if self.args.nodes is not None:
                 sys.stdout.write("Computing local metrics for nodes {}\n".format(self.args.nodes))
-                nodes_list = self.args.nodes.split(",")
-                index_list = utils.get_node_indices(node_names=nodes_list)
-                # print(index_list)
 
                 try:
-                    utils.check_name_list(nodes_list)  # to check everything's in order
+                    utils.check_name_list(self.args.nodes.split(","))  # to check everything's in order
 
                 except MissingAttributeError:
                     self.logging.error(
@@ -158,109 +150,61 @@ class Metrics():
 
             else:
                 sys.stdout.write("Computing local metrics for all nodes in the graph\n")
-                index_list = None
 
-            local_attributes.degree(index_list=index_list, recalculate=True)
-            local_attributes.clustering_coefficient(index_list=index_list, recalculate=True)
-            local_attributes.betweenness(index_list=index_list, recalculate=True)
-            local_attributes.closeness(index_list=index_list, recalculate=True)
-            local_attributes.radiality(index_list=index_list, recalculate=True)
-            local_attributes.radiality_reach(index_list=index_list, recalculate=True)
-            local_attributes.eccentricity(index_list=index_list, recalculate=True)
-            local_attributes.shortest_path(index_list=index_list, recalculate=True)
-
-            if self.args.damping_factor < 0.0 and self.args.damping_factor > 1.0:
+            if self.args.damping_factor < 0.0 or self.args.damping_factor > 1.0:
                 self.logging.error("damping factor must be betweeen 0 and 1")
                 sys.exit(1)
 
             else:
 
-                if self.args.weights is None:
-
-                    local_attributes.pagerank(index_list=index_list, weights=None,
-                                              damping=self.args.damping_factor,
-                                              recalculate=True)
-
-                else:
+                if not self.args.weights is None:
                     if not os.path.exists(self.args.weights):
                         sys.stderr.write(
                             "Input file {} does not exist. Quitting.\n".format(self.args.weights))
                         sys.exit(1)
 
                     else:
+                        #Needs a file that has a 'weights' column.
                         sys.stdout.write("Adding Edge Weights from file {}\n".format(self.args.weights))
+                        ImportAttributes(graph=graph).import_edge_attributes(self.args.weights, sep=separator_detect(self.args.weights), mode=self.args.weights_format)
+                        weights = [float(x) if x!=None else 1.0 for x in graph.es()["weights"]]
 
-                        weights_sep = separator_detect(self.args.weights)
-                        graph = GraphLoad(self.args.input_file, self.args.format, header).graph_load()
-
-                        weights = pd.read_csv(filepath_or_buffer=self.args.weights, sep=weights_sep)
-
-                        # Check attributes file's format
-                        if any(i in weights.iloc[0, 0] for i in ' ()'):
-                            mode = 'cytoscape'
-                            weightscol = 1
-                        else:
-                            mode = 'standard'
-                            weightscol = 2
-                        
-                        # convert the weights to floats
-                        try:
-                            [float(x) for x in weights[weights.columns[weightscol]].values]
-
-                        except (ValueError, TypeError) as errs:
-                            sys.stderr.write("Weights must be float or integers. Quitting\n")
-                            sys.exit(1)
-
-                        if len(weights.columns) >= 2:
-                            self.logging.warning(
-                                "Using column 3 as edge weights for pagerank. Adding the other values as edge attributes, but they will not be used for pagerank computing\n")
-                            weights_name = weights.columns[weightscol]  # store the name of the attribute
-                            print("name", weights_name)
-                            ImportAttributes(graph).import_edge_attributes(file_name=self.args.weights,
-                                                                           sep=weights_sep,
-                                                                           mode=mode)
-                            print(list(graph.es))
-                            weights_list = [float(x) if isinstance(x, str) else None for x in
-                                            graph.es()[weights_name]]
-
-                            local_attributes.pagerank(index_list=index_list, weights=weights_list,
-                                                      damping=self.args.damping_factor, recalculate=True)
-
-                        else:
-                            sys.stderr(
-                                "weights file must contains at least two columns, the first should represent node names and the second ther respective weights. Quitting.\n")
-                            sys.exit(1)
-
-            # create kp_tools for the selected metrics
+                else:
+                    weights = None
+                    
+            # create pyntacle_commands_utils for the selected metrics
             if self.args.nodes is None:
                 nodes_list = graph.vs()["name"]
-                report_prefix = "_".join(["pyntacle", graph["name"][0], "local_metrics", "kp_tools",
+                report_prefix = "_".join(["pyntacle", graph["name"][0], "local_metrics", "report",
                                           runtime_date])
             else:
+                nodes_list = self.args.nodes.split(",")
                 report_prefix = "_".join(
                     ["pyntacle", graph["name"][0], "local_metrics_selected_nodes_report",
                      runtime_date])
 
-            sys.stdout.write("Producing kp_tools in {} format.\n".format(self.args.report_format))
+            sys.stdout.write("Producing report in {} format.\n".format(self.args.report_format))
 
             report_path = os.path.join(self.args.directory, report_prefix + self.args.report_format)
 
             if os.path.exists(report_path):
                 sys.stdout.write("WARNING: File {} already exists, overwriting it\n".format(report_path))
-
-            local_attributes_list = [_LocalAttribute.degree,
-                                     _LocalAttribute.clustering_coefficient,
-                                     _LocalAttribute.betweenness,
-                                     _LocalAttribute.shortest_path,
-                                     _LocalAttribute.closeness,
-                                     _LocalAttribute.radiality,
-                                     _LocalAttribute.radiality_reach,
-                                     _LocalAttribute.eccentricity,
-                                     _LocalAttribute.pagerank]
-
-            reporter.report_local_topology(node_names=nodes_list, local_attributes_list=local_attributes_list)
-
-            reporter.create_report(report_path=report_path)
+            
+            local_attributes_dict = OrderedDict({LocalAttribute.degree.name: LocalTopology.degree(graph=graph, nodes=nodes_list),
+                 LocalAttribute.clustering_coefficient.name: LocalTopology.clustering_coefficient(graph=graph, nodes=nodes_list),
+                 LocalAttribute.betweenness.name: LocalTopology.betweenness(graph=graph, nodes=nodes_list),
+                 LocalAttribute.closeness.name: LocalTopology.closeness(graph=graph, nodes=nodes_list),
+                 LocalAttribute.radiality.name: LocalTopology.radiality(graph=graph, nodes=nodes_list),
+                 LocalAttribute.radiality_reach.name: LocalTopology.radiality_reach(graph=graph, nodes=nodes_list),
+                 LocalAttribute.eccentricity.name: LocalTopology.eccentricity(graph=graph, nodes=nodes_list),
+                 LocalAttribute.eigenvector_centrality.name : LocalTopology.eigenvector_centrality(graph=graph, nodes=nodes_list),
+                 LocalAttribute.pagerank.name: LocalTopology.pagerank(graph=graph, nodes=nodes_list, weights=weights, damping=self.args.damping_factor)})
+            
+            if self.args.nodes:
+                local_attributes_dict["nodes"] = self.args.nodes
+            
+            reporter.create_report(Reports.Local, local_attributes_dict)
+            reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
             if not self.args.no_plot and graph.vcount() < 1000:
     
@@ -277,7 +221,7 @@ class Metrics():
                     os.makedirs(plot_dir, exist_ok=True)
 
                 plot_graph = PlotGraph(graph=graph)
-                plot_graph.set_node_label(labels=graph.vs()["name"])  # assign node labels to graph
+                plot_graph.set_node_labels(labels=graph.vs()["name"])  # assign node labels to graph
 
                 pal = sns.color_palette("Accent", 8).as_hex()
                 framepal = sns.color_palette("Accent", 8, desat=0.5).as_hex()
@@ -291,25 +235,25 @@ class Metrics():
                     selected_nodes_colour = pal[0]
                     selected_nodes_frames = framepal[0]
 
-                    node_colours = [selected_nodes_colour if x["name"] in nodes_list else other_nodes_colour
+                    node_colors = [selected_nodes_colour if x["name"] in nodes_list else other_nodes_colour
                                     for x in
                                     graph.vs()]
                     node_frames = [selected_nodes_frames if x["name"] in nodes_list else other_frame_colour
                                     for x in
                                     graph.vs()]
 
-                    #print(node_colours)
+                    #print(node_colors)
 
-                    plot_graph.set_node_colours(colours=node_colours)
+                    plot_graph.set_node_colors(colors=node_colors)
 
                     node_sizes = [45 if x["name"] in nodes_list else other_nodes_size for x in graph.vs()]
                     plot_graph.set_node_sizes(sizes=node_sizes)
 
                 else:
                     # sys.stdout.write("Plotting network\n".format(nodes_list))
-                    node_colours = [other_nodes_colour] * graph.vcount()
+                    node_colors = [other_nodes_colour] * graph.vcount()
                     node_frames = [other_frame_colour] * graph.vcount()
-                    plot_graph.set_node_colours(colours=node_colours)
+                    plot_graph.set_node_colors(colors=node_colors)
 
                     node_sizes = [other_nodes_size] * graph.vcount()
                     plot_graph.set_node_sizes(sizes=node_sizes)
@@ -320,63 +264,47 @@ class Metrics():
                 plot_path = os.path.join(plot_dir, ".".join(["_".join(
                     ["pyntacle", graph["name"][0], "local_metrics_plot_",
                      runtime_date]), self.args.plot_format]))
-                plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=True,
-                                      keep_aspect_ratio=True, vertex_label_size=8, vertex_frame_color=node_frames)
+                plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
+                                      keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=node_frames)
 
             elif not self.args.no_plot and graph.vcount() >= 1000:
                 sys.stdout.write("The graph has too many nodes ({}). Can't draw graph\n".format(graph.vcount()))
 
         elif self.args.which == "global":
-
-            #define all global attributes that will be found
-            global_attributes_list = [_GlobalAttribute.average_degree, _GlobalAttribute.average_path_length,
-                                      _GlobalAttribute.diameter, _GlobalAttribute.density,
-                                      _GlobalAttribute.clustering_coefficient,
-                                      _GlobalAttribute.weighted_clustering_coefficient,
-                                      _GlobalAttribute.average_eccentricity, _GlobalAttribute.average_radiality,
-                                      _GlobalAttribute.average_radiality_reach, _GlobalAttribute.average_closeness,
-                                      _GlobalAttribute.pi,
-                                      _SparsenessAttribute.completeness,
-                                      _SparsenessAttribute.completeness_legacy,
-                                      _SparsenessAttribute.compactness]
-
-            #find metrics for the whole graph (without removing nodes)
+            
             sys.stdout.write("Computing global Metrics for whole graph\n")
-            global_topology = GlobalTopology(graph=graph)
-            sparseness = Sparseness(graph=graph)
 
-            global_topology.clustering_coefficient(recalculate=True)
+            global_attributes_dict = OrderedDict({GlobalAttribute.average_shortest_path_length.name: GlobalTopology.average_shortest_path_length(graph=graph),
+                                                 GlobalAttribute.diameter.name: GlobalTopology.diameter(graph=graph),
+                                                 GlobalAttribute.components.name: GlobalTopology.components(graph=graph),
+                                                 GlobalAttribute.radius.name: GlobalTopology.radius(graph=graph),
+                                                 GlobalAttribute.density.name: GlobalTopology.density(graph=graph),
+                                                 GlobalAttribute.pi.name: GlobalTopology.pi(graph=graph),
+                                                 GlobalAttribute.average_clustering_coefficient.name: GlobalTopology.average_clustering_coefficient(graph=graph),
+                                                 GlobalAttribute.weighted_clustering_coefficient.name: GlobalTopology.weighted_clustering_coefficient(graph=graph),
+                                                 GlobalAttribute.average_degree.name: GlobalTopology.average_degree(graph=graph),
+                                                 GlobalAttribute.average_closeness.name: GlobalTopology.average_closeness(graph=graph),
+                                                 GlobalAttribute.average_eccentricity.name: GlobalTopology.average_eccentricity(graph=graph),
+                                                 GlobalAttribute.average_radiality.name: GlobalTopology.average_radiality(graph=graph),
+                                                 GlobalAttribute.average_radiality_reach.name: GlobalTopology.average_radiality_reach(graph=graph),
+                                                 GlobalAttribute.completeness_mazza.name: Sparseness.completeness_Mazza(graph=graph),
+                                                 GlobalAttribute.completeness_XXX.name: Sparseness.completeness_XXX(graph=graph),
+                                                 GlobalAttribute.compactness.name: Sparseness.compactness(graph=graph)
+                                                 })
 
-            global_topology.weighted_clustering_coefficient(recalculate=True)
-            global_topology.average_closeness(recalculate=True)
-            global_topology.average_degree(recalculate=True)
-            global_topology.average_eccentricity(recalculate=True)
-            global_topology.average_radiality(recalculate=True)
-            global_topology.average_radiality_reach(recalculate=True)
-            global_topology.average_path_length(recalculate=True)
-            global_topology.density(recalculate=True)
-            global_topology.diameter(recalculate=True)
-            global_topology.pi(recalculate=True)
-            sparseness.compactness(recalculate=True)
-            sparseness.completeness(recalculate=True)
-            sparseness.completeness_legacy(recalculate=True)
+            sys.stdout.write("Producing report\n")
+            report_prefix = "_".join(
+                ["pyntacle", graph["name"][0], "global_metrics_report",
+                 runtime_date])
+            
+            reporter = pyntacleReporter(graph=graph)  # init reporter
+            reporter.create_report(Reports.Global, global_attributes_dict)
+            reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
-
-            if not self.args.no_nodes: #create standard kp_tools for the whole graph
-                sys.stdout.write("Producing kp_tools\n")
-
-                reporter = pyntacleReporter(graph=graph)
-                reporter.report_global_topology(global_attributes_list)
-                report_prefix = "_".join(["pyntacle", graph["name"][0], "global", "metrics", "kp_tools"])
-
-                report_path = os.path.join(self.args.directory, "_".join(
-                    [report_prefix, runtime_date]) + self.args.report_format)
-
-                reporter.report_global_topology(global_attributes_list)
-                reporter.create_report(report_path=report_path)
-
-            else:
-
+            if self.args.no_nodes:  # create an additional report for the graph minus the selected nodes
+                report_prefix_nonodes = "_".join(["pyntacle", graph["name"][0], "global_metrics_nonodes", "report",
+                                          runtime_date])
+                
                 sys.stdout.write("Removing nodes {} from input graph and computing global metrics\n".format(self.args.no_nodes))
                 nodes_list = self.args.no_nodes.split(",")
 
@@ -388,35 +316,31 @@ class Metrics():
                 graph_nonodes = graph.copy()
                 graph_nonodes.delete_vertices(index_list) #remove target nodes
 
-                global_topology_nonodes= GlobalTopology(graph_nonodes)
-                sparseness_nonodes = Sparseness(graph_nonodes)
+                global_attributes_dict_nonodes = OrderedDict({
+                         'Removed nodes': ','.join(nodes_list),
+                         GlobalAttribute.average_shortest_path_length.name: GlobalTopology.average_shortest_path_length(graph=graph_nonodes),
+                         GlobalAttribute.diameter.name: GlobalTopology.diameter(graph=graph_nonodes),
+                         GlobalAttribute.components.name: GlobalTopology.components(graph=graph_nonodes),
+                         GlobalAttribute.radius.name: GlobalTopology.radius(graph=graph_nonodes),
+                         GlobalAttribute.density.name: GlobalTopology.density(graph=graph_nonodes),
+                         GlobalAttribute.pi.name: GlobalTopology.pi(graph=graph_nonodes),
+                         GlobalAttribute.average_clustering_coefficient.name: GlobalTopology.average_clustering_coefficient(graph=graph_nonodes),
+                         GlobalAttribute.weighted_clustering_coefficient.name: GlobalTopology.weighted_clustering_coefficient(graph=graph_nonodes),
+                         GlobalAttribute.average_degree.name: GlobalTopology.average_degree(graph=graph_nonodes),
+                         GlobalAttribute.average_closeness.name: GlobalTopology.average_closeness(graph=graph_nonodes),
+                         GlobalAttribute.average_eccentricity.name: GlobalTopology.average_eccentricity(graph=graph_nonodes),
+                         GlobalAttribute.average_radiality.name: GlobalTopology.average_radiality(graph=graph_nonodes),
+                         GlobalAttribute.average_radiality_reach.name: GlobalTopology.average_radiality_reach(graph=graph_nonodes),
+                         GlobalAttribute.completeness_mazza.name: Sparseness.completeness_Mazza(graph=graph_nonodes),
+                         GlobalAttribute.completeness_XXX.name: Sparseness.completeness_XXX(graph=graph_nonodes),
+                         GlobalAttribute.compactness.name: Sparseness.compactness(graph=graph_nonodes)
+                         })
 
-                global_topology_nonodes.clustering_coefficient(recalculate=True)
-                global_topology_nonodes.weighted_clustering_coefficient(recalculate=True)
-                global_topology_nonodes.average_closeness(recalculate=True)
-                global_topology_nonodes.average_degree(recalculate=True)
-                global_topology_nonodes.average_eccentricity(recalculate=True)
-                global_topology_nonodes.average_radiality(recalculate=True)
-                global_topology_nonodes.average_radiality_reach(recalculate=True)
-                global_topology_nonodes.average_path_length(recalculate=True)
-                global_topology_nonodes.density(recalculate=True)
-                global_topology_nonodes.diameter(recalculate=True)
-                global_topology_nonodes.pi(recalculate=True)
-
-                sparseness_nonodes.compactness(recalculate=True)
-                sparseness_nonodes.completeness(recalculate=True)
-                sparseness_nonodes.completeness_legacy(recalculate=True)
-
-                sys.stdout.write("Producing kp_tools\n")
-                reporter = pyntacleReporter(graph=graph, graph2=graph_nonodes)
-                reporter.report_global_comparisons(attributes_list=global_attributes_list)
-
-                report_prefix = "_".join(["pyntacle", graph["name"][0], "global", "metrics", "nonodes", "kp_tools"])
-
-                report_path = os.path.join(self.args.directory, "_".join(
-                    [report_prefix, runtime_date]) + self.args.report_format)
-
-                reporter.create_report(report_path=report_path)
+                sys.stdout.write("Producing report\n")
+                graph_nonodes["name"][0] += '_without_nodes'
+                reporter = pyntacleReporter(graph=graph_nonodes)  # init reporter
+                reporter.create_report(Reports.Global, global_attributes_dict_nonodes)
+                reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
             if not self.args.no_plot and graph.vcount() < 1000:
 
@@ -446,8 +370,8 @@ class Metrics():
                 no_nodes_frames = framepal[4]
 
                 if self.args.no_nodes:
-                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", graph["name"][0],"global_metrics_plot_original", runtime_date]),self.args.plot_format]))
-                    node_colours = [no_nodes_colour if x["name"] in nodes_list else other_nodes_colour for x
+                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", re.sub('_without_nodes', '', graph["name"][0]),"global_metrics_plot", runtime_date]),self.args.plot_format]))
+                    node_colors = [no_nodes_colour if x["name"] in nodes_list else other_nodes_colour for x
                                     in
                                     graph.vs()]
                     node_frames = [no_nodes_frames if x["name"] in nodes_list else other_frame_colour for x
@@ -458,46 +382,46 @@ class Metrics():
                                   graph.vs()]
 
                 else:
-                    node_colours = [other_nodes_colour] * graph.vcount()
+                    node_colors = [other_nodes_colour] * graph.vcount()
                     node_frames = [other_frame_colour] * graph.vcount()
                     node_sizes = [other_nodes_size] * graph.vcount()
                     plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", graph["name"][0],"global_metrics_plot", runtime_date]), self.args.plot_format]))
 
                 plot_graph = PlotGraph(graph=graph)
-                plot_graph.set_node_label(labels=graph.vs()["name"])  # assign node labels to graph
+                plot_graph.set_node_labels(labels=graph.vs()["name"])  # assign node labels to graph
 
-                plot_graph.set_node_colours(colours=node_colours)
+                plot_graph.set_node_colors(colors=node_colors)
                 plot_graph.set_node_sizes(sizes=node_sizes)
 
-                plot_graph.set_node_colours(colours=node_colours)
+                plot_graph.set_node_colors(colors=node_colors)
                 plot_graph.set_node_sizes(sizes=node_sizes)
 
                 # define layout
                 plot_graph.set_layouts()
 
-                plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=True,
-                                      keep_aspect_ratio=True, vertex_label_size=8, vertex_frame_color=node_frames)
+                plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
+                                      keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=node_frames)
 
                 if self.args.no_nodes:
 
                     plot_graph = PlotGraph(graph=graph_nonodes)
-                    plot_graph.set_node_label(labels=graph_nonodes.vs()["name"])  # assign node labels to graph
+                    plot_graph.set_node_labels(labels=graph_nonodes.vs()["name"])  # assign node labels to graph
 
                     # print(graph_copy.vs()["name"])
-                    node_colours = [other_nodes_colour] * graph_nonodes.vcount()
+                    node_colors = [other_nodes_colour] * graph_nonodes.vcount()
                     node_frames = [other_frame_colour] * graph_nonodes.vcount()
                     node_sizes = [other_nodes_size] * graph_nonodes.vcount()
 
-                    plot_graph.set_node_colours(colours=node_colours)
+                    plot_graph.set_node_colors(colors=node_colors)
                     plot_graph.set_node_sizes(sizes=node_sizes)
 
                     # define layout
                     plot_graph.set_layouts()
 
-                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", graph["name"][0],"global_metrics_plot_nonodes",runtime_date]),self.args.plot_format]))
+                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", graph["name"][0], "global_metrics_plot",runtime_date]),self.args.plot_format]))
 
-                    plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=True,
-                                          keep_aspect_ratio=True, vertex_label_size=8, vertex_frame_color=node_frames)
+                    plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
+                                          keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=node_frames)
 
             elif not self.args.no_plot and graph.vcount() >= 1000:
                 sys.stdout.write("The graph has too many nodes ({}). Can't draw graph\n".format(graph.vcount()))
@@ -507,9 +431,34 @@ class Metrics():
             sys.exit(1)
 
         if self.args.save_binary:
+
+            binary_path = os.path.join(self.args.directory, report_prefix.replace('_report_', '_') + ".graph")
+            # elif self.args.no_nodes:
+            # nodes_list = graph_nonodes.vs()
+            if self.args.which == 'local':
+                if self.args.nodes:
+                    nodes_list = self.args.nodes.split(",")
+                else:
+                    nodes_list = graph.vs["name"]
+                for key in local_attributes_dict:
+                    AddAttributes(graph).add_node_attributes(key, local_attributes_dict[key], nodes_list)
+
+            elif self.args.which == 'global':
+                if self.args.no_nodes:
+                    binary_path_nonodes = os.path.join(self.args.directory, report_prefix_nonodes.replace('_report_', '_') + ".graph")
+                    sys.stdout.write("Since the --no-nodes option was selected to calculate the global metrics, a second graph without those "
+                                     "nodes and said metrics will be saved in a second Binary file.\n".format(os.path.basename(binary_path_nonodes)))
+                    for key in global_attributes_dict_nonodes:
+                        AddAttributes(graph_nonodes).add_graph_attributes(key, global_attributes_dict_nonodes[key])
+                    
+                    PyntacleExporter.Binary(graph_nonodes, binary_path_nonodes)
+
+                for key in global_attributes_dict:
+                    AddAttributes(graph).add_graph_attributes(key, global_attributes_dict[key])
+                    
             sys.stdout.write("Saving graph to a Binary file\n")
-            binary_path = os.path.join(self.args.directory, report_prefix + ".graph")
-            Exporter.Binary(graph, binary_path)
+            PyntacleExporter.Binary(graph, binary_path)
+
         cursor.stop()
         sys.stdout.write("pyntacle Metrics completed successfully. Ending\n")
         sys.exit(0)

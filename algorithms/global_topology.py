@@ -7,7 +7,7 @@ import numpy as np
 from igraph import Graph, VertexClustering
 from config import *
 from algorithms import local_topology
-from utils.graph_utils import *
+from tools.graph_utils import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"

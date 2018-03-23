@@ -4,9 +4,11 @@ from warnings import simplefilter
 from config import *
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 from graph_operations.logic_ops import GraphSetter
-from io_stream.exporter import Exporter
-from kp_tools.plotter import PlotGraph
-from utils.graph_utils import GraphUtils
+from io_stream.exporter import PyntacleExporter
+from pyntacle_commands_utils.plotter import PlotGraph
+from pyntacle_commands_utils.reporter import *
+from misc.enums import Reports
+from tools.graph_utils import GraphUtils
 from misc.graph_load import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
@@ -172,6 +174,7 @@ class Set():
         # NOT prefixing the argument with -- means it's not optional
 
         # GraphSetter(graph1=graph1, graph2=graph2,new_name = new_name
+        
         if self.args.which == "union":
             sys.stdout.write(
                 "Running pyntacle Union on input graph {} and  {}\n".format(self.args.input_file_1,
@@ -197,7 +200,7 @@ class Set():
 
         elif self.args.which == "difference":
             sys.stdout.write(
-                "Running pyntacle Intersection on input graph {} and  {}\n".format(self.args.input_file_1,
+                "Running pyntacle Difference on input graph {} and  {}\n".format(self.args.input_file_1,
                                                                                   self.args.input_file_2))
 
             output_graph = setter.difference()
@@ -210,7 +213,8 @@ class Set():
                 "This should not happen. Please contact pyntacle developer and send a command line, along with a log. Quitting\n")
             sys.exit(1)
 
-        # print kp_tools to command line
+
+        # print pyntacle_commands_utils to command line
         sys.stdout.write("pyntacle Report on set Operation: {}\n".format(self.args.which))
         sys.stdout.write("Input Graphs\n")
 
@@ -256,26 +260,26 @@ class Set():
         # output generated networks
         if out_form == "adjm":
             sys.stdout.write("Creating Adjacency Matrix of the generated graph\n")
-            Exporter.AdjacencyMatrix(output_graph, output_path, sep=self.args.output_separator, header=output_header)
+            PyntacleExporter.AdjacencyMatrix(output_graph, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "egl":
             sys.stdout.write("Creating Edge List of the generated graph\n")
-            Exporter.EdgeList(output_graph, output_path, sep=self.args.output_separator, header=output_header)
+            PyntacleExporter.EdgeList(output_graph, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "sif":
             sys.stdout.write("Creating Simple Interaction File of the generated graph\n")
-            Exporter.Sif(output_graph, output_path, sep=self.args.output_separator, header=output_header)
+            PyntacleExporter.Sif(output_graph, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "dot":
             sys.stdout.write("Creating DOT File of the generated graph\n")
 
             # Ignore ugly RuntimeWarnings while creating a dot
             simplefilter("ignore", RuntimeWarning)
-            Exporter.Dot(output_graph, output_path)
+            PyntacleExporter.Dot(output_graph, output_path)
 
         elif out_form == "bin":
             sys.stdout.write("Storing the created graph into a .graph (binary) file\n")
-            Exporter.Binary(output_graph, output_path)
+            PyntacleExporter.Binary(output_graph, output_path)
 
         sys.stdout.write(
             "Path to the output graph after set operation: {}\n".format(os.path.abspath(output_path)))
@@ -316,32 +320,32 @@ class Set():
             graph_2_frame = framepal[3]
 
             # set input graph node labels
-            graph1_plotter.set_node_label(labels=graph1.vs()["name"])
-            graph2_plotter.set_node_label(labels=graph2.vs()["name"])
+            graph1_plotter.set_node_labels(labels=graph1.vs()["name"])
+            graph2_plotter.set_node_labels(labels=graph2.vs()["name"])
 
-            # set input graph node colours
-            graph1_plotter.set_node_colours(colours=[graph_1_colour] * graph1.vcount())
-            graph2_plotter.set_node_colours(colours=[graph_2_colour] * graph2.vcount())
+            # set input graph node colors
+            graph1_plotter.set_node_colors(colors=[graph_1_colour] * graph1.vcount())
+            graph2_plotter.set_node_colors(colors=[graph_2_colour] * graph2.vcount())
 
             # set input graphs node sizes
             graph1_plotter.set_node_sizes(sizes=[input_graph_node_size] * graph1.vcount())
             graph2_plotter.set_node_sizes(sizes=[input_graph_node_size] * graph2.vcount())
 
             # set input graph vertex colors
-            graph_1_frame_colours = [graph_1_frame] * graph1.vcount()
-            graph_2_frame_colours = [graph_2_frame] * graph1.vcount()
+            graph_1_frame_colors = [graph_1_frame] * graph1.vcount()
+            graph_2_frame_colors = [graph_2_frame] * graph1.vcount()
 
             # define layouts
             graph1_plotter.set_layouts()
             graph2_plotter.set_layouts()
 
             # plot input graphs
-            graph1_plotter.plot_graph(path=graph1_plot_path, bbox=plot_size, margin=20, edge_curved=True,
-                                      keep_aspect_ratio=True, vertex_label_size=8,
-                                      vertex_frame_color=graph_1_frame_colours)
-            graph2_plotter.plot_graph(path=graph2_plot_path, bbox=plot_size, margin=20, edge_curved=True,
-                                      keep_aspect_ratio=True, vertex_label_size=8,
-                                      vertex_frame_color=graph_2_frame_colours)
+            graph1_plotter.plot_graph(path=graph1_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
+                                      keep_aspect_ratio=True, vertex_label_size=6,
+                                      vertex_frame_color=graph_1_frame_colors)
+            graph2_plotter.plot_graph(path=graph2_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
+                                      keep_aspect_ratio=True, vertex_label_size=6,
+                                      vertex_frame_color=graph_2_frame_colors)
 
             if output_graph.vcount() > 0:
 
@@ -362,6 +366,7 @@ class Set():
                 intersection_node_color_list = []
                 intersection_frame_color_list = []
 
+                intersection_set = []
                 for v in output_graph.vs():
                     parent_g1 = graph1["name"][0]
                     parent_g2 = graph2["name"][0]
@@ -369,7 +374,8 @@ class Set():
                     if parent_g1 in v["__parent"] and parent_g2 in v["__parent"]:
                         intersection_node_color_list.append(node_intersection_colour)
                         intersection_frame_color_list.append(node_intersection_frame)
-
+                        intersection_set.append(v["name"])
+                        
                     elif parent_g1 in v["__parent"] and not parent_g2 in v["__parent"]:
                         intersection_node_color_list.append(graph_1_colour)
                         intersection_frame_color_list.append(graph_1_frame)
@@ -379,15 +385,15 @@ class Set():
                         intersection_frame_color_list.append(graph_2_frame)
 
 
-                output_graph_plotter.set_node_colours(colours=intersection_node_color_list)
+                output_graph_plotter.set_node_colors(colors=intersection_node_color_list)
                 output_graph_plotter.set_node_sizes(sizes=[
                     node_intersection_size if parent_g1 in v["__parent"] and parent_g2 in v[
                         "__parent"] else input_graph_node_size for v in output_graph.vs()])
 
-                output_graph_plotter.set_node_label(labels=output_graph.vs()["name"])
+                output_graph_plotter.set_node_labels(labels=output_graph.vs()["name"])
                 output_graph_plotter.set_layouts()
-                output_graph_plotter.plot_graph(path=output_plot_path, bbox=plot_size, margin=20, edge_curved=True,
-                                                keep_aspect_ratio=True, vertex_label_size=8,
+                output_graph_plotter.plot_graph(path=output_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
+                                                keep_aspect_ratio=True, vertex_label_size=6,
                                                 vertex_frame_color=intersection_frame_color_list)
 
             else:
@@ -396,6 +402,38 @@ class Set():
         elif not self.args.no_plot and (graph1.vcount() >= 1000 or graph2.vcount() >= 1000):
             self.logging.warning(
                 "One of the two input Graphs exceeds pyntacle limits for plotting (maximum 1000 nodes). Will not draw Graph")
+        
+        
+        # Report
+        reporter1 = pyntacleReporter(graph=graph1)  # init reporter1
+        reporter2 = pyntacleReporter(graph=graph2)  # init reporter2
+        reporter_final = pyntacleReporter(graph=output_graph)
+        
+        set1_attr_dict = OrderedDict()
+        set2_attr_dict = OrderedDict()
+        setF_attr_dict = OrderedDict()
+
+        if self.args.which == 'intersection':
+            setF_attr_dict['\nCommon Nodes'] = 'Node names'#(len(intersection_set), ','.join(intersection_set))
+            setF_attr_dict[len(intersection_set)] = ','.join(intersection_set)
+        reporter1.create_report(Reports.Set, set1_attr_dict)
+        reporter2.create_report(Reports.Set, set2_attr_dict)
+        reporter_final.create_report(Reports.Set, setF_attr_dict)
+        
+        reporter1.report[1] = ['\n--- Graph 1 ---']
+        reporter2.report[1] = ['--- Graph 2 ---']
+        del(reporter1.report[-1])
+        del(reporter2.report[-1])
+        del(reporter2.report[0])
+        del(reporter_final.report[0])
+        for e in reporter_final.report:
+            if e[0] == 'Pyntacle Command:':
+                e[1] = e[1] + ' ' + self.args.which
+        
+        reporter_final.report[0] = ['\n--- Resulting Graph ---']
+        reporter1.report.extend(reporter2.report)
+        reporter1.report.extend(reporter_final.report)
+        reporter1.write_report(report_dir=self.args.directory, format=self.args.report_format)
         cursor.stop()
         sys.stdout.write("pyntacle Set completed successfully\n")
         sys.exit(0)

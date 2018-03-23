@@ -9,7 +9,7 @@ from misc.binarycheck import is_binary_file
 import re
 # pyntacle Libraries
 from io_stream.importer import PyntacleImporter
-from utils.graph_utils import GraphUtils
+from tools.graph_utils import GraphUtils
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"

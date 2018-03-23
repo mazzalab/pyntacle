@@ -24,10 +24,11 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+""" This is the shortest path calculation using GPU that should be imported if the GPU is available"""
+
 from config import *
 from numba import cuda,jit, uint16
 import numpy as np
-""" This is the shortest path calculation using GPU that should be imported if the GPU is available"""
 
 class SPGpu:
 #todo rewrite to work only on upper or lower triangular matrix
@@ -69,14 +70,15 @@ class SPGpu:
             posXY = min_path
 
             if posXY > 2:
-                for k in range(0, adjmat.shape[0]):
-                    posXK = adjmat[posx, k]
-                    posKY = adjmat[k, posy]
+                if posy in nodes:
+                    for k in range(0, adjmat.shape[0]):
+                        posXK = adjmat[posx, k]
+                        posKY = adjmat[k, posy]
 
-                    if posXY > posXK + posKY:
-                        min_path = posXK + posKY
+                        if posXY > posXK + posKY:
+                            min_path = posXK + posKY
 
-                    if min_path == 2:
-                        break
+                        if min_path == 2:
+                            break
 
-            result[posx, posy] = min_path
+                    result[posx, posy] = min_path

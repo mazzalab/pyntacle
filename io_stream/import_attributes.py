@@ -24,6 +24,10 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+"""
+Import attributes for an `igraph.Graph` object stored in a file and adds it to the Graph that has to be studied
+"""
+
 from igraph import Graph
 from config import *
 from collections import OrderedDict
@@ -32,7 +36,7 @@ from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
 from exceptions.unsupported_graph_error import UnsupportedGrapherror
 # pyntacle Libraries
 from exceptions.wrong_argument_error import WrongArgumentError
-from utils.add_attributes import AddAttributes
+from tools.add_attributes import AddAttributes
 
 class ImportAttributes():
     logger = None

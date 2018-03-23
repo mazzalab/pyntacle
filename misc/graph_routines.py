@@ -24,7 +24,7 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-""" **a series of decorators to improve the usability of some pyntacle's function, like 
+"""A series of decorators to improve the usability of some pyntacle's function, like 
 checking if the `igraph.Graph` object is compatible with pyntacle's specifications, verify the presence of nodes 
 in the input graph, give elapsed time of execution and so on"""
 
@@ -32,7 +32,7 @@ from exceptions.illegal_graph_size_error import IllegalGraphSizeError
 from exceptions.unsupported_graph_error import UnsupportedGrapherror
 from exceptions.wrong_argument_error import WrongArgumentError
 from config import *
-from utils.graph_utils import *
+from tools.graph_utils import *
 import time
 from functools import wraps
 # todo recheck all the init properties of an igraph Graph (in IO)
