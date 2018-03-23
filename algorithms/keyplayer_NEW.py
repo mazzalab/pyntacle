@@ -124,7 +124,7 @@ class KeyPlayer:
                 return KeyPlayer.__dF_Borgatti(graph=graph, max_distances=max_distances)
 
             else:
-                return KeyPlayer.__dF_pyntacle(graph=graph, max_distances=max_distances)
+                return KeyPlayer.__dF_pyntacle(graph=graph, max_distances=max_distances, implementation=implementation)
 
     @staticmethod
     def __dF_Borgatti(graph, max_distances=None) -> float:
@@ -157,7 +157,7 @@ class KeyPlayer:
         return round(df, 5)
 
     @staticmethod
-    def __dF_pyntacle(graph, max_distances=None) -> float:
+    def __dF_pyntacle(graph, max_distances=None, implementation=imps.cpu) -> float:
         """
         Implement the DF search using parallel computing we implemented in `LocalTopology.shortest_path_pyntacle` in
         order to speed up shortest path  search using either CPU or HPU accelerations (if nVidia compatible graphics
@@ -173,7 +173,7 @@ class KeyPlayer:
 
         shortest_path_lengths = lt.LocalTopology.shortest_path_pyntacle(graph=graph, nodes=None,
                                                                         mode=lt.GraphType.undirect_unweighted,
-                                                                        implementation=imps.auto)
+                                                                        implementation=implementation)
 
         if max_distances is not None:
             shortest_path_lengths = ShortestPathModifier.np_array_to_inf(shortest_path_lengths, max_distances=max_distances)

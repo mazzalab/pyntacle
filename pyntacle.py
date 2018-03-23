@@ -109,7 +109,6 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
             log.setLevel(logging.DEBUG)
         else:
             log.setLevel(logging.WARN)
-            
 
         # Continue parsing of the first two arguments
         args = parser.parse_args(sys.argv[1:2])

@@ -33,8 +33,8 @@ import numpy as np
 class SPGpu:
 #todo rewrite to work only on upper or lower triangular matrix
     @staticmethod
-    @cuda.jit(argtypes='uint16[:, :], (uint16[:], uint16[:, :])')
-    def shortest_path_GPU(adjmat, nodes, result):
+    @cuda.jit(argtypes='uint16[:, :], uint16[:, :]')
+    def shortest_path_GPU(adjmat, result):
         """
         Calculate the shortest paths of a graph for aa single nodes, a set of nodes or all nodes in the graph using
         'Floyd-Warshall Implementation <https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm>'_. The formula
@@ -55,15 +55,15 @@ class SPGpu:
             posXY = min_path
 
             if posXY > 2:
-                if posy in nodes:
-                    for k in range(0, adjmat.shape[0]):
-                        posXK = adjmat[posx, k]
-                        posKY = adjmat[k, posy]
+                # if posy in nodes:
+                for k in range(0, adjmat.shape[0]):
+                    posXK = adjmat[posx, k]
+                    posKY = adjmat[k, posy]
 
-                        if posXY > posXK + posKY:
-                            min_path = posXK + posKY
+                    if posXY > posXK + posKY:
+                        min_path = posXK + posKY
 
-                        if min_path == 2:
-                            break
+                    if min_path == 2:
+                        break
 
-                    result[posx, posy] = min_path
+                result[posx, posy] = min_path
