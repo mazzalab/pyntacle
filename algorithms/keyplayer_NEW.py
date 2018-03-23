@@ -287,7 +287,7 @@ class KeyPlayer:
                     raise ValueError("\"max_sp\" must be an integer greater than one")
 
         if implementation == imps.auto:
-            implementation = implementation_seeker(graph) #todo this will return the correct implementation
+            implementation = implementation_seeker(graph)
 
         if implementation == imps.igraph:
             shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)

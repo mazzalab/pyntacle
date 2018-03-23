@@ -71,6 +71,7 @@ class GreedyOptimization:
                 * kpvalue (float): float representing the kp score for the graph when the set is removed
         """
 
+
         #todo reminder che l'implementazione è automatica
         if kpp_type == KPNEGchoices.F or kpp_type == KPNEGchoices.dF:
             if graph.ecount() == 0:

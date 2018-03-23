@@ -402,9 +402,10 @@ class LocalTopology:
         """
 
         if implementation == imps.auto:
-            #todo check if this
-            implementation = implementation_seeker(graph) #call the "search" for an automatic implementation
+            raise ValueError("Implementation \"auto\" not available here, you must have already decided your implementation"
+                             "before caling this method")
 
+        #todo mauro this should be handle outside this
         if implementation == imps.gpu:
 
             if not cuda.is_available():
@@ -435,8 +436,6 @@ class LocalTopology:
                         return sps
 
                     elif implementation == implementation.gpu:
-                        #todo risistemare e testare su un altro gpu-enabled computer
-
                         if nodes is None:
                             nodes = list(range(0, graph.vcount()))
 
@@ -468,7 +467,7 @@ class LocalTopology:
             sys.exit(0)
 
     @staticmethod
-    @jit(nopython=True, parallel=True)
+    @jit(nopython=True, parallel=True, cache=True)
     def __shortest_path_CPU__(adjmat, nodes=None) -> np.ndarray:
         """
         Calculate the shortest paths of a graph for aa single nodes, a set of nodes or all nodes in the graph using
@@ -485,7 +484,15 @@ class LocalTopology:
         v = adjmat.shape[0]
         if nodes is None:
             for k in range(0, v):
-                for i in prange(0, v):
+                for i in prange(v):
+                    for j in range(0, v):
+                        if adjmat[i, j] <= 2:
+                            continue
+                        if adjmat[i, j] > adjmat[i, k] + adjmat[k, j]:
+                            adjmat[i, j] = adjmat[i, k] + adjmat[k, j]
+        else:
+            for k in range(0, v):
+                for i in nodes:
                     for j in range(0, v):
                         if adjmat[i, j] <= 2:
                             continue
