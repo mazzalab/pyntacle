@@ -439,14 +439,17 @@ class LocalTopology:
                         if nodes is None:
                             nodes = list(range(0, graph.vcount()))
 
+                        else:
+                            nodes = ut(graph=graph).get_node_indices(nodes)
+
                         # create the result vector filled with 'inf' (the total number of nodes + 1)
                         result = np.full_like(adjmat, graph.vcount()+1, dtype=np.uint16)
                         SPGpu.shortest_path_GPU(adjmat, nodes, result) #todo is there any case in which the shortest path GPU is not imported?
 
                         np.fill_diagonal(result, 0) #fill the diagonal of the result object with zeros
-                        # print(adjmat)
-                        # print(result)
-                        # input()
+
+                        if len(nodes) < graph.vcount():
+                            result = result[nodes, :]
 
                         #LocalTopology.__shortest_path_GPU__(adjmat, nodes, result)
                         return result
