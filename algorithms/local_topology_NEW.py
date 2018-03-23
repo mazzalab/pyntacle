@@ -425,45 +425,48 @@ class LocalTopology:
                 return sps
 
             else:
-                if nodes is None:
 
-                    adjmat = np.array(list(graph.get_adjacency()), dtype=np.uint16)
-                    adjmat[adjmat == 0] = graph.vcount() + 1  # set zero values to the max possible path length + 1
-                    np.fill_diagonal(adjmat, 0)  # set diagonal values to 0 (no distance from itself)
+                adjmat = np.array(list(graph.get_adjacency()), dtype=np.uint16)
 
-                    if implementation == implementation.cpu:
+                adjmat[adjmat == 0] = graph.vcount() + 1  # set zero values to the max possible path length + 1
+                np.fill_diagonal(adjmat, 0)  # set diagonal values to 0 (no distance from itself)
+                if implementation == implementation.cpu:
+
+                    if nodes is None:
+                        nodes = list(range(0, graph.vcount()))
                         sps = LocalTopology.__shortest_path_CPU__(adjmat=adjmat)
-                        return sps
+                    else:
+                        nodes = GraphUtils(graph=graph).get_node_indices(node_names=nodes)
+                        sps = LocalTopology.__shortest_path_CPU__(adjmat=adjmat)
+                        sps = sps[nodes, :]
+                    
+                    return sps
 
-                    elif implementation == implementation.gpu:
-                        if nodes is None:
-                            nodes = list(range(0, graph.vcount()))
-
-                        else:
-                            nodes = ut(graph=graph).get_node_indices(nodes)
-
-                        # create the result vector filled with 'inf' (the total number of nodes + 1)
-                        result = np.full_like(adjmat, graph.vcount()+1, dtype=np.uint16)
-                        SPGpu.shortest_path_GPU(adjmat, nodes, result) #todo is there any case in which the shortest path GPU is not imported?
-
-                        np.fill_diagonal(result, 0) #fill the diagonal of the result object with zeros
-
-                        if len(nodes) < graph.vcount():
-                            result = result[nodes, :]
-
-                        #LocalTopology.__shortest_path_GPU__(adjmat, nodes, result)
-                        return result
+                elif implementation == implementation.gpu:
+                    if nodes is None:
+                        nodes = list(range(0, graph.vcount()))
 
                     else:
-                        sys.stdout.write(
-                            "Implementation {} not available at the time, please come back soon "
-                            "for the modifed version".format(implementation.name))
-                        sps = LocalTopology.__shortest_path_CPU__(adjmat=adjmat, nodes=nodes)
-                        return sps
+                        nodes = ut(graph=graph).get_node_indices(nodes)
+
+                    # create the result vector filled with 'inf' (the total number of nodes + 1)
+                    result = np.full_like(adjmat, graph.vcount()+1, dtype=np.uint16)
+                    SPGpu.shortest_path_GPU(adjmat, result) #todo is there any case in which the shortest path GPU is not imported?
+
+                    np.fill_diagonal(result, 0) #fill the diagonal of the result object with zeros
+
+                    if len(nodes) < graph.vcount():
+                        result = result[nodes, :]
+
+                    #LocalTopology.__shortest_path_GPU__(adjmat, nodes, result)
+                    return result
 
                 else:
-                    sys.stdout.write("Not yet available for a subset of nodes in the graph\n")
-                    sys.exit(0)
+                    sys.stdout.write(
+                        "Implementation {} not available at the time, please come back soon "
+                        "for the modifed version".format(implementation.name))
+                    sps = LocalTopology.__shortest_path_CPU__(adjmat=adjmat)
+                    return sps
 
         else:
             sys.stdout.write("Shortest path for {} not yet implemented, come back soon!\n".format(mode.name))
@@ -471,7 +474,7 @@ class LocalTopology:
 
     @staticmethod
     @jit(nopython=True, parallel=True, cache=True)
-    def __shortest_path_CPU__(adjmat, nodes=None) -> np.ndarray:
+    def __shortest_path_CPU__(adjmat) -> np.ndarray:
         """
         Calculate the shortest paths of a graph for aa single nodes, a set of nodes or all nodes in the graph using
         'Floyd-Warshall Implementation <https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm>'_. The forumla
@@ -485,22 +488,13 @@ class LocalTopology:
         # todo Tom controlla i prange
 
         v = adjmat.shape[0]
-        if nodes is None:
-            for k in range(0, v):
-                for i in prange(v):
-                    for j in range(0, v):
-                        if adjmat[i, j] <= 2:
-                            continue
-                        if adjmat[i, j] > adjmat[i, k] + adjmat[k, j]:
-                            adjmat[i, j] = adjmat[i, k] + adjmat[k, j]
-        else:
-            for k in range(0, v):
-                for i in nodes:
-                    for j in range(0, v):
-                        if adjmat[i, j] <= 2:
-                            continue
-                        if adjmat[i, j] > adjmat[i, k] + adjmat[k, j]:
-                            adjmat[i, j] = adjmat[i, k] + adjmat[k, j]
+        for k in range(0, v):
+            for i in prange(v):
+                for j in range(0, v):
+                    if adjmat[i, j] <= 2:
+                        continue
+                    if adjmat[i, j] > adjmat[i, k] + adjmat[k, j]:
+                        adjmat[i, j] = adjmat[i, k] + adjmat[k, j]
 
         return adjmat
 
