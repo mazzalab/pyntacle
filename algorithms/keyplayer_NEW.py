@@ -246,6 +246,8 @@ class KeyPlayer:
             else:
                 if not isinstance(sp_matrix, np.ndarray):
                     raise ValueError("\"sp_matrix\" must be a numpy.ndarray object")
+                elif sp_matrix.shape[0] != graph.vcount():
+                    raise WrongArgumentError("Dimension of the \"sp matrix\" is different to the total number of nodes")
 
                 else:
                     shortest_path_lengths = sp_matrix[index_list, :]
@@ -324,7 +326,8 @@ class KeyPlayer:
             else:
                 if not isinstance(sp_matrix, np.ndarray):
                     raise ValueError("\"sp_matrix\" must be a numpy.ndarray object")
-
+                elif sp_matrix.shape[0] != graph.vcount():
+                    raise WrongArgumentError("Dimension of the \"sp matrix\" is different to the total number of nodes")
                 else:
                     shortest_path_lengths = sp_matrix[index_list,:]
 

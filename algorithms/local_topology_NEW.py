@@ -614,7 +614,7 @@ class LocalTopology:
 
 # todo missing stuff:
 # todo shortest path cpu: single nodes or group of nodes
-# todo shortest path gpu: single nodes or group of nodes
+#todo  shortest path gpu
 # todo all the other graphs
 # todo automatic implementation becomes global
 # todo missing methods:
