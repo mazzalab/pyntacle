@@ -33,7 +33,6 @@ __license__ = u"""
 
 # external libraries
 import argparse
-import random
 import sys
 import os
 from numba import cuda
@@ -48,16 +47,15 @@ from colorama import Fore, Style, init
 
 if os.name == "nt":
     init(convert=True)
-    
-from config import *
-from pyntacle_commands_utils.reporter import *
+
+from cmds.cmds_utils.reporter import *
 # Main commands wrappers
-from commands.keyplayer import KeyPlayer as kp_command
-from commands.metrics import Metrics as metrics_command
-from commands.convert import Convert as convert_command
-from commands.generate import Generate as generate_command
-from commands.set import Set as set_command
-from commands.communities import Communities as communities_command
+from cmds.keyplayer import KeyPlayer as kp_command
+from cmds.metrics import Metrics as metrics_command
+from cmds.convert import Convert as convert_command
+from cmds.generate import Generate as generate_command
+from cmds.set import Set as set_command
+from cmds.communities import Communities as communities_command
 
 
 def _check_value(self, action, value):

@@ -1,19 +1,16 @@
-from config import *
-from pyntacle_commands_utils.kpsearch_wrapper import KPWrapper as kpw
-from pyntacle_commands_utils.kpsearch_wrapper import GOWrapper as gow
-from pyntacle_commands_utils.kpsearch_wrapper import BFWrapper as bfw
-from algorithms.keyplayer_NEW import KeyPlayer as kpp
-from collections import OrderedDict
-from misc.enums import *
+from cmds.cmds_utils.kpsearch_wrapper import KPWrapper as kpw
+from cmds.cmds_utils.kpsearch_wrapper import GOWrapper as gow
+from cmds.cmds_utils.kpsearch_wrapper import BFWrapper as bfw
+from algorithms.keyplayer import KeyPlayer as kpp
 from itertools import chain
 from exceptions.generic_error import Error
 from io_stream.exporter import PyntacleExporter
 # from pyntacle_commands_utils.kp_runner_OLD import *
-from pyntacle_commands_utils.plotter import *
-from pyntacle_commands_utils.reporter import *
+from cmds.cmds_utils.plotter import *
+from cmds.cmds_utils.reporter import *
 from tools.graph_utils import *
 from tools.add_attributes import AddAttributes
-from misc.graph_load import *
+from tools.misc.graph_load import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"

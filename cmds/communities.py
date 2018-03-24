@@ -1,12 +1,11 @@
 from warnings import simplefilter
 
-from exceptions.multiple_solutions_error import MultipleSolutionsError
 from graph_operations.modules_finder import CommunityFinder
 from io_stream.exporter import PyntacleExporter
-from pyntacle_commands_utils.plotter import PlotGraph
+from cmds.cmds_utils.plotter import PlotGraph
 from io_stream.import_attributes import ImportAttributes
 from tools.modules_utils import ModuleUtils
-from misc.graph_load import *
+from tools.misc.graph_load import *
 from tools.graph_utils import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"

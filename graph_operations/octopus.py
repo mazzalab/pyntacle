@@ -30,20 +30,19 @@ Octopus is a pyntacle command line utility that adds properties computed by pynt
 a Graph level
 """
 
-from config import *
 from tools.add_attributes import AddAttributes
-from algorithms.local_topology_NEW import LocalTopology
-from algorithms.global_topology_NEW import GlobalTopology
-from algorithms.keyplayer_NEW import KeyPlayer
-from misc.enums import *
-from misc.enums import GraphType
-from misc.enums import SP_implementations as imps
-from misc.graph_routines import check_graph_consistency
-from misc.shortest_path_modifications import ShortestPathModifier
-from pyntacle_commands_utils.kpsearch_wrapper import KPWrapper as kpw
-from pyntacle_commands_utils.kpsearch_wrapper import GOWrapper as gow
-from pyntacle_commands_utils.kpsearch_wrapper import BFWrapper as bfw
-from misc.enums import KPNEGchoices, KPPOSchoices
+from algorithms.local_topology import LocalTopology
+from algorithms.global_topology import GlobalTopology
+from algorithms.keyplayer import KeyPlayer
+from tools.misc.enums import *
+from tools.misc.enums import GraphType
+from tools.misc.enums import SP_implementations as imps
+from tools.misc.graph_routines import check_graph_consistency
+from tools.misc.shortest_path_modifications import ShortestPathModifier
+from cmds.cmds_utils.kpsearch_wrapper import KPWrapper as kpw
+from cmds.cmds_utils.kpsearch_wrapper import GOWrapper as gow
+from cmds.cmds_utils.kpsearch_wrapper import BFWrapper as bfw
+from tools.misc.enums import KPNEGchoices, KPPOSchoices
 
 class Octopus:
     

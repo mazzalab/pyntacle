@@ -27,8 +27,8 @@ __license__ = u"""
 Export the `igraph.Graph` object into one of the pyntacle-supported formats
 """
 
-from misc.graph_routines import *
-from misc.io_utils import *
+from tools.misc.graph_routines import *
+from tools.misc.io_utils import *
 from config import *
 import pandas as pd
 import pickle

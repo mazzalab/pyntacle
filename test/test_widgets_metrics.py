@@ -2,7 +2,7 @@ import unittest
 import os, sys, glob
 from collections import namedtuple
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
-from commands.metrics import Metrics as metrics_command
+from cmds.metrics import Metrics as metrics_command
 
 
 from test import getmd5

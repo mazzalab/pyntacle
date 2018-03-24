@@ -27,7 +27,7 @@ __license__ = u"""
 from config import *
 import csv, os, xlsxwriter
 from igraph import Graph
-from misc.enums import KPNEGchoices, KPPOSchoices, Reports, LocalAttribute, GlobalAttribute
+from tools.misc.enums import KPNEGchoices, KPPOSchoices, Reports
 from exceptions.wrong_argument_error import WrongArgumentError
 from tools.graph_utils import GraphUtils as gu # swiss knife for graph utilities
 from collections import OrderedDict

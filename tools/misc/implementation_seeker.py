@@ -25,7 +25,7 @@ __license__ = u"""
   """
 
 from config import *
-from misc.enums import SP_implementations
+from tools.misc.enums import SP_implementations
 from igraph import Graph
 from numba import cuda
 

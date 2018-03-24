@@ -27,7 +27,7 @@ __license__ = u"""
 from config import *
 from functools import wraps
 from exceptions.illegal_kppset_size_error import IllegalKppsetSizeError
-from misc.enums import KPPOSchoices, KPNEGchoices
+from tools.misc.enums import KPPOSchoices, KPNEGchoices
 import random
 
 """Utilities for checking the consistency of the parameters passed in greedy or bruteforce optimization"""

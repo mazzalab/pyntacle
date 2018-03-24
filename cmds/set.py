@@ -1,15 +1,13 @@
 import filecmp
 from warnings import simplefilter
 
-from config import *
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 from graph_operations.logic_ops import GraphSetter
 from io_stream.exporter import PyntacleExporter
-from pyntacle_commands_utils.plotter import PlotGraph
-from pyntacle_commands_utils.reporter import *
-from misc.enums import Reports
-from tools.graph_utils import GraphUtils
-from misc.graph_load import *
+from cmds.cmds_utils.plotter import PlotGraph
+from cmds.cmds_utils.reporter import *
+from tools.misc.enums import Reports
+from tools.misc.graph_load import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"

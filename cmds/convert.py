@@ -1,10 +1,8 @@
-import os
-import sys
 from warnings import simplefilter
 from config import *
 from io_stream.exporter import PyntacleExporter
 from io_stream.converter import QuickConvert
-from misc.graph_load import *
+from tools.misc import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"

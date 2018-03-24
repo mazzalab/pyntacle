@@ -27,13 +27,10 @@ __license__ = u"""
 "Wraps up all the importers for several type of network representation files (all the file formats supported by Pyntacle"
 
 import pandas as pd
-import re
 import pickle
-import numpy as np
-from config import *
-from misc.binarycheck import *
+from tools.misc.binarycheck import *
 from tools.graph_utils import GraphUtils
-from misc.io_utils import *
+from tools.misc.io_utils import *
 from tools.add_attributes import *
 from tools.adjmatrix_utils import AdjmUtils
 from tools.edgelist_utils import EglUtils

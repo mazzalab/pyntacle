@@ -28,9 +28,6 @@ __license__ = u"""
 
 from config import *
 import csv
-from igraph import Graph
-from tools.add_attributes import AddAttributes
-from misc.binarycheck import is_binary_file
 from functools import wraps
 import string
 import random

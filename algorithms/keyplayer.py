@@ -26,12 +26,12 @@ __license__ = u"""
 
 """ Utilities to compute KP Metrics described by Borgatti"""
 
-import algorithms.local_topology_NEW as lt
-from misc.graph_routines import *
-from misc.implementation_seeker import implementation_seeker
+import algorithms.local_topology as lt
+from tools.misc.graph_routines import *
+from tools.misc.implementation_seeker import implementation_seeker
 from tools.graph_utils import GraphUtils as gu
-from misc.shortest_path_modifications import *
-from misc.enums import SP_implementations as imps
+from tools.misc.shortest_path_modifications import *
+from tools.misc.enums import SP_implementations as imps
 import numpy as np
 
 class KeyPlayer:

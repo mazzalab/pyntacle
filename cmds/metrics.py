@@ -24,19 +24,16 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-import pandas as pd
-from config import *
-from misc.enums import *
-from algorithms.global_topology_NEW import GlobalTopology
-from algorithms.local_topology_NEW import LocalTopology
-from algorithms.sparseness_NEW import *
+from algorithms.global_topology import GlobalTopology
+from algorithms.local_topology import LocalTopology
+from algorithms.sparseness import *
 from exceptions.generic_error import Error
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 from io_stream.exporter import PyntacleExporter
-from pyntacle_commands_utils.plotter import *
-from pyntacle_commands_utils.reporter import *
+from cmds.cmds_utils.plotter import *
+from cmds.cmds_utils.reporter import *
 from io_stream.import_attributes import ImportAttributes
-from misc.graph_load import *
+from tools.misc.graph_load import *
 from tools.graph_utils import GraphUtils
 from tools.add_attributes import AddAttributes
 

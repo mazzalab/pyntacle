@@ -24,13 +24,12 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-from algorithms.greedy_optimization_NEW import GreedyOptimization
-from algorithms.bruteforce_search_NEW import BruteforceSearch
+from algorithms.greedy_optimization import GreedyOptimization
+from algorithms.bruteforce_search import BruteforceSearch
 from tools.graph_utils import GraphUtils as gu
-from misc.timeit import timeit
-from misc.enums import KPPOSchoices, KPNEGchoices
-from misc.graph_routines import check_graph_consistency
-from algorithms.keyplayer_NEW import KeyPlayer
+from tools.misc.timeit import timeit
+from tools.misc.enums import KPPOSchoices, KPNEGchoices
+from algorithms.keyplayer import KeyPlayer
 from config import *
 from igraph import Graph
 

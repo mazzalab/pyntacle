@@ -26,7 +26,7 @@ __license__ = u"""
 
 """ This module uses igraph' s builtin function to determine wether the power law fit for an `igraph.Graph` object"""
 
-from misc.graph_routines import *
+from tools.misc.graph_routines import *
 from igraph import statistics as st
 
 

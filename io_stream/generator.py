@@ -26,10 +26,9 @@ __license__ = u"""
 
 """Generate Network with a specified toipology and make them pyntacle-ready"""
 
-import random
 from igraph import Graph
 from tools.add_attributes import AddAttributes as ad
-from misc.io_utils import *
+from tools.misc.io_utils import *
 
 class Generator:
 

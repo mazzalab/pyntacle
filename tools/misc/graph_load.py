@@ -1,12 +1,8 @@
 # external libraries
 import csv
-import os
-import sys
 from config import *
-from igraph import summary
 import numpy as np
-from misc.binarycheck import is_binary_file
-import re
+from tools.misc.binarycheck import is_binary_file
 # pyntacle Libraries
 from io_stream.importer import PyntacleImporter
 from tools.graph_utils import GraphUtils

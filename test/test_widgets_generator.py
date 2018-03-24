@@ -28,7 +28,7 @@ import unittest
 import os, sys, glob
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 from test import getmd5, getmd5_bin
-from commands.generate import Generate as generate_command
+from cmds.generate import Generate as generate_command
 
 
 class DummyObj:

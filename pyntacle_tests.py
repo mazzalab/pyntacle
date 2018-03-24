@@ -1,6 +1,4 @@
 # from algorithms.global_topology_NEW import
-from algorithms.local_topology_NEW import *
-from graph_operations.octopus import *
 # from igraph import Graph
 # from misc.graph_routines import *
 # import time
@@ -23,15 +21,8 @@ from graph_operations.octopus import *
 # print(GlobalTopology.components(erd))
 # print(GlobalTopology.density(erd))
 
-from igraph import Graph
-from io_stream.import_attributes import ImportAttributes
-from tools.add_attributes import AddAttributes
-from io_stream.importer import PyntacleImporter
-from misc.graph_load import *
-from pyntacle_commands_utils.kpsearch_wrapper import KPWrapper as kpw
-from pyntacle_commands_utils.kpsearch_wrapper import GOWrapper as gow
+from tools.misc.graph_load import *
 
-from misc.enums import KPNEGchoices, KPPOSchoices
 # adjmatrix = GraphLoad('/home/m.truglio/Desktop/Compiti_Dedalus/edgelist.txt.sif', "sif", True).graph_load()
 # print(adjmatrix)
 # print(list(adjmatrix.es))
