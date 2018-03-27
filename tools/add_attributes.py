@@ -1,15 +1,3 @@
-# external libraries
-import logging
-import os
-
-from igraph import Graph
-from config import *
-
-from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
-from exceptions.unsupported_graph_error import UnsupportedGrapherror
-# pyntacle Libraries
-from exceptions.wrong_argument_error import WrongArgumentError
-
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -37,6 +25,24 @@ __license__ = u"""
   Foundation, Inc.,  51 Franklin Street, Fifth Floor, Boston, MA
   02110-1301 USA
   """
+
+# external libraries
+import logging
+import os
+
+from igraph import Graph
+from config import *
+
+from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
+from exceptions.unsupported_graph_error import UnsupportedGrapherror
+# pyntacle Libraries
+from exceptions.wrong_argument_error import WrongArgumentError
+
+
+"""
+add specific and generic properties to the `igraph.Graph` object at several levels
+"""
+
 
 
 class AddAttributes():

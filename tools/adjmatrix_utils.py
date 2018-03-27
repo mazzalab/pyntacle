@@ -1,11 +1,3 @@
-"""
-Utilities made for common adjacency matrix file operations
-"""
-import os
-import logging
-from exceptions import *
-from config import *
-
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -34,14 +26,14 @@ __license__ = u"""
   02110-1301 USA
   """
 
-# Todo:
-# - importa adjm in numpy array (ora e' __store)
-# - controlla simmetria con numpy
-# - prova a vedere se c'e' un modo veloce in numpy per controllare ci siano solo 0, 1 in matrice
-# - getter del numpy array dopo importato (ora si chiama __write)
-# - flag pyntacle_ready come in edgelist_utils
-# - make undirect va fixato in modo da clonare la upper o lower diagonal (a scelata) sull'altra.
+"""
+Utilities made for common adjacency matrix file operations
+"""
 
+import os
+import logging
+from exceptions import *
+from config import *
 
 class AdjmUtils():
     logger = None
@@ -65,11 +57,11 @@ class AdjmUtils():
         self.header = header  # boolean to check if header is present
 
     def is_squared(self):
-        '''
+        """
         Utilitiy to check if an adjaceny matrix is squared or not by checking if the number of lines
-        
+
         :return: a boolean representing True if the matrix is squared or False otherwise
-        '''
+        """
         self.logger.info("Checking if adjacency matrix is squared")
         with open(self.adjfile, "r") as file:
             firstline = file.readline()
@@ -84,11 +76,11 @@ class AdjmUtils():
         return True
 
     def __store_adjm(self):
-        '''
+        """
         Store adjmatrix in a list for further purposes (internal class only)
-        
+
         :return:
-        '''
+        """
         self.adjm = []
         with open(self.adjfile, "r") as infile:
             if self.header:
@@ -109,11 +101,11 @@ class AdjmUtils():
                         self.adjm.append(tmp)
 
     def __write_adjm(self, adjm: list, separator: str, appendix: str):
-        '''
+        """
         Hidden function that returns a rewritten adjacency matrix
-        
+
         :return: outpath, path to the adjacency matrix
-        '''
+        """
         o = os.path.splitext(os.path.abspath(self.adjfile))
         outpath = o[0] + "_" + appendix + o[-1]
         with open(outpath, "w") as out:
@@ -132,11 +124,11 @@ class AdjmUtils():
         return outpath
 
     def is_weighted(self):
-        '''
+        """
         Function that returns a boolean telling whether the adjacency matrix is weighted or not
-        
+
         :return: self.weightbool, a boolean with True if the graph is weighted and false otherwise
-        '''
+        """
         self.__store_adjm()
         self.logger.info("checking if the matrix is weighted")
         self.weightbool = False
@@ -150,9 +142,9 @@ class AdjmUtils():
         return self.weightbool
 
     def remove_weigths(self):
-        '''
+        """
         Convert matrix to unweighted by setting every value different from 1 to 1 and write it to a new file
-        '''
+        """
         self.__store_adjm()  # store adjacency matrix into a list
 
         if not self.is_weighted():
@@ -167,11 +159,11 @@ class AdjmUtils():
         self.__write_adjm(self.adjm, separator=self.sep, appendix="unweighted")
 
     def is_direct(self):
-        '''
+        """
         Function to check whether an adjacency matrix is direct or not
-        
+
         :return: directbool, a value representing True if the matrix is direct and False otherwise
-        '''
+        """
         self.directbool = False
         self.__store_adjm()  # store adjacency matrix into a list
         self.logger.info("checking if the adjacency matrix is direct")
@@ -184,9 +176,9 @@ class AdjmUtils():
         return self.directbool
 
     def make_undirect(self):
-        '''
+        """
         Convert an undirect network to a direct one and write it to a new file
-        '''
+        """
         self.__store_adjm()
         if not self.is_direct():
             self.logger.info("the matrix is already undirect")

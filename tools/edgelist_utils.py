@@ -1,11 +1,3 @@
-"""
-Utilities made for common operations on edge lists input files
-"""
-
-import itertools
-from config import *
-import os
-
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -34,6 +26,13 @@ __license__ = u"""
   02110-1301 USA
   """
 
+"""
+Utilities made for common operations on edge lists input files
+"""
+
+import itertools
+from config import *
+import os
 import pandas as pd
 
 class EglUtils():
