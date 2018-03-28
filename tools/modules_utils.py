@@ -36,7 +36,6 @@ from igraph import Graph
 from tools.graph_utils import GraphUtils
 
 
-
 class ModuleUtils():
     logger = None
 
@@ -110,19 +109,16 @@ class ModuleUtils():
                        self.modules))
 
     def get_modules(self):
-        '''
+        """
         Return the list of graph modules (a list of igraph.Graph objects)
-        '''
+        """
 
         return self.modules
 
     def add_modules_info(self):
-        '''
-        **[EXPAND]**
-        
-        :param algorithm_used:
-        :return:
-        '''
+        """
+        **EXPAND**
+        """
 
         if len(self.graph["name"]) > 1:
             self.logger.warning(
@@ -140,10 +136,10 @@ class ModuleUtils():
                 subgraph["__origin_graph"] = self.graph["name"][0]
 
     def label_modules_in_graph(self):
-        '''
+        """
         Add to each node and edge an attribute that trace it to each module (a way to distinguish each components).
         name will be assigned to the proprietary "__module" attribute for each graph and edge
-        '''
+        """
 
         self.logger.info("Adding attribute \"__module\" to each node")
 
@@ -188,12 +184,12 @@ class ModuleUtils():
                 self.graph.es(select_nodes.indices)["__algorithm"] = self.algorithm
 
     ###################DEPRECATED#############################
-    def modules_overlaps(self):
-        '''
+    def deprecated_modules_overlaps(self):
+        """
         Verify that the modules are not overlapping
-        
+
         :return: a list of the same sizes of the modules in input; True if the module overlaps, False otherwise)
-        '''
+        """
 
         flaglist = []
 
@@ -208,5 +204,4 @@ class ModuleUtils():
             flaglist.append(flag)
 
         return flaglist
-
     ###########################################################

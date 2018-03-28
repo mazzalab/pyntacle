@@ -26,6 +26,10 @@ __license__ = u"""
   02110-1301 USA
   """
 
+"""
+add specific and generic properties to the `igraph.Graph` object at several levels
+"""
+
 # external libraries
 from config import *
 import logging

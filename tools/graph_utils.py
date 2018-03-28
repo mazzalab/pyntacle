@@ -45,9 +45,9 @@ from exceptions.multiple_solutions_error import MultipleSolutionsError
 
 
 class GraphUtils():
-    '''
+    """
     A series of methods that can be performed on graph and that can be accessed pretty quickly
-    '''
+    """
 
     logger = None
     """:type: Logger"""
@@ -71,9 +71,7 @@ class GraphUtils():
 
     def graph_checker(self):
         """
-        **[EXPAND]**
-        
-        :return:
+        Check that the input graph defined in *__init__* is consistent to the pyntacle's Minimum requirements
         """
 
         if Graph.is_directed(self.__graph):
@@ -92,10 +90,9 @@ class GraphUtils():
 
     def check_index_list(self, index_list):
         """
-        **[EXPAND]**
-        
-        :param index_list:
-        :return:
+        Check that an index list is consistent with respect to the input `igraph.Graph` object (so, that indices are not
+        negative integers and that are within the total number of vertices' boundaries
+        :param list index_list: a list of integers
         """
         self.graph_checker()
 
@@ -106,8 +103,8 @@ class GraphUtils():
             raise WrongArgumentError("List is empty")
 
         for ind in index_list:
-            if not isinstance(ind, int):
-                raise ValueError("indices must be integers")
+            if not isinstance(ind, int) or ind < 0:
+                raise ValueError("indices must be positive integers")
 
         if set(index_list) > set(self.__graph.vs.indices):
             self.logger.error("The input node index '{}' does not exist in the graph".format(index_list))
@@ -117,14 +114,15 @@ class GraphUtils():
 
     def check_name_list(self, names_list: list):
         """
-        **[EXPAND]**
-        
-        :param names_list:
-        :return:
+        Checks that a single node or a list of node *names* (the graph.vs["name"] attribute) is present in the graph
+        :param names_list: a single node name (as a string) or a list of node names (a list of strings)
         """
         self.graph_checker()
         # print(names_list)
         # print (self.graph.vs()["name"])
+        if isinstance(names_list, str):
+            names_list = [names_list]
+
         if not isinstance(names_list, list):
             raise ValueError("node names list is not a list")
 
