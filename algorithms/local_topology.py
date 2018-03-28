@@ -245,7 +245,6 @@ class LocalTopology:
         :return: a list of floats, the length being the number of input nodes. Each float represent the closeness
         of the input node
         """
-
         comps = graph.components()  # define each case
         if len(comps) == 1:
             return LocalTopology.radiality(graph=graph, nodes=nodes, implementation=implementation)
@@ -399,16 +398,6 @@ class LocalTopology:
         graph
         """
 
-        # #todo mauro this should be handle outside this
-        # if implementation == SP_implementations.gpu:
-        #
-        #     if not cuda.is_available():
-        #         implementation = imps.cpu
-        #
-        #     else:
-        #         if sys.modules.get("algorithms.shortestpath_GPU", "Not imported") == "Not imported":
-        #             from algorithms.shortestpath_GPU import SPGpu
-
         if mode == GraphType.undirect_unweighted:
 
             if implementation == SP_implementations.igraph:
@@ -422,11 +411,14 @@ class LocalTopology:
                 adjlist = list(graph.get_adjacency())
                 if virtual_memory().free < (graph.vcount()**2)*2: # the rightmost "2" is int16/8
                     sys.stdout.write("WARNING: Memory seems to be low; loading the graph given as input could fail.")
+                if implementation == SP_implementations.gpu and cuda.current_context().get_memory_info().free < (graph.vcount()**2)*2:
+                    sys.stdout.write("WARNING: GPU Memory seems to be low; loading the graph given as input could fail.")
                     
                 adjmat = np.array(adjlist, dtype=np.uint16)
 
                 adjmat[adjmat == 0] = graph.vcount() + 1  # set zero values to the max possible path length + 1
                 np.fill_diagonal(adjmat, 0)  # set diagonal values to 0 (no distance from itself)
+                
                 if implementation == SP_implementations.cpu:
     
                     if nodes is None:
@@ -557,7 +549,7 @@ class LocalTopology:
                 else:
                     avg_sps.append(float("nan"))
         else: #np array
-            sps = LocalTopology.shortest_path_pyntacle(graph=graph, nodes=nodes)
+            sps = LocalTopology.shortest_path_pyntacle(graph=graph, nodes=nodes, implementation=implementation)
             sps[sps == 0] = np.nan
             var = sps[sps > graph.vcount()] == np.nan
             avg_sps = np.nanmean(var, axis=0)
@@ -598,7 +590,7 @@ class LocalTopology:
                     avg_sps.append(float("nan"))
 
         else:  # np array
-            sps = LocalTopology.shortest_path_pyntacle(graph=graph, nodes=nodes)
+            sps = LocalTopology.shortest_path_pyntacle(graph=graph, nodes=nodes, implementation=implementation)
             sps[sps == 0] = np.nan
             var = sps[sps > graph.vcount()] == np.nan
             avg_sps = np.nanmedian(var, axis=0)

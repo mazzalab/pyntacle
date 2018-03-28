@@ -62,70 +62,70 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_radius(graph):
-        AddAttributes(graph).add_graph_attributes('radius', GlobalTopology.radius(graph))
+        AddAttributes(graph).add_graph_attributes(GlobalAttribute.radius.name, GlobalTopology.radius(graph))
         
     @staticmethod
     @check_graph_consistency
     def add_components(graph):
-        AddAttributes(graph).add_graph_attributes('components', GlobalTopology.components(graph))
+        AddAttributes(graph).add_graph_attributes(GlobalAttribute.components.name, GlobalTopology.components(graph))
 
     @staticmethod
     @check_graph_consistency
     def add_density(graph):
-        AddAttributes(graph).add_graph_attributes('density', GlobalTopology.density(graph))
+        AddAttributes(graph).add_graph_attributes(GlobalAttribute.density.name, GlobalTopology.density(graph))
         
     @staticmethod
     @check_graph_consistency
     def add_pi(graph):
-        AddAttributes(graph).add_graph_attributes('pi', GlobalTopology.pi(graph))
+        AddAttributes(graph).add_graph_attributes(GlobalAttribute.pi.name, GlobalTopology.pi(graph))
     
     @staticmethod
     @check_graph_consistency
     def add_average_clustering_coefficient(graph):
-        AddAttributes(graph).add_graph_attributes('average_clustering_coefficient',
+        AddAttributes(graph).add_graph_attributes(GlobalAttribute.average_clustering_coefficient.name,
                                                   GlobalTopology.average_clustering_coefficient(graph))
     @staticmethod
     @check_graph_consistency
     def add_weighted_clustering_coefficient(graph):
-        AddAttributes(graph).add_graph_attributes('weighted_clustering_coefficient',
+        AddAttributes(graph).add_graph_attributes(GlobalAttribute.weighted_clustering_coefficient.name,
                                                   GlobalTopology.weighted_clustering_coefficient(graph))
     
     @staticmethod
     @check_graph_consistency
     def add_average_degree(graph):
-        AddAttributes(graph).add_graph_attributes('average_degree', GlobalTopology.average_degree(graph))
+        AddAttributes(graph).add_graph_attributes(GlobalAttribute.average_degree.name, GlobalTopology.average_degree(graph))
     
     @staticmethod
     @check_graph_consistency
     def add_average_closeness(graph):
-        AddAttributes(graph).add_graph_attributes('average_closeness',
+        AddAttributes(graph).add_graph_attributes(GlobalAttribute.average_closeness.name,
                                                   GlobalTopology.average_closeness(graph))
     
     @staticmethod
     @check_graph_consistency
     def add_average_eccentricity(graph):
-        AddAttributes(graph).add_graph_attributes('average_eccentricity',
+        AddAttributes(graph).add_graph_attributes(GlobalAttribute.average_eccentricity.name,
                                                   GlobalTopology.average_eccentricity(graph))
     
     @staticmethod
     @check_graph_consistency
     def add_average_radiality(graph):
         implementation = implementation_check(graph)
-        AddAttributes(graph).add_graph_attributes('average_radiality',
+        AddAttributes(graph).add_graph_attributes(GlobalAttribute.average_radiality.name,
                                                   GlobalTopology.average_radiality(graph, implementation))
     
     @staticmethod
     @check_graph_consistency
     def add_average_radiality_reach(graph):
         implementation = implementation_check(graph)
-        AddAttributes(graph).add_graph_attributes('average_radiality_reach',
+        AddAttributes(graph).add_graph_attributes(GlobalAttribute.average_radiality_reach.name,
                                                   GlobalTopology.average_radiality_reach(graph,
                                                                                          implementation))
     @staticmethod
     @check_graph_consistency
     def add_average_shortest_path_length(graph):
         implementation = implementation_check(graph)
-        AddAttributes(graph).add_graph_attributes('average_shortest_path_length',
+        AddAttributes(graph).add_graph_attributes(GlobalAttribute.average_shortest_path_length.name,
                                                   GlobalTopology.average_shortest_path_length(graph,
                                                                                               implementation))
         
@@ -135,56 +135,58 @@ class Octopus:
     def add_degree(graph, node_names=None):
         if node_names is None:
             node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes('degree', LocalTopology.degree(graph, node_names), node_names)
+        AddAttributes(graph).add_node_attributes(LocalAttribute.degree.name, LocalTopology.degree(graph, node_names), node_names)
     
     @staticmethod
     @check_graph_consistency
     def add_betweenness(graph, node_names=None):
         if node_names is None:
             node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes('betweenness', LocalTopology.betweenness(graph, node_names), node_names)
+        AddAttributes(graph).add_node_attributes(LocalAttribute.betweenness.name, LocalTopology.betweenness(graph, node_names), node_names)
         
     @staticmethod
     @check_graph_consistency
     def add_clustering_coefficient(graph, node_names=None):
         if node_names is None:
             node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes('clustering_coefficient', LocalTopology.clustering_coefficient(graph, node_names), node_names)
+        AddAttributes(graph).add_node_attributes(LocalAttribute.clustering_coefficient.name, LocalTopology.clustering_coefficient(graph, node_names), node_names)
     
     @staticmethod
     @check_graph_consistency
     def add_closeness(graph, node_names=None):
         if node_names is None:
             node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes('closeness', LocalTopology.closeness(graph, node_names), node_names)
+        AddAttributes(graph).add_node_attributes(LocalAttribute.closeness.name, LocalTopology.closeness(graph, node_names), node_names)
         
     @staticmethod
     @check_graph_consistency
     def add_eccentricity(graph, node_names=None):
         if node_names is None:
             node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes('eccentricity', LocalTopology.eccentricity(graph, node_names), node_names)
+        AddAttributes(graph).add_node_attributes(LocalAttribute.eccentricity.name, LocalTopology.eccentricity(graph, node_names), node_names)
     
     @staticmethod
     @check_graph_consistency
     def add_radiality(graph, node_names=None):
+        implementation = implementation_check(graph)
         if node_names is None:
             node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes('radiality', LocalTopology.radiality(graph, node_names), node_names)
+        AddAttributes(graph).add_node_attributes(LocalAttribute.radiality.name, LocalTopology.radiality(graph, node_names, implementation=implementation), node_names)
         
     @staticmethod
     @check_graph_consistency
     def add_radiality_reach(graph, node_names=None):
+        implementation = implementation_check(graph)
         if node_names is None:
             node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes('radiality_reach', LocalTopology.radiality_reach(graph, node_names), node_names)
+        AddAttributes(graph).add_node_attributes(LocalAttribute.radiality_reach.name, LocalTopology.radiality_reach(graph, node_names, implementation=implementation), node_names)
         
     @staticmethod
     @check_graph_consistency
     def add_eigenvector_centrality(graph, node_names=None, scaled=False):
         if node_names is None:
             node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes('eigenvector_centrality', LocalTopology.eigenvector_centrality(graph, node_names, scaled), node_names)
+        AddAttributes(graph).add_node_attributes(LocalAttribute.eigenvector_centrality.name, LocalTopology.eigenvector_centrality(graph, node_names, scaled), node_names)
         
     @staticmethod
     @check_graph_consistency
@@ -193,24 +195,24 @@ class Octopus:
             node_names = graph.vs["name"]
         if "weights" in graph.es.attributes():
             weights = graph.es["weights"]
-        AddAttributes(graph).add_node_attributes('pagerank', LocalTopology.pagerank(graph, node_names, weights, damping), node_names)
+        AddAttributes(graph).add_node_attributes(LocalAttribute.pagerank.name, LocalTopology.pagerank(graph, node_names, weights, damping), node_names)
         
     @staticmethod
     @check_graph_consistency
     def add_shortest_path_igraph(graph, node_names=None):
         if node_names is None:
             node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes('shortest_path_igraph', LocalTopology.shortest_path_igraph(graph, node_names), node_names)
+        AddAttributes(graph).add_node_attributes(LocalAttribute.shortest_path_igraph.name, LocalTopology.shortest_path_igraph(graph, node_names), node_names)
 
     @staticmethod
     @check_graph_consistency
     def add_shortest_path(graph, node_names=None, mode=GraphType.undirect_unweighted):
         implementation = implementation_check(graph)
-        distances = LocalTopology.shortest_path_pyntacle(graph, node_names, mode, implementation).tolist()
+        distances = LocalTopology.shortest_path_pyntacle(graph, node_names, mode, implementation=implementation).tolist()
         if node_names is None:
             node_names = graph.vs["name"]
         distances_with_inf = ShortestPathModifier.igraph_sp_to_inf(distances, graph.vcount()+1)
-        AddAttributes(graph).add_node_attributes("shortest_path", distances_with_inf, node_names)
+        AddAttributes(graph).add_node_attributes(LocalAttribute.shortest_path.name, distances_with_inf, node_names)
 
     @staticmethod
     @check_graph_consistency
@@ -218,8 +220,8 @@ class Octopus:
         implementation = implementation_check(graph)
         if node_names is None:
             node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes('average_shortest_path_length',
-                                                 LocalTopology.average_shortest_path_length(graph, node_names, exclude_inf, implementation), node_names)
+        AddAttributes(graph).add_node_attributes(LocalAttribute.average_shortest_path_length.name,
+                                                 LocalTopology.average_shortest_path_length(graph, node_names, exclude_inf, implementation=implementation), node_names)
 
  
     @staticmethod
@@ -228,21 +230,21 @@ class Octopus:
         implementation = implementation_check(graph)
         if node_names is None:
             node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes('mediane_shortest_path_length',
-                                                 LocalTopology.median_shortest_path_length(graph, node_names, exclude_inf, implementation), node_names)
+        AddAttributes(graph).add_node_attributes(LocalAttribute.median_shortest_path_length.name,
+                                                 LocalTopology.median_shortest_path_length(graph, node_names, exclude_inf, implementation=implementation), node_names)
    
     # Metrics
     
     @staticmethod
     @check_graph_consistency
     def add_F(graph):
-        AddAttributes(graph).add_graph_attributes('F', KeyPlayer.F(graph))
+        AddAttributes(graph).add_graph_attributes(KPNEGchoices.F.name, KeyPlayer.F(graph))
 
     @staticmethod
     @check_graph_consistency
     def add_dF(graph, max_distances=None):
         implementation = implementation_check(graph)
-        AddAttributes(graph).add_graph_attributes('dF', KeyPlayer.dF(graph, implementation=implementation, max_distances=max_distances))
+        AddAttributes(graph).add_graph_attributes(KPNEGchoices.dF.name, KeyPlayer.dF(graph, implementation=implementation, max_distances=max_distances))
 
     # KP
 
@@ -252,16 +254,16 @@ class Octopus:
         kpobj = kpw(graph=graph)
         kpobj.run_KPNeg(nodes, KPNEGchoices.F)
         results_dict = kpobj.get_results()
-        AddAttributes(graph).add_graph_attributes('F_kpinfo', {tuple(results_dict['F'][0]): results_dict['F'][1]})
+        AddAttributes(graph).add_graph_attributes(KPNEGchoices.F.name+'_kpinfo', {tuple(results_dict[KPNEGchoices.F.name][0]): results_dict[KPNEGchoices.F.name][1]})
 
     @staticmethod
     @check_graph_consistency
-    def add__kp_dF(graph, nodes, max_distances=None):
+    def add_kp_dF(graph, nodes, max_distances=None):
         implementation = implementation_check(graph)
         kpobj = kpw(graph=graph)
         kpobj.run_KPNeg(nodes, KPNEGchoices.dF, max_distances=max_distances, implementation=implementation)
         results_dict = kpobj.get_results()
-        AddAttributes(graph).add_graph_attributes('dF_kpinfo', {tuple(results_dict['dF'][0]): results_dict['dF'][1]})
+        AddAttributes(graph).add_graph_attributes(KPNEGchoices.dF.name+'_kpinfo', {tuple(results_dict[KPNEGchoices.dF.name][0]): results_dict[KPNEGchoices.dF.name][1]})
 
 
     @staticmethod
@@ -271,7 +273,7 @@ class Octopus:
         kpobj = kpw(graph=graph)
         kpobj.run_KPPos(nodes, KPPOSchoices.dR, max_distances=max_distances, implementation=implementation)
         results_dict = kpobj.get_results()
-        AddAttributes(graph).add_graph_attributes('dR_kpinfo', {tuple(results_dict['dR'][0]): results_dict['dR'][1]})
+        AddAttributes(graph).add_graph_attributes(KPPOSchoices.dR.name+'_kpinfo', {tuple(results_dict[KPPOSchoices.dR.name][0]): results_dict[KPPOSchoices.dR.name][1]})
 
     @staticmethod
     @check_graph_consistency
@@ -280,8 +282,8 @@ class Octopus:
         kpobj = kpw(graph=graph)
         kpobj.run_KPPos(nodes, KPPOSchoices.mreach,  m=m, max_distances=max_distances, implementation=implementation)
         results_dict = kpobj.get_results()
-        attr_name = 'mreach_{}_kpinfo'.format(str(m))
-        AddAttributes(graph).add_graph_attributes(attr_name, {tuple(results_dict['mreach'][0]): results_dict['mreach'][1]})
+        attr_name = KPPOSchoices.mreach.name+'_{}_kpinfo'.format(str(m))
+        AddAttributes(graph).add_graph_attributes(attr_name, {tuple(results_dict[KPPOSchoices.mreach.name][0]): results_dict[KPPOSchoices.mreach.name][1]})
 
     # greedy
     @staticmethod
@@ -290,7 +292,7 @@ class Octopus:
         kpobj = gow(graph=graph)
         kpobj.run_fragmentation(kpp_size, KPNEGchoices.F, seed=seed)
         results_dict = kpobj.get_results()
-        AddAttributes(graph).add_graph_attributes('F'+'_greedy', {tuple(results_dict['F'][0]): results_dict['F'][1]})
+        AddAttributes(graph).add_graph_attributes(KPNEGchoices.F.name+'_greedy', {tuple(results_dict[KPNEGchoices.F.name][0]): results_dict[KPNEGchoices.F.name][1]})
 
     @staticmethod
     @check_graph_consistency
@@ -299,7 +301,7 @@ class Octopus:
         kpobj = gow(graph=graph)
         kpobj.run_fragmentation(kpp_size, KPNEGchoices.dF, max_distances=max_distances, seed=seed, implementation=implementation)
         results_dict = kpobj.get_results()
-        AddAttributes(graph).add_graph_attributes('dF'+'_greedy', {tuple(results_dict['dF'][0]): results_dict['dF'][1]})
+        AddAttributes(graph).add_graph_attributes(KPNEGchoices.dF.name+'_greedy', {tuple(results_dict[KPNEGchoices.dF.name][0]): results_dict[KPNEGchoices.dF.name][1]})
 
     @staticmethod
     @check_graph_consistency
@@ -308,7 +310,7 @@ class Octopus:
         kpobj = gow(graph=graph)
         kpobj.run_reachability(kpp_size, KPPOSchoices.dR, max_distances=max_distances, seed=seed, implementation=implementation)
         results_dict = kpobj.get_results()
-        AddAttributes(graph).add_graph_attributes('dR'+'_greedy', {tuple(results_dict['dR'][0]): results_dict['dR'][1]})
+        AddAttributes(graph).add_graph_attributes(KPPOSchoices.dR.name+'_greedy', {tuple(results_dict[KPPOSchoices.dR.name][0]): results_dict[KPPOSchoices.dR.name][1]})
 
     @staticmethod
     @check_graph_consistency
@@ -317,8 +319,8 @@ class Octopus:
         kpobj = gow(graph=graph)
         kpobj.run_reachability(kpp_size, KPPOSchoices.mreach, m=m, max_distances=max_distances, seed=seed, implementation=implementation)
         results_dict = kpobj.get_results()
-        attr_name = 'mreach_{}_greedy'.format(str(m))
-        AddAttributes(graph).add_graph_attributes(attr_name, {tuple(results_dict['mreach'][0]): results_dict['mreach'][1]})
+        attr_name = KPPOSchoices.mreach.name+'_{}_greedy'.format(str(m))
+        AddAttributes(graph).add_graph_attributes(attr_name, {tuple(results_dict[KPPOSchoices.mreach.name][0]): results_dict[KPPOSchoices.mreach.name][1]})
     
     #bruteforce
     
@@ -328,7 +330,7 @@ class Octopus:
         kpobj = bfw(graph=graph)
         kpobj.run_fragmentation(kpp_size, KPNEGchoices.F, max_distances=max_distances)
         results_dict = kpobj.get_results()
-        AddAttributes(graph).add_graph_attributes('F'+'_bruteforce', {tuple(tuple(x) for x in results_dict['F'][0]): results_dict['F'][1]})
+        AddAttributes(graph).add_graph_attributes(KPNEGchoices.F.name+'_bruteforce', {tuple(tuple(x) for x in results_dict[KPNEGchoices.F.name][0]): results_dict[KPNEGchoices.F.name][1]})
         
     @staticmethod
     @check_graph_consistency
@@ -336,7 +338,7 @@ class Octopus:
         kpobj = bfw(graph=graph)
         kpobj.run_fragmentation(kpp_size, KPNEGchoices.dF, max_distances=max_distances)
         results_dict = kpobj.get_results()
-        AddAttributes(graph).add_graph_attributes('dF'+'_bruteforce', {tuple(tuple(x) for x in results_dict['dF'][0]): results_dict['dF'][1]})
+        AddAttributes(graph).add_graph_attributes(KPNEGchoices.dF.name+'_bruteforce', {tuple(tuple(x) for x in results_dict[KPNEGchoices.dF.name][0]): results_dict[KPNEGchoices.dF.name][1]})
     
     @staticmethod
     @check_graph_consistency
@@ -344,7 +346,7 @@ class Octopus:
         kpobj = bfw(graph=graph)
         kpobj.run_reachability(kpp_size, KPPOSchoices.dR, max_distances=max_distances)
         results_dict = kpobj.get_results()
-        AddAttributes(graph).add_graph_attributes('dR'+'_bruteforce', {tuple(tuple(x) for x in results_dict['dR'][0]): results_dict['dR'][1]})
+        AddAttributes(graph).add_graph_attributes(KPPOSchoices.dR.name+'_bruteforce', {tuple(tuple(x) for x in results_dict[KPPOSchoices.dR.name][0]): results_dict[KPPOSchoices.dR.name][1]})
         
     @staticmethod
     @check_graph_consistency
@@ -352,5 +354,5 @@ class Octopus:
         kpobj = bfw(graph=graph)
         kpobj.run_reachability(kpp_size, KPPOSchoices.mreach, max_distances=max_distances, m=m)
         results_dict = kpobj.get_results()
-        attr_name = 'mreach_{}_bruteforce'.format(str(m))
-        AddAttributes(graph).add_graph_attributes(attr_name, {tuple(tuple(x) for x in results_dict['mreach'][0]): results_dict['mreach'][1]})
+        attr_name = KPPOSchoices.mreach.name+'_{}_bruteforce'.format(str(m))
+        AddAttributes(graph).add_graph_attributes(attr_name, {tuple(tuple(x) for x in results_dict[KPPOSchoices.mreach.name][0]): results_dict[KPPOSchoices.mreach.name][1]})

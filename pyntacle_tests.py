@@ -5,7 +5,7 @@ from algorithms.keyplayer import KeyPlayer
 from tools.misc.graph_load import *
 from tools.misc.enums import KPPOSchoices, KPNEGchoices
 from algorithms.greedy_optimization import *
-
+from graph_operations.octopus import Octopus
 # from igraph import Graph
 # from misc.graph_routines import *
 # import time
@@ -41,7 +41,7 @@ from algorithms.greedy_optimization import *
 mat = PyntacleImporter.AdjacencyMatrix(file='/home/m.truglio/Desktop/Compiti_Dedalus/figure_8.txt', header=True)
 print("\nGraph in main")
 print(mat.summary())
-
+print(mat["__implementation"])
 # #
 # print('gpu')
 # print(LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.gpu))
@@ -133,12 +133,15 @@ print(mat.summary())
 
 #F
 
-# Octopus.add_F(mat, ['HS'])
-#
-# #dF
-#
-# Octopus.add_dF(mat, ['CR'])
-#
+Octopus.add_F(mat)
+Octopus.add_kp_F(mat, ['HS'])
+
+#dF
+
+Octopus.add_dF(mat)
+Octopus.add_kp_dF(mat, ['HS'])
+
+
 #
 # #dR
 #

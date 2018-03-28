@@ -59,7 +59,7 @@ class KPWrapper:
         self.results = {}  # dictionary that will store results
 
     @timeit
-    def run_KPPos(self, nodes, kpp_type:KPPOSchoices, m=None, max_distances=None, implementation = SP_implementations.igraph):
+    def run_KPPos(self, nodes, kpp_type:KPPOSchoices, m=None, max_distances=None, implementation=SP_implementations.igraph):
         """
         Run Single KPP-POS metrics on a single node or a set of nodes, adds everuything to the "results" object
         :param nodes: either a single node name or a list of node names
@@ -235,7 +235,7 @@ class BFWrapper:
         self.results = {}  # dictionary that will store results
 
     @timeit
-    def run_fragmentation(self, kpp_size:int, kpp_type:KPNEGchoices, max_distances=None):
+    def run_fragmentation(self, kpp_size:int, kpp_type:KPNEGchoices, max_distances=None, implementation=SP_implementations.igraph):
         """
         Wrapper around the Bruteforce Search Module that stores the greedy optimization results for KPPOS metrics in
         the "results" dictionary
@@ -251,11 +251,11 @@ class BFWrapper:
             raise TypeError("\"kpp_type\" must be one of the KPPNEGchoices options available")
 
         bf_results = self.bf.fragmentation(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type,
-                                           max_distances=max_distances)
+                                           max_distances=max_distances, implementation=implementation)
         self.results[kpp_type.name] = [bf_results[0], bf_results[1]]
 
     @timeit
-    def run_reachability(self, kpp_size: int, kpp_type: KPPOSchoices, m=None, max_distances=None):
+    def run_reachability(self, kpp_size: int, kpp_type: KPPOSchoices, m=None, max_distances=None, implementation=SP_implementations.igraph):
         """
         Wrapper around the Bruteforce Search Module that stores the greedy optimization results for KPPOS metrics
         :param int kpp_size: size of the kpp-set to be found
@@ -276,7 +276,7 @@ class BFWrapper:
                 raise ValueError("\"m\" must be a positive integer for mreach ")
 
         bf_results = self.bf.reachability(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type,
-                                          max_distances=max_distances, m=m)
+                                          max_distances=max_distances, m=m, implementation=implementation)
 
         self.results[kpp_type.name] = [bf_results[0], bf_results[1]]
 

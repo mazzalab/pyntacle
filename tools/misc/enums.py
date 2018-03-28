@@ -78,10 +78,14 @@ class LocalAttribute(Enum):
     radiality_reach = auto()
     eccentricity = auto()
     pagerank = auto()
-    shortestpaths = auto()
+    shortest_path_igraph = auto()
+    shortest_path = auto()
     eigenvector_centrality = auto()
     closeness = auto()
     clustering_coefficient = auto()
+    average_shortest_path_length = auto()
+    median_shortest_path_length = auto()
+
 
 class GlobalAttribute(Enum):
     """

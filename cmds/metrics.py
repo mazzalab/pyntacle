@@ -91,6 +91,12 @@ class Metrics():
         # init Utils global stuff
         utils = GraphUtils(graph=graph)
 
+        # Decide implementation
+        if '__implementation' in graph.attributes():
+            implementation = graph['__implementation']
+        else:
+            implementation = SP_implementations.igraph
+            
         if self.args.largest_component:
             try:
                 graph = utils.get_largest_component()
@@ -193,8 +199,8 @@ class Metrics():
                  LocalAttribute.clustering_coefficient.name: LocalTopology.clustering_coefficient(graph=graph, nodes=nodes_list),
                  LocalAttribute.betweenness.name: LocalTopology.betweenness(graph=graph, nodes=nodes_list),
                  LocalAttribute.closeness.name: LocalTopology.closeness(graph=graph, nodes=nodes_list),
-                 LocalAttribute.radiality.name: LocalTopology.radiality(graph=graph, nodes=nodes_list),
-                 LocalAttribute.radiality_reach.name: LocalTopology.radiality_reach(graph=graph, nodes=nodes_list),
+                 LocalAttribute.radiality.name: LocalTopology.radiality(graph=graph, nodes=nodes_list, implementation=implementation),
+                 LocalAttribute.radiality_reach.name: LocalTopology.radiality_reach(graph=graph, nodes=nodes_list, implementation=implementation),
                  LocalAttribute.eccentricity.name: LocalTopology.eccentricity(graph=graph, nodes=nodes_list),
                  LocalAttribute.eigenvector_centrality.name : LocalTopology.eigenvector_centrality(graph=graph, nodes=nodes_list),
                  LocalAttribute.pagerank.name: LocalTopology.pagerank(graph=graph, nodes=nodes_list, weights=weights, damping=self.args.damping_factor)})
@@ -284,8 +290,8 @@ class Metrics():
                                                  GlobalAttribute.average_degree.name: GlobalTopology.average_degree(graph=graph),
                                                  GlobalAttribute.average_closeness.name: GlobalTopology.average_closeness(graph=graph),
                                                  GlobalAttribute.average_eccentricity.name: GlobalTopology.average_eccentricity(graph=graph),
-                                                 GlobalAttribute.average_radiality.name: GlobalTopology.average_radiality(graph=graph),
-                                                 GlobalAttribute.average_radiality_reach.name: GlobalTopology.average_radiality_reach(graph=graph),
+                                                 GlobalAttribute.average_radiality.name: GlobalTopology.average_radiality(graph=graph, implementation=implementation),
+                                                 GlobalAttribute.average_radiality_reach.name: GlobalTopology.average_radiality_reach(graph=graph, implementation=implementation),
                                                  GlobalAttribute.completeness_mazza.name: Sparseness.completeness_Mazza(graph=graph),
                                                  GlobalAttribute.completeness_XXX.name: Sparseness.completeness_XXX(graph=graph),
                                                  GlobalAttribute.compactness.name: Sparseness.compactness(graph=graph)
@@ -328,8 +334,8 @@ class Metrics():
                          GlobalAttribute.average_degree.name: GlobalTopology.average_degree(graph=graph_nonodes),
                          GlobalAttribute.average_closeness.name: GlobalTopology.average_closeness(graph=graph_nonodes),
                          GlobalAttribute.average_eccentricity.name: GlobalTopology.average_eccentricity(graph=graph_nonodes),
-                         GlobalAttribute.average_radiality.name: GlobalTopology.average_radiality(graph=graph_nonodes),
-                         GlobalAttribute.average_radiality_reach.name: GlobalTopology.average_radiality_reach(graph=graph_nonodes),
+                         GlobalAttribute.average_radiality.name: GlobalTopology.average_radiality(graph=graph_nonodes, implementation=implementation),
+                         GlobalAttribute.average_radiality_reach.name: GlobalTopology.average_radiality_reach(graph=graph_nonodes, implementation=implementation),
                          GlobalAttribute.completeness_mazza.name: Sparseness.completeness_Mazza(graph=graph_nonodes),
                          GlobalAttribute.completeness_XXX.name: Sparseness.completeness_XXX(graph=graph_nonodes),
                          GlobalAttribute.compactness.name: Sparseness.compactness(graph=graph_nonodes)

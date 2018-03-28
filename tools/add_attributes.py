@@ -264,8 +264,7 @@ class AddAttributes():
         Adding implementation info for functions that require it
         '''
         sp_implementation = SP_implementations.igraph
-        if self.__graph.vcount() > 3500:  # random number
-            # Todo: add GPU ram control on number of nodes, similar to the one we do on the cpu & ram
+        if self.__graph.vcount() > 2500:  # random number
             # if cuda_avail:
             #     sp_implementation = SP_implementations.gpu
             # else:
