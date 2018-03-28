@@ -27,6 +27,7 @@ __license__ = u"""
 """
 Custom Exception class to check if the object is an igraph.Graph object
 """
+from config import *
 
 class NotAGraphError(ValueError):
     pass

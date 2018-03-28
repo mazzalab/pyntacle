@@ -1,13 +1,3 @@
-from config import *
-
-# pyntacle libraries
-from igraph import Graph
-from tools.graph_utils import GraphUtils
-
-'''
-this module computes KPP-POS, KPP-NEG, completeness and compactness for a group of modules
-'''
-
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -35,6 +25,16 @@ __license__ = u"""
   Foundation, Inc.,  51 Franklin Street, Fifth Floor, Boston, MA
   02110-1301 USA
   """
+
+'''
+this module computes KPP-POS, KPP-NEG, completeness and compactness for a group of modules
+'''
+
+from config import *
+# pyntacle libraries
+from igraph import Graph
+from tools.graph_utils import GraphUtils
+
 
 
 class ModuleUtils():

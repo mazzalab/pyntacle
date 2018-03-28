@@ -26,6 +26,7 @@ __license__ = u"""
 
 """   Wrap the usage time, report it"""
 
+from config import *
 import time
 from functools import wraps
 def timeit(func):

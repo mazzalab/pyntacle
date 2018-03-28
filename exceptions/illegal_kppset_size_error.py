@@ -28,6 +28,8 @@ __license__ = u"""
 Custom Exception class inherited from ValueError to be raised when the specified size of a KPP-set is
 greater than the size of the corresponding graph
 """
+from config import *
+
 
 class IllegalKppsetSizeError(ValueError):
     pass

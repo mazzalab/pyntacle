@@ -32,8 +32,9 @@ import numpy as np
 
 class SPGpu:
 #todo rewrite to work only on upper or lower triangular matrix
+#todo: debug, result matrix doesn't look right on figure 8
     @staticmethod
-    @cuda.jit(argtypes='uint16[:, :], uint16[:, :]')
+    @cuda.jit#(argtypes='uint16[:, :], uint16[:, :]')
     def shortest_path_GPU(adjmat, result):
         """
         Calculate the shortest paths of a graph for aa single nodes, a set of nodes or all nodes in the graph using

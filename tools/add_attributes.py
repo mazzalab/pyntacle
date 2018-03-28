@@ -1,15 +1,3 @@
-# external libraries
-import logging
-import os
-
-from igraph import Graph
-from config import *
-
-from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
-from exceptions.unsupported_graph_error import UnsupportedGrapherror
-# pyntacle Libraries
-from exceptions.wrong_argument_error import WrongArgumentError
-
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -38,6 +26,16 @@ __license__ = u"""
   02110-1301 USA
   """
 
+# external libraries
+from config import *
+import logging
+import os
+from igraph import Graph
+from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
+from tools.misc.enums import SP_implementations
+from exceptions.unsupported_graph_error import UnsupportedGrapherror
+# pyntacle Libraries
+from exceptions.wrong_argument_error import WrongArgumentError
 
 class AddAttributes():
     logger = None
@@ -257,3 +255,16 @@ class AddAttributes():
 
         if not "__sif_interaction" in self.__graph.es().attributes():
             self.__graph.es()["__sif_interaction"] = None
+            
+        '''
+        Adding implementation info for functions that require it
+        '''
+        sp_implementation = SP_implementations.igraph
+        if self.__graph.vcount() > 3500:  # random number
+            # Todo: add GPU ram control on number of nodes, similar to the one we do on the cpu & ram
+            # if cuda_avail:
+            #     sp_implementation = SP_implementations.gpu
+            # else:
+                sp_implementation = SP_implementations.cpu
+        
+        self.__graph["__implementation"] = sp_implementation

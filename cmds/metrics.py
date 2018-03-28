@@ -24,6 +24,7 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+from config import *
 from algorithms.global_topology import GlobalTopology
 from algorithms.local_topology import LocalTopology
 from algorithms.sparseness import *
@@ -36,6 +37,7 @@ from io_stream.import_attributes import ImportAttributes
 from tools.misc.graph_load import *
 from tools.graph_utils import GraphUtils
 from tools.add_attributes import AddAttributes
+from tools.misc.enums import *
 
 
 class Metrics():
@@ -84,7 +86,7 @@ class Metrics():
         self.logging.debug(self.args)
 
         # Load Graph
-        graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header).graph_load()
+        graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header).graph_load
 
         # init Utils global stuff
         utils = GraphUtils(graph=graph)

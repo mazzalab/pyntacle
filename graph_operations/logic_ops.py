@@ -27,11 +27,10 @@ __license__ = u"""
 """
 this module merges two graphs if they have any node names in common.
 """
-
+from config import *
 from igraph import Graph
 from tools.add_attributes import AddAttributes
 from tools.graph_utils import GraphUtils
-from config import *
 from collections import OrderedDict
 
 class GraphSetter(object):

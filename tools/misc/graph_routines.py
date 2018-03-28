@@ -28,6 +28,7 @@ __license__ = u"""
 checking if the `igraph.Graph` object is compatible with pyntacle's specifications, verify the presence of nodes 
 in the input graph, give elapsed time of execution and so on"""
 
+from config import *
 from exceptions.illegal_graph_size_error import IllegalGraphSizeError
 from exceptions.unsupported_graph_error import UnsupportedGrapherror
 from exceptions.wrong_argument_error import WrongArgumentError

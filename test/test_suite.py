@@ -1,3 +1,4 @@
+from config import *
 import unittest
 import sys
 import os

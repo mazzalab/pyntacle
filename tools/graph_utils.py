@@ -1,20 +1,3 @@
-# external libraries
-from config import *
-from igraph import Graph
-import numpy as np
-
-# pyntacle libraries
-from exceptions.illegal_graph_size_error import IllegalGraphSizeError
-from exceptions.missing_attribute_error import MissingAttributeError
-from exceptions.notagraph_error import NotAGraphError
-from exceptions.unsupported_graph_error import UnsupportedGrapherror
-from exceptions.wrong_argument_error import WrongArgumentError
-from exceptions.multiple_solutions_error import MultipleSolutionsError
-
-'''
-a series of generic utilities for an iGraph graph object
-'''
-
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -42,6 +25,23 @@ __license__ = u"""
   Foundation, Inc.,  51 Franklin Street, Fifth Floor, Boston, MA
   02110-1301 USA
   """
+
+'''
+a series of generic utilities for an iGraph graph object
+'''
+
+# external libraries
+from config import *
+from igraph import Graph
+import numpy as np
+
+# pyntacle libraries
+from exceptions.illegal_graph_size_error import IllegalGraphSizeError
+from exceptions.missing_attribute_error import MissingAttributeError
+from exceptions.notagraph_error import NotAGraphError
+from exceptions.unsupported_graph_error import UnsupportedGrapherror
+from exceptions.wrong_argument_error import WrongArgumentError
+from exceptions.multiple_solutions_error import MultipleSolutionsError
 
 
 class GraphUtils():

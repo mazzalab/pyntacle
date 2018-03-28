@@ -1,13 +1,3 @@
-from warnings import simplefilter
-
-from graph_operations.modules_finder import CommunityFinder
-from io_stream.exporter import PyntacleExporter
-from cmds.cmds_utils.plotter import PlotGraph
-from io_stream.import_attributes import ImportAttributes
-from tools.modules_utils import ModuleUtils
-from tools.misc.graph_load import *
-from tools.graph_utils import *
-
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -34,6 +24,15 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+from config import *
+from warnings import simplefilter
+from graph_operations.modules_finder import CommunityFinder
+from io_stream.exporter import PyntacleExporter
+from cmds.cmds_utils.plotter import PlotGraph
+from io_stream.import_attributes import ImportAttributes
+from tools.modules_utils import ModuleUtils
+from tools.misc.graph_load import *
+from tools.graph_utils import *
 
 class Communities():
     """
@@ -69,7 +68,7 @@ class Communities():
         input_format =format_dictionary.get(self.args.format, "NA")
 
         graph = GraphLoad(self.args.input_file, file_format=input_format,
-                          header=input_header).graph_load()
+                          header=input_header).graph_load
 
         # init Utils global stuff
         utils = GraphUtils(graph=graph)

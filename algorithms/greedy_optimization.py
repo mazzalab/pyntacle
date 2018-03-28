@@ -27,7 +27,7 @@ __license__ = u"""
 """
 This Module covers the Greedy optimization algorithms for optimal kp-set calculation using Key-Players metrics developed by Borgatti
 """
-
+from config import *
 import random
 from functools import partial
 from algorithms.keyplayer import KeyPlayer as kp
@@ -46,7 +46,7 @@ class GreedyOptimization:
     @staticmethod
     @check_graph_consistency
     @greedy_search_initializer
-    def fragmentation(graph, kpp_size, kpp_type, seed=None, max_distances=None) -> (list, float):
+    def fragmentation(graph, kpp_size, kpp_type, seed=None, max_distances=None, implementation=SP_implementations.igraph) -> (list, float):
         """
         It iteratively searches for a kpp-set of a predefined vertex set size, removes it and measures the residual
         fragmentation score of the KPNEG metric queried (choices are available in misc/enums).
@@ -98,7 +98,6 @@ class GreedyOptimization:
             type_func = partial(kp.F, graph=graph)
 
         elif kpp_type == KPNEGchoices.dF:
-            implementation = implementation_seeker(graph)
             type_func = partial(kp.dF, graph=graph, max_distances=max_distances, implementation=implementation)
             # call the initial graph score here using automatic implementation for SPs
 
@@ -164,7 +163,7 @@ class GreedyOptimization:
     @staticmethod
     @check_graph_consistency
     @greedy_search_initializer #todo solve the m problem in this decorator
-    def reachability(graph, kpp_size, kpp_type, seed=None, max_distances=None, m=None) -> (list, float):
+    def reachability(graph, kpp_size, kpp_type, seed=None, max_distances=None, m=None, implementation=SP_implementations.igraph) -> (list, float):
         """
         It iteratively searches for a kpp-set of a predefined dimension, with maximal reachability according to the
         KPPOS metrics asked.
@@ -195,8 +194,6 @@ class GreedyOptimization:
         if kpp_type == KPPOSchoices.mreach and m is None:
             raise WrongArgumentError("\"m\" must be specified for mreach")
 
-        implementation = implementation_seeker(graph) #call it here in order NOT to call the implementation seeker at each KP search
-
         if kpp_type == KPPOSchoices.mreach:
             if not isinstance(m, int) or m <= 0:
                 raise TypeError({"\"m\" must be a positive integer"})
@@ -214,7 +211,7 @@ class GreedyOptimization:
                 sps = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
                 type_func = partial(kp.dR, graph=graph, nodes=S_names, max_distances=max_distances, implementation=implementation, sp_matrix=sps)
             else:
-                type_func = partial(kp.mreach, graph=graph, nodes=S_names, m=m, max_distances=max_distances,
+                type_func = partial(kp.dR, graph=graph, nodes=S_names, max_distances=max_distances,
                                     implementation=implementation)
 
         else: #all the other KPNEG functions we want to insert
@@ -262,6 +259,6 @@ class GreedyOptimization:
             else:
                 optimal_set_found = True
         final = graph.vs(S)["name"]
-        sys.stdout.write("A optimal kpp-set of size {} is {} with score {}".format(kpp_size, final,
+        sys.stdout.write("A optimal kpp-set of size {} is {} with score {}\n".format(kpp_size, final,
                                                                                    reachability_score))
         return final, round(reachability_score, 5)

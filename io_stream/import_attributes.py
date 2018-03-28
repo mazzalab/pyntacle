@@ -27,9 +27,8 @@ __license__ = u"""
 """
 Import attributes for an `igraph.Graph` object stored in a file and adds it to the Graph that has to be studied
 """
-
-from igraph import Graph
 from config import *
+from igraph import Graph
 from collections import OrderedDict
 
 from exceptions.illegal_argument_number_error import IllegalArgumentNumberError

@@ -41,7 +41,7 @@ def greedy_search_initializer(func):
     """
 
     @wraps(func)
-    def func_wrapper(graph, kpp_size, kpp_type, seed, max_distances=None, *args, **kwargs):
+    def func_wrapper(graph, kpp_size, kpp_type, seed=None, max_distances=None, *args, **kwargs):
         if not isinstance(kpp_size, int):
             raise TypeError("The kpp_size argument ('{}') is not an integer number".format(kpp_size))
 

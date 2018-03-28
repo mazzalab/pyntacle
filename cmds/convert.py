@@ -1,9 +1,3 @@
-from warnings import simplefilter
-from config import *
-from io_stream.exporter import PyntacleExporter
-from io_stream.converter import QuickConvert
-from tools.misc import *
-
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -30,6 +24,11 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+from config import *
+from warnings import simplefilter
+from io_stream.exporter import PyntacleExporter
+from io_stream.converter import QuickConvert
+from tools.misc.graph_load import *
 
 class Convert():
     """
@@ -109,7 +108,7 @@ class Convert():
 
         else:
 
-            graph = init_graph.graph_load()
+            graph = init_graph.graph_load
             in_form = init_graph.get_format()
             
             if in_form == out_form:

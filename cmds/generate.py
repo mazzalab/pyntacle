@@ -1,11 +1,3 @@
-from exceptions.generic_error import Error
-from exceptions.illegal_graph_size_error import IllegalGraphSizeError
-from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
-from io_stream.generator import *
-from io_stream.exporter import PyntacleExporter
-from cmds.cmds_utils.plotter import *
-from warnings import simplefilter
-
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -32,6 +24,14 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+from config import *
+from exceptions.generic_error import Error
+from exceptions.illegal_graph_size_error import IllegalGraphSizeError
+from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
+from io_stream.generator import *
+from io_stream.exporter import PyntacleExporter
+from cmds.cmds_utils.plotter import *
+from warnings import simplefilter
 
 class Generate():
     """

@@ -27,8 +27,8 @@ __license__ = u"""
 """
 Reserved utility to represent a graph into a plot that will be outputted by the pyntacle command line utils
 """
-import datetime
 from config import *
+import datetime
 from igraph import Graph, plot
 import os
 import random

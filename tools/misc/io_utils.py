@@ -59,7 +59,7 @@ def output_file_checker(func):
 
         else:
             if os.path.exists(os.path.abspath(output_file)):
-                sys.stdout.write("A file with the same name exists at {}, will overwrite".format(output_file))
+                sys.stdout.write("A file with the same name exists at {}, will overwrite\n".format(output_file))
 
             return func(graph,output_file, *args, **kwargs)
 

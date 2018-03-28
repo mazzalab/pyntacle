@@ -27,13 +27,15 @@ __license__ = u"""
 """
 Compute Local Topology metrics for all nodes in the graph or for a set of nodes
 """
+from config import *
 from math import isinf
 from numba import cuda, jit, prange
 import numpy as np
 import statistics
 from tools.misc.graph_routines import *
-from tools.misc.enums import SP_implementations as imps
-from tools.misc.enums import GraphType
+from psutil import virtual_memory
+# from tools.misc.enums import SP_implementations as imps
+from tools.misc.enums import GraphType, SP_implementations
 from tools.misc.shortest_path_modifications import *
 from tools.graph_utils import GraphUtils as ut
 from tools.misc.implementation_seeker import implementation_seeker
@@ -151,37 +153,33 @@ class LocalTopology:
             return [int(x) for x in graph.eccentricity(vertices=nodes)]
 
     @staticmethod
-    def __radiality_inner__(graph: Graph, nodes=None, implementation=imps.auto) -> list:
+    def __radiality_inner__(graph: Graph, nodes=None, implementation=SP_implementations.igraph) -> list:
         """
         inner class that handles the radiality calculus (without throwing any error)
         """
-        if not isinstance(implementation, imps):
-            raise KeyError(
-                "Implementation specified does not exists. Please choose among the following options {}".format(
-                    ",".join(list(imps.__members__))))
+        if not isinstance(implementation, SP_implementations):
+            raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(SP_implementations)))
+
         else:
 
             diameter = graph.diameter()
             num_nodes = graph.vcount()
             rad = []  # list that will store radiality values
 
-            if implementation == imps.auto:
-                implementation = implementation_seeker(graph)
-
-            if implementation == imps.igraph:
+            if implementation == SP_implementations.igraph:
                 sps = LocalTopology.shortest_path_igraph(graph, nodes=nodes)  # recall the shortest path function here
 
-            elif implementation == imps.cpu:
+            elif implementation == SP_implementations.cpu:
                 sps = LocalTopology.shortest_path_pyntacle(graph=graph, nodes=nodes,
                                                            mode=GraphType.undirect_unweighted,
-                                                           implementation=implementation.cpu)
+                                                           implementation=implementation)
                 sps = sps.tolist()  # reconvert to a list of lists
                 sps = [[float('inf') if x == (graph.vcount()+1) else x for x in y] for y in sps]
 
             else: #GPU case
                 sps = LocalTopology.shortest_path_pyntacle(graph=graph, nodes=nodes,
                                                            mode=GraphType.undirect_unweighted,
-                                                           implementation=implementation.gpu)
+                                                           implementation=implementation)
                 sps = sps.tolist()  # reconvert to a list of lists
                 sps = [[float('inf') if x == (graph.vcount() + 1) else x for x in y] for y in sps]
 
@@ -198,7 +196,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def radiality(graph: Graph, nodes=None, implementation=imps.auto) -> list:
+    def radiality(graph: Graph, nodes=None, implementation=SP_implementations.igraph) -> list:
         """
         Computes the radiality for a single node, a list of nodes or for all nodes in the Graph. The radiality of a node
         (v) is calculated by computing the shortest path between the node v and all other nodes in the graph. The value
@@ -225,7 +223,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def radiality_reach(graph: Graph, nodes=None, implementation=imps.auto) -> list:
+    def radiality_reach(graph: Graph, nodes=None, implementation=SP_implementations.igraph) -> list:
         """
         Computes the radiality reach for a single node, a list of nodes or for all nodes in the Graph.
         The radiality reach is a weighted measure of the canonical radiality and it is recommended for disconnected
@@ -265,7 +263,7 @@ class LocalTopology:
 
                     else:
                         part_nodes = subg.vcount()
-                        rad = LocalTopology.__radiality_inner__(graph=subg, nodes=nodes,implementation=implementation.auto)
+                        rad = LocalTopology.__radiality_inner__(graph=subg, nodes=nodes,implementation=implementation)
 
                         # rebalance radiality by weighting it over the total number of nodes
                         for i, elem in enumerate(rad):
@@ -368,9 +366,10 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
+    #@profile
     #todo check if i can see the environment variables so I don't have to recall cuda.is_available() every time
     def shortest_path_pyntacle(graph: Graph, nodes=None, mode=GraphType.undirect_unweighted,
-                               implementation=imps.cpu) -> np.ndarray:
+                               implementation=SP_implementations.igraph) -> np.ndarray:
         """
         We implement here a few ways to determine the shortest paths in a graph for a single node, a group of nodes or
         all nodes in a graph. The shortest path search is performed using the Floyd-Warhsall algorithm and the numba
@@ -400,23 +399,19 @@ class LocalTopology:
         graph
         """
 
-        if implementation == imps.auto:
-            raise ValueError("Implementation \"auto\" not available here, you must have already decided your implementation"
-                             "before caling this method")
-
-        #todo mauro this should be handle outside this
-        if implementation == imps.gpu:
-
-            if not cuda.is_available():
-                implementation = imps.cpu
-
-            else:
-                if sys.modules.get("algorithms.shortestpath_GPU", "Not imported") == "Not imported":
-                    from algorithms.shortestpath_GPU import SPGpu
+        # #todo mauro this should be handle outside this
+        # if implementation == SP_implementations.gpu:
+        #
+        #     if not cuda.is_available():
+        #         implementation = imps.cpu
+        #
+        #     else:
+        #         if sys.modules.get("algorithms.shortestpath_GPU", "Not imported") == "Not imported":
+        #             from algorithms.shortestpath_GPU import SPGpu
 
         if mode == GraphType.undirect_unweighted:
 
-            if implementation == imps.igraph:
+            if implementation == SP_implementations.igraph:
                 sys.stdout.write("using igraph implementation instead of our implementations\n")
                 sps = LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
                 sps = [[graph.vcount()+1 if isinf(x) else x for x in y] for y in sps]
@@ -424,16 +419,20 @@ class LocalTopology:
                 return sps
 
             else:
-
-                adjmat = np.array(list(graph.get_adjacency()), dtype=np.uint16)
+                adjlist = list(graph.get_adjacency())
+                if virtual_memory().free < (graph.vcount()**2)*2: # the rightmost "2" is int16/8
+                    sys.stdout.write("WARNING: Memory seems to be low; loading the graph given as input could fail.")
+                    
+                adjmat = np.array(adjlist, dtype=np.uint16)
 
                 adjmat[adjmat == 0] = graph.vcount() + 1  # set zero values to the max possible path length + 1
                 np.fill_diagonal(adjmat, 0)  # set diagonal values to 0 (no distance from itself)
-                if implementation == implementation.cpu:
-
+                if implementation == SP_implementations.cpu:
+    
                     if nodes is None:
                         nodes = list(range(0, graph.vcount()))
                         sps = LocalTopology.__shortest_path_CPU__(adjmat=adjmat)
+
                     else:
                         nodes = GraphUtils(graph=graph).get_node_indices(node_names=nodes)
                         sps = LocalTopology.__shortest_path_CPU__(adjmat=adjmat)
@@ -441,7 +440,10 @@ class LocalTopology:
                     
                     return sps
 
-                elif implementation == implementation.gpu:
+                elif implementation == SP_implementations.gpu:
+                    if "SPGpu" not in sys.modules:
+                        from algorithms.shortestpath_GPU import SPGpu
+                        
                     if nodes is None:
                         nodes = list(range(0, graph.vcount()))
 
@@ -450,7 +452,7 @@ class LocalTopology:
 
                     # create the result vector filled with 'inf' (the total number of nodes + 1)
                     result = np.full_like(adjmat, graph.vcount()+1, dtype=np.uint16)
-                    SPGpu.shortest_path_GPU(adjmat, result) #todo is there any case in which the shortest path GPU is not imported?
+                    SPGpu.shortest_path_GPU(adjmat, result)
 
                     np.fill_diagonal(result, 0) #fill the diagonal of the result object with zeros
 
@@ -472,7 +474,7 @@ class LocalTopology:
             sys.exit(0)
 
     @staticmethod
-    @jit(nopython=True, parallel=True, cache=True)
+    @jit(nopython=True, parallel=True, cache=True, )
     def __shortest_path_CPU__(adjmat) -> np.ndarray:
         """
         Calculate the shortest paths of a graph for aa single nodes, a set of nodes or all nodes in the graph using
@@ -483,8 +485,6 @@ class LocalTopology:
         Default is True (a numpy array is returned)
         :return: a numpy array
         """
-        # todo Tom: gestire nodi singoli e gruppi di nodi
-        # todo Tom controlla i prange
 
         v = adjmat.shape[0]
         for k in range(0, v):
@@ -528,7 +528,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def average_shortest_path_length(graph: Graph, nodes=None, implementation=imps.auto) -> list:
+    def average_shortest_path_length(graph: Graph, nodes=None, implementation=SP_implementations.igraph) -> list:
         """
         Computes the average of connected shortest path for each a single node, a lists of nodes or all nodes in the
         'igraph.Graph' object if 'None' (default).
@@ -546,10 +546,8 @@ class LocalTopology:
         specifications and the graph topology.
         :return: a list of floats with the average shortest path lists of each connected nodes. If a node is an isolate, 'nan' will be returned.
         """
-        if implementation == imps.auto:
-            implementation  = implementation_seeker()
 
-        if implementation == imps.igraph:
+        if implementation == SP_implementations.igraph:
             sps = LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
             avg_sps = []
             for elem in sps:
@@ -570,7 +568,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def median_shortest_path_length(graph: Graph, nodes=None, implementation=imps.auto) -> list:
+    def median_shortest_path_length(graph: Graph, nodes=None, implementation=SP_implementations.igraph) -> list:
         """
         Computes the median among connected shortest path for each a single node, a lists of nodes or all nodes in the
         'igraph.Graph' object if 'None' (default).
@@ -589,10 +587,7 @@ class LocalTopology:
         :return: a list of floats with the median shortest path(s) of each connected nodes. If a node is an isolate, 'nan' will be returned.
         """
 
-        if implementation == imps.auto:
-            implementation = implementation_seeker()
-
-        if implementation == imps.igraph:
+        if implementation == SP_implementations.igraph:
             sps = LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
             avg_sps = []
             for elem in sps:

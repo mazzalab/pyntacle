@@ -1,11 +1,3 @@
-"""
-Utilities made for common adjacency matrix file operations
-"""
-import os
-import logging
-from exceptions import *
-from config import *
-
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -33,6 +25,14 @@ __license__ = u"""
   Foundation, Inc.,  51 Franklin Street, Fifth Floor, Boston, MA
   02110-1301 USA
   """
+
+"""
+Utilities made for common adjacency matrix file operations
+"""
+import os
+import logging
+from exceptions import *
+from config import *
 
 # Todo:
 # - importa adjm in numpy array (ora e' __store)

@@ -28,6 +28,7 @@ __license__ = u"""
 Custom Exception class inherited from ValueError to be raised when there's more of a possible solution in a problem
 that doesn't conotemplate one (e.g.: gtetting the largest component of a graph in graph_utils)
 """
+from config import *
 
 class MultipleSolutionsError(ValueError):
     pass

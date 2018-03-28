@@ -29,6 +29,7 @@ Contains a series of quick file converters in order to parse one graph atored in
 another
 '''
 
+from config import *
 from tools.edgelist_utils import EglUtils as egl
 from tools.misc.io_utils import *
 from exceptions.unproperlyformattedfile_error import UnproperlyFormattedFileError

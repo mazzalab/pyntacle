@@ -29,21 +29,28 @@ __license__ = u"""
 Octopus is a pyntacle command line utility that adds properties computed by pyntacle to the Graph, both at vertex and at
 a Graph level
 """
-
+from config import *
 from tools.add_attributes import AddAttributes
 from algorithms.local_topology import LocalTopology
 from algorithms.global_topology import GlobalTopology
 from algorithms.keyplayer import KeyPlayer
 from tools.misc.enums import *
 from tools.misc.enums import GraphType
-from tools.misc.enums import SP_implementations as imps
 from tools.misc.graph_routines import check_graph_consistency
 from tools.misc.shortest_path_modifications import ShortestPathModifier
 from cmds.cmds_utils.kpsearch_wrapper import KPWrapper as kpw
 from cmds.cmds_utils.kpsearch_wrapper import GOWrapper as gow
 from cmds.cmds_utils.kpsearch_wrapper import BFWrapper as bfw
-from tools.misc.enums import KPNEGchoices, KPPOSchoices
+from tools.misc.enums import KPNEGchoices, KPPOSchoices, SP_implementations
 
+
+def implementation_check(graph):
+    if '__implementation' in graph.attributes():
+        return graph["__implementation"]
+    else:
+        return SP_implementations.igraph
+    
+    
 class Octopus:
     
     #Global
@@ -103,33 +110,25 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_average_radiality(graph):
-        implementation = imps.igraph  # Todo: qui va creato il decisore che determina se usare gpu o cpu
+        implementation = implementation_check(graph)
         AddAttributes(graph).add_graph_attributes('average_radiality',
                                                   GlobalTopology.average_radiality(graph, implementation))
     
     @staticmethod
     @check_graph_consistency
     def add_average_radiality_reach(graph):
-        implementation = imps.igraph  # Todo: qui va creato il decisore che determina se usare gpu o cpu
+        implementation = implementation_check(graph)
         AddAttributes(graph).add_graph_attributes('average_radiality_reach',
                                                   GlobalTopology.average_radiality_reach(graph,
                                                                                          implementation))
     @staticmethod
     @check_graph_consistency
     def add_average_shortest_path_length(graph):
-        implementation = imps.igraph  # Todo: qui va creato il decisore che determina se usare gpu o cpu
+        implementation = implementation_check(graph)
         AddAttributes(graph).add_graph_attributes('average_shortest_path_length',
                                                   GlobalTopology.average_shortest_path_length(graph,
                                                                                               implementation))
         
-    # @staticmethod
-    # @check_graph_consistency
-    # def add_median_shortest_path_length(graph):
-    #     implementation = imps.igraph  # Todo: qui va creato il decisore che determina se usare gpu o cpu
-    #     AddAttributes(graph).add_graph_attributes('median_shortest_path_length',
-    #                                               GlobalTopology.median_shortest_path_length(graph,
-    #                                                                                           implementation))
-    
     # Local
     @staticmethod
     @check_graph_consistency
@@ -205,11 +204,8 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    ## Guarda il grafo e decide quale implementazione usare per lo shortest path, in automatico.
-    # Per ora solo cpu ma piu' avanti aggiungi il resto
     def add_shortest_path(graph, node_names=None, mode=GraphType.undirect_unweighted):
-        implementation = imps.cpu #Todo: qui va creato il decisore che determina se usare gpu o cpu
-       
+        implementation = implementation_check(graph)
         distances = LocalTopology.shortest_path_pyntacle(graph, node_names, mode, implementation).tolist()
         if node_names is None:
             node_names = graph.vs["name"]
@@ -218,7 +214,8 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def add_average_shortest_path_length(graph, node_names=None, exclude_inf=True, implementation=imps.auto):
+    def add_average_shortest_path_length(graph, node_names=None, exclude_inf=True):
+        implementation = implementation_check(graph)
         if node_names is None:
             node_names = graph.vs["name"]
         AddAttributes(graph).add_node_attributes('average_shortest_path_length',
@@ -227,7 +224,8 @@ class Octopus:
  
     @staticmethod
     @check_graph_consistency
-    def add_median_shortest_path_length(graph, node_names=None, exclude_inf=True, implementation=imps.auto):
+    def add_median_shortest_path_length(graph, node_names=None, exclude_inf=True):
+        implementation = implementation_check(graph)
         if node_names is None:
             node_names = graph.vs["name"]
         AddAttributes(graph).add_node_attributes('mediane_shortest_path_length',
@@ -243,7 +241,8 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_dF(graph, max_distances=None):
-        AddAttributes(graph).add_graph_attributes('dF', KeyPlayer.dF(graph, implementation=imps.auto, max_distances=max_distances))
+        implementation = implementation_check(graph)
+        AddAttributes(graph).add_graph_attributes('dF', KeyPlayer.dF(graph, implementation=implementation, max_distances=max_distances))
 
     # KP
 
@@ -258,8 +257,9 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add__kp_dF(graph, nodes, max_distances=None):
+        implementation = implementation_check(graph)
         kpobj = kpw(graph=graph)
-        kpobj.run_KPNeg(nodes, KPNEGchoices.dF, max_distances=max_distances)
+        kpobj.run_KPNeg(nodes, KPNEGchoices.dF, max_distances=max_distances, implementation=implementation)
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes('dF_kpinfo', {tuple(results_dict['dF'][0]): results_dict['dF'][1]})
 
@@ -267,16 +267,18 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_kp_dR(graph, nodes, max_distances=None):
+        implementation = implementation_check(graph)
         kpobj = kpw(graph=graph)
-        kpobj.run_KPPos(nodes, KPPOSchoices.dR, max_distances=max_distances)
+        kpobj.run_KPPos(nodes, KPPOSchoices.dR, max_distances=max_distances, implementation=implementation)
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes('dR_kpinfo', {tuple(results_dict['dR'][0]): results_dict['dR'][1]})
 
     @staticmethod
     @check_graph_consistency
     def add_kp_mreach(graph, nodes, m=None, max_distances=None):
+        implementation = implementation_check(graph)
         kpobj = kpw(graph=graph)
-        kpobj.run_KPPos(nodes, KPPOSchoices.mreach,  m=m, max_distances=max_distances)
+        kpobj.run_KPPos(nodes, KPPOSchoices.mreach,  m=m, max_distances=max_distances, implementation=implementation)
         results_dict = kpobj.get_results()
         attr_name = 'mreach_{}_kpinfo'.format(str(m))
         AddAttributes(graph).add_graph_attributes(attr_name, {tuple(results_dict['mreach'][0]): results_dict['mreach'][1]})
@@ -293,28 +295,30 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_GO_dF(graph, kpp_size, max_distances=None, seed=None):
+        implementation = implementation_check(graph)
         kpobj = gow(graph=graph)
-        kpobj.run_fragmentation(kpp_size, KPNEGchoices.dF, max_distances=max_distances, seed=seed)
+        kpobj.run_fragmentation(kpp_size, KPNEGchoices.dF, max_distances=max_distances, seed=seed, implementation=implementation)
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes('dF'+'_greedy', {tuple(results_dict['dF'][0]): results_dict['dF'][1]})
 
     @staticmethod
     @check_graph_consistency
     def add_GO_dR(graph, kpp_size, max_distances=None, seed=None):
+        implementation = implementation_check(graph)
         kpobj = gow(graph=graph)
-        kpobj.run_reachability(kpp_size, KPPOSchoices.dR, max_distances=max_distances, seed=seed)
+        kpobj.run_reachability(kpp_size, KPPOSchoices.dR, max_distances=max_distances, seed=seed, implementation=implementation)
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes('dR'+'_greedy', {tuple(results_dict['dR'][0]): results_dict['dR'][1]})
 
     @staticmethod
     @check_graph_consistency
     def add_GO_mreach(graph, kpp_size, m=None, max_distances=None, seed=None):
+        implementation = implementation_check(graph)
         kpobj = gow(graph=graph)
-        kpobj.run_reachability(kpp_size, KPPOSchoices.mreach, m=m, max_distances=max_distances, seed=seed)
+        kpobj.run_reachability(kpp_size, KPPOSchoices.mreach, m=m, max_distances=max_distances, seed=seed, implementation=implementation)
         results_dict = kpobj.get_results()
         attr_name = 'mreach_{}_greedy'.format(str(m))
         AddAttributes(graph).add_graph_attributes(attr_name, {tuple(results_dict['mreach'][0]): results_dict['mreach'][1]})
-        
     
     #bruteforce
     

@@ -26,12 +26,12 @@ __license__ = u"""
 
 """ Utilities to compute KP Metrics described by Borgatti"""
 
+from config import *
 import algorithms.local_topology as lt
 from tools.misc.graph_routines import *
-from tools.misc.implementation_seeker import implementation_seeker
+from tools.misc.enums import SP_implementations
 from tools.graph_utils import GraphUtils as gu
 from tools.misc.shortest_path_modifications import *
-from tools.misc.enums import SP_implementations as imps
 import numpy as np
 
 class KeyPlayer:
@@ -56,12 +56,12 @@ class KeyPlayer:
         :return: The F measure of the graph as a float ranging between 0.0 and 1.0, where 0 is maximal disconnection
         (each node is an isolate) and 1 is maximum connection (the graph is complete)
         """
-        # sys.stdout.write("############## Running F ##############\n")
+        # sys.stdout.write("\n############## Running F ##############\n")
         if graph.ecount() == 0: #maximum F
             return 1.0
 
-        elif graph.clique_number() == graph.vcount():
-            return 0.0  #maximum F: it's a clique
+        # elif graph.clique_number() == graph.vcount():
+        #     return 0.0  #maximum F: it's a clique
 
         else:
             num_nodes = graph.vcount()
@@ -76,7 +76,7 @@ class KeyPlayer:
 
     @staticmethod
     @check_graph_consistency
-    def dF(graph, implementation=imps.auto, max_distances=None) -> float:
+    def dF(graph, implementation=SP_implementations.igraph, max_distances=None) -> float:
         """
         A measure for computing the dF (a KPP-NEG Measure) ([Ref]_ equation 9). The DF is a measure of node connectivity
         among the graph and it's a measure of how nodes in the graph can be reached.
@@ -99,12 +99,11 @@ class KeyPlayer:
         """
         # todo implementation "auto" should consider graph parameters and use the correct implementation among the classical
         # todo and the GPU/CPU one
+        print("df, USING IMPLEMENTATION", implementation)
 
-        if not isinstance(implementation, imps):
-            raise TypeError("\"implementation\" must be of type \"imps\", {} found".format(type(implementation).__name__))
+        if not isinstance(implementation, SP_implementations):
+            raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(SP_implementations)))
 
-        if implementation == imps.auto:
-            implementation = implementation_seeker(graph) #todo this will return the correct implementation
 
         if max_distances is not None:
                 if not isinstance(max_distances, int):
@@ -120,7 +119,7 @@ class KeyPlayer:
             return 1.0
 
         else:
-            if implementation == imps.igraph:
+            if implementation == SP_implementations.igraph:
                 return KeyPlayer.__dF_Borgatti(graph=graph, max_distances=max_distances)
 
             else:
@@ -157,7 +156,7 @@ class KeyPlayer:
         return round(df, 5)
 
     @staticmethod
-    def __dF_pyntacle(graph, max_distances=None, implementation=imps.cpu) -> float:
+    def __dF_pyntacle(graph, max_distances=None, implementation=SP_implementations.igraph) -> float:
         """
         Implement the DF search using parallel computing we implemented in `LocalTopology.shortest_path_pyntacle` in
         order to speed up shortest path  search using either CPU or HPU accelerations (if nVidia compatible graphics
@@ -193,7 +192,7 @@ class KeyPlayer:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def mreach(graph, nodes, m, max_distances=None, implementation=imps.auto, sp_matrix=None) -> int:
+    def mreach(graph, nodes, m, max_distances=None, implementation=SP_implementations.igraph, sp_matrix=None) -> int:
         """
         Calculates the m-reach ([Ref]_, equation 12). The m-reach is defined as a count of the number of unique nodes
         reached by any member of the kp-set in m links or less.
@@ -211,6 +210,8 @@ class KeyPlayer:
         :param np.ndarray sp_matrix: if implementation is either cpu or gpu, you can pass the matrix of shortest paths instead of recomputing it. if None, the matrix of the shortest paths will be recomputed
         :return: an integer representing the number of nodes reached by the inpu node(s) in  m steps or less
         """
+        print("mreach, USING IMPLEMENTATION", implementation)
+
         if not isinstance(m, int):
             raise TypeError("\"m\" must be an integer")
         if m < 1:
@@ -218,8 +219,8 @@ class KeyPlayer:
         elif m >= graph.vcount() + 1:
             raise ValueError("\"m\" must be lesser than the total number of vertices plus one")
 
-        if not isinstance(implementation, imps):
-            raise TypeError("\"implementation\" must be of type \"imps\", {} found".format(type(implementation).__name__))
+        if not isinstance(implementation, SP_implementations):
+            raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(SP_implementations)))
 
         if max_distances is not None:
                 if not isinstance(max_distances, int):
@@ -230,10 +231,7 @@ class KeyPlayer:
 
         index_list = gu(graph=graph).get_node_indices(node_names=nodes)
 
-        if implementation == imps.auto:
-            implementation = implementation_seeker(graph) #todo this will return the correct implementation
-
-        if implementation == imps.igraph:
+        if implementation == SP_implementations.igraph:
             shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
 
             if max_distances is not None:
@@ -270,7 +268,7 @@ class KeyPlayer:
     @staticmethod
     @check_graph_consistency
     @vertexdoctor
-    def dR(graph, nodes, max_distances=None, implementation=imps.auto, sp_matrix=None) -> float:
+    def dR(graph, nodes, max_distances=None, implementation=SP_implementations.igraph, sp_matrix=None) -> float:
         """
         Calculates the distance-weighted reach ([Ref]_, equation 14). The distance-weighted reach can be defined as the
         sum of the reciprocals of distances from the kp-set S to all nodes, where the distance from the set to a node is
@@ -288,9 +286,10 @@ class KeyPlayer:
         :param np.ndarray sp_matrix: if implementation is either cpu or gpu, you can pass the matrix of shortest paths instead of recomputing it. if None, the matrix of the shortest paths will be recomputed
         :return: a float representing he distance-weighted reach measure of the graph
         """
+        print("dr, USING IMPLEMENTATION", implementation)
 
-        if not isinstance(implementation, imps):
-            raise TypeError("\"implementation\" must be of type \"imps\", {} found".format(type(implementation).__name__))
+        if not isinstance(implementation, SP_implementations):
+            raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(SP_implementations)))
 
         if max_distances is not None :
                 if not isinstance(max_distances, int):
@@ -299,12 +298,9 @@ class KeyPlayer:
                 if max_distances >= 1:
                     raise ValueError("\"max_sp\" must be an integer greater than one")
 
-        if implementation == imps.auto:
-            implementation = implementation_seeker(graph)
-
         index_list = gu(graph=graph).get_node_indices(node_names=nodes)
 
-        if implementation == imps.igraph:
+        if implementation == SP_implementations.igraph:
             shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
 
             if max_distances is not None:

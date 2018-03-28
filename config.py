@@ -32,6 +32,11 @@ import threading
 import time
 import sys
 import os
+from numba import cuda
+from numba.config import *
+from multiprocessing import cpu_count
+from psutil import virtual_memory
+from enum import Enum, auto
 
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.ERROR, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -42,6 +47,11 @@ report_format = {"tsv" : "tsv", "txt": "tsv", "csv" : "csv", "xlsx" : "xlsx", "x
 
 runtime_date = datetime.datetime.now().strftime("%d-%m-%Y_%I:%M")
 
+# Add system info
+n_cpus = cpu_count()-1 # Leaving one thread out
+NUMBA_NUM_THREADS = n_cpus
+mem = virtual_memory().total
+cuda_avail = cuda.is_available()
 
 class CursorAnimation(threading.Thread):
     """

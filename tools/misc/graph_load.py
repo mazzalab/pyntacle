@@ -1,12 +1,3 @@
-# external libraries
-import csv
-from config import *
-import numpy as np
-from tools.misc.binarycheck import is_binary_file
-# pyntacle Libraries
-from io_stream.importer import PyntacleImporter
-from tools.graph_utils import GraphUtils
-
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -32,6 +23,17 @@ __license__ = u"""
   You should have received a copy of the license along with this
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
+
+# external libraries
+from config import *
+import csv
+import numpy as np
+from tools.misc.binarycheck import is_binary_file
+from tools.misc.enums import SP_implementations
+# pyntacle Libraries
+from io_stream.importer import PyntacleImporter
+from tools.graph_utils import GraphUtils
+from tools.add_attributes import AddAttributes
 
 
 def separator_detect(filename):
@@ -62,10 +64,11 @@ class GraphLoad():
             self.logger.info("Unspecified or unrecognized file format. Will try to guess it.")
 
         self.header = header
-
+        
     def get_format(self):
         return self.file_format
     
+    @property
     def graph_load(self):
         
         # First of all, check if binary. If so, any attempt to read as text would fail with UnicodeDecodeError.
@@ -151,7 +154,9 @@ class GraphLoad():
         self.logger.debug("Graph: name:{}\tNodes: {}\tEdges: {}".format(graph["name"], graph.vcount(), graph.ecount()))
         self.logger.debug("Header:{}".format(self.header))
         self.logger.debug("Separator:{}".format(repr(separator)))
+        
         GraphUtils(graph=graph).graph_checker()
+
         return graph
 
     def guess_format(self, filename):

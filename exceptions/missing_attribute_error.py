@@ -27,6 +27,7 @@ __license__ = u"""
 """
 Custom Exception class to be raised when an attribute is missing
 """
+from config import *
 
 class MissingAttributeError(ValueError):
     pass

@@ -26,6 +26,7 @@ __license__ = u"""
 
 """Are we looking at the same thing?"""
 
+from config import *
 
 def is_binary_file(filepathname):
     """

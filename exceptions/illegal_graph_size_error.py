@@ -28,5 +28,7 @@ __license__ = u"""
 Custom Exception class inherited from ValueError to be raised when the specified size graph is wrong
 """
 
+from config import *
+
 class IllegalGraphSizeError(ValueError):
     pass

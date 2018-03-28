@@ -32,12 +32,10 @@ __license__ = u"""
   """
 
 # external libraries
+from config import *
 import argparse
 import sys
 import os
-from numba import cuda
-from multiprocessing import cpu_count
-from psutil import virtual_memory
 from exceptions.generic_error import Error
 
 if sys.version_info <= (3, 4):
@@ -111,11 +109,6 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         # Continue parsing of the first two arguments
         args = parser.parse_args(sys.argv[1:2])
         
-        # Add system info
-        args.n_cpus = cpu_count()
-        args.mem = virtual_memory().total
-        args.cuda = cuda.is_available()
-        
         if not hasattr(self, args.command):
             print('Unrecognized command')
             parser.print_help()
@@ -176,6 +169,10 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument("--no-plot", action="store_true",
                             help="Do not output plots (recommended for graphs above 1k nodes)")
 
+        parser.add_argument('-T', "--threads", metavar='', default=n_cpus, type=int,
+                            help="Number of threads that pyntacle will use. Generally, increasing the number of threads will speed up the execution. Defaults to n_threads - 1")
+        
+
         subparsers = parser.add_subparsers(metavar='', help=argparse.SUPPRESS)
 
         # Subparser for the kp-info case
@@ -193,8 +190,8 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                                    usage='pyntacle.py keyplayer kp-finder [-h] [-f] [-d] [-m] [-v] [-I] [-S] [--save-binary] [--plot-format] [--plot-dim] [--no-plot] --type [TYPE] --input_file [FILE] -k [K]',
                                                    add_help=False, parents=[parser],
                                                    formatter_class=lambda prog: argparse.HelpFormatter(prog,
-                                                                                                       max_help_position=100,
-                                                                                                       width=150))
+                                                                                       max_help_position=100,
+                                                                                       width=150))
         finder_case_parser.add_argument('-k', '--k-size', metavar='', type=int, default=2,
                                         help='size of the set for greedy optimization (default is 2)', required=True)
 
@@ -393,7 +390,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument("-u", "--output-format", metavar="",
                             choices=format_dictionary.keys(),
                             default='adjmat',
-                            help='Desired output format. Default is \'adjmat\' (Adjacency Matrix')
+                            help='Desired output format. Default is \'adjmat\' (Adjacency Matrix)')
 
         parser.add_argument("--output-separator", metavar="",
                             help="Optional custom separator for output files. Default is \"\\t\"")

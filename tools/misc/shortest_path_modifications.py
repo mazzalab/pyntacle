@@ -25,9 +25,8 @@ __license__ = u"""
   """
 
 """Methods for shortest path operations"""
-
-import numpy as np
 from config import *
+import numpy as np
 
 class ShortestPathModifier:
 

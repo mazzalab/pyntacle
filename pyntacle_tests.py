@@ -1,4 +1,11 @@
-# from algorithms.global_topology_NEW import
+from config import *
+from algorithms.global_topology import *
+from algorithms.local_topology import *
+from algorithms.keyplayer import KeyPlayer
+from tools.misc.graph_load import *
+from tools.misc.enums import KPPOSchoices, KPNEGchoices
+from algorithms.greedy_optimization import *
+
 # from igraph import Graph
 # from misc.graph_routines import *
 # import time
@@ -21,7 +28,6 @@
 # print(GlobalTopology.components(erd))
 # print(GlobalTopology.density(erd))
 
-from tools.misc.graph_load import *
 
 # adjmatrix = GraphLoad('/home/m.truglio/Desktop/Compiti_Dedalus/edgelist.txt.sif', "sif", True).graph_load()
 # print(adjmatrix)
@@ -32,9 +38,30 @@ from tools.misc.graph_load import *
 
 
 #
-mat = PyntacleImporter.Binary(file='/home/m.truglio/Desktop/provamauro/pyntaclebin/pyntacle_kp-finder_figure_8_kpsize_2_KP-Info_report_20-03-2018_04:08.graph')
+mat = PyntacleImporter.AdjacencyMatrix(file='/home/m.truglio/Desktop/Compiti_Dedalus/figure_8.txt', header=True)
 print("\nGraph in main")
 print(mat.summary())
+
+# #
+# print('gpu')
+# print(LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.gpu))
+#
+# print('\n\ncpu')
+#
+# print(LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.cpu))
+# # input()
+# #
+# #
+# print('\n\nIGRAph')
+#
+# print(LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.igraph))
+#
+# print('\n\n Igraph puro')
+#
+# print(LocalTopology.shortest_path_igraph(graph=mat))
+
+# print(KeyPlayer.dF(graph=mat, implementation=imps.cpu))
+# print(KeyPlayer.dF(graph=mat, implementation=imps.igraph))
 
 
 # #Graph attribute da file

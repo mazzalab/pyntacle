@@ -1,17 +1,3 @@
-from cmds.cmds_utils.kpsearch_wrapper import KPWrapper as kpw
-from cmds.cmds_utils.kpsearch_wrapper import GOWrapper as gow
-from cmds.cmds_utils.kpsearch_wrapper import BFWrapper as bfw
-from algorithms.keyplayer import KeyPlayer as kpp
-from itertools import chain
-from exceptions.generic_error import Error
-from io_stream.exporter import PyntacleExporter
-# from pyntacle_commands_utils.kp_runner_OLD import *
-from cmds.cmds_utils.plotter import *
-from cmds.cmds_utils.reporter import *
-from tools.graph_utils import *
-from tools.add_attributes import AddAttributes
-from tools.misc.graph_load import *
-
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -38,6 +24,20 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+from config import *
+from cmds.cmds_utils.kpsearch_wrapper import KPWrapper as kpw
+from cmds.cmds_utils.kpsearch_wrapper import GOWrapper as gow
+from cmds.cmds_utils.kpsearch_wrapper import BFWrapper as bfw
+from algorithms.keyplayer import KeyPlayer as kpp
+from itertools import chain
+from exceptions.generic_error import Error
+from io_stream.exporter import PyntacleExporter
+# from pyntacle_commands_utils.kp_runner_OLD import *
+from cmds.cmds_utils.plotter import *
+from cmds.cmds_utils.reporter import *
+from tools.graph_utils import *
+from tools.add_attributes import AddAttributes
+from tools.misc.graph_load import *
 
 class KeyPlayer():
     """
@@ -52,7 +52,6 @@ class KeyPlayer():
                              "will not be produced.")
             self.args.no_plot = True
 
-        
     def run(self):
         cursor = CursorAnimation()
         cursor.daemon = True
@@ -90,10 +89,19 @@ class KeyPlayer():
         self.logging.debug('Running pyntacle keyplayer, with arguments')
         self.logging.debug(self.args)
         # Load Graph
-        graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header).graph_load()
-
+        graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header).graph_load
+        if 'nodes' in self.args:
+            if not all(x in graph.vs["name"] for x in self.args.nodes):
+                raise WrongArgumentError("One or more nodes you supplied could not be found in the input graph.")
         # init Utils global stuff
         utils = GraphUtils(graph=graph)
+        
+        if '__implementation' in graph.attributes():
+            implementation = graph['__implementation']
+        else:
+            implementation = SP_implementations.igraph
+            
+        print("LOADED IMPLEMENTATION", graph['__implementation'])
 
         if self.args.largest_component:
             try:
@@ -148,7 +156,7 @@ class KeyPlayer():
 
                 if self.args.type in (['F', 'neg', 'all']):
                     sys.stdout.write(
-                        "Finding best set of kp-nodes of size {} using F (kp neg measure)\n".format(
+                        "Finding best set of kp-nodes of size {0} using F (kp neg measure)\n".format(
                             self.args.k_size))
                     initial_results[KPNEGchoices.F.name] = kpp.F(graph)
                     if initial_results[KPNEGchoices.F.name] != 1:
@@ -158,30 +166,37 @@ class KeyPlayer():
                         results[KPNEGchoices.F.name] = [[], 1, 1]
                         
                 if self.args.type in (['dF', 'neg', 'all']):
+                    print("STARTING DF with imp", implementation)
                     sys.stdout.write(
-                        "Finding best set of kp-nodes of size {} using dF (kp neg measure)\n".format(
+                        "Finding best set of kp-nodes of size {0} using dF (kp neg measure)\n".format(
                             self.args.k_size))
-                    initial_results[KPNEGchoices.dF.name] = kpp.dF(graph)
+                    initial_results[KPNEGchoices.dF.name] = kpp.dF(graph, implementation=implementation)
                     if initial_results[KPNEGchoices.dF.name] != 1:
                         kp_runner.run_fragmentation(self.args.k_size, KPNEGchoices.dF,
-                                                max_distances=self.args.max_distances, seed=self.args.seed)
+                                                    max_distances=self.args.max_distances, seed=self.args.seed,
+                                                    implementation=implementation)
                     else:
                         self.logging.warning("Initial value of dF is 1. Skipping search.")
                         results[KPNEGchoices.dF.name] = [[], 1, 1]
 
                 if self.args.type in (['dR', 'pos', 'all']):
+                    print("STARTING DR with imp", implementation)
+    
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using dR (kp pos measure)\n".format(
                             self.args.k_size))
                     kp_runner.run_reachability(self.args.k_size, KPPOSchoices.dR,
-                                               max_distances=self.args.max_distances, seed=self.args.seed)
+                                               max_distances=self.args.max_distances, seed=self.args.seed,
+                                               implementation=implementation)
 
                 if self.args.type in (['mreach', 'pos', 'all']):
+                    print("STARTING mreach with imp", implementation)
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {0} using an MREACH measure of {1} (kp pos measure)\n".format(
                             self.args.k_size, self.args.m_reach))
                     kp_runner.run_reachability(self.args.k_size, KPPOSchoices.mreach, m=self.args.m_reach,
-                                               max_distances=self.args.max_distances, seed=self.args.seed)
+                                               max_distances=self.args.max_distances, seed=self.args.seed,
+                                               implementation=implementation)
 
             elif self.args.implementation == "brute-force":
                 kp_runner = bfw(graph=graph)
@@ -200,30 +215,33 @@ class KeyPlayer():
                         results[KPNEGchoices.F.name] = [[], 1, 1]
 
                 if self.args.type in (['dF', 'neg', 'all']):
+                    print("STARTING DF with imp", implementation)
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using dF (kp neg measure)\n".format(
                             self.args.k_size))
-                    initial_results[KPNEGchoices.dF.name] = kpp.dF(graph)
+                    initial_results[KPNEGchoices.dF.name] = kpp.dF(graph, implementation=implementation)
                     if initial_results[KPNEGchoices.dF.name] != 1:
                         kp_runner.run_fragmentation(self.args.k_size, KPNEGchoices.dF,
-                                                    max_distances=self.args.max_distances)
+                                                    max_distances=self.args.max_distances, implementation=implementation)
                     else:
                         self.logging.warning("Initial value of dF is 1. Skipping search.")
                         results[KPNEGchoices.dF.name] = [[], 1, 1]
 
                 if self.args.type in (['dR', 'pos', 'all']):
+                    print("STARTING DR with imp", implementation)
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using dR (kp pos measure)\n".format(
                             self.args.k_size))
                     kp_runner.run_reachability(self.args.k_size, KPPOSchoices.dR,
-                                               max_distances=self.args.max_distances)
+                                               max_distances=self.args.max_distances, implementation=implementation)
                     
                 if self.args.type in (['mreach', 'pos', 'all']):
+                    print("STARTING mreach with imp", implementation)
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {0} using an MREACH measure of {1} (kp pos measure)\n".format(
                             self.args.k_size, self.args.m_reach))
                     kp_runner.run_reachability(self.args.k_size, KPPOSchoices.mreach, m=self.args.m_reach,
-                                               max_distances=self.args.max_distances)
+                                               max_distances=self.args.max_distances, implementation=implementation)
 
             else:
                 sys.stdout.write("Wrong implementation. Please contact pyntacle Developers and sent this error message, along with a command line and a log.\nQuitting.\n")
@@ -276,17 +294,22 @@ class KeyPlayer():
             if self.args.type in (['F', 'neg', 'all']):
                 initial_results[KPNEGchoices.F.name] = kpp.F(graph)
                 kp_runner.run_KPNeg(self.args.nodes, KPNEGchoices.F)
-
             if self.args.type in (['dF', 'neg', 'all']):
-                initial_results[KPNEGchoices.dF.name] = kpp.dF(graph)
-                kp_runner.run_KPNeg(self.args.nodes, KPNEGchoices.dF, max_distances=self.args.max_distances)
+                print("STARTING DF with imp", implementation)
+                initial_results[KPNEGchoices.dF.name] = kpp.dF(graph, implementation=implementation)
+                kp_runner.run_KPNeg(self.args.nodes, KPNEGchoices.dF, max_distances=self.args.max_distances,
+                                    implementation=implementation)
+                print("DF DONE ######################")
 
             if self.args.type in (['dR', 'pos', 'all']):
-                kp_runner.run_KPPos(self.args.nodes, KPPOSchoices.dR, max_distances=self.args.max_distances)
-                
+                print("STARTING DR with imp", implementation)
+                kp_runner.run_KPPos(self.args.nodes, KPPOSchoices.dR, max_distances=self.args.max_distances,
+                                    implementation=implementation)
+
             if self.args.type in (['mreach', 'pos', 'all']):
+                print("STARTING mreach with imp", implementation)
                 kp_runner.run_KPPos(self.args.nodes, KPPOSchoices.mreach, m=self.args.m_reach,
-                                    max_distances=self.args.max_distances)
+                                    max_distances=self.args.max_distances, implementation=implementation)
 
             results.update(kp_runner.get_results())
 
@@ -352,7 +375,7 @@ class KeyPlayer():
             queried_stuff = results.keys()
             if KPNEGchoices.F.name in queried_stuff:
                 if KPNEGchoices.F.name in graph.attributes():
-                    sys.stdout.write("{} already present, will overwrite".format(KPNEGchoices.F.name))
+                    sys.stdout.write("{} already present, will overwrite\n".format(KPNEGchoices.F.name))
                 graph[KPNEGchoices.F.name] = results[KPNEGchoices.F.name][-1] #initial F value
                 k = "_".join([KPNEGchoices.F.name, bin_type])
 

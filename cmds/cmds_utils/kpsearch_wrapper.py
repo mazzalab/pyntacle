@@ -24,13 +24,15 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+from config import *
+from tools.misc.enums import SP_implementations
 from algorithms.greedy_optimization import GreedyOptimization
-from algorithms.bruteforce_search import BruteforceSearch
+
+# from algorithms.bruteforce_search import BruteforceSearch
 from tools.graph_utils import GraphUtils as gu
 from tools.misc.timeit import timeit
 from tools.misc.enums import KPPOSchoices, KPNEGchoices
 from algorithms.keyplayer import KeyPlayer
-from config import *
 from igraph import Graph
 
 """ This file contains a series of wrappers for single KP Metrics, Greedy Optimization and Bruteforce Search. This 
@@ -49,15 +51,15 @@ class KPWrapper:
         self.kp = KeyPlayer
         self.logger = log
         self.logger.info("Initializing search of KP metrics for a selected set of nodes")
-
+        
         gu(graph=graph).graph_checker()
         self.graph = graph
-
+            
         # initialize graph utility class
         self.results = {}  # dictionary that will store results
 
     @timeit
-    def run_KPPos(self, nodes, kpp_type:KPPOSchoices, m=None, max_distances=None):
+    def run_KPPos(self, nodes, kpp_type:KPPOSchoices, m=None, max_distances=None, implementation = SP_implementations.igraph):
         """
         Run Single KPP-POS metrics on a single node or a set of nodes, adds everuything to the "results" object
         :param nodes: either a single node name or a list of node names
@@ -86,22 +88,24 @@ class KPWrapper:
 
         self.logger.info("searching the KP POS values for metric {0} using nodes {1}".format(kpp_type.name, ",".join(nodes)))
         if kpp_type == KPPOSchoices.dR:
-            single_result = self.kp.dR(graph=self.graph, nodes=nodes, max_distances=max_distances)
+            single_result = self.kp.dR(graph=self.graph, nodes=nodes, max_distances=max_distances,
+                                       implementation=implementation)
 
         else:
-            single_result = self.kp.mreach(graph=self.graph, nodes=nodes, max_distances=max_distances, m=m)
+            single_result = self.kp.mreach(graph=self.graph, nodes=nodes, max_distances=max_distances, m=m, implementation=implementation)
 
         self.results[kpp_type.name] = [nodes, single_result]
         self.logger.info("KP POS search completed, results are in the \"results\" dictionary")
 
     @timeit
-    def run_KPNeg(self, nodes, kpp_type:KPNEGchoices, max_distances=None):
+    def run_KPNeg(self, nodes, kpp_type:KPNEGchoices, max_distances=None, implementation = SP_implementations.igraph):
         """
         Run KP NEG metrics for a node or a set of nodes
         :param nodes: either a single node name or a list of node names
         :param KPNEGchoices kpp_type: one of the KPPNEGchoices defined in misc.enums
         :param int max_distances: maximum shortest path distance allowed (must be a positive integer greater than 0.
         """
+        print("SONO NEL WRAPPER CON IMP", implementation)
         if not isinstance(kpp_type, KPNEGchoices):
             raise TypeError("metric must be ones of the \"KPNEGchoices\" metrics, {} found".format(type(kpp_type).__name__))
 
@@ -122,7 +126,7 @@ class KPWrapper:
             "Searching the KP NEG values for metric {0} using nodes {1}\n".format(kpp_type.name, ",".join(nodes)))
 
         if kpp_type == KPNEGchoices.dF:
-            single_result = self.kp.dF(graph=copy, max_distances=max_distances)
+            single_result = self.kp.dF(graph=copy, max_distances=max_distances, implementation=implementation)
 
         else:
             single_result = self.kp.F(graph=copy)
@@ -161,7 +165,7 @@ class GOWrapper:
         self.results = {}  # dictionary that will store results
 
     @timeit
-    def run_fragmentation(self, kpp_size:int, kpp_type:KPNEGchoices, max_distances=None, seed=None):
+    def run_fragmentation(self, kpp_size:int, kpp_type:KPNEGchoices, max_distances=None, seed=None, implementation=SP_implementations.igraph):
         """
         Wrapper around the Greedy Optimization Module that stores the greedy optimization results for KPPOS metrics in the
         "results" dictionary
@@ -176,11 +180,11 @@ class GOWrapper:
         if not isinstance(kpp_type, KPNEGchoices):
             raise TypeError("\"kpp_type\" must be one of the KPPNEGchoices options available")
 
-        go_results = self.go.fragmentation(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type, max_distances=max_distances, seed=seed)
+        go_results = self.go.fragmentation(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type, max_distances=max_distances, seed=seed, implementation=implementation)
         self.results[kpp_type.name] = [go_results[0], go_results[1]]
 
     @timeit
-    def run_reachability(self, kpp_size:int, kpp_type:KPPOSchoices, m=None, max_distances=None, seed=None):
+    def run_reachability(self, kpp_size:int, kpp_type:KPPOSchoices, m=None, max_distances=None, seed=None, implementation=SP_implementations.igraph):
         """
         Wrapper around the Greedy Optimization Module that stores the greedy optimization results for KPPOS metrics
         :param int kpp_size: size of the kpp-set to be found
@@ -201,7 +205,7 @@ class GOWrapper:
             elif not isinstance(m, int) or m <= 0 :
                 raise ValueError("\"m\" must be a positive integer for mreach ")
 
-        go_results = self.go.reachability(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type, max_distances=max_distances, seed=seed, m=m)
+        go_results = self.go.reachability(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type, max_distances=max_distances, seed=seed, m=m, implementation=implementation)
         self.results[kpp_type.name] = [go_results[0], go_results[1]]
 
     def get_results(self) -> dict:

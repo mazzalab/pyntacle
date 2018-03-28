@@ -1,14 +1,3 @@
-import filecmp
-from warnings import simplefilter
-
-from exceptions.multiple_solutions_error import MultipleSolutionsError
-from graph_operations.logic_ops import GraphSetter
-from io_stream.exporter import PyntacleExporter
-from cmds.cmds_utils.plotter import PlotGraph
-from cmds.cmds_utils.reporter import *
-from tools.misc.enums import Reports
-from tools.misc.graph_load import *
-
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -35,6 +24,16 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+from config import *
+import filecmp
+from warnings import simplefilter
+from exceptions.multiple_solutions_error import MultipleSolutionsError
+from graph_operations.logic_ops import GraphSetter
+from io_stream.exporter import PyntacleExporter
+from cmds.cmds_utils.plotter import PlotGraph
+from cmds.cmds_utils.reporter import *
+from tools.misc.enums import Reports
+from tools.misc.graph_load import *
 
 class Set():
     """
@@ -74,10 +73,10 @@ class Set():
         input_format = format_dictionary.get(self.args.format, "NA")
 
         graph1 = GraphLoad(self.args.input_file_1, file_format=input_format,
-                           header=input_header).graph_load()
+                           header=input_header).graph_load
 
         graph2 = GraphLoad(self.args.input_file_2, file_format=input_format,
-                           header=input_header).graph_load()
+                           header=input_header).graph_load
 
         # init Utils global stuff
         utils1 = GraphUtils(graph=graph1)

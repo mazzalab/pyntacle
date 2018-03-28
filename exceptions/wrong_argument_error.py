@@ -28,6 +28,7 @@ __license__ = u"""
 """
 Custom Exception class inherited from ValueError to be raised when arguments passed to methods are wrong
 """
+from config import *
 
 class WrongArgumentError(ValueError):
     pass

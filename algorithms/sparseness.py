@@ -28,6 +28,7 @@ __license__ = u"""
 Give a measure of sparseness of a graph using 3 different metrics studied in the past few years
 """
 
+from config import *
 import math
 from tools.misc.graph_routines import *
 

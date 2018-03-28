@@ -26,6 +26,7 @@ __license__ = u"""
 
 "Wraps up all the importers for several type of network representation files (all the file formats supported by Pyntacle"
 
+from config import *
 import pandas as pd
 import pickle
 from tools.misc.binarycheck import *

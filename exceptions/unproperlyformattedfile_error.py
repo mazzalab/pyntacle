@@ -27,6 +27,7 @@ __license__ = u"""
 """
 Custom Exception class inherited from TypeError to be raised when the specified size graph is wrong
 """
+from config import *
 
 class UnproperlyFormattedFileError(ValueError):
     pass
