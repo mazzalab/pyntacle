@@ -1,4 +1,3 @@
-
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -39,15 +38,19 @@ import pandas as pd
 class EglUtils():
     logger = None
 
-    def __init__(self, file: str, header: bool, separator=None):
+    def __init__(self, file: str, header: bool, sep="\t"):
+        """
+        Initialize the EdgeList Utils object
+        :param str file: a file PATH to the edgelist file
+        :param bool header: whether the edgelist has an header or not
+        :param str sep: a string specified the separator between edgelist fields. Default is "\t" (tab separated edgelist)
+        """
         self.logger = log
 
-        if separator is None:
-            self.sep = "\t"
-            self.logger.info("using '\t' as standard separator")
-
+        if not isinstance(sep, str):
+            raise ValueError("\"sep\" must be a string, {} found".format(type(sep).__name__))
         else:
-            self.sep = separator
+            self.sep = sep
 
         if not os.path.exists(file):
             raise FileNotFoundError("Input file does not exist")
@@ -60,21 +63,21 @@ class EglUtils():
 
             self.eglfile = file
 
-        self.header = header
+        self.headerbool = header
 
         self.edgl = None
 
     def egl_to_list(self):
-        '''
-        reparse an edgelist and store it into a list for edge list checks
-        '''
+        """
+        Reparses an edgelist and store it into a list of lists (for internal purposes only)
+        """
 
         self.edgl = []
 
         with open(self.eglfile, "r") as edg:
 
-            if self.header:
-                self.head = edg.readline()
+            if self.headerbool:
+                self.header = edg.readline()
             else:
                 self.header = None
 
@@ -83,12 +86,11 @@ class EglUtils():
                 tmp = elem.rstrip().split(self.sep)[:2]
                 self.edgl.append(tmp)
 
-    def get_edgelist(self):
-
-        '''
+    def get_edgelist(self) -> list:
+        """
         return the edgelist object as a list of lists (useful for igraph porting)
-        :return: a tuple containing only the self.edgl object and the header
-        '''
+        :return: a list containing all the stuff in the input file, header included, sorted by line
+        """
         if self.edgl is not None:
             if self.edgl:
                 return self.edgl
@@ -97,25 +99,24 @@ class EglUtils():
         else:
             raise ValueError("the edgelist is not ")
 
-    def get_header(self):
-        '''
+    def get_header(self) -> list:
+        """
         return the header object as a list of string
-
         :return:a list containing the header of the input edge list
-        '''
+        """
 
         if self.header is not None:
             return self.header
 
         else:
-            raise ValueError("header is not initialized")
+            self.logger.warning("Header was not initialized since it's not present, returning \"None\"")
+            return None
 
-    def is_direct(self):
-        '''
+    def is_direct(self) -> bool:
+        """
         Function that returns a boolean if the edgelist contains at least one direct edge
-        
         :return: a boolean; True if the edgelist is direct and False otherwise
-        '''
+        """
 
         if self.edgl is None:
             self.egl_to_list()
@@ -134,12 +135,11 @@ class EglUtils():
 
         return direct
 
-    def is_pyntacle_ready(self):
-        '''
-        Function that checks that the edgelist is good for pyntacle
-
+    def is_pyntacle_ready(self) -> bool:
+        """
+        This method checks that the input edgelist is ready to be processed by the `pyntacle` `iostream`
         :return: legit - a boolean; True if is the edgelist is a legit edgelist, false otherwise
-        '''
+        """
 
         if self.edgl is None:
             self.egl_to_list()
@@ -159,10 +159,9 @@ class EglUtils():
         return legit
 
     def to_undirect(self):
-        '''
-        turn the edgelist to undirect (add reciprocal pairs if missing)
-
-        '''
+        """
+        Converts the edgelist to undirect (add reciprocal pairs if missing)
+        """
         if self.edgl is None:
             self.egl_to_list()
 
@@ -179,9 +178,9 @@ class EglUtils():
             self.edgl = [list(x) for x in self.edgl]
 
     def set_edgelist_igraph(self):
-        '''
-        Create a formatted edge list from the input edge list creating an edge list ready for igraph
-        '''
+        """
+        Creates a formatted edge list ready to be used by `igraph.Graph` object as edgelist.
+        """
 
         if self.edgl is None:
             self.egl_to_list()

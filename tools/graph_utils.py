@@ -30,12 +30,9 @@ __license__ = u"""
 a series of generic utilities for an iGraph graph object
 '''
 
-# external libraries
 from config import *
 from igraph import Graph
 import numpy as np
-
-# pyntacle libraries
 from exceptions.illegal_graph_size_error import IllegalGraphSizeError
 from exceptions.missing_attribute_error import MissingAttributeError
 from exceptions.notagraph_error import NotAGraphError
@@ -50,7 +47,6 @@ class GraphUtils():
     """
 
     logger = None
-    """:type: Logger"""
 
     def __init__(self, graph: Graph):
         self.logger = log
@@ -142,60 +138,59 @@ class GraphUtils():
 
     def attribute_in_nodes(self, attribute):
         """
-        **[EXPAND]**
-        
-        :param attribute:
-        :return:
+        Checks that a given attribute (such as the ones stored in `tools/misc/enums`) is present as  node attribute
+        (so is in graph.vs.attributes())
+        :param attribute: the attribute you're looking for
+        :raise MissingAttributeError: if the attribute is in node attributes
         """
         self.graph_checker()
 
         if attribute not in self.__graph.vs().attributes():
-            raise MissingAttributeError("attribute specified is not present in graph nodes")
+            raise MissingAttributeError("attribute specified has not been initialized in node attributes")
 
     def attribute_in_edges(self, attribute):
         """
-        **[EXPAND]**
-        
-        :param attribute:
-        :return:
+        Checks that a given attribute (such as the ones stored in `tools/misc/enums`) is present as edge attribute
+        (so is in graph.es.attributes())
+        :param attribute: the attribute you're looking for
+        :raise MissingAttributeError: if the attribute is not in edge attributes()
         """
         self.graph_checker()
 
         if attribute not in self.__graph.es().attributes():
-            raise MissingAttributeError("attribute specified is not present in graph edges")
+            raise MissingAttributeError("attribute specified has not been initialized in edge attributes")
 
     def attribute_in_graph(self, attribute):
         """
-        **[EXPAND]**
-        
-        :param attribute:
-        :return:
+        Checks that a given attribute (such as the ones stored in `tools/misc/enums`) is present as graph attribute
+        (so is in graph.attributes())
+        :param attribute: the attribute you're looking for
+        :raise MissingAttributeError: if the attribute is not in graph attributes()
         """
         self.graph_checker()
 
         if attribute not in self.__graph.attributes():
-            raise MissingAttributeError("attribute specified is not present in graph")
+            raise MissingAttributeError("attribute specified has not been initialized in graph attributes")
 
     def check_attribute_type(self, attribute, attribute_types):
-        '''
-        Check that attributes are coherent and present in the graph
-        
+        """
+        Check that attributes are of the specified type in the input `igraph.Graph` object
         :param attribute: a the input attribute to be checked
         :param attribute_types: a type of enumerator that will be screened
         :raise ValueError: if the attribute type is not of the selected enumerator
-        '''
+        """
         attribute_types = (attribute_types,)
         if not isinstance(attribute, attribute_types):
             raise MissingAttributeError("the value {} is not a  legal AttributeType".format(str(attribute)))
 
     def check_attributes_types(self, attributes_list: list, attribute_types):
-        '''
+        """
         Check that attributes are coherent and present in the graph
-        
+
         :param attributes_list: a list of attributes asked to be reported
         :param attribute_types: a type of enumerator or a list of enumerators that will be screened
         :raise ValueError: if the attribute type is not of the selected enumerator
-        '''
+        """
 
         if isinstance(attribute_types, list):
             attribute_types = tuple(attribute_types)
@@ -208,24 +203,22 @@ class GraphUtils():
                 raise MissingAttributeError("the value {} is not a  legal AttributeType".format(str(elem)))
 
     def get_node_names(self, index_list: list) -> list:
-        '''
-        Convert a list of indices to a list of node names (the original ID)
-        
-        :param index_list: a list of integers containing the index list
-        :return: a list of node names
-        '''
+        """
+        Take a list of integers returns the corresponding graph.vs["name"] attribute of the node that matches each index
+        :param list index_list: a list of integers containing indices present in graph (will check for that)
+        :return: a list of the corresponding graph.vs["name"] strings
+        """
         self.graph_checker()
         self.check_index_list(index_list)
         names_list = self.__graph.vs(index_list)["name"]
         return names_list
 
     def get_node_indices(self, node_names: list) -> list:
-        '''
-        Convert a list of names into a list of indices
-        
-        :param node_names: a list of strings containing all the node names
-        :return: an index list containing the indices of the input node names
-        '''
+        """
+        Given a list of strings (that are in the graph.vs["name"] attribute, returns the correspondiung node indices
+        :param list node_names: a list of strings containing all the node names you're looking for
+        :return: a list of integers of the corrsponding node indices of the input node names
+        """
 
         self.graph_checker()
         self.check_name_list(node_names)
@@ -244,8 +237,9 @@ class GraphUtils():
 
     def get_attribute_names(self, attribute_list: list, type="graph") -> list:
         """
-        **[EXPAND]**
-        
+        given a specified enumerator (such as the ones stored in `tools/misc/enums`, check iuf the attribute is initialized
+        at the corresponding `type` level (choices are "graph", "node", "edge")
+
         :param attribute_list:
         :param type:
         :return:
@@ -291,9 +285,9 @@ class GraphUtils():
     def get_largest_component(self):
         """
         Return the maximum component of a graph (a subrgraph of the original one)
-        
+
         :return: a graph object with the only the largest component. If more than one component if present
-        :raise MultipleSolutionserror: if there is more than one largest component
+        :raise MultipleSolutionsError: if there is more than one largest component
         """
         
         self.logger.info("Giving you only the largest component of the input graph")

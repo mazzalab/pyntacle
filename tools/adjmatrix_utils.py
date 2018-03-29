@@ -34,19 +34,16 @@ import os
 import logging
 from exceptions import *
 
-# Todo:
-# - importa adjm in numpy array (ora e' __store)
-# - controlla simmetria con numpy
-# - prova a vedere se c'e' un modo veloce in numpy per controllare ci siano solo 0, 1 in matrice
-# - getter del numpy array dopo importato (ora si chiama __write)
-# - flag pyntacle_ready come in edgelist_utils
-# - make undirect va fixato in modo da clonare la upper o lower diagonal (a scelata) sull'altra.
-
-
 class AdjmUtils():
     logger = None
 
-    def __init__(self, file: str, header: bool, separator=None):
+    def __init__(self, file: str, header: bool, sep="\t"):
+        """
+        Initialize the Adjacency Matrix Utils class by giving the parser all the necessary information.
+        :param str file: a valid PATH to the input adjacency matrix
+        :param bool header: a boolean specifying whether the adjacency matrix contains an header or not on both rows and columns
+        :param str sep: a string specifying the delimiter amon adjacency matrix fields. Default it "\t" (tab separated)
+        """
 
         self.logger = log
         if not os.path.exists(file):
@@ -56,18 +53,17 @@ class AdjmUtils():
         else:
             self.adjfile = file
 
-        if separator is None:
-            self.sep = "\t"
-            self.logger.info("using '\t' as standard separator")
+        if not isinstance(sep, str):
+            raise TypeError("\"sep\" must be a string, {} found".format(type(sep).__name__))
 
         else:
-            self.sep = separator
+            self.sep = sep
+
         self.header = header  # boolean to check if header is present
 
-    def is_squared(self):
+    def is_squared(self) -> bool:
         """
-        Utilitiy to check if an adjaceny matrix is squared or not by checking if the number of lines
-
+        Utility to check if an adjaceny matrix is squared or not by checking if the number of rows and columns (must be equal)
         :return: a boolean representing True if the matrix is squared or False otherwise
         """
         self.logger.info("Checking if adjacency matrix is squared")
@@ -85,9 +81,7 @@ class AdjmUtils():
 
     def __store_adjm(self):
         """
-        Store adjmatrix in a list for further purposes (internal class only)
-
-        :return:
+        Store the input adjacency matrix in a list (for internal purposes only)
         """
         self.adjm = []
         with open(self.adjfile, "r") as infile:
@@ -108,11 +102,10 @@ class AdjmUtils():
                         tmp = line.rstrip().split(self.sep)
                         self.adjm.append(tmp)
 
-    def __write_adjm(self, adjm: list, separator: str, appendix: str):
+    def __write_adjm(self, adjm: list, separator: str, appendix: str) -> str:
         """
-        Hidden function that returns a rewritten adjacency matrix
-
-        :return: outpath, path to the adjacency matrix
+        Hidden function that rewrite an adjacency matrix to the input path (used internally)
+        :return: the path to the (new) adjacency matrix
         """
         o = os.path.splitext(os.path.abspath(self.adjfile))
         outpath = o[0] + "_" + appendix + o[-1]
@@ -131,11 +124,10 @@ class AdjmUtils():
 
         return outpath
 
-    def is_weighted(self):
+    def is_weighted(self) -> bool:
         """
-        Function that returns a boolean telling whether the adjacency matrix is weighted or not
-
-        :return: self.weightbool, a boolean with True if the graph is weighted and false otherwise
+        Function that returns a boolean telling whether the adjacency matrix contains weights (values different from 1s and 0s)
+        :return: a boolean with `True` if the graph is weighted and `False` otherwise
         """
         self.__store_adjm()
         self.logger.info("checking if the matrix is weighted")
@@ -166,10 +158,9 @@ class AdjmUtils():
 
         self.__write_adjm(self.adjm, separator=self.sep, appendix="unweighted")
 
-    def is_direct(self):
+    def is_direct(self) -> bool:
         """
-        Function to check whether an adjacency matrix is direct or not
-
+        Checks whether an adjacency matrix is direct or not (the lower and upper triangulkar matrices, are they equal?)
         :return: directbool, a value representing True if the matrix is direct and False otherwise
         """
         self.directbool = False
@@ -183,10 +174,12 @@ class AdjmUtils():
 
         return self.directbool
 
-    def make_undirect(self):
+    def make_undirect(self) -> str:
         """
-        Convert an undirect network to a direct one and write it to a new file
+        Convert an direct Adjacency Matrix to an undirect one into a new file
+        :return str outpath: a valid path where the new (undirected) adjacency matrix will be stored
         """
+
         self.__store_adjm()
         if not self.is_direct():
             self.logger.info("the matrix is already undirect")
@@ -198,4 +191,5 @@ class AdjmUtils():
             for e, el in enumerate(elem):
                 if el != 0:
                     self.adjm[e][i] = el
-        self.__write_adjm(self.adjm, separator=self.sep, appendix="undirected")
+        outpath = self.__write_adjm(self.adjm, separator=self.sep, appendix="undirected")
+        return outpath

@@ -158,7 +158,7 @@ class PyntacleImporter:
         :return: an `igraph.Graph` object.
         """
 
-        if not EglUtils(file=input_file, header=header, separator=sep).is_pyntacle_ready():
+        if not EglUtils(file=input_file, header=header, sep=sep).is_pyntacle_ready():
             raise UnproperlyFormattedFileError("Edgelist is not ready to be parsed by Pyntacle, fix it and then come back!")
 
         graph = Graph() #initialize an empty graph that will be filled

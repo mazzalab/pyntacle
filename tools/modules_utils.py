@@ -26,26 +26,25 @@ __license__ = u"""
   02110-1301 USA
   """
 
-'''
-this module computes KPP-POS, KPP-NEG, completeness and compactness for a group of modules
-'''
+"""
+This utility performs several operations on modules found through community detection algorithms
+"""
+
 
 from config import *
-# pyntacle libraries
 from igraph import Graph
 from tools.graph_utils import GraphUtils
-
 
 class ModuleUtils():
     logger = None
 
     def __init__(self, modules: list, graph: Graph, algorithm: str):
-        '''
-        Implement all the necessary step to check a graph object
-        
+        """
+        Implements all the necessary step to check a graph object
         :param modules:a list of graphs already divided by the CommunityFinder class
-        :param graph: the input graph (before module computing)
-        '''
+        :param graph: the input graph used  to find modules
+        :param str algorithm: the name of the algorithm used to perform community detection
+        """
 
         self.logger = log
 
@@ -67,18 +66,22 @@ class ModuleUtils():
                 raise ValueError("Module {} does not come from the input Graph".format(i))
 
         self.modules = modules
-        # check that the input graph is properly formatted
-        self.algorithm = algorithm
+
+        #checks that the input graph is properly formatted
+
+        if not isinstance(algorithm, str):
+            raise TypeError("\"algorithm\" must be a string, {} found".format(type(algorithm).__name__))
+
+        else:
+            self.algorithm = algorithm
 
     def filter_subgraphs(self, min_nodes=None, max_nodes=None, min_components=None, max_components=None):
-        '''
-        **[EXPAND]**
-        
-        :param min_nodes: minimum set size (default is None)
-        :param max_nodes: maximum set size (default is None)
-        :param min_components: minimum number of components that graph must havew. Default is None (all components)
-        :param max_components: maximum number of components that graph must havew. Default is None (all components)
-        '''
+        """
+        :param min_nodes: minimum set size. Default is None (no component will be filtered according to this criteria)
+        :param max_nodes: maximum set size. Default is None (no component will be filtered according to this criteria)
+        :param min_components: minimum number of components that graph must have. Default is None (no component will be filtered according to this criteria)
+        :param max_components: maximum number of components that graph must have. Default is None (no component will be filtered according to this criteria)
+        """
 
         if min_nodes is not None and min_nodes < 0:
             raise ValueError("minset must be a positive integer")
@@ -110,14 +113,16 @@ class ModuleUtils():
 
     def get_modules(self):
         """
-        Return the list of graph modules (a list of igraph.Graph objects)
+        Returns the list of graph modules (a list of igraph.Graph objects)
         """
-
         return self.modules
 
     def add_modules_info(self):
         """
-        **EXPAND**
+        adds all the information regarding the modules to each subgraph fiund using community detection algorithms.
+        These information are, specifically:
+        #. an hidden attribute named "__module_algorithm" that store the type of algorithm that was used to identify the community
+        #. an hidden attribute named "__origin_graph" the first element of the graph["name"] attribute (ideally, the name of the input graph)
         """
 
         if len(self.graph["name"]) > 1:
@@ -125,7 +130,7 @@ class ModuleUtils():
                 "graph attribute \"name\" must be unique, found {} instead, will use first name only.".format(
                     ",".join[self.graph["name"]]))
 
-        self.logger.info("adding algorithm used to each module in the \"__module_algoritm\" private attribute")
+        self.logger.info("adding algorithm used to each module in the \"__module_algorithm\" private attribute")
         self.logger.info("adding original graph name to each module in the \"__origin_graph\" private attribute")
 
         for subgraph in self.modules:
@@ -138,7 +143,9 @@ class ModuleUtils():
     def label_modules_in_graph(self):
         """
         Add to each node and edge an attribute that trace it to each module (a way to distinguish each components).
-        name will be assigned to the proprietary "__module" attribute for each graph and edge
+        Specifically, two reserved attributed will be filled in each of the elemenf in `modules`:
+        #. a "__module" name will be assigned to the reserved "__module" attribute for each  subgraph, node and edge the element in the modules was found into. spcifying the name of the module (usually a string representing a positive integer)
+        #- an "__algorithm" attribute will be assigned to each subgraph, node, and edge attributes showing the name of the algorithm that was passed to the ModuleUtils() class specifying the name of the algorithm that was used to find communities.
         """
 
         self.logger.info("Adding attribute \"__module\" to each node")
@@ -148,18 +155,22 @@ class ModuleUtils():
             if "__module" in subgraph.vs.attributes():
                 self.logger.warning(
                     "module {} already have a \"__module\" vertex attribute name, will overwrite it".format(i))
+                subgraph.vs["__module"] = None
 
             if "__algorithm" in subgraph.vs.attributes():
                 self.logger.warning(
                     "module {} already have a \"__algorithm\" vertex attribute name, will overwrite it".format(i))
+                subgraph.vs["__algorithm"] = None
 
             if "__module" in subgraph.es.attributes():
                 self.logger.warning(
                     "module {} already have a \"__module\" edge attribute name, will overwrite it".format(i))
+                subgraph.es["__module"] = None
 
             if "__algorithm" in subgraph.es.attributes():
                 self.logger.warning(
                     "module {} already have a \"__algorithm\" edge attribute name, will overwrite it".format(i))
+                subgraph.es["__algorithm"] = None
 
             node_names = subgraph.vs()["name"]
             edge_names = subgraph.es()["node_names"]
@@ -182,26 +193,3 @@ class ModuleUtils():
             else:
                 self.graph.es(select_nodes.indices)["__module"] = i
                 self.graph.es(select_nodes.indices)["__algorithm"] = self.algorithm
-
-    ###################DEPRECATED#############################
-    def deprecated_modules_overlaps(self):
-        """
-        Verify that the modules are not overlapping
-
-        :return: a list of the same sizes of the modules in input; True if the module overlaps, False otherwise)
-        """
-
-        flaglist = []
-
-        for k, elem in enumerate(self.modules):
-            # print("checking", elem)
-
-            elem_nodes = elem.vs()["name"]
-            # create another list of graphs without the one we're looping on
-            l_without_num = [elt.vs()["name"] for num, elt in enumerate(self.modules) if not num == k]
-            flag = any(n in elem_nodes for x in l_without_num for n in
-                       x)  # find if any of the node names in the graph elem overlaps with the other nodes
-            flaglist.append(flag)
-
-        return flaglist
-    ###########################################################
