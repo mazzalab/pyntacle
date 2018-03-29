@@ -41,11 +41,54 @@ from tools.misc.graph_routines import check_graph_consistency
 from tools.misc.implementation_seeker import implementation_seeker
 from algorithms.local_topology import LocalTopology as Lt
 from tools.graph_utils import GraphUtils as gu
+from igraph import Graph
 
 class BruteforceSearch:
     """
     Brute-force search for the best kp-set **[EXPAND]**
     """
+    @staticmethod
+    def crunch_fragmentation_combinations(allS, graph: Graph, kpp_type: KPNEGchoices) -> dict:
+        kppset_score_pairs = {}
+        """: type: dic{(), float}"""
+
+        # print("{}: {}".format(os.getpid(), len(allS)))
+
+        temp_graph = graph.copy()
+        temp_graph.delete_vertices(allS)
+        if kpp_type == KPNEGchoices.F:
+            type_func = partial(KeyPlayer.F, graph=graph)
+
+        elif kpp_type == KPNEGchoices.dF:
+            if '__implementation' in graph.attributes():
+                implementation = graph['__implementation']
+            else:
+                implementation = SP_implementations.igraph
+            type_func = partial(KeyPlayer.dF, graph=graph, max_distances=max_distances, implementation=implementation)
+
+        else:  # here all the other KPNEG functions we want to insert
+            sys.stdout.write("{} Not yet implemented, please come back later!".format(kpp_type.name))
+            sys.exit(0)
+
+        kppset_score_pairs[allS] = type_func(temp_graph)
+        return kppset_score_pairs
+
+    @staticmethod
+    def crunch_reachability_combinations(allS, graph: Graph, kpp_type: KPPOSchoices, m=None) -> dict:
+        kppset_score_pairs = {}
+        """: type: dic{(), float}"""
+
+        # print("{}: {}".format(os.getpid(), len(allS)))
+
+
+
+
+
+        kppset_score_pairs[allS] = reachability_score
+
+        return kppset_score_pairs
+
+
     @staticmethod
     @check_graph_consistency
     @bruteforce_search_initializer
@@ -194,39 +237,6 @@ class BruteforceSearch:
 
 #todo missing stuff:
 #todo Tom: implement bruteforce parallel you wrote pleaseeeee!
-
-
-def crunch_fragmentation_combinations(allS, graph: Graph, kpp_type: _KeyplayerAttribute) -> dict:
-    kppset_score_pairs = {}
-    """: type: dic{(), float}"""
-
-    # print("{}: {}".format(os.getpid(), len(allS)))
-
-    temp_graph = graph.copy()
-    temp_graph.delete_vertices(allS)
-    if kpp_type == _KeyplayerAttribute.F:
-        kpp_func = KeyPlayer.F
-    else:
-        kpp_func = KeyPlayer.DF
-
-    kppset_score_pairs[allS] = kpp_func(temp_graph)
-    return kppset_score_pairs
-
-
-def crunch_reachability_combinations(allS, graph: Graph, kpp_type: _KeyplayerAttribute, m=None) -> dict:
-    kppset_score_pairs = {}
-    """: type: dic{(), float}"""
-
-    # print("{}: {}".format(os.getpid(), len(allS)))
-
-    if kpp_type == _KeyplayerAttribute.MREACH:
-        reachability_score = KeyPlayer.mreach(m, index_list=allS, recalculate=True)
-    else:
-        reachability_score = KeyPlayer.DR(node_names_list=allS, recalculate=True)
-
-    kppset_score_pairs[allS] = reachability_score
-
-    return kppset_score_pairs
 
 # class BruteforceSearch:
 #     """
