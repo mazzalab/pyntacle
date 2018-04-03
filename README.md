@@ -5,7 +5,7 @@ metrics and HPC comupting.
 
 - **Compatibility**: Python 3+
 - **Contributions**: t.mazza@blabla
-- **Website**: www.blabla.com
+- **Website**: http://pyntacle.css-mendel.it
 - **Bug report**: https://github.com/mazzalab/pyntacle/issues
 
 ## Installation
