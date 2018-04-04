@@ -99,7 +99,7 @@ class KeyPlayer:
         """
         # todo implementation "auto" should consider graph parameters and use the correct implementation among the classical
         # todo and the GPU/CPU one
-        print("df, USING IMPLEMENTATION", implementation)
+        #print("df, USING IMPLEMENTATION", implementation)
 
         if not isinstance(implementation, SP_implementations):
             raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(SP_implementations)))
@@ -202,7 +202,7 @@ class KeyPlayer:
         :param int m: an integer (greater than zero) representing the maximum m-reach distance
         :param nodes: a single node (as a string) or a list of nodes of the graph *(the ones stored  in the graph.vs["name"] object)* **(required)**
         :param int max_distances: the maximum distance after that two nodes are considered disconnected
-        :param str implementation: computes the shortest path using one of the two provided methods in LocalTopology
+        :param SP_implementations implementation: computes the shortest path using one of the two provided methods in LocalTopology
         choices are:
         *`imps.auto`: automatic implementation (default) chooses the best implementation according to the graph properties
         *`imps.igraqh`: use the default shortest path implementation in igraph (performs on a single core)
@@ -278,7 +278,7 @@ class KeyPlayer:
         :param nodes: a single node (as a string) or a list of nodes of the graph *(the ones stored  in the
         graph.vs["name"] object)* **(required)**
         :param int max_distances: the maximum distance after that two nodes are considered disconnected
-        :param str implementation: computes the shortest path using one of the two provided methods in LocalTopology
+        :param SP_implementations implementation: computes the shortest path using one of the two provided methods in LocalTopology
         choices are:
         *`imps.auto`: automatic implementation (default) chooses the best implementation according to the graph properties
         *`imps.igraqh`: use the default shortest path implementation in igraph (performs on a single core)

@@ -113,7 +113,7 @@ class PyntacleImporter:
         :return: an `igraph.Graph` object.
         """
 
-        if not AdjmUtils(file=file, header=header, separator=sep).is_squared():
+        if not AdjmUtils(file=file, header=header, sep=sep).is_squared():
             raise ValueError("Matrix is not squared")
 
         with open(file, "r") as adjmatrix:

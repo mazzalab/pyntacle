@@ -38,10 +38,14 @@ from graph_operations.octopus import Octopus
 
 
 #
-mat = PyntacleImporter.AdjacencyMatrix(file='/home/m.truglio/Desktop/Compiti_Dedalus/figure_8.txt', header=True)
+mat = PyntacleImporter.AdjacencyMatrix(file='/home/local/MENDEL/d.capocefalo/Desktop/pyntacle-tests/figure_8.adjm', header=True)
 print("\nGraph in main")
 print(mat.summary())
-print(mat["__implementation"])
+from algorithms.bruteforce_search import BruteforceSearch
+
+bf = BruteforceSearch.fragmentation(mat, kpp_size=2, kpp_type=KPNEGchoices.dF, parallel=True, ncores=2)
+
+
 # #
 # print('gpu')
 # print(LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.gpu))
@@ -132,14 +136,14 @@ print(mat["__implementation"])
 # Test KeyPlayer
 
 #F
-
-Octopus.add_F(mat)
-Octopus.add_kp_F(mat, ['HS'])
-
-#dF
-
-Octopus.add_dF(mat)
-Octopus.add_kp_dF(mat, ['HS'])
+#
+# Octopus.add_F(mat)
+# Octopus.add_kp_F(mat, ['HS'])
+#
+# #dF
+#
+# Octopus.add_dF(mat)
+# Octopus.add_kp_dF(mat, ['HS'])
 
 
 #
@@ -191,13 +195,13 @@ Octopus.add_kp_dF(mat, ['HS'])
 # Octopus.add_BF_mreach(mat, 3, 3)
 
 
-print("\n\nGraph attributes:")
-for attr in mat.attributes():
-    print(attr, mat[attr])
-    
-print("\n\nNode attributes:")
-for attr in mat.vs.attributes():
-    print(attr,'\n', mat.vs.get_attribute_values(attr))
+# print("\n\nGraph attributes:")
+# for attr in mat.attributes():
+#     print(attr, mat[attr])
+#
+# print("\n\nNode attributes:")
+# for attr in mat.vs.attributes():
+#     print(attr,'\n', mat.vs.get_attribute_values(attr))
     
     
     

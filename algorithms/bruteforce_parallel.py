@@ -66,6 +66,7 @@ class BruteforceSearch:
         """
         self.logger = log
 
+
         if graph.vcount() < 1:
             self.logger.fatal("This graph does not contain vertices")
             raise IllegalGraphSizeError("This graph does not contain vertices")
@@ -111,10 +112,7 @@ class BruteforceSearch:
                 allS = itertools.combinations(node_indices, kpp_size)
 
                 pool = mp.Pool(ncore)
-                for partial_result in pool.imap_unordered(partial(crunch_fragmentation_combinations,
-                                                                  graph=self.__graph,
-                                                                  kpp_type=kpp_type),
-                                                          allS):
+                for partial_result in pool.imap_unordered(partial(crunch_fragmentation_combinations,graph=self.__graph,kpp_type=kpp_type),allS):
                     kppset_score_pairs = {**kppset_score_pairs, **partial_result}
 
                 pool.close()
