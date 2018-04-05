@@ -41,7 +41,6 @@ from exceptions.wrong_argument_error import WrongArgumentError
 from tools.misc.enums import KPPOSchoices, KPNEGchoices, SP_implementations
 from tools.misc.kpsearch_utils import bruteforce_search_initializer
 from tools.misc.graph_routines import check_graph_consistency
-from tools.misc.implementation_seeker import implementation_seeker
 from algorithms.local_topology import LocalTopology as Lt
 from tools.graph_utils import GraphUtils as gu
 from igraph import Graph
@@ -67,6 +66,7 @@ class BruteforceSearch:
         :param int kpp_size: the size of the kpp-set to be found
         :param KPNEGchoices kpp_type: any of the *KPNEGchoices* enumerators available
         :param int max_distances:
+        :param SP_implementations implementations: one of the possible shortest path implementations avaiable in the `tools/misc/enums/SP_implementations` Default is SP_implementations.igraph (uses Dijkstra's algorithm from igraph)
         :param bool parallel: whether to use the parallel computing to perform the bruteforce search. Default is `False`
         :param int ncores: Positive integer specifying the number of cores that will be used to perform parallel computing. If `None` (default) the number of cores will be the maximum n umber of cores -1
         :return: - S: a list of lists containing all the possible sets of nodes that optimize the kp-sets
@@ -108,8 +108,8 @@ class BruteforceSearch:
         #return the score of each kpp pair when nodes are removed
         else:
             final_set = BruteforceSearch.__bruteforce_fragmentation_single(graph=graph, kpp_size=kpp_size, kpp_type=kpp_type, max_distances=max_distances, implementation=implementation) #this is equivalent to the kppset_score_pairs
-            print (final_set)
-            input()
+            # print (final_set)
+            # input()
 
         maxKpp = max(final_set.values())  # this takes only in the first hit, not all hits
 
@@ -128,28 +128,18 @@ class BruteforceSearch:
 
         final = [graph.vs(x)["name"] for x in S]
 
+        maxKpp = round(maxKpp, 5)
+
         if len(final) > 1:
-            sys.stdout.write("The best kpp-set(s) of size {} are {} with score {}".format(kpp_size, final,maxKpp))
-
+            sys.stdout.write("The best kpp-sets for metric {} of size {} are {} with score {}\n".format(kpp_type.name, kpp_size, final, maxKpp))
         else:
-            sys.stdout.write("The best kpp-set(s) of size {} is {} with score {}".format(kpp_size, final,maxKpp))
+            sys.stdout.write("The best kpp-sets for metric {} of size {} is {} with score {}\n".format(kpp_type.name, kpp_size, final, maxKpp))
 
-        return final, round(maxKpp, 5)
+        return final, maxKpp
 
     @staticmethod
     def __bruteforce_fragmentation_single(graph:Graph, kpp_size:int, kpp_type: KPNEGchoices, implementation: SP_implementations, max_distances):
         """
-        It searches and finds the kpp-set of a predefined dimension that best disrupts the graph.
-        It generates all the possible kpp-sets and calculates the fragmentation score of the residual graph, after
-        having extracted the nodes belonging to the kpp-set.
-        The best kpp-set will be the one that maximizes the fragmentation of the graph.
-        :param int kpp_size: the size of the kpp-set
-        :param KPNEGchoices kpp_type: any of the *KPNEGchoices* enumerators available
-        :param int max_distances: (optional) an integer specifying the maximum distance after which two nodes will be disconnected
-        :return: - S: a list of lists containing all the possible sets of nodes that optimize the kp-sets
-                 - best_fragmentation_score: The value obtained when the S set is removed from the graph. If there are
-                 multiple sets available, the fragmentation score represents the value when **any** of the sets
-                 are removed
         """
 
         if kpp_type == KPNEGchoices.F:
@@ -183,7 +173,10 @@ class BruteforceSearch:
     #todo Tommaso this is the part of the code that causes the issue
     @staticmethod
     def __crunch_fragmentation_combinations__(allS, graph: Graph, kpp_type: KPNEGchoices, implementation:SP_implementations,max_distances) -> dict:
-        kppset_score_pairs = {}
+        """
+        Internal wrapper to some operations from `__bruteforce_fragmentation_parallel`
+        """
+        kppset_score_pairs = {} #todo Tommaso this is actually created in bruteforce_fragmentation_parallel. Shouldn't be better to pass it from there? (I didn't touch this from your code)
 
         # print("{}: {}".format(os.getpid(), len(allS)))
 
@@ -253,17 +246,17 @@ class BruteforceSearch:
         **m-reach**: min = 0 (unreachable); max = size(graph) - kpp_size (total reachability)
         **dR**: min = 0 (unreachable); max = 1 (total reachability)
 
+        :param Graph graph: a valid `igraph.Graph` object, already prepared to be used for pyntacle see "Pyntacle Minimum Requirements" for more info on regard
         :param int kpp_size: size of the kpp-set
         :param int m: maximum path length between the kpp-set and the other nodes of the graph
         :param KPPOSchoices kpp_type: Either `KPPOSchoices.mreach` or `KPPOSchoices.dR`
-        :param int max distances: a positive integer grater than 0 representing the distance above which two nodes will be disconnected
-        :param SP:implementations implementation:
+        :param int max_distances:
+        :param SP_implementations implementations: one of the possible shortest path implementations avaiable in the `tools/misc/enums/SP_implementations` Default is SP_implementations.igraph (uses Dijkstra's algorithm from igraph)
         :param bool parallel: whether to use the parallel computing to perform the bruteforce search. Default is `False`
         :param int ncores: Positive integer specifying the number of cores that will be used to perform parallel computing. If `None` (default) the number of cores will be the maximum n umber of cores -1
         :return: - S: a list of lists containing all the possible sets of nodes that optimize the kp-sets
                  - best_reachability_score: The value for the S set that maximmixe the *KPNEG* metrics requested. If there are
-                 multiple sets available, the reachability score represents the value when **any** of the sets
-                 are removed
+                 multiple sets available, then there are multiple solutions to the reachability scores, meaning that different sets of nodes maximumze the reachability metric queried
         """
 
         if kpp_type == KPPOSchoices.mreach and m is None:
@@ -285,6 +278,10 @@ class BruteforceSearch:
             final_set = BruteforceSearch.__bruteforce_reachability_parallel(graph=graph, kpp_size=kpp_size, kpp_type=kpp_type, m=m, max_distances=max_distances, implementation=implementation, ncores=ncores)
         else:
             final_set = BruteforceSearch.__bruteforce_reachability_single(graph=graph, kpp_size=kpp_size, kpp_type=kpp_type, m=m, max_distances=max_distances, implementation=implementation)
+            print("ciao")
+            input()
+            print(final_set)
+            input()
 
         # now the dictionary is filled with all the possible solutions. Time to find the maximal ones
         maxKpp = max(final_set.values())  # take the maximum value
@@ -293,15 +290,24 @@ class BruteforceSearch:
 
         final = [graph.vs(x)["name"] for x in S]
 
-        if len(final) > 1:
-            sys.stdout.write("The best kpp-sets of size {} are {} with score {}\n".format(kpp_size, final, maxKpp))
-        else:
-            sys.stdout.write("The best kpp-sets of size {} is {} with score {}\n".format(kpp_size, final, maxKpp))
+        maxKpp = round(maxKpp, 5)
 
-        return final, round(maxKpp, 5)
+        if len(final) > 1:
+            sys.stdout.write(
+                "The best kpp-sets for metric {} of size {} are {} with score {}\n".format(kpp_type.name, kpp_size,
+                                                                                           final, maxKpp))
+        else:
+            sys.stdout.write(
+                "The best kpp-sets for metric {} of size {} is {} with score {}\n".format(kpp_type.name, kpp_size,
+                                                                                          final, maxKpp))
+
+        return final, maxKpp
 
     @staticmethod
     def __bruteforce_reachability_single(graph: Graph, kpp_size: int, kpp_type: KPPOSchoices, m: int, max_distances: int, implementation=SP_implementations.igraph):
+        """
+        Internal function that Implements bruteforce search at a singe core level. Recommended when the graph is relatively small (under 500 nodes)
+        """
         kppset_score_pairs = {}
         # Generation of all combinations of nodes (all kpp-sets) of size equal to the kpp_size
         node_indices = graph.vs.indices
@@ -336,23 +342,12 @@ class BruteforceSearch:
 
             kppset_score_pairs[tuple(S)] = reachability_score
 
+        return kppset_score_pairs
+
     @staticmethod
     def __bruteforce_reachability_parallel(graph:Graph, kpp_size: int, kpp_type: KPPOSchoices, m:int, max_distances:int, implementation:SP_implementations, ncores:int) -> (list, float):
         """
-        It searches and finds the kpp-set of a predefined dimension that best reaches all other nodes over the graph.
-        It generates all the possible kpp-sets and calculates their reachability scores.
-        The best kpp-set will be the one that best reaches all other nodes of the graph.
-
-        .. note:: **m-reach**: min = 0 (unreachable); max = size(graph) - kpp_size (total reachability)
-
-                       **DR**: min = 0 (unreachable); max = 1 (total reachability)
-
-        :param int kpp_size: size of the kpp-set
-        :param int m: maximum path length between the kpp-set and the other nodes of the graph
-        :param KeyplayerAttribute.name kpp_type: Either KeyplayerAttribute.mreach or KeyplayerAttribute.DR
-        :param ncore: Number of CPU cores for parallel computing calculation of the maximum fragmentation score
-        :raises TypeError: When the kpp-set size is greater than the graph size
-        :raises WrongArgumentError: When the kpp-type argument is not of type KeyplayerAttribute.mreach or KeyplayerAttribute.DR
+        Internal function that Implements bruteforce search on a set of cores (passed by the `ncores` parameter). Recommended when the graph is quite large (over 500 nodes)
         """
         kppset_score_pairs = {}
         """: type: dic{(), float}"""
@@ -360,6 +355,9 @@ class BruteforceSearch:
         allS = itertools.combinations(graph.vs.indices, kpp_size)
 
         pool = mp.Pool(ncores)
+
+        #todo maybe the sp_matrix to be passed to the __crunch_reachability_combinations function should be computed here and not afterwards, to avoid reundancy and speed up code?.
+        #todo this doesn't work at all, must be reworked IMHO
         for partial_result in pool.imap_unordered(partial(BruteforceSearch.__crunch_reachability_combinations,graph=graph,kpp_type=kpp_type,m=m, max_distances=max_distances, implementation=implementation),allS):
             kppset_score_pairs = {**kppset_score_pairs, **partial_result}
 
@@ -370,9 +368,12 @@ class BruteforceSearch:
 
     @staticmethod
     def __crunch_reachability_combinations(allS, graph: Graph, kpp_type: KPPOSchoices, m: int, implementation: SP_implementations, max_distances) -> dict:
+        """
+        Internal wrapper to some operations from `__bruteforce_reachability_parallel`
+        """
 
         # print("{}: {}".format(os.getpid(), len(allS)))
-        kppset_score_pairs = {}
+        kppset_score_pairs = {} #todo Tommaso this is actually created in bruteforce_reachability_parallel. Shouldn't be better to pass it from there? (I didn't touch this from your code)
 
         if kpp_type == KPPOSchoices.mreach:
             if implementation != SP_implementations.igraph:
@@ -383,7 +384,7 @@ class BruteforceSearch:
                 reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distances=max_distances,
                                                       implementation=implementation)
 
-        #todo Tommaso this doesn't work because the "nodes" parameter in reachilibty_score requires node names when calling KP functions
+        #todo Tommaso this doesn't work because the "nodes" parameter in reachshilibty_score requires node names when calling KP functions
         elif kpp_type == KPPOSchoices.dR:
             if implementation != SP_implementations.igraph:
                 sp_matrix = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)

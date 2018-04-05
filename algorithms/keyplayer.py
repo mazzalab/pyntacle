@@ -210,7 +210,7 @@ class KeyPlayer:
         :param np.ndarray sp_matrix: if implementation is either cpu or gpu, you can pass the matrix of shortest paths instead of recomputing it. if None, the matrix of the shortest paths will be recomputed
         :return: an integer representing the number of nodes reached by the inpu node(s) in  m steps or less
         """
-        print("mreach, USING IMPLEMENTATION", implementation)
+        # print("mreach, USING IMPLEMENTATION", implementation)
 
         if not isinstance(m, int):
             raise TypeError("\"m\" must be an integer")
@@ -286,7 +286,7 @@ class KeyPlayer:
         :param np.ndarray sp_matrix: if implementation is either cpu or gpu, you can pass the matrix of shortest paths instead of recomputing it. if None, the matrix of the shortest paths will be recomputed
         :return: a float representing he distance-weighted reach measure of the graph
         """
-        print("dr, USING IMPLEMENTATION", implementation)
+        # print("dr, USING IMPLEMENTATION", implementation)
 
         if not isinstance(implementation, SP_implementations):
             raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(SP_implementations)))
@@ -338,4 +338,3 @@ class KeyPlayer:
 
             dr = dr_num / float(graph.vcount())
             return dr
-

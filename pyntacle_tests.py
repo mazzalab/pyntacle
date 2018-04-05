@@ -43,7 +43,8 @@ print("\nGraph in main")
 print(mat.summary())
 from algorithms.bruteforce_search import BruteforceSearch
 
-bf = BruteforceSearch.fragmentation(mat, kpp_size=2, kpp_type=KPNEGchoices.dF, parallel=True, ncores=2)
+bf = BruteforceSearch.fragmentation(mat, kpp_size=2, kpp_type=KPNEGchoices.dF, parallel=False)
+bf2 = BruteforceSearch.reachability(mat, kpp_size=2, kpp_type=KPPOSchoices.dR, parallel=False)
 
 
 # #
