@@ -244,7 +244,7 @@ class BruteforceSearch:
     @staticmethod
     @check_graph_consistency
     @bruteforce_search_initializer
-    def reachability(graph, kpp_size, kpp_type, max_distances=None, m=None, implementation=SP_implementations.igraph) -> (list, float):
+    def reachability(graph, kpp_size, kpp_type, max_distances=None, m=None, implementation=SP_implementations.igraph, parallel=False, ncores=None) -> (list, float):
         """
         It searches and finds the kpp-set of a predefined dimension that best reaches all other nodes over the graph.
         It generates all the possible kpp-sets and calculates their reachability scores.
@@ -271,21 +271,52 @@ class BruteforceSearch:
         if kpp_type == KPPOSchoices.mreach and isinstance(m, int) and m <= 0:
             raise TypeError({"\"m\" must be a positive integer"})
 
-        kppset_score_pairs = {} #dictionary that will store results
+        if parallel:
+            if ncores is None:
+                ncores = mp.cpu_count()-1
 
+            else:
+                if not isinstance(ncores, int) or ncores < 0 :
+                    raise TypeError("\"ncores\" must be an integer, {} found")
+
+            sys.stdout.write("Parallel BruteForce implementation using {} cores".format(ncores))
+
+        if parallel:
+            final_set = BruteforceSearch.__bruteforce_reachability_parallel(graph=graph, kpp_size=kpp_size, kpp_type=kpp_type, m=m, max_distances=max_distances, implementation=implementation, ncores=ncores)
+        else:
+            final_set = BruteforceSearch.__bruteforce_reachability_single(graph=graph, kpp_size=kpp_size, kpp_type=kpp_type, m=m, max_distances=max_distances, implementation=implementation)
+
+        # now the dictionary is filled with all the possible solutions. Time to find the maximal ones
+        maxKpp = max(final_set.values())  # take the maximum value
+
+        S = [list(x) for x in final_set.keys() if final_set[x] == maxKpp]
+
+        final = [graph.vs(x)["name"] for x in S]
+
+        if len(final) > 1:
+            sys.stdout.write("The best kpp-sets of size {} are {} with score {}\n".format(kpp_size, final, maxKpp))
+        else:
+            sys.stdout.write("The best kpp-sets of size {} is {} with score {}\n".format(kpp_size, final, maxKpp))
+
+        return final, round(maxKpp, 5)
+
+    @staticmethod
+    def __bruteforce_reachability_single(graph: Graph, kpp_size: int, kpp_type: KPPOSchoices, m: int, max_distances: int, implementation=SP_implementations.igraph):
+        kppset_score_pairs = {}
         # Generation of all combinations of nodes (all kpp-sets) of size equal to the kpp_size
         node_indices = graph.vs.indices
         allS = itertools.combinations(node_indices, kpp_size)
-        #initialize graphUtils tool to retrieve  the node names from node indices
+        # initialize graphUtils tool to retrieve  the node names from node indices
         utils = gu(graph=graph)
-        
+
         for S in allS:
             nodes = utils.get_node_names(list(S))
 
             if kpp_type == KPPOSchoices.mreach:
                 if implementation != SP_implementations.igraph:
                     sp_matrix = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
-                    reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distances=max_distances, implementation=implementation, sp_matrix=sp_matrix)
+                    reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distances=max_distances,
+                                                          implementation=implementation, sp_matrix=sp_matrix)
                 else:
                     reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distances=max_distances,
                                                           implementation=implementation)
@@ -305,53 +336,8 @@ class BruteforceSearch:
 
             kppset_score_pairs[tuple(S)] = reachability_score
 
-        #now the dictionary is filled with all the possible solutions. Time to find the maximal ones
-        maxKpp = max(kppset_score_pairs.values()) #take the maximum value
-        
-        result = [utils.get_node_names(list(x)) for x in kppset_score_pairs.keys() if kppset_score_pairs[x] == maxKpp]
-
-        if len(result) > 1:
-            sys.stdout.write("The best kpp-sets of size {} are {} with score {}\n".format(kpp_size, result, maxKpp))
-        else:
-            sys.stdout.write("The best kpp-sets of size {} is {} with score {}\n".format(kpp_size, result, maxKpp))
-
-        return result, round(maxKpp, 5)
-
-    # todo implement this
     @staticmethod
-    def crunch_reachability_combinations(allS, graph: Graph, kpp_type: _KeyplayerAttribute, m=None) -> dict:
-        kppset_score_pairs = {}
-        """: type: dic{(), float}"""
-
-        # print("{}: {}".format(os.getpid(), len(allS)))
-
-        if kpp_type == KPPOSchoices.mreach:
-            if implementation != SP_implementations.igraph:
-                sp_matrix = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
-                reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distances=max_distances,
-                                                      implementation=implementation, sp_matrix=sp_matrix)
-            else:
-                reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distances=max_distances,
-                                                      implementation=implementation)
-
-        elif kpp_type == KPPOSchoices.dR:
-            if implementation != SP_implementations.igraph:
-                sp_matrix = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
-                reachability_score = KeyPlayer.dR(graph=graph, nodes=nodes, max_distances=max_distances,
-                                                  implementation=implementation, sp_matrix=sp_matrix)
-            else:
-                reachability_score = KeyPlayer.dR(graph=graph, nodes=nodes, max_distances=max_distances,
-                                                  implementation=implementation)
-
-        else:  # here all the other KPNEG functions we want to insert
-            sys.stdout.write("{} Not yet implemented, please come back later!".format(kpp_type.name))
-            sys.exit(0)
-
-        kppset_score_pairs[allS] = reachability_score
-
-        return kppset_score_pairs
-
-    def bruteforce_reachability_parallel(self, kpp_size, kpp_type, m=None, ncore=mp.cpu_count()) -> (list, float):
+    def __bruteforce_reachability_parallel(graph:Graph, kpp_size: int, kpp_type: KPPOSchoices, m:int, max_distances:int, implementation:SP_implementations, ncores:int) -> (list, float):
         """
         It searches and finds the kpp-set of a predefined dimension that best reaches all other nodes over the graph.
         It generates all the possible kpp-sets and calculates their reachability scores.
@@ -368,46 +354,50 @@ class BruteforceSearch:
         :raises TypeError: When the kpp-set size is greater than the graph size
         :raises WrongArgumentError: When the kpp-type argument is not of type KeyplayerAttribute.mreach or KeyplayerAttribute.DR
         """
+        kppset_score_pairs = {}
+        """: type: dic{(), float}"""
+        # Generation of all combinations of nodes (all kpp-sets) of size kpp_size
+        allS = itertools.combinations(graph.vs.indices, kpp_size)
 
-        if not isinstance(kpp_size, int):
-            self.logger.error("The kpp_size argument ('{}') is not an integer number".format(kpp_size))
-            raise TypeError("The kpp_size argument ('{}') is not an integer number".format(kpp_size))
-        elif kpp_size >= self.__graph.vcount():
-            self.logger.error("The kpp_size must be strictly less than the graph size")
-            raise IllegalKppsetSizeError("The kpp_size must be strictly less than the graph size")
-        elif kpp_type != _KeyplayerAttribute.DR and kpp_type != _KeyplayerAttribute.MREACH:
-            self.logger.error(
-                "The kpp_type argument ('{}') must be of type KeyplayerAttribute.DR or KeyplayerAttribute.MREACH".format(
-                    kpp_type))
-            raise TypeError(
-                "The kpp_type argument ('{}') must be of type KeyplayerAttribute.DR or KeyplayerAttribute.MREACH".format(
-                    kpp_type))
-        else:
-            self.logger.info("Brute-force search of the best kpp-set o5 f size {}".format(kpp_size))
+        pool = mp.Pool(ncores)
+        for partial_result in pool.imap_unordered(partial(BruteforceSearch.__crunch_reachability_combinations,graph=graph,kpp_type=kpp_type,m=m, max_distances=max_distances, implementation=implementation),allS):
+            kppset_score_pairs = {**kppset_score_pairs, **partial_result}
 
-            kppset_score_pairs = {}
-            """: type: dic{(), float}"""
+        pool.close()
+        pool.join()
 
-            # Generation of all combinations of nodes (all kpp-sets) of size kpp_size
-            allS = itertools.combinations(self.__graph.vs.indices, kpp_size)
+        return kppset_score_pairs #returns the dictionary filled with the correct values for each node combination
 
-            pool = mp.Pool(ncore)
-            for partial_result in pool.imap_unordered(partial(crunch_reachability_combinations,
-                                                              graph=self.__graph,
-                                                              kpp_type=kpp_type,
-                                                              m=m),
-                                                      allS):
-                kppset_score_pairs = {**kppset_score_pairs, **partial_result}
-            pool.close()
-            pool.join()
+    @staticmethod
+    def __crunch_reachability_combinations(allS, graph: Graph, kpp_type: KPPOSchoices, m: int, implementation: SP_implementations, max_distances) -> dict:
 
-            best_reachability_score = max(kppset_score_pairs.values())
-            maxkpp_node_names = [self.__graph.vs(k)["name"] for k, v in kppset_score_pairs.items() if
-                                 v == best_reachability_score]
-            self.logger.info("The best kpp-set of size {} {} {} with score {}".format(kpp_size,
-                                                                                      'are' if len(
-                                                                                          maxkpp_node_names) > 1 else 'is',
-                                                                                      ', '.join([''.join(m) for m in
-                                                                                                 maxkpp_node_names]),
-                                                                                      best_reachability_score))
-            return maxkpp_node_names, best_reachability_score
+        # print("{}: {}".format(os.getpid(), len(allS)))
+        kppset_score_pairs = {}
+
+        if kpp_type == KPPOSchoices.mreach:
+            if implementation != SP_implementations.igraph:
+                sp_matrix = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
+                reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distances=max_distances,
+                                                      implementation=implementation, sp_matrix=sp_matrix)
+            else:
+                reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distances=max_distances,
+                                                      implementation=implementation)
+
+        #todo Tommaso this doesn't work because the "nodes" parameter in reachilibty_score requires node names when calling KP functions
+        elif kpp_type == KPPOSchoices.dR:
+            if implementation != SP_implementations.igraph:
+                sp_matrix = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
+                reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distances=max_distances,
+                                                  implementation=implementation, sp_matrix=sp_matrix)
+            else:
+                reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distances=max_distances,
+                                                  implementation=implementation)
+
+        else:  # here all the other KPNEG functions we want to insert
+            sys.stdout.write("{} Not yet implemented, please come back later!".format(kpp_type.name))
+            sys.exit(0)
+
+        kppset_score_pairs[allS] = reachability_score
+
+        return kppset_score_pairs
+
