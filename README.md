@@ -10,17 +10,17 @@ metrics and HPC comupting.
 
 ## Installation
 
-The easiest way for the majority of users to install pandas is to
+The easiest way for the majority of users to install Pyntacle is to
 install it as part of the **Anaconda** distribution, a cross-platform
 distribution for data analysis and scientific computing. This is the
 recommended installation method for most users.
 
 Instructions for installing from source on various Linux distributions
-and MacOs are also provided.
+and MacOS X are also provided.
 
 ### Installing pyntacle using Anaconda or Miniconda
 
-Installing pyntacle and all its dependencies can be challenging for
+Installing Pyntacle and all its dependencies can be challenging for
 inexperienced users. There are several advantages in using Anaconda to
 install not only pyntacle, but also Python and other packages: it is
 cross platform (Linux, MacOS X, Windows), you do not require
