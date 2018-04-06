@@ -300,12 +300,14 @@ class PlotGraph():
         :param str layout: a type of layout that will be assigned to the `layout` parameter in the `igraph.plot` object
         :param kwargs: a list of parameters that can be passed to each of the layout method
         """
+
         try:
+            seed = random.seed(self.seed)
 
             layout_dic = {"auto": Graph.layout_auto(self.graph, **kwargs), "circle": Graph.layout_circle(self.graph, **kwargs),
-                          "fruchterman_reingold": Graph.layout_fruchterman_reingold(self.graph,**kwargs),
+                          "fruchterman_reingold": Graph.layout_fruchterman_reingold(self.graph, seed=seed, **kwargs),
                           "fr": Graph.layout_fruchterman_reingold(self.graph, **kwargs),
-                          "kamada_kawai": Graph.layout_kamada_kawai(self.graph, **kwargs),
+                          "kamada_kawai": Graph.layout_kamada_kawai(self.graph, seed = seed,**kwargs),
                           "kk": Graph.layout_kamada_kawai(self.graph, **kwargs),
                           "large_graph": Graph.layout_lgl(self.graph, **kwargs),
                           "lgl": Graph.layout_lgl(self.graph, **kwargs),

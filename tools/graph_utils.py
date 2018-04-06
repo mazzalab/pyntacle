@@ -298,6 +298,7 @@ class GraphUtils():
         self.logger.info("Graph has the following components: {}".format(",".join(map(str, comp_len))))
 
         max_comp = max(comp_len)
+        max_ind= np.argmax(comp_len)
 
         max_list = [i for i, x in enumerate(comp_len) if x == max_comp]
 
