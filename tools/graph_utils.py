@@ -290,17 +290,16 @@ class GraphUtils():
         :raise MultipleSolutionsError: if there is more than one largest component
         """
         
-        self.logger.info("Giving you only the largest component of the input graph")
+        self.logger.info("Getting the largest component of the input graph")
 
         components = self.__graph.components()
 
         comp_len = [len(comp) for comp in components]
         self.logger.info("Graph has the following components: {}".format(",".join(map(str, comp_len))))
 
-        max_ind = np.argmax(comp_len)
+        max_comp = max(comp_len)
 
-        max_list = [i for i, x in enumerate(comp_len) if x == max_ind]
-
+        max_list = [i for i, x in enumerate(comp_len) if x == max_comp]
 
         if len(max_list) > 1:
             raise MultipleSolutionsError("there are {} largest components, cannot choose one".format(len(max_list)))

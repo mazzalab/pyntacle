@@ -85,7 +85,7 @@ class PlotGraph():
         """
 
         if "label" in self.graph.vs.attributes():
-            self.logger.warning("attribute \"label\" already exists, will overwrite")
+            self.logger.info("attribute \"label\" already exists, will overwrite")
             self.graph.vs()["label"] = None
 
         if not isinstance(labels, list):
@@ -120,7 +120,7 @@ class PlotGraph():
         """
 
         if "color" in self.graph.vs.attributes():
-            self.logger.warning("attribute \"color\" already exists, will overwrite")
+            self.logger.info("attribute \"color\" already exists, will overwrite")
             self.graph.vs()["color"] = None
 
         if not isinstance(colors, list):
@@ -154,7 +154,7 @@ class PlotGraph():
         :param: list sizes: a list of node sizes (must be positive integers or floats)
         """
         if "size" in self.graph.vs.attributes():
-            self.logger.warning("attribute \"size\" already exists, will overwrite")
+            self.logger.info("attribute \"size\" already exists, will overwrite")
             self.graph.vs()["size"] = None
 
         if not isinstance(sizes, list):
@@ -196,7 +196,7 @@ class PlotGraph():
         shapes_legal_values = ["rectangle", "circle", "hidden", "triangle-up", "triangle-down", "square"]
 
         if "shape" in self.graph.vs.attributes():
-            self.logger.warning("attribute \"shape\" already exists, will overwrite")
+            self.logger.info("attribute \"shape\" already exists, will overwrite")
             self.graph.vs()["shape"] = None
 
         if not isinstance(shapes, list):
@@ -233,7 +233,7 @@ class PlotGraph():
         """
 
         if "label" in self.graph.es.attributes():
-            self.logger.warning("attribute \"label\" already exists, will overwrite")
+            self.logger.info("attribute \"label\" already exists, will overwrite")
             self.graph.es()["label"] = None
 
         if not isinstance(labels, list):
@@ -245,11 +245,11 @@ class PlotGraph():
         tot = self.graph.ecount()
 
         if len(labels) < tot:
-            self.logger.warning(
+            self.logger.info(
                 "\"labels\" do not cover all the nodes, replacing missing ones with Nonetype")
 
         if len(labels) > tot:
-            self.logger.warning("\"labels\" specified exceed the maximum number of vertices, slicing the input list")
+            self.logger.info("\"labels\" specified exceed the maximum number of vertices, slicing the input list")
             labels = labels[:self.graph.ecount()]
 
         self.graph.es["label"] = labels
@@ -265,7 +265,7 @@ class PlotGraph():
         """
 
         if "width" in self.graph.es.attributes():
-            self.logger.warning("attribute \"width\" already exists, will overwrite")
+            self.logger.info("attribute \"width\" already exists, will overwrite")
             self.graph.es()["width"] = None
 
         if not isinstance(widths, list):
@@ -303,7 +303,7 @@ class PlotGraph():
         try:
 
             layout_dic = {"auto": Graph.layout_auto(self.graph, **kwargs), "circle": Graph.layout_circle(self.graph, **kwargs),
-                          "fruchterman_reingold": Graph.layout_fruchterman_reingold(self.graph, self.seed, **kwargs),
+                          "fruchterman_reingold": Graph.layout_fruchterman_reingold(self.graph,**kwargs),
                           "fr": Graph.layout_fruchterman_reingold(self.graph, **kwargs),
                           "kamada_kawai": Graph.layout_kamada_kawai(self.graph, **kwargs),
                           "kk": Graph.layout_kamada_kawai(self.graph, **kwargs),
