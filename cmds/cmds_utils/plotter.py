@@ -300,11 +300,10 @@ class PlotGraph():
         :param str layout: a type of layout that will be assigned to the `layout` parameter in the `igraph.plot` object
         :param kwargs: a list of parameters that can be passed to each of the layout method
         """
-        #todo does not plot the same graph (even with seed)
-
         try:
+
             layout_dic = {"auto": Graph.layout_auto(self.graph, **kwargs), "circle": Graph.layout_circle(self.graph, **kwargs),
-                          "fruchterman_reingold": Graph.layout_fruchterman_reingold(self.graph, **kwargs),
+                          "fruchterman_reingold": Graph.layout_fruchterman_reingold(self.graph, self.seed, **kwargs),
                           "fr": Graph.layout_fruchterman_reingold(self.graph, **kwargs),
                           "kamada_kawai": Graph.layout_kamada_kawai(self.graph, **kwargs),
                           "kk": Graph.layout_kamada_kawai(self.graph, **kwargs),

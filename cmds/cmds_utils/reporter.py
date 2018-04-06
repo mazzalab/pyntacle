@@ -78,7 +78,7 @@ class pyntacleReporter():
         self.report.append(["components", len(self.graph.components())])
         self.report.append(["nodes", self.graph.vcount()])
         self.report.append(["edges", self.graph.ecount()])
-        self.report.append(["\n\n"])
+        self.report.append(["\n"])
         self.report.append(["Pyntacle Command:", report_type.name])
 
         if report_type == Reports.Local:
@@ -251,6 +251,7 @@ class pyntacleReporter():
             else:
                 raise ValueError("Initial dF must range between 0 and 1")
 
+        self.report.append(["\n"])
         self.report.append(["Results: Key Player Metrics Info for selected subset of nodes"])
         self.report.append(["Metric", "Nodes", "Value"])
  

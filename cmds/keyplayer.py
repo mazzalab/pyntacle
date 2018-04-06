@@ -452,9 +452,9 @@ class KeyPlayer():
                     f_nodes_colour = pal[0]
                     f_frames_colour = framepal[0]
                     # create a list of node colors
-                    node_colors = [f_nodes_colour if x in results[metric][0] else other_nodes_colour
+                    node_colors = [f_nodes_colour if x["name"] in results[metric][0] else other_nodes_colour
                                     for x in graph.vs()]
-                    node_frames = [f_frames_colour if x in results[metric][0] else other_frame_colour
+                    node_frames = [f_frames_colour if x["name"] in results[metric][0] else other_frame_colour
                                     for x in
                                     graph.vs()]
 
