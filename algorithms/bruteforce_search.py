@@ -82,6 +82,33 @@ def crunch_reachability_combinations(allS, graph: Graph, kpp_type: KPPOSchoices,
     return kppset_score_pairs
 
 
+def crunch_fragmentation_combinations(allS, graph: Graph, kpp_type: KPNEGchoices,
+                                        implementation: SP_implementations, max_distances) -> dict:
+    """
+    Internal wrapper to some operations from `__bruteforce_fragmentation_parallel`
+    """
+    kppset_score_pairs_partial = {}
+
+    # print("{}: {}".format(os.getpid(), len(allS)))
+
+    temp_graph = graph.copy()
+    temp_graph.delete_vertices(allS)
+
+    if kpp_type == KPNEGchoices.F:
+        kppset_score_pairs_partial[allS] = KeyPlayer.F(temp_graph)
+
+    elif kpp_type == KPNEGchoices.dF:
+        kppset_score_pairs_partial[allS] = KeyPlayer.dF(graph=temp_graph, max_distances=max_distances,
+                                                        implementation=implementation)
+
+    else:  # here all the other KPNEG functions we want to insert
+        sys.stdout.write("{} Not yet implemented, please come back later!".format(kpp_type.name))
+        sys.exit(0)
+
+    # kppset_score_pairs[allS] = type_func(temp_graph) #, graph=temp_graph, max_distances=max_distances, implementation=implementation)
+    return kppset_score_pairs_partial
+
+
 class BruteforceSearch:
     """
     Brute-force search for the best kp-set using either parallel or single core implementation. Returns ALL the best KP Sets
@@ -218,33 +245,6 @@ class BruteforceSearch:
         return kppset_score_pairs
 
     @staticmethod
-    def __crunch_fragmentation_combinations(allS, graph: Graph, kpp_type: KPNEGchoices,
-                                            implementation: SP_implementations, max_distances) -> dict:
-        """
-        Internal wrapper to some operations from `__bruteforce_fragmentation_parallel`
-        """
-        kppset_score_pairs_partial = {}
-
-        # print("{}: {}".format(os.getpid(), len(allS)))
-
-        temp_graph = graph.copy()
-        temp_graph.delete_vertices(allS)
-
-        if kpp_type == KPNEGchoices.F:
-            kppset_score_pairs_partial[allS] = KeyPlayer.F(temp_graph)
-
-        elif kpp_type == KPNEGchoices.dF:
-            kppset_score_pairs_partial[allS] = KeyPlayer.dF(graph=temp_graph, max_distances=max_distances,
-                                                            implementation=implementation)
-
-        else:  # here all the other KPNEG functions we want to insert
-            sys.stdout.write("{} Not yet implemented, please come back later!".format(kpp_type.name))
-            sys.exit(0)
-
-        # kppset_score_pairs[allS] = type_func(temp_graph) #, graph=temp_graph, max_distances=max_distances, implementation=implementation)
-        return kppset_score_pairs_partial
-
-    @staticmethod
     def __bruteforce_fragmentation_parallel(graph: Graph, kpp_size: int, kpp_type: KPNEGchoices, ncores: int,
                                             implementation: SP_implementations, max_distances=None) -> dict:
         """
@@ -275,7 +275,7 @@ class BruteforceSearch:
         pool = mp.Pool(ncores)
 
         for partial_result in pool.imap_unordered(
-                partial(BruteforceSearch.__crunch_fragmentation_combinations, graph=graph, kpp_type=kpp_type,
+                partial(crunch_fragmentation_combinations, graph=graph, kpp_type=kpp_type,
                         implementation=implementation, max_distances=max_distances), allS):
             kppset_score_pairs = {**kppset_score_pairs, **partial_result}
 
@@ -393,42 +393,6 @@ class BruteforceSearch:
                 sys.exit(0)
 
             kppset_score_pairs[tuple(S)] = reachability_score
-
-        return kppset_score_pairs
-
-    @staticmethod
-    def __crunch_reachability_combinations(allS, graph: Graph, kpp_type: KPPOSchoices, m: int,
-                                           max_distances: int, implementation: SP_implementations) -> dict:
-        """
-        Internal wrapper to some operations from `__bruteforce_reachability_parallel`
-        """
-
-        # print("{}: {}".format(os.getpid(), len(allS)))
-        kppset_score_pairs = {}
-
-        if kpp_type == KPPOSchoices.mreach:
-            if implementation != SP_implementations.igraph:
-                sp_matrix = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
-                reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distances=max_distances,
-                                                      implementation=implementation, sp_matrix=sp_matrix)
-            else:
-                reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distances=max_distances,
-                                                      implementation=implementation)
-
-        elif kpp_type == KPPOSchoices.dR:
-            if implementation != SP_implementations.igraph:
-                sp_matrix = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
-                reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distances=max_distances,
-                                                  implementation=implementation, sp_matrix=sp_matrix)
-            else:
-                reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distances=max_distances,
-                                                  implementation=implementation)
-
-        else:  # here all the other KPNEG functions we want to insert
-            sys.stdout.write("{} Not yet implemented, please come back later!".format(kpp_type.name))
-            sys.exit(0)
-
-        kppset_score_pairs[allS] = reachability_score
 
         return kppset_score_pairs
 
