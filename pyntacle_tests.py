@@ -37,15 +37,17 @@ from graph_operations.octopus import Octopus
 # input()
 
 
-#
-mat = PyntacleImporter.AdjacencyMatrix(file='/home/local/MENDEL/d.capocefalo/Desktop/pyntacle-tests/figure_8.adjm', header=True)
-print("\nGraph in main")
-print(mat.summary())
-from algorithms.bruteforce_search import BruteforceSearch
+if __name__ == '__main__':
+    mat = PyntacleImporter.AdjacencyMatrix(
+        file=r'C:\Users\t.mazza\Desktop\CSS-Bioinformatics\pyntacle\test\test_sets\input\figure_8.txt', header=True)
+    print("\nGraph in main")
+    print(mat.summary())
+    from algorithms.bruteforce_search import BruteforceSearch
 
-#bf = BruteforceSearch.fragmentation(mat, kpp_size=2, kpp_type=KPNEGchoices.dF, parallel=True)
-bf2 = BruteforceSearch.reachability(mat, kpp_size=2, kpp_type=KPPOSchoices.dR, parallel=True)
+    # bf = BruteforceSearch.fragmentation(mat, kpp_size=2, kpp_type=KPNEGchoices.dF, parallel=True)
+    bf2 = BruteforceSearch.reachability(mat, kpp_size=2, kpp_type=KPPOSchoices.dR, parallel=True)
 
+    a = 3
 
 # #
 # print('gpu')

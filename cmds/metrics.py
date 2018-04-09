@@ -40,7 +40,7 @@ from tools.add_attributes import AddAttributes
 from tools.misc.enums import *
 
 
-class Metrics():
+class Metrics:
     """
     **[EXPAND]**
     """

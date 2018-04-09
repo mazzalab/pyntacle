@@ -1,11 +1,11 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "27 February 2018"
+__date__ = "09 April 2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -30,8 +30,7 @@ This algorithm makes all possible combinations of node sets of a specified size 
 It hence selects the KPP-set with the best score.
 """
 
-
-#original untouched version at https://github.com/mazzalab/pyntacle/blob/0ab47c0ccbb7d98123faca2c8c1a219ffc5ee7a0/algorithms/bruteforce_search_NEW.py
+# original untouched version at https://github.com/mazzalab/pyntacle/blob/0ab47c0ccbb7d98123faca2c8c1a219ffc5ee7a0/algorithms/bruteforce_search_NEW.py
 
 from config import *
 import itertools
@@ -46,6 +45,43 @@ from tools.graph_utils import GraphUtils as gu
 from igraph import Graph
 import multiprocessing as mp
 
+
+def crunch_reachability_combinations(allS, graph: Graph, kpp_type: KPPOSchoices, m: int,
+                                       max_distances: int, implementation: SP_implementations) -> dict:
+    """
+    Internal wrapper to some operations from `__bruteforce_reachability_parallel`
+    """
+
+    # print("{}: {}".format(os.getpid(), len(allS)))
+    kppset_score_pairs = {}
+
+    if kpp_type == KPPOSchoices.mreach:
+        if implementation != SP_implementations.igraph:
+            sp_matrix = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
+            reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distances=max_distances,
+                                                  implementation=implementation, sp_matrix=sp_matrix)
+        else:
+            reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distances=max_distances,
+                                                  implementation=implementation)
+
+    elif kpp_type == KPPOSchoices.dR:
+        if implementation != SP_implementations.igraph:
+            sp_matrix = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
+            reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distances=max_distances,
+                                              implementation=implementation, sp_matrix=sp_matrix)
+        else:
+            reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distances=max_distances,
+                                              implementation=implementation)
+
+    else:  # here all the other KPNEG functions we want to insert
+        sys.stdout.write("{} Not yet implemented, please come back later!".format(kpp_type.name))
+        sys.exit(0)
+
+    kppset_score_pairs[allS] = reachability_score
+
+    return kppset_score_pairs
+
+
 class BruteforceSearch:
     """
     Brute-force search for the best kp-set using either parallel or single core implementation. Returns ALL the best KP Sets
@@ -55,7 +91,8 @@ class BruteforceSearch:
     @staticmethod
     @check_graph_consistency
     @bruteforce_search_initializer
-    def fragmentation(graph, kpp_size, kpp_type, max_distances=None, implementation=SP_implementations.igraph, parallel=False, ncores=None) -> (list, float):
+    def fragmentation(graph, kpp_size, kpp_type, max_distances=None, implementation=SP_implementations.igraph,
+                      parallel=False, ncores=None) -> (list, float):
         """
         (a wrapper for the single core and parallel bruteforce fragmentation)
         It searches and finds the kpp-set of a predefined dimension that best disrupts the graph.
@@ -76,36 +113,44 @@ class BruteforceSearch:
         """
         if kpp_type == KPNEGchoices.F or kpp_type == KPNEGchoices.dF:
 
-            #case 0 : a graph consisting only of isolates (will not run bruteforce search
+            # case 0 : a graph consisting only of isolates (will not run bruteforce search
             if graph.ecount() == 0:
                 sys.stdout.write(
-                    "Graph is consisted of isolates, so there's no optimal KP Set that can fragment the network. Returning an empty list and the maximum {} value (1.0).\n".format(kpp_type.name))
+                    "Graph is consisted of isolates, so there's no optimal KP Set that can fragment the network. Returning an empty list and the maximum {} value (1.0).\n".format(
+                        kpp_type.name))
                 return [], 1.0
 
-        #define an initial fragmentation status of the graph
+        # define an initial fragmentation status of the graph
         if kpp_type == KPNEGchoices.F:
-            init_fragmentation_score = KeyPlayer.F(graph=graph)# initial fragmentation value
+            init_fragmentation_score = KeyPlayer.F(graph=graph)  # initial fragmentation value
 
         elif kpp_type == KPNEGchoices.dF:
-            init_fragmentation_score = KeyPlayer.dF(graph=graph, implementation=implementation,max_distances=max_distances)  # initial fragmentation value
+            init_fragmentation_score = KeyPlayer.dF(graph=graph, implementation=implementation,
+                                                    max_distances=max_distances)  # initial fragmentation value
         else:
             init_fragmentation_score = None
 
         if parallel:
             if ncores is None:
-                ncores = mp.cpu_count()-1
+                ncores = mp.cpu_count() - 1
 
             else:
-                if not isinstance(ncores, int) or ncores < 0 :
+                if not isinstance(ncores, int) or ncores < 0:
                     raise TypeError("\"ncores\" must be an integer, {} found")
 
             sys.stdout.write("Brute-Force Fragmentation will be performed in parallel using {} cores\n".format(ncores))
         if parallel:
-            final_set = BruteforceSearch.__bruteforce_fragmentation_parallel(graph=graph, kpp_size=kpp_size, kpp_type=kpp_type, ncores=ncores, max_distances=max_distances, implementation=implementation) #this is equivalent to the kppset_score_pairs
+            final_set = BruteforceSearch.__bruteforce_fragmentation_parallel(graph=graph, kpp_size=kpp_size,
+                                                                             kpp_type=kpp_type, ncores=ncores,
+                                                                             max_distances=max_distances,
+                                                                             implementation=implementation)  # this is equivalent to the kppset_score_pairs
 
-        #return the score of each kpp pair when nodes are removed
+        # return the score of each kpp pair when nodes are removed
         else:
-            final_set = BruteforceSearch.__bruteforce_fragmentation_single(graph=graph, kpp_size=kpp_size, kpp_type=kpp_type, max_distances=max_distances, implementation=implementation) #this is equivalent to the kppset_score_pairs
+            final_set = BruteforceSearch.__bruteforce_fragmentation_single(graph=graph, kpp_size=kpp_size,
+                                                                           kpp_type=kpp_type,
+                                                                           max_distances=max_distances,
+                                                                           implementation=implementation)  # this is equivalent to the kppset_score_pairs
             # print (final_set)
             # input()
 
@@ -129,14 +174,19 @@ class BruteforceSearch:
         maxKpp = round(maxKpp, 5)
 
         if len(final) > 1:
-            sys.stdout.write("The best kpp-sets for metric {} of size {} are {} with score {}\n".format(kpp_type.name, kpp_size, final, maxKpp))
+            sys.stdout.write(
+                "The best kpp-sets for metric {} of size {} are {} with score {}\n".format(kpp_type.name, kpp_size,
+                                                                                           final, maxKpp))
         else:
-            sys.stdout.write("The best kpp-sets for metric {} of size {} is {} with score {}\n".format(kpp_type.name, kpp_size, final, maxKpp))
+            sys.stdout.write(
+                "The best kpp-sets for metric {} of size {} is {} with score {}\n".format(kpp_type.name, kpp_size,
+                                                                                          final, maxKpp))
 
         return final, maxKpp
 
     @staticmethod
-    def __bruteforce_fragmentation_single(graph:Graph, kpp_size:int, kpp_type: KPNEGchoices, implementation: SP_implementations, max_distances):
+    def __bruteforce_fragmentation_single(graph: Graph, kpp_size: int, kpp_type: KPNEGchoices,
+                                          implementation: SP_implementations, max_distances):
         """
         Single core implementation of the Bruteforce Fragmentation Search (to be used for internal purposes)
         """
@@ -150,8 +200,6 @@ class BruteforceSearch:
         else:  # here all the other KPNEG functions we want to insert
             sys.stdout.write("{} Not yet implemented, please come back later!".format(kpp_type.name))
             sys.exit(0)
-
-
 
         # Generation of all combinations of nodes (all kpp-sets) of size kpp_size
         node_indices = graph.vs.indices
@@ -170,7 +218,8 @@ class BruteforceSearch:
         return kppset_score_pairs
 
     @staticmethod
-    def __crunch_fragmentation_combinations(allS, graph: Graph, kpp_type: KPNEGchoices, implementation:SP_implementations,max_distances) -> dict:
+    def __crunch_fragmentation_combinations(allS, graph: Graph, kpp_type: KPNEGchoices,
+                                            implementation: SP_implementations, max_distances) -> dict:
         """
         Internal wrapper to some operations from `__bruteforce_fragmentation_parallel`
         """
@@ -185,7 +234,8 @@ class BruteforceSearch:
             kppset_score_pairs_partial[allS] = KeyPlayer.F(temp_graph)
 
         elif kpp_type == KPNEGchoices.dF:
-            kppset_score_pairs_partial[allS] = KeyPlayer.dF(graph=temp_graph, max_distances=max_distances, implementation=implementation)
+            kppset_score_pairs_partial[allS] = KeyPlayer.dF(graph=temp_graph, max_distances=max_distances,
+                                                            implementation=implementation)
 
         else:  # here all the other KPNEG functions we want to insert
             sys.stdout.write("{} Not yet implemented, please come back later!".format(kpp_type.name))
@@ -195,7 +245,8 @@ class BruteforceSearch:
         return kppset_score_pairs_partial
 
     @staticmethod
-    def __bruteforce_fragmentation_parallel(graph:  Graph, kpp_size :int, kpp_type:KPNEGchoices, ncores:int, implementation:SP_implementations,max_distances=None) -> dict:
+    def __bruteforce_fragmentation_parallel(graph: Graph, kpp_size: int, kpp_type: KPNEGchoices, ncores: int,
+                                            implementation: SP_implementations, max_distances=None) -> dict:
         """
         It searches and finds the kpp-set of a predefined dimension that best disrupts the graph.
         It generates all the possible kpp-sets and calculates the fragmentation score of the residual graph, after
@@ -223,7 +274,9 @@ class BruteforceSearch:
 
         pool = mp.Pool(ncores)
 
-        for partial_result in pool.imap_unordered(partial(BruteforceSearch.__crunch_fragmentation_combinations, graph=graph, kpp_type=kpp_type, implementation=implementation, max_distances=max_distances), allS):
+        for partial_result in pool.imap_unordered(
+                partial(BruteforceSearch.__crunch_fragmentation_combinations, graph=graph, kpp_type=kpp_type,
+                        implementation=implementation, max_distances=max_distances), allS):
             kppset_score_pairs = {**kppset_score_pairs, **partial_result}
 
         pool.close()
@@ -234,7 +287,8 @@ class BruteforceSearch:
     @staticmethod
     @check_graph_consistency
     @bruteforce_search_initializer
-    def reachability(graph, kpp_size, kpp_type, max_distances=None, m=None, implementation=SP_implementations.igraph, parallel=False, ncores=None) -> (list, float):
+    def reachability(graph, kpp_size, kpp_type, max_distances=None, m=None, implementation=SP_implementations.igraph,
+                     parallel=False, ncores=None) -> (list, float):
         """
         It searches and finds the kpp-set of a predefined dimension that best reaches all other nodes over the graph.
         It generates all the possible kpp-sets and calculates their reachability scores.
@@ -263,25 +317,29 @@ class BruteforceSearch:
 
         if parallel:
             if ncores is None:
-                ncores = mp.cpu_count()-1
+                ncores = mp.cpu_count() - 1
 
             else:
-                if not isinstance(ncores, int) or ncores < 0 :
+                if not isinstance(ncores, int) or ncores < 0:
                     raise TypeError("\"ncores\" must be an integer, {} found")
 
             sys.stdout.write("Brute-Force Reachability will be performed in parallel using {} cores\n".format(ncores))
 
         if parallel:
-            final_set = BruteforceSearch.__bruteforce_reachability_parallel(graph=graph, kpp_size=kpp_size, kpp_type=kpp_type, m=m, max_distances=max_distances, implementation=implementation, ncores=ncores)
+            final_set = BruteforceSearch.__bruteforce_reachability_parallel(graph=graph, kpp_size=kpp_size,
+                                                                            kpp_type=kpp_type, m=m,
+                                                                            max_distances=max_distances,
+                                                                            implementation=implementation,
+                                                                            ncores=ncores)
         else:
-            final_set = BruteforceSearch.__bruteforce_reachability_single(graph=graph, kpp_size=kpp_size, kpp_type=kpp_type, m=m, max_distances=max_distances, implementation=implementation)
+            final_set = BruteforceSearch.__bruteforce_reachability_single(graph=graph, kpp_size=kpp_size,
+                                                                          kpp_type=kpp_type, m=m,
+                                                                          max_distances=max_distances,
+                                                                          implementation=implementation)
 
         # now the dictionary is filled with all the possible solutions. Time to find the maximal ones
         maxKpp = max(final_set.values())  # take the maximum value
-        S = [list(x) for x in final_set.keys() if final_set[x] == maxKpp]
-
-        final = [graph.vs(x)["name"] for x in S]
-
+        final = [list(x) for x in final_set.keys() if final_set[x] == maxKpp]
         maxKpp = round(maxKpp, 5)
 
         if len(final) > 1:
@@ -296,7 +354,8 @@ class BruteforceSearch:
         return final, maxKpp
 
     @staticmethod
-    def __bruteforce_reachability_single(graph: Graph, kpp_size: int, kpp_type: KPPOSchoices, m: int, max_distances: int, implementation=SP_implementations.igraph):
+    def __bruteforce_reachability_single(graph: Graph, kpp_size: int, kpp_type: KPPOSchoices, m: int,
+                                         max_distances: int, implementation=SP_implementations.igraph):
         """
         Internal function that Implements bruteforce search at a singe core level. Recommended when the graph is relatively small (under 500 nodes)
         """
@@ -339,7 +398,7 @@ class BruteforceSearch:
 
     @staticmethod
     def __crunch_reachability_combinations(allS, graph: Graph, kpp_type: KPPOSchoices, m: int,
-                                           implementation: SP_implementations, max_distances) -> dict:
+                                           max_distances: int, implementation: SP_implementations) -> dict:
         """
         Internal wrapper to some operations from `__bruteforce_reachability_parallel`
         """
@@ -374,27 +433,29 @@ class BruteforceSearch:
         return kppset_score_pairs
 
     @staticmethod
-    def __bruteforce_reachability_parallel(graph :Graph, kpp_size: int, kpp_type: KPPOSchoices, m:int, max_distances:int, implementation:SP_implementations, ncores:int) -> (list, float):
+    def __bruteforce_reachability_parallel(graph: Graph, kpp_size: int, kpp_type: KPPOSchoices, m: int,
+                                           max_distances: int, implementation: SP_implementations, ncores: int) -> (list, float):
         """
-        Internal function that Implements bruteforce search on a set of cores (passed by the `ncores` parameter). Recommended when the graph is quite large (over 500 nodes)
+        Internal function that Implements the Bruteforce optimization strategy  on a set of cores.
+        Recommended when a graph is quite large (over 500 nodes)
         """
+
         kppset_score_pairs = {}
         """: type: dic{(), float}"""
+
         # Generation of all combinations of nodes (all kpp-sets) of size kpp_size
-        allS = itertools.combinations(graph.vs.indices, kpp_size)
-
         utils = gu(graph=graph)
-
-        allS = [utils.get_node_names(list(x)) for x in allS]
-        # print(allS)
+        all_node_names = utils.get_node_names(graph.vs.indices)
+        allS = itertools.combinations(all_node_names, kpp_size)
 
         pool = mp.Pool(ncores)
 
-        for partial_result in pool.imap_unordered(partial(BruteforceSearch.__crunch_reachability_combinations, graph=graph, kpp_type=kpp_type, m=m, max_distances=max_distances, implementation=implementation), allS):
+        for partial_result in pool.imap_unordered(
+                partial(crunch_reachability_combinations, graph=graph, kpp_type=kpp_type, m=m,
+                        max_distances=max_distances, implementation=implementation), allS):
             kppset_score_pairs = {**kppset_score_pairs, **partial_result}
 
         pool.close()
         pool.join()
 
-        return kppset_score_pairs #returns the dictionary filled with the correct values for each node combination
-
+        return kppset_score_pairs

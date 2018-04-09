@@ -91,30 +91,24 @@ def vertexdoctor(func):
     @wraps(func)
     def func_wrapper(graph, nodes=None, *args, **kwargs):
         if nodes is not None:
+            all_names_in_graph = graph.vs['name']
 
-            if not isinstance(nodes, (str, list)):
-                raise TypeError('Node name must be a string or a list of strings')
+            if isinstance(nodes, str):
+                nodes = [nodes]
+            elif isinstance(nodes, tuple):
+                nodes = list(nodes)
+            elif not isinstance(nodes, list):
+                raise TypeError("The 'node' parameter must be of type string, list or tuple")
 
-            else:
-                if isinstance(nodes, list):
+            if not all(isinstance(node, str) for node in nodes):
+                raise TypeError("Node names must be string type")
 
-                    if not all(isinstance(x, str) for x in nodes):
-                        raise TypeError('Node name list must contain only strings')
-
-                    else:
-                        remains = list(set(nodes) - set(graph.vs["name"]))
-
-                        if len(remains) > 0:
-                            raise KeyError('{} are not present in the input graph'.format(remains))
-
-                        if len(nodes) > graph.vcount():
-                            raise WrongArgumentError(
-                                "input node list is greater than the number of vertieces in the input graph (input nodes are {}, graph vertices are {1})".format(
-                                len(nodes), graph.vcount()))
-                else:
-                    if nodes not in graph.vs['name']:
-                        raise KeyError('{} is not present in vertex names'.format(nodes))
-                    nodes = [nodes] #put it into a list directly
+            if not all(node not in all_names_in_graph for node in nodes):
+                remaining = list(set(nodes) - set(all_names_in_graph))
+                if len(remaining) > 0:
+                    raise KeyError('{} are not present in the input graph'.format(remaining))
+        else:
+            nodes = []
 
         return func(graph, nodes, *args, **kwargs)
 

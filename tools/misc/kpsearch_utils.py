@@ -90,7 +90,7 @@ def bruteforce_search_initializer(func):
             raise TypeError("\"kpp-type\" must be either a \"KPPOSchoices\" enumerator or a \"KPNEGchoices\",  {} found".format(type(kpp_type).__name__))
 
         if max_distances is not None and not isinstance(max_distances, int) and max_distances > 1 and max_distances <= graph.vcount():
-            raise ValueError("\"max_sp\" must be an integer greater than one and lesser tan the total number of nodes")
+            raise ValueError("\"max_sp\" must be an integer greater than one and lesser than the total number of nodes")
 
         sys.stdout.write("Brute-force search of the best kpp-set of size {}\n".format(kpp_size))
 

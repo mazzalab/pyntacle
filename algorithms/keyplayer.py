@@ -315,7 +315,7 @@ class KeyPlayer:
             dr = dr_num / float(graph.vcount())
             return dr
 
-        else: #we must provide a full matrix of shortest paths BEFORE searching for the single nodes
+        else:  # we must provide a full matrix of shortest paths BEFORE searching for the single nodes
             if sp_matrix is None:
                 shortest_path_lengths = lt.LocalTopology.shortest_path_pyntacle(graph=graph, nodes=nodes, implementation=implementation)
 

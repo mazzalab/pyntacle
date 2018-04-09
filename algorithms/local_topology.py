@@ -1,11 +1,11 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "27 February 2018"
+__date__ = "09 April 2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -466,7 +466,7 @@ class LocalTopology:
             sys.exit(0)
 
     @staticmethod
-    @jit(nopython=True, parallel=True, cache=True, )
+    @jit(nopython=True, parallel=True)
     def __shortest_path_CPU__(adjmat) -> np.ndarray:
         """
         Calculate the shortest paths of a graph for aa single nodes, a set of nodes or all nodes in the graph using
@@ -600,7 +600,7 @@ class LocalTopology:
 
 # todo missing stuff:
 # todo shortest path cpu: single nodes or group of nodes
-#todo  shortest path gpu
+# todo  shortest path gpu
 # todo all the other graphs
 # todo automatic implementation becomes global
 # todo missing methods:
