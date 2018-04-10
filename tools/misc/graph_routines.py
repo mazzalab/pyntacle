@@ -107,8 +107,10 @@ def vertexdoctor(func):
                 remaining = list(set(nodes) - set(all_names_in_graph))
                 if len(remaining) > 0:
                     raise KeyError('{} are not present in the input graph'.format(remaining))
-        else:
-            nodes = []
+        # else:
+        #     print("ECCHELOOOOOOOOOOOOO")
+        #     input()
+        #     nodes = []
 
         return func(graph, nodes, *args, **kwargs)
 

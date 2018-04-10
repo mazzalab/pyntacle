@@ -169,6 +169,7 @@ class KeyPlayer():
                         "Finding best set of kp-nodes of size {0} using dF (kp neg measure)\n".format(
                             self.args.k_size))
                     initial_results[KPNEGchoices.dF.name] = kpp.dF(graph, implementation=implementation)
+
                     if initial_results[KPNEGchoices.dF.name] != 1:
                         kp_runner.run_fragmentation(self.args.k_size, KPNEGchoices.dF,
                                                     max_distances=self.args.max_distances, seed=self.args.seed,
@@ -256,6 +257,7 @@ class KeyPlayer():
                     results[kp].append(initial_results[kp])
                     
                     sys.stdout.write(
+                        +
                         'kp set(s) of size {0} for Key Player Metric {1} is/are {2} with value {3} (starting value is {4})\n'.format(
                             self.args.k_size, kp, results[kp][0], results[kp][1], results[kp][2]))
 
