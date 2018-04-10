@@ -34,9 +34,6 @@ from cmds.cmds_utils.plotter import *
 from warnings import simplefilter
 
 class Generate():
-    """
-    **[EXPAND]**
-    """
     def __init__(self, args):
         self.logging = log
         self.args = args

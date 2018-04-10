@@ -42,6 +42,7 @@ class Set():
     def __init__(self, args):
         self.logging = log
         self.args = args
+        self.date = runtime_date
 
         # Check for pycairo
         if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
@@ -144,20 +145,20 @@ class Set():
                 self.args.output_file = "_".join \
                     ([os.path.splitext(os.path.basename(self.args.input_file_1))[0], "UNION",
                       os.path.splitext(os.path.basename(self.args.input_file_2))[0],
-                      runtime_date])
+                      self.date])
 
             elif self.args.which == "intersection":
                 self.args.output_file = "_".join \
                     ([os.path.splitext(os.path.basename(self.args.input_file_1))[0], "INTERSECTION",
                       os.path.splitext(os.path.basename(self.args.input_file_2))[0],
-                      runtime_date])
+                      self.date])
 
             elif self.args.which == "difference":
 
                 self.args.output_file = "_".join(
                     [os.path.splitext(os.path.basename(self.args.input_file_1))[0], "DIFFERENCE",
                      os.path.splitext(os.path.basename(self.args.input_file_2))[0],
-                     runtime_date])
+                     self.date])
             else:
                 self.logging.critical(
                     "This should not happen. Please contact pyntacle developers and send a log of the error.\nQuitting.")
@@ -297,10 +298,10 @@ class Set():
 
             graph1_plot_path = os.path.join(plot_dir, ".".join(
                 ["_".join([os.path.splitext(os.path.basename(self.args.input_file_1))[0],
-                           runtime_date]), self.args.plot_format]))
+                           self.date]), self.args.plot_format]))
             graph2_plot_path = os.path.join(plot_dir, ".".join(
                 ["_".join([os.path.splitext(os.path.basename(self.args.input_file_2))[0],
-                           runtime_date]), self.args.plot_format]))
+                           self.date]), self.args.plot_format]))
 
             graph1_plotter = PlotGraph(graph=graph1)
             graph2_plotter = PlotGraph(graph=graph2)
@@ -349,7 +350,7 @@ class Set():
                 # plot output graph
                 output_plot_path = os.path.join(plot_dir,
                                                 ".".join(["_".join(["pyntacle", self.args.output_file,
-                                                                    runtime_date]),
+                                                                    self.date]),
                                                           self.args.plot_format]))
                 output_graph_plotter = PlotGraph(graph=output_graph)  # init plotter class
 

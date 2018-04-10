@@ -46,6 +46,7 @@ class KeyPlayer():
     def __init__(self, args):
         self.logging = log
         self.args = args
+        self.date = runtime_date
         # Check for pycairo
         if not self.args.no_plot and util.find_spec("cairo") is None:
             sys.stdout.write("WARNING: It seems that the pycairo library is not installed/available. Plots"
@@ -346,7 +347,7 @@ class KeyPlayer():
         sys.stdout.write("Producing report in {} format.\n".format(self.args.report_format))
 
         report_prefix = "_".join(
-            ["pyntacle", self.args.which, graph["name"][0], "kpsize", str(k_size), results.get("algorithm", "KP-Info"),"report", runtime_date])
+            ["pyntacle", self.args.which, graph["name"][0], "kpsize", str(k_size), results.get("algorithm", "KP-Info"),"report", self.date])
         report_path = os.path.join(self.args.directory, ".".join([report_prefix, self.args.report_format]))
 
         if os.path.exists(report_path):
@@ -584,7 +585,7 @@ class KeyPlayer():
 
                 plot_graph.set_layouts(layout="fruchterman_reingold")
 
-                plot_path = os.path.join(plot_dir, "_".join(["keyplayer", graph["name"][0], "report", metric, runtime_date]) + "." + plot_format)
+                plot_path = os.path.join(plot_dir, "_".join(["keyplayer", graph["name"][0], "report", metric, self.date]) + "." + plot_format)
                 if os.path.exists(plot_path):
                     sys.stdout.write(
                         "WARNING - A plot with the name ({}) already exists, overwriting it\n".format(

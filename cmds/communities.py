@@ -35,12 +35,10 @@ from tools.misc.graph_load import *
 from tools.graph_utils import *
 
 class Communities():
-    """
-    **[EXPAND]**
-    """
     def __init__(self, args):
         self.logging = log
         self.args = args
+        self.date = runtime_date
         if not self.args.output_separator:
             self.args.output_separator = '\t'
         # Check for pycairo
@@ -298,10 +296,9 @@ class Communities():
                     self.args.output_file))
 
         output_basename = os.path.join(self.args.directory, self.args.output_file)
-        date = datetime.datetime.now().strftime("%d%m%Y%H%M")
         # output generated networks
         for elem in final_mods:
-            output_path = ".".join(["_".join([output_basename, str(elem["__module_number"]), date]), out_form])
+            output_path = ".".join(["_".join([output_basename, str(elem["__module_number"]), self.date]), out_form])
             if out_form == "adjm":
                 sys.stdout.write("Creating Adjacency Matrix of each community\n")
                 PyntacleExporter.AdjacencyMatrix(elem, output_path, sep=self.args.output_separator,
@@ -354,7 +351,7 @@ class Communities():
 
                 main_plot_path = os.path.join(plot_dir, ".".join(["_".join(
                     ["pyntacle", os.path.splitext(os.path.basename(self.args.input_file))[0], "modules",
-                     runtime_date]), self.args.plot_format]))
+                     self.date]), self.args.plot_format]))
 
                 # initialize general graph Drawer
                 sys.stdout.write("Drawing Original Graph with corresponding modules\n")
@@ -403,7 +400,7 @@ class Communities():
                     plotter.set_node_sizes([30] * comm.vcount())
 
                     comm_plot_path = os.path.join(plot_dir, ".".join(
-                        ["_".join([self.args.output_file, str(i), date]), self.args.plot_format]))
+                        ["_".join([self.args.output_file, str(i), self.date]), self.args.plot_format]))
 
                     plotter.set_layouts()
                     plotter.plot_graph(path=comm_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
