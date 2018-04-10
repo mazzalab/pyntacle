@@ -385,12 +385,12 @@ class Communities():
 
             if len(final_mods) > 20:
                 self.logging.warning(
-                    "The number of modules ({}) is very high, hence the node colors of each module may be very similar".format(
+                    "The number of modules ({}) is quite high, hence the node colors of each module may be very similar".format(
                         len(final_mods)))
 
             sys.stdout.write("Drawing Each Module Separately\n")
 
-            for i, comm in enumerate(final_mods):
+            for i,comm in enumerate(final_mods):
                 if comm.vcount() <= 1000:
                     plotter = PlotGraph(graph=comm)
                     plotter.set_node_labels(labels=comm.vs()["name"])
@@ -400,7 +400,7 @@ class Communities():
                     plotter.set_node_sizes([30] * comm.vcount())
 
                     comm_plot_path = os.path.join(plot_dir, ".".join(
-                        ["_".join([self.args.output_file, str(i), self.date]), self.args.plot_format]))
+                        ["_".join([self.args.output_file, str(comm["__module_number"]), self.date]), self.args.plot_format]))
 
                     plotter.set_layouts()
                     plotter.plot_graph(path=comm_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,

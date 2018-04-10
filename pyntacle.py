@@ -134,10 +134,10 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                             help='use this option if the input file has no header')
         parser.add_argument('-m', '--m-reach', metavar='', type=int, help='m value for m-reach')
         
-        parser.add_argument('-M', '--max_distances', metavar='', type=int, help='# EXPAND here - add that it is useless for F')
+        parser.add_argument('-M', '--max_distances', metavar='', type=int, help='(Optional) the maximum number of steps after which nodes are considered disconnected. By default, no maximum distance is allowed.')
 
         parser.add_argument('-t', "--type", metavar='', choices=['pos', 'neg', 'all', 'F', 'dF', 'dR', 'mreach'], default='all',
-                            help="kp algorithm to be executed. Choices: {pos, neg, all, F, dF, dR, mreach} Default is \"all\"")
+                            help="kp algorithm to be executed. Choices: {pos, neg, all, F, dF, dR, mreach} Default is \"all\" (computes all kp-metrics")
         
         parser.add_argument('--largest-component', action='store_true',
                             help='Use this option to perform Kp search only on the largest component of a graph. If two components of the same size exist, this will not work. Recommended for very fragmented network with only one large component')
@@ -149,7 +149,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         parser.add_argument('--report-format', '-r', metavar='', default="txt", choices=["txt", "csv", "xlsx", "tsv"],
                             type=lambda s: s.lower(),
-                            help="Specify a different report format according to your tastes. \"txt\" and \"tsv\" are tab delimited format. Available formats:{txt, tsv, csv, xlsx}")
+                            help="Specify a different report format according to your tastes. \"txt\" and \"tsv\" are tab delimited format. Available formats:{txt, tsv, csv, xlsx}. Default is \"txt\"")
 
         parser.add_argument('--plot-format', choices=["svg", "pdf", "png"], default="pdf",
                             type=lambda s: s.lower(), metavar='',
@@ -165,7 +165,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                             help="Do not output plots (recommended for graphs above 1k nodes)")
 
         parser.add_argument('-T', "--threads", metavar='', default=n_cpus, type=int,
-                            help="Number of threads that pyntacle will use. Generally, increasing the number of threads will speed up the execution. Defaults to n_threads - 1")
+                            help="Number of threads that pyntacle will use. Generally, increasing the number of threads will speed up the execution. Defaults to the maximum numbe rof threads available in your machine - 1")
         
 
         subparsers = parser.add_subparsers(metavar='', help=argparse.SUPPRESS)
@@ -193,7 +193,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         finder_case_parser.add_argument('-I', '--implementation', metavar='', type=str, default="greedy",
                                         choices=["brute-force", "greedy"],
                                         help='Type of implementation you want to find yourt keyplayer. Choices are \"greedy\" (default), \"brute-force\", '
-                                             'using the greedy optimization described by Borgatti and \"brute-force\" in which the optimal solution is found')
+                                             'using the greedy optimization described by Borgatti and \"brute-force\" in which ALL the optimal solution are found')
 
         finder_case_parser.add_argument("-S", "--seed", type=int, help="Seed (integer) for the random component of the kp-finder (greedy implementation only). "
                                                  "If set, for each seed the finder will always produce "

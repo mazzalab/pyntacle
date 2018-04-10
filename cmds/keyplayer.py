@@ -40,9 +40,6 @@ from tools.add_attributes import AddAttributes
 from tools.misc.graph_load import *
 
 class KeyPlayer():
-    """
-    **[EXPAND]**
-    """
     def __init__(self, args):
         self.logging = log
         self.args = args
