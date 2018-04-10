@@ -297,11 +297,11 @@ class Generate():
         if not self.args.no_plot and graph.vcount() < 1000:
             sys.stdout.write("Drawing Generated Graph\n")
             # generates plot directory
-            plot_dir = os.path.join(self.args.directory, "pyntacle-Plots")
+            plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
 
             if os.path.isdir(plot_dir):
                 self.logging.warning(
-                    "A directory named \"pyntacle-Plots\" already exist, I may overwrite something in there")
+                    "A directory named \"pyntacle-plots\" already exist, I may overwrite something in there")
 
             else:
                 os.mkdir(plot_dir)

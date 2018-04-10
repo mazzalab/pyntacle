@@ -419,11 +419,11 @@ class KeyPlayer():
     
             sys.stdout.write("Generating plots in {} format.\n".format(self.args.plot_format))
 
-            plot_dir = os.path.join(self.args.directory, "pyntacle-Plots")
+            plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
 
             if os.path.isdir(plot_dir):
                 self.logging.warning(
-                    "A directory named \"pyntacle-Plots\" already exists, I may overwrite something in there")
+                    "A directory named \"pyntacle-plots\" already exists, I may overwrite something in there")
 
             else:
                 os.mkdir(plot_dir)

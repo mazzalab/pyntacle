@@ -284,11 +284,11 @@ class Set():
         # producing plots
         if not self.args.no_plot:
             # generates plot directory
-            plot_dir = os.path.join(self.args.directory, "pyntacle-Plots")
+            plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
 
             if os.path.isdir(plot_dir):
                 self.logging.warning(
-                    "A directory named \"pyntacle-Plots\" already exists, I may overwrite something in there")
+                    "A directory named \"pyntacle-plots\" already exists, I may overwrite something in there")
 
             else:
                 os.mkdir(plot_dir)

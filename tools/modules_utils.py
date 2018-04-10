@@ -40,7 +40,9 @@ class ModuleUtils():
 
     def __init__(self, modules: list, graph: Graph, algorithm: str):
         """
-        Implements all the necessary step to check a graph object
+        Implements all the necessary step to check a graph object and add the reserved attribute "__module_number" to
+        each submodule in order to retrace it back. If a graph attribute with that name aòready exist, it will be
+        overwritten
         :param modules:a list of graphs already divided by the CommunityFinder class
         :param graph: the input graph used  to find modules
         :param str algorithm: the name of the algorithm used to perform community detection
@@ -49,7 +51,9 @@ class ModuleUtils():
         self.logger = log
 
         GraphUtils(graph=graph).graph_checker()
+
         self.graph = graph
+
 
         for i, elem in enumerate(modules):
             if elem.vcount() == 0:
@@ -64,6 +68,13 @@ class ModuleUtils():
 
             if elem.vcount() > graph.vcount() or elem.ecount() > graph.ecount():
                 raise ValueError("Module {} does not come from the input Graph".format(i))
+
+            if "__module_number" in graph.attributes():
+
+                self.logger.info(
+                    "Attribute \"__module_number\" already exist in the module {}, will overwrite".format(str(i)))
+
+            elem["__module_number"] = i  # this should traceroute the module back to its original number
 
         self.modules = modules
 
@@ -119,7 +130,7 @@ class ModuleUtils():
 
     def add_modules_info(self):
         """
-        adds all the information regarding the modules to each subgraph fiund using community detection algorithms.
+        adds all the information regarding the modules to each subgraph found using community detection algorithms.
         These information are, specifically:
         #. an hidden attribute named "__module_algorithm" that store the type of algorithm that was used to identify the community
         #. an hidden attribute named "__origin_graph" the first element of the graph["name"] attribute (ideally, the name of the input graph)
@@ -144,7 +155,7 @@ class ModuleUtils():
         """
         Add to each node and edge an attribute that trace it to each module (a way to distinguish each components).
         Specifically, two reserved attributed will be filled in each of the elemenf in `modules`:
-        #. a "__module" name will be assigned to the reserved "__module" attribute for each  subgraph, node and edge the element in the modules was found into. spcifying the name of the module (usually a string representing a positive integer)
+        #. a "__module" name will be assigned to the reserved "__module" attribute for each  subgraph, node and edge the element in the modules was found into. specifying the name of the module (usually a string representing a positive integer)
         #- an "__algorithm" attribute will be assigned to each subgraph, node, and edge attributes showing the name of the algorithm that was passed to the ModuleUtils() class specifying the name of the algorithm that was used to find communities.
         """
 

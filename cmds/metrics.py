@@ -216,11 +216,11 @@ class Metrics:
                 sys.stdout.write("Generating plots in {} format.\n".format(self.args.plot_format))
                 
                 # generates plot directory
-                plot_dir = os.path.join(self.args.directory, "pyntacle-Plots")
+                plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
 
                 if os.path.isdir(plot_dir):
                     self.logging.warning(
-                        "A directory named \"pyntacle-Plots\" already exists, I may overwrite something in there")
+                        "A directory named \"pyntacle-plots\" already exists, I may overwrite something in there")
 
                 else:
                     os.makedirs(plot_dir, exist_ok=True)
@@ -356,11 +356,11 @@ class Metrics:
                     sys.stdout.write("Generating Plot of input graph {}\n".format(os.path.basename(self.args.input_file)))
 
                 # generates plot directory
-                plot_dir = os.path.join(self.args.directory, "pyntacle-Plots")
+                plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
 
                 if os.path.isdir(plot_dir):
                     self.logging.warning(
-                        "WARNING: A directory named \"pyntacle-Plots\" already exists, I may overwrite something in there")
+                        "WARNING: A directory named \"pyntacle-plots\" already exists, I may overwrite something in there")
 
                 else:
                     os.mkdir(plot_dir)
