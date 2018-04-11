@@ -42,12 +42,27 @@ if __name__ == '__main__':
         file=r'C:\Users\t.mazza\Desktop\CSS-Bioinformatics\pyntacle\test\test_sets\input\figure_8.txt', header=True)
     print("\nGraph in main")
     print(mat.summary())
-    from algorithms.bruteforce_search import BruteforceSearch
 
-    # bf = BruteforceSearch.fragmentation(mat, kpp_size=2, kpp_type=KPNEGchoices.dF, parallel=True)
-    bf2 = BruteforceSearch.reachability(mat, kpp_size=2, kpp_type=KPPOSchoices.dR, parallel=True)
+    start_adj = np.array(mat.get_adjacency().data, dtype=np.uint16)
+    result = np.zeros_like(start_adj, np.uint16)
+    result.fill(start_adj.shape[0]+1)
+    np.fill_diagonal(result, 1)
+    print(result)
 
-    a = 3
+    import math
+    from algorithms.shortestpath_GPU import shortest_path_GPU
+    threadsperblock = (16, 16)
+    blockspergrid_x = math.ceil(start_adj.shape[0] / threadsperblock[0])
+    blockspergrid_y = math.ceil(start_adj.shape[1] / threadsperblock[1])
+    blockspergrid = (blockspergrid_x, blockspergrid_y)
+
+    shortest_path_GPU[blockspergrid, threadsperblock](start_adj, result)
+    print(result)
+
+
+    # from algorithms.bruteforce_search import BruteforceSearch
+    # # bf = BruteforceSearch.fragmentation(mat, kpp_size=2, kpp_type=KPNEGchoices.dF, parallel=True)
+    # bf2 = BruteforceSearch.reachability(mat, kpp_size=2, kpp_type=KPPOSchoices.dR, parallel=True)
 
 # #
 # print('gpu')
