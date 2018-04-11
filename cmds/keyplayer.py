@@ -249,22 +249,26 @@ class KeyPlayer():
             sys.stdout.write("Search for the best kp set completed!\n")
 
             results.update(kp_runner.get_results())
-
+            
             for kp in results.keys(): #ONE OF THE keys represent the algorithm, so no else exit in here
-
+                
+                if len(results[kp][0])>1:
+                    plurals = ['s', 'are']
+                else:
+                    plurals = ['', 'is']
+                    
                 if kp == KPNEGchoices.F.name or kp == KPNEGchoices.dF.name:
                     # joining initial results with final ones
                     results[kp].append(initial_results[kp])
                     
+                    print("LEN", results[kp][0], len(results[kp][0]))
                     sys.stdout.write(
-                        +
-                        'kp set(s) of size {0} for Key Player Metric {1} is/are {2} with value {3} (starting value is {4})\n'.format(
-                            self.args.k_size, kp, results[kp][0], results[kp][1], results[kp][2]))
-
+                        'kp set{0} of size {1} for Key Player Metric {2} {3} {4} with value {5} (starting value is {6})\n'.format(
+                            plurals[0], self.args.k_size, kp, plurals[1], results[kp][0], results[kp][1], results[kp][2]))
 
                 elif kp == KPPOSchoices.dR.name:
-                    sys.stdout.write('kp set(s) of size {0} for Key Player Metric {1} is/are {2} with value {3}\n'.format(
-                        self.args.k_size, kp, results[kp][0], results[kp][1]))
+                    sys.stdout.write('kp set{0} of size {1} for Key Player Metric {2} {3} {4} with value {5}\n'.format(
+                        plurals[0], self.args.k_size, kp, plurals[1], results[kp][0], results[kp][1]))
 
                 elif kp == KPPOSchoices.mreach.name:
                     results[kp].append(self.args.m_reach)
@@ -274,8 +278,8 @@ class KeyPlayer():
                     else:
                         node_perc_reached = round(node_perc_reached, 2)
                     sys.stdout.write(
-                        'kp set(s) of size {0} with a reach of {1} for Key Player Metric {2} is/are {3} with value {4} (reaching the {5}% of nodes)\n'.format(
-                            self.args.k_size, self.args.m_reach, kp, results[kp][0],
+                        'kp set{0} of size {1} with a reach of {2} for Key Player Metric {3} {4} {5} with value {6} (reaching the {7}% of nodes)\n'.format(
+                            plurals[0], self.args.k_size, self.args.m_reach, kp, plurals[1], results[kp][0],
                             results[kp][1], node_perc_reached))
 
             if self.args.implementation == "brute-force":
