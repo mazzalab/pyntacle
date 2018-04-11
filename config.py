@@ -32,6 +32,7 @@ import threading
 import time
 import sys
 import os
+from math import ceil
 from numba import cuda
 from numba.config import *
 from multiprocessing import cpu_count
@@ -52,6 +53,7 @@ n_cpus = cpu_count()-1 # Leaving one thread out
 NUMBA_NUM_THREADS = n_cpus
 mem = virtual_memory().total
 cuda_avail = cuda.is_available()
+threadsperblock = (16, 16)
 
 class CursorAnimation(threading.Thread):
     """

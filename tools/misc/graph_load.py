@@ -68,7 +68,6 @@ class GraphLoad():
     def get_format(self):
         return self.file_format
     
-    @property
     def graph_load(self):
         
         # First of all, check if binary. If so, any attempt to read as text would fail with UnicodeDecodeError.

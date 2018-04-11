@@ -28,18 +28,15 @@ __license__ = u"""
 Compute Local Topology metrics for all nodes in the graph or for a set of nodes
 """
 from config import *
-from math import isinf
+from math import isinf, ceil
 from numba import cuda, jit, prange
 import numpy as np
 import statistics
 from tools.misc.graph_routines import *
 from psutil import virtual_memory
-# from tools.misc.enums import SP_implementations as imps
 from tools.misc.enums import GraphType, SP_implementations
 from tools.misc.shortest_path_modifications import *
 from tools.graph_utils import GraphUtils as ut
-from tools.misc.implementation_seeker import implementation_seeker
-
 
 class LocalTopology:
     """
@@ -408,19 +405,16 @@ class LocalTopology:
                 return sps
 
             else:
-                adjlist = list(graph.get_adjacency())
                 if virtual_memory().free < (graph.vcount()**2)*2: # the rightmost "2" is int16/8
                     sys.stdout.write("WARNING: Memory seems to be low; loading the graph given as input could fail.")
                 if implementation == SP_implementations.gpu and cuda.current_context().get_memory_info().free < (graph.vcount()**2)*2:
                     sys.stdout.write("WARNING: GPU Memory seems to be low; loading the graph given as input could fail.")
-                    
-                adjmat = np.array(adjlist, dtype=np.uint16)
 
-                adjmat[adjmat == 0] = graph.vcount() + 1  # set zero values to the max possible path length + 1
-                np.fill_diagonal(adjmat, 0)  # set diagonal values to 0 (no distance from itself)
-                
+                adjmat = np.array(graph.get_adjacency().data, dtype=np.uint16)
+
                 if implementation == SP_implementations.cpu:
-    
+                    np.fill_diagonal(adjmat, 0)  # set diagonal values to 0 (no distance from itself)
+                    adjmat[adjmat == 0] = graph.vcount() + 1
                     if nodes is None:
                         nodes = list(range(0, graph.vcount()))
                         sps = LocalTopology.__shortest_path_CPU__(adjmat=adjmat)
@@ -433,8 +427,8 @@ class LocalTopology:
                     return sps
 
                 elif implementation == SP_implementations.gpu:
-                    if "SPGpu" not in sys.modules:
-                        from algorithms.shortestpath_GPU import SPGpu
+                    if "shortest_path_GPU" not in sys.modules:
+                        from algorithms.shortestpath_GPU import shortest_path_GPU
                         
                     if nodes is None:
                         nodes = list(range(0, graph.vcount()))
@@ -443,15 +437,19 @@ class LocalTopology:
                         nodes = ut(graph=graph).get_node_indices(nodes)
 
                     # create the result vector filled with 'inf' (the total number of nodes + 1)
-                    result = np.full_like(adjmat, graph.vcount()+1, dtype=np.uint16)
-                    SPGpu.shortest_path_GPU(adjmat, result)
+                    result = np.zeros_like(adjmat, np.uint16)
+                    result.fill(adjmat.shape[0] + 1)
+                    np.fill_diagonal(result, 0)
+                    
+                    blockspergrid_x = ceil(adjmat.shape[0] / threadsperblock[0])
+                    blockspergrid_y = ceil(adjmat.shape[1] / threadsperblock[1])
+                    blockspergrid = (blockspergrid_x, blockspergrid_y)
 
-                    np.fill_diagonal(result, 0) #fill the diagonal of the result object with zeros
+                    shortest_path_GPU[blockspergrid, threadsperblock](adjmat, result)
 
                     if len(nodes) < graph.vcount():
                         result = result[nodes, :]
 
-                    #LocalTopology.__shortest_path_GPU__(adjmat, nodes, result)
                     return result
 
                 else:

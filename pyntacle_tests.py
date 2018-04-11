@@ -5,8 +5,11 @@ from algorithms.keyplayer import KeyPlayer
 from tools.misc.graph_load import *
 from tools.misc.enums import KPPOSchoices, KPNEGchoices
 from algorithms.greedy_optimization import *
+import numpy
+numpy.set_printoptions(threshold=numpy.nan)
+
 from graph_operations.octopus import Octopus
-# from igraph import Graph
+from igraph import Graph
 # from misc.graph_routines import *
 # import time
 
@@ -29,35 +32,35 @@ from graph_operations.octopus import Octopus
 # print(GlobalTopology.density(erd))
 
 
-# adjmatrix = GraphLoad('/home/m.truglio/Desktop/Compiti_Dedalus/edgelist.txt.sif', "sif", True).graph_load()
-# print(adjmatrix)
+mat= GraphLoad('/home/m.truglio/Desktop/Compiti_Dedalus/figure_8.txt', "adjm", True).graph_load()
+print(mat)
 # print(list(adjmatrix.es))
 # AddAttributes(adjmatrix).add_edge_attributes('colore_edge', ['nero'], [('1','0')])
 # print(list(adjmatrix.es))
 # input()
 
 
-if __name__ == '__main__':
-    mat = PyntacleImporter.AdjacencyMatrix(
-        file=r'C:\Users\t.mazza\Desktop\CSS-Bioinformatics\pyntacle\test\test_sets\input\figure_8.txt', header=True)
-    print("\nGraph in main")
-    print(mat.summary())
-
-    start_adj = np.array(mat.get_adjacency().data, dtype=np.uint16)
-    result = np.zeros_like(start_adj, np.uint16)
-    result.fill(start_adj.shape[0]+1)
-    np.fill_diagonal(result, 1)
-    print(result)
-
-    import math
-    from algorithms.shortestpath_GPU import shortest_path_GPU
-    threadsperblock = (16, 16)
-    blockspergrid_x = math.ceil(start_adj.shape[0] / threadsperblock[0])
-    blockspergrid_y = math.ceil(start_adj.shape[1] / threadsperblock[1])
-    blockspergrid = (blockspergrid_x, blockspergrid_y)
-
-    shortest_path_GPU[blockspergrid, threadsperblock](start_adj, result)
-    print(result)
+# if __name__ == '__main__':
+#     mat = PyntacleImporter.AdjacencyMatrix(
+#         file=r'/home/m.truglio/Desktop/Compiti_Dedalus/figure_8.txt', header=True)
+#     print("\nGraph in main")
+#     print(mat.summary())
+#
+#     start_adj = np.array(mat.get_adjacency().data, dtype=np.uint16)
+#     result = np.zeros_like(start_adj, np.uint16)
+#     result.fill(start_adj.shape[0]+1)
+#     np.fill_diagonal(result, 0)
+#
+#     import math
+#     from algorithms.shortestpath_GPU import shortest_path_GPU
+#     threadsperblock = (16, 16)
+#     blockspergrid_x = math.ceil(start_adj.shape[0] / threadsperblock[0])
+#     blockspergrid_y = math.ceil(start_adj.shape[1] / threadsperblock[1])
+#     blockspergrid = (blockspergrid_x, blockspergrid_y)
+#
+#     shortest_path_GPU[blockspergrid, threadsperblock](start_adj, result)
+#     print(result)
+#     sys.exit()
 
 
     # from algorithms.bruteforce_search import BruteforceSearch
@@ -70,14 +73,15 @@ if __name__ == '__main__':
 #
 # print('\n\ncpu')
 #
+#
 # print(LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.cpu))
-# # input()
+# input()
 # #
 # #
-# print('\n\nIGRAph')
-#
-# print(LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.igraph))
-#
+print('\n\nIGRAph')
+
+print(LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.igraph))
+# #
 # print('\n\n Igraph puro')
 #
 # print(LocalTopology.shortest_path_igraph(graph=mat))

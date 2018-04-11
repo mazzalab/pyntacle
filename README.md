@@ -197,6 +197,7 @@ conda install cudatoolkit
 
 or by downloading and installing the Toolkit from the
 [_NVIDIA website_](https://developer.nvidia.com/cuda-toolkit).
+
 ## Release history
 
 Changelog for current and past releases:
