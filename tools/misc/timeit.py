@@ -42,7 +42,7 @@ def timeit(func):
         result = func(*args, **kwargs)
         te = time.perf_counter()
 
-        print('%r (%r, %r) %2.2f sec' % (func.__name__, args, kwargs, te - ts))
+        print('Elapsed Time: %2.2f sec' % (te - ts))
 
         return result
 

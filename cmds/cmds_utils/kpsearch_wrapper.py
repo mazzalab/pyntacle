@@ -27,8 +27,7 @@ __license__ = u"""
 from config import *
 from tools.misc.enums import SP_implementations
 from algorithms.greedy_optimization import GreedyOptimization
-
-# from algorithms.bruteforce_search import BruteforceSearch
+from algorithms.bruteforce_search import BruteforceSearch
 from tools.graph_utils import GraphUtils as gu
 from tools.misc.timeit import timeit
 from tools.misc.enums import KPPOSchoices, KPNEGchoices

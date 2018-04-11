@@ -40,12 +40,10 @@ from tools.add_attributes import AddAttributes
 from tools.misc.graph_load import *
 
 class KeyPlayer():
-    """
-    **[EXPAND]**
-    """
     def __init__(self, args):
         self.logging = log
         self.args = args
+        self.date = runtime_date
         # Check for pycairo
         if not self.args.no_plot and util.find_spec("cairo") is None:
             sys.stdout.write("WARNING: It seems that the pycairo library is not installed/available. Plots"
@@ -171,6 +169,7 @@ class KeyPlayer():
                         "Finding best set of kp-nodes of size {0} using dF (kp neg measure)\n".format(
                             self.args.k_size))
                     initial_results[KPNEGchoices.dF.name] = kpp.dF(graph, implementation=implementation)
+
                     if initial_results[KPNEGchoices.dF.name] != 1:
                         kp_runner.run_fragmentation(self.args.k_size, KPNEGchoices.dF,
                                                     max_distances=self.args.max_distances, seed=self.args.seed,
@@ -250,21 +249,26 @@ class KeyPlayer():
             sys.stdout.write("Search for the best kp set completed!\n")
 
             results.update(kp_runner.get_results())
-
+            
             for kp in results.keys(): #ONE OF THE keys represent the algorithm, so no else exit in here
-
+                
+                if len(results[kp][0])>1:
+                    plurals = ['s', 'are']
+                else:
+                    plurals = ['', 'is']
+                    
                 if kp == KPNEGchoices.F.name or kp == KPNEGchoices.dF.name:
                     # joining initial results with final ones
                     results[kp].append(initial_results[kp])
                     
+                    print("LEN", results[kp][0], len(results[kp][0]))
                     sys.stdout.write(
-                        'kp set(s) of size {0} for Key Player Metric {1} is/are {2} with value {3} (starting value is {4})\n'.format(
-                            self.args.k_size, kp, results[kp][0], results[kp][1], results[kp][2]))
-
+                        'kp set{0} of size {1} for Key Player Metric {2} {3} {4} with value {5} (starting value is {6})\n'.format(
+                            plurals[0], self.args.k_size, kp, plurals[1], results[kp][0], results[kp][1], results[kp][2]))
 
                 elif kp == KPPOSchoices.dR.name:
-                    sys.stdout.write('kp set(s) of size {0} for Key Player Metric {1} is/are {2} with value {3}\n'.format(
-                        self.args.k_size, kp, results[kp][0], results[kp][1]))
+                    sys.stdout.write('kp set{0} of size {1} for Key Player Metric {2} {3} {4} with value {5}\n'.format(
+                        plurals[0], self.args.k_size, kp, plurals[1], results[kp][0], results[kp][1]))
 
                 elif kp == KPPOSchoices.mreach.name:
                     results[kp].append(self.args.m_reach)
@@ -274,8 +278,8 @@ class KeyPlayer():
                     else:
                         node_perc_reached = round(node_perc_reached, 2)
                     sys.stdout.write(
-                        'kp set(s) of size {0} with a reach of {1} for Key Player Metric {2} is/are {3} with value {4} (reaching the {5}% of nodes)\n'.format(
-                            self.args.k_size, self.args.m_reach, kp, results[kp][0],
+                        'kp set{0} of size {1} with a reach of {2} for Key Player Metric {3} {4} {5} with value {6} (reaching the {7}% of nodes)\n'.format(
+                            plurals[0], self.args.k_size, self.args.m_reach, kp, plurals[1], results[kp][0],
                             results[kp][1], node_perc_reached))
 
             if self.args.implementation == "brute-force":
@@ -346,7 +350,7 @@ class KeyPlayer():
         sys.stdout.write("Producing report in {} format.\n".format(self.args.report_format))
 
         report_prefix = "_".join(
-            ["pyntacle", self.args.which, graph["name"][0], "kpsize", str(k_size), results.get("algorithm", "KP-Info"),"report", runtime_date])
+            ["pyntacle", self.args.which, graph["name"][0], "kpsize", str(k_size), results.get("algorithm", "KP-Info"),"report", self.date])
         report_path = os.path.join(self.args.directory, ".".join([report_prefix, self.args.report_format]))
 
         if os.path.exists(report_path):
@@ -419,11 +423,11 @@ class KeyPlayer():
     
             sys.stdout.write("Generating plots in {} format.\n".format(self.args.plot_format))
 
-            plot_dir = os.path.join(self.args.directory, "pyntacle-Plots")
+            plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
 
             if os.path.isdir(plot_dir):
                 self.logging.warning(
-                    "A directory named \"pyntacle-Plots\" already exists, I may overwrite something in there")
+                    "A directory named \"pyntacle-plots\" already exists, I may overwrite something in there")
 
             else:
                 os.mkdir(plot_dir)
@@ -584,7 +588,7 @@ class KeyPlayer():
 
                 plot_graph.set_layouts(layout="fruchterman_reingold")
 
-                plot_path = os.path.join(plot_dir, "_".join(["keyplayer", graph["name"][0], "report", metric, runtime_date]) + "." + plot_format)
+                plot_path = os.path.join(plot_dir, "_".join(["keyplayer", graph["name"][0], "report", metric, self.date]) + "." + plot_format)
                 if os.path.exists(plot_path):
                     sys.stdout.write(
                         "WARNING - A plot with the name ({}) already exists, overwriting it\n".format(

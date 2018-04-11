@@ -339,7 +339,7 @@ class BruteforceSearch:
 
         # now the dictionary is filled with all the possible solutions. Time to find the maximal ones
         maxKpp = max(final_set.values())  # take the maximum value
-        final = [list(x) for x in final_set.keys() if final_set[x] == maxKpp]
+        final = [list(graph.vs(x)["name"]) for x in final_set.keys() if final_set[x] == maxKpp]
         maxKpp = round(maxKpp, 5)
 
         if len(final) > 1:

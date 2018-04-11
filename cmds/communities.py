@@ -35,12 +35,10 @@ from tools.misc.graph_load import *
 from tools.graph_utils import *
 
 class Communities():
-    """
-    **[EXPAND]**
-    """
     def __init__(self, args):
         self.logging = log
         self.args = args
+        self.date = runtime_date
         if not self.args.output_separator:
             self.args.output_separator = '\t'
         # Check for pycairo
@@ -209,6 +207,7 @@ class Communities():
             "\t{1}\nIndex\tNodes\tEdges \tComponents\n{2}".format(
                 algorithm, len(mods), "".join(mods_report)))
 
+
         # initialize Moduleutils class
         mod_utils = ModuleUtils(graph=graph, algorithm=algorithm, modules=mods)
         mod_utils.add_modules_info()
@@ -265,7 +264,7 @@ class Communities():
                 (len(mod_utils.modules) - init_mods), len(mod_utils.modules)))
 
         else:
-            sys.stdout.write("No modules to filter. Proceeding to writing modules.\n")
+            sys.stdout.write("No modules to filter. Proceeding.\n")
 
         mod_utils.label_modules_in_graph()
         final_mods = mod_utils.get_modules()
@@ -297,45 +296,29 @@ class Communities():
                     self.args.output_file))
 
         output_basename = os.path.join(self.args.directory, self.args.output_file)
-
         # output generated networks
-        if out_form == "adjm":
-            sys.stdout.write("Creating Adjacency Matrix of each community\n")
-            for i, elem in enumerate(final_mods):
-                output_path = ".".join(["_".join([output_basename, str(i), datetime.datetime.now().strftime(
-                    "%d%m%Y%H%M")]), out_form])
+        for elem in final_mods:
+            output_path = ".".join(["_".join([output_basename, str(elem["__module_number"]), self.date]), out_form])
+            if out_form == "adjm":
+                sys.stdout.write("Creating Adjacency Matrix of each community\n")
                 PyntacleExporter.AdjacencyMatrix(elem, output_path, sep=self.args.output_separator,
-                                         header=output_header)
-
-        elif out_form == "egl":
-            sys.stdout.write("Creating Edge List of each final community\n")
-            for i, elem in enumerate(final_mods):
-                output_path = ".".join(["_".join([output_basename, str(i), datetime.datetime.now().strftime(
-                    "%d%m%Y%H%M")]), out_form])
+                                                 header=output_header)
+            elif out_form == "egl":
+                sys.stdout.write("Creating Edge List of each final community\n")
                 PyntacleExporter.EdgeList(elem, output_path, sep=self.args.output_separator, header=output_header)
 
-        elif out_form == "sif":
-            sys.stdout.write("Creating Simple Interaction File of each final community\n")
-            for i, elem in enumerate(final_mods):
-                output_path = ".".join(["_".join([output_basename, str(i), datetime.datetime.now().strftime(
-                    "%d%m%Y%H%M")]), out_form])
+            elif out_form == "sif":
+                sys.stdout.write("Creating Simple Interaction File of each final community\n")
                 PyntacleExporter.Sif(elem, output_path, sep=self.args.output_separator, header=output_header)
 
-        elif out_form == "dot":
-            sys.stdout.write("Creating DOT File of the each final community\n")
-            for i, elem in enumerate(final_mods):
-                output_path = ".".join(["_".join([output_basename, str(i), datetime.datetime.now().strftime(
-                    "%d%m%Y%H%M")]), out_form])
-
+            elif out_form == "dot":
+                sys.stdout.write("Creating DOT File of the each final community\n")
                 # Ignore ugly RuntimeWarnings while creating a dot
                 simplefilter("ignore", RuntimeWarning)
                 PyntacleExporter.Dot(elem, output_path)
 
-        elif out_form == "bin":
-            sys.stdout.write("Storing each community into a .graph (binary) file\n")
-            for i, elem in enumerate(final_mods):
-                output_path = ".".join(["_".join([output_basename, str(i), datetime.datetime.now().strftime(
-                    "%d%m%Y%H%M")]), out_form])
+            elif out_form == "bin":
+                sys.stdout.write("Storing each community into a .graph (binary) file\n")
                 PyntacleExporter.Binary(elem, output_path)
 
         # save the original graph into a binary file
@@ -348,11 +331,11 @@ class Communities():
 
         if not self.args.no_plot:
 
-            plot_dir = os.path.join(self.args.directory, "pyntacle-Plots")
+            plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
 
             if os.path.isdir(plot_dir):
                 self.logging.warning(
-                    "A directory named \"pyntacle-Plots\" already exists, I may overwrite something in there")
+                    "A directory named \"pyntacle-plots\" already exists, I may overwrite something in there")
 
             else:
                 os.mkdir(plot_dir)
@@ -368,7 +351,7 @@ class Communities():
 
                 main_plot_path = os.path.join(plot_dir, ".".join(["_".join(
                     ["pyntacle", os.path.splitext(os.path.basename(self.args.input_file))[0], "modules",
-                     runtime_date]), self.args.plot_format]))
+                     self.date]), self.args.plot_format]))
 
                 # initialize general graph Drawer
                 sys.stdout.write("Drawing Original Graph with corresponding modules\n")
@@ -397,17 +380,17 @@ class Communities():
                                          vertex_frame_color=bord_list)
             else:
                 sys.stdout.write(
-                    "Input Graph is above pyntacle Plotting limits ({} nodes, we support 1000 nodes). Will skip plotting this module.\n".format(
+                    "Input Graph is above pyntacle plotting capability ({} nodes, we support 1000 nodes). Will skip plotting this module.\n".format(
                         graph.vcount()))
 
             if len(final_mods) > 20:
                 self.logging.warning(
-                    "The number of modules ({}) is very high, hence the node colors of each module may be very similar".format(
+                    "The number of modules ({}) is quite high, hence the node colors of each module may be very similar".format(
                         len(final_mods)))
 
             sys.stdout.write("Drawing Each Module Separately\n")
 
-            for i, comm in enumerate(final_mods):
+            for i,comm in enumerate(final_mods):
                 if comm.vcount() <= 1000:
                     plotter = PlotGraph(graph=comm)
                     plotter.set_node_labels(labels=comm.vs()["name"])
@@ -417,8 +400,7 @@ class Communities():
                     plotter.set_node_sizes([30] * comm.vcount())
 
                     comm_plot_path = os.path.join(plot_dir, ".".join(
-                        ["_".join([self.args.output_file, str(i), datetime.datetime.now().strftime(
-                            "%d%m%Y%H%M")]), self.args.plot_format]))
+                        ["_".join([self.args.output_file, str(comm["__module_number"]), self.date]), self.args.plot_format]))
 
                     plotter.set_layouts()
                     plotter.plot_graph(path=comm_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,

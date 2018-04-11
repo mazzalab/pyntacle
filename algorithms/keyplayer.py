@@ -99,7 +99,8 @@ class KeyPlayer:
         """
         # todo implementation "auto" should consider graph parameters and use the correct implementation among the classical
         # todo and the GPU/CPU one
-        #print("df, USING IMPLEMENTATION", implementation)
+        # print("df, USING IMPLEMENTATION", implementation)
+        # input()
 
         if not isinstance(implementation, SP_implementations):
             raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(SP_implementations)))
@@ -138,13 +139,13 @@ class KeyPlayer:
 
         number_nodes = graph.vcount()
         df_denum = number_nodes * (number_nodes - 1)
+
         shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph)
 
         if max_distances is not None:
             shortest_path_lengths = ShortestPathModifier.igraph_sp_to_inf(shortest_path_lengths, max_distances=max_distances)
 
         df_num = 0
-
         for i in range(number_nodes):
             for j in range(i + 1, number_nodes):
                 # print(shortest_path_lengths[i][j])

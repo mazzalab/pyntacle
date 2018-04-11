@@ -47,6 +47,7 @@ class Metrics:
     def __init__(self, args):
         self.logging = log
         self.args = args
+        self.date = runtime_date
 
         # Check for pycairo
         if not self.args.no_plot and util.find_spec("cairo") is None:
@@ -181,12 +182,12 @@ class Metrics:
             if self.args.nodes is None:
                 nodes_list = graph.vs()["name"]
                 report_prefix = "_".join(["pyntacle", graph["name"][0], "local_metrics", "report",
-                                          runtime_date])
+                                          self.date])
             else:
                 nodes_list = self.args.nodes.split(",")
                 report_prefix = "_".join(
                     ["pyntacle", graph["name"][0], "local_metrics_selected_nodes_report",
-                     runtime_date])
+                     self.date])
 
             sys.stdout.write("Producing report in {} format.\n".format(self.args.report_format))
 
@@ -216,11 +217,11 @@ class Metrics:
                 sys.stdout.write("Generating plots in {} format.\n".format(self.args.plot_format))
                 
                 # generates plot directory
-                plot_dir = os.path.join(self.args.directory, "pyntacle-Plots")
+                plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
 
                 if os.path.isdir(plot_dir):
                     self.logging.warning(
-                        "A directory named \"pyntacle-Plots\" already exists, I may overwrite something in there")
+                        "A directory named \"pyntacle-plots\" already exists, I may overwrite something in there")
 
                 else:
                     os.makedirs(plot_dir, exist_ok=True)
@@ -268,7 +269,7 @@ class Metrics:
 
                 plot_path = os.path.join(plot_dir, ".".join(["_".join(
                     ["pyntacle", graph["name"][0], "local_metrics_plot_",
-                     runtime_date]), self.args.plot_format]))
+                     self.date]), self.args.plot_format]))
                 plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
                                       keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=node_frames)
 
@@ -300,7 +301,7 @@ class Metrics:
             sys.stdout.write("Producing report\n")
             report_prefix = "_".join(
                 ["pyntacle", graph["name"][0], "global_metrics_report",
-                 runtime_date])
+                 self.date])
             
             reporter = pyntacleReporter(graph=graph)  # init reporter
             reporter.create_report(Reports.Global, global_attributes_dict)
@@ -308,7 +309,7 @@ class Metrics:
 
             if self.args.no_nodes:  # create an additional report for the graph minus the selected nodes
                 report_prefix_nonodes = "_".join(["pyntacle", graph["name"][0], "global_metrics_nonodes", "report",
-                                          runtime_date])
+                                          self.date])
                 
                 sys.stdout.write("Removing nodes {} from input graph and computing global metrics\n".format(self.args.no_nodes))
                 nodes_list = self.args.no_nodes.split(",")
@@ -356,11 +357,11 @@ class Metrics:
                     sys.stdout.write("Generating Plot of input graph {}\n".format(os.path.basename(self.args.input_file)))
 
                 # generates plot directory
-                plot_dir = os.path.join(self.args.directory, "pyntacle-Plots")
+                plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
 
                 if os.path.isdir(plot_dir):
                     self.logging.warning(
-                        "WARNING: A directory named \"pyntacle-Plots\" already exists, I may overwrite something in there")
+                        "WARNING: A directory named \"pyntacle-plots\" already exists, I may overwrite something in there")
 
                 else:
                     os.mkdir(plot_dir)
@@ -375,7 +376,7 @@ class Metrics:
                 no_nodes_frames = framepal[4]
 
                 if self.args.no_nodes:
-                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", re.sub('_without_nodes', '', graph["name"][0]),"global_metrics_plot", runtime_date]),self.args.plot_format]))
+                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", re.sub('_without_nodes', '', graph["name"][0]),"global_metrics_plot", self.date]),self.args.plot_format]))
                     node_colors = [no_nodes_colour if x["name"] in nodes_list else other_nodes_colour for x
                                     in
                                     graph.vs()]
@@ -390,7 +391,7 @@ class Metrics:
                     node_colors = [other_nodes_colour] * graph.vcount()
                     node_frames = [other_frame_colour] * graph.vcount()
                     node_sizes = [other_nodes_size] * graph.vcount()
-                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", graph["name"][0],"global_metrics_plot", runtime_date]), self.args.plot_format]))
+                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", graph["name"][0],"global_metrics_plot", self.date]), self.args.plot_format]))
 
                 plot_graph = PlotGraph(graph=graph)
                 plot_graph.set_node_labels(labels=graph.vs()["name"])  # assign node labels to graph
@@ -423,7 +424,7 @@ class Metrics:
                     # define layout
                     plot_graph.set_layouts()
 
-                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", graph["name"][0], "global_metrics_plot",runtime_date]),self.args.plot_format]))
+                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", graph["name"][0], "global_metrics_plot",self.date]),self.args.plot_format]))
 
                     plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
                                           keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=node_frames)

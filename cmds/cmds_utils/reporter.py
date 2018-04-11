@@ -53,7 +53,6 @@ class pyntacleReporter():
         self.utils.graph_checker()  # check that input graph is properly set
         self.report_type = None #this will be instanced in create_report
         self.report = [] #this will be used in create_report
-        now = datetime.datetime.now()
         self.dat = runtime_date
         
     def create_report(self, report_type: Reports, report: OrderedDict):
@@ -73,7 +72,7 @@ class pyntacleReporter():
         self.report_type = report_type
         self.report = []
         self.report.append([" ".join(["pyntacle Report", self.dat])])
-        self.report.append(["General Graph Information"])
+        self.report.append(["Quick Graph Overvier"])
         self.report.append(["graph name", ",".join(self.graph["name"])])
         self.report.append(["components", len(self.graph.components())])
         self.report.append(["nodes", self.graph.vcount()])
@@ -195,7 +194,7 @@ class pyntacleReporter():
             nodes = nodes.split(',')
             del reportdict["nodes"]
 
-        self.report.append(["Results: Local Topology Metrics in Pyntacle for each node queried"])
+        self.report.append(["Results - Local Metrics for each Node in input"])
         self.report.append(["Node Name"] + [x for x in reportdict.keys()])
         addendum = [] #list that will be added to the self.report object
         for i, elem in enumerate(nodes):
@@ -212,7 +211,7 @@ class pyntacleReporter():
         :param reportdict: a dictionary like {name of the global metric: metric}
         """
 
-        self.report.append(["Results: Global Topology Metrics for selected graphs"])
+        self.report.append(["Results - Global Metrics of the input graph"])
         self.report.append(["Metric", "Value"])
         for k in reportdict.keys():
             self.report.append([k, reportdict[k]])
@@ -252,7 +251,7 @@ class pyntacleReporter():
                 raise ValueError("Initial dF must range between 0 and 1")
 
         self.report.append(["\n"])
-        self.report.append(["Results: Key Player Metrics Info for selected subset of nodes"])
+        self.report.append(["Results: Key-Player Metrics for the input set of nodes"])
         self.report.append(["Metric", "Nodes", "Value"])
  
         for k in reportdict.keys():
@@ -295,7 +294,7 @@ class pyntacleReporter():
             else:
                 raise ValueError("Initial dF must range between 0 and 1")
 
-        self.report.append(["Results: Greedily-Optimized Search"])
+        self.report.append(["Results: Greedily-Optimized Search for selected KP Metrics"])
         self.report.append(["Metric", "Nodes", "Value"])
 
         for k in reportdict.keys():
