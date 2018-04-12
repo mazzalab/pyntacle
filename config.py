@@ -53,7 +53,7 @@ n_cpus = cpu_count()-1 # Leaving one thread out
 NUMBA_NUM_THREADS = n_cpus
 mem = virtual_memory().total
 cuda_avail = cuda.is_available()
-threadsperblock = (16, 16)
+threadsperblock = 32
 
 class CursorAnimation(threading.Thread):
     """

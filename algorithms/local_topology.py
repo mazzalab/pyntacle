@@ -1,11 +1,11 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "09 April 2018"
+__date__ = "12/04/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -37,6 +37,7 @@ from psutil import virtual_memory
 from tools.misc.enums import GraphType, SP_implementations
 from tools.misc.shortest_path_modifications import *
 from tools.graph_utils import GraphUtils as ut
+
 
 class LocalTopology:
     """
@@ -398,7 +399,7 @@ class LocalTopology:
         if mode == GraphType.undirect_unweighted:
 
             if implementation == SP_implementations.igraph:
-                sys.stdout.write("using igraph implementation instead of our implementations\n")
+                sys.stdout.write("Using the iGraph implementation of the shortest path algorithm\n")
                 sps = LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
                 sps = [[graph.vcount()+1 if isinf(x) else x for x in y] for y in sps]
                 sps = np.array(sps)
@@ -410,47 +411,42 @@ class LocalTopology:
                 if implementation == SP_implementations.gpu and cuda.current_context().get_memory_info().free < (graph.vcount()**2)*2:
                     sys.stdout.write("WARNING: GPU Memory seems to be low; loading the graph given as input could fail.")
 
-                adjmat = np.array(graph.get_adjacency().data, dtype=np.uint16)
+                graph_size = graph.vcount() + 1
+                np.set_printoptions(linewidth=graph_size*10)
+                adjmat = np.array(graph.get_adjacency().data, dtype=np.uint16, copy=True)
+                adjmat[adjmat == 0] = np.uint16(graph_size)
+                np.fill_diagonal(adjmat, 0)  # set diagonal values to 0 (no distance from itself)
 
                 if implementation == SP_implementations.cpu:
-                    np.fill_diagonal(adjmat, 0)  # set diagonal values to 0 (no distance from itself)
-                    adjmat[adjmat == 0] = graph.vcount() + 1
                     if nodes is None:
-                        nodes = list(range(0, graph.vcount()))
                         sps = LocalTopology.__shortest_path_CPU__(adjmat=adjmat)
-
                     else:
                         nodes = GraphUtils(graph=graph).get_node_indices(node_names=nodes)
                         sps = LocalTopology.__shortest_path_CPU__(adjmat=adjmat)
                         sps = sps[nodes, :]
-                    
                     return sps
 
                 elif implementation == SP_implementations.gpu:
-                    if "shortest_path_GPU" not in sys.modules:
-                        from algorithms.shortestpath_GPU import shortest_path_GPU
-                        
                     if nodes is None:
                         nodes = list(range(0, graph.vcount()))
-
                     else:
                         nodes = ut(graph=graph).get_node_indices(nodes)
 
-                    # create the result vector filled with 'inf' (the total number of nodes + 1)
-                    result = np.zeros_like(adjmat, np.uint16)
-                    result.fill(adjmat.shape[0] + 1)
-                    np.fill_diagonal(result, 0)
-                    
-                    blockspergrid_x = ceil(adjmat.shape[0] / threadsperblock[0])
-                    blockspergrid_y = ceil(adjmat.shape[1] / threadsperblock[1])
-                    blockspergrid = (blockspergrid_x, blockspergrid_y)
+                    if "shortest_path_GPU" not in sys.modules:
+                        from algorithms.shortestpath_GPU import shortest_path_GPU
 
-                    shortest_path_GPU[blockspergrid, threadsperblock](adjmat, result)
+                        # create the result vector filled with 'inf' (the total number of nodes + 1)
+                        result = np.array(adjmat, copy=True, dtype=np.uint16)
+                        result[result == 0] = adjmat.shape[0] + 1
+                        np.fill_diagonal(result, 0)
 
-                    if len(nodes) < graph.vcount():
-                        result = result[nodes, :]
+                        blockspergrid = ceil(adjmat.shape[0] / threadsperblock)
+                        shortest_path_GPU[blockspergrid, threadsperblock](adjmat, result)
 
-                    return result
+                        if len(nodes) < graph.vcount():
+                            result = result[nodes, :]
+
+                        return result
 
                 else:
                     sys.stdout.write(

@@ -32,8 +32,8 @@ from igraph import Graph
 # print(GlobalTopology.density(erd))
 
 
-mat= GraphLoad('/home/m.truglio/Desktop/Compiti_Dedalus/figure_8.txt', "adjm", True).graph_load()
-print(mat)
+# mat= GraphLoad('/home/m.truglio/Desktop/Compiti_Dedalus/figure_8.txt', "adjm", True).graph_load()
+# print(mat)
 # print(list(adjmatrix.es))
 # AddAttributes(adjmatrix).add_edge_attributes('colore_edge', ['nero'], [('1','0')])
 # print(list(adjmatrix.es))
@@ -78,9 +78,20 @@ print(mat)
 # input()
 # #
 # #
-print('\n\nIGRAph')
 
-print(LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.igraph))
+mat= GraphLoad(r'C:\Users\t.mazza\Desktop\CSS-Bioinformatics\pyntacle\test\test_sets\input\figure_8.txt', "adjm", True).graph_load()
+print('\n\nORIGINAL MAT')
+print(mat.get_adjacency())
+result_igraph = LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.igraph)
+result_cpu = LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.cpu)
+result_gpu = LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.gpu)
+
+print("IGRAPH vs CPU: " + str((result_igraph == result_cpu).all()) + "\n\n")
+print(result_igraph)
+print("IGRAPH vs GPU: " + str((result_igraph == result_gpu).all()) + "\n\n")
+print(result_gpu)
+
+
 # #
 # print('\n\n Igraph puro')
 #

@@ -41,7 +41,7 @@ from exceptions.wrong_argument_error import WrongArgumentError
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 
 
-class GraphUtils():
+class GraphUtils:
     """
     A series of methods that can be performed on graph and that can be accessed pretty quickly
     """
