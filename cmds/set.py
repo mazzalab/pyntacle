@@ -74,10 +74,10 @@ class Set():
         input_format = format_dictionary.get(self.args.format, "NA")
 
         graph1 = GraphLoad(self.args.input_file_1, file_format=input_format,
-                           header=input_header).graph_load
+                           header=input_header).graph_load()
 
         graph2 = GraphLoad(self.args.input_file_2, file_format=input_format,
-                           header=input_header).graph_load
+                           header=input_header).graph_load()
 
         # init Utils global stuff
         utils1 = GraphUtils(graph=graph1)

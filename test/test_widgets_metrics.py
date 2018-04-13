@@ -49,7 +49,7 @@ class WidgetTestMetrics(unittest.TestCase):
                          'Wrong checksum for Metrics, global case')
         
         # CPU, GPU, igraph coherence check
-        graph = GraphLoad(self.Args.input_file, "adjm", header=True).graph_load
+        graph = GraphLoad(self.Args.input_file, "adjm", header=True).graph_load()
         
         implementation = SP_implementations.igraph
         igraph_result = round(GlobalTopology.average_shortest_path_length(graph, implementation),5)
@@ -76,11 +76,13 @@ class WidgetTestMetrics(unittest.TestCase):
             mt.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
+        input()
         fileout = glob.glob("test/test_sets/tmp/pyntacle_report_*_Local_*")[0]
         with open(fileout, 'r') as fin:
             data = fin.read().splitlines(True)
         with open(fileout, 'w') as fout:
             fout.writelines(data[1:])
+        input()
         expected = 'test/test_sets/output/metrics/figure8_local.txt'
         self.assertEqual(getmd5(fileout), getmd5(expected),
                          'Wrong checksum for Metrics, local case')

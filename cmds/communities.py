@@ -66,7 +66,7 @@ class Communities():
         input_format =format_dictionary.get(self.args.format, "NA")
 
         graph = GraphLoad(self.args.input_file, file_format=input_format,
-                          header=input_header).graph_load
+                          header=input_header).graph_load()
 
         # init Utils global stuff
         utils = GraphUtils(graph=graph)

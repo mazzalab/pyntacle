@@ -108,7 +108,7 @@ class Convert():
 
         else:
 
-            graph = init_graph.graph_load
+            graph = init_graph.graph_load()
             in_form = init_graph.get_format()
             
             if in_form == out_form:
