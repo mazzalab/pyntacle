@@ -32,7 +32,7 @@ from igraph import Graph
 from collections import OrderedDict
 
 from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
-from exceptions.unsupported_graph_error import UnsupportedGrapherror
+from exceptions.unsupported_graph_error import UnsupportedGraphError
 # pyntacle Libraries
 from exceptions.wrong_argument_error import WrongArgumentError
 from tools.add_attributes import AddAttributes
@@ -230,7 +230,7 @@ class ImportAttributes():
                                 # select[0][attrnames[i]] = obj
                     
                     elif len(select) > 1:
-                        raise UnsupportedGrapherror(
+                        raise UnsupportedGraphError(
                             "More than one edge with the same name is present in the graph. Probably a Multigraph")
                         # OVERWRITTEN AND REPLACED BY AN ERROR
                         # This happens if the graph has duplicate edges. Should not happen.

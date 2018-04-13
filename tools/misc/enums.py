@@ -105,9 +105,10 @@ class GlobalAttribute(Enum):
     average_eccentricity = auto()
     average_radiality = auto()
     average_radiality_reach = auto()
-    completeness_mazza = auto()
-    completeness_XXX = auto()
+    completeness_naive = auto()
+    completeness = auto()
     compactness = auto()
+    compactness_correct = auto()
 
 class edge_attributes(Enum):
     """

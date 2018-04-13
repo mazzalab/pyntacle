@@ -217,7 +217,7 @@
 
 <div class="viewcode-block" id="LocalTopology.degree"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology_NEW.html#pyntacle.algorithms.local_topology_NEW.LocalTopology.degree">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@check_graph_consistency</span>
-    <span class="nd">@vertexdoctor</span>
+    <span class="nd">@vertex_doctor</span>
     <span class="k">def</span> <span class="nf">degree</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the degree for a single node, a list of nodes or for all nodes in the Graph. The degree is defined as</span>
@@ -241,7 +241,7 @@
 
 <div class="viewcode-block" id="LocalTopology.betweenness"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology_NEW.html#pyntacle.algorithms.local_topology_NEW.LocalTopology.betweenness">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@check_graph_consistency</span>
-    <span class="nd">@vertexdoctor</span>
+    <span class="nd">@vertex_doctor</span>
     <span class="k">def</span> <span class="nf">betweenness</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the betwenness for a single node, a list of nodes or for all nodes in the Graph.</span>
@@ -266,7 +266,7 @@
 
 <div class="viewcode-block" id="LocalTopology.clustering_coefficient"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology_NEW.html#pyntacle.algorithms.local_topology_NEW.LocalTopology.clustering_coefficient">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@check_graph_consistency</span>
-    <span class="nd">@vertexdoctor</span>
+    <span class="nd">@vertex_doctor</span>
     <span class="k">def</span> <span class="nf">clustering_coefficient</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the clustering coefficient for a single node, a list of nodes or for all nodes in the Graph.</span>
@@ -290,7 +290,7 @@
 
 <div class="viewcode-block" id="LocalTopology.closeness"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology_NEW.html#pyntacle.algorithms.local_topology_NEW.LocalTopology.closeness">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@check_graph_consistency</span>
-    <span class="nd">@vertexdoctor</span>
+    <span class="nd">@vertex_doctor</span>
     <span class="k">def</span> <span class="nf">closeness</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the clustering coefficient for a single node, a list of nodes or for all nodes in the Graph.</span>
@@ -315,7 +315,7 @@
 
 <div class="viewcode-block" id="LocalTopology.eccentricity"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology_NEW.html#pyntacle.algorithms.local_topology_NEW.LocalTopology.eccentricity">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@check_graph_consistency</span>
-    <span class="nd">@vertexdoctor</span>
+    <span class="nd">@vertex_doctor</span>
     <span class="k">def</span> <span class="nf">eccentricity</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the eccentricity for a single node, a list of nodes or for all nodes in the Graph.</span>
@@ -380,7 +380,7 @@
 
 <div class="viewcode-block" id="LocalTopology.radiality"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology_NEW.html#pyntacle.algorithms.local_topology_NEW.LocalTopology.radiality">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@check_graph_consistency</span>
-    <span class="nd">@vertexdoctor</span>
+    <span class="nd">@vertex_doctor</span>
     <span class="k">def</span> <span class="nf">radiality</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">implementation</span><span class="o">=</span><span class="s2">&quot;igraph&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the radiality for a single node, a list of nodes or for all nodes in the Graph. The radiality of a node</span>
@@ -407,7 +407,7 @@
 
 <div class="viewcode-block" id="LocalTopology.radiality_reach"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology_NEW.html#pyntacle.algorithms.local_topology_NEW.LocalTopology.radiality_reach">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@check_graph_consistency</span>
-    <span class="nd">@vertexdoctor</span>
+    <span class="nd">@vertex_doctor</span>
     <span class="k">def</span> <span class="nf">radiality_reach</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">implementation</span><span class="o">=</span><span class="s2">&quot;igraph&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the radiality reach for a single node, a list of nodes or for all nodes in the Graph.</span>
@@ -482,7 +482,7 @@
 
 <div class="viewcode-block" id="LocalTopology.eigenvector_centrality"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology_NEW.html#pyntacle.algorithms.local_topology_NEW.LocalTopology.eigenvector_centrality">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@check_graph_consistency</span>
-    <span class="nd">@vertexdoctor</span>
+    <span class="nd">@vertex_doctor</span>
     <span class="k">def</span> <span class="nf">eigenvector_centrality</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">scaled</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the eigenvector centrality for a single nodes, a group of selected nodes or all nodes in the graph.</span>
@@ -510,7 +510,7 @@
 
 <div class="viewcode-block" id="LocalTopology.pagerank"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology_NEW.html#pyntacle.algorithms.local_topology_NEW.LocalTopology.pagerank">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@check_graph_consistency</span>
-    <span class="nd">@vertexdoctor</span>
+    <span class="nd">@vertex_doctor</span>
     <span class="k">def</span> <span class="nf">pagerank</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">damping</span><span class="o">=</span><span class="mf">0.85</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the Google PageRank algorithm from the input node(s), or for all nodes in the graph if it&#39;s not</span>
@@ -547,7 +547,7 @@
 
 <div class="viewcode-block" id="LocalTopology.shortest_path_igraph"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology_NEW.html#pyntacle.algorithms.local_topology_NEW.LocalTopology.shortest_path_igraph">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@check_graph_consistency</span>
-    <span class="nd">@vertexdoctor</span>
+    <span class="nd">@vertex_doctor</span>
     <span class="k">def</span> <span class="nf">shortest_path_igraph</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the shortest path for a single node, a list of nodes or for all nodes in the Graph using the Dijkstra&#39;s</span>
@@ -576,7 +576,7 @@
 
 <div class="viewcode-block" id="LocalTopology.shortest_path_pyntacle"><a class="viewcode-back" href="../../../pyntacle.algorithms.local_topology_NEW.html#pyntacle.algorithms.local_topology_NEW.LocalTopology.shortest_path_pyntacle">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@check_graph_consistency</span>
-    <span class="nd">@vertexdoctor</span>
+    <span class="nd">@vertex_doctor</span>
     <span class="k">def</span> <span class="nf">shortest_path_pyntacle</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">graph_type</span><span class="o">.</span><span class="n">undirect_unweighted</span><span class="p">,</span>
                                <span class="n">implementation</span><span class="o">=</span><span class="n">implementation</span><span class="o">.</span><span class="n">cpu</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -663,7 +663,7 @@
     <span class="c1"># @staticmethod</span>
     <span class="c1"># @cuda.jit(argtypes=[u2[:, :], u2[:, :]])</span>
     <span class="c1"># @check_graph_consistency</span>
-    <span class="c1"># @vertexdoctor</span>
+    <span class="c1"># @vertex_doctor</span>
     <span class="c1"># def shortest_path_gpu(graph, nodes=None, numpy=True):</span>
     <span class="c1">#     # tx = cuda.threadIdx.x  # Thread ids in a 2D block</span>
     <span class="c1">#     # ty = cuda.threadIdx.y</span>

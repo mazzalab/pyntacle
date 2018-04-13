@@ -47,7 +47,7 @@ class LocalTopology:
 
     @staticmethod
     @check_graph_consistency
-    @vertexdoctor
+    @vertex_doctor
     def degree(graph: Graph, nodes=None) -> list:
         """
         Computes the degree for a single node, a list of nodes or for all nodes in the Graph. The degree is defined as
@@ -67,7 +67,7 @@ class LocalTopology:
 
     @staticmethod
     @check_graph_consistency
-    @vertexdoctor
+    @vertex_doctor
     def betweenness(graph: Graph, nodes=None) -> list:
         """
         Computes the betwenness for a single node, a list of nodes or for all nodes in the Graph.
@@ -89,7 +89,7 @@ class LocalTopology:
 
     @staticmethod
     @check_graph_consistency
-    @vertexdoctor
+    @vertex_doctor
     def clustering_coefficient(graph: Graph, nodes=None) -> list:
         """
         Computes the clustering coefficient for a single node, a list of nodes or for all nodes in the Graph.
@@ -110,7 +110,7 @@ class LocalTopology:
 
     @staticmethod
     @check_graph_consistency
-    @vertexdoctor
+    @vertex_doctor
     def closeness(graph: Graph, nodes=None) -> list:
         """
         Computes the clustering coefficient for a single node, a list of nodes or for all nodes in the Graph.
@@ -131,7 +131,7 @@ class LocalTopology:
 
     @staticmethod
     @check_graph_consistency
-    @vertexdoctor
+    @vertex_doctor
     def eccentricity(graph: Graph, nodes=None) -> list:
         """
         Computes the eccentricity for a single node, a list of nodes or for all nodes in the Graph.
@@ -193,7 +193,7 @@ class LocalTopology:
 
     @staticmethod
     @check_graph_consistency
-    @vertexdoctor
+    @vertex_doctor
     def radiality(graph: Graph, nodes=None, implementation=SP_implementations.igraph) -> list:
         """
         Computes the radiality for a single node, a list of nodes or for all nodes in the Graph. The radiality of a node
@@ -220,7 +220,7 @@ class LocalTopology:
 
     @staticmethod
     @check_graph_consistency
-    @vertexdoctor
+    @vertex_doctor
     def radiality_reach(graph: Graph, nodes=None, implementation=SP_implementations.igraph) -> list:
         """
         Computes the radiality reach for a single node, a list of nodes or for all nodes in the Graph.
@@ -294,7 +294,7 @@ class LocalTopology:
 
     @staticmethod
     @check_graph_consistency
-    @vertexdoctor
+    @vertex_doctor
     def eigenvector_centrality(graph, nodes, scaled=False):
         """
         Calculates the eigenvector centrality for a single nodes, a group of selected nodes or all nodes in the graph.
@@ -322,7 +322,7 @@ class LocalTopology:
 
     @staticmethod
     @check_graph_consistency
-    @vertexdoctor
+    @vertex_doctor
     def pagerank(graph: Graph, nodes=None, weights=None, damping=0.85) -> list:
         """
         Computes the Google PageRank algorithm from the input node(s), or for all nodes in the graph if it's not
@@ -362,7 +362,7 @@ class LocalTopology:
 
     @staticmethod
     @check_graph_consistency
-    @vertexdoctor
+    @vertex_doctor
     #@profile
     #todo check if i can see the environment variables so I don't have to recall cuda.is_available() every time
     def shortest_path_pyntacle(graph: Graph, nodes=None, mode=GraphType.undirect_unweighted,
@@ -485,7 +485,7 @@ class LocalTopology:
 
     @staticmethod
     @check_graph_consistency
-    @vertexdoctor
+    @vertex_doctor
     def shortest_path_igraph(graph: Graph, nodes=None) -> list:
         """
         Computes the shortest path for a single node, a list of nodes or for all nodes in the Graph using the Dijkstra's
@@ -514,7 +514,7 @@ class LocalTopology:
 
     @staticmethod
     @check_graph_consistency
-    @vertexdoctor
+    @vertex_doctor
     def average_shortest_path_length(graph: Graph, nodes=None, implementation=SP_implementations.igraph) -> list:
         """
         Computes the average of connected shortest path for each a single node, a lists of nodes or all nodes in the
@@ -554,7 +554,7 @@ class LocalTopology:
 
     @staticmethod
     @check_graph_consistency
-    @vertexdoctor
+    @vertex_doctor
     def median_shortest_path_length(graph: Graph, nodes=None, implementation=SP_implementations.igraph) -> list:
         """
         Computes the median among connected shortest path for each a single node, a lists of nodes or all nodes in the

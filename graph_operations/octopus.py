@@ -44,6 +44,8 @@ from cmds.cmds_utils.kpsearch_wrapper import BFWrapper as bfw
 from tools.misc.enums import KPNEGchoices, KPPOSchoices, SP_implementations
 
 
+# TODO DANIELE: Add SPASENESS
+
 def implementation_check(graph):
     if '__implementation' in graph.attributes():
         return graph["__implementation"]
