@@ -35,6 +35,7 @@ class DummyObj:
 
 class WidgetTestCommunities(unittest.TestCase):
     def setUp(self):
+        self.cleanup()
         self.Args = DummyObj()
         self.Args.clusters = None
         self.Args.directory = 'test/test_sets/tmp'
@@ -122,17 +123,13 @@ class WidgetTestCommunities(unittest.TestCase):
                              'Wrong checksum for communities, community-walktrap case')
 
     def tearDown(self):
+        self.cleanup()
+
+    def cleanup(self):
         files = glob.glob('test/test_sets/tmp/*')
         for f in files:
             os.remove(f)
         
         
 if __name__ == '__main__':
-    widget_suite = unittest.TestSuite()
-    widget_suite.addTest(WidgetTestCommunities('test_fastgreedy'))
-    widget_suite.addTest(WidgetTestCommunities('test_infomap'))
-    widget_suite.addTest(WidgetTestCommunities('test_leading_eigenvector'))
-    widget_suite.addTest(WidgetTestCommunities('test_community_walktrap'))
-
-    runner = unittest.TextTestRunner()
-    runner.run(widget_suite)
+    unittest.main()

@@ -8,6 +8,7 @@ from test import getmd5, getmd5_bin
 
 class WidgetTestConvert(unittest.TestCase):
     def setUp(self):
+        self.cleanup()
         self.graph = PyntacleImporter.AdjacencyMatrix(file='test/test_sets/input/figure_8.txt', sep='\t', header=True)
         
     def test_convert_sif(self):
@@ -48,16 +49,12 @@ class WidgetTestConvert(unittest.TestCase):
                          'Wrong checksum for Convert, adjm case')
         
     def tearDown(self):
+        self.cleanup()
+
+    def cleanup(self):
         files = glob.glob('test/test_sets/tmp/*')
         for f in files:
             os.remove(f)
 
 if __name__ == '__main__':
-    widget_suite = unittest.TestSuite()
-    widget_suite.addTest(WidgetTestConvert('test_convert_sif'))
-    widget_suite.addTest(WidgetTestConvert('test_convert_egl'))
-    widget_suite.addTest(WidgetTestConvert('test_convert_bin'))
-    widget_suite.addTest(WidgetTestConvert('test_convert_dot'))
-    widget_suite.addTest(WidgetTestConvert('test_convert_adjm'))
-    runner = unittest.TextTestRunner()
-    runner.run(widget_suite)
+    unittest.main()

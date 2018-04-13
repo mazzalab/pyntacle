@@ -37,6 +37,7 @@ class DummyObj:
 
 class WidgetTestGenerator(unittest.TestCase):
     def setUp(self):
+        self.cleanup()
         self.Args = DummyObj()
         self.Args.directory = 'test/test_sets/tmp'
         self.Args.no_output_header = False
@@ -116,18 +117,15 @@ class WidgetTestGenerator(unittest.TestCase):
         expected = 'test/test_sets/output/generate/smallworld/generated.adjm'
         self.assertEqual(getmd5(fileout), getmd5(expected),
                          'Wrong checksum for Generator, smallworld case')
+        
     def tearDown(self):
+        self.cleanup()
+
+    def cleanup(self):
         files = glob.glob('test/test_sets/tmp/*')
         for f in files:
             os.remove(f)
 
 
 if __name__ == '__main__':
-    widget_suite = unittest.TestSuite()
-    widget_suite.addTest(WidgetTestGenerator('test_random'))
-    widget_suite.addTest(WidgetTestGenerator('test_scalefree'))
-    widget_suite.addTest(WidgetTestGenerator('test_tree'))
-    widget_suite.addTest(WidgetTestGenerator('test_smallworld'))
-
-    runner = unittest.TextTestRunner()
-    runner.run(widget_suite)
+    unittest.main()

@@ -1,4 +1,4 @@
-Quick Graph Overvier	
+Quick Graph Overview	
 graph name	figure_8	
 components	1	
 nodes	32	

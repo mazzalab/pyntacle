@@ -72,7 +72,7 @@ class pyntacleReporter():
         self.report_type = report_type
         self.report = []
         self.report.append([" ".join(["pyntacle Report", self.dat])])
-        self.report.append(["Quick Graph Overvier"])
+        self.report.append(["Quick Graph Overview"])
         self.report.append(["graph name", ",".join(self.graph["name"])])
         self.report.append(["components", len(self.graph.components())])
         self.report.append(["nodes", self.graph.vcount()])
@@ -259,7 +259,7 @@ class pyntacleReporter():
                 self.report.append([k, "NA", "MAXIMUM FRAGMENTATION REACHED"])
 
             else:
-                self.report.append([k, ",".join(reportdict[k][0]), reportdict[k][1]])
+                self.report.append([k, ",".join(reportdict[k][0]), round(reportdict[k][1],5)])
 
     def __greedy_report(self, reportdict: OrderedDict):
         """

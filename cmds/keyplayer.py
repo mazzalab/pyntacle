@@ -38,6 +38,7 @@ from cmds.cmds_utils.reporter import *
 from tools.graph_utils import *
 from tools.add_attributes import AddAttributes
 from tools.misc.graph_load import *
+from tools.misc.enums import Reports
 
 class KeyPlayer():
     def __init__(self, args):
@@ -88,7 +89,7 @@ class KeyPlayer():
         self.logging.debug(self.args)
         # Load Graph
         graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header).graph_load
-        if 'nodes' in self.args:
+        if hasattr(self.args, 'nodes'):
             if not all(x in graph.vs["name"] for x in self.args.nodes):
                 raise WrongArgumentError("One or more nodes you supplied could not be found in the input graph.")
         # init Utils global stuff
@@ -149,6 +150,7 @@ class KeyPlayer():
             results = OrderedDict()
             # Greedy optimization
             if self.args.implementation == "greedy":
+                report_type = Reports.KP_greedy.name
                 kp_runner = gow(graph=graph)
                 sys.stdout.write("Using Greedy Optimization Algorithm for searching optimal KP-Set\n")
 
@@ -198,6 +200,7 @@ class KeyPlayer():
                                                implementation=implementation)
 
             elif self.args.implementation == "brute-force":
+                report_type = Reports.KP_bruteforce.name
                 kp_runner = bfw(graph=graph)
                 sys.stdout.write("Using Brute Force for searching optimal KP-Set\n")
 
@@ -281,7 +284,6 @@ class KeyPlayer():
                         'kp set{0} of size {1} with a reach of {2} for Key Player Metric {3} {4} {5} with value {6} (reaching the {7}% of nodes)\n'.format(
                             plurals[0], self.args.k_size, self.args.m_reach, kp, plurals[1], results[kp][0],
                             results[kp][1], node_perc_reached))
-
             if self.args.implementation == "brute-force":
                 r.create_report(report_type=Reports.KP_bruteforce, report=results)
             elif self.args.implementation == "greedy":
@@ -289,6 +291,7 @@ class KeyPlayer():
 
         # kpinfo: compute kpmetrics for a set of predetermined nodes
         elif self.args.which == 'kp-info':
+            report_type = Reports.KPinfo.name
             k_size = len(self.args.nodes)
             initial_results = {}
             kp_runner = kpw(graph=graph)
@@ -348,9 +351,8 @@ class KeyPlayer():
         # reporting and plotting part
 
         sys.stdout.write("Producing report in {} format.\n".format(self.args.report_format))
-
         report_prefix = "_".join(
-            ["pyntacle", self.args.which, graph["name"][0], "kpsize", str(k_size), results.get("algorithm", "KP-Info"),"report", self.date])
+            ["pyntacle", self.args.which, graph["name"][0], "kpsize", str(k_size), report_type, "report", self.date])
         report_path = os.path.join(self.args.directory, ".".join([report_prefix, self.args.report_format]))
 
         if os.path.exists(report_path):
@@ -414,12 +416,13 @@ class KeyPlayer():
                 else:
                     AddAttributes(graph).add_graph_attributes(k, {
                         tuple(results[KPPOSchoices.mreach.name][0]): results[KPPOSchoices.mreach.name][1]})
-
-            binary_path = os.path.join(self.args.directory, report_prefix + ".graph")
+            binary_prefix = "_".join(["pyntacle", graph["name"][0], "kpsize", str(k_size),
+                                      report_type, self.date])
+            binary_path = os.path.join(self.args.directory, binary_prefix + ".graph")
             PyntacleExporter.Binary(graph, binary_path)
 
         # generate and output plot
-        if not self.args.no_plot or graph.vcount() < 1000:
+        if not self.args.no_plot and graph.vcount() < 1000:
     
             sys.stdout.write("Generating plots in {} format.\n".format(self.args.plot_format))
 

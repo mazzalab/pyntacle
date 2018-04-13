@@ -7,6 +7,7 @@ from test_widgets_logicops import WidgetTestLogicOps
 from test_widgets_metrics import WidgetTestMetrics
 from test_widgets_communities import WidgetTestCommunities
 from test_widgets_generator import WidgetTestGenerator
+from test_widgets_keyplayer import WidgetTestKeyplayer
 
 def suite():
     suite = unittest.TestSuite()
@@ -28,6 +29,9 @@ def suite():
     suite.addTest(WidgetTestGenerator('test_scalefree'))
     suite.addTest(WidgetTestGenerator('test_tree'))
     suite.addTest(WidgetTestGenerator('test_smallworld'))
+    suite.addTest(WidgetTestKeyplayer('test_kpinfo'))
+    suite.addTest(WidgetTestKeyplayer('test_kpfinder_greedy'))
+    suite.addTest(WidgetTestKeyplayer('test_kpfinder_bf'))
     return suite
 
 if __name__ == '__main__':

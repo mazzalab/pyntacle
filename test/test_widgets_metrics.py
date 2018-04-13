@@ -16,6 +16,7 @@ class DummyObj:
 
 class WidgetTestMetrics(unittest.TestCase):
     def setUp(self):
+        self.cleanup()
         self.Args = DummyObj()
         self.Args.directory = 'test/test_sets/tmp'
         self.Args.format = None
@@ -85,9 +86,12 @@ class WidgetTestMetrics(unittest.TestCase):
                          'Wrong checksum for Metrics, local case')
         
     def tearDown(self):
+        self.cleanup()
+
+    def cleanup(self):
         files = glob.glob('test/test_sets/tmp/*')
         for f in files:
             os.remove(f)
-    
+            
 if __name__ == '__main__':
     unittest.main()

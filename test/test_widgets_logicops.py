@@ -9,6 +9,7 @@ from test import getmd5
 
 class WidgetTestLogicOps(unittest.TestCase):
     def setUp(self):
+        self.cleanup()
         self.graph1 = PyntacleImporter.AdjacencyMatrix(file='test/test_sets/input/set1.txt', sep='\t', header=True)
         self.graph2 = PyntacleImporter.AdjacencyMatrix(file='test/test_sets/input/set2.txt', sep='\t', header=True)
         self.setter = GraphSetter(graph1=self.graph1, graph2=self.graph2, new_name='result_set')
@@ -41,14 +42,12 @@ class WidgetTestLogicOps(unittest.TestCase):
         self.assertEqual(getmd5(fileout), getmd5(expected), 'Wrong checksum for Set, difference case')
 
     def tearDown(self):
+        self.cleanup()
+
+    def cleanup(self):
         files = glob.glob('test/test_sets/tmp/*')
         for f in files:
             os.remove(f)
 
 if __name__ == '__main__':
-    widget_suite = unittest.TestSuite()
-    widget_suite.addTest(WidgetTestLogicOps('test_union'))
-    widget_suite.addTest(WidgetTestLogicOps('test_intersect'))
-    widget_suite.addTest(WidgetTestLogicOps('test_difference'))
-    runner = unittest.TextTestRunner()
-    runner.run(widget_suite)
+    unittest.main()
