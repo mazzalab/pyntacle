@@ -1,22 +1,26 @@
-Dedalus Report: Metrics - Global Topology	
+Quick Graph Overvier	
 graph name	figure_8	
 components	1	
 nodes	32	
 edges	56	
 
 	
-Metric Name	Metric Value	
-average_degree	3.5	
-average_path_length	4.082661290322581	
+Pyntacle Command:	Global	
+Results - Global Metrics of the input graph	
+Metric	Value	
+average_shortest_path_length	4.082661290322581	
 diameter	9	
-density	0.10606060606060606	
-clustering_coefficient	0.49732142857142864	
-weighted_clustering_coefficient	0.4977578475336323	
+components	1	
+radius	5	
+density	0.1129	
+pi	6.22222	
+average_clustering_coefficient	0.49732	
+weighted_clustering_coefficient	0.49776	
+average_degree	3.5	
+average_closeness	0.25268	
 average_eccentricity	7.28125	
-average_radiality	5.91733870968	
-average_radiality_reach	5.91733870968	
-average_closeness	0.252675275445	
-pi	6.222222222222222	
-completeness	3.807017543859647	
-completeness_legacy	0.12727272727272726	
-compactness	0.12676853423882287	
+average_radiality	5.91734	
+average_radiality_reach	5.91734	
+completeness_mazza	0.12727	
+completeness_XXX	3.80702	
+compactness	0.12677	

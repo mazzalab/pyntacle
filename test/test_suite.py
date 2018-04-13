@@ -1,11 +1,10 @@
-from config import *
 import unittest
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 from test_widgets_convert import WidgetTestConvert
 from test_widgets_logicops import WidgetTestLogicOps
-# from test_widgets_metrics import WidgetTestMetrics
+from test_widgets_metrics import WidgetTestMetrics
 from test_widgets_communities import WidgetTestCommunities
 from test_widgets_generator import WidgetTestGenerator
 
@@ -19,8 +18,8 @@ def suite():
     suite.addTest(WidgetTestLogicOps('test_union'))
     suite.addTest(WidgetTestLogicOps('test_intersect'))
     suite.addTest(WidgetTestLogicOps('test_difference'))
-    # suite.addTest(WidgetTestMetrics('test_global'))
-    # suite.addTest(WidgetTestMetrics('test_local'))
+    suite.addTest(WidgetTestMetrics('test_global'))
+    suite.addTest(WidgetTestMetrics('test_local'))
     suite.addTest(WidgetTestCommunities('test_fastgreedy'))
     suite.addTest(WidgetTestCommunities('test_infomap'))
     suite.addTest(WidgetTestCommunities('test_leading_eigenvector'))

@@ -201,7 +201,7 @@ class pyntacleReporter():
             temp = []
             temp.append(elem) #append the node names to the appendum
             for k in reportdict.keys():
-                temp.append(reportdict[k][i]) #append the corresponding value to the node name
+                temp.append(round(reportdict[k][i],5)) #append the corresponding value to the node name
             addendum.append(temp)
         self.report = self.report + addendum
 
@@ -371,7 +371,5 @@ class pyntacleReporter():
             self.report.append([k, reportdict[k][0], reportdict[k][1], reportdict[k][2]])
             
     def __set_report(self, reportdict: OrderedDict):
-        print(reportdict)
-        input()
         for k in reportdict.keys():
             self.report.append([k, reportdict[k]])

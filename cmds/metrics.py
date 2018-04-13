@@ -88,7 +88,6 @@ class Metrics:
 
         # Load Graph
         graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header).graph_load
-
         # init Utils global stuff
         utils = GraphUtils(graph=graph)
 
