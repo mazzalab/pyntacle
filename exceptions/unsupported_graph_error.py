@@ -29,5 +29,5 @@ Custom Exception class inherited from ValueError to be raised when the specified
 """
 from config import *
 
-class UnsupportedGrapherror(ValueError):
+class UnsupportedGraphError(ValueError):
     pass

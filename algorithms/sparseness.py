@@ -1,11 +1,19 @@
+"""
+Measure the global sparseness of graphs.
+Read the section "TOOLS FOR ESTIMATING THE DIVISIBILITY OF NETWORKS" of the paper entitled "Estimating the
+divisibility of complex biological networks by sparseness indices" available at
+https://doi.org/10.1093/bib/bbp060 for a quick overview
+"""
+
+
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "27 February 2018"
+__date__ = "13/04/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -24,11 +32,7 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-"""
-Give a measure of sparseness of a graph using 3 different metrics studied in the past few years
-"""
 
-from config import *
 import math
 from tools.misc.graph_routines import *
 
@@ -36,70 +40,118 @@ from tools.misc.graph_routines import *
 class Sparseness:
     @staticmethod
     @check_graph_consistency
-    def completeness_Mazza(graph) -> float:
+    def completeness_naive(graph) -> float:
         """
-        Compute the completeness index as described by Mazza *et al.* [Ref]_for an undirect unweighted graph.
-        They define completeness as the total number of edges over all possible edges minus the number of non-edges
-        (so the number of zeros in the adjacency matrix)
+        Compute the naive version of the completeness index, as described by Mazza *et al.* [Ref]_.
+        They define completeness as the the ratio between the number of non-zero *E* and zero *V* entries in the
+        adjacency matrix of a graph.
         [Ref] https://doi.org/10.1093/bib/bbp060
-        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
-        "Minimum requirements" specifications in pyntacle's manual
-        :return: a float representing the completeness index of the graph
+        :param igraph.Graph graph: an igraph.Graph object.
+        :return: The naive computation of the completeness index
         """
-        # get the total number of nonzero elements in an adjacency matrix
-        num = graph.ecount()  # total number of real edges
-        tote = (graph.vcount() * (graph.vcount() - 1)) / 2
-        denom = tote - graph.ecount()  # total number of non-edges
+
+        # total number of non-zero elements (E)
+        if graph.is_directed():
+            num = graph.ecount()
+        else:
+            num = graph.ecount()*2
+
+        # total number of possible edges (self-loops excluded)
+        node_tot = graph.vcount()
+        if graph.is_directed():
+            maxe = (node_tot * (node_tot - 1)) / 2
+        else:
+            maxe = node_tot * (node_tot - 1)
+
+        # total number of non-edges (V)
+        denom = maxe - num
         if denom == 0:
-            raise ZeroDivisionError("the graph is complete, thus the completeness index is out of bound")
-
-        completeness = num / denom
-
-        return round(completeness, 5)
+            return 1
+        else:
+            completeness = num / denom
+            return round(completeness, 5)
 
     @staticmethod
     @check_graph_consistency
-    def completeness_XXX(graph) -> float:
+    def completeness(graph) -> float:
         """
-        We implement the completeness measure as implemented by **XXX** in [Ref]_ to give a measure of sparsness of a
-        graph. We refer to the paper by **XXX** to explain how this compacteness is computed.
-        [Ref] **Applied Mathematics DOI**
-        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
-        "Minimum requirements" specifications in pyntacle's manual
-        :return:
+        This is a rigorous refinement of the completeness index published in [Ref1]_. It can be applied to matrix
+        not necessarily squared and is calculated as:
+        *rho = (SQRT(k) -1) * (k/z -1)*, where *k = m*n*, *m* = number of rows, *n* = number of columns and
+        *z* = number of zero elements of a matrix.
+        We refer to the paper entitled "Estimating the global density of graphs by a sparseness index" [Ref2]_
+        for details
+        [Ref1] https://doi.org/10.1093/bib/bbp060
+        [Ref2] https://doi.org/10.1016/j.amc.2013.08.040
+        :param igraph.Graph graph: an igraph.Graph object.
+        :return: The completeness index
         """
-        #todo change this here and in enums
-        root_k = graph.vcount()  # k is a dimension of the adjacency matrix (so the square of the vcount)
-        k = math.pow(root_k, 2)
-        first_part = root_k - 1  # (root(k)-1)
-        z = k - (graph.ecount() * 2)  # number of zeros in the matrix
-        second_part = (k / z) - 1
-        completeness = first_part * second_part
 
-        return round(completeness, 5)
+        node_tot = graph.vcount()
+        k = math.pow(node_tot, 2)
+        # (SQRT(k) -1)
+        addend_left = node_tot - 1
+        # number of zeros in the matrix
+        if graph.is_directed():
+            z = k - graph.ecount()
+        else:
+            z = k - (graph.ecount() * 2)
+
+        #  If the graph is complete
+        if z == 0:
+            return 1
+        else:
+            addend_right = (k / z) - 1
+            completeness = addend_left * addend_right
+            return round(completeness, 5)
 
     @staticmethod
     @check_graph_consistency
     def compactness(graph) -> float:
         """
-        Computes the compactness index described by Randìc and DeAlba [Ref]_ in order to mathematically estimate the
-        sparseness of the graph. Compacteness is evaluates by theking the square of the number of vertices in a graph
-        over the total number of connected vertices minus one and multiplying it by one minus the reciprocal of the
-        total number of edges in the graph.
+        It computes the *compactness* index described by Randić and DeAlba [Ref]_ as:
+        (Undirected graphs) rho = ((n^2 / 2E) -1) * (1- 1/n)
+        (Directed graphs) rho = ((n^2 / E) -1) * (1- 1/n), where n is the number of nodes of the graph and
+        E is the total number of edges.
         [Ref]https://pubs.acs.org/doi/abs/10.1021/ci970241z?journalCode=jcics1
-        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
-        "Minimum requirements" specifications in pyntacle's manual
-        :return: a float representing the compactness index of the graph
+        :param igraph.Graph graph: an igraph.Graph object.
+        :return: The compactness index
         """
-        # first part of the equation: (square of the nodes/edges*2)-1
-        a = math.pow(graph.vcount(), 2)
-        b = graph.ecount() * 2
-        numa = a / b - 1
-        numa = math.pow(numa, -1)
-        # second part of the equation (1-1/total number of nodes)
-        numb = 1 - (1 / graph.vcount())
-        numb = math.pow(numb, -1)
-        # finally
-        compactness = numa * numb
+
+        if graph.is_directed():
+            e = graph.ecount()
+        else:
+            e = graph.ecount() * 2
+
+        node_tot = graph.vcount()
+        addend_left = (math.pow(node_tot, 2) / e) - 1
+        addend_right = 1 - (1 / node_tot)
+        compactness = addend_left * addend_right
+
+        return round(compactness, 5)
+
+    @staticmethod
+    @check_graph_consistency
+    def compactness_correct(graph) -> float:
+        """
+        It computes the correct formulation of the Randić and DeAlba's *compactness* index [Ref1]_ as:
+        (Undirected graphs) rho = ((n^2 / 2E) -1)^-1 * (1- 1/n)^-1
+        (Directed graphs) rho = ((n^2 / E)^ -1)^-1 * (1- 1/n)^-1, where n is the number of nodes of the graph and
+        E is the total number of edges, as for [Ref2]_
+        [Ref1]https://pubs.acs.org/doi/abs/10.1021/ci970241z?journalCode=jcics1
+        [Ref2] https://doi.org/10.1093/bib/bbp060
+        :param igraph.Graph graph: an igraph.Graph object.
+        :return: The corrected compactness index
+        """
+
+        if graph.is_directed():
+            e = graph.ecount()
+        else:
+            e = graph.ecount() * 2
+
+        node_tot = graph.vcount()
+        addend_left = (math.pow(node_tot, 2) / e) - 1
+        addend_right = 1 - (1 / node_tot)
+        compactness = math.pow(addend_left, -1) * math.pow(addend_right, -1)
 
         return round(compactness, 5)

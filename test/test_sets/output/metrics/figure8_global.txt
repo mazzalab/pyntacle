@@ -22,5 +22,5 @@ average_eccentricity	7.28125
 average_radiality	5.91734	
 average_radiality_reach	5.91734	
 completeness_mazza	0.12727	
-completeness_XXX	3.80702	
+completeness	3.80702
 compactness	0.12677	

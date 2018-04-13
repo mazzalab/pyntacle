@@ -37,7 +37,7 @@ import os
 from igraph import Graph
 from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
 from tools.misc.enums import SP_implementations
-from exceptions.unsupported_graph_error import UnsupportedGrapherror
+from exceptions.unsupported_graph_error import UnsupportedGraphError
 # pyntacle Libraries
 from exceptions.wrong_argument_error import WrongArgumentError
 

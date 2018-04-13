@@ -36,7 +36,7 @@ import numpy as np
 from exceptions.illegal_graph_size_error import IllegalGraphSizeError
 from exceptions.missing_attribute_error import MissingAttributeError
 from exceptions.notagraph_error import NotAGraphError
-from exceptions.unsupported_graph_error import UnsupportedGrapherror
+from exceptions.unsupported_graph_error import UnsupportedGraphError
 from exceptions.wrong_argument_error import WrongArgumentError
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 
@@ -71,10 +71,10 @@ class GraphUtils:
         """
 
         if Graph.is_directed(self.__graph):
-            raise UnsupportedGrapherror("Input graph is direct, pyntacle supports only undirected graphs")
+            raise UnsupportedGraphError("Input graph is direct, pyntacle supports only undirected graphs")
 
         if not Graph.is_simple(self.__graph):
-            raise UnsupportedGrapherror("Input Graph contains self loops and multiple edges")
+            raise UnsupportedGraphError("Input Graph contains self loops and multiple edges")
 
         if "name" not in self.__graph.vs().attributes():
             raise KeyError("nodes must have the attribute  \"name\"")
@@ -82,7 +82,7 @@ class GraphUtils:
             raise TypeError("node \"name\" attribute must be a string")
 
         if len(set(self.__graph.vs()["name"])) != len(self.__graph.vs()["name"]):
-            raise UnsupportedGrapherror("Node names must be unique, check the \"name\" attribute in graph")
+            raise UnsupportedGraphError("Node names must be unique, check the \"name\" attribute in graph")
 
     def check_index_list(self, index_list):
         """

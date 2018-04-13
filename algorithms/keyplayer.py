@@ -192,7 +192,7 @@ class KeyPlayer:
 
     @staticmethod
     @check_graph_consistency
-    @vertexdoctor
+    @vertex_doctor
     def mreach(graph, nodes, m, max_distances=None, implementation=SP_implementations.igraph, sp_matrix=None) -> int:
         """
         Calculates the m-reach ([Ref]_, equation 12). The m-reach is defined as a count of the number of unique nodes
@@ -268,7 +268,7 @@ class KeyPlayer:
 
     @staticmethod
     @check_graph_consistency
-    @vertexdoctor
+    @vertex_doctor
     def dR(graph, nodes, max_distances=None, implementation=SP_implementations.igraph, sp_matrix=None) -> float:
         """
         Calculates the distance-weighted reach ([Ref]_, equation 14). The distance-weighted reach can be defined as the

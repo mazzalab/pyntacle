@@ -280,21 +280,22 @@ class Metrics:
             sys.stdout.write("Computing global Metrics for whole graph\n")
 
             global_attributes_dict = OrderedDict({GlobalAttribute.average_shortest_path_length.name: GlobalTopology.average_shortest_path_length(graph=graph),
-                                                 GlobalAttribute.diameter.name: GlobalTopology.diameter(graph=graph),
-                                                 GlobalAttribute.components.name: GlobalTopology.components(graph=graph),
-                                                 GlobalAttribute.radius.name: GlobalTopology.radius(graph=graph),
-                                                 GlobalAttribute.density.name: GlobalTopology.density(graph=graph),
-                                                 GlobalAttribute.pi.name: GlobalTopology.pi(graph=graph),
-                                                 GlobalAttribute.average_clustering_coefficient.name: GlobalTopology.average_clustering_coefficient(graph=graph),
-                                                 GlobalAttribute.weighted_clustering_coefficient.name: GlobalTopology.weighted_clustering_coefficient(graph=graph),
-                                                 GlobalAttribute.average_degree.name: GlobalTopology.average_degree(graph=graph),
-                                                 GlobalAttribute.average_closeness.name: GlobalTopology.average_closeness(graph=graph),
-                                                 GlobalAttribute.average_eccentricity.name: GlobalTopology.average_eccentricity(graph=graph),
-                                                 GlobalAttribute.average_radiality.name: GlobalTopology.average_radiality(graph=graph, implementation=implementation),
-                                                 GlobalAttribute.average_radiality_reach.name: GlobalTopology.average_radiality_reach(graph=graph, implementation=implementation),
-                                                 GlobalAttribute.completeness_mazza.name: Sparseness.completeness_Mazza(graph=graph),
-                                                 GlobalAttribute.completeness_XXX.name: Sparseness.completeness_XXX(graph=graph),
-                                                 GlobalAttribute.compactness.name: Sparseness.compactness(graph=graph)
+                                                    GlobalAttribute.diameter.name: GlobalTopology.diameter(graph=graph),
+                                                    GlobalAttribute.components.name: GlobalTopology.components(graph=graph),
+                                                    GlobalAttribute.radius.name: GlobalTopology.radius(graph=graph),
+                                                    GlobalAttribute.density.name: GlobalTopology.density(graph=graph),
+                                                    GlobalAttribute.pi.name: GlobalTopology.pi(graph=graph),
+                                                    GlobalAttribute.average_clustering_coefficient.name: GlobalTopology.average_clustering_coefficient(graph=graph),
+                                                    GlobalAttribute.weighted_clustering_coefficient.name: GlobalTopology.weighted_clustering_coefficient(graph=graph),
+                                                    GlobalAttribute.average_degree.name: GlobalTopology.average_degree(graph=graph),
+                                                    GlobalAttribute.average_closeness.name: GlobalTopology.average_closeness(graph=graph),
+                                                    GlobalAttribute.average_eccentricity.name: GlobalTopology.average_eccentricity(graph=graph),
+                                                    GlobalAttribute.average_radiality.name: GlobalTopology.average_radiality(graph=graph, implementation=implementation),
+                                                    GlobalAttribute.average_radiality_reach.name: GlobalTopology.average_radiality_reach(graph=graph, implementation=implementation),
+                                                    GlobalAttribute.completeness_naive.name: Sparseness.completeness_naive(graph=graph),
+                                                    GlobalAttribute.completeness.name: Sparseness.completeness(graph=graph),
+                                                    GlobalAttribute.compactness.name: Sparseness.compactness(graph=graph),
+                                                    GlobalAttribute.compactness_correct.name: Sparseness.compactness_correct(graph=graph)
                                                  })
 
             sys.stdout.write("Producing report\n")
@@ -322,24 +323,30 @@ class Metrics:
                 graph_nonodes.delete_vertices(index_list) #remove target nodes
 
                 global_attributes_dict_nonodes = OrderedDict({
-                         'Removed nodes': ','.join(nodes_list),
-                         GlobalAttribute.average_shortest_path_length.name: GlobalTopology.average_shortest_path_length(graph=graph_nonodes),
-                         GlobalAttribute.diameter.name: GlobalTopology.diameter(graph=graph_nonodes),
-                         GlobalAttribute.components.name: GlobalTopology.components(graph=graph_nonodes),
-                         GlobalAttribute.radius.name: GlobalTopology.radius(graph=graph_nonodes),
-                         GlobalAttribute.density.name: GlobalTopology.density(graph=graph_nonodes),
-                         GlobalAttribute.pi.name: GlobalTopology.pi(graph=graph_nonodes),
-                         GlobalAttribute.average_clustering_coefficient.name: GlobalTopology.average_clustering_coefficient(graph=graph_nonodes),
-                         GlobalAttribute.weighted_clustering_coefficient.name: GlobalTopology.weighted_clustering_coefficient(graph=graph_nonodes),
-                         GlobalAttribute.average_degree.name: GlobalTopology.average_degree(graph=graph_nonodes),
-                         GlobalAttribute.average_closeness.name: GlobalTopology.average_closeness(graph=graph_nonodes),
-                         GlobalAttribute.average_eccentricity.name: GlobalTopology.average_eccentricity(graph=graph_nonodes),
-                         GlobalAttribute.average_radiality.name: GlobalTopology.average_radiality(graph=graph_nonodes, implementation=implementation),
-                         GlobalAttribute.average_radiality_reach.name: GlobalTopology.average_radiality_reach(graph=graph_nonodes, implementation=implementation),
-                         GlobalAttribute.completeness_mazza.name: Sparseness.completeness_Mazza(graph=graph_nonodes),
-                         GlobalAttribute.completeness_XXX.name: Sparseness.completeness_XXX(graph=graph_nonodes),
-                         GlobalAttribute.compactness.name: Sparseness.compactness(graph=graph_nonodes)
-                         })
+                    'Removed nodes': ','.join(nodes_list),
+                    GlobalAttribute.average_shortest_path_length.name: GlobalTopology.average_shortest_path_length(
+                        graph=graph_nonodes),
+                    GlobalAttribute.diameter.name: GlobalTopology.diameter(graph=graph_nonodes),
+                    GlobalAttribute.components.name: GlobalTopology.components(graph=graph_nonodes),
+                    GlobalAttribute.radius.name: GlobalTopology.radius(graph=graph_nonodes),
+                    GlobalAttribute.density.name: GlobalTopology.density(graph=graph_nonodes),
+                    GlobalAttribute.pi.name: GlobalTopology.pi(graph=graph_nonodes),
+                    GlobalAttribute.average_clustering_coefficient.name: GlobalTopology.average_clustering_coefficient(
+                        graph=graph_nonodes),
+                    GlobalAttribute.weighted_clustering_coefficient.name: GlobalTopology.weighted_clustering_coefficient(
+                        graph=graph_nonodes),
+                    GlobalAttribute.average_degree.name: GlobalTopology.average_degree(graph=graph_nonodes),
+                    GlobalAttribute.average_closeness.name: GlobalTopology.average_closeness(graph=graph_nonodes),
+                    GlobalAttribute.average_eccentricity.name: GlobalTopology.average_eccentricity(graph=graph_nonodes),
+                    GlobalAttribute.average_radiality.name: GlobalTopology.average_radiality(graph=graph_nonodes,
+                                                                                             implementation=implementation),
+                    GlobalAttribute.average_radiality_reach.name: GlobalTopology.average_radiality_reach(
+                        graph=graph_nonodes, implementation=implementation),
+                    GlobalAttribute.completeness_naive.name: Sparseness.completeness_naive(graph=graph_nonodes),
+                    GlobalAttribute.completeness.name: Sparseness.completeness(graph=graph_nonodes),
+                    GlobalAttribute.compactness.name: Sparseness.compactness(graph=graph_nonodes),
+                    GlobalAttribute.compactness_correct.name: Sparseness.compactness_correct(graph=graph_nonodes)
+                })
 
                 sys.stdout.write("Producing report\n")
                 graph_nonodes["name"][0] += '_without_nodes'
