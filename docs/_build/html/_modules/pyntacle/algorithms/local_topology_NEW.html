@@ -617,14 +617,14 @@
                 <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">adjmat</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># set diagonal values to 0 (no distance from itself)</span>
 
                 <span class="k">if</span> <span class="n">implementation</span> <span class="o">==</span> <span class="n">implementation</span><span class="o">.</span><span class="n">cpu</span> <span class="ow">or</span> <span class="n">implementation</span> <span class="o">==</span> <span class="n">implementation</span><span class="o">.</span><span class="n">auto</span><span class="p">:</span>
-                    <span class="n">sps</span> <span class="o">=</span> <span class="n">LocalTopology</span><span class="o">.</span><span class="n">__shortest_path_CPU</span><span class="p">(</span><span class="n">adjmat</span><span class="o">=</span><span class="n">adjmat</span><span class="p">)</span>
+                    <span class="n">sps</span> <span class="o">=</span> <span class="n">LocalTopology</span><span class="o">.</span><span class="n">__shortest_path_cpu</span><span class="p">(</span><span class="n">adjmat</span><span class="o">=</span><span class="n">adjmat</span><span class="p">)</span>
                     <span class="k">return</span> <span class="n">sps</span>
 
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
                         <span class="s2">&quot;Implementation </span><span class="si">{}</span><span class="s2"> not available at the time using CPU, please come back soon &quot;</span>
                         <span class="s2">&quot;for the modifed version&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">implementation</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
-                    <span class="n">sps</span> <span class="o">=</span> <span class="n">LocalTopology</span><span class="o">.</span><span class="n">__shortest_path_CPU</span><span class="p">(</span><span class="n">adjmat</span><span class="o">=</span><span class="n">adjmat</span><span class="p">)</span>
+                    <span class="n">sps</span> <span class="o">=</span> <span class="n">LocalTopology</span><span class="o">.</span><span class="n">__shortest_path_cpu</span><span class="p">(</span><span class="n">adjmat</span><span class="o">=</span><span class="n">adjmat</span><span class="p">)</span>
                     <span class="k">return</span> <span class="n">sps</span>
 
             <span class="k">else</span><span class="p">:</span>
@@ -637,7 +637,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="nd">@jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">__shortest_path_CPU</span><span class="p">(</span><span class="n">adjmat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__shortest_path_cpu</span><span class="p">(</span><span class="n">adjmat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the shortest paths of a graph for aa single nodes, a set of nodes or all nodes in the graph using</span>
 <span class="sd">        &#39;Floyd-Warshall Implementation &lt;https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm&gt;&#39;_. The forumla</span>

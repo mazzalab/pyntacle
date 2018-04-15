@@ -36,7 +36,7 @@ import logging
 import os
 from igraph import Graph
 from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
-from tools.misc.enums import SP_implementations
+from tools.misc.enums import Cmode
 from exceptions.unsupported_graph_error import UnsupportedGraphError
 # pyntacle Libraries
 from exceptions.wrong_argument_error import WrongArgumentError
@@ -263,11 +263,11 @@ class AddAttributes():
         '''
         Adding implementation info for functions that require it
         '''
-        sp_implementation = SP_implementations.igraph
+        sp_implementation = Cmode.igraph
         if self.__graph.vcount() > 2500:  # random number
             # if cuda_avail:
-            #     sp_implementation = SP_implementations.gpu
+            #     sp_implementation = Cmode.gpu
             # else:
-                sp_implementation = SP_implementations.cpu
+                sp_implementation = Cmode.cpu
         
         self.__graph["__implementation"] = sp_implementation

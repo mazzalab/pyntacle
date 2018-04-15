@@ -29,7 +29,7 @@ __license__ = u"""
 from config import *
 import algorithms.local_topology as lt
 from tools.misc.graph_routines import *
-from tools.misc.enums import SP_implementations
+from tools.misc.enums import Cmode
 from tools.graph_utils import GraphUtils as gu
 from tools.misc.shortest_path_modifications import *
 import numpy as np
@@ -76,7 +76,7 @@ class KeyPlayer:
 
     @staticmethod
     @check_graph_consistency
-    def dF(graph, implementation=SP_implementations.igraph, max_distances=None) -> float:
+    def dF(graph, implementation=Cmode.igraph, max_distances=None) -> float:
         """
         A measure for computing the dF (a KPP-NEG Measure) ([Ref]_ equation 9). The DF is a measure of node connectivity
         among the graph and it's a measure of how nodes in the graph can be reached.
@@ -102,8 +102,8 @@ class KeyPlayer:
         # print("df, USING IMPLEMENTATION", implementation)
         # input()
 
-        if not isinstance(implementation, SP_implementations):
-            raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(SP_implementations)))
+        if not isinstance(implementation, Cmode):
+            raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(Cmode)))
 
 
         if max_distances is not None:
@@ -120,7 +120,7 @@ class KeyPlayer:
             return 1.0
 
         else:
-            if implementation == SP_implementations.igraph:
+            if implementation == Cmode.igraph:
                 return KeyPlayer.__dF_Borgatti(graph=graph, max_distances=max_distances)
 
             else:
@@ -157,7 +157,7 @@ class KeyPlayer:
         return round(df, 5)
 
     @staticmethod
-    def __dF_pyntacle(graph, max_distances=None, implementation=SP_implementations.igraph) -> float:
+    def __dF_pyntacle(graph, max_distances=None, implementation=Cmode.igraph) -> float:
         """
         Implement the DF search using parallel computing we implemented in `LocalTopology.shortest_path_pyntacle` in
         order to speed up shortest path  search using either CPU or HPU accelerations (if nVidia compatible graphics
@@ -193,7 +193,7 @@ class KeyPlayer:
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def mreach(graph, nodes, m, max_distances=None, implementation=SP_implementations.igraph, sp_matrix=None) -> int:
+    def mreach(graph, nodes, m, max_distances=None, implementation=Cmode.igraph, sp_matrix=None) -> int:
         """
         Calculates the m-reach ([Ref]_, equation 12). The m-reach is defined as a count of the number of unique nodes
         reached by any member of the kp-set in m links or less.
@@ -203,7 +203,7 @@ class KeyPlayer:
         :param int m: an integer (greater than zero) representing the maximum m-reach distance
         :param nodes: a single node (as a string) or a list of nodes of the graph *(the ones stored  in the graph.vs["name"] object)* **(required)**
         :param int max_distances: the maximum distance after that two nodes are considered disconnected
-        :param SP_implementations implementation: computes the shortest path using one of the two provided methods in LocalTopology
+        :param Cmode implementation: computes the shortest path using one of the two provided methods in LocalTopology
         choices are:
         *`imps.auto`: automatic implementation (default) chooses the best implementation according to the graph properties
         *`imps.igraqh`: use the default shortest path implementation in igraph (performs on a single core)
@@ -220,8 +220,8 @@ class KeyPlayer:
         elif m >= graph.vcount() + 1:
             raise ValueError("\"m\" must be lesser than the total number of vertices plus one")
 
-        if not isinstance(implementation, SP_implementations):
-            raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(SP_implementations)))
+        if not isinstance(implementation, Cmode):
+            raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(Cmode)))
 
         if max_distances is not None:
                 if not isinstance(max_distances, int):
@@ -232,7 +232,7 @@ class KeyPlayer:
 
         index_list = gu(graph=graph).get_node_indices(node_names=nodes)
 
-        if implementation == SP_implementations.igraph:
+        if implementation == Cmode.igraph:
             shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
 
             if max_distances is not None:
@@ -269,7 +269,7 @@ class KeyPlayer:
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def dR(graph, nodes, max_distances=None, implementation=SP_implementations.igraph, sp_matrix=None) -> float:
+    def dR(graph, nodes, max_distances=None, implementation=Cmode.igraph, sp_matrix=None) -> float:
         """
         Calculates the distance-weighted reach ([Ref]_, equation 14). The distance-weighted reach can be defined as the
         sum of the reciprocals of distances from the kp-set S to all nodes, where the distance from the set to a node is
@@ -279,7 +279,7 @@ class KeyPlayer:
         :param nodes: a single node (as a string) or a list of nodes of the graph *(the ones stored  in the
         graph.vs["name"] object)* **(required)**
         :param int max_distances: the maximum distance after that two nodes are considered disconnected
-        :param SP_implementations implementation: computes the shortest path using one of the two provided methods in LocalTopology
+        :param Cmode implementation: computes the shortest path using one of the two provided methods in LocalTopology
         choices are:
         *`imps.auto`: automatic implementation (default) chooses the best implementation according to the graph properties
         *`imps.igraqh`: use the default shortest path implementation in igraph (performs on a single core)
@@ -289,8 +289,8 @@ class KeyPlayer:
         """
         # print("dr, USING IMPLEMENTATION", implementation)
 
-        if not isinstance(implementation, SP_implementations):
-            raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(SP_implementations)))
+        if not isinstance(implementation, Cmode):
+            raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(Cmode)))
 
         if max_distances is not None :
                 if not isinstance(max_distances, int):
@@ -301,7 +301,7 @@ class KeyPlayer:
 
         index_list = gu(graph=graph).get_node_indices(node_names=nodes)
 
-        if implementation == SP_implementations.igraph:
+        if implementation == Cmode.igraph:
             shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
 
             if max_distances is not None:

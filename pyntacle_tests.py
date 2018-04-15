@@ -52,13 +52,13 @@ from igraph import Graph
 #     np.fill_diagonal(result, 0)
 #
 #     import math
-#     from algorithms.shortestpath_GPU import shortest_path_GPU
+#     from algorithms.shortestpath_GPU import shortest_path_gpu
 #     threadsperblock = (16, 16)
 #     blockspergrid_x = math.ceil(start_adj.shape[0] / threadsperblock[0])
 #     blockspergrid_y = math.ceil(start_adj.shape[1] / threadsperblock[1])
 #     blockspergrid = (blockspergrid_x, blockspergrid_y)
 #
-#     shortest_path_GPU[blockspergrid, threadsperblock](start_adj, result)
+#     shortest_path_gpu[blockspergrid, threadsperblock](start_adj, result)
 #     print(result)
 #     sys.exit()
 
@@ -69,30 +69,36 @@ from igraph import Graph
 
 # #
 # print('gpu')
-# print(LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.gpu))
+# print(LocalTopology.shortest_path_pyntacle(graph=mat, implementation=Cmode.gpu))
 #
 # print('\n\ncpu')
 #
 #
-# print(LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.cpu))
+# print(LocalTopology.shortest_path_pyntacle(graph=mat, implementation=Cmode.cpu))
 # input()
 # #
 # #
 
-mat= GraphLoad(r'C:\Users\t.mazza\Desktop\CSS-Bioinformatics\pyntacle\test\test_sets\input\figure_8.txt', "adjm", True).graph_load()
+mat= GraphLoad(r'C:\Users\Iron\Desktop\CSS-Bioinformatics\pyntacle\test\test_sets\input\figure_8.txt',
+               "adjm", True).graph_load()
+
+print("Eccentricity of BR: {}".format(LocalTopology.eccentricity(mat, "BR")))
+
+print("Radiality of BR: {}".format(LocalTopology.radiality(mat, "BR", Cmode.igraph)))
+
 # print('\n\nORIGINAL MAT')
 # print(mat.get_adjacency())
-# result_igraph = LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.igraph)
-# result_cpu = LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.cpu)
-# result_gpu = LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.gpu)
+# result_igraph = LocalTopology.shortest_path_pyntacle(graph=mat, implementation=Cmode.igraph)
+# result_cpu = LocalTopology.shortest_path_pyntacle(graph=mat, implementation=Cmode.cpu)
+# result_gpu = LocalTopology.shortest_path_pyntacle(graph=mat, implementation=Cmode.gpu)
 #
 # print("IGRAPH vs CPU: " + str((result_igraph == result_cpu).all()) + "\n\n")
 # print(result_igraph)
-# print("IGRAPH vs GPU: " + str((result_igraph == result_gpu).all()) + "\n\n")
+# print("IGRAPH vs GPU: " + str((result_igraph == result_gpu).all()))
 # print(result_gpu)
 
-from algorithms.sparseness import Sparseness
-Sparseness.completeness(mat)
+# from algorithms.sparseness import Sparseness
+# Sparseness.completeness(mat)
 
 
 # #

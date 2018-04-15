@@ -95,7 +95,7 @@ class Metrics:
         if '__implementation' in graph.attributes():
             implementation = graph['__implementation']
         else:
-            implementation = SP_implementations.igraph
+            implementation = Cmode.igraph
             
         if self.args.largest_component:
             try:
@@ -199,7 +199,7 @@ class Metrics:
                  LocalAttribute.clustering_coefficient.name: LocalTopology.clustering_coefficient(graph=graph, nodes=nodes_list),
                  LocalAttribute.betweenness.name: LocalTopology.betweenness(graph=graph, nodes=nodes_list),
                  LocalAttribute.closeness.name: LocalTopology.closeness(graph=graph, nodes=nodes_list),
-                 LocalAttribute.radiality.name: LocalTopology.radiality(graph=graph, nodes=nodes_list, implementation=implementation),
+                 LocalAttribute.radiality.name: LocalTopology.radiality(graph=graph, nodes=nodes_list, cmode=implementation),
                  LocalAttribute.radiality_reach.name: LocalTopology.radiality_reach(graph=graph, nodes=nodes_list, implementation=implementation),
                  LocalAttribute.eccentricity.name: LocalTopology.eccentricity(graph=graph, nodes=nodes_list),
                  LocalAttribute.eigenvector_centrality.name : LocalTopology.eigenvector_centrality(graph=graph, nodes=nodes_list),

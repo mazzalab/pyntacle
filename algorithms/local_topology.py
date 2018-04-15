@@ -1,11 +1,15 @@
-__author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
+"""
+Compute several local topology metrics for a graph's nodes
+"""
+
+__author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "12/04/2018"
+__date__ = "14/04/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -24,25 +28,16 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-"""
-Compute Local Topology metrics for all nodes in the graph or for a set of nodes
-"""
-from config import *
-from math import isinf, ceil
-from numba import cuda, jit, prange
-import numpy as np
-import statistics
+
 from tools.misc.graph_routines import *
-from psutil import virtual_memory
-from tools.misc.enums import GraphType, SP_implementations
-from tools.misc.shortest_path_modifications import *
-from tools.graph_utils import GraphUtils as ut
+from tools.misc.enums import Cmode
+from tools.graph_utils import GraphUtils as gUtil
+from algorithms.shortest_path import ShortestPath
 
 
 class LocalTopology:
     """
-    LocalTopology Computes information at a local level. Information is computed either for a single node or (if not
-    specified) for the whole node set in a network
+    Compute centrality measures locally to a graph. Methods are designed to work with all or selected nodes.
     """
 
     @staticmethod
@@ -50,178 +45,138 @@ class LocalTopology:
     @vertex_doctor
     def degree(graph: Graph, nodes=None) -> list:
         """
-        Computes the degree for a single node, a list of nodes or for all nodes in the Graph. The degree is defined as
-        the number of incident edges to a single nodes.
-        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
-        "Minimum requirements" specifications in pyntacle's manual
-        :param nodes: if a node name, returns the degree of the input node. If a list of node names,
-        the degree is returned for all node names.if None (default), the degree is computed for the whole graph.
+        Compute the *degree* of a node or of a list of nodes of an undirected graph. The degree is defined as
+        the number of incident edges to a node.
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
+        (default), the index is computed for all nodes of the graph.
         :return: a list of integers, the length being the number of input nodes. Each integer represent the degree
-        of the input nodes
+        of the input nodes. The order of the node list in input is preserved.
         """
 
-        if nodes is None:
-            return graph.degree()
-        else:
-            return graph.degree(nodes)
+        return graph.degree(nodes) if nodes else graph.degree()
 
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
     def betweenness(graph: Graph, nodes=None) -> list:
         """
-        Computes the betwenness for a single node, a list of nodes or for all nodes in the Graph.
-        The degree is defined as the ratio of the number of shortest path that passes through the node
-        over all shortest paths.
-        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
-        "Minimum requirements" specifications in pyntacle's manual
-        :param nodes: if a node name, returns the degree of the input node. If a list of node names,
-        the degree is returned for all node names.if None (default), the degree is computed for the whole graph.
-        :return: a list of floats, the length being the number of input nodes. Each float represent the betweenness
-        of the input node
+        Compute the *betweenness* of a node or of a list of nodes of an undirected graph.
+        The betweenness is defined as the ratio of the number of shortest paths that pass through the node
+        over all shortest paths in the graph.
+        :param igraph.Graph graph: an igraph.Graph object. The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
+        (default), the index is computed for all nodes of the graph.
+        :return: a list of floats, the length being the number of input nodes. Each float represents the betweenness
+        of the input nodes. The order of the node list in input is preserved.
         """
 
-        if nodes is None:
-            return graph.betweenness(directed=False)
-
-        else:
-            return graph.betweenness(nodes,directed=False)
+        return graph.betweenness(nodes, directed=False) if nodes else graph.betweenness(directed=False)
 
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
     def clustering_coefficient(graph: Graph, nodes=None) -> list:
         """
-        Computes the clustering coefficient for a single node, a list of nodes or for all nodes in the Graph.
+        Compute the *clustering coefficient* of a node or of a list of nodes of an undirected graph.
         The clustering coefficient is defined as the number of triangles formed among the node's neighbours over the
-        possible number of triangles that would be present if the input node(s) and its neighbours were a clique.
-        If the degree of the input node(s) is less than two, the clustering coefficient of these nodes is set to zero.
-        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
-        "Minimum requirements" specifications in pyntacle's manual
-        :param nodes: if a node name, returns the degree of the input node. If a list of node names,
-        the degree is returned for all node names.if None (default), the degree is computed for the whole graph.
-        :return: a list of floats, the length being the number of input nodes. Each float represent the clustering
-        coefficient of the input node
+        possible number of triangles that would be present if the input node and its neighbours were a clique.
+        If the degree of the input node is less than two, the clustering coefficient of these nodes is set to zero.
+        :param igraph.Graph graph: an igraph.Graph object. The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
+        (default), the index is computed for all nodes of the graph.
+        :return: a list of floats, the length being the number of input nodes. Each float represents the clustering
+        coefficient of the input nodes. The order of the node list in input is preserved.
         """
-        if nodes is None:
-            return graph.transitivity_local_undirected(mode="zero")
-        else:
-            return graph.transitivity_local_undirected(vertices=nodes, mode="zero")
+
+        return graph.transitivity_local_undirected(vertices=nodes, mode="zero") \
+            if nodes \
+            else graph.transitivity_local_undirected(mode="zero")
 
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
     def closeness(graph: Graph, nodes=None) -> list:
         """
-        Computes the clustering coefficient for a single node, a list of nodes or for all nodes in the Graph.
-        The closeness is defined as the sum of the length of the shortest paths passing through the node(s)
-        over all the length of all shortest paths in the graph.
-        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
-        "Minimum requirements" specifications in pyntacle's manual
-        :param nodes: if a node name, returns the degree of the input node. If a list of node names,
-        the degree is returned for all node names.if None (default), the degree is computed for the whole graph.
-        :return: a list of floats, the length being the number of input nodes. Each float represent the closeness
-        of the input node
+        Computes the *closeness* of a node or of a list of nodes of an undirected graph.
+        The closeness is defined as the sum of the length of the shortest paths passing through the node
+        over the length of all shortest paths in the graph.
+        :param igraph.Graph graph: an igraph.Graph object. The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
+        (default), the index is computed for all nodes of the graph.
+        :return: a list of floats, the length being the number of input nodes. Each float represents the closeness
+        of the input node. The order of the node list in input is preserved.
         """
 
-        if nodes is None:
-            return graph.closeness()
-        else:
-            return graph.closeness(vertices=nodes)
+        return graph.closeness(vertices=nodes) if nodes else graph.closeness()
 
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
     def eccentricity(graph: Graph, nodes=None) -> list:
         """
-        Computes the eccentricity for a single node, a list of nodes or for all nodes in the Graph.
-        The eccentricity is defined as the maximum of all the distances (shortest path) between the node(s)
-        and all other nodes in the graph. The eccentricity of two disconnected nodes is defined as zero.
-        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
-        "Minimum requirements" specifications in pyntacle's manual
-        :param nodes: if a node name, returns the degree of the input node. If a list of node names,
-        the degree is returned for all node names.if None (default), the degree is computed for the whole graph.
-        :return: a list of integers, the length being the number of input nodes. Each float represent the closeness
-        of the input node
+        Computes the *eccentricity* of a node or of a list of nodes of an undirected graph.
+        The eccentricity is defined as the maximum of all the distances (shortest paths) between the input node
+        and all other nodes in the graph. The eccentricity of any two disconnected nodes is defined as zero.
+        :param igraph.Graph graph: an igraph.Graph object. The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
+        (default), the index is computed for all nodes of the graph.
+        :return: a list of integers, the length being the number of input nodes. Each value represents the eccentricity
+        of the input node. The order of the node list in input is preserved.
         """
 
-        if nodes is None:
-            return [int(x) for x in graph.eccentricity()]
-        else:
-            return [int(x) for x in graph.eccentricity(vertices=nodes)]
-
-    @staticmethod
-    def __radiality_inner__(graph: Graph, nodes=None, implementation=SP_implementations.igraph) -> list:
-        """
-        inner class that handles the radiality calculus (without throwing any error)
-        """
-        if not isinstance(implementation, SP_implementations):
-            raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(SP_implementations)))
-
-        else:
-
-            diameter = graph.diameter()
-            num_nodes = graph.vcount()
-            rad = []  # list that will store radiality values
-
-            if implementation == SP_implementations.igraph:
-                sps = LocalTopology.shortest_path_igraph(graph, nodes=nodes)  # recall the shortest path function here
-
-            elif implementation == SP_implementations.cpu:
-                sps = LocalTopology.shortest_path_pyntacle(graph=graph, nodes=nodes,
-                                                           mode=GraphType.undirect_unweighted,
-                                                           implementation=implementation)
-                sps = sps.tolist()  # reconvert to a list of lists
-                sps = [[float('inf') if x == (graph.vcount()+1) else x for x in y] for y in sps]
-
-            else: #GPU case
-                sps = LocalTopology.shortest_path_pyntacle(graph=graph, nodes=nodes,
-                                                           mode=GraphType.undirect_unweighted,
-                                                           implementation=implementation)
-                sps = sps.tolist()  # reconvert to a list of lists
-                sps = [[float('inf') if x == (graph.vcount() + 1) else x for x in y] for y in sps]
-
-            for sp in sps:  # loop through the shortest path of each node name
-                partial_sum = 0
-                for sp_length in sp:
-                    if sp_length != 0:
-                        partial_sum += diameter + 1 - sp_length
-
-                rad.append(round(float(partial_sum / (num_nodes - 1)), 5))
-
-            return rad
+        return list(map(int, graph.eccentricity(vertices=nodes))) if nodes else list(map(int, graph.eccentricity()))
 
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def radiality(graph: Graph, nodes=None, implementation=SP_implementations.igraph) -> list:
+    def radiality(graph: Graph, nodes=None, cmode: Cmode=Cmode.igraph) -> list:
         """
-        Computes the radiality for a single node, a list of nodes or for all nodes in the Graph. The radiality of a node
-        (v) is calculated by computing the shortest path between the node v and all other nodes in the graph. The value
-        of each path is then subtracted by the value of the diameter + 1 and the resulting values are summated and
-        weighted over the total number of nodes -1. Finally, the obtained value is divided for the number of nodes -1
-        (n-1).
-        **WARNING:** Radiality works well when a graph is connected. If the node is disconnected, the radiality is
-        always *-inf*. If the graph is  made of at least two components, we highly recommend using the *radiality_reach*
-        method we implemented here
-        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
-        "Minimum requirements" specifications in pyntacle's manual
-        :param nodes: if a node name, returns the degree of the input node. If a list of node names,
-        the degree is returned for all node names.if None (default), the degree is computed for the whole graph.
-        :param imps implementation: the way you prefer to compute the shortest path for the whole graph. choices are:
-        * **`igraph`**: uses the Dijsktra's algorithm implemented from igraph
-        * **`parallel_CPU`**: uses a parallel CPU implementation of the Floyd Warshall algorithm using numba
-        * **`parallel_GPU`**: uses a parallel GPU implementation of the Floyd Warshall algorithm using numba
-        **CAUTION:**(requires NVIDIA graphics compatible with CUDA)
-        :return: a list of floats, the length being the number of input nodes. Each float represent the closeness
-        of the input node
+        Compute the *radiality* of a node or of a list of nodes of an undirected graph.
+        The radiality of a node *v* is calculated by first computing the shortest path between *v* and all other nodes
+        in the graph. The length of each path is then subtracted by the value of the diameter +. Resulting values are
+        then summated and weighted over the total number of nodes -1. Finally, the obtained value is divided by the
+        number of nodes -1 (n-1).
+        **WARNING:** Radiality works well with connected graph. If a node is isolated, its radiality is
+        always *-inf*. If a graph is made of more than one component, we recommend using the *radiality_reach*
+        method.
+        :param igraph.Graph graph: an igraph.Graph object. The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
+        (default), the index is computed for all nodes of the graph.
+        :param cmode: The available computing modes of the shortest paths. Choices are:
+        * **`igraph`**: use the Dijsktra's algorithm implemented in iGraph
+        * **`parallel_CPU`**: use a parallel implementation of the Floyd-Warshall algorithm running on CPU using Numba
+        * **`parallel_GPU`**: use a parallel implementation of the Floyd-Warshall algorithm running on GPU using Numba
+        **CAUTION:**(requires NVIDIA-compatible graphics cards)
+        :return: a list of floats, the length being the number of input nodes. Each float represents the radiality
+        of the input node. The order of the node list in input is preserved.
         """
-        return LocalTopology.__radiality_inner__(graph=graph, nodes=nodes, implementation=implementation)
+
+        diameter = graph.diameter()
+        num_nodes = graph.vcount()
+        rad_list = []
+
+        sps = ShortestPath.get_shortestpaths(graph, nodes=nodes, cmode=cmode)
+        for sp in sps:
+            partial_sum = 0
+            for sp_length in sp:
+                if sp_length != 0:
+                    partial_sum += diameter + 1 - sp_length
+
+            rad_list.append(round(float(partial_sum / (num_nodes - 1)), 5))
+
+        return rad_list
 
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def radiality_reach(graph: Graph, nodes=None, implementation=SP_implementations.igraph) -> list:
+    def radiality_reach(graph: Graph, nodes=None, implementation=Cmode.igraph) -> list:
         """
         Computes the radiality reach for a single node, a list of nodes or for all nodes in the Graph.
         The radiality reach is a weighted measure of the canonical radiality and it is recommended for disconnected
@@ -245,7 +200,7 @@ class LocalTopology:
         """
         comps = graph.components()  # define each case
         if len(comps) == 1:
-            return LocalTopology.radiality(graph=graph, nodes=nodes, implementation=implementation)
+            return LocalTopology.radiality(graph=graph, nodes=nodes, cmode=implementation)
 
         else:
             tot_nodes = graph.vcount()
@@ -275,7 +230,7 @@ class LocalTopology:
 
                 res = [None] * len(nodes)
 
-                inds = ut(graph=graph).get_node_indices(nodes)
+                inds = gUtil(graph=graph).get_node_indices(nodes)
 
                 for c in comps:
                     if any(x in c for x in inds):
@@ -316,7 +271,7 @@ class LocalTopology:
         if nodes is None:
             return graph.evcent(graph, directed=False, scale=scaled)
         else:
-            inds = ut(graph=graph).get_node_indices(nodes)
+            inds = gUtil(graph=graph).get_node_indices(nodes)
             evcent_values = list(graph.evcent(directed=False, scale=scaled)[i] for i in inds)
             return evcent_values
 
@@ -356,242 +311,11 @@ class LocalTopology:
             raise ValueError("Damping factor must be a float >= 0")
         
         if nodes is not None:
-            nodes = ut(graph).get_node_indices(nodes)
+            nodes = gUtil(graph).get_node_indices(nodes)
 
         return graph.pagerank(vertices=nodes, damping=damping, directed=False, weights=weights, implementation="arpack")
 
-    @staticmethod
-    @check_graph_consistency
-    @vertex_doctor
-    #@profile
-    #todo check if i can see the environment variables so I don't have to recall cuda.is_available() every time
-    def shortest_path_pyntacle(graph: Graph, nodes=None, mode=GraphType.undirect_unweighted,
-                               implementation=SP_implementations.igraph) -> np.ndarray:
-        """
-        We implement here a few ways to determine the shortest paths in a graph for a single node, a group of nodes or
-        all nodes in a graph. The shortest path search is performed using the Floyd-Warhsall algorithm and the numba
-        library for HPC computing in order to parallelize the search as quickly as possible. Currently we support the
-        use
-        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
-        "Minimum requirements" specifications in pyntacle's manual
-        :param nodes: if a node name, returns the degree of the input node. If a list of node names,
-        the shortest path between the input nodes and all other nodes in the graph is returned for all node names.
-        If None (default), the degree is computed for the whole graph.
-        :param GraphType mode: an enumerator containing the type of node to be implemented. Choices are:
-        * **`graph_type.undirect_unweighted`**: perform shortest path search for an unweighted and undirect graph
-        (default).
-        * **`graph_type.undirect_weighted`**: shortest path for a weighted undirect network. In this case, the reserved
-        attribute "__weight" at the edge level must be present and filled. **TO BE IMPLEMENTED**
-        * **`graph_type_direct_unweighted`**: unweighted direct graph **TO BE IMPLEMENTED**
-        * **`graph type_direct_weighted`**: weighted directed graph. In this case, the reserved attribute "__weight"
-        at the edge level must be present and filled. **TO BE IMPLEMENTED**
-        :param implementation :an enumerator containing the type of parallelization that will be used. Choices are:
-        * **`implementation.cpu`**: parallelize the SP search using the maximum number of threads available on the CPU
-        * **`implementation.gpu`**: parallelize the SP search using a GPU implementation and nVidia Graphics.
-        **TO BE IMPLEMENTED**
-        **CAUTION**: this will not work if the GPU is not present or CUDA compatible.
-        * **`implementation.auto`**: performs the shortest path using criteria defined by us, according to the machine
-        specifications and the graph topology.
-        :return: a numpy array storing the shortest path matrix for a single node, a list of nodes or all nodes in the
-        graph
-        """
 
-        if mode == GraphType.undirect_unweighted:
-
-            if implementation == SP_implementations.igraph:
-                sys.stdout.write("Using the iGraph implementation of the shortest path algorithm\n")
-                sps = LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
-                sps = [[graph.vcount()+1 if isinf(x) else x for x in y] for y in sps]
-                sps = np.array(sps)
-                return sps
-
-            else:
-                if virtual_memory().free < (graph.vcount()**2)*2: # the rightmost "2" is int16/8
-                    sys.stdout.write("WARNING: Memory seems to be low; loading the graph given as input could fail.")
-                if implementation == SP_implementations.gpu and cuda.current_context().get_memory_info().free < (graph.vcount()**2)*2:
-                    sys.stdout.write("WARNING: GPU Memory seems to be low; loading the graph given as input could fail.")
-
-                graph_size = graph.vcount() + 1
-                np.set_printoptions(linewidth=graph_size*10)
-                adjmat = np.array(graph.get_adjacency().data, dtype=np.uint16, copy=True)
-                adjmat[adjmat == 0] = np.uint16(graph_size)
-                np.fill_diagonal(adjmat, 0)  # set diagonal values to 0 (no distance from itself)
-
-                if implementation == SP_implementations.cpu:
-                    if nodes is None:
-                        sps = LocalTopology.__shortest_path_CPU__(adjmat=adjmat)
-                    else:
-                        nodes = GraphUtils(graph=graph).get_node_indices(node_names=nodes)
-                        sps = LocalTopology.__shortest_path_CPU__(adjmat=adjmat)
-                        sps = sps[nodes, :]
-                    return sps
-
-                elif implementation == SP_implementations.gpu:
-                    if nodes is None:
-                        nodes = list(range(0, graph.vcount()))
-                    else:
-                        nodes = ut(graph=graph).get_node_indices(nodes)
-
-                    if "shortest_path_GPU" not in sys.modules:
-                        from algorithms.shortestpath_GPU import shortest_path_GPU
-
-                        # create the result vector filled with 'inf' (the total number of nodes + 1)
-                        result = np.array(adjmat, copy=True, dtype=np.uint16)
-                        result[result == 0] = adjmat.shape[0] + 1
-                        np.fill_diagonal(result, 0)
-
-                        blockspergrid = ceil(adjmat.shape[0] / threadsperblock)
-                        shortest_path_GPU[blockspergrid, threadsperblock](adjmat, result)
-
-                        if len(nodes) < graph.vcount():
-                            result = result[nodes, :]
-
-                        return result
-
-                else:
-                    sys.stdout.write(
-                        "Implementation {} not available at the time, please come back soon "
-                        "for the modifed version".format(implementation.name))
-                    sps = LocalTopology.__shortest_path_CPU__(adjmat=adjmat)
-                    return sps
-
-        else:
-            sys.stdout.write("Shortest path for {} not yet implemented, come back soon!\n".format(mode.name))
-            sys.exit(0)
-
-    @staticmethod
-    @jit(nopython=True, parallel=True)
-    def __shortest_path_CPU__(adjmat) -> np.ndarray:
-        """
-        Calculate the shortest paths of a graph for aa single nodes, a set of nodes or all nodes in the graph using
-        'Floyd-Warshall Implementation <https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm>'_. The forumla
-        is implemented using the numba library and allows for parallelization using CPU cores.
-        :param np.ndarray adjmat: a numpy.ndarray containing the adjacency matrix of a graph. Disconnected nodes in the
-        matrix are represented as the total number of nodes in the graph + 1, while the diagonal must contain zeroes.
-        Default is True (a numpy array is returned)
-        :return: a numpy array
-        """
-
-        v = adjmat.shape[0]
-        for k in range(0, v):
-            for i in prange(v):
-                for j in range(0, v):
-                    if adjmat[i, j] <= 2:
-                        continue
-                    if adjmat[i, j] > adjmat[i, k] + adjmat[k, j]:
-                        adjmat[i, j] = adjmat[i, k] + adjmat[k, j]
-
-        return adjmat
-
-    @staticmethod
-    @check_graph_consistency
-    @vertex_doctor
-    def shortest_path_igraph(graph: Graph, nodes=None) -> list:
-        """
-        Computes the shortest path for a single node, a list of nodes or for all nodes in the Graph using the Dijkstra's
-        implementation of the igraph Package (works on a single CPU core). The shortest path is the minimum distance
-        from the input node to every other node in the graph. The distance between two disconnected nodes is represented
-        as *'inf'* (a *math.inf* object).
-        :param graph: an igraph.Graph object. The graph should have specific properties. Please see the
-        "Minimum requirements" specifications in pyntacle's manual
-        :param nodes: if a node name, returns the degree of the input node. If a list of node names,
-        the shortest path between the input nodes and all other nodes in the graph is returned for all node names.
-        If None (default), the degree is computed for the whole graph.
-        :param numpy: a **Boolean** that allows to output a list of lists or a 'numpy array object
-        <https://docs.scipy.org/doc/numpy-1.13.0/reference/generated/numpy.array.html>'_. Default is **False**,
-        while it's **True** for the other shortest path implementations.
-        :return: a list of lists, the length being the number of input nodes. Each list contains a series of integers
-        representing the distance from the input node(s) to every other node in the graph.
-        """
-
-        if nodes is None:
-            sp = graph.shortest_paths()
-
-        else:
-            sp = graph.shortest_paths(source=nodes)
-
-        return sp
-
-    @staticmethod
-    @check_graph_consistency
-    @vertex_doctor
-    def average_shortest_path_length(graph: Graph, nodes=None, implementation=SP_implementations.igraph) -> list:
-        """
-        Computes the average of connected shortest path for each a single node, a lists of nodes or all nodes in the
-        'igraph.Graph' object if 'None' (default).
-        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
-        "Minimum requirements" specifications in pyntacle's manual
-        :param nodes: if a node name, returns the degree of the input node. If a list of node names,
-        the shortest path between the input nodes and all other nodes in the graph is returned for all node names.
-        If None (default), the degree is computed for the whole graph.
-        :param implementation :an enumerator containing the type of parallelization that will be used. Choices are:
-        * **`implementation.cpu`**: parallelize the SP search using the maximum number of threads available on the CPU
-        * **`implementation.gpu`**: parallelize the SP search using a GPU implementation and nVidia Graphics.
-        **TO BE IMPLEMENTED**
-        **CAUTION**: this will not work if the GPU is not present or CUDA compatible.
-        * **`implementation.auto`**: performs the shortest path using criteria defined by us, according to the machine
-        specifications and the graph topology.
-        :return: a list of floats with the average shortest path lists of each connected nodes. If a node is an isolate, 'nan' will be returned.
-        """
-
-        if implementation == SP_implementations.igraph:
-            sps = LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
-            avg_sps = []
-            for elem in sps:
-                elem = [x for x in elem if not(isinf(x)) and x > 0]
-                if len(elem) > 0:
-                    avg_sps.append(sum(elem) / float(len(elem)))
-                else:
-                    avg_sps.append(float("nan"))
-        else: #np array
-            sps = LocalTopology.shortest_path_pyntacle(graph=graph, nodes=nodes, implementation=implementation)
-            sps[sps == 0] = np.nan
-            var = sps[sps > graph.vcount()] == np.nan
-            avg_sps = np.nanmean(var, axis=0)
-            avg_sps = avg_sps.tolist()
-
-        return avg_sps
-
-    @staticmethod
-    @check_graph_consistency
-    @vertex_doctor
-    def median_shortest_path_length(graph: Graph, nodes=None, implementation=SP_implementations.igraph) -> list:
-        """
-        Computes the median among connected shortest path for each a single node, a lists of nodes or all nodes in the
-        'igraph.Graph' object if 'None' (default).
-        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
-        "Minimum requirements" specifications in pyntacle's manual
-        :param nodes: if a node name, returns the degree of the input node. If a list of node names,
-        the shortest path between the input nodes and all other nodes in the graph is returned for all node names.
-        If None (default), the degree is computed for the whole graph.
-        :param implementation :an enumerator containing the type of parallelization that will be used. Choices are:
-        * **`implementation.cpu`**: parallelize the SP search using the maximum number of threads available on the CPU
-        * **`implementation.gpu`**: parallelize the SP search using a GPU implementation and nVidia Graphics.
-        **TO BE IMPLEMENTED**
-        **CAUTION**: this will not work if the GPU is not present or CUDA compatible.
-        * **`implementation.auto`**: performs the shortest path using criteria defined by us, according to the machine
-        specifications and the graph topology.
-        :return: a list of floats with the median shortest path(s) of each connected nodes. If a node is an isolate, 'nan' will be returned.
-        """
-
-        if implementation == SP_implementations.igraph:
-            sps = LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
-            avg_sps = []
-            for elem in sps:
-                elem = [x for x in elem if not (isinf(x)) and x > 0] #remove disconnected nodes and diagonal
-                if len(elem) > 0:
-                    avg_sps.append(statistics.median(elem))
-                else:
-                    avg_sps.append(float("nan"))
-
-        else:  # np array
-            sps = LocalTopology.shortest_path_pyntacle(graph=graph, nodes=nodes, implementation=implementation)
-            sps[sps == 0] = np.nan
-            var = sps[sps > graph.vcount()] == np.nan
-            avg_sps = np.nanmedian(var, axis=0)
-            avg_sps = avg_sps.tolist()
-
-        return avg_sps
 
 # todo missing stuff:
 # todo shortest path cpu: single nodes or group of nodes

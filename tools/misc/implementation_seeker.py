@@ -25,7 +25,7 @@ __license__ = u"""
   """
 
 from config import *
-from tools.misc.enums import SP_implementations
+from tools.misc.enums import Cmode
 from igraph import Graph
 from numba import cuda
 
@@ -36,22 +36,22 @@ def implementation_seeker(graph: Graph):
     """
     *TO BE PERFECTIONED* return the correct implementation based on several paramenters
     :param graph: an iGraph.Graph object pyntacle ready
-    :return: an SP_implementations representing the correct implementation
+    :return: an Cmode representing the correct implementation
     """
 
     # todo: decide the thresholds that will be used for SP search decision
     if graph.ecount() <= 3500:  # random number
-        imp = SP_implementations.igraph  # default
+        imp = Cmode.igraph  # default
 
     else:
         if not cuda.is_available():
             sys.stdout.write("GPU implementation is not available, using CPU instead\n")
 
-            imp = SP_implementations.cpu
+            imp = Cmode.cpu
 
         else:
             # todo this should return GPU when tested, commented for the moment
-            # imp = SP_implementations.gpu
-            imp = SP_implementations.cpu
+            # imp = Cmode.gpu
+            imp = Cmode.cpu
 
     return imp

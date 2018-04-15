@@ -83,7 +83,7 @@ class ShortestPath:
                     nodes = gUtil(graph=graph).get_node_indices(nodes)
 
                 if "shortest_path_gpu" not in sys.modules:
-                    from algorithms.shortestpath_gpu import shortest_path_gpu
+                    from algorithms.shortestpath_GPU import shortest_path_gpu
 
                     sps = np.array(adjmat, copy=True, dtype=np.uint16)
                     blockspergrid = ceil(adjmat.shape[0] / threadsperblock)

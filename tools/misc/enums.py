@@ -1,11 +1,13 @@
-__author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
+"""Contains all the enumerators used in pyntacle's methods"""
+
+__author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "27 February 2018"
+__date__ = "14/04/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -24,14 +26,9 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-""" **a series of decorators to improve the usability of some pyntacle's function, like 
-checking if the `igraph.Graph` object is compatible with pyntacle's specifications, verify the presence of nodes 
-in the input graph, give elapsed time of execution and so on"""
 
-from enum import Enum, auto
 from config import *
-
-"""Contains all the enumerators used in pyntacle's methods"""
+from enum import Enum
 
 
 class GraphType(Enum):
@@ -39,76 +36,80 @@ class GraphType(Enum):
     An enumerator that contains the different modes that will be used to compute internally the shortest path of a graph
     For the record, I still prefer the string method
     """
-    undirect_unweighted = auto()
-    undirect_weighted = auto()
-    direct_unweighted = auto()
-    direct_weighted = auto()
+    undirect_unweighted = 1
+    undirect_weighted = 2
+    direct_unweighted = 3
+    direct_weighted = 4
 
 
-class SP_implementations(Enum):
+class Cmode(Enum):
     """
     this enumerator stores the different ways that can be used to parallelize the shortest path search for a set of nodes
     """
-    igraph = auto()
-    cpu = auto()
-    gpu = auto()
-    auto = auto()
+    igraph = 1
+    cpu = 2
+    gpu = 3
+    auto = 4
+
 
 class KPNEGchoices(Enum):
     """
     this enumerator stores the metrics that can be queried to Kpp-POS calculations
     """
-    F = auto()
-    dF = auto()
+    F = 1
+    dF = 2
+
 
 class KPPOSchoices(Enum):
     """
     this enumerator stores the metrics that can be queried to Kpp-POS calculations
     """
-    mreach = auto()
-    dR = auto()
+    mreach = 1
+    dR = 2
+
 
 class LocalAttribute(Enum):
     """
     this enumerator stores all the node attributes that can be instantiated by pyntacle
     """
-    degree = auto()
-    betweenness = auto()
-    radiality = auto()
-    radiality_reach = auto()
-    eccentricity = auto()
-    pagerank = auto()
-    shortest_path_igraph = auto()
-    shortest_path = auto()
-    eigenvector_centrality = auto()
-    closeness = auto()
-    clustering_coefficient = auto()
-    average_shortest_path_length = auto()
-    median_shortest_path_length = auto()
+    degree = 1
+    betweenness = 2
+    radiality = 3
+    radiality_reach = 4
+    eccentricity = 5
+    pagerank = 6
+    shortest_path_igraph = 7
+    shortest_path = 8
+    eigenvector_centrality = 9
+    closeness = 9
+    clustering_coefficient = 10
+    average_shortest_path_length = 11
+    median_shortest_path_length = 12
 
 
 class GlobalAttribute(Enum):
     """
     this enumerator stores all the edge attributes that can be instantiated by pyntacle
     """
-    average_shortest_path_length = auto()
-    median_shortest_path_length = auto()
-    diameter = auto()
-    components = auto()
-    radius = auto()
-    density = auto()
-    pi = auto()
-    average_clustering_coefficient = auto()
-    weighted_clustering_coefficient = auto()
-    average_degree = auto()
-    average_closeness = auto()
-    average_eccentricity = auto()
-    average_radiality = auto()
-    average_radiality_reach = auto()
-    completeness_naive = auto()
-    completeness = auto()
-    compactness = auto()
-    compactness_correct = auto()
+    average_shortest_path_length = 1
+    median_shortest_path_length = 2
+    diameter = 3
+    components = 4
+    radius = 5
+    density = 6
+    pi = 7
+    average_clustering_coefficient = 8
+    weighted_clustering_coefficient = 9
+    average_degree = 10
+    average_closeness = 11
+    average_eccentricity = 12
+    average_radiality = 13
+    average_radiality_reach = 14
+    completeness_naive = 15
+    completeness = 16
+    compactness = 17
+    compactness_correct = 18
+
 
 class edge_attributes(Enum):
     """
@@ -116,14 +117,15 @@ class edge_attributes(Enum):
     """
     pass
 
+
 class Reports(Enum):
     """
     enumerator for the several type of reports available in the pyntacle command line utility
     """
-    Global = auto()
-    Local = auto()
-    KPinfo = auto()
-    KP_greedy = auto()
-    KP_bruteforce = auto()
-    Communities = auto()
-    Set = auto()
+    Global = 1
+    Local = 2
+    KPinfo = 3
+    KP_greedy = 4
+    KP_bruteforce = 5
+    Communities = 6
+    Set = 7
