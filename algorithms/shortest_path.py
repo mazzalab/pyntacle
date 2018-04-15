@@ -47,7 +47,7 @@ class ShortestPath:
     # @profile
     # todo check if i can see the environment variables so I don't have to recall cuda.is_available() every time
     @staticmethod
-    def t.mazza(graph, nodes, cmode: Cmode):
+    def get_shortestpaths(graph, nodes, cmode: Cmode):
         if cmode == Cmode.igraph:
             sps = ShortestPath.__shortest_path_igraph(graph=graph, nodes=nodes)
             # sps = [[graph.vcount() + 1 if isinf(x) else x for x in y] for y in sps]
@@ -83,7 +83,7 @@ class ShortestPath:
                     nodes = gUtil(graph=graph).get_node_indices(nodes)
 
                 if "shortest_path_gpu" not in sys.modules:
-                    from algorithms.shortestpath_GPU import shortest_path_gpu
+                    from algorithms.shortestpath_gpu import shortest_path_gpu
 
                     sps = np.array(adjmat, copy=True, dtype=np.uint16)
                     blockspergrid = ceil(adjmat.shape[0] / threadsperblock)

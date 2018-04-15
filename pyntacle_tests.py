@@ -83,8 +83,13 @@ mat= GraphLoad(r'C:\Users\Iron\Desktop\CSS-Bioinformatics\pyntacle\test\test_set
                "adjm", True).graph_load()
 
 print("Eccentricity of BR: {}".format(LocalTopology.eccentricity(mat, "BR")))
-
 print("Radiality of BR: {}".format(LocalTopology.radiality(mat, "BR", Cmode.igraph)))
+
+print("Shortest paths from BR by iGraph: {}".format(ShortestPath.get_shortestpaths(mat, "BR", Cmode.igraph)))
+print("Shortest paths from BR by multi-core: {}".format(ShortestPath.get_shortestpaths(mat, "BR", Cmode.cpu)))
+print("Shortest paths from BR by GPU: {}".format(ShortestPath.get_shortestpaths(mat, "BR", Cmode.gpu)))
+
+
 
 # print('\n\nORIGINAL MAT')
 # print(mat.get_adjacency())
