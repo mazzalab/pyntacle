@@ -34,7 +34,7 @@ from algorithms.keyplayer import KeyPlayer as kp
 from algorithms.local_topology import LocalTopology as Lt
 from tools.misc.graph_routines import *
 from exceptions.wrong_argument_error import WrongArgumentError
-from tools.misc.enums import KPPOSchoices, KPNEGchoices, SP_implementations
+from tools.misc.enums import KPPOSchoices, KPNEGchoices, Cmode
 from tools.misc.kpsearch_utils import greedy_search_initializer
 from tools.graph_utils import GraphUtils as gu
 
@@ -45,7 +45,7 @@ class GreedyOptimization:
     @staticmethod
     @check_graph_consistency
     @greedy_search_initializer
-    def fragmentation(graph, kpp_size, kpp_type, seed=None, max_distances=None, implementation=SP_implementations.igraph) -> (list, float):
+    def fragmentation(graph, kpp_size, kpp_type, seed=None, max_distances=None, implementation=Cmode.igraph) -> (list, float):
         """
         It iteratively searches for a kpp-set of a predefined vertex set size, removes it and measures the residual
         fragmentation score of the KPNEG metric queried (choices are available in misc/enums).
@@ -162,7 +162,7 @@ class GreedyOptimization:
     @staticmethod
     @check_graph_consistency
     @greedy_search_initializer #todo solve the m problem in this decorator
-    def reachability(graph, kpp_size, kpp_type, seed=None, max_distances=None, m=None, implementation=SP_implementations.igraph) -> (list, float):
+    def reachability(graph, kpp_size, kpp_type, seed=None, max_distances=None, m=None, implementation=Cmode.igraph) -> (list, float):
         """
         It iteratively searches for a kpp-set of a predefined dimension, with maximal reachability according to the
         KPPOS metrics asked.
@@ -197,7 +197,7 @@ class GreedyOptimization:
             if not isinstance(m, int) or m <= 0:
                 raise TypeError({"\"m\" must be a positive integer"})
             else:
-                if implementation != SP_implementations.igraph:
+                if implementation != Cmode.igraph:
                     sps = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
 
                     type_func = partial(kp.mreach, graph=graph, nodes=S_names, m=m, max_distances=max_distances,
@@ -206,7 +206,7 @@ class GreedyOptimization:
                     type_func = partial(kp.mreach, graph=graph, nodes=S_names, m=m, max_distances=max_distances,
                                         implementation=implementation)
         elif kpp_type == KPPOSchoices.dR:
-            if implementation != SP_implementations.igraph:
+            if implementation != Cmode.igraph:
                 sps = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
                 type_func = partial(kp.dR, graph=graph, nodes=S_names, max_distances=max_distances, implementation=implementation, sp_matrix=sps)
             else:

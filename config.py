@@ -1,4 +1,4 @@
-__author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
+__author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
@@ -26,18 +26,12 @@ __license__ = u"""
 
 import logging
 import datetime
-import importlib
-import seaborn as sns
 import threading
 import time
-import sys
-import os
-from math import ceil
 from numba import cuda
 from numba.config import *
 from multiprocessing import cpu_count
 from psutil import virtual_memory
-from enum import Enum, auto
 
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.ERROR, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -54,6 +48,7 @@ NUMBA_NUM_THREADS = n_cpus
 mem = virtual_memory().total
 cuda_avail = cuda.is_available()
 threadsperblock = 32
+
 
 class CursorAnimation(threading.Thread):
     """

@@ -37,7 +37,7 @@ import itertools
 from functools import partial
 from algorithms.keyplayer import KeyPlayer
 from exceptions.wrong_argument_error import WrongArgumentError
-from tools.misc.enums import KPPOSchoices, KPNEGchoices, SP_implementations
+from tools.misc.enums import KPPOSchoices, KPNEGchoices, Cmode
 from tools.misc.kpsearch_utils import bruteforce_search_initializer
 from tools.misc.graph_routines import check_graph_consistency
 from algorithms.local_topology import LocalTopology as Lt
@@ -47,7 +47,7 @@ import multiprocessing as mp
 
 
 def crunch_reachability_combinations(allS, graph: Graph, kpp_type: KPPOSchoices, m: int,
-                                       max_distances: int, implementation: SP_implementations) -> dict:
+                                     max_distances: int, implementation: Cmode) -> dict:
     """
     Internal wrapper to some operations from `__bruteforce_reachability_parallel`
     """
@@ -56,7 +56,7 @@ def crunch_reachability_combinations(allS, graph: Graph, kpp_type: KPPOSchoices,
     kppset_score_pairs = {}
 
     if kpp_type == KPPOSchoices.mreach:
-        if implementation != SP_implementations.igraph:
+        if implementation != Cmode.igraph:
             sp_matrix = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
             reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distances=max_distances,
                                                   implementation=implementation, sp_matrix=sp_matrix)
@@ -65,7 +65,7 @@ def crunch_reachability_combinations(allS, graph: Graph, kpp_type: KPPOSchoices,
                                                   implementation=implementation)
 
     elif kpp_type == KPPOSchoices.dR:
-        if implementation != SP_implementations.igraph:
+        if implementation != Cmode.igraph:
             sp_matrix = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
             reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distances=max_distances,
                                               implementation=implementation, sp_matrix=sp_matrix)
@@ -83,7 +83,7 @@ def crunch_reachability_combinations(allS, graph: Graph, kpp_type: KPPOSchoices,
 
 
 def crunch_fragmentation_combinations(allS, graph: Graph, kpp_type: KPNEGchoices,
-                                        implementation: SP_implementations, max_distances) -> dict:
+                                      implementation: Cmode, max_distances) -> dict:
     """
     Internal wrapper to some operations from `__bruteforce_fragmentation_parallel`
     """
@@ -118,7 +118,7 @@ class BruteforceSearch:
     @staticmethod
     @check_graph_consistency
     @bruteforce_search_initializer
-    def fragmentation(graph, kpp_size, kpp_type, max_distances=None, implementation=SP_implementations.igraph,
+    def fragmentation(graph, kpp_size, kpp_type, max_distances=None, implementation=Cmode.igraph,
                       parallel=False, ncores=None) -> (list, float):
         """
         (a wrapper for the single core and parallel bruteforce fragmentation)
@@ -130,7 +130,7 @@ class BruteforceSearch:
         :param int kpp_size: the size of the kpp-set to be found
         :param KPNEGchoices kpp_type: any of the *KPNEGchoices* enumerators available
         :param int max_distances:
-        :param SP_implementations implementations: one of the possible shortest path implementations avaiable in the `tools/misc/enums/SP_implementations` Default is SP_implementations.igraph (uses Dijkstra's algorithm from igraph)
+        :param Cmode implementations: one of the possible shortest path implementations avaiable in the `tools/misc/enums/cmode` Default is cmode.igraph (uses Dijkstra's algorithm from igraph)
         :param bool parallel: whether to use the parallel computing to perform the bruteforce search. Default is `False`
         :param int ncores: Positive integer specifying the number of cores that will be used to perform parallel computing. If `None` (default) the number of cores will be the maximum n umber of cores -1
         :return: - S: a list of lists containing all the possible sets of nodes that optimize the kp-sets
@@ -213,7 +213,7 @@ class BruteforceSearch:
 
     @staticmethod
     def __bruteforce_fragmentation_single(graph: Graph, kpp_size: int, kpp_type: KPNEGchoices,
-                                          implementation: SP_implementations, max_distances):
+                                          implementation: Cmode, max_distances):
         """
         Single core implementation of the Bruteforce Fragmentation Search (to be used for internal purposes)
         """
@@ -246,7 +246,7 @@ class BruteforceSearch:
 
     @staticmethod
     def __bruteforce_fragmentation_parallel(graph: Graph, kpp_size: int, kpp_type: KPNEGchoices, ncores: int,
-                                            implementation: SP_implementations, max_distances=None) -> dict:
+                                            implementation: Cmode, max_distances=None) -> dict:
         """
         It searches and finds the kpp-set of a predefined dimension that best disrupts the graph.
         It generates all the possible kpp-sets and calculates the fragmentation score of the residual graph, after
@@ -287,7 +287,7 @@ class BruteforceSearch:
     @staticmethod
     @check_graph_consistency
     @bruteforce_search_initializer
-    def reachability(graph, kpp_size, kpp_type, max_distances=None, m=None, implementation=SP_implementations.igraph,
+    def reachability(graph, kpp_size, kpp_type, max_distances=None, m=None, implementation=Cmode.igraph,
                      parallel=False, ncores=None) -> (list, float):
         """
         It searches and finds the kpp-set of a predefined dimension that best reaches all other nodes over the graph.
@@ -302,7 +302,7 @@ class BruteforceSearch:
         :param int m: maximum path length between the kpp-set and the other nodes of the graph
         :param KPPOSchoices kpp_type: Either `KPPOSchoices.mreach` or `KPPOSchoices.dR`
         :param int max_distances:
-        :param SP_implementations implementations: one of the possible shortest path implementations avaiable in the `tools/misc/enums/SP_implementations` Default is SP_implementations.igraph (uses Dijkstra's algorithm from igraph)
+        :param Cmode implementations: one of the possible shortest path implementations avaiable in the `tools/misc/enums/cmode` Default is cmode.igraph (uses Dijkstra's algorithm from igraph)
         :param bool parallel: whether to use the parallel computing to perform the bruteforce search. Default is `False`
         :param int ncores: Positive integer specifying the number of cores that will be used to perform parallel computing. If `None` (default) the number of cores will be the maximum n umber of cores -1
         :return: - S: a list of lists containing all the possible sets of nodes that optimize the kp-sets
@@ -355,7 +355,7 @@ class BruteforceSearch:
 
     @staticmethod
     def __bruteforce_reachability_single(graph: Graph, kpp_size: int, kpp_type: KPPOSchoices, m: int,
-                                         max_distances: int, implementation=SP_implementations.igraph):
+                                         max_distances: int, implementation=Cmode.igraph):
         """
         Internal function that Implements bruteforce search at a singe core level. Recommended when the graph is relatively small (under 500 nodes)
         """
@@ -371,7 +371,7 @@ class BruteforceSearch:
             nodes = utils.get_node_names(list(S))
 
             if kpp_type == KPPOSchoices.mreach:
-                if implementation != SP_implementations.igraph:
+                if implementation != Cmode.igraph:
                     sp_matrix = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
                     reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distances=max_distances,
                                                           implementation=implementation, sp_matrix=sp_matrix)
@@ -380,7 +380,7 @@ class BruteforceSearch:
                                                           implementation=implementation)
 
             elif kpp_type == KPPOSchoices.dR:
-                if implementation != SP_implementations.igraph:
+                if implementation != Cmode.igraph:
                     sp_matrix = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
                     reachability_score = KeyPlayer.dR(graph=graph, nodes=nodes, max_distances=max_distances,
                                                       implementation=implementation, sp_matrix=sp_matrix)
@@ -398,7 +398,7 @@ class BruteforceSearch:
 
     @staticmethod
     def __bruteforce_reachability_parallel(graph: Graph, kpp_size: int, kpp_type: KPPOSchoices, m: int,
-                                           max_distances: int, implementation: SP_implementations, ncores: int) -> (list, float):
+                                           max_distances: int, implementation: Cmode, ncores: int) -> (list, float):
         """
         Internal function that Implements the Bruteforce optimization strategy  on a set of cores.
         Recommended when a graph is quite large (over 500 nodes)

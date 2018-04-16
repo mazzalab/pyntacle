@@ -213,18 +213,24 @@ class GraphUtils:
         names_list = self.__graph.vs(index_list)["name"]
         return names_list
 
-    def get_node_indices(self, node_names: list) -> list:
+    def get_node_indices(self, node_names) -> list:
         """
-        Given a list of strings (that are in the graph.vs["name"] attribute, returns the correspondiung node indices
-        :param list node_names: a list of strings containing all the node names you're looking for
-        :return: a list of integers of the corrsponding node indices of the input node names
+        Return a list of indices of the node names passed in input.
+        :param node_names: A single string or a list of strings containing node names in the graph
+        :return: a list of indices of the corresponding node names given in input. The order of the input list
+        is preserved
         """
+
+        if not isinstance(node_names, list):
+            names = [node_names]
+        else:
+            names = node_names
 
         self.graph_checker()
         self.check_name_list(node_names)
         index_list = []
 
-        for name in node_names:
+        for name in names:
             select = self.__graph.vs.select(name=name)
             if len(select) > 1:
                 raise IndexError("name is not unique, node names must be unique, plese check your graph")

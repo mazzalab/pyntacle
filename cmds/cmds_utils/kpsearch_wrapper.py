@@ -25,7 +25,7 @@ __license__ = u"""
   """
 
 from config import *
-from tools.misc.enums import SP_implementations
+from tools.misc.enums import Cmode
 from algorithms.greedy_optimization import GreedyOptimization
 from algorithms.bruteforce_search import BruteforceSearch
 from tools.graph_utils import GraphUtils as gu
@@ -58,7 +58,7 @@ class KPWrapper:
         self.results = {}  # dictionary that will store results
 
     @timeit
-    def run_KPPos(self, nodes, kpp_type:KPPOSchoices, m=None, max_distances=None, implementation=SP_implementations.igraph):
+    def run_KPPos(self, nodes, kpp_type:KPPOSchoices, m=None, max_distances=None, implementation=Cmode.igraph):
         """
         Run Single KPP-POS metrics on a single node or a set of nodes, adds everuything to the "results" object
         :param nodes: either a single node name or a list of node names
@@ -97,7 +97,7 @@ class KPWrapper:
         self.logger.info("KP POS search completed, results are in the \"results\" dictionary")
 
     @timeit
-    def run_KPNeg(self, nodes, kpp_type:KPNEGchoices, max_distances=None, implementation = SP_implementations.igraph):
+    def run_KPNeg(self, nodes, kpp_type:KPNEGchoices, max_distances=None, implementation = Cmode.igraph):
         """
         Run KP NEG metrics for a node or a set of nodes
         :param nodes: either a single node name or a list of node names
@@ -164,7 +164,7 @@ class GOWrapper:
         self.results = {}  # dictionary that will store results
 
     @timeit
-    def run_fragmentation(self, kpp_size:int, kpp_type:KPNEGchoices, max_distances=None, seed=None, implementation=SP_implementations.igraph):
+    def run_fragmentation(self, kpp_size:int, kpp_type:KPNEGchoices, max_distances=None, seed=None, implementation=Cmode.igraph):
         """
         Wrapper around the Greedy Optimization Module that stores the greedy optimization results for KPPOS metrics in the
         "results" dictionary
@@ -183,7 +183,7 @@ class GOWrapper:
         self.results[kpp_type.name] = [go_results[0], go_results[1]]
 
     @timeit
-    def run_reachability(self, kpp_size:int, kpp_type:KPPOSchoices, m=None, max_distances=None, seed=None, implementation=SP_implementations.igraph):
+    def run_reachability(self, kpp_size:int, kpp_type:KPPOSchoices, m=None, max_distances=None, seed=None, implementation=Cmode.igraph):
         """
         Wrapper around the Greedy Optimization Module that stores the greedy optimization results for KPPOS metrics
         :param int kpp_size: size of the kpp-set to be found
@@ -234,7 +234,7 @@ class BFWrapper:
         self.results = {}  # dictionary that will store results
 
     @timeit
-    def run_fragmentation(self, kpp_size:int, kpp_type:KPNEGchoices, max_distances=None, implementation=SP_implementations.igraph):
+    def run_fragmentation(self, kpp_size:int, kpp_type:KPNEGchoices, max_distances=None, implementation=Cmode.igraph):
         """
         Wrapper around the Bruteforce Search Module that stores the greedy optimization results for KPPOS metrics in
         the "results" dictionary
@@ -254,7 +254,7 @@ class BFWrapper:
         self.results[kpp_type.name] = [bf_results[0], bf_results[1]]
 
     @timeit
-    def run_reachability(self, kpp_size: int, kpp_type: KPPOSchoices, m=None, max_distances=None, implementation=SP_implementations.igraph):
+    def run_reachability(self, kpp_size: int, kpp_type: KPPOSchoices, m=None, max_distances=None, implementation=Cmode.igraph):
         """
         Wrapper around the Bruteforce Search Module that stores the greedy optimization results for KPPOS metrics
         :param int kpp_size: size of the kpp-set to be found
