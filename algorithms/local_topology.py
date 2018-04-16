@@ -314,14 +314,3 @@ class LocalTopology:
             nodes = gUtil(graph).get_node_indices(nodes)
 
         return graph.pagerank(vertices=nodes, damping=damping, directed=False, weights=weights, implementation="arpack")
-
-
-
-# todo missing stuff:
-# todo shortest path cpu: single nodes or group of nodes
-# todo  shortest path gpu
-# todo all the other graphs
-# todo automatic implementation becomes global
-# todo missing methods:
-# todo Mauro: specify numpy maximum allocation in RAM (in "Requirements")
-# todo Mauro. specify number of cores (COU) for numba

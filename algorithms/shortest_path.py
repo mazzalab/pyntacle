@@ -50,8 +50,8 @@ class ShortestPath:
     def get_shortestpaths(graph, nodes, cmode: Cmode):
         if cmode == Cmode.igraph:
             sps = ShortestPath.__shortest_path_igraph(graph=graph, nodes=nodes)
-            # sps = [[graph.vcount() + 1 if isinf(x) else x for x in y] for y in sps]
-            # sps = np.array(sps)
+            sps = [[graph.vcount() + 1 if isinf(x) else x for x in y] for y in sps]
+            sps = np.array(sps)
             return sps
         elif cmode == Cmode.cpu or cmode == Cmode.gpu:
             if virtual_memory().free < (graph.vcount() ** 2) * 2:  # the rightmost "2" is int16/8
