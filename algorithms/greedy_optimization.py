@@ -36,7 +36,6 @@ from tools.misc.graph_routines import *
 from exceptions.wrong_argument_error import WrongArgumentError
 from tools.misc.enums import KPPOSchoices, KPNEGchoices, SP_implementations
 from tools.misc.kpsearch_utils import greedy_search_initializer
-from tools.misc.implementation_seeker import implementation_seeker
 from tools.graph_utils import GraphUtils as gu
 
 class GreedyOptimization:
