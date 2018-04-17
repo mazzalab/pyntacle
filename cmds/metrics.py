@@ -41,9 +41,6 @@ from tools.misc.enums import *
 
 
 class Metrics:
-    """
-    **[EXPAND]**
-    """
     def __init__(self, args):
         self.logging = log
         self.args = args
@@ -87,6 +84,7 @@ class Metrics:
         self.logging.debug(self.args)
 
         # Load Graph
+        sys.stdout.write("Reading input file...\n")
         graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header).graph_load()
         # init Utils global stuff
         utils = GraphUtils(graph=graph)
@@ -187,8 +185,6 @@ class Metrics:
                 report_prefix = "_".join(
                     ["pyntacle", graph["name"][0], "local_metrics_selected_nodes_report",
                      self.date])
-
-            sys.stdout.write("Computing Local Metrics...\n")
 
             local_attributes_dict = OrderedDict({LocalAttribute.degree.name: LocalTopology.degree(graph=graph, nodes=nodes_list),
                  LocalAttribute.clustering_coefficient.name: LocalTopology.clustering_coefficient(graph=graph, nodes=nodes_list),

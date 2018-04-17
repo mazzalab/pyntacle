@@ -88,6 +88,7 @@ class KeyPlayer():
         self.logging.debug('Running pyntacle keyplayer, with arguments')
         self.logging.debug(self.args)
         # Load Graph
+        sys.stdout.write("Reading input file...\n")
         graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header).graph_load()
         if hasattr(self.args, 'nodes'):
             if not all(x in graph.vs["name"] for x in self.args.nodes):
