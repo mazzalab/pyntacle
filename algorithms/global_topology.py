@@ -206,7 +206,7 @@ class GlobalTopology:
         if not isinstance(implementation, Cmode):
             raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(Cmode)))
 
-        return round(mean(Lt.LocalTopology.radiality_reach(graph=graph, nodes=None, implementation=implementation)), 5)
+        return round(mean(Lt.LocalTopology.radiality_reach(graph=graph, nodes=None, cmode=implementation)), 5)
 
     @staticmethod
     @check_graph_consistency

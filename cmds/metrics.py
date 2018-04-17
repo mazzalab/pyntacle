@@ -200,7 +200,7 @@ class Metrics:
                  LocalAttribute.betweenness.name: LocalTopology.betweenness(graph=graph, nodes=nodes_list),
                  LocalAttribute.closeness.name: LocalTopology.closeness(graph=graph, nodes=nodes_list),
                  LocalAttribute.radiality.name: LocalTopology.radiality(graph=graph, nodes=nodes_list, cmode=implementation),
-                 LocalAttribute.radiality_reach.name: LocalTopology.radiality_reach(graph=graph, nodes=nodes_list, implementation=implementation),
+                 LocalAttribute.radiality_reach.name: LocalTopology.radiality_reach(graph=graph, nodes=nodes_list, cmode=implementation),
                  LocalAttribute.eccentricity.name: LocalTopology.eccentricity(graph=graph, nodes=nodes_list),
                  LocalAttribute.eigenvector_centrality.name : LocalTopology.eigenvector_centrality(graph=graph, nodes=nodes_list),
                  LocalAttribute.pagerank.name: LocalTopology.pagerank(graph=graph, nodes=nodes_list, weights=weights, damping=self.args.damping_factor)})
