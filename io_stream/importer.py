@@ -201,7 +201,7 @@ class PyntacleImporter:
         """
 
         #todo Mauro can you speed up this process?
-        
+
         graph = Graph()
         graph.vs["name"] = []
 
