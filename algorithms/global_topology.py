@@ -30,7 +30,7 @@ import algorithms.local_topology as Lt
 from tools.misc.graph_routines import check_graph_consistency
 from statistics import mean
 from igraph import Graph
-from tools.misc.enums import SP_implementations
+from tools.misc.enums import Cmode
 import numpy as np
 
 class GlobalTopology:
@@ -165,7 +165,7 @@ class GlobalTopology:
 
     @staticmethod
     @check_graph_consistency
-    def average_radiality(graph: Graph, implementation=SP_implementations.igraph) -> float:
+    def average_radiality(graph: Graph, implementation=Cmode.igraph) -> float:
         """
         Computes the average radiality, defined as the mean for all the radiality values for each node in the graph.
         **WARNING** Average Radiality doesn't work when the graph has more than one component
@@ -183,11 +183,11 @@ class GlobalTopology:
         :return: a float representing the average of the radiality of all nodes in the graph.
         """
 
-        return round(mean(Lt.LocalTopology.radiality(graph, nodes=None, implementation=implementation)), 5)
+        return round(mean(Lt.LocalTopology.radiality(graph, nodes=None, cmode=implementation)), 5)
 
     @staticmethod
     @check_graph_consistency
-    def average_radiality_reach(graph: Graph, implementation=SP_implementations.igraph) -> float:
+    def average_radiality_reach(graph: Graph, implementation=Cmode.igraph) -> float:
         """
         Computes the average radiality reach, defined as the mean for all the radiality  reach values for each node
         in the graph. Radiality Reach is defined here as the radiality for each node in each component weighted for the
@@ -203,14 +203,14 @@ class GlobalTopology:
         nVidia graphics)
         :return: a float representing the average of the radiality reach of all nodes in the graph.
         """
-        if not isinstance(implementation, SP_implementations):
-            raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(SP_implementations)))
+        if not isinstance(implementation, Cmode):
+            raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(Cmode)))
 
-        return round(mean(Lt.LocalTopology.radiality_reach(graph=graph, nodes=None, implementation=implementation)), 5)
+        return round(mean(Lt.LocalTopology.radiality_reach(graph=graph, nodes=None, cmode=implementation)), 5)
 
     @staticmethod
     @check_graph_consistency
-    def average_shortest_path_length(graph: Graph, implementation=SP_implementations.igraph) -> float:
+    def average_shortest_path_length(graph: Graph, implementation=Cmode.igraph) -> float:
         """
         computes the  average shortest path length as defined in https://en.wikipedia.org/wiki/Average_path_length
         :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
@@ -224,10 +224,10 @@ class GlobalTopology:
         """
 
 
-        if not isinstance(implementation, SP_implementations):
-            raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(SP_implementations)))
+        if not isinstance(implementation, Cmode):
+            raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(Cmode)))
 
-        if implementation == SP_implementations.igraph:
+        if implementation == Cmode.igraph:
             avg_sp = Graph.average_path_length(graph,directed=False,unconn=False)
             return avg_sp
 

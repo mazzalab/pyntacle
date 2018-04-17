@@ -98,7 +98,7 @@ class KeyPlayer():
         if '__implementation' in graph.attributes():
             implementation = graph['__implementation']
         else:
-            implementation = SP_implementations.igraph
+            implementation = Cmode.igraph
             
         print("LOADED IMPLEMENTATION", graph['__implementation'])
 

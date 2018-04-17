@@ -41,7 +41,7 @@ from tools.misc.shortest_path_modifications import ShortestPathModifier
 from cmds.cmds_utils.kpsearch_wrapper import KPWrapper as kpw
 from cmds.cmds_utils.kpsearch_wrapper import GOWrapper as gow
 from cmds.cmds_utils.kpsearch_wrapper import BFWrapper as bfw
-from tools.misc.enums import KPNEGchoices, KPPOSchoices, SP_implementations
+from tools.misc.enums import KPNEGchoices, KPPOSchoices, Cmode
 
 
 # TODO DANIELE: Add SPASENESS
@@ -50,7 +50,7 @@ def implementation_check(graph):
     if '__implementation' in graph.attributes():
         return graph["__implementation"]
     else:
-        return SP_implementations.igraph
+        return Cmode.igraph
     
     
 class Octopus:
@@ -173,7 +173,7 @@ class Octopus:
         implementation = implementation_check(graph)
         if node_names is None:
             node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes(LocalAttribute.radiality.name, LocalTopology.radiality(graph, node_names, implementation=implementation), node_names)
+        AddAttributes(graph).add_node_attributes(LocalAttribute.radiality.name, LocalTopology.radiality(graph, node_names, cmode=implementation), node_names)
         
     @staticmethod
     @check_graph_consistency
@@ -181,7 +181,7 @@ class Octopus:
         implementation = implementation_check(graph)
         if node_names is None:
             node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes(LocalAttribute.radiality_reach.name, LocalTopology.radiality_reach(graph, node_names, implementation=implementation), node_names)
+        AddAttributes(graph).add_node_attributes(LocalAttribute.radiality_reach.name, LocalTopology.radiality_reach(graph, node_names, cmode=implementation), node_names)
         
     @staticmethod
     @check_graph_consistency

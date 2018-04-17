@@ -61,7 +61,7 @@ def check_graph_consistency(func):
             counter = Counter(graph.vs["name"])
             duplicates = [v for k, v in counter.items() if v > 1]
             if duplicates:
-                raise MissingAttributeError(f"The 'name' attribute is duplicated for [{duplicates}] nodes")
+                raise MissingAttributeError("The 'name' attribute is duplicated for [{}] nodes".format(duplicates))
 
         if Graph.is_directed(graph):
             raise UnsupportedGraphError("The input graph is directed. Pyntacle currently supports undirected graphs")
@@ -99,7 +99,7 @@ def vertex_doctor(func):
             if any(node not in all_names_in_graph for node in nodes):
                 remaining = list(set(nodes) - set(all_names_in_graph))
                 if len(remaining) > 0:
-                    raise KeyError(f'The nodes: {remaining} are not present in the input graph')
+                    raise KeyError('The nodes: {} are not present in the input graph'.format(remaining))
 
         return func(graph, nodes, *args, **kwargs)
 
