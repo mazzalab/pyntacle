@@ -50,10 +50,10 @@ def check_graph_consistency(func):
         #     raise IllegalGraphSizeError("Input Graph does not have any edges")
 
         if "name" not in graph.attributes():
-            raise MissingAttributeError("Graph must have a \"graph_name\" attribute")
+            raise MissingAttributeError("Graph must have a \"name\" attribute")
 
         if "name" not in graph.vs.attributes():
-            raise MissingAttributeError("Input graph does not have a \"name\" attribute")
+            raise MissingAttributeError("Input vertices don't have a \"name\" attribute")
         else:
             if None in graph.vs["name"]:
                 raise MissingAttributeError("The 'name' attribute must be assigned to all nodes of the graph")

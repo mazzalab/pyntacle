@@ -259,7 +259,7 @@ class PyntacleImporter:
 
                     else:
                         sys.stdout.write(
-                            "an edge already exist between node {0} and node {1}. This should not happen, as pyntacle only supports simple graphs.\n Attribute \"__sif_interaction\n will be overriden\n".format(
+                            "an edge already exists between node {0} and node {1}. This should not happen, as pyntacle only supports simple graphs.\n Attribute \"__sif_interaction\n will be overriden\n".format(
                                 first, n))
                         node_ids = GraphUtils(graph=graph).get_node_indices(node_names=[first, n])
                         graph.es(graph.get_eid(node_ids[0], node_ids[1], directed=False))["__sif_interaction"] = interaction

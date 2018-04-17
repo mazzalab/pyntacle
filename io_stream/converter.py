@@ -44,26 +44,26 @@ class QuickConvert:
     @staticmethod
     @input_file_checker
     @separator_sniffer
-    def EdgelistToSif(input_file:str, sep=None, header=False, output_file=None):
+    def EdgelistToSif(file:str, sep=None, header=False, output_file=None):
         """
         convert a file written as an edgelist into a Simple Interaction File Format (*SIF*) at the path specified by
         `output_file' format (or, if not specified, will create the same file in the same directory. if the Edgelist
         contains an header, it will be rewritten into the SIF file. The interaction that the SIF file requires will
         be a column named "Interaction" where each node is connected to any other using the *"interacts_with"* keyword.
-        :param str input_file: a valid path to the input Edgelist
+        :param str file: a valid path to the input Edgelist
         :param str sep: a string specifying the column separator for both input and output. If 'None' (default), we assume a \t separates each column.
         :param bool header: rewrite the header into the output file. Default if 'False' (inut file contains no header)
         :param str output_file: The path where the resulting file will be stored.If None, the output file will be in the current directory,with the *.egl* extension and a small pseudoword before the inout basename.
         :return: the path to the output file
         """
         if output_file is None:
-            output_file = os.path.splitext(os.path.basename(os.path.abspath(input_file)))[0] + randomword(4) + ".sif"
+            output_file = os.path.splitext(os.path.basename(os.path.abspath(file)))[0] + randomword(4) + ".sif"
             sys.stdout.write("writing the output file at {}\n").format(output_file)
 
         if os.path.exists(output_file):
             sys.stdout.write("A file named {} already exists. Will overwrite\n".format(output_file))
 
-        eglutils = egl(file=input_file, header=header, separator=sep)
+        eglutils = egl(file=file, header=header, sep=sep)
 
         if eglutils.is_direct():
             raise UnproperlyFormattedFileError("Edge List is direct")
@@ -73,7 +73,7 @@ class QuickConvert:
 
         edgelist = []
 
-        with open(input_file, "r") as infile:
+        with open(file, "r") as infile:
             if header:
                 headerstring = infile.readline().rstrip().split(sep)
                 edgelist.append([headerstring[0], "Interaction", headerstring[-1]]) #the header rewritten
@@ -98,31 +98,37 @@ class QuickConvert:
     @staticmethod
     @input_file_checker
     @separator_sniffer
-    def SifToEdgelist(input_file:str, sep=None, header=False, output_file=None):
+    def SifToEdgelist(file:str, sep=None, header=False, output_file=None):
         """
         Converts a Simple Interaction Format file (*SIF*) to an undirected edgelist readable by pyntacle. **CONDITIONS FOR CONVERSIONS:**
         We assume the SIF file contains at least 3 columns, with the *source* nodes in the 1st column and the *target*
         nodes in the 3rd column. All the other values from the 4th column onwards are assumed to be other target nodes connected by
-        the input node (so no attroibuites are present in the sif file). For more info on file format specification,
+        the input node (so no attributes are present in the sif file). For more info on file format specification,
         please visit `The official Cytoscape Documentation <http://manual.cytoscape.org/en/stable/Supported_Network_File_Formats.html> .
         **WARNING** If a header is present, the cells corresponding to column 1 and 3 will be rewritten.
-        :param str input_file: a valid path to the input SIF file
+        :param str file: a valid path to the input SIF file
         :param str sep: a string specifying the column separator for both input and output. If 'None' (default), we assume a \t separates each column.
         :param bool header: rewrite the header into the output file. Default if 'False' (inut file contains no header)
         :param str output_file: The path where the resulting file will be stored.If None, the output file will be in the current directory,with the *.egl* extension and a small pseudoword before the inout basename.
         :return: the path to the output file
         """
         if output_file is None:
-            output_file = os.path.splitext(os.path.basename(os.path.abspath(input_file)))[0] + randomword(4) + ".egl"
-            sys.stdout.write("writing the output file at {}\n").format(output_file)
+            output_file = os.path.join(os.getcwd(), "_".join([os.path.splitext(os.path.basename(os.path.abspath(file)))[0],randomword(4)])) + ".egl"
+            print(output_file)
+            input()
+            sys.stdout.write("writing the output file at {}\n".format(output_file))
 
         if os.path.exists(output_file):
             sys.stdout.write("A file named {} already exists. Will overwrite\n".format(output_file))
 
         egl = []
-        with open(input_file, "w") as infile:
+        with open(file, "r") as infile:
+            print("ciao")
+            input()
             if header:
-                headerrow = infile.readline().rstrip().split(sep)
+                headerrow = infile.readline().rstrip()
+                input()
+                #.split(sep)
                 headerrow = egl.append([headerrow[0], headerrow[2]])
                 egl.append(headerrow)
 

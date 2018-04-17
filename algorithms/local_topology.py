@@ -85,7 +85,7 @@ class LocalTopology:
             return graph.betweenness(directed=False)
 
         else:
-            return graph.betweenness(nodes,directed=False)
+            return graph.betweenness(nodes, directed=False)
 
     @staticmethod
     @check_graph_consistency

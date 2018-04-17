@@ -79,21 +79,23 @@ from igraph import Graph
 # #
 # #
 
-mat= GraphLoad(r'C:\Users\t.mazza\Desktop\CSS-Bioinformatics\pyntacle\test\test_sets\input\figure_8.txt', "adjm", True).graph_load()
-# print('\n\nORIGINAL MAT')
-# print(mat.get_adjacency())
-# result_igraph = LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.igraph)
-# result_cpu = LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.cpu)
-# result_gpu = LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.gpu)
+# mat= GraphLoad(r'C:\Users\t.mazza\Desktop\CSS-Bioinformatics\pyntacle\test\test_sets\input\figure_8.txt', "adjm", True).graph_load()
+# # print('\n\nORIGINAL MAT')
+# # print(mat.get_adjacency())
+# # result_igraph = LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.igraph)
+# # result_cpu = LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.cpu)
+# # result_gpu = LocalTopology.shortest_path_pyntacle(graph=mat, implementation=SP_implementations.gpu)
+# #
+# # print("IGRAPH vs CPU: " + str((result_igraph == result_cpu).all()) + "\n\n")
+# # print(result_igraph)
+# # print("IGRAPH vs GPU: " + str((result_igraph == result_gpu).all()) + "\n\n")
+# # print(result_gpu)
 #
-# print("IGRAPH vs CPU: " + str((result_igraph == result_cpu).all()) + "\n\n")
-# print(result_igraph)
-# print("IGRAPH vs GPU: " + str((result_igraph == result_gpu).all()) + "\n\n")
-# print(result_gpu)
+# from algorithms.sparseness import Sparseness
+# Sparseness.completeness(mat)
 
-from algorithms.sparseness import Sparseness
-Sparseness.completeness(mat)
-
+from io_stream.converter import QuickConvert
+QuickConvert.SifToEdgelist(file="/home/local/MENDEL/d.capocefalo/Desktop/Tom_Droso_Correlation/embryo0-2_corr_filtered.sif", sep="\t", header=True)
 
 # #
 # print('\n\n Igraph puro')
