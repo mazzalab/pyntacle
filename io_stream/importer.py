@@ -200,6 +200,8 @@ class PyntacleImporter:
         :return: an `igraph.Graph` object.
         """
 
+        #todo Mauro can you speed up this process?
+        
         graph = Graph()
         graph.vs["name"] = []
 
