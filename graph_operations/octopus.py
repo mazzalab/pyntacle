@@ -181,7 +181,7 @@ class Octopus:
         implementation = implementation_check(graph)
         if node_names is None:
             node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes(LocalAttribute.radiality_reach.name, LocalTopology.radiality_reach(graph, node_names, implementation=implementation), node_names)
+        AddAttributes(graph).add_node_attributes(LocalAttribute.radiality_reach.name, LocalTopology.radiality_reach(graph, node_names, cmode=implementation), node_names)
         
     @staticmethod
     @check_graph_consistency

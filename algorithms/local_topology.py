@@ -176,7 +176,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def radiality_reach(graph: Graph, nodes=None, implementation=Cmode.igraph) -> list:
+    def radiality_reach(graph: Graph, nodes=None, cmode=Cmode.igraph) -> list:
         """
         Computes the radiality reach for a single node, a list of nodes or for all nodes in the Graph.
         The radiality reach is a weighted measure of the canonical radiality and it is recommended for disconnected
@@ -190,17 +190,17 @@ class LocalTopology:
         "Minimum requirements" specifications in pyntacle's manual
         :param nodes: if a node name, returns the degree of the input node. If a list of node names,
         the degree is returned for all node names.if None (default), the degree is computed for the whole graph.
-        :param Enum.implementation implementation: the way you prefer to compute the shortest path for the whole graph. choices are:
+        :param Enum.cmode cmode: the way you prefer to compute the shortest path for the whole graph. choices are:
         * *'igraph'*: uses the Dijsktra's algorithm implemented from igraph
-        * *'parallel_CPU'*: uses a parallel CPU implementation of the Floyd-Warshall algorithm using numba
-        * *'parallel_GPU'*: uses a parallel GPU implementation of the Floyd-Warshall algorithm using numba
+        * *'parallel_CPU'*: uses a parallel CPU cmode of the Floyd-Warshall algorithm using numba
+        * *'parallel_GPU'*: uses a parallel GPU cmode of the Floyd-Warshall algorithm using numba
         **(requires NVIDIA graphics compatible with CUDA)**
         :return: a list of floats, the length being the number of input nodes. Each float represent the closeness
         of the input node
         """
         comps = graph.components()  # define each case
         if len(comps) == 1:
-            return LocalTopology.radiality(graph=graph, nodes=nodes, cmode=implementation)
+            return LocalTopology.radiality(graph=graph, nodes=nodes, cmode=cmode)
 
         else:
             tot_nodes = graph.vcount()
@@ -215,7 +215,7 @@ class LocalTopology:
 
                     else:
                         part_nodes = subg.vcount()
-                        rad = LocalTopology.__radiality_inner__(graph=subg, nodes=nodes,implementation=implementation)
+                        rad = LocalTopology.__radiality_inner__(graph=subg, nodes=nodes, implementation=cmode)
 
                         # rebalance radiality by weighting it over the total number of nodes
                         for i, elem in enumerate(rad):
@@ -238,7 +238,7 @@ class LocalTopology:
                         subg = graph.induced_subgraph(vertices=c)
                         part_nodes = subg.vcount()
                         rad = LocalTopology.__radiality_inner__(graph=subg, nodes=node_names,
-                                                              implementation=implementation)
+                                                                implementation=cmode)
                         for i, elem in enumerate(rad):
                             rad[i] = elem * (part_nodes / tot_nodes)
 
@@ -314,14 +314,3 @@ class LocalTopology:
             nodes = gUtil(graph).get_node_indices(nodes)
 
         return graph.pagerank(vertices=nodes, damping=damping, directed=False, weights=weights, implementation="arpack")
-
-
-
-# todo missing stuff:
-# todo shortest path cpu: single nodes or group of nodes
-# todo  shortest path gpu
-# todo all the other graphs
-# todo automatic implementation becomes global
-# todo missing methods:
-# todo Mauro: specify numpy maximum allocation in RAM (in "Requirements")
-# todo Mauro. specify number of cores (COU) for numba

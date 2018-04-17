@@ -41,9 +41,6 @@ from tools.misc.enums import *
 
 
 class Metrics:
-    """
-    **[EXPAND]**
-    """
     def __init__(self, args):
         self.logging = log
         self.args = args
@@ -87,6 +84,7 @@ class Metrics:
         self.logging.debug(self.args)
 
         # Load Graph
+        sys.stdout.write("Reading input file...\n")
         graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header).graph_load()
         # init Utils global stuff
         utils = GraphUtils(graph=graph)
@@ -188,26 +186,25 @@ class Metrics:
                     ["pyntacle", graph["name"][0], "local_metrics_selected_nodes_report",
                      self.date])
 
-            sys.stdout.write("Producing report in {} format.\n".format(self.args.report_format))
-
-            report_path = os.path.join(self.args.directory, report_prefix + self.args.report_format)
-
-            if os.path.exists(report_path):
-                sys.stdout.write("WARNING: File {} already exists, overwriting it\n".format(report_path))
-            
             local_attributes_dict = OrderedDict({LocalAttribute.degree.name: LocalTopology.degree(graph=graph, nodes=nodes_list),
                  LocalAttribute.clustering_coefficient.name: LocalTopology.clustering_coefficient(graph=graph, nodes=nodes_list),
                  LocalAttribute.betweenness.name: LocalTopology.betweenness(graph=graph, nodes=nodes_list),
                  LocalAttribute.closeness.name: LocalTopology.closeness(graph=graph, nodes=nodes_list),
                  LocalAttribute.radiality.name: LocalTopology.radiality(graph=graph, nodes=nodes_list, cmode=implementation),
-                 LocalAttribute.radiality_reach.name: LocalTopology.radiality_reach(graph=graph, nodes=nodes_list, implementation=implementation),
+                 LocalAttribute.radiality_reach.name: LocalTopology.radiality_reach(graph=graph, nodes=nodes_list, cmode=implementation),
                  LocalAttribute.eccentricity.name: LocalTopology.eccentricity(graph=graph, nodes=nodes_list),
                  LocalAttribute.eigenvector_centrality.name : LocalTopology.eigenvector_centrality(graph=graph, nodes=nodes_list),
                  LocalAttribute.pagerank.name: LocalTopology.pagerank(graph=graph, nodes=nodes_list, weights=weights, damping=self.args.damping_factor)})
             
             if self.args.nodes:
                 local_attributes_dict["nodes"] = self.args.nodes
-            
+
+            sys.stdout.write("Producing report in {} format.\n".format(self.args.report_format))
+            report_path = os.path.join(self.args.directory, report_prefix + self.args.report_format)
+
+            if os.path.exists(report_path):
+                sys.stdout.write("WARNING: File {} already exists, overwriting it\n".format(report_path))
+
             reporter.create_report(Reports.Local, local_attributes_dict)
             reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
@@ -277,7 +274,7 @@ class Metrics:
 
         elif self.args.which == "global":
             
-            sys.stdout.write("Computing global Metrics for whole graph\n")
+            sys.stdout.write("Computing Global Metrics...\n")
 
             global_attributes_dict = OrderedDict({GlobalAttribute.average_shortest_path_length.name: GlobalTopology.average_shortest_path_length(graph=graph),
                                                     GlobalAttribute.diameter.name: GlobalTopology.diameter(graph=graph),
@@ -311,7 +308,7 @@ class Metrics:
                 report_prefix_nonodes = "_".join(["pyntacle", graph["name"][0], "global_metrics_nonodes", "report",
                                           self.date])
                 
-                sys.stdout.write("Removing nodes {} from input graph and computing global metrics\n".format(self.args.no_nodes))
+                sys.stdout.write("Removing nodes {} from input graph and computing Global Metrics\n".format(self.args.no_nodes))
                 nodes_list = self.args.no_nodes.split(",")
 
                 # this will be useful when producing the two global topology plots, one for the global graph and the other one fo all nodes

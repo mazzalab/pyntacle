@@ -89,7 +89,7 @@ class GraphLoad():
 
         # Graph import
         if self.file_format == 'egl':
-            graph = PyntacleImporter.EdgeList(file_=self.input_file, sep=separator, header=self.header)
+            graph = PyntacleImporter.EdgeList(file=self.input_file, sep=separator, header=self.header)
             # try:
             #     graph = EdgeListToGraph().import_graph(file_name=self.input_file, header=self.header,
             #                                            separator=separator)

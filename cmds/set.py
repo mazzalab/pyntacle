@@ -72,10 +72,11 @@ class Set():
             input_header = False
 
         input_format = format_dictionary.get(self.args.format, "NA")
-
+        sys.stdout.write("Reading first input file...\n")
         graph1 = GraphLoad(self.args.input_file_1, file_format=input_format,
                            header=input_header).graph_load()
 
+        sys.stdout.write("Reading second input file...\n")
         graph2 = GraphLoad(self.args.input_file_2, file_format=input_format,
                            header=input_header).graph_load()
 
