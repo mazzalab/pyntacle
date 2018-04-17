@@ -32,7 +32,7 @@ from igraph import Graph
 # print(GlobalTopology.density(erd))
 
 
-# mat= GraphLoad('/home/m.truglio/Desktop/Compiti_Dedalus/figure_8.txt', "adjm", True).graph_load()
+mat= GraphLoad('/home/m.truglio/Desktop/Compiti_Dedalus/embryo0-2_corr_filtered.sif', "sif", True).graph_load()
 # print(mat)
 # print(list(adjmatrix.es))
 # AddAttributes(adjmatrix).add_edge_attributes('colore_edge', ['nero'], [('1','0')])
@@ -79,8 +79,8 @@ from igraph import Graph
 # #
 # #
 
-mat= GraphLoad(r'C:\Users\Iron\Desktop\CSS-Bioinformatics\pyntacle\test\test_sets\input\figure_8.txt',
-               "adjm", True).graph_load()
+# mat= GraphLoad(r'C:\Users\Iron\Desktop\CSS-Bioinformatics\pyntacle\test\test_sets\input\figure_8.txt',
+#                "adjm", True).graph_load()
 
 print("Eccentricity of BR: {}".format(LocalTopology.eccentricity(mat, "BR")))
 print("Radiality of BR: {}".format(LocalTopology.radiality(mat, "BR", Cmode.igraph)))
