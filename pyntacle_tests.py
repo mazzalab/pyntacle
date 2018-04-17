@@ -8,6 +8,11 @@ from algorithms.greedy_optimization import *
 import numpy
 numpy.set_printoptions(threshold=numpy.nan)
 
+
+from io_stream.importer import PyntacleImporter
+
+edgl = PyntacleImporter.EdgeList("/home/local/MENDEL/d.capocefalo/Desktop/Tom_Droso_Correlation/embryo2-4_corr_filtered.egl", sep="\t", header=True)
+
 from graph_operations.octopus import Octopus
 from igraph import Graph
 # from misc.graph_routines import *
@@ -79,13 +84,13 @@ from igraph import Graph
 # #
 # #
 
-mat= GraphLoad(r'C:\Users\t.mazza\Desktop\CSS-Bioinformatics\pyntacle\test\test_sets\input\figure_8.txt',
-               "adjm", True).graph_load()
-
-print("Eccentricity of BR: {}".format(LocalTopology.eccentricity(mat, "BR")))
-print("Radiality of BR: {}".format(LocalTopology.radiality(mat, "BR", Cmode.igraph)))
-print("Radiality of BR: {}".format(LocalTopology.radiality(mat, "BR", Cmode.cpu)))
-print("Radiality of BR: {}".format(LocalTopology.radiality(mat, "BR", Cmode.gpu)))
+# mat= GraphLoad(r'C:\Users\t.mazza\Desktop\CSS-Bioinformatics\pyntacle\test\test_sets\input\figure_8.txt',
+#                "adjm", True).graph_load()
+#
+# print("Eccentricity of BR: {}".format(LocalTopology.eccentricity(mat, "BR")))
+# print("Radiality of BR: {}".format(LocalTopology.radiality(mat, "BR", Cmode.igraph)))
+# print("Radiality of BR: {}".format(LocalTopology.radiality(mat, "BR", Cmode.cpu)))
+# print("Radiality of BR: {}".format(LocalTopology.radiality(mat, "BR", Cmode.gpu)))
 
 # print("Shortest paths from BR by iGraph: {}".format(ShortestPath.get_shortestpaths(mat, "BR", Cmode.igraph)))
 # print("Shortest paths from BR by multi-core: {}".format(ShortestPath.get_shortestpaths(mat, "BR", Cmode.cpu)))

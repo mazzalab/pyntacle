@@ -158,8 +158,8 @@ class PyntacleImporter:
         :return: an `igraph.Graph` object.
         """
 
-        if not EglUtils(file=file, header=header, sep=sep).is_pyntacle_ready():
-            raise UnproperlyFormattedFileError("Edgelist is not ready to be parsed by Pyntacle, fix it and then come back!")
+        if EglUtils(file=file, header=header, sep=sep).is_direct():
+            raise UnproperlyFormattedFileError("Edgelist is not ready to be parsed by Pyntacle (it is a direct one)")
 
         graph = Graph() #initialize an empty graph that will be filled
         
@@ -284,7 +284,6 @@ class PyntacleImporter:
     def Dot(file, sep=None, **kwargs):
         #todo Mauro why the separator is greyed out?
         """
-
         :param file:
         :param sep:
         :param kwargs:

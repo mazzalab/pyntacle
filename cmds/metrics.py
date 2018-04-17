@@ -188,13 +188,8 @@ class Metrics:
                     ["pyntacle", graph["name"][0], "local_metrics_selected_nodes_report",
                      self.date])
 
-            sys.stdout.write("Producing report in {} format.\n".format(self.args.report_format))
+            sys.stdout.write("Computing Local Metrics...\n")
 
-            report_path = os.path.join(self.args.directory, report_prefix + self.args.report_format)
-
-            if os.path.exists(report_path):
-                sys.stdout.write("WARNING: File {} already exists, overwriting it\n".format(report_path))
-            
             local_attributes_dict = OrderedDict({LocalAttribute.degree.name: LocalTopology.degree(graph=graph, nodes=nodes_list),
                  LocalAttribute.clustering_coefficient.name: LocalTopology.clustering_coefficient(graph=graph, nodes=nodes_list),
                  LocalAttribute.betweenness.name: LocalTopology.betweenness(graph=graph, nodes=nodes_list),
@@ -207,7 +202,13 @@ class Metrics:
             
             if self.args.nodes:
                 local_attributes_dict["nodes"] = self.args.nodes
-            
+
+            sys.stdout.write("Producing report in {} format.\n".format(self.args.report_format))
+            report_path = os.path.join(self.args.directory, report_prefix + self.args.report_format)
+
+            if os.path.exists(report_path):
+                sys.stdout.write("WARNING: File {} already exists, overwriting it\n".format(report_path))
+
             reporter.create_report(Reports.Local, local_attributes_dict)
             reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
@@ -277,7 +278,7 @@ class Metrics:
 
         elif self.args.which == "global":
             
-            sys.stdout.write("Computing global Metrics for whole graph\n")
+            sys.stdout.write("Computing Global Metrics...\n")
 
             global_attributes_dict = OrderedDict({GlobalAttribute.average_shortest_path_length.name: GlobalTopology.average_shortest_path_length(graph=graph),
                                                     GlobalAttribute.diameter.name: GlobalTopology.diameter(graph=graph),
@@ -311,7 +312,7 @@ class Metrics:
                 report_prefix_nonodes = "_".join(["pyntacle", graph["name"][0], "global_metrics_nonodes", "report",
                                           self.date])
                 
-                sys.stdout.write("Removing nodes {} from input graph and computing global metrics\n".format(self.args.no_nodes))
+                sys.stdout.write("Removing nodes {} from input graph and computing Global Metrics\n".format(self.args.no_nodes))
                 nodes_list = self.args.no_nodes.split(",")
 
                 # this will be useful when producing the two global topology plots, one for the global graph and the other one fo all nodes
