@@ -34,6 +34,7 @@ from tools.misc.enums import Cmode
 from io_stream.importer import PyntacleImporter
 from tools.graph_utils import GraphUtils
 from tools.add_attributes import AddAttributes
+from exceptions.unproperlyformattedfile_error import UnproperlyFormattedFileError
 
 
 def separator_detect(filename):
@@ -90,19 +91,6 @@ class GraphLoad():
         # Graph import
         if self.file_format == 'egl':
             graph = PyntacleImporter.EdgeList(file=self.input_file, sep=separator, header=self.header)
-            # try:
-            #     graph = EdgeListToGraph().import_graph(file_name=self.input_file, header=self.header,
-            #                                            separator=separator)
-
-            # except (ValueError):
-            #     if not self.header: #in case header has been specified
-            #         sys.stderr.write(
-            #             "Edge List is direct or edge list file is malformed. Please note that you specified the header is not present, If that's not the case, remove the \"--no-header\" option. Quitting.\n")
-            #         sys.exit(1)
-            #     else:
-            #         sys.stderr.write(
-            #             "Edge List is direct or edge list file is malformed. Please note that you specified the header was present. If that's not the case, use the \"--no-header\" option. Quitting.\n")
-            #         sys.exit(1)
 
         elif self.file_format == 'adjm':
             try:
@@ -111,11 +99,15 @@ class GraphLoad():
             except (ValueError):
                 if not self.header: #in case header has been specified
                     sys.stderr.write(
-                        "Adjacency Matrix is either direct or malformed. Please note that you specified the header is not present, If that's not the case, remove the \"--no-header\" option. Quitting.\n")
+                        "Adjacency Matrix is either direct or malformed. Please note that you specified "
+                        "the header is not present, If that's not the case, remove the \"--no-header\" "
+                        "option. Quitting.\n")
                     sys.exit(1)
                 else:
                     sys.stderr.write(
-                        "Adjacency Matrix is either direct or malformed. Please note that you specified the header was present. If that's not the case, use the \"--no-header\" option. Quitting.\n")
+                        "Adjacency Matrix is either direct or malformed. Please note that you specified "
+                        "the header was present. If that's not the case, use the \"--no-header\" option. "
+                        "Quitting.\n")
                     sys.exit(1)
 
         elif self.file_format == 'graph':
@@ -126,7 +118,8 @@ class GraphLoad():
 
             except IOError:
                 sys.stderr.write(
-                    "Binary format does not contain an igraph.Graph object or the Graph passed is invalid. check your binary. Quitting.\n")
+                    "Binary format does not contain an igraph.Graph object or the Graph passed is invalid. "
+                    "Check your binary. Quitting.\n")
                 sys.exit(1)
 
 
@@ -136,22 +129,27 @@ class GraphLoad():
                 graph = PyntacleImporter.Dot(self.input_file)
             except:
                 sys.stderr.write(
-                    "Dot file is not supporter by our parser. Or other formatting errors has occured. Please check our documentation in order to check out DOT file specifications. Quitting.\n")
+                    "Dot file is not supporter by our parser. Or other formatting errors has occured. "
+                    "Please check our documentation in order to check out DOT file specifications. "
+                    "Quitting.\n")
                 sys.exit(1)
 
         elif self.file_format == 'sif':
             try:
                 graph = PyntacleImporter.Sif(file=self.input_file, sep=separator, header=self.header)
-            except:
+            except UnproperlyFormattedFileError:
                 sys.stderr.write(
-                    "Sif is unproperly formatted or a header is present and --no-header was declared in input (also check if the separator is correct). Quitting.\n")
+                    "Sif is unproperly formatted or a header is present and --no-header was declared in "
+                    "input (also check if the separator is correct). Quitting.\n")
                 sys.exit(1)
 
         else:
-            sys.stderr.write("Unsupported file format {}. This should not happen. Please send this line to pyntacle Developer. Quitting\n".format(self.file_format))
+            sys.stderr.write("Unsupported file format {}. This should not happen. Please send this line to "
+                             "pyntacle Developer. Quitting\n".format(self.file_format))
             sys.exit(1)
 
-        self.logger.debug("Graph: name:{}\tNodes: {}\tEdges: {}".format(graph["name"], graph.vcount(), graph.ecount()))
+        self.logger.debug("Graph: name:{}\tNodes: {}\tEdges: {}".format(graph["name"], graph.vcount(),
+                                                                        graph.ecount()))
         self.logger.debug("Header:{}".format(self.header))
         self.logger.debug("Separator:{}".format(repr(separator)))
         
@@ -168,7 +166,8 @@ class GraphLoad():
         :return: guessed format, header and separator
         """
         self.logger.info(
-            "Guessing input format. It could take some time for large files; use the option --format to skip this part.")
+            "Guessing input format. It could take some time for large files; use the option --format to "
+            "skip this part.")
         valid_extensions = {'.adjm': 'adjm', '.adjmat': 'adjm', '.egl': 'egl',
                             '.sif': 'sif', '.dot': 'dot', '.graph': 'graph'}
         file_ext = str.lower(os.path.splitext(filename)[-1])
@@ -206,14 +205,15 @@ class GraphLoad():
                 f = np.genfromtxt(filename, skip_header=1, usecols=(tuple(range(start_col, n_cols))),
                                   delimiter=separator, dtype=str)
             except:
-                sys.stderr.write("\nCould not load_graph data from file. Please specify --no-header if necessary.\n")
+                sys.stderr.write("\nCould not load_graph data from file. Please specify --no-header if "
+                                 "necessary.\n")
                 sys.exit()
         else:
             try:
                 f = np.genfromtxt(filename, dtype=str)
             except:
                 sys.stderr.write(
-                    "\nCould not load_graph data from file. If it is written in one of the supported formats, "
+                    "\nCould not load_graph data from file. If it is written in one of the supported formats,"
                     "please specify it with the --format option\n")
                 sys.exit()
 
@@ -234,7 +234,8 @@ class GraphLoad():
             self.logger.info("Guessed file format: Adjacency Matrix")
             return "adjm", self.header, separator
         else:
-            self.logger.error("It was not possible to guess file format. Please specify it with the --format option.")
+            self.logger.error("It was not possible to guess file format. Please specify it with the "
+                              "--format option.")
             sys.exit()
 
     def get_header(self):

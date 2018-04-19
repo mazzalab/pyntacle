@@ -32,7 +32,10 @@ from igraph import Graph
 # print(GlobalTopology.density(erd))
 
 
-mat= GraphLoad('/home/m.truglio/Desktop/Compiti_Dedalus/embryo0-2_corr_filtered.sif', "sif", True).graph_load()
+mat = GraphLoad('/home/m.truglio/Desktop/Compiti_Dedalus/embryo_small.sif', "sif", True).graph_load()
+# print(mat)
+# print(mat.summary())
+sys.exit()
 # print(mat)
 # print(list(adjmatrix.es))
 # AddAttributes(adjmatrix).add_edge_attributes('colore_edge', ['nero'], [('1','0')])

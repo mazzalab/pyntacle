@@ -39,6 +39,7 @@ from exceptions.illegal_graph_size_error import IllegalGraphSizeError
 from exceptions.unproperlyformattedfile_error import UnproperlyFormattedFileError
 from pyparsing import *
 from itertools import product
+from collections import OrderedDict
 
 def dot_attrlist_to_dict(mylist):
     mydict = {}
@@ -117,7 +118,6 @@ class PyntacleImporter:
             raise ValueError("Matrix is not squared")
 
         with open(file, "r") as adjmatrix:
-            #todo Mauro controlli che questa parte sul separatore fatto bene funziona?
             iterator = iter(adjmatrix.readline, '')
 
             first_line = next(iterator, None).rstrip()
@@ -200,89 +200,73 @@ class PyntacleImporter:
         :return: an `igraph.Graph` object.
         """
 
-        #todo Mauro can you speed up this process?
-
         graph = Graph()
         graph.vs["name"] = []
+        
+        with open(file, "r") as f:
+        
+            """:type: list[str]"""
+            if header:
+                graph["__sif_interaction_name"] = f.readline().rstrip('\n').split(sep)[0][1]
+            else:
+                graph["__sif_interaction_name"] = None
+                
+            nodeslist = []
+            edgeslist = OrderedDict()
+            for i, elem in enumerate(f):
+                elem = elem.rstrip('\n').split(sep)
+                if len(elem) == 0:
+                    pass  # this should be an empty line
+    
+                elif len(elem) == 1:  # add the single node as isolate
+                    nodeslist.append(elem[0])
 
-        sif_list = [line.rstrip('\n').split(sep) for line in open(file, "r")]
-
-        """:type: list[str]"""
-
-        if header:
-            graph["__sif_interaction_name"] = sif_list[0][1]
-            graph.es()["__sif_interaction"] = None
-            del sif_list[0]
-
-        else:
-            graph["__sif_interaction_name"] = None
-
-        for i, elem in enumerate(sif_list):
-
-            if len(elem) == 0:
-                pass  # this should be an empty line
-
-            elif len(elem) == 1:  # add the single node as isolate
-                if elem[0] not in graph.vs()["name"]:
-                    graph.add_vertex(name=elem[0])
-
-            elif len(elem) == 3:
-
-                # print(elem)
-                first = elem[0]
-                second = elem[2]
-
-                if first not in graph.vs()["name"]:
-                    graph.add_vertex(name=first)
-
-                if second not in graph.vs()["name"]:
-                    graph.add_vertex(name=second)
-
-                if not graph.are_connected(first, second):
-                    graph.add_edge(source=first, target=second, __sif_interaction=elem[1])
-
-                else:
-                    node_ids = GraphUtils(graph=graph).get_node_indices(node_names=[first, second])
-                    graph.es(graph.get_eid(node_ids[0], node_ids[1]))["__sif_interaction"] = elem[1]
-
-            elif len(elem) >= 4:
-                first = elem[0]
-                interaction = elem[1]
-                other_nodes = elem[2:]
-
-                if first not in graph.vs()["name"]:
-                    graph.add_vertex(name=first)
-
-                for n in other_nodes:
-                    if n not in graph.vs()["name"]:
-                        graph.add_vertex(name=n)
-                    if not graph.are_connected(first, n):
-                        graph.add_edge(source=first, target=n, __sif_interaction=interaction)
-
+                elif len(elem) == 3:
+                    nodeslist.extend([elem[0], elem[2]])
+                    if ((elem[0], elem[2]) not in edgeslist) and ((elem[2], elem[0]) not in edgeslist):
+                        edgeslist[(elem[0], elem[2])] = elem[1]
                     else:
                         sys.stdout.write(
-                            "an edge already exists between node {0} and node {1}. This should not happen, as pyntacle only supports simple graphs.\n Attribute \"__sif_interaction\n will be overriden\n".format(
-                                first, n))
-                        node_ids = GraphUtils(graph=graph).get_node_indices(node_names=[first, n])
-                        graph.es(graph.get_eid(node_ids[0], node_ids[1], directed=False))["__sif_interaction"] = interaction
+                            "an edge already exists between node {0} and node {1}. This should not happen, as pyntacle only supports simple graphs.\nAttribute __sif_interaction will be overwritten\n".format(
+                                elem[0], elem[2]))
+                        edgeslist[(elem[0], elem[2])] = elem[1]
 
-            else:
-                sys.stdout.write("line {} is malformed, hence it will be skipped\n".format(i))
+                elif len(elem) >= 4:
+                    first = elem[0]
+                    interaction = elem[1]
+                    other_nodes = elem[2:]
+                        
+                    nodeslist.append(first)
+                    for n in other_nodes:
+                        nodeslist.append(n)
+                        if ((first, n) not in edgeslist) and ((n, first) not in edgeslist):
+                            edgeslist[(first, n)] = interaction
+                        else:
+                            sys.stdout.write(
+                                "an edge already exists between node {0} and node {1}. This should not "
+                                "happen, as pyntacle only supports simple graphs."
+                                "\n Attribute __sif_interaction will be overwritten\n".format(first, n))
+                            edgeslist[(first, n)] = interaction
+    
+                else:
+                    raise UnproperlyFormattedFileError("line {} is malformed".format(i))
+    
+            nodeslist = list(set(nodeslist))
+            graph.add_vertices(nodeslist)
+            graph.add_edges(edgeslist.keys())
+            graph.es()["__sif_interaction"] = list(edgeslist.values())
 
-                # print(g.vs()["name"])
-
-        # add missing attribute to graph
-        AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
-
-        sys.stdout.write("Sif File  from file {} imported\n".format(file))
+            # add missing attribute to graph
+            AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
+    
+            sys.stdout.write("Sif File  from file {} imported\n".format(file))
 
         return graph
 
     @staticmethod
     @input_file_checker
     @separator_sniffer
-    def Dot(file, sep=None, **kwargs):
-        #todo Mauro why the separator is greyed out?
+    def Dot(file, **kwargs):
         """
         :param file:
         :param sep:
