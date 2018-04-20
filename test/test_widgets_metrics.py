@@ -1,11 +1,11 @@
 import unittest
 import os, sys, glob
-from collections import namedtuple
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 from cmds.metrics import Metrics as metrics_command
 from tools.misc.graph_load import GraphLoad
 from algorithms.global_topology import GlobalTopology
-from tools.misc.enums import *
+from tools.enums import *
 
 from test import getmd5
 

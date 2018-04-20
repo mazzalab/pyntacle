@@ -24,7 +24,6 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-from config import *
 from algorithms.global_topology import GlobalTopology
 from algorithms.local_topology import LocalTopology
 from algorithms.sparseness import *
@@ -37,7 +36,7 @@ from io_stream.import_attributes import ImportAttributes
 from tools.misc.graph_load import *
 from tools.graph_utils import GraphUtils
 from tools.add_attributes import AddAttributes
-from tools.misc.enums import *
+from tools.enums import *
 
 
 class Metrics:

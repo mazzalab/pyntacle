@@ -1,15 +1,8 @@
-from config import *
-from algorithms.global_topology import *
-from algorithms.local_topology import *
-from algorithms.keyplayer import KeyPlayer
 from tools.misc.graph_load import *
-from tools.misc.enums import KPPOSchoices, KPNEGchoices
 from algorithms.greedy_optimization import *
 import numpy
 numpy.set_printoptions(threshold=numpy.nan)
 
-from graph_operations.octopus import Octopus
-from igraph import Graph
 # from misc.graph_routines import *
 # import time
 

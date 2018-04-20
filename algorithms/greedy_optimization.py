@@ -27,14 +27,13 @@ __license__ = u"""
 """
 This Module covers the Greedy optimization algorithms for optimal kp-set calculation using Key-Players metrics developed by Borgatti
 """
-from config import *
 import random
 from functools import partial
 from algorithms.keyplayer import KeyPlayer as kp
 from algorithms.local_topology import LocalTopology as Lt
 from tools.misc.graph_routines import *
 from exceptions.wrong_argument_error import WrongArgumentError
-from tools.misc.enums import KPPOSchoices, KPNEGchoices, Cmode
+from tools.enums import kppos, kpneg, Cmode
 from tools.misc.kpsearch_utils import greedy_search_initializer
 from tools.graph_utils import GraphUtils as gu
 
@@ -60,7 +59,7 @@ class GreedyOptimization:
                 Please see the `Minimum requirements` specifications in pyntacle's manual
 
             kpp_size (int): the size of the optimal set found for the selected integer
-            kpp_type (KPNEGchoices): a KPNEGchoices enumerators. right now, "F", and "dF" are available.
+            kpp_type (kpneg): a KPNEGchoices enumerators. right now, "F", and "dF" are available.
             seed (int): a seed that can be defined in order to replicate results. Default is None
             max_distances (int): an integer specifiying the maximum distance after that two nodes will be considered
             disconnected. Useful when trying to find short range interactions.
@@ -73,7 +72,7 @@ class GreedyOptimization:
 
 
         #todo reminder che l'implementazione è automatica
-        if kpp_type == KPNEGchoices.F or kpp_type == KPNEGchoices.dF:
+        if kpp_type == kpneg.F or kpp_type == kpneg.dF:
             if graph.ecount() == 0:
                 sys.stdout.write("Graph is consisted of isolates, so there's no optimal KP Set that can fragment the network. Returning an empty list.\n")
                 return [], 1.0
@@ -93,10 +92,10 @@ class GreedyOptimization:
         temp_graph = graph.copy()
         temp_graph.delete_vertices(S)
 
-        if kpp_type == KPNEGchoices.F:
+        if kpp_type == kpneg.F:
             type_func = partial(kp.F, graph=graph)
 
-        elif kpp_type == KPNEGchoices.dF:
+        elif kpp_type == kpneg.dF:
             type_func = partial(kp.dF, graph=graph, max_distances=max_distances, implementation=implementation)
             # call the initial graph score here using automatic implementation for SPs
 
@@ -190,10 +189,10 @@ class GreedyOptimization:
 
         utils = gu(graph=graph)
 
-        if kpp_type == KPPOSchoices.mreach and m is None:
+        if kpp_type == kppos.mreach and m is None:
             raise WrongArgumentError("\"m\" must be specified for mreach")
 
-        if kpp_type == KPPOSchoices.mreach:
+        if kpp_type == kppos.mreach:
             if not isinstance(m, int) or m <= 0:
                 raise TypeError({"\"m\" must be a positive integer"})
             else:
@@ -205,7 +204,7 @@ class GreedyOptimization:
                 else:
                     type_func = partial(kp.mreach, graph=graph, nodes=S_names, m=m, max_distances=max_distances,
                                         implementation=implementation)
-        elif kpp_type == KPPOSchoices.dR:
+        elif kpp_type == kppos.dR:
             if implementation != Cmode.igraph:
                 sps = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
                 type_func = partial(kp.dR, graph=graph, nodes=S_names, max_distances=max_distances, implementation=implementation, sp_matrix=sps)

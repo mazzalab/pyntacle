@@ -37,7 +37,7 @@ from igraph import Graph
 from math import isinf, ceil
 from numba import jit, prange, cuda
 from psutil import virtual_memory
-from tools.misc.enums import Cmode
+from tools.enums import Cmode
 from tools.graph_utils import GraphUtils as gUtil
 from tools.misc.graph_routines import check_graph_consistency, vertex_doctor
 

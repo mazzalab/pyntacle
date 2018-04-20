@@ -52,7 +52,7 @@ class Cmode(Enum):
     auto = 4
 
 
-class KPNEGchoices(Enum):
+class kpneg(Enum):
     """
     this enumerator stores the metrics that can be queried to Kpp-POS calculations
     """
@@ -60,7 +60,7 @@ class KPNEGchoices(Enum):
     dF = 2
 
 
-class KPPOSchoices(Enum):
+class kppos(Enum):
     """
     this enumerator stores the metrics that can be queried to Kpp-POS calculations
     """

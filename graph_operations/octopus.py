@@ -29,19 +29,18 @@ __license__ = u"""
 Octopus is a pyntacle command line utility that adds properties computed by pyntacle to the Graph, both at vertex and at
 a Graph level
 """
-from config import *
 from tools.add_attributes import AddAttributes
 from algorithms.local_topology import LocalTopology
 from algorithms.global_topology import GlobalTopology
 from algorithms.keyplayer import KeyPlayer
-from tools.misc.enums import *
-from tools.misc.enums import GraphType
+from tools.enums import *
+from tools.enums import GraphType
 from tools.misc.graph_routines import check_graph_consistency
 from tools.misc.shortest_path_modifications import ShortestPathModifier
 from cmds.cmds_utils.kpsearch_wrapper import KPWrapper as kpw
 from cmds.cmds_utils.kpsearch_wrapper import GOWrapper as gow
 from cmds.cmds_utils.kpsearch_wrapper import BFWrapper as bfw
-from tools.misc.enums import KPNEGchoices, KPPOSchoices, Cmode
+from tools.enums import kpneg, kppos, Cmode
 
 
 # TODO DANIELE: Add SPASENESS
@@ -240,13 +239,13 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_F(graph):
-        AddAttributes(graph).add_graph_attributes(KPNEGchoices.F.name, KeyPlayer.F(graph))
+        AddAttributes(graph).add_graph_attributes(kpneg.F.name, KeyPlayer.F(graph))
 
     @staticmethod
     @check_graph_consistency
     def add_dF(graph, max_distances=None):
         implementation = implementation_check(graph)
-        AddAttributes(graph).add_graph_attributes(KPNEGchoices.dF.name, KeyPlayer.dF(graph, implementation=implementation, max_distances=max_distances))
+        AddAttributes(graph).add_graph_attributes(kpneg.dF.name, KeyPlayer.dF(graph, implementation=implementation, max_distances=max_distances))
 
     # KP
 
@@ -254,18 +253,18 @@ class Octopus:
     @check_graph_consistency
     def add_kp_F(graph, nodes):
         kpobj = kpw(graph=graph)
-        kpobj.run_KPNeg(nodes, KPNEGchoices.F)
+        kpobj.run_KPNeg(nodes, kpneg.F)
         results_dict = kpobj.get_results()
-        AddAttributes(graph).add_graph_attributes(KPNEGchoices.F.name+'_kpinfo', {tuple(results_dict[KPNEGchoices.F.name][0]): results_dict[KPNEGchoices.F.name][1]})
+        AddAttributes(graph).add_graph_attributes(kpneg.F.name + '_kpinfo', {tuple(results_dict[kpneg.F.name][0]): results_dict[kpneg.F.name][1]})
 
     @staticmethod
     @check_graph_consistency
     def add_kp_dF(graph, nodes, max_distances=None):
         implementation = implementation_check(graph)
         kpobj = kpw(graph=graph)
-        kpobj.run_KPNeg(nodes, KPNEGchoices.dF, max_distances=max_distances, implementation=implementation)
+        kpobj.run_KPNeg(nodes, kpneg.dF, max_distances=max_distances, implementation=implementation)
         results_dict = kpobj.get_results()
-        AddAttributes(graph).add_graph_attributes(KPNEGchoices.dF.name+'_kpinfo', {tuple(results_dict[KPNEGchoices.dF.name][0]): results_dict[KPNEGchoices.dF.name][1]})
+        AddAttributes(graph).add_graph_attributes(kpneg.dF.name + '_kpinfo', {tuple(results_dict[kpneg.dF.name][0]): results_dict[kpneg.dF.name][1]})
 
 
     @staticmethod
@@ -273,56 +272,56 @@ class Octopus:
     def add_kp_dR(graph, nodes, max_distances=None):
         implementation = implementation_check(graph)
         kpobj = kpw(graph=graph)
-        kpobj.run_KPPos(nodes, KPPOSchoices.dR, max_distances=max_distances, implementation=implementation)
+        kpobj.run_KPPos(nodes, kppos.dR, max_distances=max_distances, implementation=implementation)
         results_dict = kpobj.get_results()
-        AddAttributes(graph).add_graph_attributes(KPPOSchoices.dR.name+'_kpinfo', {tuple(results_dict[KPPOSchoices.dR.name][0]): results_dict[KPPOSchoices.dR.name][1]})
+        AddAttributes(graph).add_graph_attributes(kppos.dR.name + '_kpinfo', {tuple(results_dict[kppos.dR.name][0]): results_dict[kppos.dR.name][1]})
 
     @staticmethod
     @check_graph_consistency
     def add_kp_mreach(graph, nodes, m=None, max_distances=None):
         implementation = implementation_check(graph)
         kpobj = kpw(graph=graph)
-        kpobj.run_KPPos(nodes, KPPOSchoices.mreach,  m=m, max_distances=max_distances, implementation=implementation)
+        kpobj.run_KPPos(nodes, kppos.mreach, m=m, max_distances=max_distances, implementation=implementation)
         results_dict = kpobj.get_results()
-        attr_name = KPPOSchoices.mreach.name+'_{}_kpinfo'.format(str(m))
-        AddAttributes(graph).add_graph_attributes(attr_name, {tuple(results_dict[KPPOSchoices.mreach.name][0]): results_dict[KPPOSchoices.mreach.name][1]})
+        attr_name = kppos.mreach.name + '_{}_kpinfo'.format(str(m))
+        AddAttributes(graph).add_graph_attributes(attr_name, {tuple(results_dict[kppos.mreach.name][0]): results_dict[kppos.mreach.name][1]})
 
     # greedy
     @staticmethod
     @check_graph_consistency
     def add_GO_F(graph, kpp_size, seed=None):
         kpobj = gow(graph=graph)
-        kpobj.run_fragmentation(kpp_size, KPNEGchoices.F, seed=seed)
+        kpobj.run_fragmentation(kpp_size, kpneg.F, seed=seed)
         results_dict = kpobj.get_results()
-        AddAttributes(graph).add_graph_attributes(KPNEGchoices.F.name+'_greedy', {tuple(results_dict[KPNEGchoices.F.name][0]): results_dict[KPNEGchoices.F.name][1]})
+        AddAttributes(graph).add_graph_attributes(kpneg.F.name + '_greedy', {tuple(results_dict[kpneg.F.name][0]): results_dict[kpneg.F.name][1]})
 
     @staticmethod
     @check_graph_consistency
     def add_GO_dF(graph, kpp_size, max_distances=None, seed=None):
         implementation = implementation_check(graph)
         kpobj = gow(graph=graph)
-        kpobj.run_fragmentation(kpp_size, KPNEGchoices.dF, max_distances=max_distances, seed=seed, implementation=implementation)
+        kpobj.run_fragmentation(kpp_size, kpneg.dF, max_distances=max_distances, seed=seed, implementation=implementation)
         results_dict = kpobj.get_results()
-        AddAttributes(graph).add_graph_attributes(KPNEGchoices.dF.name+'_greedy', {tuple(results_dict[KPNEGchoices.dF.name][0]): results_dict[KPNEGchoices.dF.name][1]})
+        AddAttributes(graph).add_graph_attributes(kpneg.dF.name + '_greedy', {tuple(results_dict[kpneg.dF.name][0]): results_dict[kpneg.dF.name][1]})
 
     @staticmethod
     @check_graph_consistency
     def add_GO_dR(graph, kpp_size, max_distances=None, seed=None):
         implementation = implementation_check(graph)
         kpobj = gow(graph=graph)
-        kpobj.run_reachability(kpp_size, KPPOSchoices.dR, max_distances=max_distances, seed=seed, implementation=implementation)
+        kpobj.run_reachability(kpp_size, kppos.dR, max_distances=max_distances, seed=seed, implementation=implementation)
         results_dict = kpobj.get_results()
-        AddAttributes(graph).add_graph_attributes(KPPOSchoices.dR.name+'_greedy', {tuple(results_dict[KPPOSchoices.dR.name][0]): results_dict[KPPOSchoices.dR.name][1]})
+        AddAttributes(graph).add_graph_attributes(kppos.dR.name + '_greedy', {tuple(results_dict[kppos.dR.name][0]): results_dict[kppos.dR.name][1]})
 
     @staticmethod
     @check_graph_consistency
     def add_GO_mreach(graph, kpp_size, m=None, max_distances=None, seed=None):
         implementation = implementation_check(graph)
         kpobj = gow(graph=graph)
-        kpobj.run_reachability(kpp_size, KPPOSchoices.mreach, m=m, max_distances=max_distances, seed=seed, implementation=implementation)
+        kpobj.run_reachability(kpp_size, kppos.mreach, m=m, max_distances=max_distances, seed=seed, implementation=implementation)
         results_dict = kpobj.get_results()
-        attr_name = KPPOSchoices.mreach.name+'_{}_greedy'.format(str(m))
-        AddAttributes(graph).add_graph_attributes(attr_name, {tuple(results_dict[KPPOSchoices.mreach.name][0]): results_dict[KPPOSchoices.mreach.name][1]})
+        attr_name = kppos.mreach.name + '_{}_greedy'.format(str(m))
+        AddAttributes(graph).add_graph_attributes(attr_name, {tuple(results_dict[kppos.mreach.name][0]): results_dict[kppos.mreach.name][1]})
     
     #bruteforce
     
@@ -330,31 +329,31 @@ class Octopus:
     @check_graph_consistency
     def add_BF_F(graph, kpp_size, max_distances=None):
         kpobj = bfw(graph=graph)
-        kpobj.run_fragmentation(kpp_size, KPNEGchoices.F, max_distances=max_distances)
+        kpobj.run_fragmentation(kpp_size, kpneg.F, max_distances=max_distances)
         results_dict = kpobj.get_results()
-        AddAttributes(graph).add_graph_attributes(KPNEGchoices.F.name+'_bruteforce', {tuple(tuple(x) for x in results_dict[KPNEGchoices.F.name][0]): results_dict[KPNEGchoices.F.name][1]})
+        AddAttributes(graph).add_graph_attributes(kpneg.F.name + '_bruteforce', {tuple(tuple(x) for x in results_dict[kpneg.F.name][0]): results_dict[kpneg.F.name][1]})
         
     @staticmethod
     @check_graph_consistency
     def add_BF_dF(graph, kpp_size, max_distances=None):
         kpobj = bfw(graph=graph)
-        kpobj.run_fragmentation(kpp_size, KPNEGchoices.dF, max_distances=max_distances)
+        kpobj.run_fragmentation(kpp_size, kpneg.dF, max_distances=max_distances)
         results_dict = kpobj.get_results()
-        AddAttributes(graph).add_graph_attributes(KPNEGchoices.dF.name+'_bruteforce', {tuple(tuple(x) for x in results_dict[KPNEGchoices.dF.name][0]): results_dict[KPNEGchoices.dF.name][1]})
+        AddAttributes(graph).add_graph_attributes(kpneg.dF.name + '_bruteforce', {tuple(tuple(x) for x in results_dict[kpneg.dF.name][0]): results_dict[kpneg.dF.name][1]})
     
     @staticmethod
     @check_graph_consistency
     def add_BF_dR(graph, kpp_size, max_distances=None):
         kpobj = bfw(graph=graph)
-        kpobj.run_reachability(kpp_size, KPPOSchoices.dR, max_distances=max_distances)
+        kpobj.run_reachability(kpp_size, kppos.dR, max_distances=max_distances)
         results_dict = kpobj.get_results()
-        AddAttributes(graph).add_graph_attributes(KPPOSchoices.dR.name+'_bruteforce', {tuple(tuple(x) for x in results_dict[KPPOSchoices.dR.name][0]): results_dict[KPPOSchoices.dR.name][1]})
+        AddAttributes(graph).add_graph_attributes(kppos.dR.name + '_bruteforce', {tuple(tuple(x) for x in results_dict[kppos.dR.name][0]): results_dict[kppos.dR.name][1]})
         
     @staticmethod
     @check_graph_consistency
     def add_BF_mreach(graph, kpp_size, m=None, max_distances=None):
         kpobj = bfw(graph=graph)
-        kpobj.run_reachability(kpp_size, KPPOSchoices.mreach, max_distances=max_distances, m=m)
+        kpobj.run_reachability(kpp_size, kppos.mreach, max_distances=max_distances, m=m)
         results_dict = kpobj.get_results()
-        attr_name = KPPOSchoices.mreach.name+'_{}_bruteforce'.format(str(m))
-        AddAttributes(graph).add_graph_attributes(attr_name, {tuple(tuple(x) for x in results_dict[KPPOSchoices.mreach.name][0]): results_dict[KPPOSchoices.mreach.name][1]})
+        attr_name = kppos.mreach.name + '_{}_bruteforce'.format(str(m))
+        AddAttributes(graph).add_graph_attributes(attr_name, {tuple(tuple(x) for x in results_dict[kppos.mreach.name][0]): results_dict[kppos.mreach.name][1]})

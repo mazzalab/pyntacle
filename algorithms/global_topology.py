@@ -25,12 +25,11 @@ __license__ = u"""
   """
 
 """ Class for computing the Global Properties of a graph"""
-from config import *
 import algorithms.local_topology as Lt
 from tools.misc.graph_routines import check_graph_consistency
 from statistics import mean
 from igraph import Graph
-from tools.misc.enums import Cmode
+from tools.enums import Cmode
 import numpy as np
 
 class GlobalTopology:

@@ -30,7 +30,7 @@ __license__ = u"""
 
 
 from tools.misc.graph_routines import *
-from tools.misc.enums import Cmode
+from tools.enums import Cmode
 from tools.graph_utils import GraphUtils as gUtil
 from algorithms.shortest_path import ShortestPath
 

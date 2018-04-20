@@ -32,12 +32,9 @@ add specific and generic properties to the `igraph.Graph` object at several leve
 
 # external libraries
 from config import *
-import logging
-import os
 from igraph import Graph
 from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
-from tools.misc.enums import Cmode
-from exceptions.unsupported_graph_error import UnsupportedGraphError
+from tools.enums import Cmode
 # pyntacle Libraries
 from exceptions.wrong_argument_error import WrongArgumentError
 

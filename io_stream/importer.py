@@ -180,6 +180,8 @@ class PyntacleImporter:
         sys.stdout.write("Edge List from file {} imported\n".format(file))
         return graph
 
+
+    #todo Mauro let's handle multiple *sif interactions*
     @staticmethod
     @input_file_checker
     @separator_sniffer

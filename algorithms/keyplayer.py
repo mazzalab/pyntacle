@@ -26,10 +26,9 @@ __license__ = u"""
 
 """ Utilities to compute KP Metrics described by Borgatti"""
 
-from config import *
 import algorithms.local_topology as lt
 from tools.misc.graph_routines import *
-from tools.misc.enums import Cmode
+from tools.enums import Cmode
 from tools.graph_utils import GraphUtils as gu
 from tools.misc.shortest_path_modifications import *
 import numpy as np
