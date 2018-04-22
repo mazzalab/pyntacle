@@ -1,5 +1,5 @@
 """
-Compute several local topology metrics for a graph's nodes
+Compute several local topology metrics of nodes
 """
 
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
@@ -139,7 +139,7 @@ class LocalTopology:
         """
         Compute the *radiality* of a node or of a list of nodes of an undirected graph.
         The radiality of a node *v* is calculated by first computing the shortest path between *v* and all other nodes
-        in the graph. The length of each path is then subtracted by the value of the diameter +. Resulting values are
+        in the graph. The length of each path is then subtracted by the value of the diameter. Resulting values are
         then summated and weighted over the total number of nodes -1. Finally, the obtained value is divided by the
         number of nodes -1 (n-1).
         **WARNING:** Radiality works well with connected graph. If a node is isolated, its radiality is
