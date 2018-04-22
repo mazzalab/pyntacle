@@ -139,9 +139,8 @@ class LocalTopology:
         """
         Compute the *radiality* of a node or of a list of nodes of an undirected graph.
         The radiality of a node *v* is calculated by first computing the shortest path between *v* and all other nodes
-        in the graph. The length of each path is then subtracted by the value of the diameter. Resulting values are
-        then summated and weighted over the total number of nodes -1. Finally, the obtained value is divided by the
-        number of nodes -1 (n-1).
+        in the graph. The length of each path is then subtracted from the diameter +1. The resulting values are
+        then added and divided by the number of nodes -1 (n-1).
         **WARNING:** Radiality works well with connected graph. If a node is isolated, its radiality is
         always *-inf*. If a graph is made of more than one component, we recommend using the *radiality_reach*
         method.
@@ -158,18 +157,14 @@ class LocalTopology:
         of the input node. The order of the node list in input is preserved.
         """
 
-        diameter = graph.diameter()
-        num_nodes = graph.vcount()
+        diameter_plus_one = graph.diameter() + 1
+        num_nodes_minus_one = graph.vcount() - 1
         rad_list = []
 
         sps = ShortestPath.get_shortestpaths(graph, nodes=nodes, cmode=cmode)
         for sp in sps:
-            partial_sum = 0
-            for sp_length in sp:
-                if sp_length != 0:
-                    partial_sum += diameter + 1 - sp_length
-
-            rad_list.append(round(float(partial_sum / (num_nodes - 1)), 5))
+            partial_sum = sum(diameter_plus_one - distance for distance in sp if distance != 0)
+            rad_list.append(round(float(partial_sum / num_nodes_minus_one), 5))
 
         return rad_list
 
