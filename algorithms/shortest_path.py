@@ -165,7 +165,7 @@ class ShortestPath:
         """
 
         if implementation == Cmode.igraph:
-            sps = LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
+            sps = ShortestPath.__shortest_path_igraph(graph=graph, nodes=nodes)
             avg_sps = []
             for elem in sps:
                 elem = [x for x in elem if not (isinf(x)) and x > 0]
@@ -174,7 +174,7 @@ class ShortestPath:
                 else:
                     avg_sps.append(float("nan"))
         else:  # np array
-            sps = LocalTopology.shortest_path_pyntacle(graph=graph, nodes=nodes, implementation=implementation)
+            sps = ShortestPath.get_shortestpaths(graph=graph, nodes=nodes, cmode=implementation)
             sps[sps == 0] = np.nan
             var = sps[sps > graph.vcount()] == np.nan
             avg_sps = np.nanmean(var, axis=0)
@@ -205,7 +205,7 @@ class ShortestPath:
         """
 
         if implementation == Cmode.igraph:
-            sps = LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
+            sps = ShortestPath.__shortest_path_igraph(graph=graph, nodes=nodes)
             avg_sps = []
             for elem in sps:
                 elem = [x for x in elem if not (isinf(x)) and x > 0]  # remove disconnected nodes and diagonal
@@ -215,7 +215,7 @@ class ShortestPath:
                     avg_sps.append(float("nan"))
 
         else:  # np array
-            sps = LocalTopology.shortest_path_pyntacle(graph=graph, nodes=nodes, implementation=implementation)
+            sps = ShortestPath.get_shortestpaths(graph=graph, nodes=nodes, cmode=implementation)
             sps[sps == 0] = np.nan
             var = sps[sps > graph.vcount()] == np.nan
             avg_sps = np.nanmedian(var, axis=0)

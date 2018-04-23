@@ -31,6 +31,7 @@ import random
 from functools import partial
 from algorithms.keyplayer import KeyPlayer as kp
 from algorithms.local_topology import LocalTopology as Lt
+from algorithms.shortest_path import ShortestPath as sp
 from tools.misc.graph_routines import *
 from exceptions.wrong_argument_error import WrongArgumentError
 from tools.enums import kppos, kpneg, Cmode
@@ -197,7 +198,7 @@ class GreedyOptimization:
                 raise TypeError({"\"m\" must be a positive integer"})
             else:
                 if implementation != Cmode.igraph:
-                    sps = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
+                    sps = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
 
                     type_func = partial(kp.mreach, graph=graph, nodes=S_names, m=m, max_distances=max_distances,
                                         implementation=implementation, sp_matrix=sps)
@@ -206,7 +207,7 @@ class GreedyOptimization:
                                         implementation=implementation)
         elif kpp_type == kppos.dR:
             if implementation != Cmode.igraph:
-                sps = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
+                sps = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
                 type_func = partial(kp.dR, graph=graph, nodes=S_names, max_distances=max_distances, implementation=implementation, sp_matrix=sps)
             else:
                 type_func = partial(kp.dR, graph=graph, nodes=S_names, max_distances=max_distances,

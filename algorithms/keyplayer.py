@@ -27,6 +27,7 @@ __license__ = u"""
 """ Utilities to compute KP Metrics described by Borgatti"""
 
 import algorithms.local_topology as lt
+from algorithms.shortest_path import ShortestPath as sp
 from tools.misc.graph_routines import *
 from tools.enums import Cmode
 from tools.graph_utils import GraphUtils as gu
@@ -139,7 +140,7 @@ class KeyPlayer:
         number_nodes = graph.vcount()
         df_denum = number_nodes * (number_nodes - 1)
 
-        shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph)
+        shortest_path_lengths = sp.__shortest_path_igraph(graph=graph)
 
         if max_distances is not None:
             shortest_path_lengths = ShortestPathModifier.igraph_sp_to_inf(shortest_path_lengths, max_distances=max_distances)
@@ -170,9 +171,7 @@ class KeyPlayer:
         number_nodes = graph.vcount()
         df_denum = number_nodes * (number_nodes - 1)
 
-        shortest_path_lengths = lt.LocalTopology.shortest_path_pyntacle(graph=graph, nodes=None,
-                                                                        mode=lt.GraphType.undirect_unweighted,
-                                                                        implementation=implementation)
+        shortest_path_lengths = sp.get_shortestpaths(graph=graph, nodes=None,cmode=implementation)
 
         if max_distances is not None:
             shortest_path_lengths = ShortestPathModifier.np_array_to_inf(shortest_path_lengths, max_distances=max_distances)
@@ -232,14 +231,14 @@ class KeyPlayer:
         index_list = gu(graph=graph).get_node_indices(node_names=nodes)
 
         if implementation == Cmode.igraph:
-            shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
+            shortest_path_lengths = sp.__shortest_path_igraph(graph, nodes=nodes)
 
             if max_distances is not None:
                 shortest_path_lengths = ShortestPathModifier.igraph_sp_to_inf(shortest_path_lengths, max_distances)
 
         else:
             if sp_matrix is None:
-                shortest_path_lengths = lt.LocalTopology.shortest_path_pyntacle(graph=graph, implementation=implementation, nodes=nodes)
+                shortest_path_lengths = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=nodes)
 
             else:
                 if not isinstance(sp_matrix, np.ndarray):
@@ -301,7 +300,7 @@ class KeyPlayer:
         index_list = gu(graph=graph).get_node_indices(node_names=nodes)
 
         if implementation == Cmode.igraph:
-            shortest_path_lengths = lt.LocalTopology.shortest_path_igraph(graph=graph, nodes=nodes)
+            shortest_path_lengths = sp.__shortest_path_igraph(graph=graph, nodes=nodes)
 
             if max_distances is not None:
                 shortest_path_lengths = ShortestPathModifier.igraph_sp_to_inf(shortest_path_lengths, max_distances)
@@ -317,7 +316,7 @@ class KeyPlayer:
 
         else:  # we must provide a full matrix of shortest paths BEFORE searching for the single nodes
             if sp_matrix is None:
-                shortest_path_lengths = lt.LocalTopology.shortest_path_pyntacle(graph=graph, nodes=nodes, implementation=implementation)
+                shortest_path_lengths = sp.get_shortestpaths(graph=graph, nodes=nodes, cmode=implementation)
 
             else:
                 if not isinstance(sp_matrix, np.ndarray):
