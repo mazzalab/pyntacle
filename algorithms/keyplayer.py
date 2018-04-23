@@ -26,7 +26,6 @@ __license__ = u"""
 
 """ Utilities to compute KP Metrics described by Borgatti"""
 
-import algorithms.local_topology as lt
 from algorithms.shortest_path import ShortestPath as sp
 from tools.misc.graph_routines import *
 from tools.enums import Cmode

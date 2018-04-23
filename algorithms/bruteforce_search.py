@@ -36,11 +36,11 @@ from config import *
 import itertools
 from functools import partial
 from algorithms.keyplayer import KeyPlayer
+from algorithms.shortest_path import ShortestPath as sp
 from exceptions.wrong_argument_error import WrongArgumentError
 from tools.enums import kppos, kpneg, Cmode
 from tools.misc.kpsearch_utils import bruteforce_search_initializer
 from tools.misc.graph_routines import check_graph_consistency
-from algorithms.local_topology import LocalTopology as Lt
 from tools.graph_utils import GraphUtils as gu
 from igraph import Graph
 import multiprocessing as mp
@@ -57,7 +57,7 @@ def crunch_reachability_combinations(allS, graph: Graph, kpp_type: kppos, m: int
 
     if kpp_type == kppos.mreach:
         if implementation != Cmode.igraph:
-            sp_matrix = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
+            sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
             reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distances=max_distances,
                                                   implementation=implementation, sp_matrix=sp_matrix)
         else:
@@ -66,7 +66,7 @@ def crunch_reachability_combinations(allS, graph: Graph, kpp_type: kppos, m: int
 
     elif kpp_type == kppos.dR:
         if implementation != Cmode.igraph:
-            sp_matrix = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
+            sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
             reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distances=max_distances,
                                               implementation=implementation, sp_matrix=sp_matrix)
         else:
@@ -130,7 +130,7 @@ class BruteforceSearch:
         :param int kpp_size: the size of the kpp-set to be found
         :param kpneg kpp_type: any of the *KPNEGchoices* enumerators available
         :param int max_distances:
-        :param Cmode implementations: one of the possible shortest path implementations avaiable in the `tools/misc/enums/cmode` Default is cmode.igraph (uses Dijkstra's algorithm from igraph)
+        :param Cmode implementation: one of the possible shortest path implementations avaiable in the `tools/misc/enums/cmode` Default is cmode.igraph (uses Dijkstra's algorithm from igraph)
         :param bool parallel: whether to use the parallel computing to perform the bruteforce search. Default is `False`
         :param int ncores: Positive integer specifying the number of cores that will be used to perform parallel computing. If `None` (default) the number of cores will be the maximum n umber of cores -1
         :return: - S: a list of lists containing all the possible sets of nodes that optimize the kp-sets
@@ -252,11 +252,12 @@ class BruteforceSearch:
         It generates all the possible kpp-sets and calculates the fragmentation score of the residual graph, after
         having extracted the nodes belonging to the kpp-set.
         The best kpp-set will be the one that maximizes the fragmentation of the graph.
-        :param ncore: Number of CPU cores for parallel computing calculation of the maximum fragmentation score
+        :param ncores: Number of CPU cores for parallel computing calculation of the maximum fragmentation score
         :param kpp_size: the size of the kpp-set
         :type kpp_size: int
         :param kpp_type: Either KeyplayerAttribute.DF or KeyplayerAttribute.F
         :type kpp_type: KeyplayerAttribute.name
+        :param Cmode implementation: one of the possible shortest path implementations avaiable in the `tools/misc/enums/cmode` Default is cmode.igraph (uses Dijkstra's algorithm from igraph)
         :return: - maxkpp_tuple_names: A list of group of nodes (names) of size **kpp_size** achieving the same maximum fragmentation score
                  - best_fragmentation_score: The achieved maximum fragmentation score
         :rtype: (list[list[str]], float)
@@ -302,7 +303,7 @@ class BruteforceSearch:
         :param int m: maximum path length between the kpp-set and the other nodes of the graph
         :param kppos kpp_type: Either `KPPOSchoices.mreach` or `KPPOSchoices.dR`
         :param int max_distances:
-        :param Cmode implementations: one of the possible shortest path implementations avaiable in the `tools/misc/enums/cmode` Default is cmode.igraph (uses Dijkstra's algorithm from igraph)
+        :param Cmode implementation: one of the possible shortest path implementations avaiable in the `tools/misc/enums/cmode` Default is cmode.igraph (uses Dijkstra's algorithm from igraph)
         :param bool parallel: whether to use the parallel computing to perform the bruteforce search. Default is `False`
         :param int ncores: Positive integer specifying the number of cores that will be used to perform parallel computing. If `None` (default) the number of cores will be the maximum n umber of cores -1
         :return: - S: a list of lists containing all the possible sets of nodes that optimize the kp-sets
@@ -372,7 +373,7 @@ class BruteforceSearch:
 
             if kpp_type == kppos.mreach:
                 if implementation != Cmode.igraph:
-                    sp_matrix = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
+                    sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
                     reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distances=max_distances,
                                                           implementation=implementation, sp_matrix=sp_matrix)
                 else:
@@ -381,7 +382,7 @@ class BruteforceSearch:
 
             elif kpp_type == kppos.dR:
                 if implementation != Cmode.igraph:
-                    sp_matrix = Lt.shortest_path_pyntacle(graph=graph, implementation=implementation)
+                    sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
                     reachability_score = KeyPlayer.dR(graph=graph, nodes=nodes, max_distances=max_distances,
                                                       implementation=implementation, sp_matrix=sp_matrix)
                 else:

@@ -30,7 +30,6 @@ This Module covers the Greedy optimization algorithms for optimal kp-set calcula
 import random
 from functools import partial
 from algorithms.keyplayer import KeyPlayer as kp
-from algorithms.local_topology import LocalTopology as Lt
 from algorithms.shortest_path import ShortestPath as sp
 from tools.misc.graph_routines import *
 from exceptions.wrong_argument_error import WrongArgumentError
