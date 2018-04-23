@@ -192,9 +192,9 @@ class PyntacleExporter:
                                                 graph.vs(target)["name"][0]]) + "\n")
 
                     else:
-
-                        outfile.write(sep.join([graph.vs(source)["name"][0], edge["__sif_interaction"],
-                                                graph.vs(target)["name"][0]]) + "\n")
+                        for i in edge["__sif_interaction"]:
+                            outfile.write(sep.join([graph.vs(source)["name"][0], i,
+                                                    graph.vs(target)["name"][0]]) + "\n")
 
                 else:
                     # print(type(self.graph.vs(edge.target)["name"]))

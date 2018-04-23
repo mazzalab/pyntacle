@@ -108,14 +108,12 @@ class QuickConvert:
         **WARNING** If a header is present, the cells corresponding to column 1 and 3 will be rewritten.
         :param str file: a valid path to the input SIF file
         :param str sep: a string specifying the column separator for both input and output. If 'None' (default), we assume a \t separates each column.
-        :param bool header: rewrite the header into the output file. Default if 'False' (inut file contains no header)
+        :param bool header: rewrite the header into the output file. Default if 'False' (input file contains no header)
         :param str output_file: The path where the resulting file will be stored.If None, the output file will be in the current directory,with the *.egl* extension and a small pseudoword before the inout basename.
         :return: the path to the output file
         """
         if output_file is None:
             output_file = os.path.join(os.getcwd(), "_".join([os.path.splitext(os.path.basename(os.path.abspath(file)))[0],randomword(4)])) + ".egl"
-            print(output_file)
-            input()
             sys.stdout.write("writing the output file at {}\n".format(output_file))
 
         if os.path.exists(output_file):
@@ -123,14 +121,11 @@ class QuickConvert:
 
         egl = []
         with open(file, "r") as infile:
-            print("ciao")
-            input()
             if header:
                 headerrow = infile.readline().rstrip()
-                input()
                 #.split(sep)
-                headerrow = egl.append([headerrow[0], headerrow[2]])
-                egl.append(headerrow)
+                # headerrow = egl.append([headerrow[0], headerrow[2]])
+                # egl.append(headerrow)
 
             for line in infile:
                 tmp = line.rstrip().split(sep)
@@ -140,7 +135,7 @@ class QuickConvert:
                     sys.stdout.write("node {} is an isolate, will not be written onto edgelist because it can't be represented\n".format(tmp[0]))
 
                 elif len(tmp) > 2:
-                    for i in range(0, len(tmp)):
+                    for i in range(1, len(tmp)):
                         egl.append([tmp[0], tmp[i]])
 
                 else:
@@ -154,6 +149,8 @@ class QuickConvert:
         # add a newline trailing character to each of the written element
         egl = [x + "\n" for x in egl]
         with open(output_file, "w") as outfile:
+            if header:
+                outfile.write(headerrow+'\n')
             outfile.writelines(egl)
 
         return None

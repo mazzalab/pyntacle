@@ -209,7 +209,7 @@ class PyntacleImporter:
         
             """:type: list[str]"""
             if header:
-                graph["__sif_interaction_name"] = f.readline().rstrip('\n').split(sep)[0][1]
+                graph["__sif_interaction_name"] = f.readline().rstrip('\n').split(sep)[1]
             else:
                 graph["__sif_interaction_name"] = None
                 
@@ -226,12 +226,17 @@ class PyntacleImporter:
                 elif len(elem) == 3:
                     nodeslist.extend([elem[0], elem[2]])
                     if ((elem[0], elem[2]) not in edgeslist) and ((elem[2], elem[0]) not in edgeslist):
-                        edgeslist[(elem[0], elem[2])] = elem[1]
+                        edgeslist[(elem[0], elem[2])] = [elem[1]]
                     else:
-                        sys.stdout.write(
-                            "an edge already exists between node {0} and node {1}. This should not happen, as pyntacle only supports simple graphs.\nAttribute __sif_interaction will be overwritten\n".format(
-                                elem[0], elem[2]))
-                        edgeslist[(elem[0], elem[2])] = elem[1]
+                        if (elem[0], elem[2]) in edgeslist:
+                            if elem[1] not in edgeslist[(elem[0], elem[2])]:
+                                edgeslist[(elem[0], elem[2])].append(elem[1])
+                        elif (elem[2], elem[0]) in edgeslist:
+                            if elem[1] not in edgeslist[(elem[2], elem[0])]:
+                                edgeslist[(elem[2], elem[0])].append(elem[1])
+                        else:
+                            raise KeyError("This should not happen - SIF formatting looks weirs. "
+                                           "Please contact the developers.")
 
                 elif len(elem) >= 4:
                     first = elem[0]
@@ -242,13 +247,18 @@ class PyntacleImporter:
                     for n in other_nodes:
                         nodeslist.append(n)
                         if ((first, n) not in edgeslist) and ((n, first) not in edgeslist):
-                            edgeslist[(first, n)] = interaction
+                            edgeslist[(first, n)] = [interaction]
                         else:
-                            sys.stdout.write(
-                                "an edge already exists between node {0} and node {1}. This should not "
-                                "happen, as pyntacle only supports simple graphs."
-                                "\n Attribute __sif_interaction will be overwritten\n".format(first, n))
-                            edgeslist[(first, n)] = interaction
+                            if (first, n) in edgeslist:
+                                if interaction not in edgeslist[(first, n)]:
+                                    edgeslist[(first, n)].append(interaction)
+                            elif (n, first) in edgeslist:
+                                if interaction not in edgeslist[(n, first)]:
+                                    edgeslist[(n, first)].append(interaction)
+                            else:
+                                raise KeyError("This should not happen - SIF formatting looks weird. "
+                                                 "Please contact the developers.")
+                            
     
                 else:
                     raise UnproperlyFormattedFileError("line {} is malformed".format(i))
