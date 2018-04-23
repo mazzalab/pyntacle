@@ -5,11 +5,11 @@ Compute several local topology metrics of nodes
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.4"
+__version__ = "0.0.5"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "14/04/2018"
+__date__ = "23/04/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -173,58 +173,51 @@ class LocalTopology:
     @vertex_doctor
     def radiality_reach(graph: Graph, nodes=None, cmode=Cmode.igraph) -> list:
         """
-        Computes the radiality reach for a single node, a list of nodes or for all nodes in the Graph.
-        The radiality reach is a weighted measure of the canonical radiality and it is recommended for disconnected
-        graphs. Specifically, if a graph has more than one components, we calculate the radiality for each node within
-        its component, then we multiply the radiality value withe the proportion of te nodes of that component over all
-        the nodes in the graph. The radiality reach of a graph with only one component will hence be equal to the
+        Compute the *radiality-reach* of a node or of a list of nodes of an undirected graph.
+        The radiality-reach is a weighted version of the canonical radiality measure and it is recommended for
+        disconnected graphs. Specifically, if a graph has more than one components, we calculate the radiality for each
+        node within its component, then we multiply the radiality value by the proportion of nodes of that component
+        over all nodes in the graph. Hence, the radiality-reach of a graph with only one component will be equal to the
         radiality, while a graph with several components will have several radiality values.
-        *if you want the radiality for a disconnected graph, we recommend to subset the original graph and then use
-        the radiality() function containied in this module.*
-        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
-        "Minimum requirements" specifications in pyntacle's manual
-        :param nodes: if a node name, returns the degree of the input node. If a list of node names,
-        the degree is returned for all node names.if None (default), the degree is computed for the whole graph.
-        :param Enum.cmode cmode: the way you prefer to compute the shortest path for the whole graph. choices are:
-        * *'igraph'*: uses the Dijsktra's algorithm implemented from igraph
-        * *'parallel_CPU'*: uses a parallel CPU cmode of the Floyd-Warshall algorithm using numba
-        * *'parallel_GPU'*: uses a parallel GPU cmode of the Floyd-Warshall algorithm using numba
-        **(requires NVIDIA graphics compatible with CUDA)**
-        :return: a list of floats, the length being the number of input nodes. Each float represent the closeness
-        of the input node
+        :param igraph.Graph graph: an igraph.Graph object. The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
+        (default), the index is computed for all nodes of the graph.
+        :param cmode: The available computing modes of the shortest paths. Choices are:
+        * **`igraph`**: use the Dijsktra's algorithm implemented in iGraph
+        * **`parallel_CPU`**: use a parallel implementation of the Floyd-Warshall algorithm running on CPU using Numba
+        * **`parallel_GPU`**: use a parallel implementation of the Floyd-Warshall algorithm running on GPU using Numba
+        **CAUTION:**(requires NVIDIA-compatible graphics cards)
+        :return: a list of floats, the length being the number of input nodes. Each float represents the radiality-reach
+        of the input node. The order of the node list in input is preserved.
         """
-        comps = graph.components()  # define each case
+        comps = graph.components()  # define the cases
         if len(comps) == 1:
             return LocalTopology.radiality(graph=graph, nodes=nodes, cmode=cmode)
-
         else:
             tot_nodes = graph.vcount()
             if nodes is None:
-                res = [None] * tot_nodes
+                result = [None] * tot_nodes
 
                 for c in comps:
                     subg = graph.induced_subgraph(vertices=c)
 
-                    if subg.ecount() < 1:  # isolates do not have a radiality_reach by definition
+                    if subg.ecount() == 0:  # isolates do not have a radiality-reach value by definition
                         rad = [0]
-
                     else:
                         part_nodes = subg.vcount()
-                        rad = LocalTopology.__radiality_inner__(graph=subg, nodes=nodes, implementation=cmode)
+                        rad = LocalTopology.radiality(graph=subg, nodes=nodes, implementation=cmode)
 
                         # rebalance radiality by weighting it over the total number of nodes
-                        for i, elem in enumerate(rad):
-                            rad[i] = elem * (part_nodes / tot_nodes)
+                        proportion_nodes = part_nodes / tot_nodes
+                        rad = [r * proportion_nodes for r in rad]
 
                     for i, ind in enumerate(c):
-                        res[ind] = rad[i]
+                        result[ind] = rad[i]
 
-                return res
-
+                return result
             else:
-
-                res = [None] * len(nodes)
-
+                result = [None] * len(nodes)
                 inds = gUtil(graph=graph).get_node_indices(nodes)
 
                 for c in comps:
@@ -232,42 +225,42 @@ class LocalTopology:
                         node_names = list(set(nodes) & set(graph.vs(c)["name"]))
                         subg = graph.induced_subgraph(vertices=c)
                         part_nodes = subg.vcount()
-                        rad = LocalTopology.__radiality_inner__(graph=subg, nodes=node_names,
-                                                                implementation=cmode)
-                        for i, elem in enumerate(rad):
-                            rad[i] = elem * (part_nodes / tot_nodes)
+                        rad = LocalTopology.radiality(graph=subg, nodes=node_names, implementation=cmode)
+
+                        proportion_nodes = part_nodes / tot_nodes
+                        rad = [r * proportion_nodes for r in rad]
 
                         for i, elem in enumerate(node_names):
                             orig_index = nodes.index(elem)
-                            res[orig_index] = rad[i]
-                return res
+                            result[orig_index] = rad[i]
+                return result
 
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
     def eigenvector_centrality(graph, nodes, scaled=False):
         """
-        Calculates the eigenvector centrality for a single nodes, a group of selected nodes or all nodes in the graph.
+        Calculate the *eigenvector* centrality of a node or of a list of nodes of an undirected graph.
         The eigenvector centrality is defined as the contribution of the leading eigenvector for a node among all the
-        other nodes in its graph. It represents the importance of a node with respect to its neighbours.
-        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
-        "Minimum requirements" specifications in pyntacle's manual
-        :param nodes: if a node name, returns the degree of the input node. If a list of node names,
-        the shortest path between the input nodes and all other nodes in the graph is returned for all node names.
-        If None (default), the degree is computed for the whole graph.
-        :param bool scaled: a Boolean to scale the eigenvector centrality using the reciprocal of the eigenvector
+        other nodes in the graph. It measures the importance of a node with respect to its neighbours.
+        :param igraph.Graph graph: an igraph.Graph object. The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
+        (default), the index is computed for all nodes of the graph.
+        :param bool scaled: a boolean value to scale the eigenvector centrality using the reciprocal of the eigenvector
         (1/eigenvector). Default is False.
-        :return: a list of floats, the length being the number of input nodes. Each value is the eigenvector centrality
-        value for the selected node(s)..
+        :return: a list of floats, the length being the number of input nodes. Each float represents the eigenvector
+        of the input node. The order of the node list in input is preserved.
         """
         if not isinstance(scaled, bool):
-            raise ValueError("Scaled must be a boolean")
-
-        if nodes is None:
-            return graph.evcent(graph, directed=False, scale=scaled)
+            raise ValueError("'scaled' must be a boolean value (True or False)")
+        elif nodes is None:
+            evcent = graph.evcent(graph, directed=False, scale=scaled)
+            return [round(e, 5) for e in evcent]
         else:
             inds = gUtil(graph=graph).get_node_indices(nodes)
-            evcent_values = list(graph.evcent(directed=False, scale=scaled)[i] for i in inds)
+            evcent = graph.evcent(directed=False, scale=scaled)
+            evcent_values = [round(evcent[i], 5) for i in inds]
             return evcent_values
 
     @staticmethod
@@ -275,34 +268,31 @@ class LocalTopology:
     @vertex_doctor
     def pagerank(graph: Graph, nodes=None, weights=None, damping=0.85) -> list:
         """
-        Computes the Google PageRank algorithm from the input node(s), or for all nodes in the graph if it's not
-        specified. The PageRank algorithm is a modifed version of the eigenvector centrality. It highlights the
-        importance of a node by means of the number of edges that connects him and if these edges come from neighbours
-        with high centrality. A likelihood distribution is computed to check what is the chance that a random walk
-        passes through the selected node(s). the higher is the centrality of the node, the higher is the probability of
-        passing through it. for more info, please refer to http://infolab.stanford.edu/~backrub/google.html for more
-        info.
-        :param graph: an igraph.Graph object. The graph should have specific properties. Please see the
-        "Minimum requirements" specifications in pyntacle's manual
-        :param nodes: if a node name, returns the degree of the input node. If a list of node names,
-        the shortest path between the input nodes and all other nodes in the graph is returned for all node names.
-        If None (default), the degree is computed for the whole graph.
-        :param weights: a list of floats minus or equal to the total number of edges.
-        :param damping : a damping factor representing the probability to reset the random walk distribution at each
+        Compute the *Google PageRank* algorithm of a node or of a list of nodes of an undirected graph.
+        The PageRank algorithm is a modified version of the eigenvector centrality. The importance of a node is here a
+        function of the number of issuing edges and the importance of the neighbour nodes. A likelihood distribution
+        is computed to check what is the chance that a random walk passes through the selected node(s). The higher is
+        the centrality of the node, the higher is the probability of passing through it.
+        For more info, please refer to http://infolab.stanford.edu/~backrub/google.html
+        :param graph: an igraph.Graph object. The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
+        (default), the index is computed for all nodes of the graph.
+        :param weights: a list of float numbers less or equal than the total number of edges.
+        :param damping: a damping factor representing the probability to reset the random walk distribution at each
         pagerank iteration. Default is 0.85.
-        :return: a list of floats representing the pagerank value for the selected node(s)
+        :return: a list of floats, the length being the number of input nodes. Each float represents the PageRank
+        of the input node. The order of the node list in input is preserved.
         """
         if weights is not None:
             if not isinstance(weights, list):
-                raise TypeError("Weights must be a list of floats")
-
+                raise TypeError("'weights' must be a list of floats")
             if not all(isinstance(x, (float, type(None))) for x in weights):
-                raise ValueError("Weights must be a list of floats")
-
+                raise ValueError("'weights' must be a list of floats")
             if len(weights) > graph.ecount():
-                raise ValueError("Weights must be equal or inferior to the total number of edges")
+                raise ValueError("The 'weights' must be equal or less than the total number of edges")
 
-        if not (isinstance(damping, (float, int)) and (0 <= damping)):
+        if not (isinstance(damping, (float, int)) or (damping < 0)):
             raise ValueError("Damping factor must be a float >= 0")
         
         if nodes is not None:
