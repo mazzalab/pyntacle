@@ -88,6 +88,12 @@ class KeyPlayer():
         # Load Graph
         sys.stdout.write("Reading input file...\n")
         graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header).graph_load()
+        # print(graph.summary())
+        # print(graph.vs()["name"])
+        # for elem in graph.vs():
+        #     print (elem["name"], elem.index, elem.degree())
+        # sys.exit(0)
+
         if hasattr(self.args, 'nodes'):
             if not all(x in graph.vs["name"] for x in self.args.nodes):
                 raise WrongArgumentError("One or more nodes you supplied could not be found in the input graph.")
