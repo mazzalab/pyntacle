@@ -42,9 +42,17 @@ class KeyPlayer:
     [Ref] Borgatti, S.P. Comput Math Organiz Theor (2006) 12: 21. https://doi.org/10.1007/s10588-006-7084-x
     """
 
-    @check_graph_consistency
     def __init__(self, graph: Graph):
-        self.graph = graph
+        self.__graph = graph
+
+    @property
+    def graph(self):
+        return self.__graph
+
+    @check_graph_consistency
+    @graph.setter
+    def graph(self, graph):
+        self.__graph = graph
 
     def F(self) -> float:
         """
