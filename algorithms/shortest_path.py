@@ -49,7 +49,7 @@ class ShortestPath:
     @staticmethod
     def get_shortestpaths(graph, nodes, cmode: Cmode):
         if cmode == Cmode.igraph:
-            sps = ShortestPath.__shortest_path_igraph(graph=graph, nodes=nodes)
+            sps = ShortestPath.shortest_path_igraph(graph=graph, nodes=nodes)
             sps = [[graph.vcount() + 1 if isinf(x) else x for x in y] for y in sps]
             sps = np.array(sps)
             return sps
@@ -102,7 +102,7 @@ class ShortestPath:
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def __shortest_path_igraph(graph: Graph, nodes=None) -> list:
+    def shortest_path_igraph(graph: Graph, nodes=None) -> list:
         """
         Compute the *shortest paths* starting from a node or of a list of nodes of an undirected graph using the
         Dijkstra's algorithm. The shortest path is defined as the minimum distance from an input node to every other
@@ -165,7 +165,7 @@ class ShortestPath:
         """
 
         if implementation == Cmode.igraph:
-            sps = ShortestPath.__shortest_path_igraph(graph=graph, nodes=nodes)
+            sps = ShortestPath.shortest_path_igraph(graph=graph, nodes=nodes)
             avg_sps = []
             for elem in sps:
                 elem = [x for x in elem if not (isinf(x)) and x > 0]
@@ -205,7 +205,7 @@ class ShortestPath:
         """
 
         if implementation == Cmode.igraph:
-            sps = ShortestPath.__shortest_path_igraph(graph=graph, nodes=nodes)
+            sps = ShortestPath.shortest_path_igraph(graph=graph, nodes=nodes)
             avg_sps = []
             for elem in sps:
                 elem = [x for x in elem if not (isinf(x)) and x > 0]  # remove disconnected nodes and diagonal

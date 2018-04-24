@@ -31,12 +31,12 @@ from algorithms.keyplayer import KeyPlayer as kpp
 from itertools import chain
 from exceptions.generic_error import Error
 from io_stream.exporter import PyntacleExporter
-# from pyntacle_commands_utils.kp_runner_OLD import *
 from cmds.cmds_utils.plotter import *
 from cmds.cmds_utils.reporter import *
 from tools.graph_utils import *
 from tools.misc.graph_load import *
-from tools.enums import Reports
+from tools.enums import Reports, Cmode
+from tools.add_attributes import AddAttributes
 
 class KeyPlayer():
     def __init__(self, args):
