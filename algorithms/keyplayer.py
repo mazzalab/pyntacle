@@ -42,19 +42,9 @@ class KeyPlayer:
     [Ref] Borgatti, S.P. Comput Math Organiz Theor (2006) 12: 21. https://doi.org/10.1007/s10588-006-7084-x
     """
 
-    def __init__(self, graph: Graph):
-        self.__graph = graph
-
-    @property
-    def graph(self):
-        return self.__graph
-
+    @staticmethod
     @check_graph_consistency
-    @graph.setter
-    def graph(self, graph):
-        self.__graph = graph
-
-    def F(self) -> float:
+    def F(graph) -> float:
         """
         Calculate the *F* metrics, which is a KPP-Neg measure, as described by the equation 4 in [Ref]_
         Since nodes within a component are mutually reachable, and since components of a graph can be enumerated
@@ -63,11 +53,13 @@ class KeyPlayer:
         **F = 1* => Maximum fragmentation. All nodes are isolate
         **F = 0* => No fragmentation. The graph is complete
         [Ref] Borgatti, S.P. Comput Math Organiz Theor (2006) 12: 21. https://doi.org/10.1007/s10588-006-7084-x
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
         :return: The F measure of the graph as a float value ranging from 0.0 to 1.0
         """
 
-        num_nodes = self.graph.vcount()
-        num_edges = self.graph.ecount()
+        num_nodes = graph.vcount()
+        num_edges = graph.ecount()
         max_edges = num_nodes * (num_edges - 1)
 
         if num_edges == 0:  # TODO: check if this case if possible, given the decorator "check_graph_consistency"
@@ -75,7 +67,7 @@ class KeyPlayer:
         elif num_edges == max_edges:
             return 0.0
         else:
-            components = self.graph.components()
+            components = graph.components()
 
             f_num = sum(len(sk) * (len(sk) - 1) for sk in components)
             f_denum = max_edges
@@ -83,7 +75,9 @@ class KeyPlayer:
 
             return round(f, 5)
 
-    def dF(self, implementation=Cmode.igraph, max_distance=None) -> float:
+    @staticmethod
+    @check_graph_consistency
+    def dF(graph, implementation=Cmode.igraph, max_distance=None) -> float:
         """
         Calculate the *dF*, which is a KPP-Neg measure, as described by the equation 9 in [Ref]_.
         DF is a measure of node connectivity and measures how nodes in the graph can be reached.
@@ -91,6 +85,8 @@ class KeyPlayer:
         **dF = 1* => Maximum fragmentation. All nodes are isolate
         **dF = 0* => No fragmentation. The graph is complete
         [Ref] Borgatti, S.P. Comput Math Organiz Theor (2006) 12: 21. https://doi.org/10.1007/s10588-006-7084-x
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
         :param Cmode.igraph implementation: Computation of the shortest paths is deferred
         to the following implementations:
         *`imps.auto`: the most performing implementation is automatically chosen according to the geometry of graph
@@ -102,8 +98,8 @@ class KeyPlayer:
         :return: The DF measure of the graph as a float value ranging from 0.0 to 1.0
         """
 
-        num_nodes = self.graph.vcount()
-        num_edges = self.graph.ecount()
+        num_nodes = graph.vcount()
+        num_edges = graph.ecount()
         if num_edges == 0:  # TODO: check if this case if possible, given the decorator "check_graph_consistency"
             return 1.0
         elif num_edges == num_nodes * (num_edges - 1):
@@ -118,25 +114,28 @@ class KeyPlayer:
                     raise TypeError("'max_distance' must be an integer value greater than one")
                 elif max_distance < 1:
                     raise ValueError("'max_distance' must be an integer value greater than one")
-                elif max_distance > num_nodes:
+                elif max_distance > graph.vcount():
                     raise ValueError("'max_distance' must be less or equal than the number of nodes in the graph")
 
             if implementation == Cmode.igraph:
-                return KeyPlayer.__dF_Borgatti(max_distance=max_distance)
+                return KeyPlayer.__dF_Borgatti(graph=graph, max_distance=max_distance)
             else:
-                return KeyPlayer.__dF_pyntacle(max_distance=max_distance, implementation=implementation)
+                return KeyPlayer.__dF_pyntacle(graph=graph, max_distance=max_distance, implementation=implementation)
 
-    def __dF_Borgatti(self, max_distance=None) -> float:
+    @staticmethod
+    def __dF_Borgatti(graph, max_distance=None) -> float:
         """
         Internal method for calculating the *DF* value of a graph using the igraph implementation of the shortest paths.
         This implements, literally, the equation 9 in Borgatti's paper.
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
         :param int max_distance: The maximum shortest path length over which two nodes are considered unreachable
         :return: The DF measure of the graph as a float value ranging from 0.0 to 1.0
         """
 
-        number_nodes = self.graph.vcount()
+        number_nodes = graph.vcount()
         df_denum = number_nodes * (number_nodes - 1)
-        shortest_path_lengths = sp.shortest_path_igraph(graph=self.graph)
+        shortest_path_lengths = sp.shortest_path_igraph(graph=graph)
 
         if max_distance:
             shortest_path_lengths = ShortestPathModifier.set_list_to_inf(
@@ -151,16 +150,19 @@ class KeyPlayer:
 
         return round(df, 5)
 
-    def __dF_pyntacle(self, max_distance=None, implementation=Cmode.cpu) -> float:
+    @staticmethod
+    def __dF_pyntacle(graph, max_distance=None, implementation=Cmode.cpu) -> float:
         """
         Internal method for calculating the *DF* value of a graph using HPC implementations of the shortest paths.
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
         :param int max_distance: The maximum shortest path length over which two nodes are considered unreachable
         :return: The DF measure of the graph as a float value ranging from 0.0 to 1.0
         """
 
-        number_nodes = self.graph.vcount()
+        number_nodes = graph.vcount()
         df_denum = number_nodes * (number_nodes - 1)
-        shortest_path_lengths = sp.get_shortestpaths(graph=self.graph, nodes=None, cmode=implementation)
+        shortest_path_lengths = sp.get_shortestpaths(graph=graph, nodes=None, cmode=implementation)
 
         if max_distance:
             shortest_path_lengths = ShortestPathModifier.set_nparray_to_inf(
@@ -177,12 +179,16 @@ class KeyPlayer:
 
         return round(df, 5)
 
+    @staticmethod
+    @check_graph_consistency
     @vertex_doctor
-    def mreach(self, nodes: list, m: int, max_distance: int=None, implementation=Cmode.igraph, sp_matrix=None) -> int:
+    def mreach(graph, nodes: list, m: int, max_distance: int=None, implementation=Cmode.igraph, sp_matrix=None) -> int:
         """
         Calculates the m-reach ([Ref]_, equation 12). The m-reach is defined as a count of the number of unique nodes
         reached by any member of the kp-set in m links or less.
         [Ref] Borgatti, S.P. Comput Math Organiz Theor (2006) 12: 21. https://doi.org/10.1007/s10588-006-7084-x
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
         :param nodes: Nodes which computing the index for.
         :param int m: an integer (greater than zero) representing the maximum m-reach distance
         :param int max_distance: The maximum shortest path length over which two nodes are considered unreachable
@@ -202,7 +208,7 @@ class KeyPlayer:
             raise TypeError("'m' must be an integer value")
         elif m < 1:
             raise ValueError("'m' must be greater than zero")
-        elif m >= self.graph.vcount() + 1:
+        elif m >= graph.vcount() + 1:
             raise ValueError("'m' must be less or equal than the total number of vertices")
         elif not isinstance(implementation, Cmode):
             raise KeyError("'implementation' not valid. It must be one of the following: {}".format(list(Cmode)))
@@ -212,19 +218,18 @@ class KeyPlayer:
                 if max_distance < 1:
                     raise ValueError("'max_distance' must be an integer value greater than one")
         else:
-            index_list = gu(graph=self.graph).get_node_indices(node_names=nodes)
+            index_list = gu(graph=graph).get_node_indices(node_names=nodes)
 
             if implementation == Cmode.igraph:
-                shortest_path_lengths = sp.shortest_path_igraph(self.graph, nodes=nodes)
+                shortest_path_lengths = sp.shortest_path_igraph(graph, nodes=nodes)
             else:
                 if not sp_matrix:
-                    shortest_path_lengths = sp.get_shortestpaths(graph=self.graph, cmode=implementation, nodes=nodes)
+                    shortest_path_lengths = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=nodes)
                 else:
                     if not isinstance(sp_matrix, np.ndarray):
                         raise ValueError("'sp_matrix' must be a numpy.ndarray instance")
-                    elif sp_matrix.shape[0] != self.graph.vcount():
-                        raise WrongArgumentError("The dimension of 'sp matrix' is different "
-                                                 "from the total number of nodes")
+                    elif sp_matrix.shape[0] != graph.vcount():
+                        raise WrongArgumentError("The dimension of 'sp matrix' is different from the total number of nodes")
                     else:
                         shortest_path_lengths = sp_matrix[index_list, :]
 
@@ -232,7 +237,7 @@ class KeyPlayer:
                 shortest_path_lengths = ShortestPathModifier.set_nparray_to_inf(shortest_path_lengths, max_distance)
 
             mreach = 0
-            vminusk = set(self.graph.vs.indices) - set(index_list)
+            vminusk = set(graph.vs.indices) - set(index_list)
             for j in vminusk:
                 for spl in shortest_path_lengths:
                     if spl[j] <= m:
@@ -241,12 +246,16 @@ class KeyPlayer:
 
             return mreach
 
+    @staticmethod
+    @check_graph_consistency
     @vertex_doctor
-    def dR(self, nodes, max_distance=None, implementation=Cmode.igraph, sp_matrix=None) -> float:
+    def dR(graph, nodes, max_distance=None, implementation=Cmode.igraph, sp_matrix=None) -> float:
         """
         Calculates the distance-weighted reach ([Ref]_, equation 14). The distance-weighted reach can be defined as the
         sum of the reciprocals of distances from the kp-set S to all nodes, where the distance from the set to a node is
         defined as the minimum distance (minimum shortest path distance).
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
         :param nodes: Nodes which computing the index for.
         :param int max_distance: The maximum shortest path length over which two nodes are considered unreachable
         :param Cmode.igraph implementation: Computation of the shortest paths is deferred
@@ -269,19 +278,18 @@ class KeyPlayer:
                 elif max_distance < 1:
                     raise ValueError("'max_distance' must be an integer greater than one")
         else:
-            index_list = gu(graph=self.graph).get_node_indices(node_names=nodes)
+            index_list = gu(graph=graph).get_node_indices(node_names=nodes)
 
             if implementation == Cmode.igraph:
-                shortest_path_lengths = sp.shortest_path_igraph(graph=self.graph, nodes=nodes)
+                shortest_path_lengths = sp.shortest_path_igraph(graph=graph, nodes=nodes)
             else:
                 if sp_matrix is None:
-                    shortest_path_lengths = sp.get_shortestpaths(graph=self.graph, nodes=nodes, cmode=implementation)
+                    shortest_path_lengths = sp.get_shortestpaths(graph=graph, nodes=nodes, cmode=implementation)
                 else:
                     if not isinstance(sp_matrix, np.ndarray):
                         raise ValueError("'sp_matrix' must be a numpy.ndarray instance")
-                    elif sp_matrix.shape[0] != self.graph.vcount():
-                        raise WrongArgumentError("The dimension of 'sp matrix' is different "
-                                                 "from the total number of nodes")
+                    elif sp_matrix.shape[0] != graph.vcount():
+                        raise WrongArgumentError("The dimension of 'sp matrix' is different from the total number of nodes")
                     else:
                         shortest_path_lengths = sp_matrix[index_list, :]
 
@@ -289,279 +297,10 @@ class KeyPlayer:
                 shortest_path_lengths = ShortestPathModifier.set_nparray_to_inf(sp_matrix, max_distance)
 
             dr_num = 0
-            vminusk = set(self.graph.vs.indices) - set(index_list)
+            vminusk = set(graph.vs.indices) - set(index_list)
             for j in vminusk:
                 dKj = min(spl[j] for spl in shortest_path_lengths)
                 dr_num += 1 / dKj
 
-            dr = dr_num / float(self.graph.vcount())
+            dr = dr_num / float(graph.vcount())
             return dr
-
-# class KeyPlayer:
-#     """
-#     Compute the Key-Player values for the importance metrics described in [Ref]_
-#     [Ref] Borgatti, S.P. Comput Math Organiz Theor (2006) 12: 21. https://doi.org/10.1007/s10588-006-7084-x
-#     """
-#
-#     @staticmethod
-#     @check_graph_consistency
-#     def F(graph) -> float:
-#         """
-#         Calculate the *F* metrics, which is a KPP-Neg measure, as described by the equation 4 in [Ref]_
-#         Since nodes within a component are mutually reachable, and since components of a graph can be enumerated
-#         extremely efficiently, the F measure can be computed more economically by rewriting it in terms of the
-#         sizes (sk) of each component (indexed by k).
-#         **F = 1* => Maximum fragmentation. All nodes are isolate
-#         **F = 0* => No fragmentation. The graph is complete
-#         [Ref] Borgatti, S.P. Comput Math Organiz Theor (2006) 12: 21. https://doi.org/10.1007/s10588-006-7084-x
-#         :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
-#         "Minimum requirements" specifications in the pyntacle's manual.
-#         :return: The F measure of the graph as a float value ranging from 0.0 to 1.0
-#         """
-#
-#         num_nodes = graph.vcount()
-#         num_edges = graph.ecount()
-#         max_edges = num_nodes * (num_edges - 1)
-#
-#         if num_edges == 0:  # TODO: check if this case if possible, given the decorator "check_graph_consistency"
-#             return 1.0
-#         elif num_edges == max_edges:
-#             return 0.0
-#         else:
-#             components = graph.components()
-#
-#             f_num = sum(len(sk) * (len(sk) - 1) for sk in components)
-#             f_denum = max_edges
-#             f = 1 - (f_num / f_denum)
-#
-#             return round(f, 5)
-#
-#     @staticmethod
-#     @check_graph_consistency
-#     def dF(graph, implementation=Cmode.igraph, max_distance=None) -> float:
-#         """
-#         Calculate the *dF*, which is a KPP-Neg measure, as described by the equation 9 in [Ref]_.
-#         DF is a measure of node connectivity and measures how nodes in the graph can be reached.
-#         The dF value ranges from 0 to 1, where:
-#         **dF = 1* => Maximum fragmentation. All nodes are isolate
-#         **dF = 0* => No fragmentation. The graph is complete
-#         [Ref] Borgatti, S.P. Comput Math Organiz Theor (2006) 12: 21. https://doi.org/10.1007/s10588-006-7084-x
-#         :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
-#         "Minimum requirements" specifications in the pyntacle's manual.
-#         :param Cmode.igraph implementation: Computation of the shortest paths is deferred
-#         to the following implementations:
-#         *`imps.auto`: the most performing implementation is automatically chosen according to the geometry of graph
-#         *`imps.igraqh`: (default) use the default shortest path implementation in igraph (run on a single computing core)
-#         *`imps.pyntacle`: compute shortest paths using the Floyd-Warshall algorithm designed for HPC hardware (multicore
-#         processors or NVIDIA-enabled GPU graphic cards. This method returns a matrix (`:type np.ndarray:`) of shortest
-#         paths. Infinite distances actually equal the total number of vertices plus one.
-#         :param int max_distance: The maximum shortest path length over which two nodes are considered unreachable
-#         :return: The DF measure of the graph as a float value ranging from 0.0 to 1.0
-#         """
-#
-#         num_nodes = graph.vcount()
-#         num_edges = graph.ecount()
-#         if num_edges == 0:  # TODO: check if this case if possible, given the decorator "check_graph_consistency"
-#             return 1.0
-#         elif num_edges == num_nodes * (num_edges - 1):
-#             return 0.0
-#         else:
-#             #  TODO: implementation "auto" should consider graph parameters and use the correct implementation
-#             #  TODO: and the GPU/MULTICORE one
-#             if not isinstance(implementation, Cmode):
-#                 raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(Cmode)))
-#             elif max_distance:
-#                 if not isinstance(max_distance, int):
-#                     raise TypeError("'max_distance' must be an integer value greater than one")
-#                 elif max_distance < 1:
-#                     raise ValueError("'max_distance' must be an integer value greater than one")
-#                 elif max_distance > graph.vcount():
-#                     raise ValueError("'max_distance' must be less or equal than the number of nodes in the graph")
-#
-#             if implementation == Cmode.igraph:
-#                 return KeyPlayer.__dF_Borgatti(graph=graph, max_distance=max_distance)
-#             else:
-#                 return KeyPlayer.__dF_pyntacle(graph=graph, max_distance=max_distance, implementation=implementation)
-#
-#     @staticmethod
-#     def __dF_Borgatti(graph, max_distance=None) -> float:
-#         """
-#         Internal method for calculating the *DF* value of a graph using the igraph implementation of the shortest paths.
-#         This implements, literally, the equation 9 in Borgatti's paper.
-#         :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
-#         "Minimum requirements" specifications in the pyntacle's manual.
-#         :param int max_distance: The maximum shortest path length over which two nodes are considered unreachable
-#         :return: The DF measure of the graph as a float value ranging from 0.0 to 1.0
-#         """
-#
-#         number_nodes = graph.vcount()
-#         df_denum = number_nodes * (number_nodes - 1)
-#         shortest_path_lengths = sp.shortest_path_igraph(graph=graph)
-#
-#         if max_distance:
-#             shortest_path_lengths = ShortestPathModifier.set_list_to_inf(
-#                 shortest_path_lengths, max_distance=max_distance)
-#
-#         df_num = 0
-#         for i in range(number_nodes):
-#             df_num = sum([1 / shortest_path_lengths[i][j] for j in range(i + 1, number_nodes)])
-#
-#         df_num *= 2
-#         df = 1 - (df_num / df_denum)
-#
-#         return round(df, 5)
-#
-#     @staticmethod
-#     def __dF_pyntacle(graph, max_distance=None, implementation=Cmode.cpu) -> float:
-#         """
-#         Internal method for calculating the *DF* value of a graph using HPC implementations of the shortest paths.
-#         :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
-#         "Minimum requirements" specifications in the pyntacle's manual.
-#         :param int max_distance: The maximum shortest path length over which two nodes are considered unreachable
-#         :return: The DF measure of the graph as a float value ranging from 0.0 to 1.0
-#         """
-#
-#         number_nodes = graph.vcount()
-#         df_denum = number_nodes * (number_nodes - 1)
-#         shortest_path_lengths = sp.get_shortestpaths(graph=graph, nodes=None, cmode=implementation)
-#
-#         if max_distance:
-#             shortest_path_lengths = ShortestPathModifier.set_nparray_to_inf(
-#                 shortest_path_lengths, max_distance=max_distance)
-#
-#         rec = shortest_path_lengths[np.triu_indices(shortest_path_lengths.shape[0], k=1)]
-#         rec = rec.astype(dtype=float)
-#         rec[rec == (float(number_nodes + 1))] = float("inf")
-#         rec = np.reciprocal(rec[rec <= number_nodes], dtype=np.float32)  # TODO: let's check this type: np.float32 or float16 ?
-#
-#         df_num = np.sum(rec)
-#         df_num *= 2
-#         df = 1 - float(df_num / df_denum)
-#
-#         return round(df, 5)
-#
-#     @staticmethod
-#     @check_graph_consistency
-#     @vertex_doctor
-#     def mreach(graph, nodes: list, m: int, max_distance: int=None, implementation=Cmode.igraph, sp_matrix=None) -> int:
-#         """
-#         Calculates the m-reach ([Ref]_, equation 12). The m-reach is defined as a count of the number of unique nodes
-#         reached by any member of the kp-set in m links or less.
-#         [Ref] Borgatti, S.P. Comput Math Organiz Theor (2006) 12: 21. https://doi.org/10.1007/s10588-006-7084-x
-#         :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
-#         "Minimum requirements" specifications in the pyntacle's manual.
-#         :param nodes: Nodes which computing the index for.
-#         :param int m: an integer (greater than zero) representing the maximum m-reach distance
-#         :param int max_distance: The maximum shortest path length over which two nodes are considered unreachable
-#         :param Cmode.igraph implementation: Computation of the shortest paths is deferred
-#         to the following implementations:
-#         *`imps.auto`: the most performing implementation is automatically chosen according to the geometry of graph
-#         *`imps.igraqh`: (default) use the default shortest path implementation in igraph (run on a single computing core)
-#         *`imps.pyntacle`: compute shortest paths using the Floyd-Warshall algorithm designed for HPC hardware (multicore
-#         processors or NVIDIA-enabled GPU graphic cards. This method returns a matrix (`:type np.ndarray:`) of shortest
-#         paths. Infinite distances actually equal the total number of vertices plus one.
-#         :param np.ndarray sp_matrix: if *implementation* is either cpu or gpu, you can pass a precomputed matrix of
-#         shortest paths instead of recomputing it. If None, the matrix of the shortest paths will be recomputed
-#         :return: An integer representing the number of nodes reached by the input node(s) in m steps or less
-#         """
-#
-#         if not isinstance(m, int):
-#             raise TypeError("'m' must be an integer value")
-#         elif m < 1:
-#             raise ValueError("'m' must be greater than zero")
-#         elif m >= graph.vcount() + 1:
-#             raise ValueError("'m' must be less or equal than the total number of vertices")
-#         elif not isinstance(implementation, Cmode):
-#             raise KeyError("'implementation' not valid. It must be one of the following: {}".format(list(Cmode)))
-#         elif max_distance:
-#                 if not isinstance(max_distance, int):
-#                     raise TypeError("'max_distance' must be an integer value greater than one")
-#                 if max_distance < 1:
-#                     raise ValueError("'max_distance' must be an integer value greater than one")
-#         else:
-#             index_list = gu(graph=graph).get_node_indices(node_names=nodes)
-#
-#             if implementation == Cmode.igraph:
-#                 shortest_path_lengths = sp.shortest_path_igraph(graph, nodes=nodes)
-#             else:
-#                 if not sp_matrix:
-#                     shortest_path_lengths = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=nodes)
-#                 else:
-#                     if not isinstance(sp_matrix, np.ndarray):
-#                         raise ValueError("'sp_matrix' must be a numpy.ndarray instance")
-#                     elif sp_matrix.shape[0] != graph.vcount():
-#                         raise WrongArgumentError("The dimension of 'sp matrix' is different from the total number of nodes")
-#                     else:
-#                         shortest_path_lengths = sp_matrix[index_list, :]
-#
-#             if max_distance:
-#                 shortest_path_lengths = ShortestPathModifier.set_nparray_to_inf(shortest_path_lengths, max_distance)
-#
-#             mreach = 0
-#             vminusk = set(graph.vs.indices) - set(index_list)
-#             for j in vminusk:
-#                 for spl in shortest_path_lengths:
-#                     if spl[j] <= m:
-#                         mreach += 1
-#                         break
-#
-#             return mreach
-#
-#     @staticmethod
-#     @check_graph_consistency
-#     @vertex_doctor
-#     def dR(graph, nodes, max_distance=None, implementation=Cmode.igraph, sp_matrix=None) -> float:
-#         """
-#         Calculates the distance-weighted reach ([Ref]_, equation 14). The distance-weighted reach can be defined as the
-#         sum of the reciprocals of distances from the kp-set S to all nodes, where the distance from the set to a node is
-#         defined as the minimum distance (minimum shortest path distance).
-#         :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
-#         "Minimum requirements" specifications in the pyntacle's manual.
-#         :param nodes: Nodes which computing the index for.
-#         :param int max_distance: The maximum shortest path length over which two nodes are considered unreachable
-#         :param Cmode.igraph implementation: Computation of the shortest paths is deferred
-#         to the following implementations:
-#         *`imps.auto`: the most performing implementation is automatically chosen according to the geometry of graph
-#         *`imps.igraqh`: (default) use the default shortest path implementation in igraph (run on a single computing core)
-#         *`imps.pyntacle`: compute shortest paths using the Floyd-Warshall algorithm designed for HPC hardware (multicore
-#         processors or NVIDIA-enabled GPU graphic cards. This method returns a matrix (`:type np.ndarray:`) of shortest
-#         paths. Infinite distances actually equal the total number of vertices plus one.
-#         :param np.ndarray sp_matrix: if *implementation* is either cpu or gpu, you can pass a precomputed matrix of
-#         shortest paths instead of recomputing it. If None, the matrix of the shortest paths will be recomputed
-#         :return: An integer representing the distance-weighted reach measure of the graph
-#         """
-#
-#         if not isinstance(implementation, Cmode):
-#             raise KeyError("'implementation' not valid. It must be one of the following: {}".format(list(Cmode)))
-#         elif max_distance:
-#                 if not isinstance(max_distance, int):
-#                     raise TypeError("'max_distance' must be an integer value greater than one")
-#                 elif max_distance < 1:
-#                     raise ValueError("'max_distance' must be an integer greater than one")
-#         else:
-#             index_list = gu(graph=graph).get_node_indices(node_names=nodes)
-#
-#             if implementation == Cmode.igraph:
-#                 shortest_path_lengths = sp.shortest_path_igraph(graph=graph, nodes=nodes)
-#             else:
-#                 if sp_matrix is None:
-#                     shortest_path_lengths = sp.get_shortestpaths(graph=graph, nodes=nodes, cmode=implementation)
-#                 else:
-#                     if not isinstance(sp_matrix, np.ndarray):
-#                         raise ValueError("'sp_matrix' must be a numpy.ndarray instance")
-#                     elif sp_matrix.shape[0] != graph.vcount():
-#                         raise WrongArgumentError("The dimension of 'sp matrix' is different from the total number of nodes")
-#                     else:
-#                         shortest_path_lengths = sp_matrix[index_list, :]
-#
-#             if max_distance:
-#                 shortest_path_lengths = ShortestPathModifier.set_nparray_to_inf(sp_matrix, max_distance)
-#
-#             dr_num = 0
-#             vminusk = set(graph.vs.indices) - set(index_list)
-#             for j in vminusk:
-#                 dKj = min(spl[j] for spl in shortest_path_lengths)
-#                 dr_num += 1 / dKj
-#
-#             dr = dr_num / float(graph.vcount())
-#             return dr

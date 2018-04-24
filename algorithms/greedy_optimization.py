@@ -1,11 +1,17 @@
-__author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
+"""
+Greedy optimization algorithms for optimal kp-set calculation using Key-Players metrics designed by Borgatti as
+described in Borgatti, S.P. Comput Math Organiz Theor (2006) 12: 21.
+https://doi.org/10.1007/s10588-006-7084-x
+"""
+
+__author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "27 February 2018"
+__date__ = "24/04/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -24,32 +30,33 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-"""
-This Module covers the Greedy optimization algorithms for optimal kp-set calculation using Key-Players metrics developed by Borgatti
-"""
 import random
 from functools import partial
+from tools.misc.graph_routines import *
+from tools.enums import kppos, kpneg, Cmode
+from tools.graph_utils import GraphUtils as gu
 from algorithms.keyplayer import KeyPlayer as kp
 from algorithms.shortest_path import ShortestPath as sp
-from tools.misc.graph_routines import *
 from exceptions.wrong_argument_error import WrongArgumentError
-from tools.enums import kppos, kpneg, Cmode
 from tools.misc.kpsearch_utils import greedy_search_initializer
-from tools.graph_utils import GraphUtils as gu
+
 
 class GreedyOptimization:
     """
-    Greedy optimization algorithms for optimal kp-set calculation
+    Greedy optimization algorithms for optimal kp-set calculation using Key-Players metrics designed by Borgatti as
+    described in Borgatti, S.P. Comput Math Organiz Theor (2006) 12: 21.
+    https://doi.org/10.1007/s10588-006-7084-x
     """
+
     @staticmethod
     @check_graph_consistency
     @greedy_search_initializer
     def fragmentation(graph, kpp_size, kpp_type, seed=None, max_distances=None, implementation=Cmode.igraph) -> (list, float):
         """
         It iteratively searches for a kpp-set of a predefined vertex set size, removes it and measures the residual
-        fragmentation score of the KPNEG metric queried (choices are available in misc/enums).
+        fragmentation score of the specified KP-Neg metric.
         The best kpp-set will be that that maximizes the fragmentation when the nodes are removed from the graph.
-        Available KP NEG choices:
+        Available KP-Neg choices:
         * KPNEGchoices.F: min = 0 (all nodes are isolates); max = 1 (network is a clique)
         * KPNEGchoices.dF: min = 0 (all nodes are isolates and therefore not connected; max = 1
         (The distance between each node pair is 1 hence the network is a clique)
