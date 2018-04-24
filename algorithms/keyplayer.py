@@ -139,7 +139,7 @@ class KeyPlayer:
         number_nodes = graph.vcount()
         df_denum = number_nodes * (number_nodes - 1)
 
-        shortest_path_lengths = sp.__shortest_path_igraph(graph=graph)
+        shortest_path_lengths = sp.shortest_path_igraph(graph=graph)
 
         if max_distances is not None:
             shortest_path_lengths = ShortestPathModifier.igraph_sp_to_inf(shortest_path_lengths, max_distances=max_distances)
@@ -230,7 +230,7 @@ class KeyPlayer:
         index_list = gu(graph=graph).get_node_indices(node_names=nodes)
 
         if implementation == Cmode.igraph:
-            shortest_path_lengths = sp.__shortest_path_igraph(graph, nodes=nodes)
+            shortest_path_lengths = sp.shortest_path_igraph(graph, nodes=nodes)
 
             if max_distances is not None:
                 shortest_path_lengths = ShortestPathModifier.igraph_sp_to_inf(shortest_path_lengths, max_distances)
@@ -299,7 +299,7 @@ class KeyPlayer:
         index_list = gu(graph=graph).get_node_indices(node_names=nodes)
 
         if implementation == Cmode.igraph:
-            shortest_path_lengths = sp.__shortest_path_igraph(graph=graph, nodes=nodes)
+            shortest_path_lengths = sp.shortest_path_igraph(graph=graph, nodes=nodes)
 
             if max_distances is not None:
                 shortest_path_lengths = ShortestPathModifier.igraph_sp_to_inf(shortest_path_lengths, max_distances)
