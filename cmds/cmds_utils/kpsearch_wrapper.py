@@ -87,11 +87,11 @@ class KPWrapper:
 
         self.logger.info("searching the KP POS values for metric {0} using nodes {1}".format(kpp_type.name, ",".join(nodes)))
         if kpp_type == kppos.dR:
-            single_result = self.kp.dR(graph=self.graph, nodes=nodes, max_distances=max_distances,
+            single_result = self.kp.dR(graph=self.graph, nodes=nodes, max_distance=max_distances,
                                        implementation=implementation)
 
         else:
-            single_result = self.kp.mreach(graph=self.graph, nodes=nodes, max_distances=max_distances, m=m, implementation=implementation)
+            single_result = self.kp.mreach(graph=self.graph, nodes=nodes, max_distance=max_distances, m=m, implementation=implementation)
 
         self.results[kpp_type.name] = [nodes, single_result]
         self.logger.info("KP POS search completed, results are in the \"results\" dictionary")
@@ -125,7 +125,7 @@ class KPWrapper:
             "Searching the KP NEG values for metric {0} using nodes {1}\n".format(kpp_type.name, ",".join(nodes)))
 
         if kpp_type == kpneg.dF:
-            single_result = self.kp.dF(graph=copy, max_distances=max_distances, implementation=implementation)
+            single_result = self.kp.dF(graph=copy, max_distance=max_distances, implementation=implementation)
 
         else:
             single_result = self.kp.F(graph=copy)

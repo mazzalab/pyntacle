@@ -1,11 +1,13 @@
-__author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
+""" Utility methods to edit the shortest paths matrix"""
+
+__author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "27 February 2018"
+__date__ = "24/04/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -24,32 +26,34 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-"""Methods for shortest path operations"""
-from config import *
 import numpy as np
 
+
 class ShortestPathModifier:
+    @staticmethod
+    def set_nparray_to_inf(shortest_paths: np.ndarray, max_distance: int) -> np.ndarray:
+        """
+        Set all distances greater than 'max_distance' to infinite (number of nodes in the graph plus one).
+        The number of nodes is the first size of the numpy array
+        :param np.ndarray shortest_paths: the input numpy.ndarray
+        :param int max_distance: The maximum shortest path length over which two nodes are considered unreachable
+        :return: a `np.ndarray` with values exceeding 'max_dinstance' set to infinite (number of nodes in the graph
+        plus one).
+        """
+
+        sp = np.array(shortest_paths, copy=True)
+        sp[sp > max_distance] = np.shape(sp)[0]
+        return sp
 
     @staticmethod
-    def np_array_to_inf(sp_pyntacle, max_distances) -> np.ndarray:
-        """
-        Set all distances greater than 'max_sp' to infinite (number of nodes in the graph plus one).
-        the number of nodes if the first component of the shape of the numpy array (the rows of the adjacency matrix)
-        :param np.ndarray sp_pyntacle: the input numpy.ndarray
-        :param int max_distances: the maximum distShoance allowed in the `np.ndarray` of distances
-        :return: a `np.ndarray` with each value modified by
-        """
-        sp_pyntacle[sp_pyntacle > max_distances] = np.shape(sp_pyntacle)[0]
-        return sp_pyntacle
-
-    @staticmethod
-    def igraph_sp_to_inf(sp_igraph, max_distances) -> list:
+    def set_list_to_inf(shortest_paths, max_distance: int) -> list:
         """
         Take an input list of distances and set distances greater than max_sp to `inf` (a `math.inf` object)
-        :param list sp_igraph: the list of shortest path outputted by the `shortest_path()` method in igraph
-        :param int max_distances: :param int max_sp: the maximum distance allowed in the `np.ndarray` of distances
+        :param list shortest_paths: the list of shortest paths outputted by the `shortest_path()` method in igraph
+        :param int max_distance: The maximum shortest path length over which two nodes are considered unreachable
         :return: a list of lists (same as igraph) containing the modified shortest path, with `inf` used if nodes are
         disconnected
         """
-        sp_igraph = [[float("inf") if x > max_distances else x for x in y] for y in sp_igraph]
-        return sp_igraph
+
+        sp = [[float("inf") if x > max_distance else x for x in y] for y in shortest_paths]
+        return sp

@@ -288,7 +288,7 @@
         <span class="n">shortest_path_lengths</span> <span class="o">=</span> <span class="n">lt</span><span class="o">.</span><span class="n">LocalTopology</span><span class="o">.</span><span class="n">shortest_path_igraph</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">max_sp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">shortest_path_lengths</span> <span class="o">=</span> <span class="n">ShortestPathModifier</span><span class="o">.</span><span class="n">igraph_sp_to_inf</span><span class="p">(</span><span class="n">shortest_path_lengths</span><span class="p">,</span> <span class="n">max_sp</span><span class="o">=</span><span class="n">max_sp</span><span class="p">)</span>
+            <span class="n">shortest_path_lengths</span> <span class="o">=</span> <span class="n">ShortestPathModifier</span><span class="o">.</span><span class="n">set_list_to_inf</span><span class="p">(</span><span class="n">shortest_path_lengths</span><span class="p">,</span> <span class="n">max_sp</span><span class="o">=</span><span class="n">max_sp</span><span class="p">)</span>
 
         <span class="n">df_num</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -322,7 +322,7 @@
                                                                         <span class="n">implementation</span><span class="o">=</span><span class="n">lt</span><span class="o">.</span><span class="n">implementation</span><span class="o">.</span><span class="n">auto</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">max_sp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">shortest_path_lengths</span> <span class="o">=</span> <span class="n">ShortestPathModifier</span><span class="o">.</span><span class="n">np_array_to_inf</span><span class="p">(</span><span class="n">shortest_path_lengths</span><span class="p">,</span> <span class="n">max_sp</span><span class="o">=</span><span class="n">max_sp</span><span class="p">)</span>
+            <span class="n">shortest_path_lengths</span> <span class="o">=</span> <span class="n">ShortestPathModifier</span><span class="o">.</span><span class="n">set_nparray_to_inf</span><span class="p">(</span><span class="n">shortest_path_lengths</span><span class="p">,</span> <span class="n">max_sp</span><span class="o">=</span><span class="n">max_sp</span><span class="p">)</span>
 
         <span class="n">rec</span> <span class="o">=</span> <span class="n">shortest_path_lengths</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">triu_indices</span><span class="p">(</span><span class="n">shortest_path_lengths</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
         <span class="sd">&#39;&#39;&#39;:type: np.ndarray&#39;&#39;&#39;</span>
@@ -385,13 +385,13 @@
             <span class="n">shortest_path_lengths</span> <span class="o">=</span> <span class="n">lt</span><span class="o">.</span><span class="n">LocalTopology</span><span class="o">.</span><span class="n">shortest_path_igraph</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">max_sp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">shortest_path_lengths</span> <span class="o">=</span> <span class="n">ShortestPathModifier</span><span class="o">.</span><span class="n">igraph_sp_to_inf</span><span class="p">(</span><span class="n">shortest_path_lengths</span><span class="p">,</span> <span class="n">max_sp</span><span class="p">)</span>
+                <span class="n">shortest_path_lengths</span> <span class="o">=</span> <span class="n">ShortestPathModifier</span><span class="o">.</span><span class="n">set_list_to_inf</span><span class="p">(</span><span class="n">shortest_path_lengths</span><span class="p">,</span> <span class="n">max_sp</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">implementation</span> <span class="o">==</span> <span class="s2">&quot;pyntacle&quot;</span><span class="p">:</span>
             <span class="n">shortest_path_lengths</span> <span class="o">=</span> <span class="n">lt</span><span class="o">.</span><span class="n">LocalTopology</span><span class="o">.</span><span class="n">shortest_path_pyntacle</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">max_sp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">shortest_path_lengths</span> <span class="o">=</span> <span class="n">ShortestPathModifier</span><span class="o">.</span><span class="n">np_array_to_inf</span><span class="p">(</span><span class="n">shortest_path_lengths</span><span class="p">,</span><span class="n">max_sp</span><span class="p">)</span>
+                <span class="n">shortest_path_lengths</span> <span class="o">=</span> <span class="n">ShortestPathModifier</span><span class="o">.</span><span class="n">set_nparray_to_inf</span><span class="p">(</span><span class="n">shortest_path_lengths</span><span class="p">,</span><span class="n">max_sp</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">auto</span><span class="se">\&quot;</span><span class="s2"> implementation not yet done, please come back later</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -452,13 +452,13 @@
             <span class="n">shortest_path_lengths</span> <span class="o">=</span> <span class="n">lt</span><span class="o">.</span><span class="n">LocalTopology</span><span class="o">.</span><span class="n">shortest_path_igraph</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">max_sp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">shortest_path_lengths</span> <span class="o">=</span> <span class="n">ShortestPathModifier</span><span class="o">.</span><span class="n">igraph_sp_to_inf</span><span class="p">(</span><span class="n">shortest_path_lengths</span><span class="p">,</span> <span class="n">max_sp</span><span class="p">)</span>
+                <span class="n">shortest_path_lengths</span> <span class="o">=</span> <span class="n">ShortestPathModifier</span><span class="o">.</span><span class="n">set_list_to_inf</span><span class="p">(</span><span class="n">shortest_path_lengths</span><span class="p">,</span> <span class="n">max_sp</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">implementation</span> <span class="o">==</span> <span class="s2">&quot;pyntacle&quot;</span><span class="p">:</span>
             <span class="n">shortest_path_lengths</span> <span class="o">=</span> <span class="n">lt</span><span class="o">.</span><span class="n">LocalTopology</span><span class="o">.</span><span class="n">shortest_path_pyntacle</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">max_sp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">shortest_path_lengths</span> <span class="o">=</span> <span class="n">ShortestPathModifier</span><span class="o">.</span><span class="n">np_array_to_inf</span><span class="p">(</span><span class="n">shortest_path_lengths</span><span class="p">,</span><span class="n">max_sp</span><span class="p">)</span>
+                <span class="n">shortest_path_lengths</span> <span class="o">=</span> <span class="n">ShortestPathModifier</span><span class="o">.</span><span class="n">set_nparray_to_inf</span><span class="p">(</span><span class="n">shortest_path_lengths</span><span class="p">,</span><span class="n">max_sp</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">auto</span><span class="se">\&quot;</span><span class="s2"> implementation not yet done, please come back later</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>

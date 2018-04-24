@@ -184,7 +184,7 @@
 <div class="viewcode-block" id="ShortestPathModifier"><a class="viewcode-back" href="../../../pyntacle.misc.sps_operations.html#pyntacle.misc.sps_operations.ShortestPathModifier">[docs]</a><span class="k">class</span> <span class="nc">ShortestPathModifier</span><span class="p">:</span>
 
 <div class="viewcode-block" id="ShortestPathModifier.np_array_to_inf"><a class="viewcode-back" href="../../../pyntacle.misc.sps_operations.html#pyntacle.misc.sps_operations.ShortestPathModifier.np_array_to_inf">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">np_array_to_inf</span><span class="p">(</span><span class="n">sp_pyntacle</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">max_sp</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">set_nparray_to_inf</span><span class="p">(</span><span class="n">sp_pyntacle</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">max_sp</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set all distances greater than &#39;max_sp&#39; to infinite (number of nodes in the graph plus one).</span>
 <span class="sd">        the number of nodes if the first component of the shape of the numpy array (the rows of the adjacency matrix)</span>
@@ -196,7 +196,7 @@
         <span class="k">return</span> <span class="n">sp_pyntacle</span></div>
 
 <div class="viewcode-block" id="ShortestPathModifier.igraph_sp_to_inf"><a class="viewcode-back" href="../../../pyntacle.misc.sps_operations.html#pyntacle.misc.sps_operations.ShortestPathModifier.igraph_sp_to_inf">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">igraph_sp_to_inf</span><span class="p">(</span><span class="n">sp_igraph</span><span class="p">:</span><span class="nb">list</span><span class="p">,</span> <span class="n">max_sp</span><span class="p">:</span><span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">set_list_to_inf</span><span class="p">(</span><span class="n">sp_igraph</span><span class="p">:</span><span class="nb">list</span><span class="p">,</span> <span class="n">max_sp</span><span class="p">:</span><span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Take an input list of distances and set distances greater than max_sp to `inf` (a `math.inf` object)</span>
 <span class="sd">        :param list sp_igraph: the list of shortest path outputted by the `shortest_path()` method in igraph</span>

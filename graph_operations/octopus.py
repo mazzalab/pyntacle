@@ -212,7 +212,7 @@ class Octopus:
         distances = LocalTopology.shortest_path_pyntacle(graph, node_names, mode, implementation=implementation).tolist()
         if node_names is None:
             node_names = graph.vs["name"]
-        distances_with_inf = ShortestPathModifier.igraph_sp_to_inf(distances, graph.vcount()+1)
+        distances_with_inf = ShortestPathModifier.set_list_to_inf(distances, graph.vcount() + 1)
         AddAttributes(graph).add_node_attributes(LocalAttribute.shortest_path.name, distances_with_inf, node_names)
 
     @staticmethod
@@ -245,7 +245,7 @@ class Octopus:
     @check_graph_consistency
     def add_dF(graph, max_distances=None):
         implementation = implementation_check(graph)
-        AddAttributes(graph).add_graph_attributes(kpneg.dF.name, KeyPlayer.dF(graph, implementation=implementation, max_distances=max_distances))
+        AddAttributes(graph).add_graph_attributes(kpneg.dF.name, KeyPlayer.dF(graph, implementation=implementation, max_distance=max_distances))
 
     # KP
 

@@ -183,7 +183,7 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <dl class="staticmethod">
 <dt id="pyntacle.misc.sps_operations.ShortestPathModifier.igraph_sp_to_inf">
-<em class="property">static </em><code class="descname">igraph_sp_to_inf</code><span class="sig-paren">(</span><em>sp_igraph: list</em>, <em>max_sp: int</em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pyntacle/misc/sps_operations.html#ShortestPathModifier.igraph_sp_to_inf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.misc.sps_operations.ShortestPathModifier.igraph_sp_to_inf" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">set_list_to_inf</code><span class="sig-paren">(</span><em>sp_igraph: list</em>, <em>max_sp: int</em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pyntacle/misc/sps_operations.html#ShortestPathModifier.igraph_sp_to_inf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.misc.sps_operations.ShortestPathModifier.igraph_sp_to_inf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Take an input list of distances and set distances greater than max_sp to <cite>inf</cite> (a <cite>math.inf</cite> object)
 :param list sp_igraph: the list of shortest path outputted by the <cite>shortest_path()</cite> method in igraph
 :param int max_sp: :param int max_sp: the maximum distance allowed in the <cite>np.ndarray</cite> of distances
@@ -193,7 +193,7 @@ disconnected</p>
 
 <dl class="staticmethod">
 <dt id="pyntacle.misc.sps_operations.ShortestPathModifier.np_array_to_inf">
-<em class="property">static </em><code class="descname">np_array_to_inf</code><span class="sig-paren">(</span><em>sp_pyntacle: numpy.ndarray</em>, <em>max_sp: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyntacle/misc/sps_operations.html#ShortestPathModifier.np_array_to_inf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.misc.sps_operations.ShortestPathModifier.np_array_to_inf" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">set_nparray_to_inf</code><span class="sig-paren">(</span><em>sp_pyntacle: numpy.ndarray</em>, <em>max_sp: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyntacle/misc/sps_operations.html#ShortestPathModifier.np_array_to_inf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyntacle.misc.sps_operations.ShortestPathModifier.np_array_to_inf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set all distances greater than ‘max_sp’ to infinite (number of nodes in the graph plus one).
 the number of nodes if the first component of the shape of the numpy array (the rows of the adjacency matrix)
 :param np.ndarray sp_pyntacle: the input numpy.ndarray

@@ -1,3 +1,4 @@
+from algorithms.local_topology import LocalTopology
 from tools.misc.graph_load import *
 from algorithms.greedy_optimization import *
 from io_stream.exporter import PyntacleExporter
@@ -27,15 +28,15 @@ numpy.set_printoptions(threshold=numpy.nan)
 # print(GlobalTopology.density(erd))
 
 
-mat = GraphLoad('/home/m.truglio/Desktop/Compiti_Dedalus/embryo_small.sif', "sif", True).graph_load()
-print(mat)
-print(mat.summary())
-print(list(mat.es()))
-print("INTER NAME", mat['__sif_interaction_name'])
-PyntacleExporter.Sif(mat, '/home/m.truglio/Desktop/Compiti_Dedalus/embryo_small_exported.sif', header=True)
-
-QuickConvert.SifToEdgelist('/home/m.truglio/Desktop/Compiti_Dedalus/embryo_small.sif', header=False, output_file='/home/m.truglio/Desktop/Compiti_Dedalus/embryo_small_exported.egl')
-sys.exit()
+# mat = GraphLoad('/home/m.truglio/Desktop/Compiti_Dedalus/embryo_small.sif', "sif", True).graph_load()
+# print(mat)
+# print(mat.summary())
+# print(list(mat.es()))
+# print("INTER NAME", mat['__sif_interaction_name'])
+# PyntacleExporter.Sif(mat, '/home/m.truglio/Desktop/Compiti_Dedalus/embryo_small_exported.sif', header=True)
+#
+# QuickConvert.SifToEdgelist('/home/m.truglio/Desktop/Compiti_Dedalus/embryo_small.sif', header=False, output_file='/home/m.truglio/Desktop/Compiti_Dedalus/embryo_small_exported.egl')
+# sys.exit()
 # print(mat)
 # print(list(adjmatrix.es))
 # AddAttributes(adjmatrix).add_edge_attributes('colore_edge', ['nero'], [('1','0')])
@@ -85,12 +86,16 @@ sys.exit()
 # mat= GraphLoad(r'C:\Users\Iron\Desktop\CSS-Bioinformatics\pyntacle\test\test_sets\input\figure_8.txt',
 #                "adjm", True).graph_load()
 
+mat= GraphLoad(r'C:\Users\t.mazza\Desktop\CSS-Bioinformatics\pyntacle\test\test_sets\input\figure_8.txt',
+               "adjm", True).graph_load()
+
 print("Eccentricity of BR: {}".format(LocalTopology.eccentricity(mat, "BR")))
 print("Radiality of BR: {}".format(LocalTopology.radiality(mat, "BR", Cmode.igraph)))
+print("Eigenvector of BR: {}".format(LocalTopology.eigenvector_centrality(mat, nodes=None, scaled=False)))
 
-print("Shortest paths from BR by iGraph: {}".format(ShortestPath.get_shortestpaths(mat, "BR", Cmode.igraph)))
-print("Shortest paths from BR by multi-core: {}".format(ShortestPath.get_shortestpaths(mat, "BR", Cmode.cpu)))
-print("Shortest paths from BR by GPU: {}".format(ShortestPath.get_shortestpaths(mat, "BR", Cmode.gpu)))
+# print("Shortest paths from BR by iGraph: {}".format(ShortestPath.get_shortestpaths(mat, "BR", Cmode.igraph)))
+# print("Shortest paths from BR by multi-core: {}".format(ShortestPath.get_shortestpaths(mat, "BR", Cmode.cpu)))
+# print("Shortest paths from BR by GPU: {}".format(ShortestPath.get_shortestpaths(mat, "BR", Cmode.gpu)))
 
 
 

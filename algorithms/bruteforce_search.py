@@ -58,19 +58,19 @@ def crunch_reachability_combinations(allS, graph: Graph, kpp_type: kppos, m: int
     if kpp_type == kppos.mreach:
         if implementation != Cmode.igraph:
             sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
-            reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distances=max_distances,
+            reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distance=max_distances,
                                                   implementation=implementation, sp_matrix=sp_matrix)
         else:
-            reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distances=max_distances,
+            reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distance=max_distances,
                                                   implementation=implementation)
 
     elif kpp_type == kppos.dR:
         if implementation != Cmode.igraph:
             sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
-            reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distances=max_distances,
+            reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distance=max_distances,
                                               implementation=implementation, sp_matrix=sp_matrix)
         else:
-            reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distances=max_distances,
+            reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distance=max_distances,
                                               implementation=implementation)
 
     else:  # here all the other KPNEG functions we want to insert
@@ -98,7 +98,7 @@ def crunch_fragmentation_combinations(allS, graph: Graph, kpp_type: kpneg,
         kppset_score_pairs_partial[allS] = KeyPlayer.F(temp_graph)
 
     elif kpp_type == kpneg.dF:
-        kppset_score_pairs_partial[allS] = KeyPlayer.dF(graph=temp_graph, max_distances=max_distances,
+        kppset_score_pairs_partial[allS] = KeyPlayer.dF(graph=temp_graph, max_distance=max_distances,
                                                         implementation=implementation)
 
     else:  # here all the other KPNEG functions we want to insert
@@ -153,7 +153,7 @@ class BruteforceSearch:
 
         elif kpp_type == kpneg.dF:
             init_fragmentation_score = KeyPlayer.dF(graph=graph, implementation=implementation,
-                                                    max_distances=max_distances)  # initial fragmentation value
+                                                    max_distance=max_distances)  # initial fragmentation value
         else:
             init_fragmentation_score = None
 
@@ -374,19 +374,19 @@ class BruteforceSearch:
             if kpp_type == kppos.mreach:
                 if implementation != Cmode.igraph:
                     sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
-                    reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distances=max_distances,
+                    reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distance=max_distances,
                                                           implementation=implementation, sp_matrix=sp_matrix)
                 else:
-                    reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distances=max_distances,
+                    reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distance=max_distances,
                                                           implementation=implementation)
 
             elif kpp_type == kppos.dR:
                 if implementation != Cmode.igraph:
                     sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
-                    reachability_score = KeyPlayer.dR(graph=graph, nodes=nodes, max_distances=max_distances,
+                    reachability_score = KeyPlayer.dR(graph=graph, nodes=nodes, max_distance=max_distances,
                                                       implementation=implementation, sp_matrix=sp_matrix)
                 else:
-                    reachability_score = KeyPlayer.dR(graph=graph, nodes=nodes, max_distances=max_distances,
+                    reachability_score = KeyPlayer.dR(graph=graph, nodes=nodes, max_distance=max_distances,
                                                       implementation=implementation)
 
             else:  # here all the other KPNEG functions we want to insert
