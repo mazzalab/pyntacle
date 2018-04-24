@@ -139,7 +139,7 @@ class PyntacleImporter:
             AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0],
                                                          node_names=node_names)
 
-            sys.stdout.write("Adjacency Matrix from file {} imported\n".format(file))
+            sys.stdout.write("Adjacency Matrix from {} imported\n".format(file))
             return graph
 
     @staticmethod
@@ -177,11 +177,9 @@ class PyntacleImporter:
         graph.add_edges([tuple(x) for x in adj.values])
         #initialize the graph by calling the graph_initializer() method
         AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
-        sys.stdout.write("Edge List from file {} imported\n".format(file))
+        sys.stdout.write("Edge List from {} imported\n".format(file))
         return graph
 
-
-    #todo Mauro let's handle multiple *sif interactions*
     @staticmethod
     @input_file_checker
     @separator_sniffer
@@ -271,7 +269,7 @@ class PyntacleImporter:
             # add missing attribute to graph
             AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
     
-            sys.stdout.write("Sif File  from file {} imported\n".format(file))
+            sys.stdout.write("SIF  from {} imported\n".format(file))
 
         return graph
 
@@ -285,7 +283,7 @@ class PyntacleImporter:
         :param kwargs:
         :return:
         """
-
+        #todo Mauro and Tommaso, can you describe this part please?
         graph = Graph()
         graph.vs()["name"] = None
         graph.es()["__sif_interaction"] = None
@@ -378,7 +376,7 @@ class PyntacleImporter:
             for k in edge_attrs_dict[a]:
                 AddAttributes(graph).add_edge_attributes(k, [edge_attrs_dict[a][k]], [a])
 
-        sys.stdout.write("Dot File {} imported to a Graph Object\n".format(file))
+        sys.stdout.write("Dot from {} imported\n".format(file))
         return graph
 
     @staticmethod
