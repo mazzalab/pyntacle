@@ -47,13 +47,30 @@ class ShortestPath:
     # @profile
     # todo check if i can see the environment variables so I don't have to recall cuda.is_available() every time
     @staticmethod
-    def get_shortestpaths(graph, nodes, cmode: Cmode):
-        if cmode == Cmode.igraph:
+    def get_shortestpaths(graph, nodes, implementation: Cmode) -> np.ndarray:
+        """
+        Compute the *shortest paths* starting from a node or of a list of nodes of an undirected graph using the
+        implementation modes specified in the input parameter *cmode*
+        :param graph: an igraph.Graph object. The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
+        (default), the index is computed for all nodes of the graph.
+        :param implementation: an enumerator ranging from:
+        * **`cmode.igraph`**: shortest paths computed by iGraph
+        * **`cmode.cpu`**: Dijkstra algorithm implemented for multicore CPU
+        * **`cmode.gpu`**: Dijkstra algorithm implemented for GPU-enabled graphics cards
+        **CAUTION**: this will not work if the GPU is not present or CUDA compatible.
+        :return: a np.ndarray, the first size being the number of input nodes. Each row contains a series of
+        integer values representing the distance from any input node to every other node in the graph.
+        The order of the node list in input is preserved in the np.ndarray.
+        """
+
+        if implementation == Cmode.igraph:
             sps = ShortestPath.shortest_path_igraph(graph=graph, nodes=nodes)
             sps = [[graph.vcount() + 1 if isinf(x) else x for x in y] for y in sps]
             sps = np.array(sps)
             return sps
-        elif cmode == Cmode.cpu or cmode == Cmode.gpu:
+        elif implementation == Cmode.cpu or implementation == Cmode.gpu:
             if virtual_memory().free < (graph.vcount() ** 2) * 2:  # the rightmost "2" is int16/8
                 sys.stdout.write("WARNING: Memory seems to be low; loading the graph given as input could fail.")
 
@@ -63,7 +80,7 @@ class ShortestPath:
             adjmat[adjmat == 0] = np.uint16(graph_size)
             np.fill_diagonal(adjmat, 0)
 
-            if cmode == Cmode.cpu:
+            if implementation == Cmode.cpu:
                 if nodes is None:
                     sps = ShortestPath.__shortest_path_cpu(adjmat=adjmat)
                 else:
@@ -72,8 +89,8 @@ class ShortestPath:
                     sps = sps[nodes, :]
                 return sps
 
-            elif cmode == Cmode.gpu:
-                if cmode == Cmode.gpu and cuda.current_context().get_memory_info().free < (graph.vcount() ** 2) * 2:
+            elif implementation == Cmode.gpu:
+                if implementation == Cmode.gpu and cuda.current_context().get_memory_info().free < (graph.vcount() ** 2) * 2:
                     sys.stdout.write(
                         "WARNING: GPU Memory seems to be low; loading the graph given as input could fail.")
 
@@ -174,7 +191,7 @@ class ShortestPath:
                 else:
                     avg_sps.append(float("nan"))
         else:  # np array
-            sps = ShortestPath.get_shortestpaths(graph=graph, nodes=nodes, cmode=implementation)
+            sps = ShortestPath.get_shortestpaths(graph=graph, nodes=nodes, implementation=implementation)
             sps[sps == 0] = np.nan
             var = sps[sps > graph.vcount()] == np.nan
             avg_sps = np.nanmean(var, axis=0)
@@ -215,7 +232,7 @@ class ShortestPath:
                     avg_sps.append(float("nan"))
 
         else:  # np array
-            sps = ShortestPath.get_shortestpaths(graph=graph, nodes=nodes, cmode=implementation)
+            sps = ShortestPath.get_shortestpaths(graph=graph, nodes=nodes, implementation=implementation)
             sps[sps == 0] = np.nan
             var = sps[sps > graph.vcount()] == np.nan
             avg_sps = np.nanmedian(var, axis=0)

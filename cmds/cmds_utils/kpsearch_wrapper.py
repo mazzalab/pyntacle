@@ -179,7 +179,7 @@ class GOWrapper:
         if not isinstance(kpp_type, kpneg):
             raise TypeError("\"kpp_type\" must be one of the KPPNEGchoices options available")
 
-        go_results = self.go.fragmentation(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type, max_distances=max_distances, seed=seed, implementation=implementation)
+        go_results = self.go.fragmentation(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type, max_distance=max_distances, seed=seed, implementation=implementation)
         self.results[kpp_type.name] = [go_results[0], go_results[1]]
 
     @timeit
@@ -204,7 +204,7 @@ class GOWrapper:
             elif not isinstance(m, int) or m <= 0 :
                 raise ValueError("\"m\" must be a positive integer for mreach ")
 
-        go_results = self.go.reachability(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type, max_distances=max_distances, seed=seed, m=m, implementation=implementation)
+        go_results = self.go.reachability(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type, max_distance=max_distances, seed=seed, m=m, implementation=implementation)
         self.results[kpp_type.name] = [go_results[0], go_results[1]]
 
     def get_results(self) -> dict:

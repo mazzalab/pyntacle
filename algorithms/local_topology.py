@@ -161,7 +161,7 @@ class LocalTopology:
         num_nodes_minus_one = graph.vcount() - 1
         rad_list = []
 
-        sps = ShortestPath.get_shortestpaths(graph, nodes=nodes, cmode=cmode)
+        sps = ShortestPath.get_shortestpaths(graph, nodes=nodes, implementation=cmode)
         for sp in sps:
             partial_sum = sum(diameter_plus_one - distance for distance in sp if distance != 0)
             rad_list.append(round(float(partial_sum / num_nodes_minus_one), 5))

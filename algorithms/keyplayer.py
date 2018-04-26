@@ -162,7 +162,7 @@ class KeyPlayer:
 
         number_nodes = graph.vcount()
         df_denum = number_nodes * (number_nodes - 1)
-        shortest_path_lengths = sp.get_shortestpaths(graph=graph, nodes=None, cmode=implementation)
+        shortest_path_lengths = sp.get_shortestpaths(graph=graph, nodes=None, implementation=implementation)
 
         if max_distance:
             shortest_path_lengths = ShortestPathModifier.set_nparray_to_inf(
@@ -224,12 +224,13 @@ class KeyPlayer:
                 shortest_path_lengths = sp.shortest_path_igraph(graph, nodes=nodes)
             else:
                 if not sp_matrix:
-                    shortest_path_lengths = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=nodes)
+                    shortest_path_lengths = sp.get_shortestpaths(graph=graph, implementation=implementation, nodes=nodes)
                 else:
                     if not isinstance(sp_matrix, np.ndarray):
                         raise ValueError("'sp_matrix' must be a numpy.ndarray instance")
                     elif sp_matrix.shape[0] != graph.vcount():
-                        raise WrongArgumentError("The dimension of 'sp matrix' is different from the total number of nodes")
+                        raise WrongArgumentError("The dimension of 'sp matrix' is different from the total "
+                                                 "number of nodes")
                     else:
                         shortest_path_lengths = sp_matrix[index_list, :]
 
@@ -284,7 +285,7 @@ class KeyPlayer:
                 shortest_path_lengths = sp.shortest_path_igraph(graph=graph, nodes=nodes)
             else:
                 if sp_matrix is None:
-                    shortest_path_lengths = sp.get_shortestpaths(graph=graph, nodes=nodes, cmode=implementation)
+                    shortest_path_lengths = sp.get_shortestpaths(graph=graph, nodes=nodes, implementation=implementation)
                 else:
                     if not isinstance(sp_matrix, np.ndarray):
                         raise ValueError("'sp_matrix' must be a numpy.ndarray instance")

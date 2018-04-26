@@ -57,7 +57,7 @@ def crunch_reachability_combinations(allS, graph: Graph, kpp_type: kppos, m: int
 
     if kpp_type == kppos.mreach:
         if implementation != Cmode.igraph:
-            sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
+            sp_matrix = sp.get_shortestpaths(graph=graph, implementation=implementation, nodes=None)
             reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distance=max_distances,
                                                   implementation=implementation, sp_matrix=sp_matrix)
         else:
@@ -66,7 +66,7 @@ def crunch_reachability_combinations(allS, graph: Graph, kpp_type: kppos, m: int
 
     elif kpp_type == kppos.dR:
         if implementation != Cmode.igraph:
-            sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
+            sp_matrix = sp.get_shortestpaths(graph=graph, implementation=implementation, nodes=None)
             reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distance=max_distances,
                                               implementation=implementation, sp_matrix=sp_matrix)
         else:
@@ -373,7 +373,7 @@ class BruteforceSearch:
 
             if kpp_type == kppos.mreach:
                 if implementation != Cmode.igraph:
-                    sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
+                    sp_matrix = sp.get_shortestpaths(graph=graph, implementation=implementation, nodes=None)
                     reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distance=max_distances,
                                                           implementation=implementation, sp_matrix=sp_matrix)
                 else:
@@ -382,7 +382,7 @@ class BruteforceSearch:
 
             elif kpp_type == kppos.dR:
                 if implementation != Cmode.igraph:
-                    sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
+                    sp_matrix = sp.get_shortestpaths(graph=graph, implementation=implementation, nodes=None)
                     reachability_score = KeyPlayer.dR(graph=graph, nodes=nodes, max_distance=max_distances,
                                                       implementation=implementation, sp_matrix=sp_matrix)
                 else:
