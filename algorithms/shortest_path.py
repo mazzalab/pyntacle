@@ -8,7 +8,7 @@ __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
 __maintainer__ = "Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
-__status__ = "Development"
+__status__ = ["Release", "Stable"]
 __date__ = "15/04/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
@@ -40,6 +40,7 @@ from psutil import virtual_memory
 from tools.enums import Cmode
 from tools.graph_utils import GraphUtils as gUtil
 from tools.misc.graph_routines import check_graph_consistency, vertex_doctor
+from algorithms.global_topology import GlobalTopology
 
 
 class ShortestPath:
@@ -161,24 +162,66 @@ class ShortestPath:
 
     @staticmethod
     @check_graph_consistency
-    @vertex_doctor
-    def average_shortest_path_length(graph: Graph, nodes=None, implementation=Cmode.igraph) -> list:
+    def average_global_shortest_path_length(graph: Graph, implementation=Cmode.igraph) -> float:
         """
-        Computes the average of connected shortest path for each a single node, a lists of nodes or all nodes in the
-        'igraph.Graph' object if 'None' (default).
-        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
-        "Minimum requirements" specifications in pyntacle's manual
-        :param nodes: if a node name, returns the degree of the input node. If a list of node names,
-        the shortest path between the input nodes and all other nodes in the graph is returned for all node names.
-        If None (default), the degree is computed for the whole graph.
-        :param implementation :an enumerator containing the type of parallelization that will be used. Choices are:
-        * **`implementation.cpu`**: parallelize the SP search using the maximum number of threads available on the CPU
-        * **`implementation.gpu`**: parallelize the SP search using a GPU implementation and nVidia Graphics.
-        **TO BE IMPLEMENTED**
-        **CAUTION**: this will not work if the GPU is not present or CUDA compatible.
-        * **`implementation.auto`**: performs the shortest path using criteria defined by us, according to the machine
-        specifications and the graph topology.
-        :return: a list of floats with the average shortest path lists of each connected nodes. If a node is an isolate, 'nan' will be returned.
+        Compute the global *average shortest path length* as defined in https://en.wikipedia.org/wiki/Average_path_length
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual. If the graph as more than one component, the average
+        shortest path length is the sum of each component's shortest path length (both directions are counted) divided
+        by the total number of components. Isolated nodes counts as single components, but their distance to all other
+        nodes in the graph is 0.
+        :param implementation: the implementation that will be used to compute the average shortest path length value.
+        Choices are:
+        **igraph:* uses the igraph implementation
+        **parallel_CPU:* uses the Floyd-Warshall algorithm implemented in Numba for multicore processors
+        **parallel_GPU:* uses the Floyd-Warshall algorithm implemented in Numba for GPU devices (requires
+        CUDA-compatible nVIDIA graphic cards)
+        :return: a positive float value representing the average shortest path length for the graph
+        """
+
+        if not isinstance(implementation, Cmode):
+            raise KeyError("'implementation' not valid, must be one of the following: {}".format(list(Cmode)))
+        elif implementation == Cmode.igraph:
+            avg_sp = Graph.average_path_length(graph, directed=False, unconn=False)
+            return round(avg_sp, 5)
+        else:
+            if GlobalTopology.components(graph) == 1:
+                sp = ShortestPath.get_shortestpaths(graph=graph, nodes=None, implementation=implementation)
+                # set all the shortest paths greater than the total number of nodes to 0
+                sp[sp == graph.vcount() + 1] = 0
+
+                all_possible_edges = graph.vcount() * (graph.vcount() - 1)
+                agspl: float = np.sum(np.divide(sp, all_possible_edges))
+                return round(agspl, 5)
+            else:
+                comps = graph.components()
+                sum = 0
+                for elem in comps:
+                    subg = graph.induced_subgraph(elem)
+                    if subg.ecount() > 0:
+                        sp = ShortestPath.get_shortestpaths(graph=subg, nodes=None, implementation=implementation)
+                        sp[sp == subg.vcount() + 1] = 0
+                        sum += np.sum(sp)
+                return round(sum / len(comps), 5)
+
+    @staticmethod
+    @check_graph_consistency
+    @vertex_doctor
+    def average_shortest_path_lengths(graph: Graph, nodes=None, implementation=Cmode.igraph) -> list:
+        """
+        Compute the average shortest paths issuing from each node in input or of all nodes in the graph if None provided.
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: if a node name, returns the shortest paths of the input node. If a list of node names is provided,
+        the shortest paths between the input nodes and all other nodes in the graph are returned for all node names.
+        If None (default), the degree is computed for all nodes in the graph.
+        :param implementation: the implementation that will be used to compute the average shortest path length value.
+        Choices are:
+        **igraph:* uses the igraph implementation
+        **parallel_CPU:* uses the Floyd-Warshall algorithm implemented in Numba for multicore processors
+        **parallel_GPU:* uses the Floyd-Warshall algorithm implemented in Numba for GPU devices (requires
+        CUDA-compatible nVIDIA graphic cards)
+        :return: a list of average shortest path lengths, one for each node provided in input
         """
 
         if implementation == Cmode.igraph:
@@ -190,52 +233,69 @@ class ShortestPath:
                     avg_sps.append(sum(elem) / float(len(elem)))
                 else:
                     avg_sps.append(float("nan"))
-        else:  # np array
+        else:
             sps = ShortestPath.get_shortestpaths(graph=graph, nodes=nodes, implementation=implementation)
+            sps = sps.astype(np.float)
+            sps[sps > graph.vcount()] = np.nan
             sps[sps == 0] = np.nan
-            var = sps[sps > graph.vcount()] == np.nan
-            avg_sps = np.nanmean(var, axis=0)
+            avg_sps = np.nanmean(sps, axis=1)  # TODO: check axis = 0 or 1
             avg_sps = avg_sps.tolist()
 
         return avg_sps
 
     @staticmethod
     @check_graph_consistency
-    @vertex_doctor
-    def median_shortest_path_length(graph: Graph, nodes=None, implementation=Cmode.igraph) -> list:
+    def median_global_shortest_path_length(graph: Graph) -> float:
         """
-        Computes the median among connected shortest path for each a single node, a lists of nodes or all nodes in the
-        'igraph.Graph' object if 'None' (default).
-        :param igraph.Graph graph: an igraph.Graph object. The graph should have specific properties. Please see the
-        "Minimum requirements" specifications in pyntacle's manual
-        :param nodes: if a node name, returns the degree of the input node. If a list of node names,
-        the shortest path between the input nodes and all other nodes in the graph is returned for all node names.
-        If None (default), the degree is computed for the whole graph.
-        :param implementation :an enumerator containing the type of parallelization that will be used. Choices are:
-        * **`implementation.cpu`**: parallelize the SP search using the maximum number of threads available on the CPU
-        * **`implementation.gpu`**: parallelize the SP search using a GPU implementation and nVidia Graphics.
-        **TO BE IMPLEMENTED**
-        **CAUTION**: this will not work if the GPU is not present or CUDA compatible.
-        * **`implementation.auto`**: performs the shortest path using criteria defined by us, according to the machine
-        specifications and the graph topology.
-        :return: a list of floats with the median shortest path(s) of each connected nodes. If a node is an isolate, 'nan' will be returned.
+        Compute the median shortest path length across all shortest paths in the graph. This is useful if one needs
+        to estimate the trend of the shortest path distances.
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :return: the median shortest path length across all shortest path distances
+        """
+        sps = ShortestPath.shortest_path_igraph(graph=graph)  # TODO: Include other implementations
+        sps = np.array(sps)
+
+        return np.median(sps[sps != 0])
+
+    @staticmethod
+    @check_graph_consistency
+    @vertex_doctor
+    def median_shortest_path_lengths(graph: Graph, nodes=None, implementation=Cmode.igraph) -> list:
+        """
+        Compute the median among the shortest paths for each a single node, a lists of nodes or all nodes in the graph.
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: if a node name, returns the median shortest paths of the input nodes. If a list of node names is
+        provided, the shortest path between the input nodes and all other nodes in the graph is returned for all nodes.
+        If None (default), the median shortest paths are computed for the whole graph.
+        :param implementation: the implementation that will be used to compute the average shortest path length value.
+        Choices are:
+        **igraph:* uses the igraph implementation
+        **parallel_CPU:* uses the Floyd-Warshall algorithm implemented in Numba for multicore processors
+        **parallel_GPU:* uses the Floyd-Warshall algorithm implemented in Numba for GPU devices (requires
+        CUDA-compatible nVIDIA graphic cards)
+        :return: a list of float values corresponding to the median shortest paths of each input node.
+        If a node is an isolate, 'nan' will be returned.
         """
 
         if implementation == Cmode.igraph:
             sps = ShortestPath.shortest_path_igraph(graph=graph, nodes=nodes)
-            avg_sps = []
+            median_sps = []
             for elem in sps:
                 elem = [x for x in elem if not (isinf(x)) and x > 0]  # remove disconnected nodes and diagonal
                 if len(elem) > 0:
-                    avg_sps.append(statistics.median(elem))
+                    median_sps.append(statistics.median(elem))
                 else:
-                    avg_sps.append(float("nan"))
+                    median_sps.append(float("nan"))
 
-        else:  # np array
+        else:
             sps = ShortestPath.get_shortestpaths(graph=graph, nodes=nodes, implementation=implementation)
-            sps[sps == 0] = np.nan
-            var = sps[sps > graph.vcount()] == np.nan
-            avg_sps = np.nanmedian(var, axis=0)
-            avg_sps = avg_sps.tolist()
+            sps = sps.astype(np.float)
 
-        return avg_sps
+            sps[sps > graph.vcount()] = np.nan
+            sps[sps == 0] = np.nan
+            median_sps = np.nanmedian(sps, axis=1)  # TODO: check axis = 0 or 1
+            median_sps = median_sps.tolist()
+
+        return median_sps

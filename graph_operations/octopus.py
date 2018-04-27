@@ -29,9 +29,11 @@ __license__ = u"""
 Octopus is a pyntacle command line utility that adds properties computed by pyntacle to the Graph, both at vertex and at
 a Graph level
 """
+
 from tools.add_attributes import AddAttributes
 from algorithms.local_topology import LocalTopology
 from algorithms.global_topology import GlobalTopology
+from algorithms.shortest_path import ShortestPath
 from algorithms.keyplayer import KeyPlayer
 from tools.enums import *
 from tools.enums import GraphType
@@ -127,8 +129,8 @@ class Octopus:
     def add_average_shortest_path_length(graph):
         implementation = implementation_check(graph)
         AddAttributes(graph).add_graph_attributes(GlobalAttribute.average_shortest_path_length.name,
-                                                  GlobalTopology.average_shortest_path_length(graph,
-                                                                                              implementation))
+                                                  ShortestPath.average_global_shortest_path_length(graph,
+                                                                                                     implementation))
         
     # Local
     @staticmethod

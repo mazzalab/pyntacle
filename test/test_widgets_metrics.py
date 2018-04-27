@@ -5,6 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 from cmds.metrics import Metrics as metrics_command
 from tools.misc.graph_load import GraphLoad
 from algorithms.global_topology import GlobalTopology
+from algorithms.shortest_path import ShortestPath
 from tools.enums import *
 
 from test import getmd5
@@ -52,16 +53,16 @@ class WidgetTestMetrics(unittest.TestCase):
         graph = GraphLoad(self.Args.input_file, "adjm", header=True).graph_load()
         
         implementation = Cmode.igraph
-        igraph_result = round(GlobalTopology.average_shortest_path_length(graph, implementation),5)
+        igraph_result = round(ShortestPath.average_global_shortest_path_length(graph, implementation), 5)
         
         implementation = Cmode.cpu
-        cpu_result = GlobalTopology.average_shortest_path_length(graph, implementation)
+        cpu_result = ShortestPath.average_global_shortest_path_length(graph, implementation)
         
         self.assertEqual(igraph_result, cpu_result)
         
         if cuda_avail:
             implementation = Cmode.gpu
-            gpu_result = GlobalTopology.average_shortest_path_length(graph, implementation)
+            gpu_result = ShortestPath.average_global_shortest_path_length(graph, implementation)
             self.assertEqual(igraph_result, gpu_result)
         
     def test_local(self):

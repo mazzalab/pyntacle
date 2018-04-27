@@ -24,6 +24,7 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+from algorithms.shortest_path import ShortestPath
 from algorithms.global_topology import GlobalTopology
 from algorithms.local_topology import LocalTopology
 from algorithms.sparseness import *
@@ -275,7 +276,7 @@ class Metrics:
             
             sys.stdout.write("Computing Global Metrics...\n")
 
-            global_attributes_dict = OrderedDict({GlobalAttribute.average_shortest_path_length.name: GlobalTopology.average_shortest_path_length(graph=graph),
+            global_attributes_dict = OrderedDict({GlobalAttribute.average_shortest_path_length.name: ShortestPath.average_global_shortest_path_length(graph=graph),
                                                     GlobalAttribute.diameter.name: GlobalTopology.diameter(graph=graph),
                                                     GlobalAttribute.components.name: GlobalTopology.components(graph=graph),
                                                     GlobalAttribute.radius.name: GlobalTopology.radius(graph=graph),
@@ -320,7 +321,7 @@ class Metrics:
 
                 global_attributes_dict_nonodes = OrderedDict({
                     'Removed nodes': ','.join(nodes_list),
-                    GlobalAttribute.average_shortest_path_length.name: GlobalTopology.average_shortest_path_length(
+                    GlobalAttribute.average_shortest_path_length.name: ShortestPath.average_global_shortest_path_length(
                         graph=graph_nonodes),
                     GlobalAttribute.diameter.name: GlobalTopology.diameter(graph=graph_nonodes),
                     GlobalAttribute.components.name: GlobalTopology.components(graph=graph_nonodes),

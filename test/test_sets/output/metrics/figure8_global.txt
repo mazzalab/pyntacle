@@ -8,7 +8,7 @@ edges	56
 Pyntacle Command:	Global	
 Results - Global Metrics of the input graph	
 Metric	Value	
-average_shortest_path_length	4.082661290322581	
+average_global_shortest_path_length	4.082661290322581
 diameter	9	
 components	1	
 radius	5	

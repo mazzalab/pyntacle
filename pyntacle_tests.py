@@ -1,4 +1,5 @@
 from algorithms.local_topology import LocalTopology
+from algorithms.shortest_path import ShortestPath
 from tools.misc.graph_load import *
 from algorithms.greedy_optimization import *
 from io_stream.exporter import PyntacleExporter
@@ -92,12 +93,13 @@ mat= GraphLoad(r'C:\Users\t.mazza\Desktop\CSS-Bioinformatics\pyntacle\test\test_
 print("Eccentricity of BR: {}".format(LocalTopology.eccentricity(mat, "BR")))
 print("Radiality of BR: {}".format(LocalTopology.radiality(mat, "BR", Cmode.igraph)))
 print("Eigenvector of BR: {}".format(LocalTopology.eigenvector_centrality(mat, nodes=None, scaled=False)))
+print("Global ASP: {}".format(ShortestPath.average_global_shortest_path_length(mat, Cmode.cpu)))
+print("ASP from BR: {}".format(ShortestPath.average_shortest_path_lengths(mat, nodes="BR", implementation=Cmode.gpu)))
+print("Median SP from BR: {}".format(ShortestPath.median_shortest_path_lengths(mat, nodes="BR", implementation=Cmode.gpu)))
 
 # print("Shortest paths from BR by iGraph: {}".format(ShortestPath.get_shortestpaths(mat, "BR", Cmode.igraph)))
 # print("Shortest paths from BR by multi-core: {}".format(ShortestPath.get_shortestpaths(mat, "BR", Cmode.cpu)))
 # print("Shortest paths from BR by GPU: {}".format(ShortestPath.get_shortestpaths(mat, "BR", Cmode.gpu)))
-
-
 
 # print('\n\nORIGINAL MAT')
 # print(mat.get_adjacency())
@@ -184,7 +186,7 @@ print("Eigenvector of BR: {}".format(LocalTopology.eigenvector_centrality(mat, n
 # print("\nGraph attributes test")
 # print("avg closeness", mat["average_closeness"])
 # print("pi", mat["pi"])
-# print("avg shortest path length", mat["average_shortest_path_length"])
+# print("avg shortest path length", mat["average_global_shortest_path_length"])
 # print("avg radiality", mat["average_radiality"])
 
 

@@ -1,7 +1,6 @@
 """
 Compute several local topology metrics of nodes
 """
-
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -29,10 +28,10 @@ __license__ = u"""
   """
 
 
-from tools.misc.graph_routines import *
 from tools.enums import Cmode
+from tools.misc.graph_routines import *
 from tools.graph_utils import GraphUtils as gUtil
-from algorithms.shortest_path import ShortestPath
+# from algorithms.shortest_path import ShortestPath.get
 
 
 class LocalTopology:
@@ -161,6 +160,7 @@ class LocalTopology:
         num_nodes_minus_one = graph.vcount() - 1
         rad_list = []
 
+        from algorithms.shortest_path import ShortestPath  # TODO: temporarily here to fix circular dependencies
         sps = ShortestPath.get_shortestpaths(graph, nodes=nodes, implementation=cmode)
         for sp in sps:
             partial_sum = sum(diameter_plus_one - distance for distance in sp if distance != 0)
@@ -255,7 +255,7 @@ class LocalTopology:
         if not isinstance(scaled, bool):
             raise ValueError("'scaled' must be a boolean value (True or False)")
         elif nodes is None:
-            evcent = graph.evcent(graph, directed=False, scale=scaled)
+            evcent = graph.evcent(directed=False, scale=scaled)
             return [round(e, 5) for e in evcent]
         else:
             inds = gUtil(graph=graph).get_node_indices(nodes)

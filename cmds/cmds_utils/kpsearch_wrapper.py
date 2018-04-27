@@ -250,7 +250,7 @@ class BFWrapper:
             raise TypeError("\"kpp_type\" must be one of the KPPNEGchoices options available")
 
         bf_results = self.bf.fragmentation(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type,
-                                           max_distances=max_distances, implementation=implementation)
+                                           max_distance=max_distances, implementation=implementation)
         self.results[kpp_type.name] = [bf_results[0], bf_results[1]]
 
     @timeit
@@ -275,7 +275,7 @@ class BFWrapper:
                 raise ValueError("\"m\" must be a positive integer for mreach ")
 
         bf_results = self.bf.reachability(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type,
-                                          max_distances=max_distances, m=m, implementation=implementation)
+                                          max_distance=max_distances, m=m, implementation=implementation)
 
         self.results[kpp_type.name] = [bf_results[0], bf_results[1]]
 
