@@ -111,9 +111,6 @@ class ShortestPath:
                         sps = sps[nodes, :]
 
                     return sps
-
-            # sps = sps.tolist()  # reconvert to a list of lists
-            # sps = [[float('inf') if x == (graph.vcount() + 1) else x for x in y] for y in sps]
         else:
             raise ValueError("The specified 'computing mode' is invalid. Choose from: {}".format(list(Cmode)))
 
@@ -187,11 +184,10 @@ class ShortestPath:
         else:
             if GlobalTopology.components(graph) == 1:
                 sp = ShortestPath.get_shortestpaths(graph=graph, nodes=None, implementation=implementation)
-                # set all the shortest paths greater than the total number of nodes to 0
                 sp[sp == graph.vcount() + 1] = 0
 
                 all_possible_edges = graph.vcount() * (graph.vcount() - 1)
-                agspl: float = np.sum(np.divide(sp, all_possible_edges))
+                agspl = float(np.sum(np.divide(sp, all_possible_edges)))
                 return round(agspl, 5)
             else:
                 comps = graph.components()
@@ -256,7 +252,7 @@ class ShortestPath:
         sps = ShortestPath.shortest_path_igraph(graph=graph)  # TODO: Include other implementations
         sps = np.array(sps)
 
-        return np.median(sps[sps != 0])
+        return float(np.median(sps[sps != 0]))
 
     @staticmethod
     @check_graph_consistency
