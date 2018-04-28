@@ -51,7 +51,7 @@ class KPWrapper:
         self.logger = log
         self.logger.info("Initializing search of KP metrics for a selected set of nodes")
         
-        gu(graph=graph).graph_checker()
+        gu(graph=graph).check_graph()
         self.graph = graph
             
         # initialize graph utility class
@@ -155,7 +155,7 @@ class GOWrapper:
         self.logger = log
         self.logger.info("Initializing Greedy Optimization")
 
-        gu(graph=graph).graph_checker() #check the input graph
+        gu(graph=graph).check_graph() #check the input graph
 
         self.graph = graph
 
@@ -228,7 +228,7 @@ class BFWrapper:
         self.logger = log
         self.logger.info("Initializing BruteForce search")
 
-        gu(graph=graph).graph_checker()
+        gu(graph=graph).check_graph()
         self.graph = graph
         # initialize graph utility class
         self.results = {}  # dictionary that will store results

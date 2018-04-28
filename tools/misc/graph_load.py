@@ -151,7 +151,7 @@ class GraphLoad():
         self.logger.debug("Header:{}".format(self.header))
         self.logger.debug("Separator:{}".format(repr(separator)))
         
-        GraphUtils(graph=graph).graph_checker()
+        GraphUtils(graph=graph).check_graph()
 
         return graph
 

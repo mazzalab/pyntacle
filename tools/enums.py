@@ -129,3 +129,9 @@ class Reports(Enum):
     KP_bruteforce = 5
     Communities = 6
     Set = 7
+
+
+class GraphOperationEnum(Enum):
+    Union = 1
+    Intersection = 2
+    Difference = 3

@@ -27,17 +27,20 @@ __license__ = u"""
 import filecmp
 from warnings import simplefilter
 from exceptions.multiple_solutions_error import MultipleSolutionsError
-from graph_operations.logic_ops import GraphSetter
+from exceptions.unsupported_graph_error import UnsupportedGraphError
+from graph_operations.set_operations import GraphOperations
 from io_stream.exporter import PyntacleExporter
 from cmds.cmds_utils.plotter import PlotGraph
 from cmds.cmds_utils.reporter import *
 from tools.enums import Reports
 from tools.misc.graph_load import *
 
-class Set():
+
+class Set:
     """
     **[EXPAND]**
     """
+
     def __init__(self, args):
         self.logging = log
         self.args = args
@@ -78,6 +81,12 @@ class Set():
         sys.stdout.write("Reading second input file...\n")
         graph2 = GraphLoad(self.args.input_file_2, file_format=input_format,
                            header=input_header).graph_load()
+
+        try:
+            GraphUtils(graph1).check_graph()
+            GraphUtils(graph2).check_graph()
+        except (UnsupportedGraphError, KeyError, TypeError) as e:
+            raise e  # TODO: handle better this
 
         # init Utils global stuff
         utils1 = GraphUtils(graph=graph1)
@@ -166,20 +175,16 @@ class Set():
 
             sys.stdout.write("basename of output graph: {}\n".format(self.args.output_file))
 
-        # initialize set class
-        setter = GraphSetter(graph1=graph1, graph2=graph2, new_name=self.args.output_file)
-
         # NOT prefixing the argument with -- means it's not optional
 
-        # GraphSetter(graph1=graph1, graph2=graph2,new_name = new_name
+        # GraphOperations(graph1=graph1, graph2=graph2,new_name = new_name
         
         if self.args.which == "union":
             sys.stdout.write(
                 "Running pyntacle Union on input graph {} and  {}\n".format(self.args.input_file_1,
                                                                            self.args.input_file_2))
 
-            output_graph = setter.union()
-
+            output_graph = GraphOperations.union(graph1, graph2, self.args.output_file)
             if all(len(x) <= 2 for x in output_graph.vs()["__parent"]):
                 sys.stdout.write(
                     "There were no common nodes when performing Graph union. Will return Two disjointed graphs.\n")
@@ -189,8 +194,7 @@ class Set():
                 "Running pyntacle Intersection on input graph {} and  {}\n".format(self.args.input_file_1,
                                                                                   self.args.input_file_2))
 
-            output_graph = setter.intersection()
-
+            output_graph = GraphOperations.intersection(graph1, graph2, self.args.output_file)
             if output_graph.ecount() == 0:
                 sys.stdout.write(
                     "No intersection was possible for the two input graphs. No output will be generated\n")
@@ -201,7 +205,7 @@ class Set():
                 "Running pyntacle Difference on input graph {} and  {}\n".format(self.args.input_file_1,
                                                                                   self.args.input_file_2))
 
-            output_graph = setter.difference()
+            output_graph = GraphOperations.difference(graph1, graph2, self.args.output_file)
             if output_graph.vcount() == graph1.vcount() and output_graph.ecount() == graph1.ecount():
                 sys.stdout.write("Nothing of graph {} could be subtracted from graph {}\n".format(
                     os.path.basename(self.args.input_file_1), os.path.basename(self.args.input_file_2)))
@@ -232,7 +236,7 @@ class Set():
 
         # producing output graph
         if self.args.no_output_header:
-            sys.stdout.write("Not creating header on output file as you requested\n")
+            sys.stdout.write("Not creating header on output file as for your request\n")
             output_header = False
 
         else:

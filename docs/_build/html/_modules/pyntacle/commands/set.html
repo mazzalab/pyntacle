@@ -157,7 +157,7 @@
 
 <span class="kn">from</span> <span class="nn">config</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">exceptions.multiple_solutions_error</span> <span class="k">import</span> <span class="n">MultipleSolutionsError</span>
-<span class="kn">from</span> <span class="nn">graph_operations.set_graphs</span> <span class="k">import</span> <span class="n">GraphSetter</span>
+<span class="kn">from</span> <span class="nn">graph_operations.set_graphs</span> <span class="k">import</span> <span class="n">GraphOperations</span>
 <span class="kn">from</span> <span class="nn">io_stream.graph_to_adjacencymatrix</span> <span class="k">import</span> <span class="n">GraphToAdjacencyMatrix</span>
 <span class="kn">from</span> <span class="nn">io_stream.graph_to_binary</span> <span class="k">import</span> <span class="n">GraphToBinary</span>
 <span class="kn">from</span> <span class="nn">io_stream.graph_to_dot</span> <span class="k">import</span> <span class="n">GraphToDot</span>
@@ -325,11 +325,11 @@
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;basename of output graph: </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">output_file</span><span class="p">))</span>
 
         <span class="c1"># initialize set class</span>
-        <span class="n">setter</span> <span class="o">=</span> <span class="n">GraphSetter</span><span class="p">(</span><span class="n">graph1</span><span class="o">=</span><span class="n">graph1</span><span class="p">,</span> <span class="n">graph2</span><span class="o">=</span><span class="n">graph2</span><span class="p">,</span> <span class="n">new_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">output_file</span><span class="p">)</span>
+        <span class="n">setter</span> <span class="o">=</span> <span class="n">GraphOperations</span><span class="p">(</span><span class="n">graph1</span><span class="o">=</span><span class="n">graph1</span><span class="p">,</span> <span class="n">graph2</span><span class="o">=</span><span class="n">graph2</span><span class="p">,</span> <span class="n">new_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">output_file</span><span class="p">)</span>
 
         <span class="c1"># NOT prefixing the argument with -- means it&#39;s not optional</span>
 
-        <span class="c1"># GraphSetter(graph1=graph1, graph2=graph2,new_name = new_name</span>
+        <span class="c1"># GraphOperations(graph1=graph1, graph2=graph2,new_name = new_name</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">which</span> <span class="o">==</span> <span class="s2">&quot;union&quot;</span><span class="p">:</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
                 <span class="s2">&quot;Running pyntacle Union on input graph </span><span class="si">{}</span><span class="s2"> and  </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">input_file_1</span><span class="p">,</span>

@@ -1,3 +1,7 @@
+"""
+Generic utilities for graph management and safety checks
+"""
+
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -26,9 +30,6 @@ __license__ = u"""
   02110-1301 USA
   """
 
-'''
-a series of generic utilities for an iGraph graph object
-'''
 
 from config import *
 from igraph import Graph
@@ -43,7 +44,7 @@ from exceptions.multiple_solutions_error import MultipleSolutionsError
 
 class GraphUtils:
     """
-    A series of methods that can be performed on graph and that can be accessed pretty quickly
+    Generic utilities for graph management and safety checks
     """
 
     logger = None
@@ -51,7 +52,7 @@ class GraphUtils:
     def __init__(self, graph: Graph):
         self.logger = log
 
-        if not isinstance(graph, Graph):  # check that the object is a graph
+        if not isinstance(graph, Graph):
             raise NotAGraphError("input graph is not a graph")
 
         if graph.vcount() < 1:
@@ -65,24 +66,24 @@ class GraphUtils:
         else:
             self.__graph = graph
 
-    def graph_checker(self):
+    def check_graph(self) -> bool:
         """
-        Check that the input graph defined in *__init__* is consistent to the pyntacle's Minimum requirements
+        Check that the input graph is consistent according to the Pyntacle's minimum requirements
+        :return: Whether or not the graph is sound
         """
 
         if Graph.is_directed(self.__graph):
             raise UnsupportedGraphError("Input graph is direct, pyntacle supports only undirected graphs")
-
-        if not Graph.is_simple(self.__graph):
+        elif not Graph.is_simple(self.__graph):
             raise UnsupportedGraphError("Input Graph contains self loops and multiple edges")
-
-        if "name" not in self.__graph.vs().attributes():
+        elif "name" not in self.__graph.vs().attributes():
             raise KeyError("nodes must have the attribute  \"name\"")
-        if not all(isinstance(item, str) for item in self.__graph.vs()["name"]):
+        elif not all(isinstance(item, str) for item in self.__graph.vs()["name"]):
             raise TypeError("node \"name\" attribute must be a string")
-
-        if len(set(self.__graph.vs()["name"])) != len(self.__graph.vs()["name"]):
+        elif len(set(self.__graph.vs()["name"])) != len(self.__graph.vs()["name"]):
             raise UnsupportedGraphError("Node names must be unique, check the \"name\" attribute in graph")
+        else:
+            return True
 
     def check_index_list(self, index_list):
         """
@@ -90,7 +91,7 @@ class GraphUtils:
         negative integers and that are within the total number of vertices' boundaries
         :param list index_list: a list of integers
         """
-        self.graph_checker()
+        self.check_graph()
 
         if not isinstance(index_list, list):
             raise ValueError("index list is not a list")
@@ -113,7 +114,7 @@ class GraphUtils:
         Checks that a single node or a list of node *names* (the graph.vs["name"] attribute) is present in the graph
         :param names_list: a single node name (as a string) or a list of node names (a list of strings)
         """
-        self.graph_checker()
+        self.check_graph()
         # print(names_list)
         # print (self.graph.vs()["name"])
         if isinstance(names_list, str):
@@ -143,7 +144,7 @@ class GraphUtils:
         :param attribute: the attribute you're looking for
         :raise MissingAttributeError: if the attribute is in node attributes
         """
-        self.graph_checker()
+        self.check_graph()
 
         if attribute not in self.__graph.vs().attributes():
             raise MissingAttributeError("attribute specified has not been initialized in node attributes")
@@ -155,7 +156,7 @@ class GraphUtils:
         :param attribute: the attribute you're looking for
         :raise MissingAttributeError: if the attribute is not in edge attributes()
         """
-        self.graph_checker()
+        self.check_graph()
 
         if attribute not in self.__graph.es().attributes():
             raise MissingAttributeError("attribute specified has not been initialized in edge attributes")
@@ -167,7 +168,7 @@ class GraphUtils:
         :param attribute: the attribute you're looking for
         :raise MissingAttributeError: if the attribute is not in graph attributes()
         """
-        self.graph_checker()
+        self.check_graph()
 
         if attribute not in self.__graph.attributes():
             raise MissingAttributeError("attribute specified has not been initialized in graph attributes")
@@ -208,7 +209,7 @@ class GraphUtils:
         :param list index_list: a list of integers containing indices present in graph (will check for that)
         :return: a list of the corresponding graph.vs["name"] strings
         """
-        self.graph_checker()
+        self.check_graph()
         self.check_index_list(index_list)
         names_list = self.__graph.vs(index_list)["name"]
         return names_list
@@ -226,7 +227,7 @@ class GraphUtils:
         else:
             names = node_names
 
-        self.graph_checker()
+        self.check_graph()
         self.check_name_list(node_names)
         index_list = []
 
@@ -250,7 +251,7 @@ class GraphUtils:
         :param type:
         :return:
         """
-        self.graph_checker()
+        self.check_graph()
 
         attribute_names = []
 
