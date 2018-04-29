@@ -3,9 +3,9 @@
 A python command line tool for network analysis based on non canonical
 metrics and HPC comupting.
 
-- **Compatibility**: Python 3+
-- **Contributions**: t.mazza@blabla
-- **Website**: www.blabla.com
+- **Compatibility**: Python 3.5+
+- **Contributions**: bioinformatics@css-mendel.it
+- **Website**: http://pyntacle.css-mendel.it
 - **Bug report**: https://github.com/mazzalab/pyntacle/issues
 
 ## Installation
@@ -16,7 +16,7 @@ distribution for data analysis and scientific computing. This is the
 recommended installation method for most users.
 
 Instructions for installing from source on various Linux distributions
-and MacOs are also provided.
+and MacOS are also provided.
 
 ### Installing pyntacle using Anaconda or Miniconda
 
