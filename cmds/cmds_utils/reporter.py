@@ -27,7 +27,7 @@ __license__ = u"""
 from config import *
 import csv, os, xlsxwriter
 from igraph import Graph
-from tools.enums import kpneg, kppos, Reports
+from tools.enums import KpnegEnum, KpposEnum, ReportEnum
 from exceptions.wrong_argument_error import WrongArgumentError
 from tools.graph_utils import GraphUtils as gu # swiss knife for graph utilities
 from collections import OrderedDict
@@ -55,7 +55,7 @@ class pyntacleReporter():
         self.report = [] #this will be used in create_report
         self.dat = runtime_date
         
-    def create_report(self, report_type: Reports, report: OrderedDict):
+    def create_report(self, report_type: ReportEnum, report: OrderedDict):
         """
         initialize the report object by writing generic information on the input graph and calling the internal report
         creators, according to the value passed by the "Report" enumerator
@@ -63,8 +63,8 @@ class pyntacleReporter():
         :param OrderedDict report: a dictionary containing all the information to be reported
         """
 
-        if not isinstance(report_type, Reports):
-            raise TypeError("\"report_type\" must be on of the \"Reports\" enumerators, {} found".format(type(report_type).__name__))
+        if not isinstance(report_type, ReportEnum):
+            raise TypeError("\"report_type\" must be on of the \"ReportEnum\" enumerators, {} found".format(type(report_type).__name__))
 
         if not isinstance(report, OrderedDict):
             raise ValueError("\"report\" must be an ordered Dictionary")
@@ -80,19 +80,19 @@ class pyntacleReporter():
         self.report.append(["\n"])
         self.report.append(["Pyntacle Command:", report_type.name])
 
-        if report_type == Reports.Local:
+        if report_type == ReportEnum.Local:
             self.__local_report(reportdict=report)
-        elif report_type == Reports.Global:
+        elif report_type == ReportEnum.Global:
             self.__global_report(reportdict=report)
-        elif report_type == Reports.KPinfo:
+        elif report_type == ReportEnum.KPinfo:
             self.__KPinfo_report(reportdict=report)
-        elif report_type == Reports.KP_greedy:
+        elif report_type == ReportEnum.KP_greedy:
             self.__greedy_report(reportdict=report)
-        elif report_type == Reports.KP_bruteforce:
+        elif report_type == ReportEnum.KP_bruteforce:
             self.__bruteforce_report(reportdict=report)
-        elif report_type == Reports.Communities:
+        elif report_type == ReportEnum.Communities:
             self.__communities_report(reportdict=report)
-        elif report_type == Reports.Set:
+        elif report_type == ReportEnum.Set:
             self.__set_report(reportdict=report)
         else:
             raise ValueError("Report specified does not exists")
@@ -229,24 +229,24 @@ class pyntacleReporter():
         # if not all(isinstance(x, str) for x in reportdict.keys()):
         #     raise TypeError("one of the keys in the report dictionary is not a KPPOSchoices or KPNEGchoices")
 
-        if kppos.mreach.name in reportdict.keys():
-            m = reportdict[kppos.mreach.name][2]
+        if KpposEnum.mreach.name in reportdict.keys():
+            m = reportdict[KpposEnum.mreach.name][2]
 
             if not isinstance(m, int) and m < 1:
                 raise ValueError("m must be a positive integer")
             else:
-                self.report.append(["maximum mreach distance", reportdict[kppos.mreach.name][2]])
+                self.report.append(["maximum mreach distance", reportdict[KpposEnum.mreach.name][2]])
 
-        if kpneg.F.name in reportdict.keys():
-            init_F = reportdict[kpneg.F.name][2]
+        if KpnegEnum.F.name in reportdict.keys():
+            init_F = reportdict[KpnegEnum.F.name][2]
 
             if 0.0 <= init_F <= 1.0:
                 self.report.append(["initial F value (whole graph)", init_F])
             else:
                 raise ValueError("Initial F must range between 0 and 1")
 
-        if kpneg.dF.name in reportdict.keys():
-            init_dF = reportdict[kpneg.dF.name][2]
+        if KpnegEnum.dF.name in reportdict.keys():
+            init_dF = reportdict[KpnegEnum.dF.name][2]
 
             if 0.0 <= init_dF <= 1.0:
                 self.report.append(["initial dF value (whole graph)", init_dF])
@@ -258,7 +258,7 @@ class pyntacleReporter():
         self.report.append(["Metric", "Nodes", "Value"])
  
         for k in reportdict.keys():
-            if (k == kpneg.F.name or k == kpneg.dF.name) and reportdict[k][-1] == 1.0:
+            if (k == KpnegEnum.F.name or k == KpnegEnum.dF.name) and reportdict[k][-1] == 1.0:
                 self.report.append([k, "NA", "MAXIMUM FRAGMENTATION REACHED"])
 
             else:
@@ -273,24 +273,24 @@ class pyntacleReporter():
         # if not all(isinstance(x, (KPPOSchoices, KPPOSchoices)) for x in reportdict.keys()):
         #     raise TypeError("one of the keys in the report dictionary is not a KPPOSchoices or KPNEGchoices")
 
-        if kppos.mreach.name in reportdict.keys():
-            m = reportdict[kppos.mreach.name][2]
+        if KpposEnum.mreach.name in reportdict.keys():
+            m = reportdict[KpposEnum.mreach.name][2]
 
             if not isinstance(m, int) and m < 1:
                 raise ValueError("m must be a positive integer")
             else:
-                self.report.append(["maximum mreach distance", reportdict[kppos.mreach.name][2]])
+                self.report.append(["maximum mreach distance", reportdict[KpposEnum.mreach.name][2]])
 
-        if kpneg.F.name in reportdict.keys():
-            init_F = reportdict[kpneg.F.name][2]
+        if KpnegEnum.F.name in reportdict.keys():
+            init_F = reportdict[KpnegEnum.F.name][2]
 
             if 0.0 <= init_F <= 1.0:
                 self.report.append(["initial F value (whole graph)", init_F])
             else:
                 raise ValueError("Initial F must range between 0 and 1")
 
-        if kpneg.dF.name in reportdict.keys():
-            init_dF = reportdict[kpneg.dF.name][2]
+        if KpnegEnum.dF.name in reportdict.keys():
+            init_dF = reportdict[KpnegEnum.dF.name][2]
 
             if 0.0 <= init_dF <= 1.0:
                 self.report.append(["initial dF value (whole graph)", init_dF])
@@ -301,7 +301,7 @@ class pyntacleReporter():
         self.report.append(["Metric", "Nodes", "Value"])
 
         for k in reportdict.keys():
-            if (k == kpneg.F.name or k == kpneg.dF.name) and reportdict[k][-1] == 1.0:
+            if (k == KpnegEnum.F.name or k == KpnegEnum.dF.name) and reportdict[k][-1] == 1.0:
                 self.report.append([k, "NA", "MAXIMUM FRAGMENTATION REACHED"])
 
             else:
@@ -316,24 +316,24 @@ class pyntacleReporter():
         # if not all(isinstance(x, (KPPOSchoices, KPPOSchoices)) for x in reportdict.keys()):
         #     raise TypeError("one of the keys in the report dictionary is not a KPPOSchoices or KPNEGchoices")
 
-        if kppos.mreach.name in reportdict.keys():
-            m = reportdict[kppos.mreach.name][2]
+        if KpposEnum.mreach.name in reportdict.keys():
+            m = reportdict[KpposEnum.mreach.name][2]
 
             if not isinstance(m, int) and m < 1:
                 raise ValueError("m must be a positive integer")
             else:
-                self.report.append(["maximum mreach distance", reportdict[kppos.mreach.name][2]])
+                self.report.append(["maximum mreach distance", reportdict[KpposEnum.mreach.name][2]])
 
-        if kpneg.F.name in reportdict.keys():
-            init_F = reportdict[kpneg.F.name][2]
+        if KpnegEnum.F.name in reportdict.keys():
+            init_F = reportdict[KpnegEnum.F.name][2]
 
             if 0.0 <= init_F <= 1.0:
                 self.report.append(["initial F value (whole graph)", init_F])
             else:
                 raise ValueError("Initial F must range between 0 and 1")
 
-        if kpneg.dF.name in reportdict.keys():
-            init_dF = reportdict[kpneg.dF.name][2]
+        if KpnegEnum.dF.name in reportdict.keys():
+            init_dF = reportdict[KpnegEnum.dF.name][2]
 
             if 0.0 <= init_dF <= 1.0:
                 self.report.append(["initial dF value (whole graph)", init_dF])
@@ -344,7 +344,7 @@ class pyntacleReporter():
         self.report.append(["Metric", "Nodes", "Value"])
 
         for k in reportdict.keys():
-            if (k == kpneg.F.name or k == kpneg.dF.name) and reportdict[k][-1] == 1.0:
+            if (k == KpnegEnum.F.name or k == KpnegEnum.dF.name) and reportdict[k][-1] == 1.0:
                 self.report.append([k, "NA", "MAXIMUM FRAGMENTATION REACHED"])
 
             else:

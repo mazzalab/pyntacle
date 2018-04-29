@@ -52,16 +52,16 @@ class WidgetTestMetrics(unittest.TestCase):
         # CPU, GPU, igraph coherence check
         graph = GraphLoad(self.Args.input_file, "adjm", header=True).graph_load()
         
-        implementation = Cmode.igraph
+        implementation = CmodeEnum.igraph
         igraph_result = round(ShortestPath.average_global_shortest_path_length(graph, implementation), 5)
         
-        implementation = Cmode.cpu
+        implementation = CmodeEnum.cpu
         cpu_result = ShortestPath.average_global_shortest_path_length(graph, implementation)
         
         self.assertEqual(igraph_result, cpu_result)
         
         if cuda_avail:
-            implementation = Cmode.gpu
+            implementation = CmodeEnum.gpu
             gpu_result = ShortestPath.average_global_shortest_path_length(graph, implementation)
             self.assertEqual(igraph_result, gpu_result)
         

@@ -36,10 +36,11 @@ from tools.add_attributes import *
 from tools.adjmatrix_utils import AdjmUtils
 from tools.edgelist_utils import EglUtils
 from exceptions.illegal_graph_size_error import IllegalGraphSizeError
-from exceptions.unproperlyformattedfile_error import UnproperlyFormattedFileError
+from exceptions.unproperly_formatted_file_error import UnproperlyFormattedFileError
 from pyparsing import *
 from itertools import product
 from collections import OrderedDict
+
 
 def dot_attrlist_to_dict(mylist):
     mydict = {}

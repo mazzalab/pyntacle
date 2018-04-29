@@ -1,6 +1,7 @@
 """
 Compute several local topology metrics of nodes
 """
+
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -28,10 +29,9 @@ __license__ = u"""
   """
 
 
-from tools.enums import Cmode
+from tools.enums import CmodeEnum
 from tools.misc.graph_routines import *
 from tools.graph_utils import GraphUtils as gUtil
-# from algorithms.shortest_path import ShortestPath.get
 
 
 class LocalTopology:
@@ -134,7 +134,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def radiality(graph: Graph, nodes=None, cmode: Cmode=Cmode.igraph) -> list:
+    def radiality(graph: Graph, nodes=None, cmode: CmodeEnum=CmodeEnum.igraph) -> list:
         """
         Compute the *radiality* of a node or of a list of nodes of an undirected graph.
         The radiality of a node *v* is calculated by first computing the shortest path between *v* and all other nodes
@@ -161,7 +161,7 @@ class LocalTopology:
         rad_list = []
 
         from algorithms.shortest_path import ShortestPath  # TODO: temporarily here to fix circular dependencies
-        sps = ShortestPath.get_shortestpaths(graph, nodes=nodes, implementation=cmode)
+        sps = ShortestPath.get_shortestpaths(graph, nodes=nodes, cmode=cmode)
         for sp in sps:
             partial_sum = sum(diameter_plus_one - distance for distance in sp if distance != 0)
             rad_list.append(round(float(partial_sum / num_nodes_minus_one), 5))
@@ -171,7 +171,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def radiality_reach(graph: Graph, nodes=None, cmode=Cmode.igraph) -> list:
+    def radiality_reach(graph: Graph, nodes=None, cmode=CmodeEnum.igraph) -> list:
         """
         Compute the *radiality-reach* of a node or of a list of nodes of an undirected graph.
         The radiality-reach is a weighted version of the canonical radiality measure and it is recommended for

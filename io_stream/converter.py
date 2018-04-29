@@ -32,7 +32,8 @@ another
 from config import *
 from tools.edgelist_utils import EglUtils as egl
 from tools.misc.io_utils import *
-from exceptions.unproperlyformattedfile_error import UnproperlyFormattedFileError
+from exceptions.unproperly_formatted_file_error import UnproperlyFormattedFileError
+
 
 class QuickConvert:
     '''

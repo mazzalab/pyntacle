@@ -69,9 +69,13 @@ class GraphUtils:
     def check_graph(self) -> bool:
         """
         Check that the input graph is consistent according to the Pyntacle's minimum requirements
-        :return: Whether or not the graph is sound
+        :raise UnsupportedGraphError: An error occurred because the graph is not compliant with the Pyhtacle's
+        minimum requirements
+        :raise KeyError: An error occurred because nodes must hold a 'name' attribute
+        :raise TypeError: An error occurred because node's name attribute must be of type *string*
+        :return: Whether the graph is sound. If it is not, an exception is raised
         """
-
+        # TODO: Handle exceptions wherever this method is used
         if Graph.is_directed(self.__graph):
             raise UnsupportedGraphError("Input graph is direct, pyntacle supports only undirected graphs")
         elif not Graph.is_simple(self.__graph):

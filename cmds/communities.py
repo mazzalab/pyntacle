@@ -117,7 +117,7 @@ class Communities():
             else:
                 plot_size = (1600, 1600)
 
-        if self.args.which == "fastgreedy":
+        if self.args.which == "fast_greedy":
             if self.args.weights is not None:
                 # import edge attributes
                 if not os.path.exists(self.args.weights):
@@ -139,21 +139,21 @@ class Communities():
                     sys.stderr.write("argument of \"--clusters\" must be an integer. Quitting\n")
                     sys.exit(1)
 
-            sys.stdout.write("Running Community finding using fastgreedy algorithm\n")
-            communities.fastgreedy(weights=weights, n=self.args.clusters)
-            mods = communities.get_modules()
-            algorithm = "fastgreedy"
+            sys.stdout.write("Running Community finding using fast_greedy algorithm\n")
+            communities.fast_greedy(weights=weights, n=self.args.clusters)
+            mods = communities.modules
+            algorithm = "fast_greedy"
 
         elif self.args.which == "infomap":
             sys.stdout.write("Running Community finding using infomap algorithm\n")
             communities.infomap()
-            mods = communities.get_modules()
+            mods = communities.modules
             algorithm = "infomap"
 
         elif self.args.which == "leading-eigenvector":
             sys.stdout.write("Running Community finding using leading-eigenvector algorithm\n")
             communities.leading_eigenvector()
-            mods = communities.get_modules()
+            mods = communities.modules
             algorithm = "leading-eigenvector"
 
         elif self.args.which == "community-walktrap":
@@ -190,7 +190,7 @@ class Communities():
                     self.args.steps))
             communities.community_walktrap(weights=weights, n=self.args.clusters,
                                            steps=self.args.steps)
-            mods = communities.get_modules()
+            mods = communities.modules
             algorithm = "community-walktrap"
 
         else:

@@ -35,7 +35,7 @@ from cmds.cmds_utils.plotter import *
 from cmds.cmds_utils.reporter import *
 from tools.graph_utils import *
 from tools.misc.graph_load import *
-from tools.enums import Reports, Cmode
+from tools.enums import ReportEnum, CmodeEnum
 from tools.add_attributes import AddAttributes
 
 class KeyPlayer():
@@ -103,7 +103,7 @@ class KeyPlayer():
         if '__implementation' in graph.attributes():
             implementation = graph['__implementation']
         else:
-            implementation = Cmode.igraph
+            implementation = CmodeEnum.igraph
             
         print("LOADED IMPLEMENTATION", graph['__implementation'])
 
@@ -155,7 +155,7 @@ class KeyPlayer():
             results = OrderedDict()
             # Greedy optimization
             if self.args.implementation == "greedy":
-                report_type = Reports.KP_greedy.name
+                report_type = ReportEnum.KP_greedy.name
                 kp_runner = gow(graph=graph)
                 sys.stdout.write("Using Greedy Optimization Algorithm for searching optimal KP-Set\n")
 
@@ -163,27 +163,27 @@ class KeyPlayer():
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {0} using F (kp neg measure)\n".format(
                             self.args.k_size))
-                    initial_results[kpneg.F.name] = kpp.F(graph)
-                    if initial_results[kpneg.F.name] != 1:
-                        kp_runner.run_fragmentation(self.args.k_size, kpneg.F, seed=self.args.seed)
+                    initial_results[KpnegEnum.F.name] = kpp.F(graph)
+                    if initial_results[KpnegEnum.F.name] != 1:
+                        kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, seed=self.args.seed)
                     else:
                         self.logging.warning("Initial value of F is 1. Skipping search.")
-                        results[kpneg.F.name] = [[], 1, 1]
+                        results[KpnegEnum.F.name] = [[], 1, 1]
                         
                 if self.args.type in (['dF', 'neg', 'all']):
                     print("STARTING DF with imp", implementation)
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {0} using dF (kp neg measure)\n".format(
                             self.args.k_size))
-                    initial_results[kpneg.dF.name] = kpp.dF(graph, implementation=implementation)
+                    initial_results[KpnegEnum.dF.name] = kpp.dF(graph, implementation=implementation)
 
-                    if initial_results[kpneg.dF.name] != 1:
-                        kp_runner.run_fragmentation(self.args.k_size, kpneg.dF,
+                    if initial_results[KpnegEnum.dF.name] != 1:
+                        kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
                                                     max_distances=self.args.max_distances, seed=self.args.seed,
                                                     implementation=implementation)
                     else:
                         self.logging.warning("Initial value of dF is 1. Skipping search.")
-                        results[kpneg.dF.name] = [[], 1, 1]
+                        results[KpnegEnum.dF.name] = [[], 1, 1]
 
                 if self.args.type in (['dR', 'pos', 'all']):
                     print("STARTING DR with imp", implementation)
@@ -191,7 +191,7 @@ class KeyPlayer():
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using dR (kp pos measure)\n".format(
                             self.args.k_size))
-                    kp_runner.run_reachability(self.args.k_size, kppos.dR,
+                    kp_runner.run_reachability(self.args.k_size, KpposEnum.dR,
                                                max_distances=self.args.max_distances, seed=self.args.seed,
                                                implementation=implementation)
 
@@ -200,12 +200,12 @@ class KeyPlayer():
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {0} using an MREACH measure of {1} (kp pos measure)\n".format(
                             self.args.k_size, self.args.m_reach))
-                    kp_runner.run_reachability(self.args.k_size, kppos.mreach, m=self.args.m_reach,
+                    kp_runner.run_reachability(self.args.k_size, KpposEnum.mreach, m=self.args.m_reach,
                                                max_distances=self.args.max_distances, seed=self.args.seed,
                                                implementation=implementation)
 
             elif self.args.implementation == "brute-force":
-                report_type = Reports.KP_bruteforce.name
+                report_type = ReportEnum.KP_bruteforce.name
                 kp_runner = bfw(graph=graph)
                 sys.stdout.write("Using Brute Force for searching optimal KP-Set\n")
 
@@ -213,33 +213,33 @@ class KeyPlayer():
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using F (kp neg measure)\n".format(
                             self.args.k_size))
-                    initial_results[kpneg.F.name] = kpp.F(graph)
-                    if initial_results[kpneg.F.name] != 1:
-                        kp_runner.run_fragmentation(self.args.k_size, kpneg.F)
+                    initial_results[KpnegEnum.F.name] = kpp.F(graph)
+                    if initial_results[KpnegEnum.F.name] != 1:
+                        kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F)
 
                     else:
                         self.logging.warning("Initial value of F is 1. Skipping search.")
-                        results[kpneg.F.name] = [[], 1, 1]
+                        results[KpnegEnum.F.name] = [[], 1, 1]
 
                 if self.args.type in (['dF', 'neg', 'all']):
                     print("STARTING DF with imp", implementation)
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using dF (kp neg measure)\n".format(
                             self.args.k_size))
-                    initial_results[kpneg.dF.name] = kpp.dF(graph, implementation=implementation)
-                    if initial_results[kpneg.dF.name] != 1:
-                        kp_runner.run_fragmentation(self.args.k_size, kpneg.dF,
+                    initial_results[KpnegEnum.dF.name] = kpp.dF(graph, implementation=implementation)
+                    if initial_results[KpnegEnum.dF.name] != 1:
+                        kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
                                                     max_distances=self.args.max_distances, implementation=implementation)
                     else:
                         self.logging.warning("Initial value of dF is 1. Skipping search.")
-                        results[kpneg.dF.name] = [[], 1, 1]
+                        results[KpnegEnum.dF.name] = [[], 1, 1]
 
                 if self.args.type in (['dR', 'pos', 'all']):
                     print("STARTING DR with imp", implementation)
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using dR (kp pos measure)\n".format(
                             self.args.k_size))
-                    kp_runner.run_reachability(self.args.k_size, kppos.dR,
+                    kp_runner.run_reachability(self.args.k_size, KpposEnum.dR,
                                                max_distances=self.args.max_distances, implementation=implementation)
                     
                 if self.args.type in (['mreach', 'pos', 'all']):
@@ -247,7 +247,7 @@ class KeyPlayer():
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {0} using an MREACH measure of {1} (kp pos measure)\n".format(
                             self.args.k_size, self.args.m_reach))
-                    kp_runner.run_reachability(self.args.k_size, kppos.mreach, m=self.args.m_reach,
+                    kp_runner.run_reachability(self.args.k_size, KpposEnum.mreach, m=self.args.m_reach,
                                                max_distances=self.args.max_distances, implementation=implementation)
 
             else:
@@ -265,7 +265,7 @@ class KeyPlayer():
                 else:
                     plurals = ['', 'is']
                     
-                if kp == kpneg.F.name or kp == kpneg.dF.name:
+                if kp == KpnegEnum.F.name or kp == KpnegEnum.dF.name:
                     # joining initial results with final ones
                     results[kp].append(initial_results[kp])
                     
@@ -274,11 +274,11 @@ class KeyPlayer():
                         'kp set{0} of size {1} for Key Player Metric {2} {3} {4} with value {5} (starting value is {6})\n'.format(
                             plurals[0], self.args.k_size, kp, plurals[1], results[kp][0], results[kp][1], results[kp][2]))
 
-                elif kp == kppos.dR.name:
+                elif kp == KpposEnum.dR.name:
                     sys.stdout.write('kp set{0} of size {1} for Key Player Metric {2} {3} {4} with value {5}\n'.format(
                         plurals[0], self.args.k_size, kp, plurals[1], results[kp][0], results[kp][1]))
 
-                elif kp == kppos.mreach.name:
+                elif kp == KpposEnum.mreach.name:
                     results[kp].append(self.args.m_reach)
                     node_perc_reached = ((self.args.k_size + results[kp][1]) / graph.vcount()) * 100
                     if node_perc_reached == 100:
@@ -290,13 +290,13 @@ class KeyPlayer():
                             plurals[0], self.args.k_size, self.args.m_reach, kp, plurals[1], results[kp][0],
                             results[kp][1], node_perc_reached))
             if self.args.implementation == "brute-force":
-                r.create_report(report_type=Reports.KP_bruteforce, report=results)
+                r.create_report(report_type=ReportEnum.KP_bruteforce, report=results)
             elif self.args.implementation == "greedy":
-                r.create_report(report_type=Reports.KP_greedy, report=results)
+                r.create_report(report_type=ReportEnum.KP_greedy, report=results)
 
         # kpinfo: compute kpmetrics for a set of predetermined nodes
         elif self.args.which == 'kp-info':
-            report_type = Reports.KPinfo.name
+            report_type = ReportEnum.KPinfo.name
             k_size = len(self.args.nodes)
             initial_results = {}
             kp_runner = kpw(graph=graph)
@@ -304,23 +304,23 @@ class KeyPlayer():
 
             sys.stdout.write('\nNodes given as input: {}\n'.format(self.args.nodes))
             if self.args.type in (['F', 'neg', 'all']):
-                initial_results[kpneg.F.name] = kpp.F(graph)
-                kp_runner.run_KPNeg(self.args.nodes, kpneg.F)
+                initial_results[KpnegEnum.F.name] = kpp.F(graph)
+                kp_runner.run_KPNeg(self.args.nodes, KpnegEnum.F)
             if self.args.type in (['dF', 'neg', 'all']):
                 print("STARTING DF with imp", implementation)
-                initial_results[kpneg.dF.name] = kpp.dF(graph, implementation=implementation)
-                kp_runner.run_KPNeg(self.args.nodes, kpneg.dF, max_distances=self.args.max_distances,
+                initial_results[KpnegEnum.dF.name] = kpp.dF(graph, implementation=implementation)
+                kp_runner.run_KPNeg(self.args.nodes, KpnegEnum.dF, max_distances=self.args.max_distances,
                                     implementation=implementation)
                 print("DF DONE ######################")
 
             if self.args.type in (['dR', 'pos', 'all']):
                 print("STARTING DR with imp", implementation)
-                kp_runner.run_KPPos(self.args.nodes, kppos.dR, max_distances=self.args.max_distances,
+                kp_runner.run_KPPos(self.args.nodes, KpposEnum.dR, max_distances=self.args.max_distances,
                                     implementation=implementation)
 
             if self.args.type in (['mreach', 'pos', 'all']):
                 print("STARTING mreach with imp", implementation)
-                kp_runner.run_KPPos(self.args.nodes, kppos.mreach, m=self.args.m_reach,
+                kp_runner.run_KPPos(self.args.nodes, KpposEnum.mreach, m=self.args.m_reach,
                                     max_distances=self.args.max_distances, implementation=implementation)
 
             results.update(kp_runner.get_results())
@@ -328,13 +328,13 @@ class KeyPlayer():
             sys.stdout.write("Keyplayer metric(s) {}:\n".format(self.args.type.upper()))
             for metric in results.keys():
 
-                if metric == kpneg.F.name or metric == kpneg.dF.name:
+                if metric == KpnegEnum.F.name or metric == KpnegEnum.dF.name:
                     results[metric].append(initial_results[metric])
                     sys.stdout.write(
                         "Starting value for {0} is {1}. Removing nodes {2} gives a {0} value of {3}\n".format(
                             metric, results[metric][2], self.args.nodes, results[metric][1]))
 
-                elif metric == kppos.mreach.name:
+                elif metric == KpposEnum.mreach.name:
                     results[metric].append(self.args.m_reach)
                     perc_node_reached = (results[metric][1] + len(self.args.nodes)) / graph.vcount() * 100
                     sys.stdout.write(
@@ -346,7 +346,7 @@ class KeyPlayer():
                     sys.stdout.write(
                         "{0} value for nodes {1} is {2}\n".format(metric, results[metric][0],
                                                                   results[metric][1]))
-            r.create_report(report_type=Reports.KPinfo, report=results)
+            r.create_report(report_type=ReportEnum.KPinfo, report=results)
 
         else:
             log.critical(
@@ -384,43 +384,43 @@ class KeyPlayer():
                     bin_type = "greedy"
 
             queried_stuff = results.keys()
-            if kpneg.F.name in queried_stuff:
-                if kpneg.F.name in graph.attributes():
-                    sys.stdout.write("{} already present, will overwrite\n".format(kpneg.F.name))
-                graph[kpneg.F.name] = results[kpneg.F.name][-1] #initial F value
-                k = "_".join([kpneg.F.name, bin_type])
+            if KpnegEnum.F.name in queried_stuff:
+                if KpnegEnum.F.name in graph.attributes():
+                    sys.stdout.write("{} already present, will overwrite\n".format(KpnegEnum.F.name))
+                graph[KpnegEnum.F.name] = results[KpnegEnum.F.name][-1] #initial F value
+                k = "_".join([KpnegEnum.F.name, bin_type])
 
                 if bf:
-                    AddAttributes(graph).add_graph_attributes(k, {tuple(tuple(x) for x in results[kpneg.F.name][0]): results[kpneg.F.name][1]})
+                    AddAttributes(graph).add_graph_attributes(k, {tuple(tuple(x) for x in results[KpnegEnum.F.name][0]): results[KpnegEnum.F.name][1]})
                 else:
-                    AddAttributes(graph).add_graph_attributes(k, {tuple(results[kpneg.F.name][0]): results[kpneg.F.name][1]})
+                    AddAttributes(graph).add_graph_attributes(k, {tuple(results[KpnegEnum.F.name][0]): results[KpnegEnum.F.name][1]})
 
-            if kpneg.dF.name in queried_stuff:
-                graph[kpneg.dF.name] = results[kpneg.dF.name][-1]  #initial dF value
-                k = "_".join([kpneg.dF.name, bin_type])
+            if KpnegEnum.dF.name in queried_stuff:
+                graph[KpnegEnum.dF.name] = results[KpnegEnum.dF.name][-1]  #initial dF value
+                k = "_".join([KpnegEnum.dF.name, bin_type])
 
                 if bf:
-                    AddAttributes(graph).add_graph_attributes(k, {tuple(tuple(x) for x in results[kpneg.dF.name][0]): results[kpneg.dF.name][1]})
+                    AddAttributes(graph).add_graph_attributes(k, {tuple(tuple(x) for x in results[KpnegEnum.dF.name][0]): results[KpnegEnum.dF.name][1]})
                 else:
-                    AddAttributes(graph).add_graph_attributes(k, {tuple(results[kpneg.dF.name][0]):results[kpneg.dF.name][1]})
+                    AddAttributes(graph).add_graph_attributes(k, {tuple(results[KpnegEnum.dF.name][0]):results[KpnegEnum.dF.name][1]})
 
-            if kppos.dR.name in queried_stuff:
-                k = "_".join([kppos.dR.name, bin_type])
-                if bf:
-                    AddAttributes(graph).add_graph_attributes(k, {
-                        tuple(tuple(x) for x in results[kppos.dR.name][0]): results[kppos.dR.name][1]})
-                else:
-                    AddAttributes(graph).add_graph_attributes(k, {tuple(results[kppos.dR.name][0]):results[kppos.dR.name][1]})
-
-            if kppos.mreach.name in queried_stuff:
-                k = "_".join([kppos.mreach.name, str(results[kppos.mreach.name][-1]), bin_type])
-
+            if KpposEnum.dR.name in queried_stuff:
+                k = "_".join([KpposEnum.dR.name, bin_type])
                 if bf:
                     AddAttributes(graph).add_graph_attributes(k, {
-                        tuple(tuple(x) for x in results[kppos.mreach.name][0]): results[kppos.mreach.name][1]})
+                        tuple(tuple(x) for x in results[KpposEnum.dR.name][0]): results[KpposEnum.dR.name][1]})
+                else:
+                    AddAttributes(graph).add_graph_attributes(k, {tuple(results[KpposEnum.dR.name][0]):results[KpposEnum.dR.name][1]})
+
+            if KpposEnum.mreach.name in queried_stuff:
+                k = "_".join([KpposEnum.mreach.name, str(results[KpposEnum.mreach.name][-1]), bin_type])
+
+                if bf:
+                    AddAttributes(graph).add_graph_attributes(k, {
+                        tuple(tuple(x) for x in results[KpposEnum.mreach.name][0]): results[KpposEnum.mreach.name][1]})
                 else:
                     AddAttributes(graph).add_graph_attributes(k, {
-                        tuple(results[kppos.mreach.name][0]): results[kppos.mreach.name][1]})
+                        tuple(results[KpposEnum.mreach.name][0]): results[KpposEnum.mreach.name][1]})
             binary_prefix = "_".join(["pyntacle", graph["name"][0], "kpsize", str(k_size),
                                       report_type, self.date])
             binary_path = os.path.join(self.args.directory, binary_prefix + ".graph")

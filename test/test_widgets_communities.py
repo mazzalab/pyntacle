@@ -60,19 +60,19 @@ class WidgetTestCommunities(unittest.TestCase):
         self.Args.v = None
 
     def test_fastgreedy(self):
-        sys.stdout.write("Testing fastgreedy community finder\n")
-        self.Args.which = 'fastgreedy'
-        self.Args.output_file = 'fastgreedy'
+        sys.stdout.write("Testing fast_greedy community finder\n")
+        self.Args.which = 'fast_greedy'
+        self.Args.output_file = 'fast_greedy'
         comm = communities_command(self.Args)
         with self.assertRaises(SystemExit) as cm:
             comm.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        files_out = sorted(glob.glob("test/test_sets/tmp/fastgreedy*"))
-        expected_files = sorted(glob.glob('test/test_sets/output/communities/fastgreedy/module*'))
+        files_out = sorted(glob.glob("test/test_sets/tmp/fast_greedy*"))
+        expected_files = sorted(glob.glob('test/test_sets/output/communities/fast_greedy/module*'))
         
         for f, e in zip(files_out, expected_files):
-            self.assertEqual(getmd5(f), getmd5(e), 'Wrong checksum for communities, fastgreedy case')
+            self.assertEqual(getmd5(f), getmd5(e), 'Wrong checksum for communities, fast_greedy case')
 
     def test_infomap(self):
         sys.stdout.write("Testing infomap community finder\n")

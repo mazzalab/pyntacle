@@ -32,7 +32,7 @@ from graph_operations.set_operations import GraphOperations
 from io_stream.exporter import PyntacleExporter
 from cmds.cmds_utils.plotter import PlotGraph
 from cmds.cmds_utils.reporter import *
-from tools.enums import Reports
+from tools.enums import ReportEnum
 from tools.misc.graph_load import *
 
 
@@ -418,9 +418,9 @@ class Set:
         if self.args.which == 'intersection':
             setF_attr_dict['\nCommon Nodes'] = 'Node names'#(len(intersection_set), ','.join(intersection_set))
             setF_attr_dict[len(intersection_set)] = ','.join(intersection_set)
-        reporter1.create_report(Reports.Set, set1_attr_dict)
-        reporter2.create_report(Reports.Set, set2_attr_dict)
-        reporter_final.create_report(Reports.Set, setF_attr_dict)
+        reporter1.create_report(ReportEnum.Set, set1_attr_dict)
+        reporter2.create_report(ReportEnum.Set, set2_attr_dict)
+        reporter_final.create_report(ReportEnum.Set, setF_attr_dict)
         
         reporter1.report[1] = ['\n--- Graph 1 ---']
         reporter2.report[1] = ['--- Graph 2 ---']
