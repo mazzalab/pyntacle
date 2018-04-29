@@ -64,7 +64,7 @@ class CommunityFinder:
         else:
             self.logger.info("Computing Fastgreedy module search")
 
-        modules = Graph.community_fastgreedy(self.__graph, weights=weights)
+        modules = self.__graph.community_fastgreedy(weights=weights)
         if not isinstance(n, int) and n is not None:
             raise ValueError("'n' must be an integer value")
         else:
@@ -78,7 +78,7 @@ class CommunityFinder:
         """
 
         self.logger.info("Running Community Infomap")
-        temp_modules = Graph.community_infomap(self.__graph)
+        temp_modules = self.__graph.community_infomap(edge_weights=None, vertex_weights=None, trials=10)
         self.__modules = temp_modules.subgraphs()
 
     def leading_eigenvector(self):
@@ -90,7 +90,7 @@ class CommunityFinder:
         """
 
         self.logger.info("Calculating the leading eigenvectors")
-        temp_modules = Graph.community_leading_eigenvector(self.__graph)
+        temp_modules = self.__graph.community_leading_eigenvector()
         self.__modules = temp_modules.subgraphs()
 
     def community_walktrap(self, weights=None, steps: int=3, n: int=None):
@@ -105,7 +105,8 @@ class CommunityFinder:
         """
 
         if weights is None:
-            vertex_dendogram = Graph.community_walktrap(self.__graph, steps=steps)
+            # TODO: why steps=3 if iGraph set 4 as default?
+            vertex_dendogram = self.__graph.community_walktrap(steps=steps)
             modules = vertex_dendogram.as_clustering()
             self.__modules = modules.subgraphs()
         else:
@@ -113,7 +114,7 @@ class CommunityFinder:
                 raise ValueError("Weights must be either a list or an edge graph attribute present in graph")
 
             else:
-                vertex_dendogram = Graph.community_walktrap(self.__graph, steps=steps, weights=weights)
+                vertex_dendogram = self.__graph.community_walktrap(steps=steps, weights=weights)
                 if not isinstance(n, int) and n is not None:
                     raise ValueError("'n' must be an integer value")
                 else:
