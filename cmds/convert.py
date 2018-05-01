@@ -27,7 +27,7 @@ __license__ = u"""
 from config import *
 from warnings import simplefilter
 from io_stream.exporter import PyntacleExporter
-from io_stream.converter import FileFormatConvert
+from io_stream.format_converter import FileFormatConvert
 from tools.misc.graph_load import *
 
 class Convert():
