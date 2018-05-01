@@ -3,7 +3,7 @@ from algorithms.shortest_path import ShortestPath
 from tools.misc.graph_load import *
 from algorithms.greedy_optimization import *
 from io_stream.exporter import PyntacleExporter
-from io_stream.converter import QuickConvert
+from io_stream.converter import FileFormatConvert
 import numpy
 numpy.set_printoptions(threshold=numpy.nan)
 
@@ -36,7 +36,7 @@ numpy.set_printoptions(threshold=numpy.nan)
 # print("INTER NAME", mat['__sif_interaction_name'])
 # PyntacleExporter.Sif(mat, '/home/m.truglio/Desktop/Compiti_Dedalus/embryo_small_exported.sif', header=True)
 #
-# QuickConvert.SifToEdgelist('/home/m.truglio/Desktop/Compiti_Dedalus/embryo_small.sif', header=False, output_file='/home/m.truglio/Desktop/Compiti_Dedalus/embryo_small_exported.egl')
+# FileFormatConvert.sifToEdgelist('/home/m.truglio/Desktop/Compiti_Dedalus/embryo_small.sif', header=False, output_file='/home/m.truglio/Desktop/Compiti_Dedalus/embryo_small_exported.egl')
 # sys.exit()
 # print(mat)
 # print(list(adjmatrix.es))

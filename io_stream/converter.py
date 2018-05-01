@@ -1,11 +1,15 @@
-__author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
+"""
+Provide conversion routines between different graph file formats
+"""
+
+__author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "27 February 2018"
+__date__ = "30/04/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -24,134 +28,120 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-'''
-Contains a series of quick file converters in order to parse one graph atored into  format and mmedately rewrite onto
-another
-'''
 
 from config import *
 from tools.edgelist_utils import EglUtils as egl
-from tools.misc.io_utils import *
+from tools.misc.io_utils import input_file_checker, separator_sniffer, randomword
 from exceptions.unproperly_formatted_file_error import UnproperlyFormattedFileError
 
 
-class QuickConvert:
-    '''
-    This class is designed to quickly convert one file format to another, without passing to the Graph object
-    and the Importing/Exporting. At the moment, we quickly convert Sif to Edgelist and Vice-Versa using the
-    'EdgelistToSif' and the 'SifToEdgelist' methods.
-    '''
+class FileFormatConvert:
+    """
+    This class is designed to convert one graph file format to another, without resorting to iGraph's internal methods.
+    """
 
     @staticmethod
     @input_file_checker
     @separator_sniffer
-    def EdgelistToSif(file:str, sep=None, header=False, output_file=None):
+    def edgelistToSif(file: str, sep=None, header: bool=False, output_file: str=None) -> str:
         """
-        convert a file written as an edgelist into a Simple Interaction File Format (*SIF*) at the path specified by
-        `output_file' format (or, if not specified, will create the same file in the same directory. if the Edgelist
-        contains an header, it will be rewritten into the SIF file. The interaction that the SIF file requires will
-        be a column named "Interaction" where each node is connected to any other using the *"interacts_with"* keyword.
-        :param str file: a valid path to the input Edgelist
-        :param str sep: a string specifying the column separator for both input and output. If 'None' (default), we assume a \t separates each column.
-        :param bool header: rewrite the header into the output file. Default if 'False' (inut file contains no header)
-        :param str output_file: The path where the resulting file will be stored.If None, the output file will be in the current directory,with the *.egl* extension and a small pseudoword before the inout basename.
+        Convert as an edge-list file into a Simple Interaction File Format (*SIF*) file.
+        If the edge-list file contains an header line, this will be written into the SIF file. The *interaction type*,
+        required by SIF will be always *interacts_with* between any pair of interacting nodes.
+        For more info on the SIF file format specification, please visit the official Cytoscape documentation
+        at http://manual.cytoscape.org/en/stable/Supported_Network_File_Formats.html.
+        **WARNING** If a header is present, the cells corresponding to columns 1 and 3 will be rewritten.
+        :param str file: a valid path to the input edge-list file
+        :param str sep: a string that specifies the file separator of both input and output files. If 'None' (default),
+        we assume a tabulator character as separator.
+        :param bool header: Whether to report the header line from the input (if present) to the output file.
+        Default if 'False' (input file contains no header)
+        :param str output_file: The path to the output file. If None, the output file will be in the current directory,
+        and its file extension will be *sif*
         :return: the path to the output file
         """
-        if output_file is None:
-            output_file = os.path.splitext(os.path.basename(os.path.abspath(file)))[0] + randomword(4) + ".sif"
-            sys.stdout.write("writing the output file at {}\n").format(output_file)
 
-        if os.path.exists(output_file):
-            sys.stdout.write("A file named {} already exists. Will overwrite\n".format(output_file))
+        if not output_file:
+            output_file = os.path.splitext(os.path.basename(os.path.abspath(file)))[0] + randomword(4) + ".sif"
+        elif os.path.exists(output_file):
+            sys.stdout.write("A file named {} already exists. It will be overwritten\n".format(output_file))
 
         eglutils = egl(file=file, header=header, sep=sep)
-
         if eglutils.is_direct():
-            raise UnproperlyFormattedFileError("Edge List is direct")
+            raise UnproperlyFormattedFileError(
+                "The edge-list file represents a direct graph, which is not currently supported")
+        elif eglutils.is_hypergraph():
+            raise UnproperlyFormattedFileError("The edge-list file contains multiple edges")
+        else:
+            with open(file, "r") as infile:
+                with open(output_file, "w") as outfile:
+                    if header:
+                        headerstring = infile.readline().rstrip().split(sep)
+                        # edgelist.append([headerstring[0], "Interaction", headerstring[-1]])
+                        # TODO: why -1, are you allowing files with more than 2 columns?
+                        outfile.write(sep.join([headerstring[0], "interacts_with", headerstring[-1]]) + "\n")
 
-        if eglutils.is_pyntacle_ready():
-            raise UnproperlyFormattedFileError("Edgelist contains multiple edges containing two vertices")
+                    for line in infile:
+                        pair = line.rstrip().split(sep)
+                        outfile.write(sep.join([pair[0], "interacts_with", pair[-1]]))
 
-        edgelist = []
-
-        with open(file, "r") as infile:
-            if header:
-                headerstring = infile.readline().rstrip().split(sep)
-                edgelist.append([headerstring[0], "Interaction", headerstring[-1]]) #the header rewritten
-
-            for line in infile:
-                pair = line.rstrip().split(sep)
-                edgelist.append(pair)  # a list of lists
-
-        # remove all multiple edges from the edgelist, if present
-        siftuple = tuple(tuple(x) for x in edgelist)
-        sifcleaned = set(tuple(sorted(l)) for l in siftuple)
-        siflist = [list(x) for x in sifcleaned]
-
-        with open(output_file, "w") as outfile:
-
-            for couple in siflist:
-                outfile.write(sep.join([couple[0], "interacts_with", couple[1]]) + "\n")
-
-        sys.stdout.write("file successfully converted\n")
-        return None
+            sys.stdout.write("File successfully converted\n")
+            return output_file
 
     @staticmethod
     @input_file_checker
     @separator_sniffer
-    def SifToEdgelist(file:str, sep=None, header=False, output_file=None):
+    def sifToEdgelist(file: str, sep=None, header: bool=False, output_file: str=None):
         """
-        Converts a Simple Interaction Format file (*SIF*) to an undirected edgelist readable by pyntacle. **CONDITIONS FOR CONVERSIONS:**
+        Convert a Simple Interaction Format file (*SIF*) to an undirected edge-list.
+        **CONDITIONS FOR CONVERSIONS:**
         We assume the SIF file contains at least 3 columns, with the *source* nodes in the 1st column and the *target*
-        nodes in the 3rd column. All the other values from the 4th column onwards are assumed to be other target nodes connected by
-        the input node (so no attributes are present in the sif file). For more info on file format specification,
-        please visit `The official Cytoscape Documentation <http://manual.cytoscape.org/en/stable/Supported_Network_File_Formats.html> .
-        **WARNING** If a header is present, the cells corresponding to column 1 and 3 will be rewritten.
+        nodes in the 3rd column. All the other values from the 4th column onwards are assumed to be other target nodes
+        connected to the input node. Thus, no attributes are present in the sif file.
+        For more info on the SIF file format specification, please visit the official Cytoscape documentation
+        at http://manual.cytoscape.org/en/stable/Supported_Network_File_Formats.html.
+        **WARNING** If a header is present, the cells corresponding to columns 1 and 3 will be rewritten.
         :param str file: a valid path to the input SIF file
-        :param str sep: a string specifying the column separator for both input and output. If 'None' (default), we assume a \t separates each column.
-        :param bool header: rewrite the header into the output file. Default if 'False' (input file contains no header)
-        :param str output_file: The path where the resulting file will be stored.If None, the output file will be in the current directory,with the *.egl* extension and a small pseudoword before the inout basename.
+        :param str sep: a string that specifies the file separator of both input and output files. If 'None' (default),
+        we assume a tabulator character as separator.
+        :param bool header: Whether to report the header line from the input (if present) to the output file.
+        Default if 'False' (input file contains no header)
+        :param str output_file: The path to the output file. If None, the output file will be in the current directory,
+        and its file extension will be *egl*
         :return: the path to the output file
         """
-        if output_file is None:
-            output_file = os.path.join(os.getcwd(), "_".join([os.path.splitext(os.path.basename(os.path.abspath(file)))[0],randomword(4)])) + ".egl"
-            sys.stdout.write("writing the output file at {}\n".format(output_file))
 
-        if os.path.exists(output_file):
-            sys.stdout.write("A file named {} already exists. Will overwrite\n".format(output_file))
+        if not output_file:
+            output_file = os.path.join(os.getcwd(),
+                                       "_".join([os.path.splitext(os.path.basename(os.path.abspath(file)))[0],
+                                                 randomword(4)])) + ".egl"
+        elif os.path.exists(output_file):
+            sys.stdout.write("A file named {} already exists. It will be overwritten\n".format(output_file))
 
-        egl = []
+        # TODO: Add sifutils class with these functionalities
+        # sifutils = sif(file=file, header=header, sep=sep)
+        # if sifutils.is_direct():
+        #     raise UnproperlyFormattedFileError(
+        #         "The SIF file represents a direct graph, which is not currently supported")
+        # elif sifutils.is_hypergraph():
+        #     raise UnproperlyFormattedFileError("The SIF file contains multiple edges")
+        # else:
+
         with open(file, "r") as infile:
-            if header:
-                headerrow = infile.readline().rstrip()
-                #.split(sep)
-                # headerrow = egl.append([headerrow[0], headerrow[2]])
-                # egl.append(headerrow)
+            with open(output_file, "w") as outfile:
+                if header:
+                    headerrow = infile.readline().rstrip()
+                    outfile.write(headerrow + '\n')
 
-            for line in infile:
-                tmp = line.rstrip().split(sep)
-                del tmp[1] #remove interaction column
+                for line in infile:
+                    tmp = line.rstrip().split(sep)
+                    del tmp[1]  # remove the interaction column
+                    if len(tmp) < 2:
+                        sys.stdout.write("node {} is an isolate and will not be included in the edge-list\n".format(tmp[0]))
+                    elif len(tmp) > 2:
+                        for i in range(1, len(tmp)):
+                            outfile.write(tmp[0] + "\t" + tmp[i] + '\n')
+                    else:
+                        outfile.write(tmp[0] + "\t" + tmp[1] + '\n')
 
-                if len(tmp) < 2:
-                    sys.stdout.write("node {} is an isolate, will not be written onto edgelist because it can't be represented\n".format(tmp[0]))
-
-                elif len(tmp) > 2:
-                    for i in range(1, len(tmp)):
-                        egl.append([tmp[0], tmp[i]])
-
-                else:
-                    egl.append(tmp)
-
-        #remove multiple edges
-        egl = [list(x) for x in set(tuple(sorted(y)) for y in egl)]
-
-        #rewrite egl as a list of strings
-        egl = [sep.join(x) for x in egl]
-        # add a newline trailing character to each of the written element
-        egl = [x + "\n" for x in egl]
-        with open(output_file, "w") as outfile:
-            if header:
-                outfile.write(headerrow+'\n')
-            outfile.writelines(egl)
-
-        return None
+        return output_file

@@ -35,7 +35,8 @@ from config import *
 import os
 import pandas as pd
 
-class EglUtils():
+
+class EglUtils:
     logger = None
 
     def __init__(self, file: str, header: bool, sep="\t"):
@@ -135,10 +136,10 @@ class EglUtils():
 
         return direct
 
-    def is_pyntacle_ready(self) -> bool:
+    def is_hypergraph(self) -> bool:
         """
-        This method checks that the input edgelist is ready to be processed by the `pyntacle` `iostream`
-        :return: legit - a boolean; True if is the edgelist is a legit edgelist, false otherwise
+        Check that the edge-list does not represent a hypergraph. Multiple edges between two nodes are not allowed
+        :return: Whether ot not the edge-list represents a hypergraph
         """
 
         if self.edgl is None:
