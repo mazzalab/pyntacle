@@ -43,7 +43,7 @@ class FileFormatConvert:
     @staticmethod
     @input_file_checker
     @separator_sniffer
-    def edgelistToSif(file: str, sep=None, header: bool=False, output_file: str=None) -> str:
+    def edgelistToSif(file: str, sep=None, header: bool=False, output_file: str=None, output_sep: str="\t") -> str:
         """
         Convert as an edge-list file into a Simple Interaction File Format (*SIF*) file.
         If the edge-list file contains an header line, this will be written into the SIF file. The *interaction type*,
@@ -52,38 +52,48 @@ class FileFormatConvert:
         at http://manual.cytoscape.org/en/stable/Supported_Network_File_Formats.html.
         **WARNING** If a header is present, the cells corresponding to columns 1 and 3 will be rewritten.
         :param str file: a valid path to the input edge-list file
-        :param str sep: a string that specifies the file separator of both input and output files. If 'None' (default),
-        we assume a tabulator character as separator.
+        :param str sep: a string that specifies the file separator of both input and output files. If 'None' (default), we will guess it from the first line of the file.
         :param bool header: Whether to report the header line from the input (if present) to the output file.
         Default if 'False' (input file contains no header)
         :param str output_file: The path to the output file. If None, the output file will be in the current directory,
+        :param str output_sep: The output separator of choice. By default, we assume a tabular character is the one that is best suited for SIF files.
         and its file extension will be *sif*
         :return: the path to the output file
         """
 
         if not output_file:
             output_file = os.path.splitext(os.path.basename(os.path.abspath(file)))[0] + randomword(4) + ".sif"
+
         elif os.path.exists(output_file):
             sys.stdout.write("A file named {} already exists. It will be overwritten\n".format(output_file))
 
+        if not isinstance(output_sep, str):
+            raise TypeError("\"output_sep\" must be a string, {} found".format(type(output_sep).__name__))
+
         eglutils = egl(file=file, header=header, sep=sep)
+
         if eglutils.is_direct():
             raise UnproperlyFormattedFileError(
                 "The edge-list file represents a direct graph, which is not currently supported")
-        elif eglutils.is_hypergraph():
+        elif eglutils.is_multigraph():
             raise UnproperlyFormattedFileError("The edge-list file contains multiple edges")
-        else:
-            with open(file, "r") as infile:
-                with open(output_file, "w") as outfile:
-                    if header:
-                        headerstring = infile.readline().rstrip().split(sep)
-                        # edgelist.append([headerstring[0], "Interaction", headerstring[-1]])
-                        # TODO: why -1, are you allowing files with more than 2 columns?
-                        outfile.write(sep.join([headerstring[0], "interacts_with", headerstring[-1]]) + "\n")
 
-                    for line in infile:
-                        pair = line.rstrip().split(sep)
-                        outfile.write(sep.join([pair[0], "interacts_with", pair[-1]]))
+        else: #import the sif file into memory, transform it into a list of lists (each sublist represent each line), then sort it in order to remove the double occurrence of the link
+            with open(file, "r") as infile:
+                if header:
+                    headlist = infile.readline().rstrip().split(sep)
+                    headlist = [headlist[0] + "Interaction"  + headlist[1]]
+
+                edglist = [x.rstrip().split(sep) for x in infile.readlines()]
+                siflist = set(tuple(sorted(x)) for x in edglist)
+                siflist = [list(x) for x in siflist]
+                siflist = [x[0] + "interacts_with" + x[1] for x in siflist] #this is the final object that wil be written to the output file
+
+            if header:
+                siflist = headlist + siflist #re-adds the header
+
+            with open(output_file, "w") as outfile:
+                outfile.writelines([output_sep.join(x) + "\n" for x in siflist]) #convert each sublist into a string and use the writelines method to dump everything into a file quickly.
 
             sys.stdout.write("File successfully converted\n")
             return output_file
@@ -91,7 +101,7 @@ class FileFormatConvert:
     @staticmethod
     @input_file_checker
     @separator_sniffer
-    def sifToEdgelist(file: str, sep=None, header: bool=False, output_file: str=None):
+    def sifToEdgelist(file: str, sep=None, header: bool=False, output_file: str=None, output_sep: str="\t"):
         """
         Convert a Simple Interaction Format file (*SIF*) to an undirected edge-list.
         **CONDITIONS FOR CONVERSIONS:**
@@ -108,8 +118,13 @@ class FileFormatConvert:
         Default if 'False' (input file contains no header)
         :param str output_file: The path to the output file. If None, the output file will be in the current directory,
         and its file extension will be *egl*
+        :param str output_sep: The output separator of choice. By default, we assume a tabular character is the one that is best suited for SIF files.
+        and its file extension will be *sif*
         :return: the path to the output file
         """
+
+        if not isinstance(output_sep, str):
+            raise TypeError("\"output_sep\" must be a string, {} found".format(type(output_sep).__name__))
 
         if not output_file:
             output_file = os.path.join(os.getcwd(),
@@ -118,30 +133,24 @@ class FileFormatConvert:
         elif os.path.exists(output_file):
             sys.stdout.write("A file named {} already exists. It will be overwritten\n".format(output_file))
 
-        # TODO: Add sifutils class with these functionalities
-        # sifutils = sif(file=file, header=header, sep=sep)
-        # if sifutils.is_direct():
-        #     raise UnproperlyFormattedFileError(
-        #         "The SIF file represents a direct graph, which is not currently supported")
-        # elif sifutils.is_hypergraph():
-        #     raise UnproperlyFormattedFileError("The SIF file contains multiple edges")
-        # else:
-
         with open(file, "r") as infile:
             with open(output_file, "w") as outfile:
                 if header:
-                    headerrow = infile.readline().rstrip()
-                    outfile.write(headerrow + '\n')
+                    headerrow = infile.readline().rstrip().split(sep)
+                    del headerrow[1] #delete the name of the interaction
+                    outfile.write(output_sep.join(headerrow) + '\n')
 
                 for line in infile:
                     tmp = line.rstrip().split(sep)
                     del tmp[1]  # remove the interaction column
                     if len(tmp) < 2:
-                        sys.stdout.write("node {} is an isolate and will not be included in the edge-list\n".format(tmp[0]))
+                        sys.stdout.write("node {} is an isolate and will not be included in the edge-list (as edge lists just represent connected nodes)\n".format(tmp[0]))
                     elif len(tmp) > 2:
                         for i in range(1, len(tmp)):
                             outfile.write(tmp[0] + "\t" + tmp[i] + '\n')
+                            outfile.write(tmp[i] + "\t" + tmp[0] + '\n')
                     else:
                         outfile.write(tmp[0] + "\t" + tmp[1] + '\n')
+                        outfile.write(tmp[1] + "\t" + tmp[0] + '\n')
 
         return output_file

@@ -34,7 +34,7 @@ import itertools
 from config import *
 import os
 import pandas as pd
-
+from exceptions.unproperly_formatted_file_error import UnproperlyFormattedFileError
 
 class EglUtils:
     logger = None
@@ -59,8 +59,7 @@ class EglUtils:
         else:
             checkfile = pd.read_csv(filepath_or_buffer=file, sep=self.sep)
             if len(checkfile.columns) != 2:
-                self.logger.error("Input file is not an edgelist (does not have 2 columns")
-                sys.exit(1)
+                raise UnproperlyFormattedFileError("Edgelist should contain 2 columns, {} found. Is the separator specified correct?".format(len(checkfile.columns)))
 
             self.eglfile = file
 
@@ -136,10 +135,10 @@ class EglUtils:
 
         return direct
 
-    def is_hypergraph(self) -> bool:
+    def is_multigraph(self) -> bool:
         """
-        Check that the edge-list does not represent a hypergraph. Multiple edges between two nodes are not allowed
-        :return: Whether ot not the edge-list represents a hypergraph
+        Check that the edge-list does not represent a multigraph. Multiple edges between two nodes are not allowed
+        :return: Whether ot not the edge-list represents a multigraph
         """
 
         if self.edgl is None:

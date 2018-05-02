@@ -143,7 +143,7 @@ class KeyPlayer:
 
         df_num = 0
         for i in range(number_nodes):
-            df_num = sum([1 / shortest_path_lengths[i][j] for j in range(i + 1, number_nodes)])
+            df_num += sum([float(1 / shortest_path_lengths[i][j]) for j in range(i + 1, number_nodes)])
 
         df_num *= 2
         df = 1 - (df_num / df_denum)
