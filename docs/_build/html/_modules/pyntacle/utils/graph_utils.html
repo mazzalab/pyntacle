@@ -161,7 +161,7 @@
 <span class="kn">from</span> <span class="nn">exceptions.illegal_graph_size_error</span> <span class="k">import</span> <span class="n">IllegalGraphSizeError</span>
 <span class="kn">from</span> <span class="nn">exceptions.missing_attribute_error</span> <span class="k">import</span> <span class="n">MissingAttributeError</span>
 <span class="kn">from</span> <span class="nn">exceptions.notagraph_error</span> <span class="k">import</span> <span class="n">NotAGraphError</span>
-<span class="kn">from</span> <span class="nn">exceptions.unsupported_graph_error</span> <span class="k">import</span> <span class="n">UnsupportedGrapherror</span>
+<span class="kn">from</span> <span class="nn">exceptions.unsupported_graph_error</span> <span class="k">import</span> <span class="n">UnsupportedGraphError</span>
 <span class="kn">from</span> <span class="nn">exceptions.wrong_argument_error</span> <span class="k">import</span> <span class="n">WrongArgumentError</span>
 <span class="kn">from</span> <span class="nn">exceptions.multiple_solutions_error</span> <span class="k">import</span> <span class="n">MultipleSolutionsError</span>
 
@@ -223,7 +223,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span> <span class="o">=</span> <span class="n">graph</span>
 
-<div class="viewcode-block" id="GraphUtils.graph_checker"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.graph_checker">[docs]</a>    <span class="k">def</span> <span class="nf">graph_checker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="GraphUtils.graph_checker"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.graph_checker">[docs]</a>    <span class="k">def</span> <span class="nf">check_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **[EXPAND]**</span>
 <span class="sd">        </span>
@@ -231,10 +231,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">Graph</span><span class="o">.</span><span class="n">is_directed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">UnsupportedGrapherror</span><span class="p">(</span><span class="s2">&quot;Input graph is direct, pyntacle supports only undirected graphs&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">UnsupportedGraphError</span><span class="p">(</span><span class="s2">&quot;Input graph is direct, pyntacle supports only undirected graphs&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">Graph</span><span class="o">.</span><span class="n">is_simple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">UnsupportedGrapherror</span><span class="p">(</span><span class="s2">&quot;Input Graph contains self loops and multiple edges&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">UnsupportedGraphError</span><span class="p">(</span><span class="s2">&quot;Input Graph contains self loops and multiple edges&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="s2">&quot;name&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()</span><span class="o">.</span><span class="n">attributes</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;nodes must have the attribute  </span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -242,7 +242,7 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;node </span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2"> attribute must be a string&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()[</span><span class="s2">&quot;name&quot;</span><span class="p">]))</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()[</span><span class="s2">&quot;name&quot;</span><span class="p">]):</span>
-            <span class="k">raise</span> <span class="n">UnsupportedGrapherror</span><span class="p">(</span><span class="s2">&quot;Node names must be unique, check the </span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2"> attribute in graph&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="n">UnsupportedGraphError</span><span class="p">(</span><span class="s2">&quot;Node names must be unique, check the </span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2"> attribute in graph&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GraphUtils.check_index_list"><a class="viewcode-back" href="../../../pyntacle.utils.graph_utils.html#pyntacle.utils.graph_utils.GraphUtils.check_index_list">[docs]</a>    <span class="k">def</span> <span class="nf">check_index_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -251,7 +251,7 @@
 <span class="sd">        :param index_list:</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_graph</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;index list is not a list&quot;</span><span class="p">)</span>
@@ -276,7 +276,7 @@
 <span class="sd">        :param names_list:</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_graph</span><span class="p">()</span>
         <span class="c1"># print(names_list)</span>
         <span class="c1"># print (self.graph.vs()[&quot;name&quot;])</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">names_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
@@ -303,7 +303,7 @@
 <span class="sd">        :param attribute:</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_graph</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">attribute</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()</span><span class="o">.</span><span class="n">attributes</span><span class="p">():</span>
             <span class="k">raise</span> <span class="n">MissingAttributeError</span><span class="p">(</span><span class="s2">&quot;attribute specified is not present in graph nodes&quot;</span><span class="p">)</span></div>
@@ -315,7 +315,7 @@
 <span class="sd">        :param attribute:</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_graph</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">attribute</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">es</span><span class="p">()</span><span class="o">.</span><span class="n">attributes</span><span class="p">():</span>
             <span class="k">raise</span> <span class="n">MissingAttributeError</span><span class="p">(</span><span class="s2">&quot;attribute specified is not present in graph edges&quot;</span><span class="p">)</span></div>
@@ -327,7 +327,7 @@
 <span class="sd">        :param attribute:</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_graph</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">attribute</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">attributes</span><span class="p">():</span>
             <span class="k">raise</span> <span class="n">MissingAttributeError</span><span class="p">(</span><span class="s2">&quot;attribute specified is not present in graph&quot;</span><span class="p">)</span></div>
@@ -370,7 +370,7 @@
 <span class="sd">        :param index_list: a list of integers containing the index list</span>
 <span class="sd">        :return: a list of node names</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_graph</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_index_list</span><span class="p">(</span><span class="n">index_list</span><span class="p">)</span>
         <span class="n">names_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">(</span><span class="n">index_list</span><span class="p">)[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
 
@@ -384,7 +384,7 @@
 <span class="sd">        :return: an index list containing the indices of the input node names</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_graph</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_name_list</span><span class="p">(</span><span class="n">node_names</span><span class="p">)</span>
         <span class="n">index_list</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -407,7 +407,7 @@
 <span class="sd">        :param type:</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_graph</span><span class="p">()</span>
 
         <span class="n">attribute_names</span> <span class="o">=</span> <span class="p">[]</span>
 

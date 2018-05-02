@@ -229,12 +229,12 @@
                 <span class="k">raise</span> <span class="n">MissingAttributeError</span><span class="p">(</span><span class="s2">&quot;graph name is not defined&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># creates a copy of the graph to work on</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">utils</span> <span class="o">=</span> <span class="n">graph_utils</span><span class="o">.</span><span class="n">GraphUtils</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">)</span>  <span class="c1"># initialize graph utilities</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>  <span class="c1"># check that input graph is properly set</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">check_graph</span><span class="p">()</span>  <span class="c1"># check that input graph is properly set</span>
 
         <span class="c1"># initialize empty containers for the graph class</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node_labels</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">edge_labels</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">node_colours</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">node_colors</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">edge_widths</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node_shapes</span> <span class="o">=</span> <span class="p">[]</span>
@@ -318,15 +318,15 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">layout_dic</span><span class="p">[</span><span class="n">layout</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span></div>
 
-<div class="viewcode-block" id="PlotGraph.set_node_colours"><a class="viewcode-back" href="../../../pyntacle.report.plotter.html#pyntacle.report.plotter.PlotGraph.set_node_colours">[docs]</a>    <span class="k">def</span> <span class="nf">set_node_colours</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">colours</span><span class="p">,</span> <span class="n">attribute</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotGraph.set_node_colors"><a class="viewcode-back" href="../../../pyntacle.report.plotter.html#pyntacle.report.plotter.PlotGraph.set_node_colors">[docs]</a>    <span class="k">def</span> <span class="nf">set_node_colors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">attribute</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Assign a series of colours stored in a dictionary to the igraph plot, based on the attribute values</span>
+<span class="sd">        Assign a series of colors stored in a dictionary to the igraph plot, based on the attribute values</span>
 <span class="sd">        </span>
-<span class="sd">        :param colours: either a dictionary whose keys are graph attributes and the colours are either RGB or literal colour names e.g. {&quot;vasco&quot;: &quot;red&quot;} with &quot;vasco&quot; being in self.graph.vs()[&quot;name&quot;] or a list of the same lenght as number of node with colours inside</span>
-<span class="sd">        :param attribute: if colours is a dictionary, must be specified</span>
+<span class="sd">        :param colors: either a dictionary whose keys are graph attributes and the colors are either RGB or literal colour names e.g. {&quot;vasco&quot;: &quot;red&quot;} with &quot;vasco&quot; being in self.graph.vs()[&quot;name&quot;] or a list of the same lenght as number of node with colors inside</span>
+<span class="sd">        :param attribute: if colors is a dictionary, must be specified</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colours</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colors</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">attribute</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">attribute_in_nodes</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
                 <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()[</span><span class="n">attribute</span><span class="p">]</span>
@@ -337,40 +337,40 @@
             <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">            check that the input values in the colour dictioary belong to the specified attribute</span>
 <span class="sd">            &#39;&#39;&#39;</span>
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">colours</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">colors</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;one of the key in the dictionary does not belong to the specified graph attribute.&quot;</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colours</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;colour codes must be string (either literal colour names or hex RGB&quot;</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">colours</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="s2">&quot;the number of attributes variable specified is greater than the total number of values for that &quot;</span>
                     <span class="s2">&quot;attribute&quot;</span><span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">node_colours</span> <span class="o">=</span> <span class="p">[</span><span class="n">colours</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">node_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">colors</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span>
 
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colours</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">colours</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">():</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colors</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vcount</span><span class="p">():</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;length of colour list must be equal to graph nodes number&quot;</span><span class="p">)</span>
 
-            <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">colours</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">colors</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;colour list must be made of strings&quot;</span><span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">node_colours</span> <span class="o">=</span> <span class="n">colours</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">node_colors</span> <span class="o">=</span> <span class="n">colors</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">WrongArgumentError</span><span class="p">(</span><span class="s2">&quot;colours must be either a dictionary or a list, </span><span class="si">{}</span><span class="s2"> found&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">colours</span><span class="p">)))</span></div>
+            <span class="k">raise</span> <span class="n">WrongArgumentError</span><span class="p">(</span><span class="s2">&quot;colors must be either a dictionary or a list, </span><span class="si">{}</span><span class="s2"> found&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">colors</span><span class="p">)))</span></div>
 
 <div class="viewcode-block" id="PlotGraph.set_edge_widths"><a class="viewcode-back" href="../../../pyntacle.report.plotter.html#pyntacle.report.plotter.PlotGraph.set_edge_widths">[docs]</a>    <span class="k">def</span> <span class="nf">set_edge_widths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widths</span><span class="p">,</span> <span class="n">attribute</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Assign a series of colours stored in a dictionary to the igraph plot, based on the attribute values</span>
+<span class="sd">        Assign a series of colors stored in a dictionary to the igraph plot, based on the attribute values</span>
 <span class="sd">        </span>
 <span class="sd">        :type widths: dict or list</span>
 <span class="sd">        :param widths: either a dictionary whose keys are graph attributes and the widths are either integers or floats e.g. {&quot;foo&quot;: 0.4} with &quot;vasco&quot; being in self.graph.vs()[&quot;name&quot;] or a list of the same length as number of node with widths inside</span>
-<span class="sd">        :param attribute: if colours is a dictionary, must be specified</span>
+<span class="sd">        :param attribute: if colors is a dictionary, must be specified</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widths</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
@@ -416,7 +416,7 @@
 <span class="sd">        </span>
 <span class="sd">        :type widths: dict or list</span>
 <span class="sd">        :param widths: either a dictionary whose keys are graph attributes and the widths are either integers or floats e.g. {&quot;foo&quot;: 0.4} with &quot;vasco&quot; being in self.graph.vs()[&quot;name&quot;] or a list of the same lenght as number of node with widths inside</span>
-<span class="sd">        :param attribute: if colours is a dictionary, must be specified</span>
+<span class="sd">        :param attribute: if colors is a dictionary, must be specified</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sizes</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
@@ -456,7 +456,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">node_sizes</span> <span class="o">=</span> <span class="n">sizes</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">WrongArgumentError</span><span class="p">(</span><span class="s2">&quot;colours must be either a dictionary or a list&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="n">WrongArgumentError</span><span class="p">(</span><span class="s2">&quot;colors must be either a dictionary or a list&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PlotGraph.set_node_shapes"><a class="viewcode-back" href="../../../pyntacle.report.plotter.html#pyntacle.report.plotter.PlotGraph.set_node_shapes">[docs]</a>    <span class="k">def</span> <span class="nf">set_node_shapes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shapes</span><span class="p">,</span> <span class="n">attribute</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
@@ -517,7 +517,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">node_shapes</span> <span class="o">=</span> <span class="n">shapes</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">WrongArgumentError</span><span class="p">(</span><span class="s2">&quot;colours must be either a dictionary or a list&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="n">WrongArgumentError</span><span class="p">(</span><span class="s2">&quot;colors must be either a dictionary or a list&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PlotGraph.plot_graph"><a class="viewcode-back" href="../../../pyntacle.report.plotter.html#pyntacle.report.plotter.PlotGraph.plot_graph">[docs]</a>    <span class="k">def</span> <span class="nf">plot_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -554,8 +554,8 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_shapes</span><span class="p">:</span>
             <span class="n">visual_style</span><span class="p">[</span><span class="s2">&quot;vertex_shape&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_shapes</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_colours</span><span class="p">:</span>
-            <span class="n">visual_style</span><span class="p">[</span><span class="s2">&quot;vertex_color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_colours</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_colors</span><span class="p">:</span>
+            <span class="n">visual_style</span><span class="p">[</span><span class="s2">&quot;vertex_color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_colors</span>
 
         <span class="n">additional_params</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;bbox&quot;</span><span class="p">,</span> <span class="s2">&quot;margin&quot;</span><span class="p">,</span> <span class="s2">&quot;edge_curved&quot;</span><span class="p">,</span> <span class="s2">&quot;vertex_frame_color&quot;</span><span class="p">,</span> <span class="s2">&quot;keep_aspect_ratio&quot;</span><span class="p">,</span>
                              <span class="s2">&quot;vertex_label_size&quot;</span><span class="p">]</span>

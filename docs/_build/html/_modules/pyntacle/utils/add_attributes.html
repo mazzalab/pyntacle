@@ -160,7 +160,7 @@
 <span class="kn">from</span> <span class="nn">config</span> <span class="k">import</span> <span class="o">*</span>
 
 <span class="kn">from</span> <span class="nn">exceptions.illegal_argument_number_error</span> <span class="k">import</span> <span class="n">IllegalArgumentNumberError</span>
-<span class="kn">from</span> <span class="nn">exceptions.unsupported_graph_error</span> <span class="k">import</span> <span class="n">UnsupportedGrapherror</span>
+<span class="kn">from</span> <span class="nn">exceptions.unsupported_graph_error</span> <span class="k">import</span> <span class="n">UnsupportedGraphError</span>
 <span class="c1"># pyntacle Libraries</span>
 <span class="kn">from</span> <span class="nn">exceptions.wrong_argument_error</span> <span class="k">import</span> <span class="n">WrongArgumentError</span>
 
@@ -384,7 +384,7 @@
                                 <span class="n">select</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">attrnames</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">obj</span>
 
                     <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">select</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="n">UnsupportedGrapherror</span><span class="p">(</span>
+                        <span class="k">raise</span> <span class="n">UnsupportedGraphError</span><span class="p">(</span>
                             <span class="s2">&quot;More than one edge with the same name is present in the graph. Probably a Multigraph&quot;</span><span class="p">)</span>
                         <span class="c1"># OVERWRITTEN AND REPLACED BY AN ERROR</span>
                         <span class="c1"># This happens if the graph has duplicate edges. Should not happen.</span>

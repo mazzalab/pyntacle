@@ -1,10 +1,10 @@
 # pyntacle
 
 A python command line tool for network analysis based on non canonical
-metrics and HPC comupting.
+metrics and HPC computing.
 
 - **Compatibility**: Python 3+
-- **Contributions**: t.mazza@blabla
+- **Contributions**: bioinformatics@css-mendel.it
 - **Website**: http://pyntacle.css-mendel.it
 - **Bug report**: https://github.com/mazzalab/pyntacle/issues
 
@@ -17,6 +17,7 @@ recommended installation method for most users.
 
 Instructions for installing from source on various Linux distributions
 and MacOS X are also provided.
+
 
 ### Installing pyntacle using Anaconda or Miniconda
 
@@ -185,6 +186,18 @@ administrator:
 ```bash
 python3.5 setup.py install ln -s /opt/local/Library/Frameworks/Python.framework/Versions/3.5/bin/pyntacle /opt/local/bin
 ```
+
+### CUDA support
+
+Independently of the OS in use, if you need CUDA support, you should
+also install the CUDA toolkit either by using Conda:
+
+```bash
+conda install cudatoolkit
+```
+
+or by downloading and installing the Toolkit from the
+[_NVIDIA website_](https://developer.nvidia.com/cuda-toolkit).
 
 ## Release history
 

@@ -189,7 +189,7 @@
 <div class="viewcode-block" id="Sparseness"><a class="viewcode-back" href="../../../pyntacle.algorithms.sparseness_NEW.html#pyntacle.algorithms.sparseness_NEW.Sparseness">[docs]</a><span class="k">class</span> <span class="nc">Sparseness</span><span class="p">:</span>
 <div class="viewcode-block" id="Sparseness.completeness_Mazza"><a class="viewcode-back" href="../../../pyntacle.algorithms.sparseness_NEW.html#pyntacle.algorithms.sparseness_NEW.Sparseness.completeness_Mazza">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@check_graph_consistency</span>
-    <span class="k">def</span> <span class="nf">completeness_Mazza</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">completeness_naive</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the completeness index as described by Mazza *et al.* [Ref]_for an undirect unweighted graph.</span>
 <span class="sd">        They define completeness as the total number of edges over all possible edges minus the number of non-edges</span>
@@ -212,7 +212,7 @@
 
 <div class="viewcode-block" id="Sparseness.completeness_XXX"><a class="viewcode-back" href="../../../pyntacle.algorithms.sparseness_NEW.html#pyntacle.algorithms.sparseness_NEW.Sparseness.completeness_XXX">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@check_graph_consistency</span>
-    <span class="k">def</span> <span class="nf">completeness_XXX</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">completeness</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        We implement the completeness measure as implemented by **XXX** in [Ref]_ to give a measure of sparsness of a</span>
 <span class="sd">        graph. We refer to the paper by **XXX** to explain how this compacteness is computed.</span>

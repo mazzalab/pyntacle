@@ -1,11 +1,15 @@
+"""
+Exception raised  when more than one solution was were found for a problem, but this is unwanted
+"""
+
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "27 February 2018"
+__date__ = "29/04/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -24,10 +28,9 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-"""
-Custom Exception class inherited from ValueError to be raised when there's more of a possible solution in a problem
-that doesn't conotemplate one (e.g.: gtetting the largest component of a graph in graph_utils)
-"""
 
 class MultipleSolutionsError(ValueError):
-    pass
+    def __init__(self, message, errors):
+        super().__init__(message)
+        # Custom errors here
+        self.errors = errors

@@ -24,14 +24,12 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-
 """Generate Network with a specified toipology and make them pyntacle-ready"""
 
-
-import random
+from config import *
 from igraph import Graph
-from utils.add_attributes import AddAttributes as ad
-from misc.generators_utils import *
+from tools.add_attributes import AddAttributes as ad
+from tools.misc.io_utils import *
 
 class Generator:
 
@@ -50,12 +48,12 @@ class Generator:
         can be either a `float` betweeen 0 and 1 or an `int`. If it's a float , it will be considered as rewiring
         probability. Otherwise, it will be considered the number of edges in the Random Graph.
         :param name: optional, if you want to assign a name to the `name` graph attribute. Default is **"Random"**
-        :param int seed: optional: provide a seed to tyhe random generator
+        :param int seed: optional: provide a seed to the random generator
         :return igraph.Graph: an `igraph,Graph` object already initialized to be used for pyntacle's methods
         """
         if seed is not None:
             if not isinstance(seed, int):
-                raise TypeError("\"seed must be an integer, {} found".format(type(seed).__name__))
+                raise TypeError("\"Seed must be an integer, {} found".format(type(seed).__name__))
 
         else:
             random.seed(seed)
@@ -69,9 +67,8 @@ class Generator:
             graph = Graph.Erdos_Renyi(params[0], m=params[1])
 
         else:
-            raise ValueError('second parameter is not a positive float or a positive integer greater than 1')
-
-        ad.graph_initializer(graph_name=(randomword(19, prefix="_".join([name, graph.vcount(), graph.ecount()]))))
+            raise ValueError('Second parameter is not a positive float or a positive integer greater than 1')
+        ad(graph=graph).graph_initializer(graph_name=(randomword(10, prefix="_".join([name, str(graph.vcount()), str(graph.ecount())]))))
 
         return graph
 
@@ -84,7 +81,7 @@ class Generator:
         :param  list params: a list of two elements: the first element is the number of nodes of the graph,
         the second element is the average number of incoming/outcoming edges per node
         :param str name: optional, if you want to assign a name to the `name` graph attribute. Default is **"Scale_Free"**
-        :param int seed: optional: provide a seed to tyhe random generator
+        :param int seed: optional: provide a seed to the random generator
         :return igraph.Graph: an `igraph,Graph` object already initialized to be used for pyntacle's methods
         """
 
@@ -102,7 +99,9 @@ class Generator:
             raise ValueError('The value of one or more parameters is not allowed')
         else:
             graph = Graph.Barabasi(params[0], params[1])
-            ad.graph_initializer(graph_name=(randomword(19, prefix="_".join([name, graph.vcount(), graph.ecount()]))))
+            ad(graph=graph).graph_initializer(graph_name=(
+            randomword(10, prefix="_".join([name, str(graph.vcount()), str(graph.ecount())]))))
+
             return graph
 
     @staticmethod
@@ -139,7 +138,8 @@ class Generator:
         else:
             graph = Graph.Watts_Strogatz(params[0], params[1], params[2], params[3])
 
-            ad.graph_initializer(graph_name=(randomword(19, prefix="_".join([name, graph.vcount(), graph.ecount()]))))
+            ad(graph=graph).graph_initializer(graph_name=(
+            randomword(10, prefix="_".join([name, str(graph.vcount()), str(graph.ecount())]))))
 
             return graph
 
@@ -153,7 +153,7 @@ class Generator:
         :param params: a list of two arguments: #1. the toal number of nodes and #.the number of *children* each *parent*
         node will have
         :param str name: optional, if you want to assign a name to the `name` graph attribute. Default is **"Tree"**
-        :param int seed: optional: provide a seed to tyhe random generator
+        :param int seed: optional: provide a seed to the random generator
         :return igraph.Graph: an `igraph,Graph` object already initialized to be used for pyntacle's methods
         """
         if seed is not None:
@@ -170,5 +170,6 @@ class Generator:
             raise ValueError('The value of one or more parameters is not allowed')
         else:
             graph = Graph.Tree(params[0], params[1])
-            ad.graph_initializer(graph_name=(randomword(19, prefix="_".join([name, graph.vcount(), graph.ecount()]))))
+            ad(graph=graph).graph_initializer(graph_name=(
+            randomword(10, prefix="_".join([name, str(graph.vcount()), str(graph.ecount())]))))
             return graph

@@ -1,0 +1,19 @@
+Quick Graph Overview	
+graph name	figure_8	
+components	1	
+nodes	32	
+edges	56	
+
+	
+Pyntacle Command:	KPinfo	
+maximum mreach distance	2	
+initial F value (whole graph)	0.0	
+initial dF value (whole graph)	0.64755	
+
+	
+Results: Key-Player Metrics for the input set of nodes	
+Metric	Nodes	Value	
+F	HS,HA,GM	0.44335	
+dF	HS,HA,GM	0.74676	
+dR	HS,HA,GM	0.50417	
+mreach	HS,HA,GM	18	

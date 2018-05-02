@@ -1,10 +1,3 @@
-# external libraries
-from config import *
-import os
-from collections import Iterable
-from igraph import Graph
-from exceptions.notagraph_error import NotAGraphError
-
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -30,6 +23,15 @@ __license__ = u"""
   You should have received a copy of the license along with this
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
+
+"""
+Export Attributes stored in the graph as text files
+"""
+
+from config import *
+import os
+from igraph import Graph
+from exceptions.notagraph_error import NotAGraphError
 
 class ExportAttributes():
     """

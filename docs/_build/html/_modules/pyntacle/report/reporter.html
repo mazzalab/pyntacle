@@ -224,14 +224,14 @@
 
         <span class="c1"># initialize graph utility class</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__utils</span> <span class="o">=</span> <span class="n">graph_utils</span><span class="o">.</span><span class="n">GraphUtils</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__utils</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>  <span class="c1"># check that input graph is properly set</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__utils</span><span class="o">.</span><span class="n">check_graph</span><span class="p">()</span>  <span class="c1"># check that input graph is properly set</span>
 
         <span class="k">if</span> <span class="n">graph2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">graph2</span><span class="p">,</span> <span class="n">Graph</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;adding second graph for comparison purposes&quot;</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">__graph2</span> <span class="o">=</span> <span class="n">graph2</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__utils2</span> <span class="o">=</span> <span class="n">graph_utils</span><span class="o">.</span><span class="n">GraphUtils</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph2</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__utils2</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__utils2</span><span class="o">.</span><span class="n">check_graph</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">__report</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#initialize empty report</span>
 
@@ -378,7 +378,7 @@
 <span class="sd">        Report all the requested topological indices for the requested nodes</span>
 <span class="sd">        </span>
 <span class="sd">        :param node_names: a list of node names (must be string)</span>
-<span class="sd">        :param local_attributes_list: a list of LocalAttribute parameter</span>
+<span class="sd">        :param local_attributes_list: a list of LocalAttributeEnum parameter</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">__utils</span><span class="o">.</span><span class="n">check_name_list</span><span class="p">(</span><span class="n">names_list</span><span class="o">=</span><span class="n">node_names</span><span class="p">)</span>  <span class="c1"># check integrity of node names</span>

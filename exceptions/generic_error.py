@@ -23,7 +23,7 @@ __license__ = u"""
   You should have received a copy of the license along with this
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
-
+from config import *
 import sys
 import inspect
 

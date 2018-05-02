@@ -24,22 +24,22 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-import pandas as pd
-import re
-import pickle
-import numpy as np
+"Wraps up all the importers for several type of network representation files (all the file formats supported by Pyntacle"
+
 from config import *
-from misc.binarycheck import *
-from utils.graph_utils import GraphUtils
-from misc.import_utils import *
-from utils.add_attributes import *
-from utils.adjmatrix_utils import AdjmUtils
-from utils.edgelist_utils import EglUtils
+import pandas as pd
+import pickle
+from tools.misc.binarycheck import *
+from tools.graph_utils import GraphUtils
+from tools.misc.io_utils import *
+from tools.add_attributes import *
+from tools.adjmatrix_utils import AdjmUtils
+from tools.edgelist_utils import EglUtils
 from exceptions.illegal_graph_size_error import IllegalGraphSizeError
-from exceptions.unproperlyformattedfile_error import UnproperlyFormattedFileError
+from exceptions.unproperly_formatted_file_error import UnproperlyFormattedFileError
 from pyparsing import *
 from itertools import product
-"Wraps up all the importers for several type of network representation files"
+from collections import OrderedDict
 
 
 def dot_attrlist_to_dict(mylist):
@@ -95,7 +95,7 @@ def dot_edgeattrlist_to_dict(mylist):
 
 class PyntacleImporter:
     @staticmethod
-    @filechecker
+    @input_file_checker
     @separator_sniffer
     def AdjacencyMatrix(file, sep=None, header=True) -> Graph:
         """
@@ -115,11 +115,10 @@ class PyntacleImporter:
         :return: an `igraph.Graph` object.
         """
 
-        if not AdjmUtils(file=file, header=header, separator=sep).is_squared():
+        if not AdjmUtils(file=file, header=header, sep=sep).is_squared():
             raise ValueError("Matrix is not squared")
 
         with open(file, "r") as adjmatrix:
-            #todo Mauro controlli che questa parte sul separatore fatto bene funziona?
             iterator = iter(adjmatrix.readline, '')
 
             first_line = next(iterator, None).rstrip()
@@ -141,11 +140,11 @@ class PyntacleImporter:
             AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0],
                                                          node_names=node_names)
 
-            sys.stdout.write("Adjacency Matrix from file {} imported\n".format(file))
+            sys.stdout.write("Adjacency Matrix from {} imported\n".format(file))
             return graph
 
     @staticmethod
-    @filechecker
+    @input_file_checker
     @separator_sniffer
     def EdgeList(file, sep=None, header=False):
         """
@@ -160,38 +159,37 @@ class PyntacleImporter:
         :return: an `igraph.Graph` object.
         """
 
-        EglUtils(file=file, header=header, separator=sep).is_pyntacle_ready()
+        if EglUtils(file=file, header=header, sep=sep).is_direct():
+            raise UnproperlyFormattedFileError("Edgelist is not ready to be parsed by Pyntacle (it is a direct one)")
 
         graph = Graph() #initialize an empty graph that will be filled
-
-        graph.vs["name"] = []
+        
         if header:
 
-            adj = pd.read_csv(file, sep=sep, header=0)
+            adj = pd.read_csv(file, sep=sep, skiprows=1, header=None)
 
         else:
             adj = pd.read_csv(file, sep=sep, header=None)
-
+            
         adj.values.sort()
         adj = adj.drop_duplicates()
-
         # add all vertices to graph
-        graph.add_vertices(list(set(adj[0].tolist() + adj[1].tolist())))
+        graph.add_vertices(list(str(x) for x in set(adj[0].tolist() + adj[1].tolist())))
         graph.add_edges([tuple(x) for x in adj.values])
         #initialize the graph by calling the graph_initializer() method
         AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
-        sys.stdout.write("Edge List from file {} imported\n".format(file))
+        sys.stdout.write("Edge List from {} imported\n".format(file))
         return graph
 
     @staticmethod
-    @filechecker
+    @input_file_checker
     @separator_sniffer
     def Sif(file, sep=None, header=True) -> Graph:
         """
         Import a Simple Interaction File (**SIF**) usually used by tools like Cytoscape to visualize and analyze networks
         inside the Cytoscape Framework, as well as by other Cytscape-like applications. For information regarding the SIF
         file specification, visit: `The Official Cytoscape Page`_. Here, we accept Cytoscape file **with the interaction
-        type in between the two node columns** (e.g. NodeA *separator* **INTERACTION** NodeB). The interaction type and
+        type in between the two node columns** (e.g. NodeA *separator* **INTERACTION** *separator* NodeB). The interaction type and
         (if present) the header associated to the interaction will be stored in the edge attribute `__sif_interaction`
         and `__sif_interaction_name` respectively.
         _The Official Cytoscape Page: http://wiki.cytoscape.org/Cytoscape_User_Manual/Network_Formats.
@@ -205,92 +203,88 @@ class PyntacleImporter:
 
         graph = Graph()
         graph.vs["name"] = []
-
-        sif_list = [line.rstrip('\n').split(sep) for line in open(file, "r")]
-
-        """:type: list[str]"""
-
-        if header:
-            graph["__sif_interaction_name"] = sif_list[0][1]
-            graph.es()["__sif_interaction"] = None
-            del sif_list[0]
-
-        else:
-            graph["__sif_interaction_name"] = None
-
-        for i, elem in enumerate(sif_list):
-
-            if len(elem) == 0:
-                pass  # this should be an empty line
-
-            elif len(elem) == 1:  # add the single node as isolate
-                if elem[0] not in graph.vs()["name"]:
-                    graph.add_vertex(name=elem[0])
-
-            elif len(elem) == 3:
-
-                # print(elem)
-                first = elem[0]
-                second = elem[2]
-
-                if first not in graph.vs()["name"]:
-                    graph.add_vertex(name=first)
-
-                if second not in graph.vs()["name"]:
-                    graph.add_vertex(name=second)
-
-                if not graph.are_connected(first, second):
-                    graph.add_edge(source=first, target=second, __sif_interaction=elem[1])
-
-                else:
-                    node_ids = GraphUtils(graph=graph).get_node_indices(node_names=[first, second])
-                    graph.es(graph.get_eid(node_ids[0], node_ids[1]))["__sif_interaction"] = elem[1]
-
-            elif len(elem) >= 4:
-                first = elem[0]
-                interaction = elem[1]
-                other_nodes = elem[2:]
-
-                if first not in graph.vs()["name"]:
-                    graph.add_vertex(name=first)
-
-                for n in other_nodes:
-                    if n not in graph.vs()["name"]:
-                        graph.add_vertex(name=n)
-                    if not graph.are_connected(first, n):
-                        graph.add_edge(source=first, target=n, __sif_interaction=interaction)
-
-                    else:
-                        sys.stdout.write(
-                            "an edge already exist between node {0} and node {1}. This should not happen, as pyntacle only supports simple graphs.\n Attribute \"__sif_interaction\n will be overriden\n".format(
-                                first, n))
-                        node_ids = GraphUtils(graph=graph).get_node_indices(node_names=[first, n])
-                        graph.es(graph.get_eid(node_ids[0], node_ids[1], directed=False))["__sif_interaction"] = interaction
-
+        
+        with open(file, "r") as f:
+        
+            """:type: list[str]"""
+            if header:
+                graph["__sif_interaction_name"] = f.readline().rstrip('\n').split(sep)[1]
             else:
-                sys.stdout.write("line {} is malformed, hence it will be skipped\n".format(i))
+                graph["__sif_interaction_name"] = None
+                
+            nodeslist = []
+            edgeslist = OrderedDict()
+            for i, elem in enumerate(f):
+                elem = elem.rstrip('\n').split(sep)
+                if len(elem) == 0:
+                    pass  # this should be an empty line
+    
+                elif len(elem) == 1:  # add the single node as isolate
+                    nodeslist.append(elem[0])
 
-                # print(g.vs()["name"])
+                elif len(elem) == 3:
+                    nodeslist.extend([elem[0], elem[2]])
+                    if ((elem[0], elem[2]) not in edgeslist) and ((elem[2], elem[0]) not in edgeslist):
+                        edgeslist[(elem[0], elem[2])] = [elem[1]]
+                    else:
+                        if (elem[0], elem[2]) in edgeslist:
+                            if elem[1] not in edgeslist[(elem[0], elem[2])]:
+                                edgeslist[(elem[0], elem[2])].append(elem[1])
+                        elif (elem[2], elem[0]) in edgeslist:
+                            if elem[1] not in edgeslist[(elem[2], elem[0])]:
+                                edgeslist[(elem[2], elem[0])].append(elem[1])
+                        else:
+                            raise KeyError("This should not happen - SIF formatting looks weirs. "
+                                           "Please contact the developers.")
 
-        # add missing attribute to graph
-        AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
+                elif len(elem) >= 4:
+                    first = elem[0]
+                    interaction = elem[1]
+                    other_nodes = elem[2:]
+                        
+                    nodeslist.append(first)
+                    for n in other_nodes:
+                        nodeslist.append(n)
+                        if ((first, n) not in edgeslist) and ((n, first) not in edgeslist):
+                            edgeslist[(first, n)] = [interaction]
+                        else:
+                            if (first, n) in edgeslist:
+                                if interaction not in edgeslist[(first, n)]:
+                                    edgeslist[(first, n)].append(interaction)
+                            elif (n, first) in edgeslist:
+                                if interaction not in edgeslist[(n, first)]:
+                                    edgeslist[(n, first)].append(interaction)
+                            else:
+                                raise KeyError("This should not happen - SIF formatting looks weird. "
+                                                 "Please contact the developers.")
+                            
+    
+                else:
+                    raise UnproperlyFormattedFileError("line {} is malformed".format(i))
+    
+            nodeslist = list(set(nodeslist))
+            graph.add_vertices(nodeslist)
+            graph.add_edges(edgeslist.keys())
+            graph.es()["__sif_interaction"] = list(edgeslist.values())
 
-        sys.stdout.write("Sif File  from file {} imported\n".format(file))
+            # add missing attribute to graph
+            AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
+    
+            sys.stdout.write("SIF  from {} imported\n".format(file))
 
         return graph
 
     @staticmethod
-    @filechecker
+    @input_file_checker
     @separator_sniffer
-    def Dot(file, sep=None, **kwargs):
+    def Dot(file, **kwargs):
         """
-
         :param file:
         :param sep:
         :param kwargs:
         :return:
         """
-
+        #todo Mauro and Tommaso, can you describe this part please?
         graph = Graph()
         graph.vs()["name"] = None
         graph.es()["__sif_interaction"] = None
@@ -305,10 +299,8 @@ class PyntacleImporter:
             header_comment = True
         dotdata.seek(last_pos)
         if header_comment:
-            sys.stdout.write("HEADER PRESENT\n")
             dotdata = dotdata.read().split("\n", 1)[1]
         else:
-            sys.stdout.write("HEADER NOT PRESENT\n")
             dotdata = dotdata.read()
 
         # Parsing dot file
@@ -385,11 +377,11 @@ class PyntacleImporter:
             for k in edge_attrs_dict[a]:
                 AddAttributes(graph).add_edge_attributes(k, [edge_attrs_dict[a][k]], [a])
 
-        sys.stdout.write("Dot File {} imported to a Graph Object\n".format(file))
+        sys.stdout.write("Dot from {} imported\n".format(file))
         return graph
 
     @staticmethod
-    @filechecker
+    @input_file_checker
     def Binary(file) -> Graph:
         """
         Reload a binary file that stores an `igraph.Graph` object and makes it ready to be used for pyntacle (if it's
@@ -419,6 +411,6 @@ class PyntacleImporter:
                     sys.stdout.write("Converting graph to undirect\n")
                     graph.to_undirected()
 
-                GraphUtils(graph=graph).graph_checker()
+                GraphUtils(graph=graph).check_graph()
                 sys.stdout.write("Binary from file {} imported\n".format(file))
                 return graph

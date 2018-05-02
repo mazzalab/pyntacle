@@ -1,23 +1,15 @@
 """
-Calculator of local properties of graphs
+Compute several local topology metrics of nodes
 """
 
-# external libraries
-from enum import Enum
-from igraph import Graph
-from algorithms import global_topology
-from exceptions.wrong_argument_error import WrongArgumentError
-from utils.graph_utils import GraphUtils
-from config import *
-
-__author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
+__author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.1"
+__version__ = "0.0.5"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "27 February 2018"
+__date__ = "23/04/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -37,526 +29,273 @@ __license__ = u"""
   """
 
 
-class _LocalAttribute(Enum):
-    degree = 0
-    betweenness = 1
-    clustering_coefficient = 2
-    closeness = 3
-    eccentricity = 4
-    shortest_path = 5
-    radiality = 6
-    radiality_reach = 7
-    eigenvector_centrality = 8
-    pagerank = 9
+from tools.enums import CmodeEnum
+from tools.misc.graph_routines import *
+from tools.graph_utils import GraphUtils as gUtil
 
 
 class LocalTopology:
     """
-    Calculator of local properties of graphs **[EXPAND?]**
+    Compute centrality measures locally to a graph. Methods are designed to work with all or selected nodes.
     """
 
-    __graph = None
-    """:type: Graph"""
-    logger = None
-    """:type: Logger"""
-
-    def __init__(self, graph):
+    @staticmethod
+    @check_graph_consistency
+    @vertex_doctor
+    def degree(graph: Graph, nodes=None) -> list:
         """
-        Initializes a graph for local properties calculation
-        
-        :param Graph graph: Graph provided in input
-        :raises IllegalGraphSizeError: if graph does not contain vertices or edges
+        Compute the *degree* of a node or of a list of nodes of an undirected graph. The degree is defined as
+        the number of incident edges to a node.
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
+        (default), the index is computed for all nodes of the graph.
+        :return: a list of integers, the length being the number of input nodes. Each integer represent the degree
+        of the input nodes. The order of the node list in input is preserved.
         """
-        self.logger = log
 
-        self.__graph_utils = GraphUtils(graph=graph)
-        self.__graph_utils.graph_checker()
+        return graph.degree(nodes) if nodes else graph.degree()
 
-        self.__graph = graph
-
-    def get_graph(self) -> Graph:
+    @staticmethod
+    @check_graph_consistency
+    @vertex_doctor
+    def betweenness(graph: Graph, nodes=None) -> list:
         """
-        Returns the graph
-        :return: - A Graph data structure
+        Compute the *betweenness* of a node or of a list of nodes of an undirected graph.
+        The betweenness is defined as the ratio of the number of shortest paths that pass through the node
+        over all shortest paths in the graph.
+        :param igraph.Graph graph: an igraph.Graph object. The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
+        (default), the index is computed for all nodes of the graph.
+        :return: a list of floats, the length being the number of input nodes. Each float represents the betweenness
+        of the input nodes. The order of the node list in input is preserved.
         """
-        return self.__graph
 
-    def set_graph(self, graph, deepcopy=False):
-        """
-        Replaces the internal graph object with a new one
-        
-        :param igraph.Graph graph: igraph.Graph object provided in input
-        :param bool deepcopy: Flag determining shallow or deep copy of attributes of the graph
-        """
-        if not deepcopy:
-            for elem in graph.attributes():
-                del graph[elem]
-        self.__graph = graph
+        return graph.betweenness(nodes, directed=False) if nodes else graph.betweenness(directed=False)
 
-    def degree(self, index_list=None, recalculate=False) -> list:
+    @staticmethod
+    @check_graph_consistency
+    @vertex_doctor
+    def clustering_coefficient(graph: Graph, nodes=None) -> list:
         """
-        Computes the degree of every node in the graph, or of a specified list of nodes
-        
-        :param list[int] index_list: List of node indices
-        :param bool recalculate: If True, the degree is recalculated regardless if it had been already computed
-        :return: - A list containing the degree values of the specified node indices. If an index is not specified, it returns a list of degree values for all nodes contained in the graph
-        :raises WrongArgumentError: When the input node index does not exist
+        Compute the *clustering coefficient* of a node or of a list of nodes of an undirected graph.
+        The clustering coefficient is defined as the number of triangles formed among the node's neighbours over the
+        possible number of triangles that would be present if the input node and its neighbours were a clique.
+        If the degree of the input node is less than two, the clustering coefficient of these nodes is set to zero.
+        :param igraph.Graph graph: an igraph.Graph object. The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
+        (default), the index is computed for all nodes of the graph.
+        :return: a list of floats, the length being the number of input nodes. Each float represents the clustering
+        coefficient of the input nodes. The order of the node list in input is preserved.
         """
-        if index_list is not None:
-            self.__graph_utils.check_index_list(index_list=index_list)
-            self.logger.info("Calculating the degree of nodes {}".format(index_list))
 
-            for i in index_list:
-                if recalculate or _LocalAttribute.degree.name not in self.__graph.vs[i].attributes() \
-                        or self.__graph.vs[i][_LocalAttribute.degree.name] is None:
-                    self.__graph.vs[i][_LocalAttribute.degree.name] = self.__graph.degree(vertices=i)
-            return self.__graph.vs.select(index_list)[_LocalAttribute.degree.name]
+        return graph.transitivity_local_undirected(vertices=nodes, mode="zero") \
+            if nodes \
+            else graph.transitivity_local_undirected(mode="zero")
 
+    @staticmethod
+    @check_graph_consistency
+    @vertex_doctor
+    def closeness(graph: Graph, nodes=None) -> list:
+        """
+        Computes the *closeness* of a node or of a list of nodes of an undirected graph.
+        The closeness is defined as the sum of the length of the shortest paths passing through the node
+        over the length of all shortest paths in the graph.
+        :param igraph.Graph graph: an igraph.Graph object. The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
+        (default), the index is computed for all nodes of the graph.
+        :return: a list of floats, the length being the number of input nodes. Each float represents the closeness
+        of the input node. The order of the node list in input is preserved.
+        """
+
+        return graph.closeness(vertices=nodes) if nodes else graph.closeness()
+
+    @staticmethod
+    @check_graph_consistency
+    @vertex_doctor
+    def eccentricity(graph: Graph, nodes=None) -> list:
+        """
+        Computes the *eccentricity* of a node or of a list of nodes of an undirected graph.
+        The eccentricity is defined as the maximum of all the distances (shortest paths) between the input node
+        and all other nodes in the graph. The eccentricity of any two disconnected nodes is defined as zero.
+        :param igraph.Graph graph: an igraph.Graph object. The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
+        (default), the index is computed for all nodes of the graph.
+        :return: a list of integers, the length being the number of input nodes. Each value represents the eccentricity
+        of the input node. The order of the node list in input is preserved.
+        """
+
+        return list(map(int, graph.eccentricity(vertices=nodes))) if nodes else list(map(int, graph.eccentricity()))
+
+    @staticmethod
+    @check_graph_consistency
+    @vertex_doctor
+    def radiality(graph: Graph, nodes=None, cmode: CmodeEnum=CmodeEnum.igraph) -> list:
+        """
+        Compute the *radiality* of a node or of a list of nodes of an undirected graph.
+        The radiality of a node *v* is calculated by first computing the shortest path between *v* and all other nodes
+        in the graph. The length of each path is then subtracted from the diameter +1. The resulting values are
+        then added and divided by the number of nodes -1 (n-1).
+        **WARNING:** Radiality works well with connected graph. If a node is isolated, its radiality is
+        always *-inf*. If a graph is made of more than one component, we recommend using the *radiality_reach*
+        method.
+        :param igraph.Graph graph: an igraph.Graph object. The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
+        (default), the index is computed for all nodes of the graph.
+        :param cmode: The available computing modes of the shortest paths. Choices are:
+        * **`igraph`**: use the Dijsktra's algorithm implemented in iGraph
+        * **`parallel_CPU`**: use a parallel implementation of the Floyd-Warshall algorithm running on CPU using Numba
+        * **`parallel_GPU`**: use a parallel implementation of the Floyd-Warshall algorithm running on GPU using Numba
+        **CAUTION:**(requires NVIDIA-compatible graphics cards)
+        :return: a list of floats, the length being the number of input nodes. Each float represents the radiality
+        of the input node. The order of the node list in input is preserved.
+        """
+
+        diameter_plus_one = graph.diameter() + 1
+        num_nodes_minus_one = graph.vcount() - 1
+        rad_list = []
+
+        from algorithms.shortest_path import ShortestPath  # TODO: temporarily here to fix circular dependencies
+        sps = ShortestPath.get_shortestpaths(graph, nodes=nodes, cmode=cmode)
+        for sp in sps:
+            partial_sum = sum(diameter_plus_one - distance for distance in sp if distance != 0)
+            rad_list.append(round(float(partial_sum / num_nodes_minus_one), 5))
+
+        return rad_list
+
+    @staticmethod
+    @check_graph_consistency
+    @vertex_doctor
+    def radiality_reach(graph: Graph, nodes=None, cmode=CmodeEnum.igraph) -> list:
+        """
+        Compute the *radiality-reach* of a node or of a list of nodes of an undirected graph.
+        The radiality-reach is a weighted version of the canonical radiality measure and it is recommended for
+        disconnected graphs. Specifically, if a graph has more than one components, we calculate the radiality for each
+        node within its component, then we multiply the radiality value by the proportion of nodes of that component
+        over all nodes in the graph. Hence, the radiality-reach of a graph with only one component will be equal to the
+        radiality, while a graph with several components will have several radiality values.
+        :param igraph.Graph graph: an igraph.Graph object. The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
+        (default), the index is computed for all nodes of the graph.
+        :param cmode: The available computing modes of the shortest paths. Choices are:
+        * **`igraph`**: use the Dijsktra's algorithm implemented in iGraph
+        * **`parallel_CPU`**: use a parallel implementation of the Floyd-Warshall algorithm running on CPU using Numba
+        * **`parallel_GPU`**: use a parallel implementation of the Floyd-Warshall algorithm running on GPU using Numba
+        **CAUTION:**(requires NVIDIA-compatible graphics cards)
+        :return: a list of floats, the length being the number of input nodes. Each float represents the radiality-reach
+        of the input node. The order of the node list in input is preserved.
+        """
+        comps = graph.components()  # define the cases
+        if len(comps) == 1:
+            return LocalTopology.radiality(graph=graph, nodes=nodes, cmode=cmode)
         else:
+            tot_nodes = graph.vcount()
+            if nodes is None:
+                result = [None] * tot_nodes
 
-            if recalculate or _LocalAttribute.degree.name not in self.__graph.vs().attributes() \
-                    or None in self.__graph.vs()[_LocalAttribute.degree.name]:
-                self.logger.info("Calculating the degree of all nodes")
-                self.__graph.vs[_LocalAttribute.degree.name] = self.__graph.degree(self.__graph.vs.indices)
+                for c in comps:
+                    subg = graph.induced_subgraph(vertices=c)
 
-            return self.__graph.vs[_LocalAttribute.degree.name]
-
-    def betweenness(self, index_list=None, recalculate=False):
-        """
-        Computes the betweenness of every node in the graph, or of a specified list of nodes
-        
-        :param list[int] index_list: List of node indices
-        :param bool recalculate: If True, the betweenness is recalculated regardless if it had been already computed
-        :return: - A list containing the betweenness values of the specified node indices. If an index is not specified, it returns a list of betweenness values for all nodes contained in the graph
-        :raises WrongArgumentError: When the input node index does not exist
-        """
-
-        if index_list is not None:
-            self.__graph_utils.check_index_list(index_list=index_list)
-            self.logger.info("Calculating the betweenness of nodes {}".format(index_list))
-            for i in index_list:
-                if recalculate or _LocalAttribute.betweenness.name not in self.__graph.vs[i].attributes() \
-                        or self.__graph.vs[i][_LocalAttribute.betweenness.name] is None:
-                    self.__graph.vs[i][_LocalAttribute.betweenness.name] = self.__graph.betweenness(vertices=i,
-                                                                                                    directed=False)
-                pass
-
-            return self.__graph.vs.select(index_list)[_LocalAttribute.betweenness.name]
-
-        else:
-
-            if recalculate or _LocalAttribute.betweenness.name not in self.__graph.vs().attributes() \
-                    or None in self.__graph.vs()[_LocalAttribute.betweenness.name] is None:
-                self.logger.info("Calculating the betweenness of all nodes")
-                self.__graph.vs[_LocalAttribute.betweenness.name] = self.__graph.betweenness(directed=False)
-
-            return self.__graph.vs[_LocalAttribute.betweenness.name]
-
-    def clustering_coefficient(self, index_list=None, recalculate=False):
-        """
-        Computes the clustering coefficient of every node in the graph, or of a specified list of nodes
-        
-        :param list[int] index_list: List of node indices
-        :param bool recalculate: If True, the clustering coefficient is recalculated regardless if it had been already computed
-        :return: - A list containing the clustering coefficient values of the specified node indices. If an index is not specified, it returns a list of clustering coefficient values for all nodes contained in the graph
-        :raises WrongArgumentError: When the input node index does not exist
-        """
-        if index_list is not None:
-            self.__graph_utils.check_index_list(index_list=index_list)
-            self.logger.info("Calculating the clustering coefficient of nodes {}".format(index_list))
-            for i in index_list:
-                if recalculate or _LocalAttribute.clustering_coefficient.name not in self.__graph.vs[i].attributes() \
-                        or self.__graph.vs[i][_LocalAttribute.clustering_coefficient.name] is None:
-                    self.__graph.vs[i][
-                        _LocalAttribute.clustering_coefficient.name] = self.__graph.transitivity_local_undirected(
-                        mode="zero", vertices=i)
-            return self.__graph.vs.select(index_list)[_LocalAttribute.clustering_coefficient.name]
-
-        else:
-
-            if recalculate or _LocalAttribute.clustering_coefficient.name not in self.__graph.vs().attributes() \
-                    or None in self.__graph.vs()[_LocalAttribute.clustering_coefficient.name] is None:
-                self.logger.info("Calculating the clustering coefficient of all nodes")
-                self.__graph.vs[
-                    _LocalAttribute.clustering_coefficient.name] = self.__graph.transitivity_local_undirected(
-                    mode="zero")
-
-            return self.__graph.vs[_LocalAttribute.clustering_coefficient.name]
-
-    def closeness(self, index_list=None, recalculate=False):
-        """
-        Computes the closeness of every node in the graph, or of a specified list of nodes
-        
-        :param list[int] index_list: List of node indices
-        :param bool recalculate: If True, the closeness is recalculated regardless if it had been already computed
-        :return: - A list containing the closeness values of the specified node indices. If an index is not specified, it returns a list of closeness values for all nodes contained in the graph
-        :raises WrongArgumentError: When the input node index does not exist
-        """
-
-        if index_list is not None:
-            self.__graph_utils.check_index_list(index_list=index_list)
-            self.logger.info("Calculating the closeness of nodes {}".format(index_list))
-            for i in index_list:
-                if recalculate or _LocalAttribute.closeness.name not in self.__graph.vs[i].attributes() \
-                        or self.__graph.vs[i][_LocalAttribute.closeness.name] is None:
-                    self.__graph.vs[i][_LocalAttribute.closeness.name] = self.__graph.closeness(vertices=i)
-            return self.__graph.vs.select(index_list)[_LocalAttribute.closeness.name]
-
-        else:
-
-            if recalculate or _LocalAttribute.closeness.name not in self.__graph.vs().attributes() \
-                    or None in self.__graph.vs()[_LocalAttribute.closeness.name] is None:
-                self.logger.info("Calculating the closeness of all nodes")
-                self.__graph.vs[_LocalAttribute.closeness.name] = self.__graph.closeness()
-
-            return self.__graph.vs[_LocalAttribute.closeness.name]
-
-    def eccentricity(self, index_list=None, recalculate=False):
-        """
-        Computes the eccentricity of every node in the graph, or of a specified list of nodes
-        
-        :param list[int] index_list: List of node indices
-        :param bool recalculate: If True, the eccentricity is recalculated regardless if it had been already computed
-        :return: - A list containing the eccentricity values of the specified node indices. If an index is not specified, it returns a list of eccentricity values for all nodes contained in the graph
-        :raises WrongArgumentError: When the input node index does not exist
-        """
-
-        if index_list is not None:
-            self.__graph_utils.check_index_list(index_list=index_list)
-            self.logger.info("Calculating the eccentricity of nodes {}".format(index_list))
-            for i in index_list:
-                if recalculate or _LocalAttribute.eccentricity.name not in self.__graph.vs[i].attributes() \
-                        or self.__graph.vs[i][_LocalAttribute.eccentricity.name] is None:
-                    self.__graph.vs[i][_LocalAttribute.eccentricity.name] = self.__graph.eccentricity(vertices=i)
-            return self.__graph.vs.select(index_list)[_LocalAttribute.eccentricity.name]
-
-        else:
-
-            if recalculate or _LocalAttribute.eccentricity.name not in self.__graph.vs().attributes() \
-                    or None in self.__graph.vs()[_LocalAttribute.eccentricity.name] is None:
-                self.logger.info("Calculating the eccentricity of all nodes")
-                self.__graph.vs[_LocalAttribute.eccentricity.name] = self.__graph.eccentricity()
-
-            return self.__graph.vs[_LocalAttribute.eccentricity.name]
-
-    def shortest_path_igraph(self, index_list=None, recalculate=False):
-        """
-        Calculates the shortest path lengths between all (or a specified list of) nodes in the graph and every other nodes
-        
-        :param list[int] index_list: List of node indices
-        :param bool recalculate: If True, the eccentricity is recalculated regardless if it had been already computed
-        :return: - A list containing the shortest paths of the specified node indices. If an index is not specified, it returns a list of shortest paths from all nodes of the graph
-        :raises WrongArgumentError: When the input node index does not exist
-        """
-
-        if index_list is not None:
-            self.__graph_utils.check_index_list(index_list=index_list)
-            self.logger.info("Calculating the shortest paths from nodes {}".format(index_list))
-            for i in index_list:
-                if recalculate or _LocalAttribute.shortest_path.name not in self.__graph.vs[i].attributes() \
-                        or self.__graph.vs[i][_LocalAttribute.shortest_path.name] is None:
-                    self.__graph.vs[i][_LocalAttribute.shortest_path.name] = self.__graph.shortest_paths(source=i)[0]
-
-            return self.__graph.vs.select(index_list)[_LocalAttribute.shortest_path.name]
-
-        else:
-            if recalculate or _LocalAttribute.shortest_path.name not in self.__graph.vs().attributes() \
-                    or None in self.__graph.vs()[_LocalAttribute.shortest_path.name] is None:
-                self.logger.info("Calculating the shortest paths from all nodes")
-                self.__graph.vs[_LocalAttribute.shortest_path.name] = self.__graph.shortest_paths()
-
-            return self.__graph.vs[_LocalAttribute.shortest_path.name]
-
-    def radiality(self, index_list=None, recalculate=False):
-        """
-        Computes the radiality of every node in the graph, or of a specified list of nodes. The radiality of a node v
-        is calculated by computing the shortest path between the node v and all other nodes in the graph. The value
-        of each path is then subtracted by the value of the diameter + 1 and the resulting values are summated.
-        Finally, the obtained value is divided for the number of nodes -1 (n-1).
-        
-        :param list[int] index_list: List of node indices
-        :param bool recalculate: If True, the eccentricity is recalculated regardless if it had been already computed
-        :return: - A list containing the radiality values of the specified node indices. If an index is not specified, it returns a list of radiality values for all nodes contained in the graph
-        :raises WrongArgumentError: When the input node index does not exist
-        """
-
-        gt = global_topology.GlobalTopology(graph=self.__graph)
-        diameter = gt.diameter()
-        num_nodes = self.__graph.vcount()
-
-        if index_list is not None:
-            self.__graph_utils.check_index_list(index_list=index_list)
-
-            self.logger.info("Calculating the radiality of nodes {}".format(index_list))
-            shortest_path_lengths = self.shortest_path_igraph(recalculate=True)
-
-            for i in index_list:
-                if recalculate or _LocalAttribute.radiality.name not in self.__graph.vs[i].attributes() \
-                        or self.__graph.vs[i][_LocalAttribute.radiality.name] is None:
-
-                    partial_sum = 0
-
-                    for sp_length in shortest_path_lengths[i]:
-                        if sp_length != 0:  # skip itself
-                            partial_sum += diameter + 1 - sp_length
-                    self.__graph.vs[i][_LocalAttribute.radiality.name] = float(partial_sum) / (num_nodes - 1)
-
-            return self.__graph.vs.select(index_list)[_LocalAttribute.radiality.name]
-
-        else:
-            shortest_path_lengths = self.shortest_path_igraph(recalculate=True)
-            self.logger.info("Calculating the radiality of all nodes")
-
-            for i in self.__graph.vs.indices:
-                if recalculate or _LocalAttribute.radiality.name not in self.__graph.vs().attributes() \
-                        or None in self.__graph.vs()[_LocalAttribute.radiality.name]:
-
-                    partial_sum = 0
-
-                    for sp_length in shortest_path_lengths[i]:
-                        if sp_length != 0:  # skip itself
-                            partial_sum += diameter + 1 - sp_length
-                    self.__graph.vs[i][_LocalAttribute.radiality.name] = float(partial_sum) / (num_nodes - 1)
-
-            return self.__graph.vs[_LocalAttribute.radiality.name]
-
-    def radiality_reach(self, index_list=None, recalculate=False):
-        """
-        Computes a modified version of the radiality in which the radiality is computer for each component and then
-        weighted over the proportion of nodes present in that component with respect
-        to the total number of nodes in the graph. This ensures that the radiality **[EXPAND]**
-        
-        :param index_list:
-        :param recalculate:
-        :return:
-        """
-
-        comps = self.__graph.components()
-        total_nodes = self.__graph.vcount()
-
-        if index_list is not None:
-            self.__graph_utils.check_index_list(index_list=index_list)
-
-            self.logger.info("Calculating the radiality reach of nodes {}".format(index_list))
-
-            for i in index_list:
-                # print(i)
-
-                if recalculate or _LocalAttribute.radiality_reach.name not in self.__graph.vs[i].attributes() \
-                        or self.__graph.vs[i][_LocalAttribute.radiality_reach.name] is None:
-
-                    for ind, c in enumerate(comps): #find the corresponding index of the component
-                        if i in c:
-                            subg_ind = c.index(i)
-                            comp_ind = ind
-                            break
-
-                    subg = self.__graph.induced_subgraph(vertices=comps[comp_ind])
-
-                    if subg.ecount() > 0:  # control that the component is not made of node isolates
-
-                        gt = global_topology.GlobalTopology(graph=subg)
-                        num_nodes = subg.vcount()
-                        diameter = gt.diameter()
-
-                        shortest_path_lengths = subg.shortest_paths(source=subg_ind)[0]
-                        #print(shortest_path_lengths)
-
-                        partial_sum = 0
-
-                        for sp_length in shortest_path_lengths:
-                            if sp_length != 0:  # skip itself
-                                partial_sum += diameter + 1 - sp_length
-
-
-                        # print(float(partial_sum) / (num_nodes - 1))
-                        # print((num_nodes/total_nodes))
-                        radiality_reach = (float(partial_sum) / (num_nodes - 1)) * (num_nodes/total_nodes)
-                        # print(radiality_reach)
-
-                        self.__graph.vs[i][_LocalAttribute.radiality_reach.name] = radiality_reach
+                    if subg.ecount() == 0:  # isolates do not have a radiality-reach value by definition
+                        rad = [0]
                     else:
-                        self.__graph.vs[i][_LocalAttribute.radiality_reach.name] = 0 #when the node is an isolate, the radiality reach of that node is 0
-                        #todo discuss this with tommaso  (especially for average radiality reach)
+                        part_nodes = subg.vcount()
+                        rad = LocalTopology.radiality(graph=subg, nodes=nodes, implementation=cmode)
 
-            return self.__graph.vs.select(index_list)[_LocalAttribute.radiality_reach.name]
+                        # rebalance radiality by weighting it over the total number of nodes
+                        proportion_nodes = part_nodes / tot_nodes
+                        rad = [r * proportion_nodes for r in rad]
 
-        else:
-            self.logger.info("Calculating the radiality_reach of all nodes")
-            #print(None in self.__graph.vs()[LocalAttribute.radiality_reach.name])
+                    for i, ind in enumerate(c):
+                        result[ind] = rad[i]
 
-            if recalculate or _LocalAttribute.radiality_reach.name not in self.__graph.vs().attributes() \
-                    or None in self.__graph.vs()[_LocalAttribute.radiality_reach.name]:
+                return result
+            else:
+                result = [None] * len(nodes)
+                inds = gUtil(graph=graph).get_node_indices(nodes)
 
-                for ind, elem in enumerate(comps):
+                for c in comps:
+                    if any(x in c for x in inds):
+                        node_names = list(set(nodes) & set(graph.vs(c)["name"]))
+                        subg = graph.induced_subgraph(vertices=c)
+                        part_nodes = subg.vcount()
+                        rad = LocalTopology.radiality(graph=subg, nodes=node_names, implementation=cmode)
 
-                    subg = self.__graph.induced_subgraph(vertices=elem)
+                        proportion_nodes = part_nodes / tot_nodes
+                        rad = [r * proportion_nodes for r in rad]
 
-                    if subg.ecount() > 0: #control that the component is not made of node isolate#
+                        for i, elem in enumerate(node_names):
+                            orig_index = nodes.index(elem)
+                            result[orig_index] = rad[i]
+                return result
 
-                        gt = global_topology.GlobalTopology(graph=subg)
-
-                        num_nodes = subg.vcount()
-
-                        diameter = gt.diameter()
-
-                        shortest_path_lengths = subg.shortest_paths()
-                        #print (shortest_path_lengths[:3])
-
-                        for i in subg.vs.indices:
-
-                                partial_sum = 0
-
-                                for sp_length in shortest_path_lengths[i]:
-                                    if sp_length != 0:  # skip itself
-                                        partial_sum += diameter + 1 - sp_length
-
-                                correct_ind = self.__graph.vs(comps[ind][i])[0].index
-                                # print(float(partial_sum) / (num_nodes - 1))
-                                # print(num_nodes / total_nodes)
-                                radiality_reach = (float(partial_sum) / (num_nodes - 1)) * (num_nodes / total_nodes)
-
-                                self.__graph.vs[correct_ind][_LocalAttribute.radiality_reach.name] = radiality_reach
-
-                    else:
-                        self.__graph.vs[elem[0]][_LocalAttribute.radiality_reach.name] = 0
-
-            return self.__graph.vs[_LocalAttribute.radiality_reach.name]
-
-    def eigenvector_centrality(self, scaled=False, recalculate=False, index_list=None):
+    @staticmethod
+    @check_graph_consistency
+    @vertex_doctor
+    def eigenvector_centrality(graph, nodes, scaled=False):
         """
-        Calculates the eigenvector centrality between all  nodes in the graph using igraph builtin operators (Igraph.evc)
-        
-        :param bool scaled: whether to normalize the eigenvector centrality (1/eigenvector value)
-        :param bool recalculate: If True, the eccentricity is recalculated regardless if it had been already computed
-        :return: A list containing the radiality values of the specified node indices. If an index is not specified, it returns a list of radiality values for all nodes contained in the graph
-        :raises WrongArgumentError: if the input is not an igraph Graph object
+        Calculate the *eigenvector* centrality of a node or of a list of nodes of an undirected graph.
+        The eigenvector centrality is defined as the contribution of the leading eigenvector for a node among all the
+        other nodes in the graph. It measures the importance of a node with respect to its neighbours.
+        :param igraph.Graph graph: an igraph.Graph object. The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
+        (default), the index is computed for all nodes of the graph.
+        :param bool scaled: a boolean value to scale the eigenvector centrality using the reciprocal of the eigenvector
+        (1/eigenvector). Default is False.
+        :return: a list of floats, the length being the number of input nodes. Each float represents the eigenvector
+        of the input node. The order of the node list in input is preserved.
         """
-
         if not isinstance(scaled, bool):
-            raise ValueError("\"scaled\" parameter is not a boolean")
-
-        if index_list is not None:
-            self.__graph_utils.check_index_list(index_list=index_list)
-            self.logger.info("Calculating the radiality of nodes {}".format(index_list))
-            ec = Graph.evcent(self.__graph, directed=False, scale=scaled)
-            for i in index_list:
-                if recalculate or _LocalAttribute.eigenvector_centrality.name not in self.__graph.vs[i].attributes() or \
-                                self.__graph.vs[i][_LocalAttribute.eigenvector_centrality.name] is None:
-                    self.__graph.vs(i)[_LocalAttribute.eigenvector_centrality.name] = ec[i]
-
-            return self.__graph.vs.select(index_list)[_LocalAttribute.eigenvector_centrality.name]
-
+            raise ValueError("'scaled' must be a boolean value (True or False)")
+        elif nodes is None:
+            evcent = graph.evcent(directed=False, scale=scaled)
+            return [round(e, 5) for e in evcent]
         else:
-            if recalculate or _LocalAttribute.eigenvector_centrality.name not in self.__graph.vs.attributes() or None in \
-                    self.__graph.vs()[_LocalAttribute.eigenvector_centrality.name]:
-                self.logger.info("Calculating the eigenvector centrality of all nodes")
-                ec = Graph.evcent(self.__graph, directed=False, scale=scaled)
-                for i, elem in enumerate(ec):
-                    self.__graph.vs()[_LocalAttribute.eigenvector_centrality.name] = elem
+            inds = gUtil(graph=graph).get_node_indices(nodes)
+            evcent = graph.evcent(directed=False, scale=scaled)
+            evcent_values = [round(evcent[i], 5) for i in inds]
+            return evcent_values
 
-            return self.__graph.vs[_LocalAttribute.eigenvector_centrality.name]
-
-    def pagerank(self, index_list=None, weights=None, damping=0.85, recalculate=False):
+    @staticmethod
+    @check_graph_consistency
+    @vertex_doctor
+    def pagerank(graph: Graph, nodes=None, weights=None, damping=0.85) -> list:
         """
-        Computes the pagerank index of every node in the graph, or of a specified list of nodes
-        
-        :param list[int] index_list: List of node indices
-        :param bool recalculate: If True, the pagerank is recalculated regardless if it had been already computed
-        :param int damping: a proposed damping factor
-        :param list[int,float] weights: a list of edge weights to apply to the pagerank algorithm
-        :return: A list containing the pagerank values of the specified node indices. If an index is not specified, it returns a list of pagerank values for all nodes contained in the graph
-        :raises WrongArgumentError: When the input node index does not exist
-        :raises IllegalSizeArgument: if the weights length does not match the total size of the nodes
+        Compute the *Google PageRank* algorithm of a node or of a list of nodes of an undirected graph.
+        The PageRank algorithm is a modified version of the eigenvector centrality. The importance of a node is here a
+        function of the number of issuing edges and the importance of the neighbour nodes. A likelihood distribution
+        is computed to check what is the chance that a random walk passes through the selected node(s). The higher is
+        the centrality of the node, the higher is the probability of passing through it.
+        For more info, please refer to http://infolab.stanford.edu/~backrub/google.html
+        :param graph: an igraph.Graph object. The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
+        (default), the index is computed for all nodes of the graph.
+        :param weights: a list of float numbers less or equal than the total number of edges.
+        :param damping: a damping factor representing the probability to reset the random walk distribution at each
+        pagerank iteration. Default is 0.85.
+        :return: a list of floats, the length being the number of input nodes. Each float represents the PageRank
+        of the input node. The order of the node list in input is preserved.
         """
-
-        if weights:
+        if weights is not None:
             if not isinstance(weights, list):
-                raise WrongArgumentError("weights must be a list")
+                raise TypeError("'weights' must be a list of floats")
+            if not all(isinstance(x, (float, type(None))) for x in weights):
+                raise ValueError("'weights' must be a list of floats")
+            if len(weights) > graph.ecount():
+                raise ValueError("The 'weights' must be equal or less than the total number of edges")
 
-            if len(weights) != self.__graph.ecount():
-                raise AttributeError("weights must have the same length of number of edges")
+        if not (isinstance(damping, (float, int)) or (damping < 0)):
+            raise ValueError("Damping factor must be a float >= 0")
+        
+        if nodes is not None:
+            nodes = gUtil(graph).get_node_indices(nodes)
 
-            for w in weights:
-                try:
-                    w = float(w)
-
-                except TypeError:
-                    self.logger.info("weight is {0}, keeping it a {1}".format(w, type(w).__name__))
-
-                except ValueError:
-                    self.logger.error("weight is {}, cannot convert to float.")
-                    raise WrongArgumentError("one of the weights cannot be converted to float")
-
-        if not isinstance(damping, (int, float)):
-            if not damping > 0 or not damping <= 1:
-                raise ValueError("Damping must be between 0.1 and 1")
-
-        if index_list is not None:
-            self.__graph_utils.check_index_list(index_list=index_list)
-
-            self.logger.info("Calculating the pagerank of nodes {}".format(index_list))
-
-            if recalculate or _LocalAttribute.pagerank.name not in self.__graph.vs(index_list).attributes() or None in \
-                    self.__graph.vs(index_list)[_LocalAttribute.pagerank.name]:
-
-                if weights:
-
-                    if damping != 0.85:
-                        self.logger.info("using the specified damping factor (default is 0.85)")
-                        self.__graph.vs[_LocalAttribute.pagerank.name] = Graph.pagerank(self.__graph,
-                                                                                        vertices=index_list,
-                                                                                        directed=False,
-                                                                                        damping=damping,
-                                                                                        weights=weights)
-
-                    else:
-
-                        self.__graph.vs[_LocalAttribute.pagerank.name] = Graph.pagerank(self.__graph, directed=False,
-                                                                                        vertices=index_list,
-                                                                                        weights=weights)
-
-                else:
-                    if damping != 0.85:
-                        self.logger.info("using the specified damping factor (default is 0.85)")
-                        self.__graph.vs[_LocalAttribute.pagerank.name] = Graph.pagerank(self.__graph,
-                                                                                        vertices=index_list,
-                                                                                        directed=False,
-                                                                                        damping=damping)
-                    else:
-                        self.__graph.vs[_LocalAttribute.pagerank.name] = Graph.pagerank(self.__graph,
-                                                                                        vertices=index_list,
-                                                                                        directed=False)
-
-            return self.__graph.vs.select(index_list)[_LocalAttribute.pagerank.name]
-
-        else:
-            if recalculate or _LocalAttribute.pagerank.name not in self.__graph.vs.attributes() or None in \
-                    self.__graph.vs()[_LocalAttribute.pagerank.name]:
-
-                self.logger.info("Calculating the pagerank for all nodes")
-
-                if weights:
-
-                    if len(weights) != self.__graph.ecount():
-                        raise ValueError("Weights list does not matches the total number of nodes")
-
-                    else:
-                        if damping != 0.85:
-                            self.logger.info("using the specified damping factor (default is 0.85)")
-                            self.__graph.vs[_LocalAttribute.pagerank.name] = Graph.pagerank(self.__graph, directed=False,
-                                                                                            damping=damping,
-                                                                                            weights=weights)
-                        else:
-                            self.__graph.vs[_LocalAttribute.pagerank.name] = Graph.pagerank(self.__graph, directed=False,
-                                                                                            weights=weights)
-
-                else:
-                    if damping != 0.85:
-                        self.logger.info("using the specified damping factor (default is 0.85)")
-                        self.__graph.vs[_LocalAttribute.pagerank.name] = Graph.pagerank(self.__graph, directed=False,
-                                                                                        damping=damping)
-                    else:
-                        self.__graph.vs[_LocalAttribute.pagerank.name] = Graph.pagerank(self.__graph, directed=False)
-
-            return self.__graph.vs[_LocalAttribute.pagerank.name]
+        return graph.pagerank(vertices=nodes, damping=damping, directed=False, weights=weights, implementation="arpack")

@@ -1,4 +1,4 @@
-__author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
+__author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.1"
@@ -26,19 +26,30 @@ __license__ = u"""
 
 import logging
 import datetime
-import importlib
-import seaborn as sns
 import threading
 import time
-import sys
-import os
+from numba import cuda
+from numba.config import *
+from multiprocessing import cpu_count
+from psutil import virtual_memory
+import seaborn as sns
+import importlib
 
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.ERROR, format="%(asctime)s - %(levelname)s - %(message)s")
 format_dictionary = {"adjmat": "adjm", "edgelist": "egl", "sif": "sif", "dot": "dot", "bin": "graph", "adjm": "adjm",
                      "graph": "graph", "edgl": "egl", "egl": "egl", "binary": "bin", "adjacencymatrix": "adjm",
                      "edge_list": "egl", "adjacency_matrix": "adjm"}
-runtime_date = datetime.datetime.now().strftime("%d%m%Y%H%M")
+report_format = {"tsv" : "tsv", "txt": "tsv", "csv" : "csv", "xlsx" : "xlsx", "xlx": "xlsx"}
+
+runtime_date = datetime.datetime.now().strftime("%d-%m-%Y_%I:%M")
+
+# Add system info
+n_cpus = cpu_count()-1 # Leaving one thread out
+NUMBA_NUM_THREADS = n_cpus
+mem = virtual_memory().total
+cuda_avail = cuda.is_available()
+threadsperblock = 32
 
 
 class CursorAnimation(threading.Thread):

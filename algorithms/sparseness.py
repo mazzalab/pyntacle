@@ -1,21 +1,19 @@
-'''
-this module implements several implementations of a sparseness index as proposed by two publications
-'''
+"""
+Measure the global sparseness of graphs.
+Read the section "TOOLS FOR ESTIMATING THE DIVISIBILITY OF NETWORKS" of the paper entitled "Estimating the
+divisibility of complex biological networks by sparseness indices" available at
+https://doi.org/10.1093/bib/bbp060 for a quick overview
+"""
 
-from enum import Enum
-from exceptions.illegal_graph_size_error import IllegalGraphSizeError
-import igraph
-import math
-from config import *
 
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "27 February 2018"
+__date__ = "13/04/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -35,128 +33,125 @@ __license__ = u"""
   """
 
 
-class _SparsenessAttribute(Enum):
-    completeness_legacy = 0
-    compactness = 1
-    completeness = 2
+import math
+from tools.misc.graph_routines import *
 
 
 class Sparseness:
-    '''
-    Computes the completeness index of a graph or subgraph according to two different theories proposed
-    '''
-    __graph = None
-    """:type: Graph"""
-    logger = None
-    """:type: Logger"""
-
-    def __init__(self, graph):
+    @staticmethod
+    @check_graph_consistency
+    def completeness_naive(graph) -> float:
         """
-        Initializes a graph for local properties calculation
-
-        :param Graph graph: Graph provided in input
-        :raises IllegalGraphSizeError: if graph does not contain vertices or edges
+        Compute the naive version of the completeness index, as described by Mazza *et al.* [Ref]_.
+        They define completeness as the the ratio between the number of non-zero *E* and zero *V* entries in the
+        adjacency matrix of a graph.
+        [Ref] https://doi.org/10.1093/bib/bbp060
+        :param igraph.Graph graph: an igraph.Graph object.
+        :return: The naive computation of the completeness index
         """
-        self.logger = log
 
-        if graph.vcount() < 1:
-            self.logger.fatal("This graph does not contain vertices")
-            raise IllegalGraphSizeError("This graph does not contain vertices")
-        elif graph.ecount() < 1:
-            self.logger.fatal("This graph does not contain edges")
-            raise IllegalGraphSizeError("This graph does not contain edges")
+        # total number of non-zero elements (E)
+        if graph.is_directed():
+            num = graph.ecount()
         else:
-            self.__graph = graph
+            num = graph.ecount()*2
 
-    def get_graph(self):
-        """
-        Returns the graph
-
-        :return: - A Graph data structure
-        """
-        return self.__graph
-
-    def set_graph(self, graph, deepcopy=False):
-        """
-        Replaces the internal graph object with a new one
-
-        :param igraph.Graph graph: igraph.Graph object provided in input
-        :param bool deepcopy: Flag determining shallow or deep copy of attributes of the graph
-        """
-        if not deepcopy:
-            for elem in graph.attributes():
-                del graph[elem]
-        self.__graph = graph
-
-    def name_to_id(self, node_name):
-        """
-        Retrieves the node index given the node name or index
-        """
-        if not isinstance(node_name, str) and isinstance(node_name, int):
-            return -1
+        # total number of possible edges (self-loops excluded)
+        node_tot = graph.vcount()
+        if graph.is_directed():
+            maxe = (node_tot * (node_tot - 1)) / 2
         else:
-            if isinstance(node_name, str):
-                return self.__graph.select(node_id=node_name)[0].index
-            return node_name
+            maxe = node_tot * (node_tot - 1)
 
-    def completeness_legacy(self, recalculate=False):
-        '''
-        Compute the completeness index as described by Mazza et al for an undirected graph.
-        Completeness is defined as the total number of edges / the total number of nonedges among all possible edges
+        # total number of non-edges (V)
+        denom = maxe - num
+        if denom == 0:
+            return 1
+        else:
+            completeness = num / denom
+            return round(completeness, 5)
 
-        :param recalculate: boolean; whether to recalculate the index or not for the whole graph
-        :return: The completeness index of the graph
-        '''
-        self.logger.info("computing the completeness as described by Mazza et al")
-        if recalculate or _SparsenessAttribute.completeness_legacy not in self.__graph.attributes():
-            # get the total number of nonzero elements in an adjacency matrix
-            num = self.__graph.ecount()  # total number of real edges
-            tote = (self.__graph.vcount() * (self.__graph.vcount() - 1)) / 2
-            denom = tote - self.__graph.ecount()  # total number of non-edges
-            if denom == 0:
-                raise ZeroDivisionError("the graph is complete, thus the completeness index is out of bound")
+    @staticmethod
+    @check_graph_consistency
+    def completeness(graph) -> float:
+        """
+        This is a rigorous refinement of the completeness index published in [Ref1]_. It can be applied to matrix
+        not necessarily squared and is calculated as:
+        *rho = (SQRT(k) -1) * (k/z -1)*, where *k = m*n*, *m* = number of rows, *n* = number of columns and
+        *z* = number of zero elements of a matrix.
+        We refer to the paper entitled "Estimating the global density of graphs by a sparseness index" [Ref2]_
+        for details
+        [Ref1] https://doi.org/10.1093/bib/bbp060
+        [Ref2] https://doi.org/10.1016/j.amc.2013.08.040
+        :param igraph.Graph graph: an igraph.Graph object.
+        :return: The completeness index
+        """
 
-            self.__graph[_SparsenessAttribute.completeness_legacy.name] = num / denom
+        node_tot = graph.vcount()
+        k = math.pow(node_tot, 2)
+        # (SQRT(k) -1)
+        addend_left = node_tot - 1
+        # number of zeros in the matrix
+        if graph.is_directed():
+            z = k - graph.ecount()
+        else:
+            z = k - (graph.ecount() * 2)
 
-        return self.__graph[_SparsenessAttribute.completeness_legacy.name]
+        #  If the graph is complete
+        if z == 0:
+            return 1
+        else:
+            addend_right = (k / z) - 1
+            completeness = addend_left * addend_right
+            return round(completeness, 5)
 
-    def compactness(self, recalculate=False):
-        '''
-        We implement here the compactness index as described by Randìc and DeAlba (J. Chem. Inf. Comput. Sci., 1999)
+    @staticmethod
+    @check_graph_consistency
+    def compactness(graph) -> float:
+        """
+        It computes the *compactness* index described by Randić and DeAlba [Ref]_ as:
+        (Undirected graphs) rho = ((n^2 / 2E) -1) * (1- 1/n)
+        (Directed graphs) rho = ((n^2 / E) -1) * (1- 1/n), where n is the number of nodes of the graph and
+        E is the total number of edges.
+        [Ref]https://pubs.acs.org/doi/abs/10.1021/ci970241z?journalCode=jcics1
+        :param igraph.Graph graph: an igraph.Graph object.
+        :return: The compactness index
+        """
 
-        :param recalculate: boolean; whether to recalculate the index or not for the whole graph
-        :return: The compactness value for the whole graph
-        '''
-        self.logger.info("computing the compactness as described by Randìc et al")
+        if graph.is_directed():
+            e = graph.ecount()
+        else:
+            e = graph.ecount() * 2
 
-        if recalculate or _SparsenessAttribute.compactness not in self.__graph.attributes():
-            # first part of the equation: (square of the nodes/edges*2)-1
-            a = math.pow(self.__graph.vcount(), 2)
-            b = self.__graph.ecount() * 2
-            numa = a / b - 1
-            numa = math.pow(numa, -1)
-            # second part of the equation (1-1/total number of nodes)
-            numb = 1 - (1 / self.__graph.vcount())
-            numb = math.pow(numb, -1)
-            # finally
-            self.__graph[_SparsenessAttribute.compactness.name] = numa * numb
+        node_tot = graph.vcount()
+        addend_left = (math.pow(node_tot, 2) / e) - 1
+        addend_right = 1 - (1 / node_tot)
+        compactness = addend_left * addend_right
 
-        return self.__graph[_SparsenessAttribute.compactness.name]
+        return round(compactness, 5)
 
-    def completeness(self, recalculate=False):
-        '''
-        We implement the denseness measure as implemented by XXX in Applied Mathematics **[EXPAND]**
+    @staticmethod
+    @check_graph_consistency
+    def compactness_correct(graph) -> float:
+        """
+        It computes the correct formulation of the Randić and DeAlba's *compactness* index [Ref1]_ as:
+        (Undirected graphs) rho = ((n^2 / 2E) -1)^-1 * (1- 1/n)^-1
+        (Directed graphs) rho = ((n^2 / E)^ -1)^-1 * (1- 1/n)^-1, where n is the number of nodes of the graph and
+        E is the total number of edges, as for [Ref2]_
+        [Ref1]https://pubs.acs.org/doi/abs/10.1021/ci970241z?journalCode=jcics1
+        [Ref2] https://doi.org/10.1093/bib/bbp060
+        :param igraph.Graph graph: an igraph.Graph object.
+        :return: The corrected compactness index
+        """
 
-        :param recalculate: boolean; whether to recalculate the index or not for the whole graph
-        :return: The completeness value for the whole graph
-        '''
-        if recalculate or _SparsenessAttribute.completeness not in self.__graph.attributes():
-            root_k = self.__graph.vcount()  # k is a dimension of the adjacency matrix (so the square of the vcount)
-            k = math.pow(root_k, 2)
-            first_part = root_k - 1  # (root(k)-1)
-            z = k - (self.__graph.ecount() * 2)  # number of zeros in the matrix
-            second_part = (k / z) - 1
-            denseness = first_part * second_part
-            self.__graph[_SparsenessAttribute.completeness.name] = denseness
+        if graph.is_directed():
+            e = graph.ecount()
+        else:
+            e = graph.ecount() * 2
 
-        return self.__graph[_SparsenessAttribute.completeness.name]
+        node_tot = graph.vcount()
+        addend_left = (math.pow(node_tot, 2) / e) - 1
+        addend_right = 1 - (1 / node_tot)
+        compactness = math.pow(addend_left, -1) * math.pow(addend_right, -1)
+
+        return round(compactness, 5)

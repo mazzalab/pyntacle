@@ -183,7 +183,7 @@
 <span class="sd">in the input graph, give elapsed time of execution and so on&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">exceptions.illegal_graph_size_error</span> <span class="k">import</span> <span class="n">IllegalGraphSizeError</span>
-<span class="kn">from</span> <span class="nn">exceptions.unsupported_graph_error</span> <span class="k">import</span> <span class="n">UnsupportedGrapherror</span>
+<span class="kn">from</span> <span class="nn">exceptions.unsupported_graph_error</span> <span class="k">import</span> <span class="n">UnsupportedGraphError</span>
 <span class="kn">from</span> <span class="nn">exceptions.wrong_argument_error</span> <span class="k">import</span> <span class="n">WrongArgumentError</span>
 <span class="kn">from</span> <span class="nn">config</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">utils.graph_utils</span> <span class="k">import</span> <span class="o">*</span>
@@ -217,17 +217,17 @@
             <span class="k">raise</span> <span class="n">MissingAttributeError</span><span class="p">(</span><span class="s2">&quot;Input graph does not have a </span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2"> attribute&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="kc">None</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="n">UnsupportedGrapherror</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2"> vertex attribute contains None values, all </span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2">s should &quot;</span>
+                <span class="k">raise</span> <span class="n">UnsupportedGraphError</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2"> vertex attribute contains None values, all </span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2">s should &quot;</span>
                                             <span class="s2">&quot;be initialized&quot;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])):</span>
-                <span class="k">raise</span> <span class="n">UnsupportedGrapherror</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2"> vertex attribute should be unique to each vertex&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">UnsupportedGraphError</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2"> vertex attribute should be unique to each vertex&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">Graph</span><span class="o">.</span><span class="n">is_directed</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">UnsupportedGrapherror</span><span class="p">(</span><span class="s2">&quot;Graph is direct; Pyntacle only supports direct graphs&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">UnsupportedGraphError</span><span class="p">(</span><span class="s2">&quot;Graph is direct; Pyntacle only supports direct graphs&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">Graph</span><span class="o">.</span><span class="n">is_simple</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">UnsupportedGrapherror</span><span class="p">(</span>
+            <span class="k">raise</span> <span class="n">UnsupportedGraphError</span><span class="p">(</span>
                 <span class="s2">&quot;Input Graph contains self loops or multiple edges. Pyntacle only supports simple graphs.&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -235,7 +235,7 @@
     <span class="k">return</span> <span class="n">func_wrapper</span></div>
 
 
-<div class="viewcode-block" id="vertexdoctor"><a class="viewcode-back" href="../../../pyntacle.misc.graph_routines.html#pyntacle.misc.graph_routines.vertexdoctor">[docs]</a><span class="k">def</span> <span class="nf">vertexdoctor</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<div class="viewcode-block" id="vertexdoctor"><a class="viewcode-back" href="../../../pyntacle.misc.graph_routines.html#pyntacle.misc.graph_routines.vertexdoctor">[docs]</a><span class="k">def</span> <span class="nf">vertex_doctor</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator for check whether the node name exists in a Graph and if the nodes are consisten within the graph</span>
 <span class="sd">    :param func: a function that takes in input a node name</span>

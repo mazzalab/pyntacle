@@ -189,7 +189,7 @@
 <span class="s2">  &quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="GraphSetter"><a class="viewcode-back" href="../../../pyntacle.graph_operations.set_graphs.html#pyntacle.graph_operations.set_graphs.GraphSetter">[docs]</a><span class="k">class</span> <span class="nc">GraphSetter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="GraphSetter"><a class="viewcode-back" href="../../../pyntacle.graph_operations.set_graphs.html#pyntacle.graph_operations.set_graphs.GraphSetter">[docs]</a><span class="k">class</span> <span class="nc">GraphOperations</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph1</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">graph2</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">new_name</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logging</span> <span class="o">=</span> <span class="n">log</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">graph1</span> <span class="o">=</span> <span class="n">graph1</span>
@@ -199,8 +199,8 @@
         <span class="c1"># check input graphs</span>
         <span class="n">utils1</span> <span class="o">=</span> <span class="n">GraphUtils</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">graph1</span><span class="p">)</span>
         <span class="n">utils2</span> <span class="o">=</span> <span class="n">GraphUtils</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">graph2</span><span class="p">)</span>
-        <span class="n">utils1</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
-        <span class="n">utils2</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
+        <span class="n">utils1</span><span class="o">.</span><span class="n">check_graph</span><span class="p">()</span>
+        <span class="n">utils2</span><span class="o">.</span><span class="n">check_graph</span><span class="p">()</span>
 
 <div class="viewcode-block" id="GraphSetter.union"><a class="viewcode-back" href="../../../pyntacle.graph_operations.set_graphs.html#pyntacle.graph_operations.set_graphs.GraphSetter.union">[docs]</a>    <span class="k">def</span> <span class="nf">union</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -208,7 +208,7 @@
 <span class="sd">        </span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">union_v</span><span class="p">,</span> <span class="n">union_e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_sets</span><span class="p">(</span><span class="s1">&#39;union&#39;</span><span class="p">)</span>
+        <span class="n">union_v</span><span class="p">,</span> <span class="n">union_e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_sets</span><span class="p">(</span><span class="s1">&#39;union&#39;</span><span class="p">)</span>
         <span class="n">merged_g</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">()</span>
         <span class="n">merged_g</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">newname</span><span class="p">]</span>
         <span class="n">merged_g</span><span class="o">.</span><span class="n">add_vertices</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">union_v</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
@@ -231,7 +231,7 @@
 <span class="sd">        </span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">intersect_v</span><span class="p">,</span> <span class="n">intersect_e</span><span class="p">,</span> <span class="n">union_v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_sets</span><span class="p">(</span><span class="s1">&#39;intersection&#39;</span><span class="p">)</span>
+        <span class="n">intersect_v</span><span class="p">,</span> <span class="n">intersect_e</span><span class="p">,</span> <span class="n">union_v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_sets</span><span class="p">(</span><span class="s1">&#39;intersection&#39;</span><span class="p">)</span>
 
         <span class="c1"># Intersect: to avoid isolated nodes, we take the intersection of EDGES as a reference.</span>
         <span class="c1"># Therefore, removal of nodes not involved in these edges is necessary</span>
@@ -264,7 +264,7 @@
 <span class="sd">        </span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">exclusive1_v</span><span class="p">,</span> <span class="n">exclusive1_e</span><span class="p">,</span> <span class="n">union_v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_sets</span><span class="p">(</span><span class="s1">&#39;difference&#39;</span><span class="p">)</span>
+        <span class="n">exclusive1_v</span><span class="p">,</span> <span class="n">exclusive1_e</span><span class="p">,</span> <span class="n">union_v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_sets</span><span class="p">(</span><span class="s1">&#39;difference&#39;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">exclusive1_e</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclusive1_v</span><span class="p">:</span>
@@ -309,7 +309,7 @@
         <span class="n">AddAttributes</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">exclusive_g1</span><span class="p">)</span><span class="o">.</span><span class="n">graph_initializer</span><span class="p">(</span><span class="n">graph_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">newname</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">exclusive_g1</span></div>
 
-<div class="viewcode-block" id="GraphSetter.calculate_sets"><a class="viewcode-back" href="../../../pyntacle.graph_operations.set_graphs.html#pyntacle.graph_operations.set_graphs.GraphSetter.calculate_sets">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_sets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">):</span>
+<div class="viewcode-block" id="GraphSetter.calculate_sets"><a class="viewcode-back" href="../../../pyntacle.graph_operations.set_graphs.html#pyntacle.graph_operations.set_graphs.GraphSetter.calculate_sets">[docs]</a>    <span class="k">def</span> <span class="nf">make_sets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        **[EXPAND]**</span>
 <span class="sd">        </span>

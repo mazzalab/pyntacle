@@ -1,24 +1,15 @@
-"""
-Calculator of global properties of graphs
-"""
-from enum import Enum
-from math import isinf
-import numpy as np
-from igraph import Graph, VertexClustering
-from config import *
-from algorithms import local_topology
-from utils.graph_utils import *
+""" Compute several global topology metrics of a given graph """
 
-__author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
+__author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "27 February 2018"
+__date__ = "26/04/2018"
 __license__ = u"""
-  Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
+  Copyright (C) 2016-2018  Tommaso Mazza <t,mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
 
   This program is free software; you can use and redistribute it under
@@ -35,253 +26,188 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-
-class _GlobalAttribute(Enum):
-    diameter = 0
-    radius = 1
-    average_path_length = 2
-    component = 3
-    density = 4
-    pi = 5
-    clustering_coefficient = 6
-    weighted_clustering_coefficient = 7
-    average_degree = 8
-    average_radiality = 9
-    average_radiality_reach = 10
-    average_closeness = 11
-    average_eccentricity = 12
+from algorithms.local_topology import LocalTopology
+from tools.misc.graph_routines import check_graph_consistency
+from statistics import mean
+from igraph import Graph
+from tools.enums import CmodeEnum
 
 
 class GlobalTopology:
     """
-    Calculator of global properties of graphs **[EXPAND]**
+    Compute several global topology metrics of a given graph
     """
 
-    __graph = None
-    """:type: Graph"""
-    logger = None
-    """:type: Logger"""
+    @staticmethod
+    @check_graph_consistency
+    def diameter(graph: Graph) -> int:
+        """
+        Return the *diameter* of a graph.
+        The diameter is defined as the maximum among all eccentricites in a graph. If the graph consists of isolates,
+        we set the diameter to zero. If the input graph has more than one component, the longest shortest path for
+        the largest component is returned. If one is interested in finding the diameter of a single component,
+        one should subset the graph in asvance.
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :return: an integer value representing the graph's diameter
+        """
+        return graph.diameter()
 
-    def __init__(self, graph):
+    @staticmethod
+    @check_graph_consistency
+    def radius(graph: Graph) -> int:
         """
-        Initializes a graph for global properties calculation
-        
-        :param Graph graph: Graph provided in input
-        :raises IllegalGraphSizeError: if graph does not contain vertices or edges
-        """
-        self.logger = log
-
-        self.__graph_utils = GraphUtils(graph=graph)
-        self.__graph_utils.graph_checker()
-
-        self.__graph = graph
-
-    def get_graph(self) -> Graph:
-        """
-        Returns the graph
-        
-        :return: A Graph data structure
-        """
-        return self.__graph
-
-    def set_graph(self, graph, deepcopy=False):
-        """
-        Replaces the internal graph object with a new one
-        
-        :param igraph.Graph graph: igraph.Graph object provided in input
-        :param bool deepcopy: Flag determining shallow or deep copy of attributes of the graph
-        """
-        if not deepcopy:
-            for elem in graph.attributes():
-                del graph[elem]
-        self.__graph = graph
-
-    def diameter(self, recalculate=False) -> int:
-        """
-        Calculates the graph diameter
-        
-        :param bool recalculate: If True, the diameter is recalculated regardless if it had been already computed
-        :return: The diameter of the graph
-        """
-        self.logger.info("Calculating the diameter of the graph")
-        if recalculate or _GlobalAttribute.diameter.name not in self.__graph.attributes():
-            self.__graph[_GlobalAttribute.diameter.name] = self.__graph.diameter(directed=False)
-        return self.__graph[_GlobalAttribute.diameter.name]
-
-    def radius(self, recalculate=False) -> int:
-        """
-        Calculates the graph radius
-        
-        :param bool recalculate: If True, the radius is recalculated regardless if it had been already computed
-        :return: The radius of the graph
-        """
-        self.logger.info("Calculating the radius of the graph")
-        if recalculate or _GlobalAttribute.radius.name not in self.__graph.attributes():
-            self.__graph[_GlobalAttribute.radius.name] = self.__graph.radius()
-        return self.__graph[_GlobalAttribute.radius.name]
-
-    def average_path_length(self, recalculate=False) -> float:
-        """
-        Calculates the average shortest path of a graph
-        
-        :param bool recalculate: If True, the average shortest path is recalculated regardless if it had been already computed
-        :return: The average path length of the graph
-        """
-        self.logger.info("Calculating the average path length of the graph")
-        if recalculate or _GlobalAttribute.average_path_length.name not in self.__graph.attributes():
-            self.__graph[_GlobalAttribute.average_path_length.name] = self.__graph.average_path_length(directed=False)
-        return self.__graph[_GlobalAttribute.average_path_length.name]
-
-    def components(self, recalculate=False) -> VertexClustering:
-        """
-        Calculates clusters (connected components) for a given graph
-        
-        :param bool recalculate: If True, the components are recalculated regardless if they had been already computed
-        :return: A VertexClustering data structure containing the clustering of the vertex set of a graph
-        """
-        self.logger.info("Calculating the components of the graph")
-        if recalculate or _GlobalAttribute.component.name not in self.__graph.attributes():
-            self.__graph[_GlobalAttribute.component.name] = self.__graph.components()
-        return self.__graph[_GlobalAttribute.component.name]
-
-    def density(self, loops=True, recalculate=False) -> int:
-        """
-        Calculates the density of the graph
-        
-        :param bool loops: Whether to take loops into consideration
-        :param bool recalculate: If True, the density is recalculated regardless if it had been already computed
-        :return: The density (or the reciprocity) of the graph
-        """
-        self.logger.info("Calculating the density of the graph")
-        if recalculate or _GlobalAttribute.density.name not in self.__graph.attributes():
-            self.__graph[_GlobalAttribute.density.name] = self.__graph.density(loops)
-        return self.__graph[_GlobalAttribute.density.name]
-
-    def clustering_coefficient(self, recalculate=False) -> float:
-        """
-        Calculates the global transitivity (clustering coefficient) of the graph
-        
-        :param bool recalculate: If True, the clustering coefficient is recalculated regardless if it had been already computed
-        :return: The transitivity of the graph
-        """
-        self.logger.info("Calculating the clustering coefficient of the graph")
-        if recalculate or _GlobalAttribute.clustering_coefficient.name not in self.__graph.attributes():
-            self.__graph[_GlobalAttribute.clustering_coefficient.name] = self.__graph.transitivity_avglocal_undirected()
-        return self.__graph[_GlobalAttribute.clustering_coefficient.name]
-
-    def pi(self, recalculate=False) -> float:
-        """
-        Pi is defined as the ratio between the total paths length and the diameter
-        
-        :param bool recalculate: If True, the Pi value is recalculated regardless if it had been already computed
-        :return: The Pi of the graph
-        """
-        self.logger.info("Calculating the Pi of the graph")
-        if recalculate or _GlobalAttribute.pi.name not in self.__graph.attributes():
-            d = self.__graph.diameter()
-            edges_number = self.__graph.ecount()
-            self.__graph[_GlobalAttribute.pi.name] = edges_number / d
-        return self.__graph[_GlobalAttribute.pi.name]
-
-    def weighted_clustering_coefficient(self, recalculate=False) -> float:
-        """
-        Computes the weighted clustering coefficient, defined as the average of each node's
-        clustering coefficient weighted by its degree
-        
-        :param bool recalculate: If True, the weighted clustering coefficient is recalculated regardless if it had been already computed
-        :return: The weighted clustering coefficient
-        """
-        self.logger.info("Calculating the weighted clustering coefficient of the graph")
-        if recalculate or _GlobalAttribute.weighted_clustering_coefficient.name not in self.__graph.attributes():
-            self.__graph[_GlobalAttribute.weighted_clustering_coefficient.name] = self.__graph.transitivity_undirected()
-        return self.__graph[_GlobalAttribute.weighted_clustering_coefficient.name]
-
-    def average_degree(self, recalculate=False) -> float:
-        """
-            Computes the average degree at a global level (divide each nodes's degree by the total number of nodes)
-            
-            :param bool recalculate: If True, the average degree is recalculated regardless if it had been already computed
-            :return: The average degree
-        """
-        self.logger.info("Calculating the average degree of the graph")
-        if recalculate or _GlobalAttribute.average_degree.name not in self.__graph.attributes():
-            degr = local_topology.LocalTopology(graph=self.__graph).degree(recalculate=True)
-            # print(degr)
-            self.__graph[_GlobalAttribute.average_degree.name] = np.mean(degr)
-            # print (self.__graph[GlobalAttribute.average_degree])
-        return self.__graph[_GlobalAttribute.average_degree.name]
-
-    def average_radiality(self, recalculate=False) -> float:
-        """
-            Computes the average radiality at a global level (divide each nodes's radiality by the total number of nodes)
-            
-            :param bool recalculate: If True, the average radiality is recomputed regardless if it had been already computed
-            :return: The average radiality
+        Return the *radius* of a graph.
+        The radius of a graph is defined as the minimum among all eccentricites in a graph. If the graph consists of
+        more than one component, the radius of the smallest component is returned. If the graph has isolates,
+        the radius is zero.
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :return: an integer value representing the graph's radius
         """
 
-        self.logger.info("Calculating the average radiality of the graph")
+        return int(graph.radius())
 
-        if recalculate or _GlobalAttribute.average_radiality.name not in self.__graph.attributes():
-
-            rad = local_topology.LocalTopology(graph=self.__graph).radiality(recalculate=True)
-            rad = [x for x in rad if not isinf(x)] #remove all the infinite value for float component
-            if len(rad) > 0:
-
-                self.__graph[_GlobalAttribute.average_radiality.name] = np.mean(rad)
-            else:
-                self.__graph[_GlobalAttribute.average_radiality.name] = 0
-
-        return self.__graph[_GlobalAttribute.average_radiality.name]
-
-    def average_radiality_reach(self, recalculate=False) -> float:
+    @staticmethod
+    @check_graph_consistency
+    def components(graph: Graph) -> int:
         """
-            Computes the radiality reach at a global level (divide each nodes's radiality reach by the total number of nodes)
-            
-            :param bool recalculate: If True, the average radiality reach is recomputed regardless if it had been already computed
-            :return: The average radiality
+        Return the number of *components* in a graph.
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :return: an integer value representing the number of components in a graph
         """
+        return len(graph.components())
 
-        self.logger.info("Calculating the average radiality  reach of the graph")
-        if recalculate or _GlobalAttribute.average_radiality_reach.name not in self.__graph.attributes():
-
-            rad_r = local_topology.LocalTopology(graph=self.__graph).radiality_reach(recalculate=True)
-
-            if len(rad_r) > 0:
-
-                self.__graph[_GlobalAttribute.average_radiality_reach.name] = np.mean(rad_r)
-
-            else:
-                self.__graph[_GlobalAttribute.average_radiality_reach.name] = 0
-
-
-        return self.__graph[_GlobalAttribute.average_radiality_reach.name]
-
-    def average_closeness(self, recalculate=False) -> float:
+    @staticmethod
+    @check_graph_consistency
+    def density(graph: Graph) -> float:
         """
-            Computes the average closeness at a global level (divide each nodes's closeness by the total number of nodes)
-            
-            :param bool recalculate: If True, the average closeness is recomputed regardless if it had been already computed
-            :return: The average closeness
+        Compute the *density* of a graph.
+        The density of a graph is defined as the ratio between the actual number of edges and the number of possible
+        edges in the graph (n*(n-1))
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :return: a float value representing the graph's density
         """
 
-        self.logger.info("Calculating the average closeness of the graph")
-        if recalculate or _GlobalAttribute.average_closeness.name not in self.__graph.attributes():
-            clo = local_topology.LocalTopology(graph=self.__graph).closeness(recalculate=True)
-            self.__graph[_GlobalAttribute.average_closeness.name] = np.mean(clo)
-            # print (self.__graph[GlobalAttribute.average_degree])
-        return self.__graph[_GlobalAttribute.average_closeness.name]
+        return round(graph.density(), 5)
 
-    def average_eccentricity(self, recalculate=False) -> float:
+    @staticmethod
+    @check_graph_consistency
+    def pi(graph: Graph) -> float:
         """
-            Computes the average eccentricity at a global level (divide each nodes's eccentricity by the total number of nodes)
-            
-            :param bool recalculate: If True, the average eccentricity is recomputed regardless if it had been already computed
-            :return: The average eccentricity
+        Return the *pi* of a graph.
+        Pi is defined as the ratio between the total number of edges and the diameter.
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :return: a float value representing the graph's pi
+        """
+        return round(graph.ecount()/graph.diameter(), 5)
+
+    @staticmethod
+    @check_graph_consistency
+    def average_clustering_coefficient(graph: Graph) -> float:
+        """
+        Compute the *average clustering coefficient* among all nodes in a graph.
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :return: a float value representing the graph's mean clustering coefficient
+        """
+        return round(graph.transitivity_avglocal_undirected(), 5)
+
+    @staticmethod
+    @check_graph_consistency
+    def weighted_clustering_coefficient(graph: Graph) -> float:
+        """
+        Compute the *weighted clustering coefficient* among all nodes in a graph.
+        The weighted clustering coefficient is defined as the average of each node's clustering coefficient
+        weighted by their degree values.
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :return: a float value representing the graph's weighted clustering coefficient
+        """
+        return round(graph.transitivity_undirected(), 5)
+
+    @staticmethod
+    @check_graph_consistency
+    def average_degree(graph: Graph) -> float:
+        """
+        Return the *average degree* of the input graph.
+        The average degree is the mean of the degree of each node in the graph.
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :return: a float value representing the average degree of the input graph
+        """
+        return round(mean(graph.degree()), 5)
+
+    @staticmethod
+    @check_graph_consistency
+    def average_closeness(graph: Graph) -> float:
+        """
+        Return the *average closeness* of the input graph.
+        This is computed as the mean of each node's closeness.
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :return: a float value representing the average closeness of a graph
         """
 
-        self.logger.info("Calculating the average eccentricity of the graph")
-        if recalculate or _GlobalAttribute.average_eccentricity.name not in self.__graph.attributes():
-            ecc = local_topology.LocalTopology(graph=self.__graph).eccentricity(recalculate=True)
-            self.__graph[_GlobalAttribute.average_eccentricity.name] = np.mean(ecc)
-            # print (self.__graph[GlobalAttribute.average_degree])
-        return self.__graph[_GlobalAttribute.average_eccentricity.name]
+        return round(mean(LocalTopology.closeness(graph=graph)), 5)
+
+    @staticmethod
+    @check_graph_consistency
+    def average_eccentricity(graph: Graph) -> float:
+        """
+        Returns the *average eccentricity* of the input graph.
+        This is done by computing the mean of each node's eccentricity.
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :return: a float value representing the average eccentricity of a graph
+        """
+
+        return round(mean(LocalTopology.eccentricity(graph=graph)), 5)
+
+    @staticmethod
+    @check_graph_consistency
+    def average_radiality(graph: Graph, cmode=CmodeEnum.igraph) -> float:
+        """
+        Compute the *average radiality*, defined as the mean of all node radiality values.
+        **WARNING** The average radiality calculation does not work when the graph has more than one component
+        (some of the distances will be infinite, hence the average radiality would always be -inf).
+        For that purpose, we recommend using the *average_radiality_reach()* method that calculates a modified version
+        of the radiality. Otherwise, we recommend to subset your graph to take the components you need the
+        radiality for.
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param cmode: the implementation that will be used to compute the radiality. Choices are:
+        **CmodeEnum.igraph:* uses the igraph implementation of the shortest path calculation
+        **CmodeEnum.cpu:* uses a Floyd-Warshall algorithm optimized for multicore computing
+        **CmodeEnum.gpu:* uses a Floyd-Warshall algorithm optimized for CUDA-enabled GPUs (requires CUDA-compatible
+        nVIDIA graphics graphics)
+        :return: a float value representing the average of the radiality of all nodes in the graph.
+        """
+
+        return round(mean(LocalTopology.radiality(graph, nodes=None, cmode=cmode)), 5)
+
+    @staticmethod
+    @check_graph_consistency
+    def average_radiality_reach(graph: Graph, cmode=CmodeEnum.igraph) -> float:
+        """
+        Computes the average radiality reach, defined as the mean for all the radiality  reach values for each node
+        in the graph. Radiality Reach is defined here as the radiality for each node in each component weighted for the
+        ratio of the number of nodes in that component over all nodes in the graph. Isolated nodes has 0 radiality
+        reach by defninition. This is done to ensure that the radiality for each component is weighted on the
+        contribution of the component in the graph.
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param cmode: the implementation that will be used to computed radiality. Choices are
+        **igraph:* uses the igraph implementation
+        **parallel_CPU:* uses the Floyd-Warshall algorithm implemented in numba CPU
+        **parallel_GPU:* uses the Floyd-Warshall algorithm implemented in numba- GPU (requires CUDA-compatible
+        nVidia graphics)
+        :return: a float representing the average of the radiality reach of all nodes in the graph.
+        """
+        if not isinstance(cmode, CmodeEnum):
+            raise KeyError("'cmode' not valid, must be one of the following: {}".format(list(CmodeEnum)))
+
+        return round(mean(LocalTopology.radiality_reach(graph=graph, nodes=None, cmode=cmode)), 5)
