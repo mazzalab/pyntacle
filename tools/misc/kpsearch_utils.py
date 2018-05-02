@@ -27,7 +27,7 @@ __license__ = u"""
 from config import *
 from functools import wraps
 from exceptions.illegal_kppset_size_error import IllegalKppsetSizeError
-from tools.enums import kppos, kpneg
+from tools.enums import KpposEnum, KpnegEnum
 import random
 
 """Utilities for checking the consistency of the parameters passed in greedy or bruteforce optimization"""
@@ -55,7 +55,7 @@ def greedy_search_initializer(func):
             else:
                 random.seed(seed)
 
-        if not isinstance(kpp_type, (kppos, kpneg)):
+        if not isinstance(kpp_type, (KpposEnum, KpnegEnum)):
             raise TypeError("\"kpp-type\" must be either a \"KPPOSchoices\" enumerator or a \"KPNEGchoices\",  {} found".format(type(kpp_type).__name__))
 
         if max_distance is not None and not isinstance(max_distance, int) and max_distance > 1 and max_distance <= graph.vcount():
@@ -86,7 +86,7 @@ def bruteforce_search_initializer(func):
             if kpp_size >= graph.vcount():
                 raise IllegalKppsetSizeError("The kpp_size must be strictly less than the graph size")
 
-        if not isinstance(kpp_type, (kppos, kpneg)):
+        if not isinstance(kpp_type, (KpposEnum, KpnegEnum)):
             raise TypeError("\"kpp-type\" must be either a \"KPPOSchoices\" enumerator or a \"KPNEGchoices\",  {} found".format(type(kpp_type).__name__))
 
         if max_distance is not None and not isinstance(max_distance, int) and max_distance > 1 and max_distance <= graph.vcount():

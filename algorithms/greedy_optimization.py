@@ -33,7 +33,7 @@ __license__ = u"""
 import random
 from functools import partial
 from tools.misc.graph_routines import *
-from tools.enums import kppos, kpneg, Cmode
+from tools.enums import KpposEnum, KpnegEnum, CmodeEnum
 from tools.graph_utils import GraphUtils as gu
 from algorithms.keyplayer import KeyPlayer as kp
 from algorithms.shortest_path import ShortestPath as sp
@@ -51,25 +51,25 @@ class GreedyOptimization:
     @staticmethod
     @check_graph_consistency
     @greedy_search_initializer
-    def fragmentation(graph, kpp_size, kpp_type: kpneg, seed=None, max_distance=None, implementation=Cmode.igraph) -> (list, float):
+    def fragmentation(graph, kpp_size, kpp_type: KpnegEnum, seed=None, max_distance=None, implementation=CmodeEnum.igraph) -> (list, float):
         """
         It searches for the best kpp-set of a predefined size, removes it and measures the residual
         fragmentation score for a specified KP-Neg metric.
         The best kpp-set will be that which maximizes the fragmentation when the nodes are removed from the graph.
         Available KP-Neg choices:
-        * kpneg.F: min = 0 (the network is complete); max = 1 (all nodes are isolates)
-        * kpneg.dF: min = 0 (the network is complete); max = 1 (all nodes are isolates)
+        * KpnegEnum.F: min = 0 (the network is complete); max = 1 (all nodes are isolates)
+        * KpnegEnum.dF: min = 0 (the network is complete); max = 1 (all nodes are isolates)
 
         Args:
             graph (igraph.Graph): The graph must have specific properties. Please see the
         "Minimum requirements" specifications in the pyntacle's manual.
 
             kpp_size (int): the size of the kp-set
-            kpp_type (kpneg): a *kpneg* enumerators. *F*, and *dF* options are available.
+            kpp_type (KpnegEnum): a *KpnegEnum* enumerators. *F*, and *dF* options are available.
             seed (int): a seed to allow repeatability. Default is None
             max_distance (int): an integer specifying the maximum distance after that two nodes will be considered
             disconnected. Useful when searching for short-range interactions.
-            implementation (Cmode): an enumerator ranging from:
+            implementation (CmodeEnum): an enumerator ranging from:
             * **`cmode.igraph`**: shortest paths computed by iGraph
             * **`cmode.cpu`**: Dijkstra algorithm implemented for multicore CPU
             * **`cmode.gpu`**: Dijkstra algorithm implemented for GPU-enabled graphics cards
@@ -86,7 +86,7 @@ class GreedyOptimization:
         max_edges = num_nodes * (num_edges - 1)
 
         #todo reminder che l'implementazione è automatica
-        if kpp_type == kpneg.F or kpp_type == kpneg.dF:
+        if kpp_type == KpnegEnum.F or kpp_type == KpnegEnum.dF:
             if num_edges == 0:  # TODO: check if this case if possible, given the decorator "check_graph_consistency"
                 return [], 1.0
             elif num_edges == max_edges:
@@ -101,12 +101,12 @@ class GreedyOptimization:
 
                 temp_graph = graph.copy()
                 temp_graph.delete_vertices(S)
-                if kpp_type == kpneg.F:
+                if kpp_type == KpnegEnum.F:
                     type_func = partial(kp.F, graph=graph)
-                elif kpp_type == kpneg.dF:
+                elif kpp_type == KpnegEnum.dF:
                     type_func = partial(kp.dF, graph=graph, max_distance=max_distance, implementation=implementation)
                 else:
-                    raise KeyError("'kpp_type' not valid. It must be one of the following: {}".format(list(kpneg)))
+                    raise KeyError("'kpp_type' not valid. It must be one of the following: {}".format(list(KpnegEnum)))
 
                 fragmentation_score = type_func(graph=graph)
                 kppset_score_pairs_history = {tuple(S): fragmentation_score}
@@ -156,7 +156,7 @@ class GreedyOptimization:
     @staticmethod
     @check_graph_consistency
     @greedy_search_initializer #todo solve the m problem in this decorator
-    def reachability(graph, kpp_size, kpp_type: kppos, seed=None, max_distance=None, m=None, implementation=Cmode.igraph) -> (list, float):
+    def reachability(graph, kpp_size, kpp_type: KpposEnum, seed=None, max_distance=None, m=None, implementation=CmodeEnum.igraph) -> (list, float):
         """
         It searches for the best kpp-set of a predefined size that exhibit maximal reachability for a specified
         KP-Pos metric. Available KP-Pos choices:
@@ -168,12 +168,12 @@ class GreedyOptimization:
         "Minimum requirements" specifications in the pyntacle's manual.
 
             kpp_size (int): the size of the kp-set
-            kpp_type (kppos): a *kppos* enumerators. *mreach*, and *dR* options are available.
+            kpp_type (KpposEnum): a *KpposEnum* enumerators. *mreach*, and *dR* options are available.
             seed (int): a seed to allow repeatability. Default is None
             max_distance (int): an integer specifying the maximum distance after that two nodes will be considered
             disconnected. Useful when searching for short-range interactions.
             m (int): maximum path length between the kpp-set and the other nodes of the graph
-            implementation (Cmode): an enumerator ranging from:
+            implementation (CmodeEnum): an enumerator ranging from:
             * **`cmode.igraph`**: shortest paths computed by iGraph
             * **`cmode.cpu`**: Dijkstra algorithm implemented for multicore CPU
             * **`cmode.gpu`**: Dijkstra algorithm implemented for GPU-enabled graphics cards
@@ -192,29 +192,29 @@ class GreedyOptimization:
         notS = set(node_indices).difference(set(S))
 
         utils = gu(graph=graph)
-        if kpp_type == kppos.mreach and m is None:
+        if kpp_type == KpposEnum.mreach and m is None:
             raise WrongArgumentError("'m' is required for the mreach algorithm")
-        elif kpp_type == kppos.mreach:
+        elif kpp_type == KpposEnum.mreach:
             if not isinstance(m, int) or m <= 0:
                 raise TypeError({"'m' must be a positive integer value"})
             else:
-                if implementation != Cmode.igraph:
-                    sps = sp.get_shortestpaths(graph=graph, implementation=implementation, nodes=None)
+                if implementation != CmodeEnum.igraph:
+                    sps = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
                     type_func = partial(kp.mreach, graph=graph, nodes=S_names, m=m, max_distance=max_distance,
                                         implementation=implementation, sp_matrix=sps)
                 else:
                     type_func = partial(kp.mreach, graph=graph, nodes=S_names, m=m, max_distance=max_distance,
                                         implementation=implementation)
-        elif kpp_type == kppos.dR:
-            if implementation != Cmode.igraph:
-                sps = sp.get_shortestpaths(graph=graph, implementation=implementation, nodes=None)
+        elif kpp_type == KpposEnum.dR:
+            if implementation != CmodeEnum.igraph:
+                sps = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
                 type_func = partial(kp.dR, graph=graph, nodes=S_names, max_distance=max_distance,
                                     implementation=implementation, sp_matrix=sps)
             else:
                 type_func = partial(kp.dR, graph=graph, nodes=S_names, max_distance=max_distance,
                                     implementation=implementation)
         else:
-            raise KeyError("'kpp_type' not valid. It must be one of the following: {}".format(list(kppos)))
+            raise KeyError("'kpp_type' not valid. It must be one of the following: {}".format(list(KpposEnum)))
 
         reachability_score = type_func()
         kppset_score_pairs_history = {tuple(S): reachability_score}

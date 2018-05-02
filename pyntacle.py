@@ -491,7 +491,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser = argparse.ArgumentParser(
             description='Divide your graph into modules using one of the provided algorithms for module detection and outputs a series of subgraphs\n',
             formatter_class=argparse.RawDescriptionHelpFormatter,
-            usage=Fore.RED + Style.BRIGHT + 'pyntacle.py communities' + Fore.GREEN + Style.BRIGHT + ' {fastgreedy, '
+            usage=Fore.RED + Style.BRIGHT + 'pyntacle.py communities' + Fore.GREEN + Style.BRIGHT + ' {fast_greedy, '
                                                                                                    'infomap, leading-eigenvector, community-walktrap} ' + Fore.RED + '[arguments]' + Style.RESET_ALL)
 
         parser.add_argument('-i', '--input_file', metavar='',
@@ -551,14 +551,14 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         subparsers = parser.add_subparsers(metavar='', help=argparse.SUPPRESS)
 
-        fastgreedy_subparser = subparsers.add_parser("fastgreedy",
-                                                     usage='pyntacle.py communities fastgreedy [-h] [-v] [-o] [-d] [-dr] [-m] [-M] [-c] [-C] [--weights] [--clusters] [--no-plot]',
+        fastgreedy_subparser = subparsers.add_parser("fast_greedy",
+                                                     usage='pyntacle.py communities fast_greedy [-h] [-v] [-o] [-d] [-dr] [-m] [-M] [-c] [-C] [--weights] [--clusters] [--no-plot]',
                                                      add_help=False, parents=[parser],
                                                      formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                          max_help_position=100,
                                                                                                          width=150))
 
-        fastgreedy_subparser.set_defaults(which='fastgreedy')
+        fastgreedy_subparser.set_defaults(which='fast_greedy')
 
         fastgreedy_subparser.add_argument("--weights", metavar="",
                                           help="a file containing edge attributes, either a tabular way or a cytoscape edge attribute file. See documentation for more help on this")
@@ -611,9 +611,9 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         args = parser.parse_args(sys.argv[2:])
 
         if len(sys.argv) < 4 or (
-                    sys.argv[2] not in ('fastgreedy', 'infomap', 'leading-eigenvector', 'community-walktrap')):
+                    sys.argv[2] not in ('fast_greedy', 'infomap', 'leading-eigenvector', 'community-walktrap')):
             raise Error(
-                'usage: pyntacle.py communities {fastgreedy, infomap, leading-eigenvector, community-walktrap} [arguments] (use --help for command description)')
+                'usage: pyntacle.py communities {fast_greedy, infomap, leading-eigenvector, community-walktrap} [arguments] (use --help for command description)')
 
         sys.stdout.write('Running pyntacle communities\n')
 

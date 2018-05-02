@@ -50,7 +50,7 @@ class ModuleUtils():
 
         self.logger = log
 
-        GraphUtils(graph=graph).graph_checker()
+        GraphUtils(graph=graph).check_graph()
 
         self.graph = graph
 

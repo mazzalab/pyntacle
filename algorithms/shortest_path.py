@@ -1,5 +1,5 @@
 """
-Compute shortest paths of a graph
+Several implementation to compute shortest paths of a graph
 """
 
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
@@ -37,7 +37,7 @@ from igraph import Graph
 from math import isinf, ceil
 from numba import jit, prange, cuda
 from psutil import virtual_memory
-from tools.enums import Cmode
+from tools.enums import CmodeEnum
 from tools.graph_utils import GraphUtils as gUtil
 from tools.misc.graph_routines import check_graph_consistency, vertex_doctor
 from algorithms.global_topology import GlobalTopology
@@ -48,7 +48,7 @@ class ShortestPath:
     # @profile
     # todo check if i can see the environment variables so I don't have to recall cuda.is_available() every time
     @staticmethod
-    def get_shortestpaths(graph, nodes, implementation: Cmode) -> np.ndarray:
+    def get_shortestpaths(graph, nodes, cmode: CmodeEnum) -> np.ndarray:
         """
         Compute the *shortest paths* starting from a node or of a list of nodes of an undirected graph using the
         implementation modes specified in the input parameter *cmode*
@@ -56,7 +56,7 @@ class ShortestPath:
         "Minimum requirements" specifications in the pyntacle's manual.
         :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
         (default), the index is computed for all nodes of the graph.
-        :param implementation: an enumerator ranging from:
+        :param cmode: an enumerator ranging from:
         * **`cmode.igraph`**: shortest paths computed by iGraph
         * **`cmode.cpu`**: Dijkstra algorithm implemented for multicore CPU
         * **`cmode.gpu`**: Dijkstra algorithm implemented for GPU-enabled graphics cards
@@ -66,12 +66,12 @@ class ShortestPath:
         The order of the node list in input is preserved in the np.ndarray.
         """
 
-        if implementation == Cmode.igraph:
+        if cmode == CmodeEnum.igraph:
             sps = ShortestPath.shortest_path_igraph(graph=graph, nodes=nodes)
             sps = [[graph.vcount() + 1 if isinf(x) else x for x in y] for y in sps]
             sps = np.array(sps)
             return sps
-        elif implementation == Cmode.cpu or implementation == Cmode.gpu:
+        elif cmode == CmodeEnum.cpu or cmode == CmodeEnum.gpu:
             if virtual_memory().free < (graph.vcount() ** 2) * 2:  # the rightmost "2" is int16/8
                 sys.stdout.write("WARNING: Memory seems to be low; loading the graph given as input could fail.")
 
@@ -81,7 +81,7 @@ class ShortestPath:
             adjmat[adjmat == 0] = np.uint16(graph_size)
             np.fill_diagonal(adjmat, 0)
 
-            if implementation == Cmode.cpu:
+            if cmode == CmodeEnum.cpu:
                 if nodes is None:
                     sps = ShortestPath.__shortest_path_cpu(adjmat=adjmat)
                 else:
@@ -90,8 +90,8 @@ class ShortestPath:
                     sps = sps[nodes, :]
                 return sps
 
-            elif implementation == Cmode.gpu:
-                if implementation == Cmode.gpu and cuda.current_context().get_memory_info().free < (graph.vcount() ** 2) * 2:
+            elif cmode == CmodeEnum.gpu:
+                if cmode == CmodeEnum.gpu and cuda.current_context().get_memory_info().free < (graph.vcount() ** 2) * 2:
                     sys.stdout.write(
                         "WARNING: GPU Memory seems to be low; loading the graph given as input could fail.")
 
@@ -111,11 +111,8 @@ class ShortestPath:
                         sps = sps[nodes, :]
 
                     return sps
-
-            # sps = sps.tolist()  # reconvert to a list of lists
-            # sps = [[float('inf') if x == (graph.vcount() + 1) else x for x in y] for y in sps]
         else:
-            raise ValueError("The specified 'computing mode' is invalid. Choose from: {}".format(list(Cmode)))
+            raise ValueError("The specified 'computing mode' is invalid. Choose from: {}".format(list(CmodeEnum)))
 
     @staticmethod
     @check_graph_consistency
@@ -162,7 +159,7 @@ class ShortestPath:
 
     @staticmethod
     @check_graph_consistency
-    def average_global_shortest_path_length(graph: Graph, implementation=Cmode.igraph) -> float:
+    def average_global_shortest_path_length(graph: Graph, cmode=CmodeEnum.igraph) -> float:
         """
         Compute the global *average shortest path length* as defined in https://en.wikipedia.org/wiki/Average_path_length
         :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
@@ -170,7 +167,7 @@ class ShortestPath:
         shortest path length is the sum of each component's shortest path length (both directions are counted) divided
         by the total number of components. Isolated nodes counts as single components, but their distance to all other
         nodes in the graph is 0.
-        :param implementation: the implementation that will be used to compute the average shortest path length value.
+        :param cmode: the implementation that will be used to compute the average shortest path length value.
         Choices are:
         **igraph:* uses the igraph implementation
         **parallel_CPU:* uses the Floyd-Warshall algorithm implemented in Numba for multicore processors
@@ -179,19 +176,18 @@ class ShortestPath:
         :return: a positive float value representing the average shortest path length for the graph
         """
 
-        if not isinstance(implementation, Cmode):
-            raise KeyError("'implementation' not valid, must be one of the following: {}".format(list(Cmode)))
-        elif implementation == Cmode.igraph:
+        if not isinstance(cmode, CmodeEnum):
+            raise KeyError("'cmode' not valid, must be one of the following: {}".format(list(CmodeEnum)))
+        elif cmode == CmodeEnum.igraph:
             avg_sp = Graph.average_path_length(graph, directed=False, unconn=False)
             return round(avg_sp, 5)
         else:
             if GlobalTopology.components(graph) == 1:
-                sp = ShortestPath.get_shortestpaths(graph=graph, nodes=None, implementation=implementation)
-                # set all the shortest paths greater than the total number of nodes to 0
+                sp = ShortestPath.get_shortestpaths(graph=graph, nodes=None, cmode=cmode)
                 sp[sp == graph.vcount() + 1] = 0
 
                 all_possible_edges = graph.vcount() * (graph.vcount() - 1)
-                agspl: float = np.sum(np.divide(sp, all_possible_edges))
+                agspl = float(np.sum(np.divide(sp, all_possible_edges)))
                 return round(agspl, 5)
             else:
                 comps = graph.components()
@@ -199,7 +195,7 @@ class ShortestPath:
                 for elem in comps:
                     subg = graph.induced_subgraph(elem)
                     if subg.ecount() > 0:
-                        sp = ShortestPath.get_shortestpaths(graph=subg, nodes=None, implementation=implementation)
+                        sp = ShortestPath.get_shortestpaths(graph=subg, nodes=None, cmode=cmode)
                         sp[sp == subg.vcount() + 1] = 0
                         sum += np.sum(sp)
                 return round(sum / len(comps), 5)
@@ -207,7 +203,7 @@ class ShortestPath:
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def average_shortest_path_lengths(graph: Graph, nodes=None, implementation=Cmode.igraph) -> list:
+    def average_shortest_path_lengths(graph: Graph, nodes=None, cmode=CmodeEnum.igraph) -> list:
         """
         Compute the average shortest paths issuing from each node in input or of all nodes in the graph if None provided.
         :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
@@ -215,7 +211,7 @@ class ShortestPath:
         :param nodes: if a node name, returns the shortest paths of the input node. If a list of node names is provided,
         the shortest paths between the input nodes and all other nodes in the graph are returned for all node names.
         If None (default), the degree is computed for all nodes in the graph.
-        :param implementation: the implementation that will be used to compute the average shortest path length value.
+        :param cmode: the implementation that will be used to compute the average shortest path length value.
         Choices are:
         **igraph:* uses the igraph implementation
         **parallel_CPU:* uses the Floyd-Warshall algorithm implemented in Numba for multicore processors
@@ -224,7 +220,7 @@ class ShortestPath:
         :return: a list of average shortest path lengths, one for each node provided in input
         """
 
-        if implementation == Cmode.igraph:
+        if cmode == CmodeEnum.igraph:
             sps = ShortestPath.shortest_path_igraph(graph=graph, nodes=nodes)
             avg_sps = []
             for elem in sps:
@@ -234,7 +230,7 @@ class ShortestPath:
                 else:
                     avg_sps.append(float("nan"))
         else:
-            sps = ShortestPath.get_shortestpaths(graph=graph, nodes=nodes, implementation=implementation)
+            sps = ShortestPath.get_shortestpaths(graph=graph, nodes=nodes, cmode=cmode)
             sps = sps.astype(np.float)
             sps[sps > graph.vcount()] = np.nan
             sps[sps == 0] = np.nan
@@ -256,12 +252,12 @@ class ShortestPath:
         sps = ShortestPath.shortest_path_igraph(graph=graph)  # TODO: Include other implementations
         sps = np.array(sps)
 
-        return np.median(sps[sps != 0])
+        return float(np.median(sps[sps != 0]))
 
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def median_shortest_path_lengths(graph: Graph, nodes=None, implementation=Cmode.igraph) -> list:
+    def median_shortest_path_lengths(graph: Graph, nodes=None, cmode=CmodeEnum.igraph) -> list:
         """
         Compute the median among the shortest paths for each a single node, a lists of nodes or all nodes in the graph.
         :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
@@ -269,7 +265,7 @@ class ShortestPath:
         :param nodes: if a node name, returns the median shortest paths of the input nodes. If a list of node names is
         provided, the shortest path between the input nodes and all other nodes in the graph is returned for all nodes.
         If None (default), the median shortest paths are computed for the whole graph.
-        :param implementation: the implementation that will be used to compute the average shortest path length value.
+        :param cmode: the implementation that will be used to compute the average shortest path length value.
         Choices are:
         **igraph:* uses the igraph implementation
         **parallel_CPU:* uses the Floyd-Warshall algorithm implemented in Numba for multicore processors
@@ -279,7 +275,7 @@ class ShortestPath:
         If a node is an isolate, 'nan' will be returned.
         """
 
-        if implementation == Cmode.igraph:
+        if cmode == CmodeEnum.igraph:
             sps = ShortestPath.shortest_path_igraph(graph=graph, nodes=nodes)
             median_sps = []
             for elem in sps:
@@ -290,7 +286,7 @@ class ShortestPath:
                     median_sps.append(float("nan"))
 
         else:
-            sps = ShortestPath.get_shortestpaths(graph=graph, nodes=nodes, implementation=implementation)
+            sps = ShortestPath.get_shortestpaths(graph=graph, nodes=nodes, cmode=cmode)
             sps = sps.astype(np.float)
 
             sps[sps > graph.vcount()] = np.nan

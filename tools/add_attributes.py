@@ -30,34 +30,28 @@ __license__ = u"""
 add specific and generic properties to the `igraph.Graph` object at several levels
 """
 
-# external libraries
 from config import *
 from igraph import Graph
-from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
-from tools.enums import Cmode
-# pyntacle Libraries
+from tools.enums import CmodeEnum
 from exceptions.wrong_argument_error import WrongArgumentError
+from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
 
-class AddAttributes():
+
+class AddAttributes:
     logger = None
 
     def __init__(self, graph: Graph):
-
         self.logger = log
-
         if type(graph) is not Graph:
             raise WrongArgumentError("object is not a igraph.Graph")
         else:
             self.__graph = graph
 
-
-    def add_graph_attributes(self, attr_name, attr):
+    def add_graph_attributes(self, attr_name: str, attr):
         """
         Add an attribute to a graph object
-
-        :param attr: any object being added as attribute
-        :param attr_name: string. The name of the attribute being imported
-        :return: an igraph.Graph object
+        :param attr: Any object being added as attribute
+        :param attr_name: The name of the attribute being imported
         """
 
         if not isinstance(attr_name, str):
@@ -260,11 +254,11 @@ class AddAttributes():
         '''
         Adding implementation info for functions that require it
         '''
-        sp_implementation = Cmode.igraph
+        sp_implementation = CmodeEnum.igraph
         if self.__graph.vcount() > 2500:  # random number
             # if cuda_avail:
-            #     sp_implementation = Cmode.gpu
+            #     sp_implementation = CmodeEnum.gpu
             # else:
-                sp_implementation = Cmode.cpu
+                sp_implementation = CmodeEnum.cpu
         
         self.__graph["__implementation"] = sp_implementation

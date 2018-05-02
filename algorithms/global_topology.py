@@ -30,7 +30,7 @@ from algorithms.local_topology import LocalTopology
 from tools.misc.graph_routines import check_graph_consistency
 from statistics import mean
 from igraph import Graph
-from tools.enums import Cmode
+from tools.enums import CmodeEnum
 
 
 class GlobalTopology:
@@ -169,7 +169,7 @@ class GlobalTopology:
 
     @staticmethod
     @check_graph_consistency
-    def average_radiality(graph: Graph, implementation=Cmode.igraph) -> float:
+    def average_radiality(graph: Graph, cmode=CmodeEnum.igraph) -> float:
         """
         Compute the *average radiality*, defined as the mean of all node radiality values.
         **WARNING** The average radiality calculation does not work when the graph has more than one component
@@ -179,19 +179,19 @@ class GlobalTopology:
         radiality for.
         :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
         "Minimum requirements" specifications in the pyntacle's manual.
-        :param implementation: the implementation that will be used to compute the radiality. Choices are:
-        **Cmode.igraph:* uses the igraph implementation of the shortest path calculation
-        **Cmode.cpu:* uses a Floyd-Warshall algorithm optimized for multicore computing
-        **Cmode.gpu:* uses a Floyd-Warshall algorithm optimized for CUDA-enabled GPUs (requires CUDA-compatible
+        :param cmode: the implementation that will be used to compute the radiality. Choices are:
+        **CmodeEnum.igraph:* uses the igraph implementation of the shortest path calculation
+        **CmodeEnum.cpu:* uses a Floyd-Warshall algorithm optimized for multicore computing
+        **CmodeEnum.gpu:* uses a Floyd-Warshall algorithm optimized for CUDA-enabled GPUs (requires CUDA-compatible
         nVIDIA graphics graphics)
         :return: a float value representing the average of the radiality of all nodes in the graph.
         """
 
-        return round(mean(LocalTopology.radiality(graph, nodes=None, cmode=implementation)), 5)
+        return round(mean(LocalTopology.radiality(graph, nodes=None, cmode=cmode)), 5)
 
     @staticmethod
     @check_graph_consistency
-    def average_radiality_reach(graph: Graph, implementation=Cmode.igraph) -> float:
+    def average_radiality_reach(graph: Graph, cmode=CmodeEnum.igraph) -> float:
         """
         Computes the average radiality reach, defined as the mean for all the radiality  reach values for each node
         in the graph. Radiality Reach is defined here as the radiality for each node in each component weighted for the
@@ -200,14 +200,14 @@ class GlobalTopology:
         contribution of the component in the graph.
         :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
         "Minimum requirements" specifications in the pyntacle's manual.
-        :param implementation: the implementation that will be used to computed radiality. Choices are
+        :param cmode: the implementation that will be used to computed radiality. Choices are
         **igraph:* uses the igraph implementation
         **parallel_CPU:* uses the Floyd-Warshall algorithm implemented in numba CPU
         **parallel_GPU:* uses the Floyd-Warshall algorithm implemented in numba- GPU (requires CUDA-compatible
         nVidia graphics)
         :return: a float representing the average of the radiality reach of all nodes in the graph.
         """
-        if not isinstance(implementation, Cmode):
-            raise KeyError("'implementation' not valid, must be one of the following: {}".format(list(Cmode)))
+        if not isinstance(cmode, CmodeEnum):
+            raise KeyError("'cmode' not valid, must be one of the following: {}".format(list(CmodeEnum)))
 
-        return round(mean(LocalTopology.radiality_reach(graph=graph, nodes=None, cmode=implementation)), 5)
+        return round(mean(LocalTopology.radiality_reach(graph=graph, nodes=None, cmode=cmode)), 5)

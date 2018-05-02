@@ -222,7 +222,7 @@
 
         <span class="n">eglutils</span> <span class="o">=</span> <span class="n">edgelist_utils</span><span class="o">.</span><span class="n">EglUtils</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="n">separator</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">eglutils</span><span class="o">.</span><span class="n">is_pyntacle_ready</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">eglutils</span><span class="o">.</span><span class="n">is_hypergraph</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Edgelist is a multigraph or there is some direct edge&quot;</span><span class="p">)</span>
 
         <span class="n">graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">()</span>

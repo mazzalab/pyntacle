@@ -93,7 +93,7 @@ class Metrics:
         if '__implementation' in graph.attributes():
             implementation = graph['__implementation']
         else:
-            implementation = Cmode.igraph
+            implementation = CmodeEnum.igraph
             
         if self.args.largest_component:
             try:
@@ -186,15 +186,15 @@ class Metrics:
                     ["pyntacle", graph["name"][0], "local_metrics_selected_nodes_report",
                      self.date])
 
-            local_attributes_dict = OrderedDict({LocalAttribute.degree.name: LocalTopology.degree(graph=graph, nodes=nodes_list),
-                 LocalAttribute.clustering_coefficient.name: LocalTopology.clustering_coefficient(graph=graph, nodes=nodes_list),
-                 LocalAttribute.betweenness.name: LocalTopology.betweenness(graph=graph, nodes=nodes_list),
-                 LocalAttribute.closeness.name: LocalTopology.closeness(graph=graph, nodes=nodes_list),
-                 LocalAttribute.radiality.name: LocalTopology.radiality(graph=graph, nodes=nodes_list, cmode=implementation),
-                 LocalAttribute.radiality_reach.name: LocalTopology.radiality_reach(graph=graph, nodes=nodes_list, cmode=implementation),
-                 LocalAttribute.eccentricity.name: LocalTopology.eccentricity(graph=graph, nodes=nodes_list),
-                 LocalAttribute.eigenvector_centrality.name : LocalTopology.eigenvector_centrality(graph=graph, nodes=nodes_list),
-                 LocalAttribute.pagerank.name: LocalTopology.pagerank(graph=graph, nodes=nodes_list, weights=weights, damping=self.args.damping_factor)})
+            local_attributes_dict = OrderedDict({LocalAttributeEnum.degree.name: LocalTopology.degree(graph=graph, nodes=nodes_list),
+                                                 LocalAttributeEnum.clustering_coefficient.name: LocalTopology.clustering_coefficient(graph=graph, nodes=nodes_list),
+                                                 LocalAttributeEnum.betweenness.name: LocalTopology.betweenness(graph=graph, nodes=nodes_list),
+                                                 LocalAttributeEnum.closeness.name: LocalTopology.closeness(graph=graph, nodes=nodes_list),
+                                                 LocalAttributeEnum.radiality.name: LocalTopology.radiality(graph=graph, nodes=nodes_list, cmode=implementation),
+                                                 LocalAttributeEnum.radiality_reach.name: LocalTopology.radiality_reach(graph=graph, nodes=nodes_list, cmode=implementation),
+                                                 LocalAttributeEnum.eccentricity.name: LocalTopology.eccentricity(graph=graph, nodes=nodes_list),
+                                                 LocalAttributeEnum.eigenvector_centrality.name : LocalTopology.eigenvector_centrality(graph=graph, nodes=nodes_list),
+                                                 LocalAttributeEnum.pagerank.name: LocalTopology.pagerank(graph=graph, nodes=nodes_list, weights=weights, damping=self.args.damping_factor)})
             
             if self.args.nodes:
                 local_attributes_dict["nodes"] = self.args.nodes
@@ -205,7 +205,7 @@ class Metrics:
             if os.path.exists(report_path):
                 sys.stdout.write("WARNING: File {} already exists, overwriting it\n".format(report_path))
 
-            reporter.create_report(Reports.Local, local_attributes_dict)
+            reporter.create_report(ReportEnum.Local, local_attributes_dict)
             reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
             if not self.args.no_plot and graph.vcount() < 1000:
@@ -276,24 +276,24 @@ class Metrics:
             
             sys.stdout.write("Computing Global Metrics...\n")
 
-            global_attributes_dict = OrderedDict({GlobalAttribute.average_shortest_path_length.name: ShortestPath.average_global_shortest_path_length(graph=graph),
-                                                    GlobalAttribute.diameter.name: GlobalTopology.diameter(graph=graph),
-                                                    GlobalAttribute.components.name: GlobalTopology.components(graph=graph),
-                                                    GlobalAttribute.radius.name: GlobalTopology.radius(graph=graph),
-                                                    GlobalAttribute.density.name: GlobalTopology.density(graph=graph),
-                                                    GlobalAttribute.pi.name: GlobalTopology.pi(graph=graph),
-                                                    GlobalAttribute.average_clustering_coefficient.name: GlobalTopology.average_clustering_coefficient(graph=graph),
-                                                    GlobalAttribute.weighted_clustering_coefficient.name: GlobalTopology.weighted_clustering_coefficient(graph=graph),
-                                                    GlobalAttribute.average_degree.name: GlobalTopology.average_degree(graph=graph),
-                                                    GlobalAttribute.average_closeness.name: GlobalTopology.average_closeness(graph=graph),
-                                                    GlobalAttribute.average_eccentricity.name: GlobalTopology.average_eccentricity(graph=graph),
-                                                    GlobalAttribute.average_radiality.name: GlobalTopology.average_radiality(graph=graph, implementation=implementation),
-                                                    GlobalAttribute.average_radiality_reach.name: GlobalTopology.average_radiality_reach(graph=graph, implementation=implementation),
-                                                    GlobalAttribute.completeness_naive.name: Sparseness.completeness_naive(graph=graph),
-                                                    GlobalAttribute.completeness.name: Sparseness.completeness(graph=graph),
-                                                    GlobalAttribute.compactness.name: Sparseness.compactness(graph=graph),
-                                                    GlobalAttribute.compactness_correct.name: Sparseness.compactness_correct(graph=graph)
-                                                 })
+            global_attributes_dict = OrderedDict({GlobalAttributeEnum.average_shortest_path_length.name: ShortestPath.average_global_shortest_path_length(graph=graph),
+                                                  GlobalAttributeEnum.diameter.name: GlobalTopology.diameter(graph=graph),
+                                                  GlobalAttributeEnum.components.name: GlobalTopology.components(graph=graph),
+                                                  GlobalAttributeEnum.radius.name: GlobalTopology.radius(graph=graph),
+                                                  GlobalAttributeEnum.density.name: GlobalTopology.density(graph=graph),
+                                                  GlobalAttributeEnum.pi.name: GlobalTopology.pi(graph=graph),
+                                                  GlobalAttributeEnum.average_clustering_coefficient.name: GlobalTopology.average_clustering_coefficient(graph=graph),
+                                                  GlobalAttributeEnum.weighted_clustering_coefficient.name: GlobalTopology.weighted_clustering_coefficient(graph=graph),
+                                                  GlobalAttributeEnum.average_degree.name: GlobalTopology.average_degree(graph=graph),
+                                                  GlobalAttributeEnum.average_closeness.name: GlobalTopology.average_closeness(graph=graph),
+                                                  GlobalAttributeEnum.average_eccentricity.name: GlobalTopology.average_eccentricity(graph=graph),
+                                                  GlobalAttributeEnum.average_radiality.name: GlobalTopology.average_radiality(graph=graph, cmode=implementation),
+                                                  GlobalAttributeEnum.average_radiality_reach.name: GlobalTopology.average_radiality_reach(graph=graph, cmode=implementation),
+                                                  GlobalAttributeEnum.completeness_naive.name: Sparseness.completeness_naive(graph=graph),
+                                                  GlobalAttributeEnum.completeness.name: Sparseness.completeness(graph=graph),
+                                                  GlobalAttributeEnum.compactness.name: Sparseness.compactness(graph=graph),
+                                                  GlobalAttributeEnum.compactness_correct.name: Sparseness.compactness_correct(graph=graph)
+                                                  })
 
             sys.stdout.write("Producing report\n")
             report_prefix = "_".join(
@@ -301,7 +301,7 @@ class Metrics:
                  self.date])
             
             reporter = pyntacleReporter(graph=graph)  # init reporter
-            reporter.create_report(Reports.Global, global_attributes_dict)
+            reporter.create_report(ReportEnum.Global, global_attributes_dict)
             reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
             if self.args.no_nodes:  # create an additional report for the graph minus the selected nodes
@@ -321,34 +321,34 @@ class Metrics:
 
                 global_attributes_dict_nonodes = OrderedDict({
                     'Removed nodes': ','.join(nodes_list),
-                    GlobalAttribute.average_shortest_path_length.name: ShortestPath.average_global_shortest_path_length(
+                    GlobalAttributeEnum.average_shortest_path_length.name: ShortestPath.average_global_shortest_path_length(
                         graph=graph_nonodes),
-                    GlobalAttribute.diameter.name: GlobalTopology.diameter(graph=graph_nonodes),
-                    GlobalAttribute.components.name: GlobalTopology.components(graph=graph_nonodes),
-                    GlobalAttribute.radius.name: GlobalTopology.radius(graph=graph_nonodes),
-                    GlobalAttribute.density.name: GlobalTopology.density(graph=graph_nonodes),
-                    GlobalAttribute.pi.name: GlobalTopology.pi(graph=graph_nonodes),
-                    GlobalAttribute.average_clustering_coefficient.name: GlobalTopology.average_clustering_coefficient(
+                    GlobalAttributeEnum.diameter.name: GlobalTopology.diameter(graph=graph_nonodes),
+                    GlobalAttributeEnum.components.name: GlobalTopology.components(graph=graph_nonodes),
+                    GlobalAttributeEnum.radius.name: GlobalTopology.radius(graph=graph_nonodes),
+                    GlobalAttributeEnum.density.name: GlobalTopology.density(graph=graph_nonodes),
+                    GlobalAttributeEnum.pi.name: GlobalTopology.pi(graph=graph_nonodes),
+                    GlobalAttributeEnum.average_clustering_coefficient.name: GlobalTopology.average_clustering_coefficient(
                         graph=graph_nonodes),
-                    GlobalAttribute.weighted_clustering_coefficient.name: GlobalTopology.weighted_clustering_coefficient(
+                    GlobalAttributeEnum.weighted_clustering_coefficient.name: GlobalTopology.weighted_clustering_coefficient(
                         graph=graph_nonodes),
-                    GlobalAttribute.average_degree.name: GlobalTopology.average_degree(graph=graph_nonodes),
-                    GlobalAttribute.average_closeness.name: GlobalTopology.average_closeness(graph=graph_nonodes),
-                    GlobalAttribute.average_eccentricity.name: GlobalTopology.average_eccentricity(graph=graph_nonodes),
-                    GlobalAttribute.average_radiality.name: GlobalTopology.average_radiality(graph=graph_nonodes,
-                                                                                             implementation=implementation),
-                    GlobalAttribute.average_radiality_reach.name: GlobalTopology.average_radiality_reach(
-                        graph=graph_nonodes, implementation=implementation),
-                    GlobalAttribute.completeness_naive.name: Sparseness.completeness_naive(graph=graph_nonodes),
-                    GlobalAttribute.completeness.name: Sparseness.completeness(graph=graph_nonodes),
-                    GlobalAttribute.compactness.name: Sparseness.compactness(graph=graph_nonodes),
-                    GlobalAttribute.compactness_correct.name: Sparseness.compactness_correct(graph=graph_nonodes)
+                    GlobalAttributeEnum.average_degree.name: GlobalTopology.average_degree(graph=graph_nonodes),
+                    GlobalAttributeEnum.average_closeness.name: GlobalTopology.average_closeness(graph=graph_nonodes),
+                    GlobalAttributeEnum.average_eccentricity.name: GlobalTopology.average_eccentricity(graph=graph_nonodes),
+                    GlobalAttributeEnum.average_radiality.name: GlobalTopology.average_radiality(graph=graph_nonodes,
+                                                                                                 cmode=implementation),
+                    GlobalAttributeEnum.average_radiality_reach.name: GlobalTopology.average_radiality_reach(
+                        graph=graph_nonodes, cmode=implementation),
+                    GlobalAttributeEnum.completeness_naive.name: Sparseness.completeness_naive(graph=graph_nonodes),
+                    GlobalAttributeEnum.completeness.name: Sparseness.completeness(graph=graph_nonodes),
+                    GlobalAttributeEnum.compactness.name: Sparseness.compactness(graph=graph_nonodes),
+                    GlobalAttributeEnum.compactness_correct.name: Sparseness.compactness_correct(graph=graph_nonodes)
                 })
 
                 sys.stdout.write("Producing report\n")
                 graph_nonodes["name"][0] += '_without_nodes'
                 reporter = pyntacleReporter(graph=graph_nonodes)  # init reporter
-                reporter.create_report(Reports.Global, global_attributes_dict_nonodes)
+                reporter.create_report(ReportEnum.Global, global_attributes_dict_nonodes)
                 reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
             if not self.args.no_plot and graph.vcount() < 1000:

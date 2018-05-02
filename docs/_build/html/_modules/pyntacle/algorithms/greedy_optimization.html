@@ -217,7 +217,7 @@
             <span class="k">raise</span> <span class="n">IllegalGraphSizeError</span><span class="p">(</span><span class="s2">&quot;This graph does not contain edges&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span> <span class="o">=</span> <span class="n">graph</span>
-            <span class="n">GraphUtils</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">)</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
+            <span class="n">GraphUtils</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="p">)</span><span class="o">.</span><span class="n">check_graph</span><span class="p">()</span>
 
 <div class="viewcode-block" id="GreedyOptimization.optimize_kpp_neg"><a class="viewcode-back" href="../../../pyntacle.algorithms.greedy_optimization.html#pyntacle.algorithms.greedy_optimization.GreedyOptimization.optimize_kpp_neg">[docs]</a>    <span class="k">def</span> <span class="nf">optimize_kpp_neg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kpp_size</span><span class="p">,</span> <span class="n">kpp_type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

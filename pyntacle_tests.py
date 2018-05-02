@@ -3,7 +3,7 @@ from algorithms.shortest_path import ShortestPath
 from tools.misc.graph_load import *
 from algorithms.greedy_optimization import *
 from io_stream.exporter import PyntacleExporter
-from io_stream.converter import QuickConvert
+from io_stream.converter import FileFormatConvert
 import numpy
 numpy.set_printoptions(threshold=numpy.nan)
 
@@ -36,7 +36,7 @@ numpy.set_printoptions(threshold=numpy.nan)
 # print("INTER NAME", mat['__sif_interaction_name'])
 # PyntacleExporter.Sif(mat, '/home/m.truglio/Desktop/Compiti_Dedalus/embryo_small_exported.sif', header=True)
 #
-# QuickConvert.SifToEdgelist('/home/m.truglio/Desktop/Compiti_Dedalus/embryo_small.sif', header=False, output_file='/home/m.truglio/Desktop/Compiti_Dedalus/embryo_small_exported.egl')
+# FileFormatConvert.sifToEdgelist('/home/m.truglio/Desktop/Compiti_Dedalus/embryo_small.sif', header=False, output_file='/home/m.truglio/Desktop/Compiti_Dedalus/embryo_small_exported.egl')
 # sys.exit()
 # print(mat)
 # print(list(adjmatrix.es))
@@ -74,12 +74,12 @@ numpy.set_printoptions(threshold=numpy.nan)
 
 # #
 # print('gpu')
-# print(LocalTopology.shortest_path_pyntacle(graph=mat, implementation=Cmode.gpu))
+# print(LocalTopology.shortest_path_pyntacle(graph=mat, implementation=CmodeEnum.gpu))
 #
 # print('\n\ncpu')
 #
 #
-# print(LocalTopology.shortest_path_pyntacle(graph=mat, implementation=Cmode.cpu))
+# print(LocalTopology.shortest_path_pyntacle(graph=mat, implementation=CmodeEnum.cpu))
 # input()
 # #
 # #
@@ -91,21 +91,21 @@ mat= GraphLoad(r'C:\Users\t.mazza\Desktop\CSS-Bioinformatics\pyntacle\test\test_
                "adjm", True).graph_load()
 
 print("Eccentricity of BR: {}".format(LocalTopology.eccentricity(mat, "BR")))
-print("Radiality of BR: {}".format(LocalTopology.radiality(mat, "BR", Cmode.igraph)))
+print("Radiality of BR: {}".format(LocalTopology.radiality(mat, "BR", CmodeEnum.igraph)))
 print("Eigenvector of BR: {}".format(LocalTopology.eigenvector_centrality(mat, nodes=None, scaled=False)))
-print("Global ASP: {}".format(ShortestPath.average_global_shortest_path_length(mat, Cmode.cpu)))
-print("ASP from BR: {}".format(ShortestPath.average_shortest_path_lengths(mat, nodes="BR", implementation=Cmode.gpu)))
-print("Median SP from BR: {}".format(ShortestPath.median_shortest_path_lengths(mat, nodes="BR", implementation=Cmode.gpu)))
+print("Global ASP: {}".format(ShortestPath.average_global_shortest_path_length(mat, CmodeEnum.cpu)))
+print("ASP from BR: {}".format(ShortestPath.average_shortest_path_lengths(mat, nodes="BR", cmode=CmodeEnum.gpu)))
+print("Median SP from BR: {}".format(ShortestPath.median_shortest_path_lengths(mat, nodes="BR", cmode=CmodeEnum.gpu)))
 
-# print("Shortest paths from BR by iGraph: {}".format(ShortestPath.get_shortestpaths(mat, "BR", Cmode.igraph)))
-# print("Shortest paths from BR by multi-core: {}".format(ShortestPath.get_shortestpaths(mat, "BR", Cmode.cpu)))
-# print("Shortest paths from BR by GPU: {}".format(ShortestPath.get_shortestpaths(mat, "BR", Cmode.gpu)))
+# print("Shortest paths from BR by iGraph: {}".format(ShortestPath.get_shortestpaths(mat, "BR", CmodeEnum.igraph)))
+# print("Shortest paths from BR by multi-core: {}".format(ShortestPath.get_shortestpaths(mat, "BR", CmodeEnum.cpu)))
+# print("Shortest paths from BR by GPU: {}".format(ShortestPath.get_shortestpaths(mat, "BR", CmodeEnum.gpu)))
 
 # print('\n\nORIGINAL MAT')
 # print(mat.get_adjacency())
-# result_igraph = LocalTopology.shortest_path_pyntacle(graph=mat, implementation=Cmode.igraph)
-# result_cpu = LocalTopology.shortest_path_pyntacle(graph=mat, implementation=Cmode.cpu)
-# result_gpu = LocalTopology.shortest_path_pyntacle(graph=mat, implementation=Cmode.gpu)
+# result_igraph = LocalTopology.shortest_path_pyntacle(graph=mat, implementation=CmodeEnum.igraph)
+# result_cpu = LocalTopology.shortest_path_pyntacle(graph=mat, implementation=CmodeEnum.cpu)
+# result_gpu = LocalTopology.shortest_path_pyntacle(graph=mat, implementation=CmodeEnum.gpu)
 #
 # print("IGRAPH vs CPU: " + str((result_igraph == result_cpu).all()) + "\n\n")
 # print(result_igraph)

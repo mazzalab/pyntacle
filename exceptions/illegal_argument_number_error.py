@@ -1,11 +1,15 @@
+"""
+Exception raised when the number of arguments passed to a function call iw wrong
+"""
+
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "27 February 2018"
+__date__ = "29/04/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -24,9 +28,9 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-from config import *
-
-""" exception that checks that the argument number of arguments is passed to a function call """
 
 class IllegalArgumentNumberError(ValueError):
-    pass
+    def __init__(self, message, errors):
+        super().__init__(message)
+        # Custom errors here
+        self.errors = errors

@@ -29,7 +29,7 @@ __license__ = u"""
 
 
 import numpy as np
-from tools.enums import Cmode
+from tools.enums import CmodeEnum
 from tools.misc.graph_routines import *
 from tools.graph_utils import GraphUtils as gu
 from tools.misc.shortest_path_modifications import *
@@ -77,7 +77,7 @@ class KeyPlayer:
 
     @staticmethod
     @check_graph_consistency
-    def dF(graph, implementation=Cmode.igraph, max_distance=None) -> float:
+    def dF(graph, implementation=CmodeEnum.igraph, max_distance=None) -> float:
         """
         Calculate the *dF*, which is a KPP-Neg measure, as described by the equation 9 in [Ref]_.
         DF is a measure of node connectivity and measures how nodes in the graph can be reached.
@@ -87,7 +87,7 @@ class KeyPlayer:
         [Ref] Borgatti, S.P. Comput Math Organiz Theor (2006) 12: 21. https://doi.org/10.1007/s10588-006-7084-x
         :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
         "Minimum requirements" specifications in the pyntacle's manual.
-        :param Cmode.igraph implementation: Computation of the shortest paths is deferred
+        :param CmodeEnum.igraph implementation: Computation of the shortest paths is deferred
         to the following implementations:
         *`imps.auto`: the most performing implementation is automatically chosen according to the geometry of graph
         *`imps.igraqh`: (default) use the default shortest path implementation in igraph (run on a single computing core)
@@ -107,8 +107,8 @@ class KeyPlayer:
         else:
             #  TODO: implementation "auto" should consider graph parameters and use the correct implementation
             #  TODO: and the GPU/MULTICORE one
-            if not isinstance(implementation, Cmode):
-                raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(Cmode)))
+            if not isinstance(implementation, CmodeEnum):
+                raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(CmodeEnum)))
             elif max_distance:
                 if not isinstance(max_distance, int):
                     raise TypeError("'max_distance' must be an integer value greater than one")
@@ -117,7 +117,7 @@ class KeyPlayer:
                 elif max_distance > graph.vcount():
                     raise ValueError("'max_distance' must be less or equal than the number of nodes in the graph")
 
-            if implementation == Cmode.igraph:
+            if implementation == CmodeEnum.igraph:
                 return KeyPlayer.__dF_Borgatti(graph=graph, max_distance=max_distance)
             else:
                 return KeyPlayer.__dF_pyntacle(graph=graph, max_distance=max_distance, implementation=implementation)
@@ -151,7 +151,7 @@ class KeyPlayer:
         return round(df, 5)
 
     @staticmethod
-    def __dF_pyntacle(graph, max_distance=None, implementation=Cmode.cpu) -> float:
+    def __dF_pyntacle(graph, max_distance=None, implementation=CmodeEnum.cpu) -> float:
         """
         Internal method for calculating the *DF* value of a graph using HPC implementations of the shortest paths.
         :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
@@ -162,7 +162,7 @@ class KeyPlayer:
 
         number_nodes = graph.vcount()
         df_denum = number_nodes * (number_nodes - 1)
-        shortest_path_lengths = sp.get_shortestpaths(graph=graph, nodes=None, implementation=implementation)
+        shortest_path_lengths = sp.get_shortestpaths(graph=graph, nodes=None, cmode=implementation)
 
         if max_distance:
             shortest_path_lengths = ShortestPathModifier.set_nparray_to_inf(
@@ -182,7 +182,7 @@ class KeyPlayer:
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def mreach(graph, nodes: list, m: int, max_distance: int=None, implementation=Cmode.igraph, sp_matrix=None) -> int:
+    def mreach(graph, nodes: list, m: int, max_distance: int=None, implementation=CmodeEnum.igraph, sp_matrix=None) -> int:
         """
         Calculates the m-reach ([Ref]_, equation 12). The m-reach is defined as a count of the number of unique nodes
         reached by any member of the kp-set in m links or less.
@@ -192,7 +192,7 @@ class KeyPlayer:
         :param nodes: Nodes which computing the index for.
         :param int m: an integer (greater than zero) representing the maximum m-reach distance
         :param int max_distance: The maximum shortest path length over which two nodes are considered unreachable
-        :param Cmode.igraph implementation: Computation of the shortest paths is deferred
+        :param CmodeEnum.igraph implementation: Computation of the shortest paths is deferred
         to the following implementations:
         *`imps.auto`: the most performing implementation is automatically chosen according to the geometry of graph
         *`imps.igraqh`: (default) use the default shortest path implementation in igraph (run on a single computing core)
@@ -210,8 +210,8 @@ class KeyPlayer:
             raise ValueError("'m' must be greater than zero")
         elif m >= graph.vcount() + 1:
             raise ValueError("'m' must be less or equal than the total number of vertices")
-        elif not isinstance(implementation, Cmode):
-            raise KeyError("'implementation' not valid. It must be one of the following: {}".format(list(Cmode)))
+        elif not isinstance(implementation, CmodeEnum):
+            raise KeyError("'implementation' not valid. It must be one of the following: {}".format(list(CmodeEnum)))
         elif max_distance:
                 if not isinstance(max_distance, int):
                     raise TypeError("'max_distance' must be an integer value greater than one")
@@ -220,11 +220,11 @@ class KeyPlayer:
         else:
             index_list = gu(graph=graph).get_node_indices(node_names=nodes)
 
-            if implementation == Cmode.igraph:
+            if implementation == CmodeEnum.igraph:
                 shortest_path_lengths = sp.shortest_path_igraph(graph, nodes=nodes)
             else:
                 if not sp_matrix:
-                    shortest_path_lengths = sp.get_shortestpaths(graph=graph, implementation=implementation, nodes=nodes)
+                    shortest_path_lengths = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=nodes)
                 else:
                     if not isinstance(sp_matrix, np.ndarray):
                         raise ValueError("'sp_matrix' must be a numpy.ndarray instance")
@@ -250,7 +250,7 @@ class KeyPlayer:
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def dR(graph, nodes, max_distance=None, implementation=Cmode.igraph, sp_matrix=None) -> float:
+    def dR(graph, nodes, max_distance=None, implementation=CmodeEnum.igraph, sp_matrix=None) -> float:
         """
         Calculates the distance-weighted reach ([Ref]_, equation 14). The distance-weighted reach can be defined as the
         sum of the reciprocals of distances from the kp-set S to all nodes, where the distance from the set to a node is
@@ -259,7 +259,7 @@ class KeyPlayer:
         "Minimum requirements" specifications in the pyntacle's manual.
         :param nodes: Nodes which computing the index for.
         :param int max_distance: The maximum shortest path length over which two nodes are considered unreachable
-        :param Cmode.igraph implementation: Computation of the shortest paths is deferred
+        :param CmodeEnum.igraph implementation: Computation of the shortest paths is deferred
         to the following implementations:
         *`imps.auto`: the most performing implementation is automatically chosen according to the geometry of graph
         *`imps.igraqh`: (default) use the default shortest path implementation in igraph (run on a single computing core)
@@ -271,8 +271,8 @@ class KeyPlayer:
         :return: An integer representing the distance-weighted reach measure of the graph
         """
 
-        if not isinstance(implementation, Cmode):
-            raise KeyError("'implementation' not valid. It must be one of the following: {}".format(list(Cmode)))
+        if not isinstance(implementation, CmodeEnum):
+            raise KeyError("'implementation' not valid. It must be one of the following: {}".format(list(CmodeEnum)))
         elif max_distance:
                 if not isinstance(max_distance, int):
                     raise TypeError("'max_distance' must be an integer value greater than one")
@@ -281,11 +281,11 @@ class KeyPlayer:
         else:
             index_list = gu(graph=graph).get_node_indices(node_names=nodes)
 
-            if implementation == Cmode.igraph:
+            if implementation == CmodeEnum.igraph:
                 shortest_path_lengths = sp.shortest_path_igraph(graph=graph, nodes=nodes)
             else:
                 if sp_matrix is None:
-                    shortest_path_lengths = sp.get_shortestpaths(graph=graph, nodes=nodes, implementation=implementation)
+                    shortest_path_lengths = sp.get_shortestpaths(graph=graph, nodes=nodes, cmode=implementation)
                 else:
                     if not isinstance(sp_matrix, np.ndarray):
                         raise ValueError("'sp_matrix' must be a numpy.ndarray instance")

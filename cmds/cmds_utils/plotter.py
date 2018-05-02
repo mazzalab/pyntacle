@@ -59,7 +59,7 @@ class PlotGraph():
 
         self.graph = graph.copy()  # creates a copy of the graph to work on
         self.utils = Gu(graph=self.graph)
-        self.utils.graph_checker()  # checks that input graph is properly set
+        self.utils.check_graph()  # checks that input graph is properly set
 
         if seed is not None:
             if not isinstance(seed, int):

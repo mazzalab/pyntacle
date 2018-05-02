@@ -224,7 +224,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">log</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">__graph_utils</span> <span class="o">=</span> <span class="n">GraphUtils</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__graph_utils</span><span class="o">.</span><span class="n">graph_checker</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__graph_utils</span><span class="o">.</span><span class="n">check_graph</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span> <span class="o">=</span> <span class="n">graph</span>
 
@@ -537,7 +537,7 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calculating the radiality_reach of all nodes&quot;</span><span class="p">)</span>
-            <span class="c1">#print(None in self.__graph.vs()[LocalAttribute.radiality_reach.name])</span>
+            <span class="c1">#print(None in self.__graph.vs()[LocalAttributeEnum.radiality_reach.name])</span>
 
             <span class="k">if</span> <span class="n">recalculate</span> <span class="ow">or</span> <span class="n">_LocalAttribute</span><span class="o">.</span><span class="n">radiality_reach</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()</span><span class="o">.</span><span class="n">attributes</span><span class="p">()</span> \
                     <span class="ow">or</span> <span class="kc">None</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__graph</span><span class="o">.</span><span class="n">vs</span><span class="p">()[</span><span class="n">_LocalAttribute</span><span class="o">.</span><span class="n">radiality_reach</span><span class="o">.</span><span class="n">name</span><span class="p">]:</span>

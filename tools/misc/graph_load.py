@@ -24,15 +24,13 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-# external libraries
 from config import *
 import csv
 import numpy as np
 from tools.misc.binarycheck import is_binary_file
-# pyntacle Libraries
 from io_stream.importer import PyntacleImporter
 from tools.graph_utils import GraphUtils
-from exceptions.unproperlyformattedfile_error import UnproperlyFormattedFileError
+from exceptions.unproperly_formatted_file_error import UnproperlyFormattedFileError
 
 
 def separator_detect(filename):
@@ -151,7 +149,7 @@ class GraphLoad():
         self.logger.debug("Header:{}".format(self.header))
         self.logger.debug("Separator:{}".format(repr(separator)))
         
-        GraphUtils(graph=graph).graph_checker()
+        GraphUtils(graph=graph).check_graph()
 
         return graph
 
