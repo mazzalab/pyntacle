@@ -70,7 +70,7 @@ class KeyPlayer:
         else:
             components = graph.components()
 
-            f_num = sum(len(sk)* (len(sk) - 1) for sk in components)
+            f_num = sum(len(sk) * (len(sk) - 1) for sk in components)
 
             f_denum = max_edges
             f = 1 - (f_num / f_denum)
