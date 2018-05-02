@@ -1,9 +1,9 @@
-# pyntacle
+# Pyntacle
 
 A python command line tool for network analysis based on non canonical
 metrics and HPC computing.
 
-- **Compatibility**: Python 3+
+- **Compatibility**: Python 3.5+
 - **Contributions**: bioinformatics@css-mendel.it
 - **Website**: http://pyntacle.css-mendel.it
 - **Bug report**: https://github.com/mazzalab/pyntacle/issues
