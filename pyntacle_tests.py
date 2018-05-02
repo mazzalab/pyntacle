@@ -3,7 +3,7 @@ from algorithms.shortest_path import ShortestPath
 from tools.misc.graph_load import *
 from algorithms.greedy_optimization import *
 from io_stream.exporter import PyntacleExporter
-from io_stream.converter import FileFormatConvert
+# from io_stream.converter import  FileFormatConvert
 import numpy
 numpy.set_printoptions(threshold=numpy.nan)
 
@@ -87,15 +87,19 @@ numpy.set_printoptions(threshold=numpy.nan)
 # mat= GraphLoad(r'C:\Users\Iron\Desktop\CSS-Bioinformatics\pyntacle\test\test_sets\input\figure_8.txt',
 #                "adjm", True).graph_load()
 
-mat= GraphLoad(r'C:\Users\t.mazza\Desktop\CSS-Bioinformatics\pyntacle\test\test_sets\input\figure_8.txt',
-               "adjm", True).graph_load()
+from io_stream.importer import PyntacleImporter as pimp
+mat = PyntacleImporter.AdjacencyMatrix("/home/local/MENDEL/d.capocefalo/Desktop/figure_8.adjm", header=True)
 
-print("Eccentricity of BR: {}".format(LocalTopology.eccentricity(mat, "BR")))
-print("Radiality of BR: {}".format(LocalTopology.radiality(mat, "BR", CmodeEnum.igraph)))
-print("Eigenvector of BR: {}".format(LocalTopology.eigenvector_centrality(mat, nodes=None, scaled=False)))
-print("Global ASP: {}".format(ShortestPath.average_global_shortest_path_length(mat, CmodeEnum.cpu)))
-print("ASP from BR: {}".format(ShortestPath.average_shortest_path_lengths(mat, nodes="BR", cmode=CmodeEnum.gpu)))
-print("Median SP from BR: {}".format(ShortestPath.median_shortest_path_lengths(mat, nodes="BR", cmode=CmodeEnum.gpu)))
+from algorithms.keyplayer import KeyPlayer as kp
+
+print(kp.F(mat))
+
+# print("Eccentricity of BR: {}".format(LocalTopology.eccentricity(mat, "BR")))
+# print("Radiality of BR: {}".format(LocalTopology.radiality(mat, "BR", CmodeEnum.igraph)))
+# print("Eigenvector of BR: {}".format(LocalTopology.eigenvector_centrality(mat, nodes=None, scaled=False)))
+# print("Global ASP: {}".format(ShortestPath.average_global_shortest_path_length(mat, CmodeEnum.cpu)))
+# print("ASP from BR: {}".format(ShortestPath.average_shortest_path_lengths(mat, nodes="BR", cmode=CmodeEnum.gpu)))
+# print("Median SP from BR: {}".format(ShortestPath.median_shortest_path_lengths(mat, nodes="BR", cmode=CmodeEnum.gpu)))
 
 # print("Shortest paths from BR by iGraph: {}".format(ShortestPath.get_shortestpaths(mat, "BR", CmodeEnum.igraph)))
 # print("Shortest paths from BR by multi-core: {}".format(ShortestPath.get_shortestpaths(mat, "BR", CmodeEnum.cpu)))

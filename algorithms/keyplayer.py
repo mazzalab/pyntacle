@@ -59,17 +59,19 @@ class KeyPlayer:
         """
 
         num_nodes = graph.vcount()
-        num_edges = graph.ecount()
-        max_edges = num_nodes * (num_edges - 1)
+        max_edges = num_nodes * (num_nodes - 1)
 
-        if num_edges == 0:  # TODO: check if this case if possible, given the decorator "check_graph_consistency"
+        if graph.ecount() == 0:
             return 1.0
-        elif num_edges == max_edges:
+
+        elif graph.ecount() == max_edges:
             return 0.0
+
         else:
             components = graph.components()
 
-            f_num = sum(len(sk) * (len(sk) - 1) for sk in components)
+            f_num = sum(len(sk)* (len(sk) - 1) for sk in components)
+
             f_denum = max_edges
             f = 1 - (f_num / f_denum)
 
