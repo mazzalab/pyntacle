@@ -179,7 +179,7 @@ class KeyPlayer():
 
                     if initial_results[kpneg.dF.name] != 1:
                         kp_runner.run_fragmentation(self.args.k_size, kpneg.dF,
-                                                    max_distances=self.args.max_distances, seed=self.args.seed,
+                                                    max_distance=self.args.max_distances, seed=self.args.seed,
                                                     implementation=implementation)
                     else:
                         self.logging.warning("Initial value of dF is 1. Skipping search.")
@@ -192,7 +192,7 @@ class KeyPlayer():
                         "Finding best set of kp-nodes of size {} using dR (kp pos measure)\n".format(
                             self.args.k_size))
                     kp_runner.run_reachability(self.args.k_size, kppos.dR,
-                                               max_distances=self.args.max_distances, seed=self.args.seed,
+                                               max_distance=self.args.max_distances, seed=self.args.seed,
                                                implementation=implementation)
 
                 if self.args.type in (['mreach', 'pos', 'all']):
@@ -201,7 +201,7 @@ class KeyPlayer():
                         "Finding best set of kp-nodes of size {0} using an MREACH measure of {1} (kp pos measure)\n".format(
                             self.args.k_size, self.args.m_reach))
                     kp_runner.run_reachability(self.args.k_size, kppos.mreach, m=self.args.m_reach,
-                                               max_distances=self.args.max_distances, seed=self.args.seed,
+                                               max_distance=self.args.max_distances, seed=self.args.seed,
                                                implementation=implementation)
 
             elif self.args.implementation == "brute-force":
@@ -229,7 +229,7 @@ class KeyPlayer():
                     initial_results[kpneg.dF.name] = kpp.dF(graph, implementation=implementation)
                     if initial_results[kpneg.dF.name] != 1:
                         kp_runner.run_fragmentation(self.args.k_size, kpneg.dF,
-                                                    max_distances=self.args.max_distances, implementation=implementation)
+                                                    max_distance=self.args.max_distances, implementation=implementation)
                     else:
                         self.logging.warning("Initial value of dF is 1. Skipping search.")
                         results[kpneg.dF.name] = [[], 1, 1]
@@ -240,7 +240,7 @@ class KeyPlayer():
                         "Finding best set of kp-nodes of size {} using dR (kp pos measure)\n".format(
                             self.args.k_size))
                     kp_runner.run_reachability(self.args.k_size, kppos.dR,
-                                               max_distances=self.args.max_distances, implementation=implementation)
+                                               max_distance=self.args.max_distances, implementation=implementation)
                     
                 if self.args.type in (['mreach', 'pos', 'all']):
                     print("STARTING mreach with imp", implementation)
@@ -248,7 +248,7 @@ class KeyPlayer():
                         "Finding best set of kp-nodes of size {0} using an MREACH measure of {1} (kp pos measure)\n".format(
                             self.args.k_size, self.args.m_reach))
                     kp_runner.run_reachability(self.args.k_size, kppos.mreach, m=self.args.m_reach,
-                                               max_distances=self.args.max_distances, implementation=implementation)
+                                               max_distance=self.args.max_distances, implementation=implementation)
 
             else:
                 sys.stdout.write("Wrong implementation. Please contact pyntacle Developers and sent this error message, along with a command line and a log.\nQuitting.\n")
@@ -309,19 +309,19 @@ class KeyPlayer():
             if self.args.type in (['dF', 'neg', 'all']):
                 print("STARTING DF with imp", implementation)
                 initial_results[kpneg.dF.name] = kpp.dF(graph, implementation=implementation)
-                kp_runner.run_KPNeg(self.args.nodes, kpneg.dF, max_distances=self.args.max_distances,
+                kp_runner.run_KPNeg(self.args.nodes, kpneg.dF, max_distance=self.args.max_distances,
                                     implementation=implementation)
                 print("DF DONE ######################")
 
             if self.args.type in (['dR', 'pos', 'all']):
                 print("STARTING DR with imp", implementation)
-                kp_runner.run_KPPos(self.args.nodes, kppos.dR, max_distances=self.args.max_distances,
+                kp_runner.run_KPPos(self.args.nodes, kppos.dR, max_distance=self.args.max_distances,
                                     implementation=implementation)
 
             if self.args.type in (['mreach', 'pos', 'all']):
                 print("STARTING mreach with imp", implementation)
                 kp_runner.run_KPPos(self.args.nodes, kppos.mreach, m=self.args.m_reach,
-                                    max_distances=self.args.max_distances, implementation=implementation)
+                                    max_distance=self.args.max_distances, implementation=implementation)
 
             results.update(kp_runner.get_results())
 

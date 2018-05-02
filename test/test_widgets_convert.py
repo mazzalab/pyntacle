@@ -10,7 +10,7 @@ class WidgetTestConvert(unittest.TestCase):
     def setUp(self):
         self.cleanup()
         self.graph = PyntacleImporter.AdjacencyMatrix(file='test/test_sets/input/figure_8.txt', sep='\t', header=True)
-        
+    #todo egl to sif e viceversa vanno testati a parte
     def test_convert_sif(self):
         sys.stdout.write("Testing sif conversion\n")
         fileout = 'test/test_sets/tmp/test.sif'

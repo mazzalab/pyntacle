@@ -104,7 +104,7 @@ class GreedyOptimization:
                 if kpp_type == kpneg.F:
                     type_func = partial(kp.F, graph=graph)
                 elif kpp_type == kpneg.dF:
-                    type_func = partial(kp.dF, graph=graph, max_distances=max_distance, implementation=implementation)
+                    type_func = partial(kp.dF, graph=graph, max_distance=max_distance, implementation=implementation)
                 else:
                     raise KeyError("'kpp_type' not valid. It must be one of the following: {}".format(list(kpneg)))
 
@@ -200,18 +200,18 @@ class GreedyOptimization:
             else:
                 if implementation != Cmode.igraph:
                     sps = sp.get_shortestpaths(graph=graph, implementation=implementation, nodes=None)
-                    type_func = partial(kp.mreach, graph=graph, nodes=S_names, m=m, max_distances=max_distance,
+                    type_func = partial(kp.mreach, graph=graph, nodes=S_names, m=m, max_distance=max_distance,
                                         implementation=implementation, sp_matrix=sps)
                 else:
-                    type_func = partial(kp.mreach, graph=graph, nodes=S_names, m=m, max_distances=max_distance,
+                    type_func = partial(kp.mreach, graph=graph, nodes=S_names, m=m, max_distance=max_distance,
                                         implementation=implementation)
         elif kpp_type == kppos.dR:
             if implementation != Cmode.igraph:
                 sps = sp.get_shortestpaths(graph=graph, implementation=implementation, nodes=None)
-                type_func = partial(kp.dR, graph=graph, nodes=S_names, max_distances=max_distance,
+                type_func = partial(kp.dR, graph=graph, nodes=S_names, max_distance=max_distance,
                                     implementation=implementation, sp_matrix=sps)
             else:
-                type_func = partial(kp.dR, graph=graph, nodes=S_names, max_distances=max_distance,
+                type_func = partial(kp.dR, graph=graph, nodes=S_names, max_distance=max_distance,
                                     implementation=implementation)
         else:
             raise KeyError("'kpp_type' not valid. It must be one of the following: {}".format(list(kppos)))
@@ -237,7 +237,7 @@ class GreedyOptimization:
 
                     else:
                         temp_kpp_set_names = utils.get_node_names(index_list=temp_kpp_set)
-                        temp_kpp_func_value=type_func(graph=graph, nodes=temp_kpp_set_names, max_distances=max_distance,
+                        temp_kpp_func_value=type_func(graph=graph, nodes=temp_kpp_set_names, max_distance=max_distance,
                                                       implementation=implementation)
                         kppset_score_pairs[temp_kpp_set_tuple] = temp_kpp_func_value
                         kppset_score_pairs_history[temp_kpp_set_tuple] = temp_kpp_func_value

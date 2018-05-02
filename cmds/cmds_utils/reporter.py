@@ -186,9 +186,6 @@ class pyntacleReporter():
         representing the corresponding the value of the metrics for the corresponding node
         """
 
-        print(reportdict)
-        input()
-
         nodes = reportdict.get("nodes")
 
         if nodes is None:

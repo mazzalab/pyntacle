@@ -81,10 +81,10 @@ class LocalAttribute(Enum):
     shortest_path_igraph = 7
     shortest_path = 8
     eigenvector_centrality = 9
-    closeness = 9
-    clustering_coefficient = 10
-    average_shortest_path_length = 11
-    median_shortest_path_length = 12
+    closeness = 10
+    clustering_coefficient = 11
+    average_shortest_path_length = 12
+    median_shortest_path_length = 13
 
 
 class GlobalAttribute(Enum):

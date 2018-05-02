@@ -2,12 +2,12 @@ import unittest
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
-from test_widgets_convert import WidgetTestConvert
-from test_widgets_logicops import WidgetTestLogicOps
-from test_widgets_metrics import WidgetTestMetrics
-from test_widgets_communities import WidgetTestCommunities
-from test_widgets_generator import WidgetTestGenerator
-from test_widgets_keyplayer import WidgetTestKeyplayer
+from test.test_widgets_convert import WidgetTestConvert
+from test.test_widgets_logicops import WidgetTestLogicOps
+from test.test_widgets_metrics import WidgetTestMetrics
+from test.test_widgets_communities import WidgetTestCommunities
+from test.test_widgets_generator import WidgetTestGenerator
+from test.test_widgets_keyplayer import WidgetTestKeyplayer
 
 def suite():
     suite = unittest.TestSuite()
