@@ -110,3 +110,4 @@ venv.bak/
 #added by Daniele
 .idea/
 pyntacle_tests.py
+*.pyc
