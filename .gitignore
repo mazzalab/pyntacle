@@ -107,3 +107,8 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+#added by Daniele
+.idea/
+pyntacle_tests.py
+*.pyc
