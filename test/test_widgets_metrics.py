@@ -2,6 +2,8 @@ import unittest
 import os, sys, glob
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+current_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
+
 from config import *
 from cmds.metrics import Metrics as metrics_command
 from tools.misc.graph_load import GraphLoad
@@ -20,9 +22,9 @@ class WidgetTestMetrics(unittest.TestCase):
     def setUp(self):
         self.cleanup()
         self.Args = DummyObj()
-        self.Args.directory = 'test/test_sets/tmp'
+        self.Args.directory = os.path.join(current_dir, 'test/test_sets/tmp')
         self.Args.format = None
-        self.Args.input_file = 'test/test_sets/input/figure_8.txt'
+        self.Args.input_file = os.path.join(current_dir, 'test/test_sets/input/figure_8.txt')
         self.Args.largest_component = False
         self.Args.no_header = False
         self.Args.no_nodes = None
@@ -41,12 +43,12 @@ class WidgetTestMetrics(unittest.TestCase):
             mt.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        fileout = glob.glob("test/test_sets/tmp/pyntacle_report_*_Global_*")[0]
+        fileout = glob.glob(os.path.join(current_dir, "test/test_sets/tmp/pyntacle_report_*_Global_*"))[0]
         with open(fileout, 'r') as fin:
             data = fin.read().splitlines(True)
         with open(fileout, 'w') as fout:
             fout.writelines(data[1:])
-        expected = 'test/test_sets/output/metrics/figure8_global.txt'
+        expected = os.path.join(current_dir, 'test/test_sets/output/metrics/figure8_global.txt')
         self.assertEqual(getmd5(fileout), getmd5(expected),
                          'Wrong checksum for Metrics, global case')
         
@@ -78,12 +80,12 @@ class WidgetTestMetrics(unittest.TestCase):
             mt.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        fileout = glob.glob("test/test_sets/tmp/pyntacle_report_*_Local_*")[0]
+        fileout = glob.glob(os.path.join(current_dir, "test/test_sets/tmp/pyntacle_report_*_Local_*"))[0]
         with open(fileout, 'r') as fin:
             data = fin.read().splitlines(True)
         with open(fileout, 'w') as fout:
             fout.writelines(data[1:])
-        expected = 'test/test_sets/output/metrics/figure8_local.txt'
+        expected = os.path.join(current_dir, 'test/test_sets/output/metrics/figure8_local.txt')
         self.assertEqual(getmd5(fileout), getmd5(expected),
                          'Wrong checksum for Metrics, local case')
         
@@ -91,7 +93,7 @@ class WidgetTestMetrics(unittest.TestCase):
         self.cleanup()
 
     def cleanup(self):
-        files = glob.glob('test/test_sets/tmp/*')
+        files = glob.glob(os.path.join(current_dir, 'test/test_sets/tmp/*'))
         for f in files:
             os.remove(f)
             
