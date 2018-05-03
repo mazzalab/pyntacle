@@ -29,6 +29,7 @@ from config import *
 import argparse
 import sys
 import os
+import unittest
 from exceptions.generic_error import Error
 if sys.version_info <= (3, 4):
     sys.exit('Python < 3.4 is not supported. Please use "python3" instead or update your python version.')
@@ -46,6 +47,7 @@ from cmds.convert import Convert as convert_command
 from cmds.generate import Generate as generate_command
 from cmds.set import Set as set_command
 from cmds.communities import Communities as communities_command
+from test.test_suite import suite
 
 
 def _check_value(self, action, value):
@@ -57,8 +59,8 @@ def _check_value(self, action, value):
         raise argparse.ArgumentError(action, msg % args)
 
 
-# todo: Controlla che tutte le opzioni stiano effettivamente negli USAGE
-# todo: aggiungi --test come opzione di lancio della main
+# todo: Check all options are documented in <usage>
+
 class App:
     def __init__(self):
         sys.stdout.write('\n')
@@ -79,7 +81,8 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                   Fore.GREEN + '\n  convert         ' + Fore.CYAN + 'Convert one graph stored into a file into another graph' +
                   Fore.GREEN + '\n  set             ' + Fore.CYAN + 'Perform set operation on two graphs' +
                   Fore.GREEN + '\n  generate        ' + Fore.CYAN + 'Create a graph based on several topologies' +
-                  Fore.GREEN + '\n  communities     ' + Fore.CYAN + 'Find communities within a Graph using several modular decomposition algorithms\n' +
+                  Fore.GREEN + '\n  communities     ' + Fore.CYAN + 'Find communities within a Graph using several modular decomposition algorithms' +
+                  Fore.GREEN + '\n  test            ' + Fore.CYAN + 'Run a quick test of all available commands. Useful to check if the installation was successful\n' +
                   Style.RESET_ALL + 100 * '-')
 
         parser.add_argument('command', help='subcommand to run', type=lambda s: s.lower())
@@ -717,6 +720,10 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
             set.run()
         except KeyboardInterrupt:
             sys.stderr.write("\nReceived SIGKILL from Keyboard\n")
+    
+    def test(self):
+        runner = unittest.TextTestRunner()
+        runner.run(suite())
 
 if __name__ == '__main__':
     App()
