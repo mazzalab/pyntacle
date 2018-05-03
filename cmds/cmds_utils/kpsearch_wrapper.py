@@ -104,7 +104,6 @@ class KPWrapper:
         :param KpnegEnum kpp_type: one of the KPPNEGchoices defined in misc.enums
         :param int max_distance: maximum shortest path distance allowed (must be a positive integer greater than 0.
         """
-        print("SONO NEL WRAPPER CON IMP", implementation)
         if not isinstance(kpp_type, KpnegEnum):
             raise TypeError("metric must be ones of the \"KPNEGchoices\" metrics, {} found".format(type(kpp_type).__name__))
 

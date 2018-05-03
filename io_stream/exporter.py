@@ -100,20 +100,18 @@ class PyntacleExporter:
             raise TypeError("`sep` must be a string, {} found".format(type(output_file).__name__))
 
         adjlist = list(graph.get_adjlist())
-
         with open(output_file, "w") as outfile:
 
             if header:
                 outfile.write("NodeA\tNodeB\n")
 
             for i, ver in enumerate(adjlist):
-                # print(ver)
                 if not header:
                     #outfile.writelines([str(i) + sep + str(x) + "\n" for x in adjlist[i]])
                     outfile.writelines([sep.join([str(i),str(x)]) + "\n" for x in adjlist[i]])
                 else:
                     outfile.writelines([sep.join([graph.vs(i)["name"][0], x]) + "\n" for x in graph.vs(ver)["name"]])
-
+                    
         sys.stdout.write("Graph successfully exported to Adjacency Matrix at path: {}\n".format(
             os.path.abspath(output_file)))
         return None

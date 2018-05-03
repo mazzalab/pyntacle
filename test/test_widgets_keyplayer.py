@@ -14,7 +14,7 @@ class DummyObj:
 
 class WidgetTestKeyplayer(unittest.TestCase):
     def setUp(self):
-        self.cleanup()
+        # self.cleanup()
         self.Args = DummyObj()
         self.Args.directory = 'test/test_sets/tmp'
         self.Args.format = None
@@ -92,8 +92,8 @@ class WidgetTestKeyplayer(unittest.TestCase):
         self.assertEqual(getmd5(fileout), getmd5(expected),
                          'Wrong checksum for KeyPlayer, kp-finder bruteforce case')
     
-    def tearDown(self):
-        self.cleanup()
+    # def tearDown(self):
+    #     self.cleanup()
 
     def cleanup(self):
         files = glob.glob('test/test_sets/tmp/*')

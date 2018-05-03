@@ -58,7 +58,7 @@ def _check_value(self, action, value):
 
 
 # todo: Controlla che tutte le opzioni stiano effettivamente negli USAGE
-
+# todo: aggiungi --test come opzione di lancio della main
 class App:
     def __init__(self):
         sys.stdout.write('\n')

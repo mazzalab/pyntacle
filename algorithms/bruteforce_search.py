@@ -46,24 +46,24 @@ import multiprocessing as mp
 
 
 def crunch_reachability_combinations(allS, graph: Graph, kpp_type: KpposEnum, m: int,
-                                     max_distances: int, implementation: CmodeEnum) -> dict:
+                                     max_distance: int, implementation: CmodeEnum) -> dict:
     # print("{}: {}".format(os.getpid(), len(allS)))
     kppset_score_pairs = {}
     if kpp_type == KpposEnum.mreach:
         if implementation != CmodeEnum.igraph:
             sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
-            reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distance=max_distances,
+            reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distance=max_distance,
                                                   implementation=implementation, sp_matrix=sp_matrix)
         else:
-            reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distance=max_distances,
+            reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distance=max_distance,
                                                   implementation=implementation)
     elif kpp_type == KpposEnum.dR:
         if implementation != CmodeEnum.igraph:
             sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
-            reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distance=max_distances,
+            reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distance=max_distance,
                                               implementation=implementation, sp_matrix=sp_matrix)
         else:
-            reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distance=max_distances,
+            reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distance=max_distance,
                                               implementation=implementation)
 
     else:  # TODO: change to raise and exception
@@ -75,7 +75,7 @@ def crunch_reachability_combinations(allS, graph: Graph, kpp_type: KpposEnum, m:
 
 
 def crunch_fragmentation_combinations(allS, graph: Graph, kpp_type: KpnegEnum,
-                                      implementation: CmodeEnum, max_distances) -> dict:
+                                      implementation: CmodeEnum, max_distance) -> dict:
     kppset_score_pairs_partial = {}
 
     # print("{}: {}".format(os.getpid(), len(allS)))
@@ -87,14 +87,14 @@ def crunch_fragmentation_combinations(allS, graph: Graph, kpp_type: KpnegEnum,
         kppset_score_pairs_partial[allS] = KeyPlayer.F(temp_graph)
 
     elif kpp_type == KpnegEnum.dF:
-        kppset_score_pairs_partial[allS] = KeyPlayer.dF(graph=temp_graph, max_distance=max_distances,
+        kppset_score_pairs_partial[allS] = KeyPlayer.dF(graph=temp_graph, max_distance=max_distance,
                                                         implementation=implementation)
 
     else:  # here all the other KPNEG functions we want to insert
         sys.stdout.write("{} Not yet implemented, please come back later!".format(kpp_type.name))
         sys.exit(0)
 
-    # kppset_score_pairs[allS] = type_func(temp_graph) #, graph=temp_graph, max_distances=max_distances, implementation=implementation)
+    # kppset_score_pairs[allS] = type_func(temp_graph) #, graph=temp_graph, max_distance=max_distance, implementation=implementation)
     return kppset_score_pairs_partial
 
 
@@ -159,12 +159,12 @@ class BruteforceSearch:
         if parallel:
             final_set = BruteforceSearch.__bruteforce_fragmentation_parallel(graph=graph, kpp_size=kpp_size,
                                                                              kpp_type=kpp_type, ncores=ncores,
-                                                                             max_distances=max_distance,
+                                                                             max_distance=max_distance,
                                                                              implementation=implementation)
         else:
             final_set = BruteforceSearch.__bruteforce_fragmentation_single(graph=graph, kpp_size=kpp_size,
                                                                            kpp_type=kpp_type,
-                                                                           max_distances=max_distance,
+                                                                           max_distance=max_distance,
                                                                            implementation=implementation)
 
         maxKpp = max(final_set.values())
@@ -194,13 +194,13 @@ class BruteforceSearch:
 
     @staticmethod
     def __bruteforce_fragmentation_single(graph: Graph, kpp_size: int, kpp_type: KpnegEnum,
-                                          implementation: CmodeEnum, max_distances):
+                                          implementation: CmodeEnum, max_distance):
         sys.stdout.write("Brute-force search of the best kpp-set of size {}".format(kpp_size))
 
         if kpp_type == KpnegEnum.F:
             type_func = partial(KeyPlayer.F, graph=graph)
         elif kpp_type == KpnegEnum.dF:
-            type_func = partial(KeyPlayer.dF, graph=graph, max_distances=max_distances, implementation=implementation)
+            type_func = partial(KeyPlayer.dF, graph=graph, max_distance=max_distance, implementation=implementation)
         else:  # TODO: change to raise exceptions
             sys.stdout.write("{} Not yet implemented, please come back later!".format(kpp_type.name))
             sys.exit(0)
@@ -218,7 +218,7 @@ class BruteforceSearch:
 
     @staticmethod
     def __bruteforce_fragmentation_parallel(graph: Graph, kpp_size: int, kpp_type: KpnegEnum, ncores: int,
-                                            implementation: CmodeEnum, max_distances=None) -> dict:
+                                            implementation: CmodeEnum, max_distance=None) -> dict:
         sys.stdout.write("Brute-force search of the best kpp-set of size {}".format(kpp_size))
 
         kppset_score_pairs = {}
@@ -231,7 +231,7 @@ class BruteforceSearch:
         pool = mp.Pool(ncores)
         for partial_result in pool.imap_unordered(
                 partial(crunch_fragmentation_combinations, graph=graph, kpp_type=kpp_type,
-                        implementation=implementation, max_distances=max_distances), allS):
+                        implementation=implementation, max_distance=max_distance), allS):
             kppset_score_pairs = {**kppset_score_pairs, **partial_result}
 
         pool.close()
@@ -291,13 +291,13 @@ class BruteforceSearch:
         if parallel:
             final_set = BruteforceSearch.__bruteforce_reachability_parallel(graph=graph, kpp_size=kpp_size,
                                                                             kpp_type=kpp_type, m=m,
-                                                                            max_distances=max_distance,
+                                                                            max_distance=max_distance,
                                                                             implementation=implementation,
                                                                             ncores=ncores)
         else:
             final_set = BruteforceSearch.__bruteforce_reachability_single(graph=graph, kpp_size=kpp_size,
                                                                           kpp_type=kpp_type, m=m,
-                                                                          max_distances=max_distance,
+                                                                          max_distance=max_distance,
                                                                           implementation=implementation)
 
         maxKpp = max(final_set.values())  # take the maximum value
@@ -317,7 +317,7 @@ class BruteforceSearch:
 
     @staticmethod
     def __bruteforce_reachability_single(graph: Graph, kpp_size: int, kpp_type: KpposEnum, m: int,
-                                         max_distances: int, implementation=CmodeEnum.igraph):
+                                         max_distance: int, implementation=CmodeEnum.igraph):
         sys.stdout.write("Brute-force search of the best kpp-set of size {}".format(kpp_size))
 
         kppset_score_pairs = {}
@@ -331,19 +331,19 @@ class BruteforceSearch:
             if kpp_type == KpposEnum.mreach:
                 if implementation != CmodeEnum.igraph:
                     sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
-                    reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distance=max_distances,
+                    reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distance=max_distance,
                                                           implementation=implementation, sp_matrix=sp_matrix)
                 else:
-                    reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distance=max_distances,
+                    reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distance=max_distance,
                                                           implementation=implementation)
 
             elif kpp_type == KpposEnum.dR:
                 if implementation != CmodeEnum.igraph:
                     sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
-                    reachability_score = KeyPlayer.dR(graph=graph, nodes=nodes, max_distance=max_distances,
+                    reachability_score = KeyPlayer.dR(graph=graph, nodes=nodes, max_distance=max_distance,
                                                       implementation=implementation, sp_matrix=sp_matrix)
                 else:
-                    reachability_score = KeyPlayer.dR(graph=graph, nodes=nodes, max_distance=max_distances,
+                    reachability_score = KeyPlayer.dR(graph=graph, nodes=nodes, max_distance=max_distance,
                                                       implementation=implementation)
 
             else:  # TODO: change to raise exceptions
@@ -356,7 +356,7 @@ class BruteforceSearch:
 
     @staticmethod
     def __bruteforce_reachability_parallel(graph: Graph, kpp_size: int, kpp_type: KpposEnum, m: int,
-                                           max_distances: int, implementation: CmodeEnum, ncores: int) -> (list, float):
+                                           max_distance: int, implementation: CmodeEnum, ncores: int) -> (list, float):
         sys.stdout.write("Brute-force search of the best kpp-set of size {}".format(kpp_size))
 
         kppset_score_pairs = {}
@@ -371,7 +371,7 @@ class BruteforceSearch:
 
         for partial_result in pool.imap_unordered(
                 partial(crunch_reachability_combinations, graph=graph, kpp_type=kpp_type, m=m,
-                        max_distances=max_distances, implementation=implementation), allS):
+                        max_distance=max_distance, implementation=implementation), allS):
             kppset_score_pairs = {**kppset_score_pairs, **partial_result}
 
         pool.close()

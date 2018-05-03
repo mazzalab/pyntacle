@@ -3,7 +3,7 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 from test.test_widgets_convert import WidgetTestConvert
-from test.test_widgets_logicops import WidgetTestLogicOps
+from test.test_widgets_setoperations import WidgetTestLogicOps
 from test.test_widgets_metrics import WidgetTestMetrics
 from test.test_widgets_communities import WidgetTestCommunities
 from test.test_widgets_generator import WidgetTestGenerator
@@ -16,6 +16,9 @@ def suite():
     suite.addTest(WidgetTestConvert('test_convert_bin'))
     suite.addTest(WidgetTestConvert('test_convert_dot'))
     suite.addTest(WidgetTestConvert('test_convert_adjm'))
+    suite.addTest(WidgetTestConvert('test_egl_to_sif'))
+    suite.addTest(WidgetTestConvert('test_sif_to_egl'))
+
     suite.addTest(WidgetTestLogicOps('test_union'))
     suite.addTest(WidgetTestLogicOps('test_intersect'))
     suite.addTest(WidgetTestLogicOps('test_difference'))

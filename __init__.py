@@ -43,7 +43,7 @@ import cmds.cmds_utils.kpsearch_wrapper
 import cmds.cmds_utils.reporter
 
 import exceptions
-import exceptions.unproperlyformattedfile_error
+import exceptions.unproperly_formatted_file_error
 import exceptions.illegal_graph_size_error
 import exceptions.illegal_argument_number_error
 import exceptions.wrong_argument_error
@@ -55,20 +55,20 @@ import exceptions.unsupported_graph_error
 import exceptions.illegal_kppset_size_error
 
 import graph_operations
-import graph_operations.logic_ops
+import graph_operations.set_operations
 import graph_operations.modules_finder
 import graph_operations.octopus
 
 import io_stream
 import io_stream.generator
 import io_stream.exporter
-import io_stream.converter
+import io_stream.format_converter
 import io_stream.importer
 import io_stream.import_attributes
 import io_stream.export_attributes
 
 import test
-import test.test_widgets_logicops
+import test.test_widgets_setoperations
 import test.test_widgets_convert
 import test.test_widgets_keyplayer
 import test.test_widgets_metrics

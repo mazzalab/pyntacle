@@ -2,6 +2,7 @@ import unittest
 import os, sys, glob
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+from config import *
 from cmds.metrics import Metrics as metrics_command
 from tools.misc.graph_load import GraphLoad
 from algorithms.global_topology import GlobalTopology

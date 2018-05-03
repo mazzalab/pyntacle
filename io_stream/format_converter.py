@@ -30,7 +30,7 @@ __license__ = u"""
 
 
 from config import *
-from tools.edgelist_utils import EglUtils as egl
+from tools.edgelist_utils import EglUtils
 from tools.misc.io_utils import input_file_checker, separator_sniffer, randomword
 from exceptions.unproperly_formatted_file_error import UnproperlyFormattedFileError
 
@@ -70,30 +70,31 @@ class FileFormatConvert:
         if not isinstance(output_sep, str):
             raise TypeError("\"output_sep\" must be a string, {} found".format(type(output_sep).__name__))
 
-        eglutils = egl(file=file, header=header, sep=sep)
+        eglutils = EglUtils(file=file, header=header, sep=sep)
 
         if eglutils.is_direct():
             raise UnproperlyFormattedFileError(
-                "The edge-list file represents a direct graph, which is not currently supported")
+                "Edgelist is not ready to be parsed by Pyntacle (it is a direct one)")
+
         elif eglutils.is_multigraph():
-            raise UnproperlyFormattedFileError("The edge-list file contains multiple edges")
+            raise UnproperlyFormattedFileError("Edgelist contains multiple edges")
 
         else: #import the sif file into memory, transform it into a list of lists (each sublist represent each line), then sort it in order to remove the double occurrence of the link
             with open(file, "r") as infile:
                 if header:
                     headlist = infile.readline().rstrip().split(sep)
-                    headlist = [headlist[0] + "Interaction"  + headlist[1]]
+                    headlist = [output_sep.join([headlist[0],"Interaction",headlist[1]])]
 
                 edglist = [x.rstrip().split(sep) for x in infile.readlines()]
-                siflist = set(tuple(sorted(x)) for x in edglist)
+                siflist = sorted(set(tuple(sorted(x)) for x in edglist))
                 siflist = [list(x) for x in siflist]
-                siflist = [x[0] + "interacts_with" + x[1] for x in siflist] #this is the final object that wil be written to the output file
+                siflist = [output_sep.join([x[0], "interacts_with", x[1]]) for x in siflist] #this is the final object that wil be written to the output file
 
             if header:
                 siflist = headlist + siflist #re-adds the header
 
             with open(output_file, "w") as outfile:
-                outfile.writelines([output_sep.join(x) + "\n" for x in siflist]) #convert each sublist into a string and use the writelines method to dump everything into a file quickly.
+                outfile.writelines([x + "\n" for x in siflist]) #convert each sublist into a string and use the writelines method to dump everything into a file quickly.
 
             sys.stdout.write("File successfully converted\n")
             return output_file

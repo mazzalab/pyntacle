@@ -158,9 +158,13 @@ class PyntacleImporter:
         :param bool header: Whether the header is present or not (default is *False*)
         :return: an `igraph.Graph` object.
         """
-
-        if EglUtils(file=file, header=header, sep=sep).is_direct():
+        eglutils = EglUtils(file=file, header=header, sep=sep)
+        
+        if eglutils.is_direct():
             raise UnproperlyFormattedFileError("Edgelist is not ready to be parsed by Pyntacle (it is a direct one)")
+        
+        elif eglutils.is_multigraph():
+            raise UnproperlyFormattedFileError("Edgelist contains multiple edges")
 
         graph = Graph() #initialize an empty graph that will be filled
         

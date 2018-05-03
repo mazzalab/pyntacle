@@ -105,8 +105,6 @@ class KeyPlayer():
         else:
             implementation = CmodeEnum.igraph
             
-        print("LOADED IMPLEMENTATION", graph['__implementation'])
-
         if self.args.largest_component:
             try:
                 graph = utils.get_largest_component()
@@ -171,7 +169,6 @@ class KeyPlayer():
                         results[KpnegEnum.F.name] = [[], 1, 1]
                         
                 if self.args.type in (['dF', 'neg', 'all']):
-                    print("STARTING DF with imp", implementation)
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {0} using dF (kp neg measure)\n".format(
                             self.args.k_size))
@@ -186,8 +183,6 @@ class KeyPlayer():
                         results[KpnegEnum.dF.name] = [[], 1, 1]
 
                 if self.args.type in (['dR', 'pos', 'all']):
-                    print("STARTING DR with imp", implementation)
-    
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using dR (kp pos measure)\n".format(
                             self.args.k_size))
@@ -196,7 +191,6 @@ class KeyPlayer():
                                                implementation=implementation)
 
                 if self.args.type in (['mreach', 'pos', 'all']):
-                    print("STARTING mreach with imp", implementation)
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {0} using an MREACH measure of {1} (kp pos measure)\n".format(
                             self.args.k_size, self.args.m_reach))
@@ -222,7 +216,6 @@ class KeyPlayer():
                         results[KpnegEnum.F.name] = [[], 1, 1]
 
                 if self.args.type in (['dF', 'neg', 'all']):
-                    print("STARTING DF with imp", implementation)
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using dF (kp neg measure)\n".format(
                             self.args.k_size))
@@ -235,7 +228,6 @@ class KeyPlayer():
                         results[KpnegEnum.dF.name] = [[], 1, 1]
 
                 if self.args.type in (['dR', 'pos', 'all']):
-                    print("STARTING DR with imp", implementation)
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using dR (kp pos measure)\n".format(
                             self.args.k_size))
@@ -243,7 +235,6 @@ class KeyPlayer():
                                                max_distance=self.args.max_distances, implementation=implementation)
                     
                 if self.args.type in (['mreach', 'pos', 'all']):
-                    print("STARTING mreach with imp", implementation)
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {0} using an MREACH measure of {1} (kp pos measure)\n".format(
                             self.args.k_size, self.args.m_reach))
@@ -269,7 +260,6 @@ class KeyPlayer():
                     # joining initial results with final ones
                     results[kp].append(initial_results[kp])
                     
-                    print("LEN", results[kp][0], len(results[kp][0]))
                     sys.stdout.write(
                         'kp set{0} of size {1} for Key Player Metric {2} {3} {4} with value {5} (starting value is {6})\n'.format(
                             plurals[0], self.args.k_size, kp, plurals[1], results[kp][0], results[kp][1], results[kp][2]))
@@ -307,19 +297,15 @@ class KeyPlayer():
                 initial_results[KpnegEnum.F.name] = kpp.F(graph)
                 kp_runner.run_KPNeg(self.args.nodes, KpnegEnum.F)
             if self.args.type in (['dF', 'neg', 'all']):
-                print("STARTING DF with imp", implementation)
                 initial_results[KpnegEnum.dF.name] = kpp.dF(graph, implementation=implementation)
                 kp_runner.run_KPNeg(self.args.nodes, KpnegEnum.dF, max_distance=self.args.max_distances,
                                     implementation=implementation)
-                print("DF DONE ######################")
 
             if self.args.type in (['dR', 'pos', 'all']):
-                print("STARTING DR with imp", implementation)
                 kp_runner.run_KPPos(self.args.nodes, KpposEnum.dR, max_distance=self.args.max_distances,
                                     implementation=implementation)
 
             if self.args.type in (['mreach', 'pos', 'all']):
-                print("STARTING mreach with imp", implementation)
                 kp_runner.run_KPPos(self.args.nodes, KpposEnum.mreach, m=self.args.m_reach,
                                     max_distance=self.args.max_distances, implementation=implementation)
 

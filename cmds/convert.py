@@ -98,12 +98,12 @@ class Convert():
         if format_dictionary.get(self.args.format, "NA") == "egl" and out_form == "sif":
 
             sys.stdout.write("Converting edgelist to sif. Path to the output file:{}\n".format(output_path))
-            FileFormatConvert.edgelistToSif(file=self.args.input_file, sep=self.args.output_separator, header=output_header, output_file=output_path)
+            FileFormatConvert.edgelistToSif(file=self.args.input_file, sep=separator, output_sep=self.args.output_separator, header=output_header, output_file=output_path)
 
         #2: convert a sif to an edgelist file
         elif format_dictionary.get(self.args.format, "NA") == "sif" and out_form == "egl":
             sys.stdout.write("Converting sif to edgelist. Path to the output file:{}\n".format(output_path))
-            FileFormatConvert.sifToEdgelist(file=self.args.input_file, sep=self.args.output_separator,
+            FileFormatConvert.sifToEdgelist(file=self.args.input_file, sep=separator, output_sep=self.args.output_separator,
                                             header=output_header, output_file=output_path)
 
         else:

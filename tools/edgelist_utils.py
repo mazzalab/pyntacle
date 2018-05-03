@@ -143,16 +143,13 @@ class EglUtils:
 
         if self.edgl is None:
             self.egl_to_list()
-
-        legit = False
-
+            
         egl_tuple = [tuple(sorted(x)) for x in self.edgl]
 
         if len(set(egl_tuple)) != (len(self.edgl)/2):
-            return legit
-
-        legit = True
-        return legit
+            return True
+        else:
+            return False
 
     def to_undirect(self):
         """
