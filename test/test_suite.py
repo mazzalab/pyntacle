@@ -9,6 +9,7 @@ from test.test_widgets_communities import WidgetTestCommunities
 from test.test_widgets_generator import WidgetTestGenerator
 from test.test_widgets_keyplayer import WidgetTestKeyplayer
 
+
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(WidgetTestConvert('test_convert_sif'))
