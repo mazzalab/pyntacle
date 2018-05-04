@@ -153,7 +153,7 @@ python3 setup.py install
 
 #### MacOS X
 
-n order to compile from source, you need some of the tools that are
+In order to compile from source, you need some of the tools that are
 conveniently packed in
 [XCode](https://itunes.apple.com/us/app/xcode/id497799835?mt=12), which
 has to be downloaded and installed from the Mac App Store. Once you have
@@ -184,7 +184,8 @@ Finally, extract the pyntacle [_source tar.gz_](https://github.com/mazzalab/pynt
 administrator:
 
 ```bash
-python3.5 setup.py install ln -s /opt/local/Library/Frameworks/Python.framework/Versions/3.5/bin/pyntacle /opt/local/bin
+python3.5 setup.py install
+ln -s /opt/local/Library/Frameworks/Python.framework/Versions/3.5/bin/pyntacle /opt/local/bin
 ```
 
 ### CUDA support
