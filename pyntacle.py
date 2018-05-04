@@ -1,7 +1,7 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.1"
+__version__ = "0.1.1"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
@@ -47,7 +47,7 @@ from cmds.convert import Convert as convert_command
 from cmds.generate import Generate as generate_command
 from cmds.set import Set as set_command
 from cmds.communities import Communities as communities_command
-from test.test_suite import suite
+from tests.test_suite import Suite
 
 
 def _check_value(self, action, value):
@@ -87,7 +87,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         parser.add_argument('command', help='subcommand to run', type=lambda s: s.lower())
         parser.add_argument('-v', action="count", help="verbosity level. -vvv is the highest level")
-        parser.add_argument('-V', "--version", action="version", version="pyntacle v0.1 (alpha)")
+        parser.add_argument('-V', "--version", action="version", version="pyntacle v0.1.1")
 
         # Detect verbosity
         for arg in sys.argv:
@@ -723,7 +723,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
     
     def test(self):
         runner = unittest.TextTestRunner()
-        runner.run(suite())
+        runner.run(Suite())
 
 if __name__ == '__main__':
     App()

@@ -27,7 +27,7 @@ import unittest
 import os, sys, glob
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 current_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
-from test import getmd5, getmd5_bin
+from tests import getmd5, getmd5_bin
 from cmds.communities import Communities as communities_command
 
 class DummyObj:
@@ -39,9 +39,9 @@ class WidgetTestCommunities(unittest.TestCase):
         self.cleanup()
         self.Args = DummyObj()
         self.Args.clusters = None
-        self.Args.directory = os.path.join(current_dir, 'test/test_sets/tmp')
+        self.Args.directory = os.path.join(current_dir, 'tests/test_sets/tmp')
         self.Args.format = None
-        self.Args.input_file = os.path.join(current_dir, 'test/test_sets/input/figure_8.txt')
+        self.Args.input_file = os.path.join(current_dir, 'tests/test_sets/input/figure_8.txt')
         self.Args.largest_component = False
         self.Args.max_components = None
         self.Args.max_nodes = None
@@ -69,8 +69,8 @@ class WidgetTestCommunities(unittest.TestCase):
             comm.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        files_out = sorted(glob.glob(os.path.join(current_dir, "test/test_sets/tmp/fast_greedy*")))
-        expected_files = sorted(glob.glob(os.path.join(current_dir, 'test/test_sets/output/communities/fast_greedy/module*')))
+        files_out = sorted(glob.glob(os.path.join(current_dir, "tests/test_sets/tmp/fast_greedy*")))
+        expected_files = sorted(glob.glob(os.path.join(current_dir, 'tests/test_sets/output/communities/fast_greedy/module*')))
         
         for f, e in zip(files_out, expected_files):
             self.assertEqual(getmd5(f), getmd5(e), 'Wrong checksum for communities, fast_greedy case')
@@ -84,8 +84,8 @@ class WidgetTestCommunities(unittest.TestCase):
             comm.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        files_out = sorted(glob.glob(os.path.join(current_dir, "test/test_sets/tmp/infomap*")))
-        expected_files = sorted(glob.glob(os.path.join(current_dir, 'test/test_sets/output/communities/infomap/module*')))
+        files_out = sorted(glob.glob(os.path.join(current_dir, "tests/test_sets/tmp/infomap*")))
+        expected_files = sorted(glob.glob(os.path.join(current_dir, 'tests/test_sets/output/communities/infomap/module*')))
 
         for f, e in zip(files_out, expected_files):
             self.assertEqual(getmd5(f), getmd5(e), 'Wrong checksum for communities, infomap case')
@@ -99,8 +99,8 @@ class WidgetTestCommunities(unittest.TestCase):
             comm.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        files_out = sorted(glob.glob(os.path.join(current_dir, "test/test_sets/tmp/leading-eigenvector*")))
-        expected_files = sorted(glob.glob(os.path.join(current_dir, 'test/test_sets/output/communities/leading-eigenvector/module*')))
+        files_out = sorted(glob.glob(os.path.join(current_dir, "tests/test_sets/tmp/leading-eigenvector*")))
+        expected_files = sorted(glob.glob(os.path.join(current_dir, 'tests/test_sets/output/communities/leading-eigenvector/module*')))
 
         for f, e in zip(files_out, expected_files):
             self.assertEqual(getmd5(f), getmd5(e), 'Wrong checksum for communities, leading-eigenvector case')
@@ -115,9 +115,9 @@ class WidgetTestCommunities(unittest.TestCase):
             comm.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        files_out = sorted(glob.glob(os.path.join(current_dir, "test/test_sets/tmp/community-walktrap*")))
+        files_out = sorted(glob.glob(os.path.join(current_dir, "tests/test_sets/tmp/community-walktrap*")))
         expected_files = sorted(
-            glob.glob(os.path.join(current_dir, 'test/test_sets/output/communities/community-walktrap/module*')))
+            glob.glob(os.path.join(current_dir, 'tests/test_sets/output/communities/community-walktrap/module*')))
 
         for f, e in zip(files_out, expected_files):
             self.assertEqual(getmd5(f), getmd5(e),
@@ -127,7 +127,7 @@ class WidgetTestCommunities(unittest.TestCase):
         self.cleanup()
 
     def cleanup(self):
-        files = glob.glob(os.path.join(current_dir, 'test/test_sets/tmp/*'))
+        files = glob.glob(os.path.join(current_dir, 'tests/test_sets/tmp/*'))
         for f in files:
             os.remove(f)
         

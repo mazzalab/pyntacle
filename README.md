@@ -203,6 +203,10 @@ or by downloading and installing the Toolkit from the
 
 Changelog for current and past releases:
 
+### 0.1.1:
+
+- Bugfixes
+
 ### 0.1.0:
 
 -  The first release of pyntacle.

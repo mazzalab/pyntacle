@@ -2,15 +2,15 @@ import unittest
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
-from test.test_widgets_convert import WidgetTestConvert
-from test.test_widgets_setoperations import WidgetTestLogicOps
-from test.test_widgets_metrics import WidgetTestMetrics
-from test.test_widgets_communities import WidgetTestCommunities
-from test.test_widgets_generator import WidgetTestGenerator
-from test.test_widgets_keyplayer import WidgetTestKeyplayer
+from tests.test_widgets_convert import WidgetTestConvert
+from tests.test_widgets_setoperations import WidgetTestLogicOps
+from tests.test_widgets_metrics import WidgetTestMetrics
+from tests.test_widgets_communities import WidgetTestCommunities
+from tests.test_widgets_generator import WidgetTestGenerator
+from tests.test_widgets_keyplayer import WidgetTestKeyplayer
 
 
-def suite():
+def Suite():
     suite = unittest.TestSuite()
     suite.addTest(WidgetTestConvert('test_convert_sif'))
     suite.addTest(WidgetTestConvert('test_convert_egl'))
@@ -40,4 +40,4 @@ def suite():
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
-    runner.run(suite())
+    runner.run(Suite())
