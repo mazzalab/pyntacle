@@ -133,6 +133,9 @@ class ImportAttributes():
                     tmp = line.rstrip().split(sep)
                     name = tmp[0]
                     attrs = tmp[1:]
+                    if any(x.upper() in ["NA", "NONE", "?"] for x in attrs):
+                        self.logger.warning("NAs found for node {}, replacing it with None")
+                        attrs = [None if x in ["NA", "NONE", "?"] else x for x in attrs]
                     # select node with attribute name matching the node attribute "name"
                     select = self.__graph.vs.select(name=name)
                 
