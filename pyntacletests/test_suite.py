@@ -2,12 +2,12 @@ import unittest
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
-from tests.test_widgets_convert import WidgetTestConvert
-from tests.test_widgets_setoperations import WidgetTestLogicOps
-from tests.test_widgets_metrics import WidgetTestMetrics
-from tests.test_widgets_communities import WidgetTestCommunities
-from tests.test_widgets_generator import WidgetTestGenerator
-from tests.test_widgets_keyplayer import WidgetTestKeyplayer
+from pyntacletests.test_widgets_convert import WidgetTestConvert
+from pyntacletests.test_widgets_setoperations import WidgetTestLogicOps
+from pyntacletests.test_widgets_metrics import WidgetTestMetrics
+from pyntacletests.test_widgets_communities import WidgetTestCommunities
+from pyntacletests.test_widgets_generator import WidgetTestGenerator
+from pyntacletests.test_widgets_keyplayer import WidgetTestKeyplayer
 
 
 def Suite():

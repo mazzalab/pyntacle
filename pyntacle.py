@@ -47,7 +47,7 @@ from cmds.convert import Convert as convert_command
 from cmds.generate import Generate as generate_command
 from cmds.set import Set as set_command
 from cmds.communities import Communities as communities_command
-from tests.test_suite import Suite
+from pyntacletests.test_suite import Suite
 
 
 def _check_value(self, action, value):
@@ -104,12 +104,15 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         # Continue parsing of the first two arguments
         args = parser.parse_args(sys.argv[1:2])
         
-        if not hasattr(self, args.command):
+        if not hasattr(self, args.command) and args.command!='test':
             print('Unrecognized command')
             parser.print_help()
             exit(1)
         # Use dispatch pattern to invoke method with same name
-        getattr(self, args.command)()
+        if args.command == 'test':
+            self.pyntacle_test()
+        else:
+            getattr(self, args.command)()
 
     def keyplayer(self):
         parser = argparse.ArgumentParser(
@@ -721,7 +724,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         except KeyboardInterrupt:
             sys.stderr.write("\nReceived SIGKILL from Keyboard\n")
     
-    def test(self):
+    def pyntacle_test(self):
         runner = unittest.TextTestRunner()
         runner.run(Suite())
 
