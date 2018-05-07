@@ -121,11 +121,7 @@ class EglUtils:
         if self.edgl is None:
             self.egl_to_list()
 
-        set_direct = set()
-
-        for elem in self.edgl:
-            sorted_elem = tuple(sorted(elem))
-            set_direct.add(sorted_elem)
+        set_direct = list(set((tuple(sorted(x)) for x in self.edgl)))
 
         if len(set_direct) == len(self.edgl) / 2:
             direct = False
