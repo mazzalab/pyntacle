@@ -84,7 +84,6 @@ class ImportAttributes():
         check = self.__check_file(file_name=file_name, sep=sep)
         infile = check[0]
         sep = check[1]
-        if any
         with open(infile, "r") as attrfile:
             next(attrfile)
             for line in attrfile:
