@@ -28,7 +28,7 @@ import unittest
 import os, sys, glob
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 current_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
-from tests import getmd5, getmd5_bin
+from pyntacletests import getmd5, getmd5_bin
 from cmds.generate import Generate as generate_command
 
 
@@ -40,7 +40,7 @@ class WidgetTestGenerator(unittest.TestCase):
     def setUp(self):
         self.cleanup()
         self.Args = DummyObj()
-        self.Args.directory = os.path.join(current_dir, 'tests/test_sets/tmp')
+        self.Args.directory = os.path.join(current_dir, 'pyntacletests/test_sets/tmp')
         self.Args.no_output_header = False
         self.Args.no_plot = True
         self.Args.output_format = 'adjmat'
@@ -62,8 +62,8 @@ class WidgetTestGenerator(unittest.TestCase):
             gen.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        fileout = os.path.join(current_dir, 'tests/test_sets/tmp/random.adjm')
-        expected = os.path.join(current_dir, 'tests/test_sets/output/generate/random/generated.adjm')
+        fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/random.adjm')
+        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/generate/random/generated.adjm')
         self.assertEqual(getmd5(fileout), getmd5(expected), 'Wrong checksum for Generator, random case')
 
     def test_scalefree(self):
@@ -78,8 +78,8 @@ class WidgetTestGenerator(unittest.TestCase):
             gen.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        fileout = os.path.join(current_dir, 'tests/test_sets/tmp/scalefree.adjm')
-        expected = os.path.join(current_dir, 'tests/test_sets/output/generate/scalefree/generated.adjm')
+        fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/scalefree.adjm')
+        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/generate/scalefree/generated.adjm')
         self.assertEqual(getmd5(fileout), getmd5(expected), 'Wrong checksum for Generator, scale-free case')
 
     def test_tree(self):
@@ -94,8 +94,8 @@ class WidgetTestGenerator(unittest.TestCase):
             gen.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        fileout = os.path.join(current_dir, 'tests/test_sets/tmp/tree.adjm')
-        expected = os.path.join(current_dir, 'tests/test_sets/output/generate/tree/generated.adjm')
+        fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/tree.adjm')
+        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/generate/tree/generated.adjm')
         self.assertEqual(getmd5(fileout), getmd5(expected),
                          'Wrong checksum for Generator, tree case')
 
@@ -114,8 +114,8 @@ class WidgetTestGenerator(unittest.TestCase):
             gen.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        fileout = os.path.join(current_dir, 'tests/test_sets/tmp/smallworld.adjm')
-        expected = os.path.join(current_dir, 'tests/test_sets/output/generate/smallworld/generated.adjm')
+        fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/smallworld.adjm')
+        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/generate/smallworld/generated.adjm')
         self.assertEqual(getmd5(fileout), getmd5(expected),
                          'Wrong checksum for Generator, smallworld case')
         
@@ -123,7 +123,7 @@ class WidgetTestGenerator(unittest.TestCase):
         self.cleanup()
 
     def cleanup(self):
-        files = glob.glob(os.path.join(current_dir, 'tests/test_sets/tmp/*'))
+        files = glob.glob(os.path.join(current_dir, 'pyntacletests/test_sets/tmp/*'))
         for f in files:
             os.remove(f)
 

@@ -13,7 +13,7 @@ from .cmds.cmds_utils import *
 from .exceptions import *
 from .graph_operations import *
 from .io_stream import *
-from .tests import *
+from .pyntacletests import *
 from .tools import *
 from .tools.misc import *
 
@@ -67,14 +67,14 @@ import io_stream.importer
 import io_stream.import_attributes
 import io_stream.export_attributes
 
-import tests
-import tests.test_widgets_setoperations
-import tests.test_widgets_convert
-import tests.test_widgets_keyplayer
-import tests.test_widgets_metrics
-import tests.test_suite
-import tests.test_widgets_generator
-import tests.test_widgets_communities
+import pyntacletests
+import pyntacletests.test_widgets_setoperations
+import pyntacletests.test_widgets_convert
+import pyntacletests.test_widgets_keyplayer
+import pyntacletests.test_widgets_metrics
+import pyntacletests.test_suite
+import pyntacletests.test_widgets_generator
+import pyntacletests.test_widgets_communities
 
 import tools
 import tools.modules_utils
