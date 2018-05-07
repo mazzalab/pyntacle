@@ -84,11 +84,14 @@ class ImportAttributes():
         check = self.__check_file(file_name=file_name, sep=sep)
         infile = check[0]
         sep = check[1]
+        if any
         with open(infile, "r") as attrfile:
             next(attrfile)
             for line in attrfile:
-                AddAttributes(self.__graph).add_graph_attributes(line.strip().split(str(sep))[0],
-                                                                 line.strip().split(str(sep))[1])
+                attrs = line.strip().split(str(sep))
+
+                AddAttributes(self.__graph).add_graph_attributes(attrs[0],
+                                                                 attrs[1])
 
     def import_node_attributes(self, file_name: str, sep=None):
         '''
@@ -104,7 +107,7 @@ class ImportAttributes():
         '''
         check if file name is properly passed
         '''
-    
+        reserved_attrs = ["name", "__parent"]
         check = self.__check_file(file_name=file_name, sep=sep)
         infile = check[0]
         sep = check[1]
@@ -112,7 +115,7 @@ class ImportAttributes():
         with open(infile, "r") as attrfile:
             last_pos = attrfile.tell()
             # Checking if one or more attributes' names start with '__'. Avoids malicious injection.
-            if any(i.startswith('__') for i in attrfile.readline().rstrip().split(sep)):
+            if any(i in reserved_attrs for i in attrfile.readline().rstrip().split(sep)):
                 raise KeyError(
                     "One of the attributes in your attributes/weights file starts with __ (double underscore)."
                     "This notation is reserved to private variables, please avoid using it.")
