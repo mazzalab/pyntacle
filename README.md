@@ -113,7 +113,7 @@ Then, the numba package needs to be installed manually by cloning the developer'
 
 ```bash
 pip3 install numpy
-pip3 install llvmlite --upgrade
+pip3 install llvmlite
 git clone git://github.com/numba/numba.git ; cd numba; python3 setup.py install; cd ..; rm -r numba
 
 ```
