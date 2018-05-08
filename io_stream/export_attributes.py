@@ -82,7 +82,7 @@ class ExportAttributes():
                     if e.attributes()['__sif_interaction'] is None:
                         out.write('(interacts with) ')
                     else:
-                        out.write('(' + e.attributes()['__sif_interaction'] + ') ')
+                        out.write('(' + e.attributes()['__sif_interaction'][0] + ') ')
                     out.write(str(e.attributes()['node_names'][1]))
 
                 for attr in attributes_tokeep:
