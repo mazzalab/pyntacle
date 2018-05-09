@@ -119,7 +119,7 @@ git clone git://github.com/numba/numba.git ; cd numba; python3 setup.py install;
 ```
 
 
-Finally, extract the pyntacle [_source tar.gz_](https://github.com/mazzalab/pyntacle/releases) file navigate into it and run as an administrator:
+Finally, extract the pyntacle [_source tar.gz_](https://github.com/mazzalab/pyntacle/releases) file navigate into it and run as an administrator (or add ```--user``` if you do not have admin rights):
 
 ```bash
 python3 setup.py install
@@ -139,7 +139,7 @@ Then, you need to download and install the Cairo library:
 wget https://github.com/pygobject/pycairo/archive/master.zip ; unzip master.zip; cd pycairo-master; python3 setup.py build ; sudo python3 setup.py install; cd ..; rm -r master.zip pycairo-master
 ```
 Finally, extract the pyntacle [_source tar.gz_](https://github.com/mazzalab/pyntacle/releases) file, navigate into the
-extracted folder and run as an administrator:
+extracted folder and run as an administrator (or add ```--user``` if you do not have admin rights):
 
 ```bash
 python3 setup.py install
