@@ -31,7 +31,8 @@ class WidgetTestLogicOps(unittest.TestCase):
         output_graph = GraphOperations.intersection(self.graph1, self.graph2, new_graph_name='result_set')
         PyntacleExporter.AdjacencyMatrix(graph=output_graph, output_file=os.path.join(current_dir, 'pyntacletests/test_sets/tmp/result_set.adjm'),
                                          sep='\t', header=True)
-        self.assertEqual(getmd5(fileout), getmd5(expected), 'Wrong checksum for Set, intersect case')
+        if sys.version_info >= (3, 6):
+            self.assertEqual(getmd5(fileout), getmd5(expected), 'Wrong checksum for Set, intersect case')
 
     def test_difference(self):
         sys.stdout.write("Testing set difference\n")
