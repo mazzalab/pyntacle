@@ -178,7 +178,6 @@ class ImportAttributes():
         infile = check[0]
         sep = check[1]
         edges_list = set()
-        print("IN IMPORT EDGE ATTRS. mode:", mode)
         attrs_dict = {}
         with open(infile, "r") as attrfile:
             if mode == 'standard':
@@ -222,7 +221,7 @@ class ImportAttributes():
                     match_inv = self.__graph.es.select(node_names=perm_node_names[1])
                     if len(match_inv) != 0:
                         select.append(match_inv)
-                    
+                        
                     if len(select) == 1:
                         for i, obj in enumerate(attrs):
                             if attrnames[i] not in attrs_dict:

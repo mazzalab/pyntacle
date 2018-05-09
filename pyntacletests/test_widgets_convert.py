@@ -6,7 +6,7 @@ from io_stream.importer import PyntacleImporter
 from io_stream.exporter import PyntacleExporter
 from io_stream.format_converter import FileFormatConvert
 from pyntacletests import getmd5, getmd5_bin
-
+import re
 
 class WidgetTestConvert(unittest.TestCase):
     def setUp(self):
@@ -34,14 +34,23 @@ class WidgetTestConvert(unittest.TestCase):
         fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/test.graph')
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/convert/figure8.graph')
         PyntacleExporter.Binary(graph=self.graph, output_file=fileout)
-        self.assertEqual(getmd5_bin(fileout), getmd5_bin(expected), 'Wrong checksum for Convert, binary case')
+        if sys.version_info >= (3, 6):
+            self.assertEqual(getmd5_bin(fileout), getmd5_bin(expected), 'Wrong checksum for Convert, binary case')
 
     def test_convert_dot(self):
         sys.stdout.write("Testing dot conversion\n")
         fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/test.dot')
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/convert/figure8.dot')
         PyntacleExporter.Dot(graph=self.graph, output_file=fileout)
-        self.assertEqual(getmd5(fileout), getmd5(expected),
+        with open(fileout, 'r') as fin:
+            next(fin)
+            data = fin.read()
+            
+        with open(expected, 'r') as exp:
+            data_exp = exp.read()
+        o = set(re.findall(r"name=[A-z0-9]+|[A-z0-9]+ -- [A-z0-9]+", data))
+        e = set(re.findall(r"name=[A-z0-9]+|[A-z0-9]+ -- [A-z0-9]+", data_exp))
+        self.assertEqual(o, e,
                          'Wrong checksum for Convert, dot case')
 
     def test_convert_adjm(self):

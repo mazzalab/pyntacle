@@ -5,6 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 current_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 
 from config import *
+import re
 from cmds.metrics import Metrics as metrics_command
 from tools.misc.graph_load import GraphLoad
 from algorithms.global_topology import GlobalTopology
@@ -45,11 +46,15 @@ class WidgetTestMetrics(unittest.TestCase):
         self.assertEqual(the_exception.code, 0)
         fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/pyntacle_report_*_Global_*"))[0]
         with open(fileout, 'r') as fin:
-            data = fin.read().splitlines(True)
-        with open(fileout, 'w') as fout:
-            fout.writelines(data[1:])
+            next(fin)
+            data = fin.read()
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/metrics/figure8_global.txt')
-        self.assertEqual(getmd5(fileout), getmd5(expected),
+        with open(expected, 'r') as exp:
+            data_exp = exp.read()
+        o = set(re.findall(r"[-+]?\d*\.\d+|\d+", data))
+        e = set(re.findall(r"[-+]?\d*\.\d+|\d+", data_exp))
+        
+        self.assertEqual(o, e,
                          'Wrong checksum for Metrics, global case')
         
         # CPU, GPU, igraph coherence check
@@ -61,12 +66,13 @@ class WidgetTestMetrics(unittest.TestCase):
         implementation = CmodeEnum.cpu
         cpu_result = ShortestPath.average_global_shortest_path_length(graph, implementation)
         
-        self.assertEqual(igraph_result, cpu_result)
+        self.assertEqual(igraph_result, cpu_result, 'Discrepancy between igraph and cpu result, global case')
         
         if cuda_avail:
             implementation = CmodeEnum.gpu
             gpu_result = ShortestPath.average_global_shortest_path_length(graph, implementation)
-            self.assertEqual(igraph_result, gpu_result)
+            self.assertEqual(igraph_result, gpu_result,
+                             'Discrepancy between igraph and gpu result, global case')
         
     def test_local(self):
         sys.stdout.write("Testing local metrics\n")
@@ -82,11 +88,14 @@ class WidgetTestMetrics(unittest.TestCase):
         self.assertEqual(the_exception.code, 0)
         fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/pyntacle_report_*_Local_*"))[0]
         with open(fileout, 'r') as fin:
-            data = fin.read().splitlines(True)
-        with open(fileout, 'w') as fout:
-            fout.writelines(data[1:])
+            next(fin)
+            data = fin.read()
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/metrics/figure8_local.txt')
-        self.assertEqual(getmd5(fileout), getmd5(expected),
+        with open(expected, 'r') as exp:
+            data_exp = exp.read()
+        o = set(re.findall(r"[-+]?\d*\.\d+|\d+", data))
+        e = set(re.findall(r"[-+]?\d*\.\d+|\d+", data_exp))
+        self.assertEqual(o, e,
                          'Wrong checksum for Metrics, local case')
         
     def tearDown(self):

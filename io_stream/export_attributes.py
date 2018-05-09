@@ -60,14 +60,14 @@ class ExportAttributes():
         """
         
         warnflag = 0
-        if not os.path.exists(os.path.dirname(filename)):
+        dirname = os.path.dirname(filename) or '.'
+        if not os.path.exists(dirname):
             self.logger.warning("The directory tree for the output file does not exist, it will be created")
-            os.makedirs(os.path.dirname(filename), exist_ok=True)
+            os.makedirs(dirname, exist_ok=True)
         with open(filename, 'w') as out:
             # Writing header
             attributes_tokeep = [x for x in self.__graph.es()[0].attributes() if
                                  x != 'node_names' and not x.startswith('__')]
-
             if mode == 'standard':
                 out.write('Node1' + '\t' + 'Node2' + '\t' + '\t'.join(attributes_tokeep) + '\n')
             else:
@@ -77,27 +77,41 @@ class ExportAttributes():
                 if mode == 'standard':
                     out.write(str(e.attributes()['node_names'][0]) + '\t')
                     out.write(str(e.attributes()['node_names'][1]))
+                    for attr in attributes_tokeep:
+                        # Checking the type of the attribute
+                        if not isinstance(e.attributes()[attr], (str, float, int)) and \
+                                        e.attributes()[attr] is not None and warnflag == 0:
+                            self.logger.warning("The attribute {} looks like an iterable. "
+                                                "It will be written as it is.".format(attr))
+                            warnflag = 1
+    
+                        if e.attributes()[attr] is None:
+                            out.write('\t' + 'NA')
+                        else:
+                            out.write('\t' + str(e.attributes()[attr]))
+                    out.write('\n')
                 else:
-                    out.write(str(e.attributes()['node_names'][0]) + ' ')
                     if e.attributes()['__sif_interaction'] is None:
                         out.write('(interacts with) ')
                     else:
-                        out.write('(' + e.attributes()['__sif_interaction'] + ') ')
-                    out.write(str(e.attributes()['node_names'][1]))
+                        for interaction in e.attributes()['__sif_interaction']:
+                            out.write(str(e.attributes()['node_names'][0]) + ' ')
+                            out.write('(' + interaction + ') ')
+                            out.write(str(e.attributes()['node_names'][1]))
 
-                for attr in attributes_tokeep:
-                    # Checking the type of the attribute
-                    if not isinstance(e.attributes()[attr], (str, float, int)) and \
-                                    e.attributes()[attr] is not None and warnflag == 0:
-                        self.logger.warning("The attribute {} looks like an iterable. "
-                                            "It will be written as it is.".format(attr))
-                        warnflag = 1
-
-                    if e.attributes()[attr] is None:
-                        out.write('\t' + 'NA')
-                    else:
-                        out.write('\t' + str(e.attributes()[attr]))
-                out.write('\n')
+                            for attr in attributes_tokeep:
+                                # Checking the type of the attribute
+                                if not isinstance(e.attributes()[attr], (str, float, int)) and \
+                                                e.attributes()[attr] is not None and warnflag == 0:
+                                    self.logger.warning("The attribute {} looks like an iterable. "
+                                                        "It will be written as it is.".format(attr))
+                                    warnflag = 1
+            
+                                if e.attributes()[attr] is None:
+                                    out.write('\t' + 'NA')
+                                else:
+                                    out.write('\t' + str(e.attributes()[attr]))
+                            out.write('\n')
 
     def export_node_attributes(self, filename):
         """
@@ -107,9 +121,10 @@ class ExportAttributes():
         :return:
         """
         warnflag = 0
-        if not os.path.exists(os.path.dirname(filename)):
+        dirname = os.path.dirname(filename) or '.'
+        if not os.path.exists(dirname):
             self.logger.warning("The directory tree for the output file does not exist, it will be created")
-            os.makedirs(os.path.dirname(filename), exist_ok=True)
+            os.makedirs(dirname, exist_ok=True)
         with open(filename, 'w') as out:
             # Writing header
             attributes_tokeep = [x for x in self.__graph.vs()[0].attributes() if
@@ -140,10 +155,11 @@ class ExportAttributes():
         :return:
         """
         warnflag = 0
-        if not os.path.exists(os.path.dirname(filename)):
+        dirname = os.path.dirname(filename) or '.'
+        if not os.path.exists(dirname):
             self.logger.warning(
                 "The directory tree for the output file does not exist, it will be created")
-            os.makedirs(os.path.dirname(filename))
+            os.makedirs(dirname)
         with open(filename, 'w') as out:
             # Writing header
             attributes_tokeep = [x for x in self.__graph.attributes() if

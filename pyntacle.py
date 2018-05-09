@@ -87,7 +87,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         parser.add_argument('command', help='subcommand to run', type=lambda s: s.lower())
         parser.add_argument('-v', action="count", help="verbosity level. -vvv is the highest level")
-        parser.add_argument('-V', "--version", action="version", version="pyntacle v0.1.1")
+        parser.add_argument('-V', "--version", action="version", version="pyntacle v0.1.2")
 
         # Detect verbosity
         for arg in sys.argv:
@@ -104,7 +104,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         # Continue parsing of the first two arguments
         args = parser.parse_args(sys.argv[1:2])
         
-        if not hasattr(self, args.command) and args.command!='test':
+        if not hasattr(self, args.command) and args.command != 'test':
             print('Unrecognized command')
             parser.print_help()
             exit(1)

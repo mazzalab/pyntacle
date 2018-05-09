@@ -6,7 +6,7 @@ current_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pa
 
 from cmds.keyplayer import KeyPlayer as keyplayer_command
 from tools.enums import *
-
+import re
 from pyntacletests import getmd5
 
 
@@ -34,7 +34,6 @@ class WidgetTestKeyplayer(unittest.TestCase):
         self.Args.type = 'all'
         self.Args.v = None
         
-        
     def test_kpinfo(self):
         sys.stdout.write("Testing kp-info\n")
         self.Args.which = 'kp-info'
@@ -44,14 +43,16 @@ class WidgetTestKeyplayer(unittest.TestCase):
             kp.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        
         fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/pyntacle_report_*_KPinfo_*"))[0]
         with open(fileout, 'r') as fin:
-            data = fin.read().splitlines(True)
-        with open(fileout, 'w') as fout:
-            fout.writelines(data[1:])
+            next(fin)
+            data = fin.read()
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/keyplayer/figure8_kpinfo.txt')
-        self.assertEqual(getmd5(fileout), getmd5(expected),
+        with open(expected, 'r') as exp:
+            data_exp = exp.read()
+        o = set(re.findall(r"[-+]?\d*\.\d+|\d+", data))
+        e = set(re.findall(r"[-+]?\d*\.\d+|\d+", data_exp))
+        self.assertEqual(o,e,
                          'Wrong checksum for KeyPlayer, kp-info case')
 
     def test_kpfinder_greedy(self):
@@ -67,11 +68,16 @@ class WidgetTestKeyplayer(unittest.TestCase):
         self.assertEqual(the_exception.code, 0)
         fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/pyntacle_report_*_KP_greedy_*"))[0]
         with open(fileout, 'r') as fin:
-            data = fin.read().splitlines(True)
-        with open(fileout, 'w') as fout:
-            fout.writelines(data[1:])
+            next(fin)
+            data = fin.read()
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/keyplayer/figure8_kpfinder_greedy.txt')
-        self.assertEqual(getmd5(fileout), getmd5(expected),
+        with open(expected, 'r') as exp:
+            data_exp = exp.read()
+        o = set(re.findall(r"[^A-z:\t][0-9]*\.\d+|[^A-z:\t][ 0-9]+", data))
+        e = set(re.findall(r"[^A-z:\t][0-9]*\.\d+|[^A-z:\t][ 0-9]+", data_exp))
+        print(o)
+        print(e)
+        self.assertEqual(o,e,
                          'Wrong checksum for KeyPlayer, kp-finder greedy case')
         
     def test_kpfinder_bf(self):
@@ -87,13 +93,16 @@ class WidgetTestKeyplayer(unittest.TestCase):
         self.assertEqual(the_exception.code, 0)
         fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/pyntacle_report_*_KP_bruteforce_*"))[0]
         with open(fileout, 'r') as fin:
-            data = fin.read().splitlines(True)
-        with open(fileout, 'w') as fout:
-            fout.writelines(data[1:])
+            next(fin)
+            data = fin.read()
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/keyplayer/figure8_kpfinder_bruteforce.txt')
-        self.assertEqual(getmd5(fileout), getmd5(expected),
+        with open(expected, 'r') as exp:
+            data_exp = exp.read()
+        o = set(re.findall(r"[-+]?\d*\.\d+|\d+", data))
+        e = set(re.findall(r"[-+]?\d*\.\d+|\d+", data_exp))
+        self.assertEqual(o,e,
                          'Wrong checksum for KeyPlayer, kp-finder bruteforce case')
-    
+
     def tearDown(self):
         self.cleanup()
 
