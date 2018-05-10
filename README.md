@@ -114,7 +114,7 @@ pip3 install llvmlite
 Then, the numba package needs to be installed manually by cloning the developer's Git repository:
 
 ```bash
-git clone git://github.com/numba/numba.git ; cd numba; python3 setup.py install; cd ..; rm -r numba
+git clone git://github.com/numba/numba.git ; cd numba; python3 setup.py install; cd ..; rm -rf numba
 ```
 
 
