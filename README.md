@@ -107,39 +107,25 @@ requirements that need to be satisfied on each platform.
 As a user with admin rights, run:
 
 ```bash
-apt-get install -y build-essential linux-headers-$(uname -r) libgl1-mesa-glx libigraph0v5 libigraph0-dev libcairo2-dev libffi-dev libjpeg-dev libgif-dev libblas-dev liblapack-dev git python3-pip
-```
-Then, the numba package needs to be installed manually by cloning the developer's Git repository:
-
-```bash
-pip3 install numpy
-pip3 install llvmlite
-git clone git://github.com/numba/numba.git ; cd numba; python3 setup.py install; cd ..; rm -r numba
-
+apt-get install -y build-essential linux-headers-$(uname -r) libgl1-mesa-glx libigraph0v5 libigraph0-dev libcairo2-dev libffi-dev libjpeg-dev libgif-dev libblas-dev liblapack-dev git python3-pip python3-tk
 ```
 
 
-Finally, extract the pyntacle [_source tar.gz_](https://github.com/mazzalab/pyntacle/releases) file navigate into it and run as an administrator (or add ```--user``` if you do not have admin rights):
+> #### Ubuntu/Debian version <= 16.04
+> For Ubuntu/Debian 16.04 and older, you also have to install two dependencies from the PyPi repository, by running:
+>```
+>pip3 install numpy
+>pip3 install llvmlite
+>```
+>
+>Then, the numba package needs to be installed manually by cloning the developer's Git repository:
+>
+>```bash
+>git clone git://github.com/numba/numba.git ; cd numba; python3 setup.py install; cd ..; rm -rf numba
+>```
 
-```bash
-python3 setup.py install
-```
 
-#### Kubuntu
-
-As a user with admin rights, run:
-
-```bash
-apt-get install build-essential linux-headers-$(uname -r) libgl1-mesa-glx libigraph0v5 libigraph0-dev libcairo2-dev libffi-dev libjpeg-dev libgif-dev libblas-dev liblapack-dev python3-pip
-```
-
-Then, you need to download and install the Cairo library:
-
-```bash
-wget https://github.com/pygobject/pycairo/archive/master.zip ; unzip master.zip; cd pycairo-master; python3 setup.py build ; sudo python3 setup.py install; cd ..; rm -r master.zip pycairo-master
-```
-Finally, extract the pyntacle [_source tar.gz_](https://github.com/mazzalab/pyntacle/releases) file, navigate into the
-extracted folder and run as an administrator (or add ```--user``` if you do not have admin rights):
+Finally, extract the pyntacle [_source tar.gz_](https://github.com/mazzalab/pyntacle/releases) file navigate into it and run as an administrator (or add ```--user``` if you do not have admin rights and prefer to install the pyntacle binary in ```~/.local/bin```):
 
 ```bash
 python3 setup.py install
@@ -150,14 +136,15 @@ python3 setup.py install
 As an admin, you need to run:
 
 ```bash
-yum groupinstall -y development kernel-headers-`uname -r` kernel-devel-`uname -r` gcc gcc-c++ yum-utils; yum install -y https://centos7.iuscommunity.org/ius-release.rpm; yum install -y wget python36u-devel.x86_64 igraph-devel.x86_64 cairo-devel.x86_64 atlas-devel.x86_64 libffi-devel.x86_64 python36u-pip
+yum groupinstall -y development kernel-headers-`uname -r` kernel-devel-`uname -r` gcc gcc-c++ yum-utils; yum install -y https://centos7.iuscommunity.org/ius-release.rpm; yum install -y wget python36u-devel.x86_64 igraph-devel.x86_64 cairo-devel.x86_64 atlas-devel.x86_64 libffi-devel.x86_64 python36u-pip python36u-tkinter.x86_64
 wget https://github.com/pygobject/pycairo/releases/download/v1.14.1/pycairo-1.14.1.tar.gz ; tar -xf pycairo-1.14.1.tar.gz; cd pycairo-1.14.1; python3.6 setup.py build ; sudo python3.6 setup.py install; cd ..; rm -rf pycairo-1.14.1*
 ```
 
 Finally, extract the pyntacle [_source tar.gz_](https://github.com/mazzalab/pyntacle/releases) file, navigate into the
-extracted folder and run as an administrator:
+extracted folder and run as an administrator (or add ```--user``` if you do not have admin rights and prefer to install the pyntacle binary in ```~/.local/bin```):
+
 ```bash
-python3 setup.py install
+python3.6 setup.py install
 ```
 
 #### MacOS X
@@ -213,11 +200,11 @@ or by downloading and installing the Toolkit from the
 
 Changelog for current and past releases:
 
-### 0.1.1:
+### 0.1.2:
 
 - Bugfixes
 
-### 0.1.0:
+### 0.1.1:
 
 -  The first release of pyntacle.
 
