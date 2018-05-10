@@ -113,3 +113,4 @@ venv.bak/
 .idea/pyntacle.iml
 pyntacle_tests.py
 *.pyc
+.docs/*
