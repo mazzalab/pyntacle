@@ -108,37 +108,22 @@ As a user with admin rights, run:
 
 ```bash
 apt-get install -y build-essential linux-headers-$(uname -r) libgl1-mesa-glx libigraph0v5 libigraph0-dev libcairo2-dev libffi-dev libjpeg-dev libgif-dev libblas-dev liblapack-dev git python3-pip python3-tk
-pip3 install numpy
-pip3 install llvmlite
 ```
+
+> #### v.16.04 only
+> For Ubuntu/Debian 16.04 you also have to install two dependencies from the PyPi repository, by running:
+>```
+>pip3 install numpy
+>pip3 install llvmlite
+>```
+
 Then, the numba package needs to be installed manually by cloning the developer's Git repository:
 
 ```bash
 git clone git://github.com/numba/numba.git ; cd numba; python3 setup.py install; cd ..; rm -rf numba
 ```
 
-
 Finally, extract the pyntacle [_source tar.gz_](https://github.com/mazzalab/pyntacle/releases) file navigate into it and run as an administrator (or add ```--user``` if you do not have admin rights and prefer to install the pyntacle binary in ```~/.local/bin```):
-
-```bash
-python3 setup.py install
-```
-
-#### Kubuntu
-
-As a user with admin rights, run:
-
-```bash
-apt-get install build-essential linux-headers-$(uname -r) libgl1-mesa-glx libigraph0v5 libigraph0-dev libcairo2-dev libffi-dev libjpeg-dev libgif-dev libblas-dev liblapack-dev python3-pip
-```
-
-Then, you need to download and install the Cairo library:
-
-```bash
-wget https://github.com/pygobject/pycairo/archive/master.zip ; unzip master.zip; cd pycairo-master; python3 setup.py build ; sudo python3 setup.py install; cd ..; rm -r master.zip pycairo-master
-```
-Finally, extract the pyntacle [_source tar.gz_](https://github.com/mazzalab/pyntacle/releases) file, navigate into the
-extracted folder and run as an administrator (or add ```--user``` if you do not have admin rights and prefer to install the pyntacle binary in ```~/.local/bin```):
 
 ```bash
 python3 setup.py install
