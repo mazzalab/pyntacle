@@ -158,7 +158,7 @@ Finally, extract the pyntacle [_source tar.gz_](https://github.com/mazzalab/pynt
 extracted folder and run as an administrator (or add ```--user``` if you do not have admin rights and prefer to install the pyntacle binary in ```~/.local/bin```):
 
 ```bash
-python3 setup.py install
+python3.6 setup.py install
 ```
 
 #### MacOS X
