@@ -111,8 +111,8 @@ apt-get install -y build-essential linux-headers-$(uname -r) libgl1-mesa-glx lib
 ```
 
 
-> #### v.16.04 only
-> For Ubuntu/Debian 16.04 you also have to install two dependencies from the PyPi repository, by running:
+> #### Ubuntu/Debian version <= 16.04
+> For Ubuntu/Debian 16.04 and older, you also have to install two dependencies from the PyPi repository, by running:
 >```
 >pip3 install numpy
 >pip3 install llvmlite
