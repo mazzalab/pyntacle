@@ -117,13 +117,13 @@ apt-get install -y build-essential linux-headers-$(uname -r) libgl1-mesa-glx lib
 >pip3 install numpy
 >pip3 install llvmlite
 >```
+>
+>Then, the numba package needs to be installed manually by cloning the developer's Git repository:
+>
+>```bash
+>git clone git://github.com/numba/numba.git ; cd numba; python3 setup.py install; cd ..; rm -rf numba
+>```
 
-
-Then, the numba package needs to be installed manually by cloning the developer's Git repository:
-
-```bash
-git clone git://github.com/numba/numba.git ; cd numba; python3 setup.py install; cd ..; rm -rf numba
-```
 
 Finally, extract the pyntacle [_source tar.gz_](https://github.com/mazzalab/pyntacle/releases) file navigate into it and run as an administrator (or add ```--user``` if you do not have admin rights and prefer to install the pyntacle binary in ```~/.local/bin```):
 
