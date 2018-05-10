@@ -110,12 +110,14 @@ As a user with admin rights, run:
 apt-get install -y build-essential linux-headers-$(uname -r) libgl1-mesa-glx libigraph0v5 libigraph0-dev libcairo2-dev libffi-dev libjpeg-dev libgif-dev libblas-dev liblapack-dev git python3-pip python3-tk
 ```
 
+
 > #### v.16.04 only
 > For Ubuntu/Debian 16.04 you also have to install two dependencies from the PyPi repository, by running:
 >```
 >pip3 install numpy
 >pip3 install llvmlite
 >```
+
 
 Then, the numba package needs to be installed manually by cloning the developer's Git repository:
 
