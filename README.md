@@ -108,14 +108,13 @@ As a user with admin rights, run:
 
 ```bash
 apt-get install -y build-essential linux-headers-$(uname -r) libgl1-mesa-glx libigraph0v5 libigraph0-dev libcairo2-dev libffi-dev libjpeg-dev libgif-dev libblas-dev liblapack-dev git python3-pip
+pip3 install numpy
+pip3 install llvmlite
 ```
 Then, the numba package needs to be installed manually by cloning the developer's Git repository:
 
 ```bash
-pip3 install numpy
-pip3 install llvmlite
 git clone git://github.com/numba/numba.git ; cd numba; python3 setup.py install; cd ..; rm -r numba
-
 ```
 
 
