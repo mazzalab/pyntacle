@@ -107,7 +107,7 @@ requirements that need to be satisfied on each platform.
 As a user with admin rights, run:
 
 ```bash
-apt-get install -y build-essential linux-headers-$(uname -r) libgl1-mesa-glx libigraph0v5 libigraph0-dev libcairo2-dev libffi-dev libjpeg-dev libgif-dev libblas-dev liblapack-dev git python3-pip
+apt-get install -y build-essential linux-headers-$(uname -r) libgl1-mesa-glx libigraph0v5 libigraph0-dev libcairo2-dev libffi-dev libjpeg-dev libgif-dev libblas-dev liblapack-dev git python3-pip python3-tk
 pip3 install numpy
 pip3 install llvmlite
 ```
