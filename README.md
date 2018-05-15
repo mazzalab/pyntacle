@@ -97,8 +97,8 @@ Installing from source is advised for advanced users only. The following
 instructions were written for Mac OS v.11+ and a few major Linux
 distros. System requirements can vary for other distros/versions.
 
-The source code can be downloaded from our
-[GitHub](https://github.com/mazzalab/pyntacle) releases page as a
+The source code can be downloaded from our GitHub
+[releases](https://github.com/mazzalab/pyntacle/releases) page as a
 .tar.gz file. Before trying to install pyntacle, there are system
 requirements that need to be satisfied on each platform.
 
