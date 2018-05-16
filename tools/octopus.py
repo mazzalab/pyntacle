@@ -41,12 +41,12 @@ from cmds.cmds_utils.kpsearch_wrapper import KPWrapper as kpw
 from cmds.cmds_utils.kpsearch_wrapper import GOWrapper as gow
 from cmds.cmds_utils.kpsearch_wrapper import BFWrapper as bfw
 
+#TODO: MAURO - we miss Sparseness attributes
 
-# TODO DANIELE: Add SPASENESS
 
 def get_cmode(graph):
     if '__implementation' in graph.attributes():
-        return graph["__cmode"]
+        return graph["__implementation"]
     else:
         return CmodeEnum.igraph
     
