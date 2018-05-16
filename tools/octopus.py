@@ -43,7 +43,6 @@ from cmds.cmds_utils.kpsearch_wrapper import BFWrapper as bfw
 
 #TODO: MAURO - we miss Sparseness attributes
 
-
 def get_cmode(graph):
     if '__implementation' in graph.attributes():
         return graph["__implementation"]
@@ -270,7 +269,7 @@ class Octopus:
         kpobj.run_KPNeg(nodes, KpnegEnum.F)
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes(
-            KpnegEnum.F.name + '_kpinfo', {tuple(results_dict[KpnegEnum.F.name][0]): results_dict[KpnegEnum.F.name][1]})
+            KpnegEnum.F.name + '_kpinfo', {tuple(sorted(results_dict[KpnegEnum.F.name][0])): results_dict[KpnegEnum.F.name][1]})
 
     @staticmethod
     @check_graph_consistency
@@ -281,7 +280,7 @@ class Octopus:
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes(
             KpnegEnum.dF.name + '_kpinfo',
-            {tuple(results_dict[KpnegEnum.dF.name][0]): results_dict[KpnegEnum.dF.name][1]})
+            {tuple(sorted(results_dict[KpnegEnum.dF.name][0])): results_dict[KpnegEnum.dF.name][1]})
 
     @staticmethod
     @check_graph_consistency
@@ -292,7 +291,7 @@ class Octopus:
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes(
             KpposEnum.dR.name + '_kpinfo',
-            {tuple(results_dict[KpposEnum.dR.name][0]): results_dict[KpposEnum.dR.name][1]})
+            {tuple(sorted(results_dict[KpposEnum.dR.name][0])): results_dict[KpposEnum.dR.name][1]})
 
     @staticmethod
     @check_graph_consistency
@@ -303,7 +302,7 @@ class Octopus:
         results_dict = kpobj.get_results()
         attr_name = KpposEnum.mreach.name + '_{}_kpinfo'.format(str(m))
         AddAttributes(graph).add_graph_attributes(
-            attr_name, {tuple(results_dict[KpposEnum.mreach.name][0]): results_dict[KpposEnum.mreach.name][1]})
+            attr_name, {tuple(sorted(results_dict[KpposEnum.mreach.name][0])): results_dict[KpposEnum.mreach.name][1]})
 
     # Greedy optimization
     @staticmethod
@@ -313,7 +312,7 @@ class Octopus:
         kpobj.run_fragmentation(kpp_size, KpnegEnum.F, seed=seed)
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes(
-            KpnegEnum.F.name + '_greedy', {tuple(results_dict[KpnegEnum.F.name][0]): results_dict[KpnegEnum.F.name][1]})
+            KpnegEnum.F.name + '_greedy', {tuple(sorted(results_dict[KpnegEnum.F.name][0])): results_dict[KpnegEnum.F.name][1]})
 
     @staticmethod
     @check_graph_consistency
@@ -324,7 +323,7 @@ class Octopus:
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes(
             KpnegEnum.dF.name + '_greedy',
-            {tuple(results_dict[KpnegEnum.dF.name][0]): results_dict[KpnegEnum.dF.name][1]})
+            {tuple(sorted(results_dict[KpnegEnum.dF.name][0])): results_dict[KpnegEnum.dF.name][1]})
 
     @staticmethod
     @check_graph_consistency
@@ -335,7 +334,7 @@ class Octopus:
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes(
             KpposEnum.dR.name + '_greedy',
-            {tuple(results_dict[KpposEnum.dR.name][0]): results_dict[KpposEnum.dR.name][1]})
+            {tuple(sorted(results_dict[KpposEnum.dR.name][0])): results_dict[KpposEnum.dR.name][1]})
 
     @staticmethod
     @check_graph_consistency
@@ -346,7 +345,7 @@ class Octopus:
         results_dict = kpobj.get_results()
         attr_name = KpposEnum.mreach.name + '_{}_greedy'.format(str(m))
         AddAttributes(graph).add_graph_attributes(
-            attr_name, {tuple(results_dict[KpposEnum.mreach.name][0]): results_dict[KpposEnum.mreach.name][1]})
+            attr_name, {tuple(sorted(results_dict[KpposEnum.mreach.name][0])): results_dict[KpposEnum.mreach.name][1]})
     
     # Brute-force optimization
     @staticmethod
@@ -357,7 +356,7 @@ class Octopus:
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes(
             KpnegEnum.F.name + '_bruteforce',
-            {tuple(tuple(x) for x in results_dict[KpnegEnum.F.name][0]): results_dict[KpnegEnum.F.name][1]})
+            {tuple(tuple(sorted(x)) for x in results_dict[KpnegEnum.F.name][0]): results_dict[KpnegEnum.F.name][1]})
         
     @staticmethod
     @check_graph_consistency
@@ -367,7 +366,7 @@ class Octopus:
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes(
             KpnegEnum.dF.name + '_bruteforce',
-            {tuple(tuple(x) for x in results_dict[KpnegEnum.dF.name][0]): results_dict[KpnegEnum.dF.name][1]})
+            {tuple(tuple(sorted(x)) for x in results_dict[KpnegEnum.dF.name][0]): results_dict[KpnegEnum.dF.name][1]})
     
     @staticmethod
     @check_graph_consistency
@@ -377,7 +376,7 @@ class Octopus:
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes(
             KpposEnum.dR.name + '_bruteforce',
-            {tuple(tuple(x) for x in results_dict[KpposEnum.dR.name][0]): results_dict[KpposEnum.dR.name][1]})
+            {tuple(tuple(sorted(x)) for x in results_dict[KpposEnum.dR.name][0]): results_dict[KpposEnum.dR.name][1]})
         
     @staticmethod
     @check_graph_consistency
@@ -388,4 +387,4 @@ class Octopus:
         attr_name = KpposEnum.mreach.name + '_{}_bruteforce'.format(str(m))
         AddAttributes(graph).add_graph_attributes(
             attr_name,
-            {tuple(tuple(x) for x in results_dict[KpposEnum.mreach.name][0]): results_dict[KpposEnum.mreach.name][1]})
+            {tuple(tuple(sorted(x)) for x in results_dict[KpposEnum.mreach.name][0]): results_dict[KpposEnum.mreach.name][1]})
