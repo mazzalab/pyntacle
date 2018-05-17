@@ -347,10 +347,13 @@ class pyntacleReporter():
             else:
                 #in this case, the report dictionary can contain more than one set of nodes
                 if len(reportdict[k][0]) > 1:
-                    self.report.append([k, ",".join(reportdict[k][0][0]), reportdict[k][1]])
-                    del reportdict[k][0][0]
+                    count = 0
                     for elem in reportdict[k][0]:
-                        self.report.append(["", ",".join(elem), reportdict[k][1]])
+                        if count == 0:
+                            self.report.append([k, ",".join(reportdict[k][0][0]), reportdict[k][1]])
+                        else:
+                            self.report.append(["", ",".join(elem), reportdict[k][1]])
+                        count += 1
                 else:
                     self.report.append([k, ",".join(reportdict[k][0][0]), reportdict[k][1]])
 

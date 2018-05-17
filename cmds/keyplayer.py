@@ -279,6 +279,8 @@ class KeyPlayer():
                         'kp set{0} of size {1} with a reach of {2} for Key Player Metric {3} {4} {5} with value {6} (reaching the {7}% of nodes)\n'.format(
                             plurals[0], self.args.k_size, self.args.m_reach, kp, plurals[1], results[kp][0],
                             results[kp][1], node_perc_reached))
+
+
             if self.args.implementation == "brute-force":
                 r.create_report(report_type=ReportEnum.KP_bruteforce, report=results)
             elif self.args.implementation == "greedy":
@@ -416,7 +418,6 @@ class KeyPlayer():
         if not self.args.no_plot and graph.vcount() < 1000:
     
             sys.stdout.write("Generating plots in {} format.\n".format(self.args.plot_format))
-
             plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
 
             if os.path.isdir(plot_dir):
@@ -443,7 +444,7 @@ class KeyPlayer():
 
             for metric in results:
                 if self.args.which == 'kp-finder' and self.args.implementation == "brute-force":
-                    results[metric][0] = list(chain(*results[metric][0]))
+                    results[metric][0] = list(set(list(chain(*results[metric][0]))))
                     
                 if metric == "F":
 

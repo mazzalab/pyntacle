@@ -33,6 +33,7 @@ from tools.add_attributes import AddAttributes
 from algorithms.local_topology import LocalTopology
 from algorithms.global_topology import GlobalTopology
 from algorithms.shortest_path import ShortestPath
+from algorithms.sparseness import Sparseness
 from algorithms.keyplayer import KeyPlayer
 from tools.enums import *
 from tools.misc.graph_routines import check_graph_consistency
@@ -41,7 +42,6 @@ from cmds.cmds_utils.kpsearch_wrapper import KPWrapper as kpw
 from cmds.cmds_utils.kpsearch_wrapper import GOWrapper as gow
 from cmds.cmds_utils.kpsearch_wrapper import BFWrapper as bfw
 
-#TODO: MAURO - we miss Sparseness attributes
 
 def get_cmode(graph):
     if '__implementation' in graph.attributes():
@@ -129,6 +129,30 @@ class Octopus:
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.average_shortest_path_length.name,
                                                   ShortestPath.average_global_shortest_path_length(
                                                       graph, cmode))
+    
+    @staticmethod
+    @check_graph_consistency
+    def add_completeness_naive(graph):
+        AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.completeness_naive.name,
+                                                  Sparseness.completeness_naive(graph))
+    
+    @staticmethod
+    @check_graph_consistency
+    def add_completeness(graph):
+        AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.completeness.name,
+                                                  Sparseness.completeness(graph))
+        
+    @staticmethod
+    @check_graph_consistency
+    def add_compactness(graph):
+        AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.compactness.name,
+                                                  Sparseness.compactness(graph))
+
+    @staticmethod
+    @check_graph_consistency
+    def add_compactness_correct(graph):
+        AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.compactness_correct.name,
+                                                  Sparseness.compactness_correct(graph))
         
     # Local properties
     @staticmethod
