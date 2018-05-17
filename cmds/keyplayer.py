@@ -187,7 +187,7 @@ class KeyPlayer():
                         "Finding best set of kp-nodes of size {} using dR (kp pos measure)\n".format(
                             self.args.k_size))
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.dR,
-                                               max_distanc=self.args.max_distances, seed=self.args.seed,
+                                               max_distance=self.args.max_distances, seed=self.args.seed,
                                                implementation=implementation)
 
                 if self.args.type in (['mreach', 'pos', 'all']):
@@ -195,7 +195,7 @@ class KeyPlayer():
                         "Finding best set of kp-nodes of size {0} using an MREACH measure of {1} (kp pos measure)\n".format(
                             self.args.k_size, self.args.m_reach))
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.mreach, m=self.args.m_reach,
-                                               max_distanc=self.args.max_distances, seed=self.args.seed,
+                                               max_distance=self.args.max_distances, seed=self.args.seed,
                                                implementation=implementation)
 
             elif self.args.implementation == "brute-force":

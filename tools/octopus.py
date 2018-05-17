@@ -354,7 +354,7 @@ class Octopus:
     def add_GO_dR(graph, kpp_size, max_distance=None, seed=None):
         cmode = get_cmode(graph)
         kpobj = gow(graph=graph)
-        kpobj.run_reachability(kpp_size, KpposEnum.dR, max_distanc=max_distance, seed=seed, implementation=cmode)
+        kpobj.run_reachability(kpp_size, KpposEnum.dR, max_distance=max_distance, seed=seed, implementation=cmode)
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes(
             KpposEnum.dR.name + '_greedy',
@@ -365,7 +365,7 @@ class Octopus:
     def add_GO_mreach(graph, kpp_size, m=None, max_distance=None, seed=None):
         cmode = get_cmode(graph)
         kpobj = gow(graph=graph)
-        kpobj.run_reachability(kpp_size, KpposEnum.mreach, m=m, max_distanc=max_distance, seed=seed, implementation=cmode)
+        kpobj.run_reachability(kpp_size, KpposEnum.mreach, m=m, max_distance=max_distance, seed=seed, implementation=cmode)
         results_dict = kpobj.get_results()
         attr_name = KpposEnum.mreach.name + '_{}_greedy'.format(str(m))
         AddAttributes(graph).add_graph_attributes(
