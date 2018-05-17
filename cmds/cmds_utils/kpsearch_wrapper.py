@@ -182,7 +182,7 @@ class GOWrapper:
         self.results[kpp_type.name] = [go_results[0], go_results[1]]
 
     @timeit
-    def run_reachability(self, kpp_size:int, kpp_type:KpposEnum, m=None, max_distance=None, seed=None, implementation=CmodeEnum.igraph):
+    def run_reachability(self, kpp_size:int, kpp_type:KpposEnum, m=None, max_distanc=None, seed=None, implementation=CmodeEnum.igraph):
         """
         Wrapper around the Greedy Optimization Module that stores the greedy optimization results for KPPOS metrics
         :param int kpp_size: size of the kpp-set to be found
@@ -203,7 +203,7 @@ class GOWrapper:
             elif not isinstance(m, int) or m <= 0 :
                 raise ValueError("\"m\" must be a positive integer for mreach ")
 
-        go_results = self.go.reachability(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type, max_distance=max_distance, seed=seed, m=m, implementation=implementation)
+        go_results = self.go.reachability(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type, max_distance=max_distanc, seed=seed, m=m, implementation=implementation)
         self.results[kpp_type.name] = [go_results[0], go_results[1]]
 
     def get_results(self) -> dict:

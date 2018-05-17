@@ -283,7 +283,7 @@ class Octopus:
     @check_graph_consistency
     def add_dF(graph, max_distance=None):
         cmode = get_cmode(graph)
-        AddAttributes(graph).add_graph_attributes(KpnegEnum.dF.name, KeyPlayer.dF(graph, cmode=cmode,
+        AddAttributes(graph).add_graph_attributes(KpnegEnum.dF.name, KeyPlayer.dF(graph, implementation=cmode,
                                                                                   max_distance=max_distance))
 
     @staticmethod
@@ -300,7 +300,7 @@ class Octopus:
     def add_kp_dF(graph, nodes, max_distance=None):
         cmode = get_cmode(graph)
         kpobj = kpw(graph=graph)
-        kpobj.run_KPNeg(nodes, KpnegEnum.dF, max_distance=max_distance, cmode=cmode)
+        kpobj.run_KPNeg(nodes, KpnegEnum.dF, max_distance=max_distance, implementation=cmode)
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes(
             KpnegEnum.dF.name + '_kpinfo',
@@ -311,7 +311,7 @@ class Octopus:
     def add_kp_dR(graph, nodes, max_distance=None):
         cmode = get_cmode(graph)
         kpobj = kpw(graph=graph)
-        kpobj.run_KPPos(nodes, KpposEnum.dR, max_distance=max_distance, cmode=cmode)
+        kpobj.run_KPPos(nodes, KpposEnum.dR, max_distance=max_distance, implementation=cmode)
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes(
             KpposEnum.dR.name + '_kpinfo',
@@ -322,7 +322,7 @@ class Octopus:
     def add_kp_mreach(graph, nodes, m=None, max_distance=None):
         cmode = get_cmode(graph)
         kpobj = kpw(graph=graph)
-        kpobj.run_KPPos(nodes, KpposEnum.mreach, m=m, max_distance=max_distance, cmode=cmode)
+        kpobj.run_KPPos(nodes, KpposEnum.mreach, m=m, max_distance=max_distance, implementation=cmode)
         results_dict = kpobj.get_results()
         attr_name = KpposEnum.mreach.name + '_{}_kpinfo'.format(str(m))
         AddAttributes(graph).add_graph_attributes(
@@ -343,7 +343,7 @@ class Octopus:
     def add_GO_dF(graph, kpp_size, max_distance=None, seed=None):
         cmode = get_cmode(graph)
         kpobj = gow(graph=graph)
-        kpobj.run_fragmentation(kpp_size, KpnegEnum.dF, max_distance=max_distance, seed=seed, cmode=cmode)
+        kpobj.run_fragmentation(kpp_size, KpnegEnum.dF, max_distance=max_distance, seed=seed, implementation=cmode)
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes(
             KpnegEnum.dF.name + '_greedy',
@@ -354,7 +354,7 @@ class Octopus:
     def add_GO_dR(graph, kpp_size, max_distance=None, seed=None):
         cmode = get_cmode(graph)
         kpobj = gow(graph=graph)
-        kpobj.run_reachability(kpp_size, KpposEnum.dR, max_distanc=max_distance, seed=seed, cmode=cmode)
+        kpobj.run_reachability(kpp_size, KpposEnum.dR, max_distanc=max_distance, seed=seed, implementation=cmode)
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes(
             KpposEnum.dR.name + '_greedy',
@@ -365,7 +365,7 @@ class Octopus:
     def add_GO_mreach(graph, kpp_size, m=None, max_distance=None, seed=None):
         cmode = get_cmode(graph)
         kpobj = gow(graph=graph)
-        kpobj.run_reachability(kpp_size, KpposEnum.mreach, m=m, max_distanc=max_distance, seed=seed, cmode=cmode)
+        kpobj.run_reachability(kpp_size, KpposEnum.mreach, m=m, max_distanc=max_distance, seed=seed, implementation=cmode)
         results_dict = kpobj.get_results()
         attr_name = KpposEnum.mreach.name + '_{}_greedy'.format(str(m))
         AddAttributes(graph).add_graph_attributes(
