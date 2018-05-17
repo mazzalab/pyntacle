@@ -187,18 +187,16 @@ ln -s /opt/local/Library/Frameworks/Python.framework/Versions/3.5/bin/pyntacle /
 ### CUDA support
 
 Independently of the OS in use, if you need CUDA support, you should
-also install the CUDA toolkit either by using Conda:
-
-```bash
-conda install cudatoolkit
-```
-
-or by downloading and installing the Toolkit from the
+also install the CUDA toolkit by downloading and installing the Toolkit from the
 [_NVIDIA website_](https://developer.nvidia.com/cuda-toolkit).
 
 ## Release history
 
 Changelog for current and past releases:
+
+### 0.1.3:
+
+- Bugfixes
 
 ### 0.1.2:
 

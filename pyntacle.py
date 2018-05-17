@@ -1,7 +1,7 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.1.1"
+__version__ = "0.1.3"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
@@ -87,7 +87,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         parser.add_argument('command', help='subcommand to run', type=lambda s: s.lower())
         parser.add_argument('-v', action="count", help="verbosity level. -vvv is the highest level")
-        parser.add_argument('-V', "--version", action="version", version="pyntacle v0.1.2")
+        parser.add_argument('-V', "--version", action="version", version="pyntacle v0.1.3")
 
         # Detect verbosity
         for arg in sys.argv:
