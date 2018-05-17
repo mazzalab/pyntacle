@@ -168,20 +168,19 @@ easily fetch them using the package manager
 Once Mac Ports is installed, getting the dependencies is easy:
 
 ```bash
-port install py35-cairo py35-setuptools py35-pandas py35-seaborn py35-colorama py35-xlsxwriter py35-igraph
+port install py36-cairo py36-setuptools py36-pandas py36-seaborn py36-colorama py36-xlsxwriter py36-igraph py36-numba py36-psutil
 ```
 
-**Note**: unfortunately, at the time of writing this guide, Mac Ports does
-not provide a python3.6 version of the library ‘xlsxwriter’; therefore,
-everything must be downgraded to Python 3.5. This does not affect the
-performance or the results.
-
-Finally, extract the pyntacle [_source tar.gz_](https://github.com/mazzalab/pyntacle/releases) file navigate into it and run as an
-administrator:
+Finally, extract the pyntacle [_source tar.gz_](https://github.com/mazzalab/pyntacle/releases) file, navigate into it and run:
 
 ```bash
-python3.5 setup.py install
-ln -s /opt/local/Library/Frameworks/Python.framework/Versions/3.5/bin/pyntacle /opt/local/bin
+python3.6 setup.py install --user
+```
+
+For your convenience, you can make the newly installed binary available system-wide (requires administrative rights):
+
+```
+ln -s /Users/$USER/Library/Python/3.6/bin/pyntacle /opt/local/bin
 ```
 
 ### CUDA support
