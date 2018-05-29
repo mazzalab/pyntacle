@@ -102,6 +102,19 @@ class AdjmUtils():
                         tmp = line.rstrip().split(self.sep)
                         self.adjm.append(tmp)
 
+    def get_adjm(self, file: str, header: bool, sep="\t"):
+        """
+        Replace the current adjacency Matrix with another one
+        :param str file: valid path to the newl added input adjacency matrix
+        :param bool header: Boolean to specify whether the header is present or not
+        :param str sep: cell separator. Default is "\t"
+        """
+
+        self.adjfile = file
+        self.sep = sep
+        self.header = header
+
+
     def __write_adjm(self, adjm: list, separator: str, appendix: str) -> str:
         """
         Hidden function that rewrite an adjacency matrix to the input path (used internally)
@@ -154,7 +167,7 @@ class AdjmUtils():
         self.logger.info("removing weights from adjacency matrix")
 
         for i, elem in enumerate(self.adjm):
-            self.adjm[i] = ["1" if float(x) == 1.0 else x for x in elem]
+            self.adjm[i] = ["1" if float(x) != 1.0 else x for x in elem]
 
         self.__write_adjm(self.adjm, separator=self.sep, appendix="unweighted")
 
