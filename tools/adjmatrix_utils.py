@@ -167,7 +167,7 @@ class AdjmUtils():
         self.logger.info("removing weights from adjacency matrix")
 
         for i, elem in enumerate(self.adjm):
-            self.adjm[i] = ["1" if float(x) != 1.0 else x for x in elem]
+            self.adjm[i] = ["0" if float(x) == 0.0 else "1" for x in elem]
 
         self.__write_adjm(self.adjm, separator=self.sep, appendix="unweighted")
 
