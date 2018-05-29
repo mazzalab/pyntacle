@@ -33,6 +33,9 @@ from config import *
 import os
 import logging
 from exceptions import *
+import numpy as np
+import sys
+
 
 class AdjmUtils():
     logger = None
@@ -47,8 +50,7 @@ class AdjmUtils():
 
         self.logger = log
         if not os.path.exists(file):
-            self.logger.fatal("Input file does not exist")
-            raise FileNotFoundError
+            raise FileNotFoundError("Input file does not exist")
 
         else:
             self.adjfile = file
@@ -60,6 +62,8 @@ class AdjmUtils():
             self.sep = sep
 
         self.header = header  # boolean to check if header is present
+
+        self.adjm=None
 
     def is_squared(self) -> bool:
         """
@@ -81,26 +85,30 @@ class AdjmUtils():
 
     def __store_adjm(self):
         """
-        Store the input adjacency matrix in a list (for internal purposes only)
+        Store the input adjacency matrix in a list of lists
         """
-        self.adjm = []
-        with open(self.adjfile, "r") as infile:
-            if self.header:
-                self.headlist = infile.readline().rstrip().split(self.sep)
-                # print (self.headlist)
+        if self.adjm is None:
+            self.adjm = []
+            with open(self.adjfile, "r") as infile:
+                if self.header:
+                    self.headlist = infile.readline().rstrip().split(self.sep)
+                    # print (self.headlist)
 
-                iterator = iter(infile.readline, '')
+                    iterator = iter(infile.readline, '')
 
-                for line in iterator:
-                    # print (line)
+                    for line in iterator:
+                        # print (line)
 
-                    if self.header:
-                        tmp = line.rstrip().split(self.sep)
-                        self.adjm.append(tmp[1:])
+                        if self.header:
+                            tmp = line.rstrip().split(self.sep)
+                            self.adjm.append(tmp[1:])
 
-                    else:
-                        tmp = line.rstrip().split(self.sep)
-                        self.adjm.append(tmp)
+                        else:
+                            tmp = line.rstrip().split(self.sep)
+                            self.adjm.append(tmp)
+
+        else:
+            return self.adjm
 
     def get_adjm(self, file: str, header: bool, sep="\t"):
         """
@@ -113,6 +121,7 @@ class AdjmUtils():
         self.adjfile = file
         self.sep = sep
         self.header = header
+        self.adjm = None
 
 
     def __write_adjm(self, adjm: list, separator: str, appendix: str) -> str:
@@ -135,6 +144,7 @@ class AdjmUtils():
                 for elem in adjm:
                     out.write(separator.join(elem) + "\n")
 
+        print(outpath)
         return outpath
 
     def is_weighted(self) -> bool:
@@ -156,8 +166,13 @@ class AdjmUtils():
 
     def remove_weigths(self):
         """
-        Convert matrix to unweighted by setting every value different from 1 to 1 and write it to a new file
+        Convert matrix to unweighted by setting every value different from 1 to 1 and write it to a new file. Zeroes
+        will be preserved. Will create a file in the same directory  where the input adjacency matrix is stored
+        with the "_unweighted.adjm" extension
+        :return str outpath: a path to a valid file. Will be in the same directory of the input adjacencuy matrix, with
+        the "unweighted" extension.
         """
+
         self.__store_adjm()  # store adjacency matrix into a list
 
         if not self.is_weighted():
@@ -174,9 +189,10 @@ class AdjmUtils():
 
     def is_direct(self) -> bool:
         """
-        Checks whether an adjacency matrix is direct or not (the lower and upper triangulkar matrices, are they equal?)
+        Checks whether an adjacency matrix is direct or not (so if the upperand lower triangular matrix match perfectly)
         :return: directbool, a value representing True if the matrix is direct and False otherwise
         """
+
         self.directbool = False
         self.__store_adjm()  # store adjacency matrix into a list
         self.logger.info("checking if the adjacency matrix is direct")
@@ -190,20 +206,27 @@ class AdjmUtils():
 
     def make_undirect(self) -> str:
         """
-        Convert an direct Adjacency Matrix to an undirect one into a new file
-        :return str outpath: a valid path where the new (undirected) adjacency matrix will be stored
+        Convert an direct Adjacency Matrix to an undirect one (so make it symmetric) and store it into a new file with
+        the "_undirect.adjm" extension. If the matrix is weighted, we will take the maximum value in each cell and
+        assign it to the corresponding one.
+
+        :return str outpath: a valid path where the new (undirected) adjacency matrix will be stored with the
+        "_unweighted.adjm extension"
         """
 
         self.__store_adjm()
         if not self.is_direct():
-            self.logger.info("the matrix is already undirect")
+            self.logger.info("the input matrix is already undirect, returning the same matrix")
             return self.adjfile
 
         self.logger.info("Converting Matrix to undirect")
+        self.adjm = np.array(self.adjm, dtype=float)
 
-        for i, elem in enumerate(self.adjm):
-            for e, el in enumerate(elem):
-                if el != 0:
-                    self.adjm[e][i] = el
+        aa = np.maximum(self.adjm, self.adjm.transpose())
+
+        self.adjm = aa.tolist()
+
+        self.adjm = [[str(x) for x in y] for y in self.adjm]
+
         outpath = self.__write_adjm(self.adjm, separator=self.sep, appendix="undirected")
         return outpath
