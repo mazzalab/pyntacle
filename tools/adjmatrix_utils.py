@@ -169,7 +169,8 @@ class AdjmUtils():
         for i, elem in enumerate(self.adjm):
             self.adjm[i] = ["0" if float(x) == 0.0 else "1" for x in elem]
 
-        self.__write_adjm(self.adjm, separator=self.sep, appendix="unweighted")
+        outpath = self.__write_adjm(self.adjm, separator=self.sep, appendix="unweighted")
+        return outpath
 
     def is_direct(self) -> bool:
         """
