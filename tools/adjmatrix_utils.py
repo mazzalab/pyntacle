@@ -144,7 +144,6 @@ class AdjmUtils():
                 for elem in adjm:
                     out.write(separator.join(elem) + "\n")
 
-        print(outpath)
         return outpath
 
     def is_weighted(self) -> bool:

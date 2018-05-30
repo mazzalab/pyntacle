@@ -161,25 +161,29 @@ class PyntacleImporter:
         eglutils = EglUtils(file=file, header=header, sep=sep)
         
         if eglutils.is_direct():
-            raise UnproperlyFormattedFileError("Edgelist is not ready to be parsed by Pyntacle (it is a direct one)")
+            raise ValueError("Edgelist is not ready to be parsed by Pyntacle, it's direct. Use the `edgelist_utils` module in `tools` to make it undirect")
         
         elif eglutils.is_multigraph():
-            raise UnproperlyFormattedFileError("Edgelist contains multiple edges")
+            raise ValueError("Edgelist contains multiple edges. It is not ready to be parsed by Pyntacle, Use the `edgelist_utils` module in `tools` to turn it into a simple graph.")
 
         graph = Graph() #initialize an empty graph that will be filled
         
         if header:
 
-            adj = pd.read_csv(file, sep=sep, skiprows=1, header=None)
+            adj = pd.read_csv(file, sep=sep, header=0, dtype=str)
 
         else:
-            adj = pd.read_csv(file, sep=sep, header=None)
-            
+            adj = pd.read_csv(file, sep=sep, header=None, dtype=str)
+
         adj.values.sort()
         adj = adj.drop_duplicates()
-        # add all vertices to graph
+        adj.dropna(how="all", inplace=True) #remove all empty lines
+
         graph.add_vertices(list(str(x) for x in set(adj[0].tolist() + adj[1].tolist())))
-        graph.add_edges([tuple(x) for x in adj.values])
+
+        edgs = adj.values.tolist()
+
+        graph.add_edges(edgs)
         #initialize the graph by calling the graph_initializer() method
         AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
         sys.stdout.write("Edge List from {} imported\n".format(file))
@@ -201,7 +205,7 @@ class PyntacleImporter:
         :param str file: a valid path to the Edge List File
         :param sep: if None(default) we will try to guess the separator. Otherwise, you can place the string
         representing the rows and columns separator.
-        :param bool header: Whether the header is present or not (default is *False*)
+        :param bool header: Whether the header is present or not (default is `False`)
         :return: an `igraph.Graph` object.
         """
 
@@ -282,13 +286,12 @@ class PyntacleImporter:
     @input_file_checker
     @separator_sniffer
     def Dot(file, **kwargs):
+        # todo Mauro and Tommaso, can you document this method please?
         """
         :param file:
-        :param sep:
         :param kwargs:
         :return:
         """
-        #todo Mauro and Tommaso, can you describe this part please?
         graph = Graph()
         graph.vs()["name"] = None
         graph.es()["__sif_interaction"] = None

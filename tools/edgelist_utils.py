@@ -27,7 +27,7 @@ __license__ = u"""
   """
 
 """
-Utilities made for common operations on edge lists input files
+A series of utilities to perform severasl checks and file parsing operations on Edgelist files
 """
 
 import itertools
@@ -37,71 +37,61 @@ import pandas as pd
 from exceptions.unproperly_formatted_file_error import UnproperlyFormattedFileError
 
 class EglUtils:
+
     logger = None
 
     def __init__(self, file: str, header: bool, sep="\t"):
         """
         Initialize the EdgeList Utils object
         :param str file: a file PATH to the edgelist file
-        :param bool header: whether the edgelist has an header or not
-        :param str sep: a string specified the separator between edgelist fields. Default is "\t" (tab separated edgelist)
+        :param bool header: specify whether the edgelist has an header or not
+        :param str sep: a string specified the separator between Edgelist cells. Default is "\t"
         """
         self.logger = log
+        if not isinstance(header, bool):
+            raise TypeError("\"header ust be a string, {} found".format(type(header).__name__))
 
         if not isinstance(sep, str):
-            raise ValueError("\"sep\" must be a string, {} found".format(type(sep).__name__))
+            raise TypeError("\"sep\" must be a string, {} found".format(type(sep).__name__))
         else:
             self.sep = sep
 
         if not os.path.exists(file):
-            raise FileNotFoundError("Input file does not exist")
+            raise FileNotFoundError("Input file at path {} does not exist".format(file))
 
-        else:
-            checkfile = pd.read_csv(filepath_or_buffer=file, sep=self.sep)
-            if len(checkfile.columns) != 2:
-                raise UnproperlyFormattedFileError("Edgelist should contain 2 columns, {} found. Is the separator specified correct?".format(len(checkfile.columns)))
+        else: #read the edgelist and store it into a list of lists using the egl_to_list function
 
-            self.eglfile = file
+            self.edglfile = file
+            if header:
+                edgl = pd.read_csv(self.edglfile, dtype = str, sep = self.sep, header = 0)
 
-        self.headerbool = header
-
-        self.edgl = None
-
-    def egl_to_list(self):
-        """
-        Reparses an edgelist and store it into a list of lists (for internal purposes only)
-        """
-
-        self.edgl = []
-
-        with open(self.eglfile, "r") as edg:
-
-            if self.headerbool:
-                self.header = edg.readline()
+                with open(file, "r") as hh:
+                    self.header = hh.readline().rstrip().split(self.sep)  # store the header and strip all trailing characters
             else:
+                edgl = pd.read_csv(self.edglfile, dtype=str, sep=self.sep, header=None)
                 self.header = None
 
-            for elem in edg:
-                # print(elem)
-                tmp = elem.rstrip().split(self.sep)[:2]
-                self.edgl.append(tmp)
+            #remove all empty lines (these should be removed by default but just in case)
+            edgl.dropna(how="all", inplace=True)
+
+            #check if there are more than 2 columns and raise error, if so)
+            if len(edgl.columns) != 2:
+                raise UnproperlyFormattedFileError(
+                    "Edgelist should contain 2 columns, {0} found. found separator is \"{1}\"".format(len(edgl.columns),
+                                                                                                      self.sep))
+            #create the self.edgl object, storing the rows of the pandas dataframe as list of lists:
+            self.edgl = edgl.values.tolist()
 
     def get_edgelist(self) -> list:
         """
-        return the edgelist object as a list of lists (useful for igraph porting)
-        :return: a list containing all the stuff in the input file, header included, sorted by line
+        Returns the edgelist object as a list of lists (useful for igraph porting)
+        :return: a list containing all the values in the input graph BUT the header
         """
-        if self.edgl is not None:
-            if self.edgl:
-                return self.edgl
-            else:
-                raise ValueError("the edgelist is empty")
-        else:
-            raise ValueError("the edgelist is not ")
+        return self.edgl
 
     def get_header(self) -> list:
         """
-        return the header object as a list of string
+        return the header object as a list of strings, if present or None otherwise
         :return:a list containing the header of the input edge list
         """
 
@@ -109,17 +99,34 @@ class EglUtils:
             return self.header
 
         else:
-            self.logger.warning("Header was not initialized since it's not present, returning \"None\"")
-            return None
+            sys.stdout.write("No header present, returning \"None\"")
+
+    def set_edgelist(self, edgl:list):
+        """
+        replace the edgelist (list of list) with another one of choice. Must be a list of lists of string.
+        Each element in the list must have length 2.
+        :param list edgl: a list of lists of strings. Each nested list must have length 2
+        """
+
+        self.edgl = edgl
+
+    def set_header(self, header:list):
+        """replaces the header imported in the __init__ with another one (or add an header to the current input file).
+        :param str header: a list of strings of length 2
+        Must be a list of strings of length 2"""
+        self.header = header
+
+    def set_sep(self, sep: str):
+        """replaces the separator imported in the __init__ with another one. Must be a string
+        :param str sep: a separator of choice. Must be a string.
+        """
+        self.sep = sep
 
     def is_direct(self) -> bool:
         """
         Function that returns a boolean if the edgelist contains at least one direct edge
         :return: a boolean; True if the edgelist is direct and False otherwise
         """
-
-        if self.edgl is None:
-            self.egl_to_list()
 
         set_direct = list(set((tuple(sorted(x)) for x in self.edgl)))
 
@@ -133,48 +140,77 @@ class EglUtils:
 
     def is_multigraph(self) -> bool:
         """
-        Check that the edge-list does not represent a multigraph. Multiple edges between two nodes are not allowed
-        :return: Whether ot not the edge-list represents a multigraph
+        Check that the edge-list does not have more than one edge between each vertex pair.
+        Multiple edges between two nodes are not accepted by Pyntacle.
+        :return bool: a boolean; `True` if the edgelist is a multigraph, `False` otherwise
         """
-
-        if self.edgl is None:
-            self.egl_to_list()
-            
         egl_tuple = [tuple(sorted(x)) for x in self.edgl]
 
         if len(set(egl_tuple)) != (len(self.edgl)/2):
             return True
+
         else:
             return False
 
-    def to_undirect(self):
+    def make_undirect(self):
         """
-        Converts the edgelist to undirect (add reciprocal pairs if missing)
+        Converts the edgelist to undirect (add reciprocal pairs if missing). Write the edgelist to a file with header
+        (if initialized) with the "_undirected.egl" extension to the input edgelist file
+        return str: the path to the valid output file (the name of the input edgelist + "_undirected.egl"). If the edgelist
+        is already undirect, returns the input edgelist file
         """
-        if self.edgl is None:
-            self.egl_to_list()
 
         if not self.is_direct():
             self.logger.info("Graph is already undirect, no operations to perform")
+            return self.edglfile
 
         else:
             single_pairs = set([tuple(sorted(x)) for x in self.edgl])
-            single_pairs = [list(x) for x in  single_pairs]
-            self.edgl = []
+            single_pairs = [list(x) for x in single_pairs]
+            final = []
             for elem in single_pairs:
-                self.edgl += list(itertools.permutations(elem, 2))
+                final += list(itertools.permutations(elem, 2))
 
-            self.edgl = [list(x) for x in self.edgl]
+            final = [list(x) for x in self.edgl]
 
-    def set_edgelist_igraph(self):
+            outpath = "_".join([os.path.splitext(os.path.abspath(self.edglfile))[0], "undirected.egl"])
+
+            self.__write_edgelist(edgelist=final, path=outpath)
+
+            return outpath
+
+    def make_simple(self):
         """
-        Creates a formatted edge list ready to be used by `igraph.Graph` object as edgelist.
+        Converts the edgelist to a simple edgeist (remove duplicated lines). Write the edgelist to a file with header
+        (if initialized) with the "_simple.egl" extension to the input edgelist file
+        return str: the path to the valid output file (the name of the input edgelist + "_simple.egl"). If the edgelist
+        is already simple, returns the input edgelist file
         """
-
-        if self.edgl is None:
-            self.egl_to_list()
+        if not self.is_multigraph():
+            self.logger.info("Edgelist is already simple, will not return any file")
+            return self.edglfile
 
         else:
-            self.logger.info("converting edgelist to an igraph edgelist")
-            self.edgl = list(set([tuple(sorted(x)) for x in self.edgl]))
-            self.edgl = [list(x) for x in self.edgl]
+            final= [list(x) for x in set(tuple(y) for y in self.edgl)]
+
+            outpath = "_".join([os.path.splitext(os.path.abspath(self.edglfile))[0], "simple.egl"])
+
+            self.__write_edgelist(edgelist=final, path=outpath)
+
+            return outpath
+
+
+    def __write_edgelist(self, edgelist:list, path:str):
+       """internal method to write an edgelist into a file at a specified path"""
+
+       with open(path, "w") as outfile:
+            if self.header is not None:
+                outfile.write(self.sep.join(self.header) + "\n")
+
+            oo = [self.sep.join(x) + "\n" for x in edgelist]
+
+            outfile.writelines(oo)
+
+
+
+

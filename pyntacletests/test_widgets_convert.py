@@ -4,7 +4,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 current_dir=os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 from io_stream.importer import PyntacleImporter
 from io_stream.exporter import PyntacleExporter
-from io_stream.format_converter import FileFormatConvert
+from io_stream.converter import PyntacleConverter
 from pyntacletests import getmd5, getmd5_bin
 import re
 
@@ -66,7 +66,7 @@ class WidgetTestConvert(unittest.TestCase):
         filein = os.path.join(current_dir, 'pyntacletests/test_sets/input/figure_8.egl')
         fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/test_egltosif.sif')
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/convert/figure8_egltosif.sif')
-        FileFormatConvert.edgelistToSif(file=filein, sep='\t',
+        PyntacleConverter.edgelistToSif(file=filein, sep='\t',
                                         header=True, output_file=fileout)
         self.assertEqual(getmd5(fileout), getmd5(expected),
                          'Wrong checksum for Convert, egl to sif case')
@@ -76,7 +76,7 @@ class WidgetTestConvert(unittest.TestCase):
         filein = os.path.join(current_dir, 'pyntacletests/test_sets/input/figure_8.sif')
         fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/test_siftoegl.egl')
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/convert/figure8_siftoegl.egl')
-        FileFormatConvert.sifToEdgelist(file=filein, sep='\t',
+        PyntacleConverter.sifToEdgelist(file=filein, sep='\t',
                                         header=True, output_file=fileout)
         self.assertEqual(getmd5(fileout), getmd5(expected),
                          'Wrong checksum for Convert, sif to egl case')

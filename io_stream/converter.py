@@ -35,7 +35,7 @@ from tools.misc.io_utils import input_file_checker, separator_sniffer, randomwor
 from exceptions.unproperly_formatted_file_error import UnproperlyFormattedFileError
 
 
-class FileFormatConvert:
+class PyntacleConverter:
     """
     This class is designed to convert one graph file format to another, without resorting to iGraph's internal methods.
     """
@@ -73,11 +73,12 @@ class FileFormatConvert:
         eglutils = EglUtils(file=file, header=header, sep=sep)
 
         if eglutils.is_direct():
-            raise UnproperlyFormattedFileError(
-                "Edgelist is not ready to be parsed by Pyntacle (it is a direct one)")
+            raise ValueError(
+                "Edgelist is not ready to be parsed by Pyntacle, it's direct. Use the `edgelist_utils` module in `tools` to make it undirect")
 
         elif eglutils.is_multigraph():
-            raise UnproperlyFormattedFileError("Edgelist contains multiple edges")
+            raise ValueError(
+                "Edgelist contains multiple edges. It is not ready to be parsed by Pyntacle, Use the `edgelist_utils` module in `tools` to turn it into a simple graph.")
 
         else: #import the sif file into memory, transform it into a list of lists (each sublist represent each line), then sort it in order to remove the double occurrence of the link
             with open(file, "r") as infile:

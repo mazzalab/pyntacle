@@ -60,7 +60,7 @@ import graph_operations.modules_finder
 import io_stream
 import io_stream.generator
 import io_stream.exporter
-import io_stream.format_converter
+import io_stream.converter
 import io_stream.importer
 import io_stream.import_attributes
 import io_stream.export_attributes
