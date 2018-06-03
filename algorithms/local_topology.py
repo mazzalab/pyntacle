@@ -3,13 +3,13 @@ Compute several local topology metrics of nodes
 """
 
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
-__copyright__ = "Copyright 2018, The pyntacle Project"
+__copyright__ = "Copyright 2018, The Pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.5"
+__version__ = "0.0.6"
 __maintainer__ = "Daniele Capocefalo"
-__email__ = "d.capocefalo@css-mendel.it"
+__email__ = "bioinformatics@css-mendel.it"
 __status__ = "Development"
-__date__ = "23/04/2018"
+__date__ = "03/06/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -36,7 +36,7 @@ from tools.graph_utils import GraphUtils as gUtil
 
 class LocalTopology:
     """
-    Compute centrality measures locally to a graph. Methods are designed to work with all or selected nodes.
+    Compute local centrality measures of all or selected nodes of a given graph.
     """
 
     @staticmethod
@@ -53,6 +53,24 @@ class LocalTopology:
         :return: a list of integers, the length being the number of input nodes. Each integer represent the degree
         of the input nodes. The order of the node list in input is preserved.
         """
+
+        return graph.degree(nodes) if nodes else graph.degree()
+
+    @staticmethod
+    @check_graph_consistency
+    @vertex_doctor
+    def group_degree(graph: Graph, nodes) -> float:
+        """
+        It is defined as the  number  of  non-group  nodes  that  are connected to group members.
+        Multiple ties to the same node are counted only once.
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: The group members
+        :return: The normalized group degree centrality, obtained by dividing the group degree by the number of
+        non-group nodes.
+        """
+
+        
 
         return graph.degree(nodes) if nodes else graph.degree()
 
