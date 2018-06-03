@@ -70,9 +70,9 @@ class LocalTopology:
         non-group nodes.
         """
 
+        neig = graph.neighborhood(nodes, order=1, mode="all")
         
-
-        return graph.degree(nodes) if nodes else graph.degree()
+        return 3.0
 
     @staticmethod
     @check_graph_consistency
