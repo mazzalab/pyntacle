@@ -29,9 +29,10 @@ __license__ = u"""
   """
 
 
-from tools.enums import CmodeEnum
+from tools.enums import CmodeEnum, GroupDistanceEnum
 from tools.misc.graph_routines import *
 from tools.graph_utils import GraphUtils as gUtil
+from algorithms.shortest_path import ShortestPath
 
 
 class LocalTopology:
@@ -59,7 +60,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def group_degree(graph: Graph, nodes) -> float:
+    def group_degree(graph: Graph, nodes: list) -> float:
         """
         It is defined as the  number  of  non-group  nodes  that  are connected to group members.
         Multiple ties to the same node are counted only once.
@@ -71,8 +72,11 @@ class LocalTopology:
         """
 
         neig = graph.neighborhood(nodes, order=1, mode="all")
+        selected_neig = neig[nodes]
+        flat_list = [item for sublist in selected_neig for i, item in enumerate(sublist) if i not in nodes]
+        normalized_score = len(set(flat_list)) / (len(graph.vs) - len(nodes))
         
-        return 3.0
+        return normalized_score
 
     @staticmethod
     @check_graph_consistency
@@ -130,6 +134,51 @@ class LocalTopology:
         """
 
         return graph.closeness(vertices=nodes) if nodes else graph.closeness()
+
+    @staticmethod
+    @check_graph_consistency
+    @vertex_doctor
+    def group_closeness(graph: Graph, nodes: list, distance: GroupDistanceEnum) -> list:
+        """
+        Computes the closeness of a group of nodes.
+        The *group closeness* is defined as the sum of the distances from the group to all vertices outside the group.
+        As with individual closeness, this produces an inverse measure of closeness as larger numbers indicate
+        less centrality. This definition deliberately leaves unspecified how distance from the group to an outside
+        vertex is to be defined. Everett-Borgatti propose to consider the set D of all distances from a single vertex
+        to a set of vertices. The distance from the vertex to the set can be defined as either the maximum in D,
+        the minimum in D or the mean of values in D. Following Freeman’s (1979) convention, we can normalize
+        group closeness by dividing the distance score into the number of non-group members, with the result
+        that larger numbers indicate greater centrality.
+        :param igraph.Graph graph: an igraph.Graph object. The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: The group members
+        :return: The normalized group closeness centrality, obtained by dividing the group closeness by the number of
+        non-group nodes.
+        """
+
+        nongroup_nodes = set(graph.vs) - set(nodes)
+        np_paths = ShortestPath.get_shortestpaths(graph, nongroup_nodes, CmodeEnum.cpu)
+        group_closeness = 0
+
+        if distance == GroupDistanceEnum.maximum:
+            dist_func = max
+        elif distance == GroupDistanceEnum.minimum:
+            dist_func = min
+        else:
+            dist_func = mean
+
+        for nnodes in nongroup_nodes:
+
+
+        neig = graph.neighborhood(nodes, order=1, mode="all")
+        selected_neig = neig[nodes]
+        flat_list = [item for sublist in selected_neig for i, item in enumerate(sublist) if i not in nodes]
+        normalized_score = len(set(flat_list)) / (len(graph.vs) - len(nodes))
+
+        return normalized_score
+
+        return graph.closeness(vertices=nodes) if nodes else graph.closeness()
+
 
     @staticmethod
     @check_graph_consistency

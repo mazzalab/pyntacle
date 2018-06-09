@@ -5,11 +5,11 @@ A set of enumerators whose values are used as reserved keywords of Pyntacle's fu
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "29/04/2018"
+__date__ = "07/06/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -107,3 +107,9 @@ class GraphOperationEnum(Enum):
     Union = 1
     Intersection = 2
     Difference = 3
+
+
+class GroupDistanceEnum(Enum):
+    minimum = 1
+    maximum = 2
+    mean = 3

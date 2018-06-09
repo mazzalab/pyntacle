@@ -37,7 +37,7 @@ import numpy as np
 import sys
 
 
-class AdjmUtils():
+class AdjmUtils:
     logger = None
 
     def __init__(self, file: str, header: bool, sep="\t"):
