@@ -170,7 +170,7 @@ class LocalTopology:
 
         group_closeness = 0
         for np_path in np_paths:
-            group_closeness += dist_func([item for item in np_path if item in nodes])
+            group_closeness += dist_func([item for i, item in enumerate(np_path) if i in nodes])
 
         normalized_score = group_closeness / len(nongroup_nodes)
         return normalized_score
