@@ -138,7 +138,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def group_closeness(graph: Graph, nodes: list, distance: GroupDistanceEnum) -> list:
+    def group_closeness(graph: Graph, nodes: list, distance: GroupDistanceEnum) -> float:
         """
         Computes the closeness of a group of nodes.
         The *group closeness* is defined as the sum of the distances from the group to all vertices outside the group.
@@ -149,6 +149,8 @@ class LocalTopology:
         the minimum in D or the mean of values in D. Following Freeman’s (1979) convention, we can normalize
         group closeness by dividing the distance score into the number of non-group members, with the result
         that larger numbers indicate greater centrality.
+        :param distance: The definition of distance between any non-group and group nodes. It can be any value
+        of the enumerator GroupDistanceEnum
         :param igraph.Graph graph: an igraph.Graph object. The graph must have specific properties. Please see the
         "Minimum requirements" specifications in the pyntacle's manual.
         :param nodes: The group members
@@ -156,29 +158,22 @@ class LocalTopology:
         non-group nodes.
         """
 
-        nongroup_nodes = set(graph.vs) - set(nodes)
-        np_paths = ShortestPath.get_shortestpaths(graph, nongroup_nodes, CmodeEnum.cpu)
-        group_closeness = 0
-
         if distance == GroupDistanceEnum.maximum:
             dist_func = max
         elif distance == GroupDistanceEnum.minimum:
             dist_func = min
         else:
-            dist_func = mean
+            def dist_func(x: list): return sum(x) / len(x)
 
-        for nnodes in nongroup_nodes:
+        nongroup_nodes = set(graph.vs) - set(nodes)
+        np_paths = ShortestPath.get_shortestpaths(graph, nongroup_nodes, CmodeEnum.cpu)
 
+        group_closeness = 0
+        for np_path in np_paths:
+            group_closeness += dist_func([item for item in np_path if item in nodes])
 
-        neig = graph.neighborhood(nodes, order=1, mode="all")
-        selected_neig = neig[nodes]
-        flat_list = [item for sublist in selected_neig for i, item in enumerate(sublist) if i not in nodes]
-        normalized_score = len(set(flat_list)) / (len(graph.vs) - len(nodes))
-
+        normalized_score = group_closeness / len(nongroup_nodes)
         return normalized_score
-
-        return graph.closeness(vertices=nodes) if nodes else graph.closeness()
-
 
     @staticmethod
     @check_graph_consistency

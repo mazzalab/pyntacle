@@ -119,7 +119,7 @@ class ShortestPath:
     @vertex_doctor
     def shortest_path_igraph(graph: Graph, nodes=None) -> list:
         """
-        Compute the *shortest paths* starting from a node or of a list of nodes of an undirected graph using the
+        Compute the *shortest paths* lengths between any pairs of nodes of an undirected graph, using the
         Dijkstra's algorithm. The shortest path is defined as the minimum distance from an input node to every other
         node in a graph. The distance between two disconnected nodes is infinite.
         :param graph: an igraph.Graph object. The graph must have specific properties. Please see the
@@ -132,6 +132,34 @@ class ShortestPath:
         """
 
         return graph.shortest_paths(source=nodes) if nodes else graph.shortest_paths()
+
+    @staticmethod
+    @check_graph_consistency
+    @vertex_doctor
+    def shortest_paths_igraph(graph: Graph, nodes=None) -> list:
+        """
+        Compute the *shortest paths* starting from any pairs of nodes of an undirected graph using the
+        Dijkstra's algorithm and returns a matrix of predecessors in order to ease the process of reconstructing the
+        physical paths between nodes.
+        :param graph: an igraph.Graph object. The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
+        (default), the index is computed for all nodes of the graph.
+        :return: a list of lists, the first size being the number of input nodes. Each list contains a series of
+        integer values representing the distance from any input node to every other node in the graph.
+        The order of the node list in input is preserved.
+        """
+
+        shortest_paths = []
+        if nodes:
+            loop_nodes = nodes
+        else:
+            loop_nodes = graph.vs()
+
+        for node in loop_nodes:
+            shortest_paths.append(graph.get_all_shortest_paths(v=node))
+
+        return shortest_paths  # TODO: Flatten this list of lists
 
     @staticmethod
     @jit(nopython=True, parallel=True)
