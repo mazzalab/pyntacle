@@ -32,7 +32,6 @@ __license__ = u"""
 from tools.enums import CmodeEnum, GroupDistanceEnum
 from tools.misc.graph_routines import *
 from tools.graph_utils import GraphUtils as gUtil
-from algorithms.shortest_path import ShortestPath
 
 
 class LocalTopology:
@@ -71,12 +70,12 @@ class LocalTopology:
         non-group nodes.
         """
 
-        neig = graph.neighborhood(nodes, order=1, mode="all")
-        selected_neig = neig[nodes]
-        flat_list = [item for sublist in selected_neig for i, item in enumerate(sublist) if i not in nodes]
+        node_idx = gUtil(graph).get_node_indices(node_names=nodes)
+        selected_neig = graph.neighborhood(node_idx, order=1, mode="all")
+        flat_list = [item for sublist in selected_neig for item in sublist if item not in node_idx]
         normalized_score = len(set(flat_list)) / (len(graph.vs) - len(nodes))
         
-        return normalized_score
+        return round(normalized_score, 2)
 
     @staticmethod
     @check_graph_consistency
@@ -158,22 +157,28 @@ class LocalTopology:
         non-group nodes.
         """
 
+        MAX_PATH_LENGHT = len(graph.vs) + 1
+
         if distance == GroupDistanceEnum.maximum:
-            dist_func = max
+            def dist_func(x: list) -> int: return max(x)
         elif distance == GroupDistanceEnum.minimum:
-            dist_func = min
+            def dist_func(x: list) -> int: return min(x)
         else:
             def dist_func(x: list): return sum(x) / len(x)
 
-        nongroup_nodes = set(graph.vs) - set(nodes)
+        from algorithms.shortest_path import ShortestPath
+        nongroup_nodes = list(set(graph.vs["name"]) - set(nodes))
         np_paths = ShortestPath.get_shortestpaths(graph, nongroup_nodes, CmodeEnum.cpu)
 
         group_closeness = 0
+        node_idx = gUtil(graph).get_node_indices(node_names=nodes)
         for np_path in np_paths:
-            group_closeness += dist_func([item for item in np_path if item in nodes])
+            temp_list = [elem for elem in np_path[node_idx] if elem != MAX_PATH_LENGHT]
+            if temp_list:
+                group_closeness += dist_func(temp_list)
 
         normalized_score = group_closeness / len(nongroup_nodes)
-        return normalized_score
+        return round(normalized_score, 2)
 
     @staticmethod
     @check_graph_consistency
@@ -361,3 +366,6 @@ class LocalTopology:
             nodes = gUtil(graph).get_node_indices(nodes)
 
         return graph.pagerank(vertices=nodes, damping=damping, directed=False, weights=weights, implementation="arpack")
+
+
+# from algorithms.shortest_path import ShortestPath
