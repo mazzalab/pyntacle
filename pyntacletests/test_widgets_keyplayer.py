@@ -20,6 +20,7 @@ class WidgetTestKeyplayer(unittest.TestCase):
         self.Args = DummyObj()
         self.Args.directory = os.path.join(current_dir, 'pyntacletests/test_sets/tmp')
         self.Args.format = None
+        self.Args.input_separator = '\t'
         self.Args.input_file = os.path.join(current_dir, 'pyntacletests/test_sets/input/figure_8.txt')
         self.Args.largest_component = False
         self.Args.m_reach = 2

@@ -54,7 +54,6 @@ class ModuleUtils():
 
         self.graph = graph
 
-
         for i, elem in enumerate(modules):
             if elem.vcount() == 0:
                 self.logger.warning("Module {} is empty, and therefore will be discarded".format(i))
@@ -68,7 +67,6 @@ class ModuleUtils():
 
             if elem.vcount() > graph.vcount() or elem.ecount() > graph.ecount():
                 raise ValueError("Module {} does not come from the input Graph".format(i))
-
             if "__module_number" in graph.attributes():
 
                 self.logger.info(
@@ -108,7 +106,7 @@ class ModuleUtils():
 
         info = [str(x) if x is not None else "NA" for x in (min_nodes, max_nodes, min_components, max_components)]
 
-        self.logger.info(
+        sys.stdout.write(
             "Filtering Subgraphs according to your criteria:\nminimum number of nodes per modules: {0}\nmaximum number of nodes per module: {1}\nminimum number of components: {2}\nmaximum number of components: {3}\n".format(
                 *info))
 

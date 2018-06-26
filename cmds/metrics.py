@@ -85,7 +85,7 @@ class Metrics:
 
         # Load Graph
         sys.stdout.write("Reading input file...\n")
-        graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header).graph_load()
+        graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header, separator=self.args.input_separator).graph_load()
         # init Utils global stuff
         utils = GraphUtils(graph=graph)
 
@@ -170,7 +170,12 @@ class Metrics:
                         #Needs a file that has a 'weights' column.
                         sys.stdout.write("Adding Edge Weights from file {}\n".format(self.args.weights))
                         ImportAttributes(graph=graph).import_edge_attributes(self.args.weights, sep=separator_detect(self.args.weights), mode=self.args.weights_format)
-                        weights = [float(x) if x!=None else 1.0 for x in graph.es()["weights"]]
+                        try:
+                            weights = [float(x) if x!=None else 1.0 for x in graph.es()["weights"]]
+                        except KeyError:
+                            sys.stderr.write("ERROR: The attribute file does not contain a column named 'weights'."
+                                             "Please fix it and launch Pyntacle again.\n")
+                            sys.exit(1)
 
                 else:
                     weights = None

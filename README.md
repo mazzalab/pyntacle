@@ -71,6 +71,14 @@ conda install -y -c bfxcss -c conda-forge pyntacle
 ```
 
 #### Windows
+<aside class="warning">
+<b>Warning</b>: Windows users could experience some issues when installing
+Conda or Miniconda in folders that have a whitespace in their name
+(e.g. "C:\John Appleseed\Miniconda"). This is a known bug, as reported
+here and here. If this happens, a workaround could be to create a new
+user without whitespaces (e.g. "C:\John<b>_</b>Appleseed\).
+</aside>
+
 
 Open a cmd terminal window or - better - an
 [Anaconda prompt](https://chrisconlan.com/wp-content/uploads/2017/05/anaconda_prompt.png)

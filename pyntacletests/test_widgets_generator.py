@@ -44,10 +44,12 @@ class WidgetTestGenerator(unittest.TestCase):
         self.Args.no_output_header = False
         self.Args.no_plot = True
         self.Args.output_format = 'adjmat'
+        self.Args.input_separator = None
         self.Args.output_separator = None
         self.Args.plot_dim = None
         self.Args.plot_format = 'pdf'
         self.Args.seed = 1
+        self.Args.repeat = 1
         self.Args.v = None
 
     def test_random(self):
@@ -63,7 +65,7 @@ class WidgetTestGenerator(unittest.TestCase):
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
         fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/random.adjm')
-        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/generate/random/generated.adjm')
+        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/generate/random/random.adjm')
         self.assertEqual(getmd5(fileout), getmd5(expected), 'Wrong checksum for Generator, random case')
 
     def test_scalefree(self):
@@ -71,7 +73,7 @@ class WidgetTestGenerator(unittest.TestCase):
         self.Args.which = 'scale-free'
         self.Args.output_file = 'scalefree'
         self.Args.nodes = None
-        self.Args.outgoing_edges = None
+        self.Args.avg_edges = None
 
         gen = generate_command(self.Args)
         with self.assertRaises(SystemExit) as cm:
@@ -79,7 +81,7 @@ class WidgetTestGenerator(unittest.TestCase):
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
         fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/scalefree.adjm')
-        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/generate/scalefree/generated.adjm')
+        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/generate/scalefree/scalefree.adjm')
         self.assertEqual(getmd5(fileout), getmd5(expected), 'Wrong checksum for Generator, scale-free case')
 
     def test_tree(self):
@@ -95,7 +97,7 @@ class WidgetTestGenerator(unittest.TestCase):
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
         fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/tree.adjm')
-        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/generate/tree/generated.adjm')
+        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/generate/tree/tree.adjm')
         self.assertEqual(getmd5(fileout), getmd5(expected),
                          'Wrong checksum for Generator, tree case')
 
@@ -115,7 +117,7 @@ class WidgetTestGenerator(unittest.TestCase):
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
         fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/smallworld.adjm')
-        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/generate/smallworld/generated.adjm')
+        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/generate/smallworld/smallworld.adjm')
         self.assertEqual(getmd5(fileout), getmd5(expected),
                          'Wrong checksum for Generator, smallworld case')
         

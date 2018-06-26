@@ -36,6 +36,7 @@ from warnings import simplefilter
 class Generate():
     def __init__(self, args):
         self.logging = log
+        self.args = None
         self.args = args
         if self.args.seed:
             random.seed(self.args.seed)
@@ -47,8 +48,7 @@ class Generate():
         if self.args.which == "random":
 
             if self.args.nodes is None:
-                self.args.nodes = random.randint(30, 300)
-
+                self.args.nodes = random.randint(100, 500)
             else:
                 try:
                     self.args.nodes = int(self.args.nodes)
@@ -63,6 +63,7 @@ class Generate():
                     self.args.edges = int(self.args.edges)
                     "Generating Graph with Scale Random Topology\nParameters:\nNumber of Nodes: {0}\nNumber of Edges: {1}\n".format(
                         self.args.nodes, self.args.edges)
+                    
                     graph = Generator.Random([self.args.nodes, self.args.edges], name="Random", seed=self.args.seed)
 
                 except (ValueError, TypeError, IllegalGraphSizeError):
@@ -96,7 +97,7 @@ class Generate():
                 
         elif self.args.which == "scale-free":
             if self.args.nodes is None:
-                self.args.nodes = random.randint(100, 1000)
+                self.args.nodes = random.randint(100, 500)
 
             else:
                 try:
@@ -106,12 +107,12 @@ class Generate():
                     sys.stderr.write("Number of nodes must be a positive integer. Quitting\n")
                     sys.exit(1)
 
-            if self.args.outgoing_edges is None:
-                self.args.outgoing_edges = random.randint(10, 100)
+            if self.args.avg_edges is None:
+                self.args.avg_edges = random.randint(10, 100)
 
             else:
                 try:
-                    self.args.outgoing_edges = int(self.args.nodes)
+                    self.args.avg_edges = int(self.args.nodes)
 
                 except ValueError:
                     sys.stderr.write("Number of outgoing edges must be a positive integer. Quitting\n")
@@ -120,8 +121,8 @@ class Generate():
             try:
                 sys.stdout.write(
                     "Generating Graph with Scale Free Topology\nParameters:\nNumber of Nodes: {0}\nNumber of Outging edges: {1}\n".format(
-                        self.args.nodes, self.args.outgoing_edges))
-                graph = Generator.ScaleFree([self.args.nodes, self.args.outgoing_edges], name="ScaleFree", seed=self.args.seed)
+                        self.args.nodes, self.args.avg_edges))
+                graph = Generator.ScaleFree([self.args.nodes, self.args.avg_edges], name="ScaleFree", seed=self.args.seed)
 
             except (ValueError, TypeError, IllegalGraphSizeError):
                 sys.stderr.write(
@@ -131,7 +132,7 @@ class Generate():
         elif self.args.which == "tree":
 
             if self.args.nodes is None:
-                self.args.nodes = random.randint(100, 1000)
+                self.args.nodes = random.randint(100, 500)
 
             else:
                 try:
@@ -165,8 +166,10 @@ class Generate():
 
         elif self.args.which == "small-world":
             
+            #This does not happen anymore, as default is 2.
             if not self.args.lattice_size:
                 self.args.lattice_size = random.randint(2, 5)
+                
             if not self.args.nei:
                 self.args.nei = random.randint(1, 5)
                 
@@ -360,4 +363,5 @@ class Generate():
             sys.exit(0)
         cursor.stop()
         sys.stdout.write("pyntacle Generate completed successfully. Ending\n")
-        sys.exit(0)
+        if self.args.repeat == 1:
+            sys.exit(0)

@@ -31,6 +31,11 @@ from tools.misc.binarycheck import is_binary_file
 from io_stream.importer import PyntacleImporter
 from tools.graph_utils import GraphUtils
 from exceptions.unproperly_formatted_file_error import UnproperlyFormattedFileError
+import codecs
+
+
+def unescaped_str(arg_str):
+    return codecs.decode(str(arg_str), 'unicode_escape')
 
 
 def separator_detect(filename):
@@ -52,15 +57,15 @@ def separator_detect(filename):
 
 
 class GraphLoad():
-    def __init__(self, input_file, file_format, header):
+    def __init__(self, input_file, file_format, header, separator=None):
         self.logger = log
         self.input_file = input_file
-
         self.file_format = file_format
         if self.file_format == "NA":
             self.logger.info("Unspecified or unrecognized file format. Will try to guess it.")
 
         self.header = header
+        self.separator = separator
         
     def get_format(self):
         return self.file_format
@@ -77,20 +82,21 @@ class GraphLoad():
             
         # Separator sniffer
         if self.file_format != 'graph':
-            separator = separator_detect(self.input_file)
+            if not self.separator:
+                self.separator = separator_detect(self.input_file)
 
         # If no format is specified, the header, separator and format itself will be guessed
         if self.file_format == "NA":
             self.logger.info("Trying to guess input format for file {}".format(self.input_file))
-            self.file_format, self.header, separator = self.guess_format(self.input_file)
+            self.file_format, self.header, self.separator = self.guess_format(self.input_file)
 
         # Graph import
         if self.file_format == 'egl':
-            graph = PyntacleImporter.EdgeList(file=self.input_file, sep=separator, header=self.header)
+            graph = PyntacleImporter.EdgeList(file=self.input_file, sep=self.separator, header=self.header)
 
         elif self.file_format == 'adjm':
             try:
-                graph = PyntacleImporter.AdjacencyMatrix(file=self.input_file, sep=separator,
+                graph = PyntacleImporter.AdjacencyMatrix(file=self.input_file, sep=self.separator,
                                                               header=self.header)
             except (ValueError):
                 if not self.header: #in case header has been specified
@@ -132,7 +138,7 @@ class GraphLoad():
 
         elif self.file_format == 'sif':
             try:
-                graph = PyntacleImporter.Sif(file=self.input_file, sep=separator, header=self.header)
+                graph = PyntacleImporter.Sif(file=self.input_file, sep=self.separator, header=self.header)
             except UnproperlyFormattedFileError:
                 sys.stderr.write(
                     "Sif is unproperly formatted or a header is present and --no-header was declared in "
@@ -147,7 +153,7 @@ class GraphLoad():
         self.logger.debug("Graph: name:{}\tNodes: {}\tEdges: {}".format(graph["name"], graph.vcount(),
                                                                         graph.ecount()))
         self.logger.debug("Header:{}".format(self.header))
-        self.logger.debug("Separator:{}".format(repr(separator)))
+        self.logger.debug("Separator:{}".format(repr(self.separator)))
         
         GraphUtils(graph=graph).check_graph()
 
@@ -165,18 +171,22 @@ class GraphLoad():
             "Guessing input format. It could take some time for large files; use the option --format to "
             "skip this part.")
         valid_extensions = {'.adjm': 'adjm', '.adjmat': 'adjm', '.egl': 'egl',
-                            '.sif': 'sif', '.dot': 'dot', '.graph': 'graph'}
+                            '.sif': 'sif', '.dot': 'dot', '.gv': 'dot', '.graph': 'graph'}
         file_ext = str.lower(os.path.splitext(filename)[-1])
         if file_ext == '.graph' or file_ext == '.bin':
             self.header = False
-            separator = ''
+            self.separator = ''
         else:
-            separator = separator_detect(filename)
-
+            if not self.separator:
+                self.separator = separator_detect(filename)
+            else:
+                self.logger.info("Separator provided: {}".format(self.separator))
+                self.separator = unescaped_str(self.separator)
+            
         # Guessing by extension
         if file_ext in valid_extensions:
             self.logger.info("Guessed from extension: {}".format(valid_extensions[file_ext]))
-            return valid_extensions[file_ext], self.header, separator
+            return valid_extensions[file_ext], self.header, self.separator
         
         # Easy .dot guessing by keyword at the beginning
         with open(filename, "r") as filein:
@@ -191,44 +201,50 @@ class GraphLoad():
                 with open(filename, "r") as filein:
                     iterator = iter(filein.readline, '')
                     first_line = next(iterator, None).rstrip()
-                    n_cols = len(first_line.split())
+                    n_cols = len(first_line.split(self.separator))
                     first_char = first_line[0]
-                    if first_char.isspace():
+                    if first_char.isspace() or first_char == self.separator:
                         start_col = 1
-                        n_cols += 1
                     else:
                         start_col = 0
                 f = np.genfromtxt(filename, skip_header=1, usecols=(tuple(range(start_col, n_cols))),
-                                  delimiter=separator, dtype=str)
+                                  delimiter=self.separator, dtype=str)
+
             except:
                 sys.stderr.write("\nCould not load_graph data from file. Please specify --no-header if "
                                  "necessary.\n")
                 sys.exit()
         else:
             try:
-                f = np.genfromtxt(filename, dtype=str)
+                with open(filename, "r") as filein:
+                    iterator = iter(filein.readline, '')
+                    first_line = next(iterator, None).rstrip()
+                    n_cols = len(first_line.split(self.separator))
+                    start_col = 0
+                f = np.genfromtxt(filename, skip_header=0, usecols=(tuple(range(start_col, n_cols))),
+                                  delimiter=self.separator, dtype=str)
             except:
                 sys.stderr.write(
                     "\nCould not load_graph data from file. If it is written in one of the supported formats,"
-                    "please specify it with the --format option\n")
+                    "please specify it with the --format option, and/or specify the correct field delimiter with --input-separator\n")
                 sys.exit()
 
         if len(f.shape) == 1 or (f.shape[1] >= 3 and (f.shape[1] != f.shape[0] or ('1' not in f or '0' not in f))):
             if len(f.shape) == 1:
                 self.logger.warning("WARNING: the input file seems to be very small (1 edge).")
             self.logger.info("Guessed file format: Simple Interaction Format")
-            return "sif", self.header, separator
+            return "sif", self.header, self.separator
 
         if f.shape[1] == 2:
             if f.shape[0] == 2 and ('1' in f or '0' in f):
                 self.logger.info("Guessed file format: Adjacency Matrix")
-                return "adjm", self.header, separator
+                return "adjm", self.header, self.separator
             else:
                 self.logger.info("Guessed file format: Edge List")
-                return "egl", self.header, separator
+                return "egl", self.header, self.separator
         elif f.shape[1] == f.shape[0] and f.shape[1] > 2:
             self.logger.info("Guessed file format: Adjacency Matrix")
-            return "adjm", self.header, separator
+            return "adjm", self.header, self.separator
         else:
             self.logger.error("It was not possible to guess file format. Please specify it with the "
                               "--format option.")

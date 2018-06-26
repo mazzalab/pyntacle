@@ -91,7 +91,7 @@ class Convert():
             sys.exit(1)
 
         output_path = os.path.join(self.args.directory, ".".join([self.args.output_file, out_form]))
-        init_graph = GraphLoad(input_file=self.args.input_file, file_format=format_dictionary.get(self.args.format, "NA"), header=header)
+        init_graph = GraphLoad(input_file=self.args.input_file, file_format=format_dictionary.get(self.args.format, "NA"), header=header, separator=self.args.input_separator)
 
         # special cases:
         #1: convert an edgelist to a sif file

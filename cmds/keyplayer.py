@@ -87,7 +87,7 @@ class KeyPlayer():
         self.logging.debug(self.args)
         # Load Graph
         sys.stdout.write("Reading input file...\n")
-        graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header).graph_load()
+        graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header, separator=self.args.input_separator).graph_load()
         # print(graph.summary())
         # print(graph.vs()["name"])
         # for elem in graph.vs():

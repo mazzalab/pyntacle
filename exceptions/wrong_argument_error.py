@@ -31,8 +31,7 @@ __license__ = u"""
 
 
 class WrongArgumentError(ValueError):
-    class NotAGraphError(ValueError):
-        def __init__(self, message, errors):
-            super().__init__(message)
-            # Custom errors here
-            self.errors = errors
+    def __init__(self, message):
+        super().__init__(message)
+        # Custom errors here
+        # self.errors = errors

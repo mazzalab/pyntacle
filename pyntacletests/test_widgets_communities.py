@@ -51,6 +51,7 @@ class WidgetTestCommunities(unittest.TestCase):
         self.Args.no_output_header = False
         self.Args.no_plot = True
         self.Args.output_format = 'adjm'
+        self.Args.input_separator = '\t'
         self.Args.output_separator = '\t'
         self.Args.plot_dim = None
         self.Args.plot_format = 'pdf'
@@ -62,7 +63,7 @@ class WidgetTestCommunities(unittest.TestCase):
 
     def test_fastgreedy(self):
         sys.stdout.write("Testing fast_greedy community finder\n")
-        self.Args.which = 'fast_greedy'
+        self.Args.which = 'fastgreedy'
         self.Args.output_file = 'fast_greedy'
         comm = communities_command(self.Args)
         with self.assertRaises(SystemExit) as cm:

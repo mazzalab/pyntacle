@@ -33,6 +33,7 @@ class WidgetTestMetrics(unittest.TestCase):
         self.Args.plot_dim = None
         self.Args.plot_format = 'pdf'
         self.Args.report_format = 'txt'
+        self.Args.input_separator = '\t'
         self.Args.save_binary = False
         self.Args.v = None
 
@@ -58,7 +59,7 @@ class WidgetTestMetrics(unittest.TestCase):
                          'Wrong checksum for Metrics, global case')
         
         # CPU, GPU, igraph coherence check
-        graph = GraphLoad(self.Args.input_file, "adjm", header=True).graph_load()
+        graph = GraphLoad(self.Args.input_file, "adjm", header=True, separator=self.Args.input_separator).graph_load()
         
         implementation = CmodeEnum.igraph
         igraph_result = round(ShortestPath.average_global_shortest_path_length(graph, implementation), 5)

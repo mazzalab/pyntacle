@@ -169,18 +169,18 @@ class PyntacleImporter:
         graph = Graph() #initialize an empty graph that will be filled
         
         if header:
-
             adj = pd.read_csv(file, sep=sep, header=0, dtype=str)
-
+            adj.columns = [0, 1]
+            
+            
         else:
             adj = pd.read_csv(file, sep=sep, header=None, dtype=str)
-
+        
         adj.values.sort()
         adj = adj.drop_duplicates()
         adj.dropna(how="all", inplace=True) #remove all empty lines
 
         graph.add_vertices(list(str(x) for x in set(adj[0].tolist() + adj[1].tolist())))
-
         edgs = adj.values.tolist()
 
         graph.add_edges(edgs)

@@ -67,7 +67,7 @@ class Communities():
 
         sys.stdout.write("Reading input file...\n")
         graph = GraphLoad(self.args.input_file, file_format=input_format,
-                          header=input_header).graph_load()
+                          header=input_header, separator=self.args.input_separator).graph_load()
 
         # init Utils global stuff
         utils = GraphUtils(graph=graph)
@@ -117,7 +117,7 @@ class Communities():
             else:
                 plot_size = (1600, 1600)
 
-        if self.args.which == "fast_greedy":
+        if self.args.which == "fastgreedy":
             if self.args.weights is not None:
                 # import edge attributes
                 if not os.path.exists(self.args.weights):
@@ -139,10 +139,10 @@ class Communities():
                     sys.stderr.write("argument of \"--clusters\" must be an integer. Quitting\n")
                     sys.exit(1)
 
-            sys.stdout.write("Running Community finding using fast_greedy algorithm\n")
+            sys.stdout.write("Running Community finding using fastgreedy algorithm\n")
             communities.fast_greedy(weights=weights, n=self.args.clusters)
             mods = communities.modules
-            algorithm = "fast_greedy"
+            algorithm = "fastgreedy"
 
         elif self.args.which == "infomap":
             sys.stdout.write("Running Community finding using infomap algorithm\n")
@@ -199,12 +199,15 @@ class Communities():
             sys.exit(1)
 
         mods_report = []
+        if not mods:
+            sys.stderr.write("No modules found. Quitting.")
+            sys.exit(1)
         for i, elem in enumerate(mods):
             mods_report.append(
                 "\t".join([str(x) for x in [i, elem.vcount(), elem.ecount(), len(elem.components())]]) + "\n")
 
         sys.stdout.write(
-            "pyntacle - Community Finding Report:\nalgorithm:{0}\nTotal number of Modules Found:"
+            "pyntacle - Community Finding Report:\nalgorithm:{0}\nTotal number of modules found:"
             "\t{1}\nIndex\tNodes\tEdges \tComponents\n{2}".format(
                 algorithm, len(mods), "".join(mods_report)))
 
@@ -249,20 +252,15 @@ class Communities():
                     sys.stderr.write("argument of \"--min_components\" must be an integer. Quitting\n")
                     sys.exit(1)
 
-            info = [x if x is not None else "NA" for x in
-                    (self.args.min_nodes, self.args.max_nodes, self.args.max_components,
-                     self.args.min_components)]
-            sys.stdout.write(
-                "Filtering Subgraphs according to your criteria:\nminimum number of nodes per modules: {0}\n"
-                "maximum number of nodes per module: {1}\nminimum number of components: {2}\n"
-                "maximum number of components: {3}\n".format(
-                    *info))
-
             mod_utils.filter_subgraphs(min_nodes=self.args.min_nodes, max_nodes=self.args.max_nodes,
                                        min_components=self.args.min_components,
                                        max_components=self.args.max_components)
-            sys.stdout.write("Filtered out {0} modules. Keeping {1} modules. Producing Output.\n".format(
-                (len(mod_utils.modules) - init_mods), len(mod_utils.modules)))
+            if len(mod_utils.modules) > 0:
+                sys.stdout.write("Filtered out {0} modules. Keeping {1} communities. Producing Output.\n".format(
+                    (init_mods - len(mod_utils.modules)), len(mod_utils.modules)))
+            else:
+                sys.stderr.write("According to your filtering criteria, no community was kept. Quitting.\n")
+                sys.exit(1)
 
         else:
             sys.stdout.write("No modules to filter. Proceeding.\n")

@@ -30,7 +30,5 @@ __license__ = u"""
 
 
 class IllegalGraphSizeError(ValueError):
-    def __init__(self, message, errors):
+    def __init__(self, message):
         super().__init__(message)
-        # Custom errors here
-        self.errors = errors
