@@ -186,6 +186,34 @@ class ShortestPath:
         return adjmat
 
     @staticmethod
+    @jit(nopython=True, parallel=True)
+    def shortest_path_number_cpu(adjmat) -> np.ndarray:
+        """
+        Calculate the shortest paths of a graph for aa single nodes, a set of nodes or all nodes in the graph using
+        'Floyd-Warshall Implementation <https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm>'_. The forumla
+        is implemented using the numba library and allows for parallelization using CPU cores.
+        :param np.ndarray adjmat: a numpy.ndarray containing the adjacency matrix of a graph. Disconnected nodes in the
+        matrix are represented as the total number of nodes in the graph + 1, while the diagonal must contain zeroes.
+        Default is True (a numpy array is returned)
+        :return: a numpy array
+        """
+
+        v = adjmat.shape[0]
+        path_number = np.full_like(adjmat, v+1)
+        path_number = np.fill_diagonal(path_number, 0)
+
+        for k in range(0, v):
+            for i in prange(v):
+                for j in range(0, v):
+                    if adjmat[i, j] <= 2:
+                        continue
+                    if adjmat[i, j] > adjmat[i, k] + adjmat[k, j]:
+                        adjmat[i, j] = adjmat[i, k] + adjmat[k, j]
+                        path_number[i, j] = path_number[k, j]
+
+        return adjmat
+
+    @staticmethod
     @check_graph_consistency
     def average_global_shortest_path_length(graph: Graph, cmode=CmodeEnum.igraph) -> float:
         """

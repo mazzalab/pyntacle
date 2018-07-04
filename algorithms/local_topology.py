@@ -98,6 +98,30 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
+    def group_betweenness(graph: Graph, nodes: list, np_paths=None) -> float:
+        """
+        Computes the betweenness of a group of nodes.
+        The *group betweenness* indicates the proportion of geodesics connecting pairs of non-group members that
+        pass through the group. One way to compute this measure is as follows: (a) count the number of geodesics
+        between every pair of non-group members, yielding a node-by-node matrix of counts, (b) delete all ties involving
+        group members and redo the calculation, creating a new node-by-node matrix of counts, (c) divide each cell in
+        the new matrix by the corresponding cell in the first matrix, and (d) take the sum of all these ratios.
+
+        :param np_paths: List of shortest paths issuing from non-group nodes to every other node. Unreached nodes are
+        marked with values equal to the total number of nodes in the graph + 1. Passing this argument would make the
+        overall calculation of the group closeness index faster, if re-iterated several times.
+        :param igraph.Graph graph: an igraph.Graph object. The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: The group members
+        :return: The normalized group closeness centrality, obtained by dividing the group closeness by the number of
+        non-group nodes.
+        """
+
+
+
+    @staticmethod
+    @check_graph_consistency
+    @vertex_doctor
     def clustering_coefficient(graph: Graph, nodes=None) -> list:
         """
         Compute the *clustering coefficient* of a node or of a list of nodes of an undirected graph.
@@ -137,7 +161,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def group_closeness(graph: Graph, nodes: list, distance: GroupDistanceEnum) -> float:
+    def group_closeness(graph: Graph, nodes: list, distance: GroupDistanceEnum, np_paths=None) -> float:
         """
         Computes the closeness of a group of nodes.
         The *group closeness* is defined as the sum of the distances from the group to all vertices outside the group.
@@ -148,6 +172,9 @@ class LocalTopology:
         the minimum in D or the mean of values in D. Following Freeman’s (1979) convention, we can normalize
         group closeness by dividing the distance score into the number of non-group members, with the result
         that larger numbers indicate greater centrality.
+        :param np_paths: List of shortest paths issuing from non-group nodes to every other node. Unreached nodes are
+        marked with values equal to the total number of nodes in the graph + 1. Passing this argument would make the
+        overall calculation of the group closeness index faster, if re-iterated several times.
         :param distance: The definition of distance between any non-group and group nodes. It can be any value
         of the enumerator GroupDistanceEnum
         :param igraph.Graph graph: an igraph.Graph object. The graph must have specific properties. Please see the
@@ -163,12 +190,24 @@ class LocalTopology:
             def dist_func(x: list) -> int: return max(x)
         elif distance == GroupDistanceEnum.minimum:
             def dist_func(x: list) -> int: return min(x)
-        else:
+        elif distance == GroupDistanceEnum.mean:
             def dist_func(x: list): return sum(x) / len(x)
+        else:
+            # MIN is the default choice
+            def dist_func(x: list) -> int: return min(x)
 
-        from algorithms.shortest_path import ShortestPath
         nongroup_nodes = list(set(graph.vs["name"]) - set(nodes))
-        np_paths = ShortestPath.get_shortestpaths(graph, nongroup_nodes, CmodeEnum.cpu)
+
+        if not np_paths:
+            if "ShortestPath" not in sys.modules:
+                from algorithms.shortest_path import ShortestPath
+            np_paths = ShortestPath.get_shortestpaths(graph, nongroup_nodes, CmodeEnum.cpu)
+        else:
+            # Check np_paths integrity (i.e., number of non-group nodes == number of paths in np_paths
+            if len(nongroup_nodes) != len(np_paths):
+                raise WrongArgumentError("The number of shortest paths passed as argument ({}) does not fit the the "
+                                         "number of non-group nodes ({})".format(len(np_paths), len(nongroup_nodes)),
+                                         errors="Wrong parameter size")
 
         group_closeness = 0
         node_idx = gUtil(graph).get_node_indices(node_names=nodes)
@@ -177,7 +216,7 @@ class LocalTopology:
             if temp_list:
                 group_closeness += dist_func(temp_list)
 
-        normalized_score = group_closeness / len(nongroup_nodes)
+        normalized_score = len(nongroup_nodes) / group_closeness
         return round(normalized_score, 2)
 
     @staticmethod
@@ -366,6 +405,3 @@ class LocalTopology:
             nodes = gUtil(graph).get_node_indices(nodes)
 
         return graph.pagerank(vertices=nodes, damping=damping, directed=False, weights=weights, implementation="arpack")
-
-
-# from algorithms.shortest_path import ShortestPath
