@@ -1,5 +1,5 @@
 """
-Compute several local topology metrics of nodes
+Compute local topology metrics of nodes
 """
 
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
@@ -32,6 +32,8 @@ __license__ = u"""
 from tools.enums import CmodeEnum, GroupDistanceEnum
 from tools.misc.graph_routines import *
 from tools.graph_utils import GraphUtils as gUtil
+from algorithms.shortest_path import ShortestPath
+from algorithms.shortestpath_gpu import shortest_path_number_cpu
 
 
 class LocalTopology:
@@ -74,7 +76,7 @@ class LocalTopology:
         selected_neig = graph.neighborhood(node_idx, order=1, mode="all")
         flat_list = [item for sublist in selected_neig for item in sublist if item not in node_idx]
         normalized_score = len(set(flat_list)) / (len(graph.vs) - len(nodes))
-        
+
         return round(normalized_score, 2)
 
     @staticmethod
@@ -98,7 +100,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def group_betweenness(graph: Graph, nodes: list, np_paths=None) -> float:
+    def group_betweenness(graph: Graph, nodes: list, np_counts=None) -> float:
         """
         Computes the betweenness of a group of nodes.
         The *group betweenness* indicates the proportion of geodesics connecting pairs of non-group members that
@@ -107,16 +109,32 @@ class LocalTopology:
         group members and redo the calculation, creating a new node-by-node matrix of counts, (c) divide each cell in
         the new matrix by the corresponding cell in the first matrix, and (d) take the sum of all these ratios.
 
-        :param np_paths: List of shortest paths issuing from non-group nodes to every other node. Unreached nodes are
-        marked with values equal to the total number of nodes in the graph + 1. Passing this argument would make the
-        overall calculation of the group closeness index faster, if re-iterated several times.
+        :param np_counts: numpy array containing shortest paths numbers connecting any pair of nodes of the network.
+        Passing this argument would make the overall calculation of the group betweenness index faster.
         :param igraph.Graph graph: an igraph.Graph object. The graph must have specific properties. Please see the
         "Minimum requirements" specifications in the pyntacle's manual.
         :param nodes: The group members
-        :return: The normalized group closeness centrality, obtained by dividing the group closeness by the number of
-        non-group nodes.
+        :return: The normalized group betweenness centrality, obtained by dividing the group betweenness by the number
+        of non-group nodes.
         """
 
+        if np_counts:
+            count = np_counts
+        else:
+            adj_mat = np.array(graph.get_adjacency().data)
+            adj_mat[adj_mat == 0] = adj_mat.shape[0]
+            count = ShortestPath.shortest_path_number_cpu(adj_mat)
+            # count2 = ShortestPath.shortest_path_number_igraph(graph)
+            #
+            # count3 = np.copy(adj_mat)
+            # count3[count3 == graph.vcount()] = 0
+            # threadsperblock = 32
+            # blockspergrid = math.ceil(count3.shape[0] / threadsperblock)
+            # shortest_path_number_cpu[blockspergrid, threadsperblock](adj_mat, count3)
+
+        # temp_graph = graph.copy()
+        # temp.graph.delete_vertices(to_delete_ids)
+        # TODO: calculate counts of modified graph
 
 
     @staticmethod
@@ -400,7 +418,7 @@ class LocalTopology:
 
         if not (isinstance(damping, (float, int)) or (damping < 0)):
             raise ValueError("Damping factor must be a float >= 0")
-        
+
         if nodes is not None:
             nodes = gUtil(graph).get_node_indices(nodes)
 

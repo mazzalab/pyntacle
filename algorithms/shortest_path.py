@@ -5,11 +5,11 @@ Several implementation to compute shortest paths of a graph
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.1"
+__version__ = "0.0.3"
 __maintainer__ = "Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = ["Release", "Stable"]
-__date__ = "15/04/2018"
+__date__ = "11/07/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -67,7 +67,7 @@ class ShortestPath:
         """
 
         if cmode == CmodeEnum.igraph:
-            sps = ShortestPath.shortest_path_igraph(graph=graph, nodes=nodes)
+            sps = ShortestPath.shortest_path_length_igraph(graph=graph, nodes=nodes)
             sps = [[graph.vcount() + 1 if isinf(x) else x for x in y] for y in sps]
             sps = np.array(sps)
             return sps
@@ -83,9 +83,9 @@ class ShortestPath:
 
             if cmode == CmodeEnum.cpu:
                 if nodes is None:
-                    sps = ShortestPath.__shortest_path_cpu(adjmat=adjmat)
+                    sps = ShortestPath.shortest_path_length_cpu(adjmat=adjmat)
                 else:
-                    sps = ShortestPath.__shortest_path_cpu(adjmat=adjmat)
+                    sps = ShortestPath.shortest_path_length_cpu(adjmat=adjmat)
                     nodes = gUtil(graph=graph).get_node_indices(node_names=nodes)
                     sps = sps[nodes, :]
                 return sps
@@ -117,7 +117,7 @@ class ShortestPath:
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def shortest_path_igraph(graph: Graph, nodes=None) -> list:
+    def shortest_path_length_igraph(graph: Graph, nodes=None) -> list:
         """
         Compute the *shortest paths* lengths between any pairs of nodes of an undirected graph, using the
         Dijkstra's algorithm. The shortest path is defined as the minimum distance from an input node to every other
@@ -136,42 +136,51 @@ class ShortestPath:
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def shortest_paths_igraph(graph: Graph, nodes=None) -> list:
+    def shortest_path_number_igraph(graph: Graph, nodes=None) -> np.ndarray:
         """
-        Compute the *shortest paths* starting from any pairs of nodes of an undirected graph using the
+        Compute the *shortest paths* from any pairs of nodes of an undirected graph using the
         Dijkstra's algorithm and returns a matrix of predecessors in order to ease the process of reconstructing the
         physical paths between nodes.
         :param graph: an igraph.Graph object. The graph must have specific properties. Please see the
         "Minimum requirements" specifications in the pyntacle's manual.
         :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
         (default), the index is computed for all nodes of the graph.
-        :return: a list of lists, the first size being the number of input nodes. Each list contains a series of
-        integer values representing the distance from any input node to every other node in the graph.
+        :return: a list of lists, the first size being the number of input nodes. Each list is a path (sequence of
+        nodes) from a start and an end node.
         The order of the node list in input is preserved.
         """
 
-        shortest_paths = []
         if nodes:
             loop_nodes = nodes
         else:
             loop_nodes = graph.vs()
 
-        for node in loop_nodes:
-            shortest_paths.append(graph.get_all_shortest_paths(v=node))
+        spaths = np.ndarray(shape=(len(loop_nodes), len(loop_nodes)), dtype=int)
 
-        return shortest_paths  # TODO: Flatten this list of lists
+        for node in loop_nodes:
+            temp_line = np.zeros(shape=len(loop_nodes))
+            sp = graph.get_all_shortest_paths(v=node)
+            for s in sp:
+                if len(s) > 1:
+                    last = s[-1]
+                    temp_line[last] += 1
+                else:
+                    row_index = s[0]
+
+            spaths[row_index] =  temp_line
+
+        return spaths
 
     @staticmethod
     @jit(nopython=True, parallel=True)
-    def __shortest_path_cpu(adjmat) -> np.ndarray:
+    def shortest_path_length_cpu(adjmat) -> np.ndarray:
         """
-        Calculate the shortest paths of a graph for aa single nodes, a set of nodes or all nodes in the graph using
+        Calculate the shortest path lengths of a graph for a single node, a set of nodes or all nodes in the graph using
         'Floyd-Warshall Implementation <https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm>'_. The forumla
-        is implemented using the numba library and allows for parallelization using CPU cores.
+        is implemented using Numba for just-in-time compilation and run on multiple CPU processors.
         :param np.ndarray adjmat: a numpy.ndarray containing the adjacency matrix of a graph. Disconnected nodes in the
         matrix are represented as the total number of nodes in the graph + 1, while the diagonal must contain zeroes.
-        Default is True (a numpy array is returned)
-        :return: a numpy array
+        :return: a numpy array of shortest path lengths
         """
 
         v = adjmat.shape[0]
@@ -189,29 +198,34 @@ class ShortestPath:
     @jit(nopython=True, parallel=True)
     def shortest_path_number_cpu(adjmat) -> np.ndarray:
         """
-        Calculate the shortest paths of a graph for aa single nodes, a set of nodes or all nodes in the graph using
-        'Floyd-Warshall Implementation <https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm>'_. The forumla
-        is implemented using the numba library and allows for parallelization using CPU cores.
+        Calculate the shortest path lengths of a graph using the
+        'Floyd-Warshall with path count. The method is implemented using Numba for just-in-time compilation and run
+        on multiple CPU processors.
         :param np.ndarray adjmat: a numpy.ndarray containing the adjacency matrix of a graph. Disconnected nodes in the
-        matrix are represented as the total number of nodes in the graph + 1, while the diagonal must contain zeroes.
-        Default is True (a numpy array is returned)
-        :return: a numpy array
+        matrix are represented as the total number of nodes in the graph + 1.
+        :return: a numpy array of shortest paths numbers
         """
 
         v = adjmat.shape[0]
-        path_number = np.full_like(adjmat, v+1)
-        path_number = np.fill_diagonal(path_number, 0)
+        dist = np.copy(adjmat)
+
+        count = np.copy(adjmat)
+        for i in prange(v):
+            for j in prange(v):
+                if count[i, j] == v:
+                    count[i, j] = 0
 
         for k in range(0, v):
             for i in prange(v):
                 for j in range(0, v):
-                    if adjmat[i, j] <= 2:
-                        continue
-                    if adjmat[i, j] > adjmat[i, k] + adjmat[k, j]:
-                        adjmat[i, j] = adjmat[i, k] + adjmat[k, j]
-                        path_number[i, j] = path_number[k, j]
+                    if k != j and k != i and i != j:
+                        if dist[i, j] == dist[i, k] + dist[k, j]:
+                            count[i, j] += count[i, k] * count[k, j]
+                        elif dist[i, j] > dist[i, k] + dist[k, j]:
+                            dist[i, j] = dist[i, k] + dist[k, j]
+                            count[i, j] = count[i, k] * count[k, j]
 
-        return adjmat
+        return count
 
     @staticmethod
     @check_graph_consistency
@@ -277,7 +291,7 @@ class ShortestPath:
         """
 
         if cmode == CmodeEnum.igraph:
-            sps = ShortestPath.shortest_path_igraph(graph=graph, nodes=nodes)
+            sps = ShortestPath.shortest_path_length_igraph(graph=graph, nodes=nodes)
             avg_sps = []
             for elem in sps:
                 elem = [x for x in elem if not (isinf(x)) and x > 0]
@@ -305,7 +319,7 @@ class ShortestPath:
         "Minimum requirements" specifications in the pyntacle's manual.
         :return: the median shortest path length across all shortest path distances
         """
-        sps = ShortestPath.shortest_path_igraph(graph=graph)  # TODO: Include other implementations
+        sps = ShortestPath.shortest_path_length_igraph(graph=graph)  # TODO: Include other implementations
         sps = np.array(sps)
 
         return float(np.median(sps[sps != 0]))
@@ -332,7 +346,7 @@ class ShortestPath:
         """
 
         if cmode == CmodeEnum.igraph:
-            sps = ShortestPath.shortest_path_igraph(graph=graph, nodes=nodes)
+            sps = ShortestPath.shortest_path_length_igraph(graph=graph, nodes=nodes)
             median_sps = []
             for elem in sps:
                 elem = [x for x in elem if not (isinf(x)) and x > 0]  # remove disconnected nodes and diagonal

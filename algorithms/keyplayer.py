@@ -137,7 +137,7 @@ class KeyPlayer:
 
         number_nodes = graph.vcount()
         df_denum = number_nodes * (number_nodes - 1)
-        shortest_path_lengths = sp.shortest_path_igraph(graph=graph)
+        shortest_path_lengths = sp.shortest_path_length_igraph(graph=graph)
 
         if max_distance:
             shortest_path_lengths = ShortestPathModifier.set_list_to_inf(
@@ -223,7 +223,7 @@ class KeyPlayer:
             index_list = gu(graph=graph).get_node_indices(node_names=nodes)
 
             if implementation == CmodeEnum.igraph:
-                shortest_path_lengths = sp.shortest_path_igraph(graph, nodes=nodes)
+                shortest_path_lengths = sp.shortest_path_length_igraph(graph, nodes=nodes)
             else:
                 if not sp_matrix:
                     shortest_path_lengths = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=nodes)
@@ -284,7 +284,7 @@ class KeyPlayer:
             index_list = gu(graph=graph).get_node_indices(node_names=nodes)
 
             if implementation == CmodeEnum.igraph:
-                shortest_path_lengths = sp.shortest_path_igraph(graph=graph, nodes=nodes)
+                shortest_path_lengths = sp.shortest_path_length_igraph(graph=graph, nodes=nodes)
             else:
                 if sp_matrix is None:
                     shortest_path_lengths = sp.get_shortestpaths(graph=graph, nodes=nodes, cmode=implementation)
