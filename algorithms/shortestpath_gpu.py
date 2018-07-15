@@ -4,11 +4,11 @@ a NVIDIA-compliant GPU, if available"""
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.2"
+__version__ = "0.0.7"
 __maintainer__ = "Tommaso Mazza"
 __email__ = "t.mazza@css-mendel.it"
 __status__ = "Development"
-__date__ = "11/04/2018"
+__date__ = "11/07/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t,mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -56,3 +56,33 @@ def shortest_path_gpu(adjmat):
                 posKY = adjmat[k, j]
                 if posIJ > posIK + posKY:
                     adjmat[i, j] = posIK + posKY
+
+
+@cuda.jit('void(uint16[:, :], uint16[:, :])')
+def shortest_path_number_cpu(adjmat, count):
+    """
+    Calculate the shortest path lengths of a graph using the
+    'Floyd-Warshall algorithm with path count. The overall calculation is delegated to the GPU, if available, through
+    the NUMBA python package.
+    :param np.ndarray adjmat: a numpy.ndarray containing the adjacency matrix of a graph. Disconnected nodes in the
+    matrix are represented as the total number of nodes in the graph + 1.
+    :param np.ndarray adjmat: a numpy.ndarray filled by zeroes that will contain the number of paths between any
+    pair of nodes.
+    """
+
+    i = cuda.grid(1)
+    graph_size = adjmat.shape[0]
+
+    if i < graph_size:  # Check array boundaries
+        for k in range(0, graph_size):
+            for j in range(0, graph_size):
+                if k != j and k != i and i != j:
+                    posIJ = adjmat[i, j]
+                    posIK = adjmat[i, k]
+                    posKY = adjmat[k, j]
+
+                    if posIJ == posIK + posKY:
+                        count[i, j] += count[i, k] * count[k, j]
+                    elif posIJ > posIK + posKY:
+                        adjmat[i, j] = posIK + posKY
+                        count[i, j] = count[i, k] * count[k, j]

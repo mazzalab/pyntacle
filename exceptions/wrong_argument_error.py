@@ -5,11 +5,11 @@ Exception raised when the arguments passed to a method are wrong
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "29/04/2018"
+__date__ = "27/06/2018"
 __creator__ = "t.mazza"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
@@ -31,8 +31,7 @@ __license__ = u"""
 
 
 class WrongArgumentError(ValueError):
-    class NotAGraphError(ValueError):
-        def __init__(self, message, errors):
-            super().__init__(message)
-            # Custom errors here
-            self.errors = errors
+    def __init__(self, message, errors):
+        super().__init__(message)
+        # Custom errors here
+        self.errors = errors
