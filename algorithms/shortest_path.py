@@ -5,7 +5,7 @@ Several implementation to compute shortest paths of a graph
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 __maintainer__ = "Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = ["Release", "Stable"]
@@ -40,7 +40,6 @@ from psutil import virtual_memory
 from tools.enums import CmodeEnum
 from tools.graph_utils import GraphUtils as gUtil
 from tools.misc.graph_routines import check_graph_consistency, vertex_doctor
-from algorithms.global_topology import GlobalTopology
 
 
 class ShortestPath:
@@ -155,7 +154,7 @@ class ShortestPath:
         else:
             loop_nodes = graph.vs()
 
-        spaths = np.ndarray(shape=(len(loop_nodes), len(loop_nodes)), dtype=int)
+        spaths = np.ndarray(shape=(len(loop_nodes), len(loop_nodes)), dtype=np.int16)
 
         for node in loop_nodes:
             temp_line = np.zeros(shape=len(loop_nodes))
@@ -167,7 +166,7 @@ class ShortestPath:
                 else:
                     row_index = s[0]
 
-            spaths[row_index] =  temp_line
+            spaths[row_index] = temp_line
 
         return spaths
 
@@ -252,7 +251,7 @@ class ShortestPath:
             avg_sp = Graph.average_path_length(graph, directed=False, unconn=False)
             return round(avg_sp, 5)
         else:
-            if GlobalTopology.components(graph) == 1:
+            if len(graph.components()) == 1:
                 sp = ShortestPath.get_shortestpaths(graph=graph, nodes=None, cmode=cmode)
                 sp[sp == graph.vcount() + 1] = 0
 

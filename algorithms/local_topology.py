@@ -119,12 +119,26 @@ class LocalTopology:
         """
 
         if np_counts:
-            count = np_counts
+            count_all = np_counts
         else:
             adj_mat = np.array(graph.get_adjacency().data)
             adj_mat[adj_mat == 0] = adj_mat.shape[0]
-            count = ShortestPath.shortest_path_number_cpu(adj_mat)
-            # count2 = ShortestPath.shortest_path_number_igraph(graph)
+            count_all = ShortestPath.shortest_path_number_cpu(adj_mat)
+
+        del_edg = graph.es.select(_source_in=nodes)
+        graph_notgroup = graph.copy()
+        graph_notgroup.delete_edges(del_edg)
+        count_notgroup = ShortestPath.shortest_path_number_igraph(graph_notgroup)
+        count_group = np.subtract(count_all, count_notgroup)
+
+        x1 = np.arange(9.0).reshape((3, 3))
+        x2 = np.arange(3.0)
+        np.subtract(x1, x2)
+
+        group_btw_temp = np.divide(count_group, count_all)
+        group_btw = np.sum(group_btw_temp)
+
+
             #
             # count3 = np.copy(adj_mat)
             # count3[count3 == graph.vcount()] = 0
