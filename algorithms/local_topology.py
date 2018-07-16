@@ -129,6 +129,9 @@ class LocalTopology:
         graph_notgroup = graph.copy()
         graph_notgroup.delete_edges(del_edg)
         count_notgroup = ShortestPath.shortest_path_number_igraph(graph_notgroup)
+
+        count_all = count_all.astype(float).reshape((20, 20))
+        count_notgroup = count_notgroup.astype(float).reshape((20, 20))
         count_group = np.subtract(count_all, count_notgroup)
 
         x1 = np.arange(9.0).reshape((3, 3))
@@ -139,15 +142,9 @@ class LocalTopology:
         group_btw = np.sum(group_btw_temp)
 
 
-            #
-            # count3 = np.copy(adj_mat)
-            # count3[count3 == graph.vcount()] = 0
-            # threadsperblock = 32
-            # blockspergrid = math.ceil(count3.shape[0] / threadsperblock)
-            # shortest_path_number_cpu[blockspergrid, threadsperblock](adj_mat, count3)
-
-        # temp_graph = graph.copy()
-        # temp.graph.delete_vertices(to_delete_ids)
+        # threadsperblock = 32
+        # blockspergrid = math.ceil(count3.shape[0] / threadsperblock)
+        # shortest_path_number_cpu[blockspergrid, threadsperblock](adj_mat, count3)
         # TODO: calculate counts of modified graph
 
 
