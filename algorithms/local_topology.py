@@ -125,18 +125,13 @@ class LocalTopology:
             adj_mat[adj_mat == 0] = adj_mat.shape[0]
             count_all = ShortestPath.shortest_path_number_cpu(adj_mat)
 
-        del_edg = graph.es.select(_source_in=nodes)
+        node_idx = gUtil(graph).get_node_indices(nodes)
+        del_edg = graph.es.select(_source_in=node_idx)
         graph_notgroup = graph.copy()
         graph_notgroup.delete_edges(del_edg)
         count_notgroup = ShortestPath.shortest_path_number_igraph(graph_notgroup)
-
-        count_all = count_all.astype(float).reshape((20, 20))
-        count_notgroup = count_notgroup.astype(float).reshape((20, 20))
         count_group = np.subtract(count_all, count_notgroup)
 
-        x1 = np.arange(9.0).reshape((3, 3))
-        x2 = np.arange(3.0)
-        np.subtract(x1, x2)
 
         group_btw_temp = np.divide(count_group, count_all)
         group_btw = np.sum(group_btw_temp)
