@@ -1,7 +1,7 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.1"
+__version__ = "0.2.1"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
@@ -266,7 +266,7 @@ class Metrics:
                     plot_graph.set_node_sizes(sizes=node_sizes)
 
                 # define layout
-                plot_graph.set_layouts()
+                plot_graph.set_layouts(self.args.plot_layout)
 
                 plot_path = os.path.join(plot_dir, ".".join(["_".join(
                     ["pyntacle", graph["name"][0], "local_metrics_plot_",
@@ -411,7 +411,7 @@ class Metrics:
                 plot_graph.set_node_sizes(sizes=node_sizes)
 
                 # define layout
-                plot_graph.set_layouts()
+                plot_graph.set_layouts(self.args.plot_layout)
 
                 plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
                                       keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=node_frames)
@@ -430,7 +430,7 @@ class Metrics:
                     plot_graph.set_node_sizes(sizes=node_sizes)
 
                     # define layout
-                    plot_graph.set_layouts()
+                    plot_graph.set_layouts(self.args.plot_layout)
 
                     plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", graph["name"][0], "global_metrics_plot",self.date]),self.args.plot_format]))
 

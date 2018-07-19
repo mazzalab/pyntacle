@@ -1,7 +1,7 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.1"
+__version__ = "0.2.1"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
@@ -373,7 +373,7 @@ class Communities():
                         bord_list.append(not_in_module_colors)
 
                 graph_plotter.set_node_colors(col_list)
-                graph_plotter.set_layouts()
+                graph_plotter.set_layouts(self.args.plot_layout)
                 graph_plotter.plot_graph(path=main_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
                                          keep_aspect_ratio=True, vertex_label_size=6,
                                          vertex_frame_color=bord_list)
@@ -401,7 +401,7 @@ class Communities():
                     comm_plot_path = os.path.join(plot_dir, ".".join(
                         ["_".join([self.args.output_file, str(comm["__module_number"]), self.date]), self.args.plot_format]))
 
-                    plotter.set_layouts()
+                    plotter.set_layouts(self.args.plot_layout)
                     plotter.plot_graph(path=comm_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
                                        keep_aspect_ratio=True, vertex_label_size=6,
                                        vertex_frame_color=[avail_colors_borders[i]] * comm.vcount())

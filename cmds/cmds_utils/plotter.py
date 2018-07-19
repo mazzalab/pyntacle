@@ -1,7 +1,7 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.1"
+__version__ = "0.2.1"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
@@ -300,7 +300,6 @@ class PlotGraph():
         :param str layout: a type of layout that will be assigned to the `layout` parameter in the `igraph.plot` object
         :param kwargs: a list of parameters that can be passed to each of the layout method
         """
-
         try:
             seed = random.seed(self.seed)
 
@@ -331,7 +330,6 @@ class PlotGraph():
         '''
 
         formats = ["jpg", "pdf", "svg", "png"]
-
         if path is None:
             now = datetime.datetime.now()
             now = now.strftime("%d-%m-%A_%H%M")

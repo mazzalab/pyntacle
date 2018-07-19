@@ -1,7 +1,7 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.1"
+__version__ = "0.2.1"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
@@ -172,7 +172,7 @@ class Generate():
                 
             if not self.args.nei:
                 self.args.nei = random.randint(1, 5)
-                
+
             if isinstance(self.args.lattice, str):
                 try:
                     self.args.lattice = int(self.args.lattice)
@@ -186,7 +186,7 @@ class Generate():
                     if self.args.lattice_size <= 1:
                         raise ValueError
 
-                    if self.args.nei <= 1:
+                    if self.args.nei < 1:
                         raise ValueError
 
                     if self.args.lattice <= 1:
@@ -321,22 +321,34 @@ class Generate():
 
             # define layout according to the toplogy of the graph
             if self.args.which == "random":
-                plot_graph.set_layouts(layout="random")
+                if self.args.plot_layout != "random":
+                    plot_graph.set_layouts(self.args.plot_layout)
+                else:
+                    plot_graph.set_layouts(layout="random")
                 other_nodes_colour = pal[-3]
                 frame_vertex_colour = framepal[-3]
 
             elif self.args.which == "scale-free":
-                plot_graph.set_layouts(layout="fr")
+                if self.args.plot_layout != "fr" and self.args.plot_layout != "fruchterman_reingold":
+                    plot_graph.set_layouts(self.args.plot_layout)
+                else:
+                    plot_graph.set_layouts(layout="fr")
                 other_nodes_colour = pal[3]
                 frame_vertex_colour = framepal[3]
 
             elif self.args.which == "tree":
-                plot_graph.set_layouts(layout="reingold_tilford")
+                if self.args.plot_layout != "rt" and self.args.plot_layout != "reingold_tilford":
+                    plot_graph.set_layouts(self.args.plot_layout)
+                else:
+                    plot_graph.set_layouts(layout="reingold_tilford")
                 other_nodes_colour = pal2[-2]
                 frame_vertex_colour = framepal2[-2]
 
             else:
-                plot_graph.set_layouts(layout="circle")
+                if self.args.plot_layout != "circle":
+                    plot_graph.set_layouts(self.args.plot_layout)
+                else:
+                    plot_graph.set_layouts(layout="circle")
                 other_nodes_colour = pal[0]
                 frame_vertex_colour = framepal[0]
 

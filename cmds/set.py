@@ -1,7 +1,7 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.1"
+__version__ = "0.2.1"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
@@ -338,8 +338,8 @@ class Set:
             graph_2_frame_colors = [graph_2_frame] * graph1.vcount()
 
             # define layouts
-            graph1_plotter.set_layouts()
-            graph2_plotter.set_layouts()
+            graph1_plotter.set_layouts(self.args.plot_layout)
+            graph2_plotter.set_layouts(self.args.plot_layout)
 
             # plot input graphs
             graph1_plotter.plot_graph(path=graph1_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
@@ -393,7 +393,7 @@ class Set:
                         "__parent"] else input_graph_node_size for v in output_graph.vs()])
 
                 output_graph_plotter.set_node_labels(labels=output_graph.vs()["name"])
-                output_graph_plotter.set_layouts()
+                output_graph_plotter.set_layouts(self.args.plot_layout)
                 output_graph_plotter.plot_graph(path=output_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
                                                 keep_aspect_ratio=True, vertex_label_size=6,
                                                 vertex_frame_color=intersection_frame_color_list)

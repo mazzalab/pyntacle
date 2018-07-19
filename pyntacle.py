@@ -1,7 +1,7 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.2"
+__version__ = "0.2.1"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
@@ -31,6 +31,7 @@ import sys
 import os
 import unittest
 import random
+from numpy import random as nprandom
 from copy import deepcopy
 from exceptions.generic_error import Error
 if sys.version_info <= (3, 4):
@@ -108,12 +109,12 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                                                     'Pyntacle integrity. Useful after '
                                                                     'installing pyntacle and for debugging '
                                                                     'purposes.\n' +
-                  Style.RESET_ALL + 100 * '-')
+                  Style.RESET_ALL + 100 * '-', )
 
         parser.add_argument('command', help='Subcommand to run', type=lambda s: s.lower())
         parser.add_argument('-v', action="count", help="Verbosity level of the internal Pyntacle logger. "
-                                                       "-vvv is the highest level (for debug use)")
-        parser.add_argument('-V', "--version", action="version", version="pyntacle v0.2",
+                                                       "-vvv is the highest level (for debugging)")
+        parser.add_argument('-V', "--version", action="version", version="pyntacle v0.2.1",
                             help="Shows program's version number and exits.")
 
         # Detect verbosity
@@ -145,10 +146,12 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser = argparse.ArgumentParser(
             description='Compute key-player metrics for a specifc set of nodes (kp-info) or perform the '
                         'search of set of nodes that maximize key player metrics (kp-finder).\n\n'
-                        'Subcommands:\n' + 90 * '-' + '\n' +
-                        '  kp-finder\t        Finds the best kp set of size k using key player metrics and either a greedy or a bruteforce algorithm. \n'
-                        '  kp-info\t        Computes specified key player metrics for a selected subset of nodes.\n\n' + 90 * '-',
-            formatter_class=argparse.RawDescriptionHelpFormatter,
+                        'Subcommands:\n\n' + 100 * '-' + '\n' +
+                        '   kp-finder\t           Finds the best kp set of size k using key player metrics and either a '
+                        '\n\t\t\t   greedy or a bruteforce algorithm.\n\n'
+                        '   kp-info\t           Computes specified key player metrics for a selected subset of nodes.\n' + 100 * '-',
+            formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=100,
+                                                                              max_help_position=100),
             usage=Fore.RED + Style.BRIGHT + 'pyntacle.py keyplayer'
                   + Fore.GREEN + Style.BRIGHT + ' {kp-finder, kp-info}'
                   + Fore.LIGHTBLUE_EX + ' --type {pos | neg | all | F | dF | dR | mreach}' + Fore.RED + ' [arguments]\n' + Style.RESET_ALL)
@@ -165,9 +168,10 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                             choices=format_dictionary.keys(),
                             help="Input format. \'adjmat\' for adjacency matrix, \'edgelist\' for edge list, "
                                  "\'sif\' for Simple Interaction format, \'dot\' for DOT file, \'bin\' "
-                                 "for binary file.")
+                                 "for binary file. See https://goo.gl/9wFRfM for more information and abbreviations.")
 
         parser.add_argument('--input-separator', metavar='', default=None, help="Specifies the field separator for the input file. "
+                                    
                                                                                 "If not provided, Pyntacle tries to guess it automatically.")
                             
         parser.add_argument('-N', '--no-header', default=False, action='store_true',
@@ -217,12 +221,23 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                  " Default is “800,800” for graph <= 150 nodes and “1600,1600” for larger "
                                  "graphs. Overridden by --no-plot. ")
 
-        parser.add_argument("--save-binary", action="store_true",
-                            help="Save a binary file (with a .graph extension) that contains an igraph.Graph "
-                                 "object. This object is the one processed by Pyntacle. ")
+        parser.add_argument('--plot-layout', metavar='',
+                            choices=["circle", "fruchterman_reingold", "fr", "kamada_kawai", "kk",
+                                     "large_graph", "lgl", "random", "reingold_tilford", "rt"],
+                            default="fr",
+                            help="This option allows to choose one of the predefined layout for network "
+                                 "plotting. Choices are “fruchterman_reingold” (default), “kamada_kawai”, "
+                                 "“large_graph”, “random”, “reingold_tilford”. Default is "
+                                 "“fruchterman_reingold”. Bypassed if `--no-plot` if specified or the graph "
+                                 "exceeds the maximum number of nodes. See The full command line guide at "
+                                 "https://goo.gl/p9gN62 for more information.")
 
         parser.add_argument("--no-plot", action="store_true",
                             help="Do not ouput the graphical representation of the plot.")
+        
+        parser.add_argument("--save-binary", action="store_true",
+                            help="Save a binary file (with a .graph extension) that contains an igraph.Graph "
+                                 "object. This object is the one processed by Pyntacle. ")
 
         parser.add_argument('-T', "--threads", metavar='', default=n_cpus, type=int,
                             help="If any parallel computation is required, specify the number of cores that "
@@ -230,7 +245,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                  "your machine - 1")
         
         parser.add_argument('-v', action="count", help="verbosity level of the internal Pyntacle logger. "
-                                                       "-vvv is the highest level (for debug).")
+                                                       "-vvv is the highest level (for debugging).")
         
         subparsers = parser.add_subparsers(metavar='', help=argparse.SUPPRESS)
 
@@ -284,11 +299,17 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
     def metrics(self):
 
         parser = argparse.ArgumentParser(
-            description='Computes various types of metrics for a set of nodes of a network or for the whole graph.\n\nSubcommands:\n'
-                        '  global\t      Computes global centrality measures for the whole graph. Can also be used to remove nodes from the graph and computing these global centrality measures before and after the node removal. \n'
-                        '  local\t      Computes local centrality measures for a single node, a group of nodes or all nodes in the graph.\n\n',
+            description='Computes various types of metrics for a set of nodes of a network or for the whole graph.\n\n'
+                        'Subcommands:\n\n' + 90 * '-' + '\n' +
+                        '  global\tComputes global centrality measures for the whole graph. Can also be used'
+                        '\n\t\tto remove nodes from the graph and computing these global centrality'
+                        '\n\t\tmeasures before and after the node removal. \n\n'
+                        '  local\t        Computes local centrality measures for a single node, a group of nodes '
+                        '\n\t\tor all nodes in the graph.\n'
+                        + 90 * '-',
 
-            formatter_class=argparse.RawDescriptionHelpFormatter,
+            formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=100,
+                                                                              max_help_position=100),
             usage=Fore.RED + Style.BRIGHT + 'pyntacle.py metrics' + Fore.GREEN + Style.BRIGHT + ' {global, local}' + Fore.RED +
                   ' [arguments]' + Style.RESET_ALL)
         # NOT prefixing the argument with -- means it's not optional
@@ -303,7 +324,8 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                             help="Specifies the format of the input file passed using the --input-file "
                                  "command. "
                                  "\'adjmat\' for adjacency matrix, \'edgelist\' for edge list, \'sif\' for "
-                                 "Simple Interaction format, \'dot\' for DOT file, \'bin\' for binary file")
+                                 "Simple Interaction format, \'dot\' for DOT file, \'bin\' for binary file. "
+                                 "See https://goo.gl/9wFRfM for more information and abbreviations.")
 
         parser.add_argument('--input-separator', metavar='', default=None, help="Specifies the field separator for the input file. "
                                                                                 "If not provided, Pyntacle tries to guess it automatically.")
@@ -318,12 +340,12 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                  "exist, we will create one at the specified path. Default is the present "
                                  "working directory. ")
 
-        parser.add_argument('--report-format', '-r', default="txt", choices=["txt", "csv", "xlsx", "tsv"],
+        parser.add_argument('--report-format', '-r', metavar='', default="txt", choices=["txt", "csv", "xlsx", "tsv"],
                             help="Specifies the format that will be used to output the report produced by "
                                  "Pyntacle. Choices are “txt” and “tsv” for tab separated value files, “csv” "
                                  "for comma-separated value files, “xlsx” for Excel files. Default is “txt”.")
 
-        parser.add_argument('-P', '--plot-format', choices=["svg", "pdf", "png"], default="pdf",
+        parser.add_argument('-P', '--plot-format', metavar='', choices=["svg", "pdf", "png"], default="pdf",
                             type=lambda s: s.lower(),
                             help="Use this option to specify the format of choice of the plots produced by "
                                  "Pyntacle and stored in the “pyntacle-plots” directory inside your output "
@@ -338,6 +360,17 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument("--no-plot", action="store_true",
                             help="Do not ouput the graphical representation of the plot.")
 
+        parser.add_argument('--plot-layout', metavar='',
+                            choices=["circle", "fruchterman_reingold", "fr", "kamada_kawai", "kk",
+                                     "large_graph", "lgl", "random", "reingold_tilford", "rt"],
+                            default="fr",
+                            help="This option allows to choose one of the predefined layout for network "
+                                 "plotting. Choices are “fruchterman_reingold” (default), “kamada_kawai”, "
+                                 "“large_graph”, “random”, “reingold_tilford”. Default is "
+                                 "“fruchterman_reingold”. Bypassed if `--no-plot` if specified or the graph "
+                                 "exceeds the maximum number of nodes. See The full command line guide at "
+                                 "https://goo.gl/p9gN62 for more information.")
+        
         parser.add_argument("--save-binary", action="store_true",
                             help="Save a binary file (with a .graph extension) that contains an igraph.Graph "
                                  "object. This object is the one processed by Pyntacle.")
@@ -350,7 +383,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         parser.add_argument('-v', action="count",
                             help="Verbosity level of the internal Pyntacle logger. -vvv is the highest level"
-                                 " (for debug).")
+                                 " (for debugging).")
 
         subparsers = parser.add_subparsers(metavar='', help=argparse.SUPPRESS)
 
@@ -414,7 +447,8 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
     def convert(self):
         parser = argparse.ArgumentParser(
             description='Easily convert a network file from one format to another.',
-            formatter_class=argparse.RawDescriptionHelpFormatter,
+            formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=140,
+                                                                              max_help_position=100),
             usage=Fore.RED + Style.BRIGHT + 'pyntacle.py convert [arguments]' + Style.RESET_ALL)
 
         parser.add_argument('-i', '--input-file', metavar="", required=True,
@@ -463,7 +497,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                  " Note: the separator must be specified in quotes.")
 
         parser.add_argument('-v', action="count", help="Verbosity level of the internal Pyntacle logger. -vvv"
-                                                       " is the highest level (for debug).")
+                                                       " is the highest level (for debugging).")
 
         # NOT prefixing the argument with -- means it's not optional
         args = parser.parse_args(sys.argv[2:])
@@ -486,12 +520,15 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         parser = argparse.ArgumentParser(
             description='Generate random networks based on several topologies (useful to compared results '
-                        'against predefined network topologies).\n\nSubcommands:\n'
-                        '  random\t      Generate a random network following the Erdos–Renyi model.\n'
-                        '  scale-free\t      Generate a network following scale free topology according to the model proposed by Barabási and Albert.\n'
-                        '  tree\t              Generate a network that follow a tree topology, as described here.\n'
-                        '  small-world\t      Generate a network following the Watts-Strogatz model.\n\n',
-            formatter_class=argparse.RawDescriptionHelpFormatter,
+                        'against predefined network topologies).\n\n'
+                        'Subcommands:\n\n' + 90 * '-' + '\n' +
+                        '  random\t      Generate a random network following the Erdos–Renyi model.\n\n'
+                        '  scale-free\t      Generate a network following scale free topology according to the '
+                        '\n\t\t      model proposed by Barabási and Albert.\n\n'
+                        '  tree\t              Generate a network that follow a tree topology, as described here.\n\n'
+                        '  small-world\t      Generate a network following the Watts-Strogatz model.\n'+ 90 * '-',
+            formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=140,
+                                                                              max_help_position=100),
             usage=Fore.RED + Style.BRIGHT + 'pyntacle.py generate' + Fore.GREEN + Style.BRIGHT +
                   ' {random, scale-free, tree, small-world}' + Fore.RED +
                   ' [arguments]' + Style.RESET_ALL+ Style.RESET_ALL)
@@ -503,15 +540,17 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                  "exist, we will create one at the specified path. Default is the present "
                                  "working directory.")
 
-        parser.add_argument("--output-file", "-o",
+        parser.add_argument("--output-file", "-o", metavar='',
                             help="Basename of the output file. If not specified, a standard name will be "
                                  "generated.")
 
         parser.add_argument("-u", "--output-format", metavar="",
                             choices=format_dictionary.keys(),
                             default='adjmat',
-                            help='Desired output format for the output communities. Follows the same rules '
-                                 'of the `--format` options. Default is “adjmat” (Adjacency Matrix).')
+                            help='Desired output format for the output communities. \'adjmat\' for '
+                                 'adjacency matrix, \'edgelist\' for edge list, \'sif\' for '
+                                 'Simple Interaction format, \'dot\' for DOT file, \'bin\' for binary file. '
+                                 'See https://goo.gl/9wFRfM for more information and abbreviations.')
 
         parser.add_argument("--output-separator", metavar="",
                             help="Specify a desired output separator for your output files. Default is “\t”."
@@ -522,30 +561,42 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                  ' output network files with an optional header (Adjacency Matrix, Edge List,'
                                  ' SIF files). If not specified, your output files will contain a header.')
 
-        parser.add_argument('-P', '--plot-format', choices=["svg", "pdf", "png"], default="pdf",
+        parser.add_argument('-P', '--plot-format', choices=["svg", "pdf", "png"], metavar='', default="pdf",
                             type=lambda s: s.lower(),
                             help="Use this option to specify the format of choice of the plots produced by "
                                  "Pyntacle and stored in the “pyntacle-plots” directory inside your output"
                                  " directory. Choices are “pdf”, “png” and “svg”. Default is “pdf”."
                                  " Overridden by --no-plot.")
 
-        parser.add_argument('--plot-dim',
+        parser.add_argument('--plot-dim', metavar='',
                             help="Comma-separated values that specifies the size of the produced plot(s). "
                                  "Default is “800,800” for graph <= 150 nodes and “1600,1600” for larger "
                                  "graphs. Overridden by --no-plot.")
 
         parser.add_argument("--no-plot", action="store_true",
                             help="Do not ouput the graphical representation of the plot.")
+        
+        parser.add_argument('--plot-layout', metavar='',
+                            choices=["circle", "fruchterman_reingold", "fr", "kamada_kawai", "kk",
+                                     "large_graph", "lgl", "random", "reingold_tilford", "rt"],
+                            default="fr",
+                            help="This option allows to choose one of the predefined layout for network "
+                                 "plotting. Choices are “fruchterman_reingold”, “kamada_kawai”, "
+                                 "“large_graph”, “random”, “reingold_tilford”. The default choice depends on "
+                                 "the kind of graph that is generated. Bypassed if `--no-plot` if specified or the graph "
+                                 "exceeds the maximum number of nodes. See The full command line guide at "
+                                 "https://goo.gl/p9gN62 for more information.")
 
         parser.add_argument("-S", "--seed", type=int, help="Set a seed when creating a network (useful for "
                                                            "recreating the same networks). Overridden by --repeat",
                             metavar="", default=None)
         
-        parser.add_argument("-R", "--repeat", type=int, default=1, help="Specify the number of graphs that will be generated. Default is 1."
-                                                                        " Note: --repeat overrides --seed.")
+        parser.add_argument("-R", "--repeat", metavar='', type=int, default=1,
+                            help="Specify the number of graphs that will be generated. Default is 1."
+                                 " Note: --repeat overrides --seed.")
         
         parser.add_argument('-v', action="count", help="Verbosity level of the internal Pyntacle logger. -vvv"
-                                                       " is the highest level (for debug).")
+                                                       " is the highest level (for debugging).")
 
         subparsers = parser.add_subparsers(metavar='', help=argparse.SUPPRESS)
         # Subparser for the nodes case
@@ -633,12 +684,12 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         for r in range(0, args.repeat):
             args = deepcopy(original_args)
             if not args.seed:
-                args.seed = random.randint(1,1000000)
+                print("generating new seed")
+                args.seed = nprandom.randint(1,1000000)
             elif args.seed and args.repeat!=1:
                 sys.stdout.write("WARNING: you have supplied both --repeat greater than 1, and --seed. The former overrides"
                                  "the latter, so {0} different graphs will be produced with a random seed.\n".format(str(args.repeat)))
                 args.seed = random.randint(1,1000000)
-
             gen = generate_command(args)
             try:
                 gen.run()
@@ -650,12 +701,14 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
             description='Find communities within a graph using several community-finding (or modular '
                         'decomposition) algorithms. Produces several network files, each one containing an'
                         ' induced subgraph of every community found. Communities can be filtered by nodes'
-                        ' and components number.\n\nSubcommands:\n'
-                        '  fastgreedy\t      Performs module detection on tthe input network using the fastgreedy algorithm.\n'
-                        '  infomap\t      Performs module detection on the input network using the community infomap algorithm.\n'
-                        '  leading-eigenvector\t              Performs module detection on the input network using the leading eigenvector algorithm.\n'
-                        '  community-walktrap\t      Performs module detection on the input network using the community walktrap algorithm.\n\n',
-            formatter_class=argparse.RawDescriptionHelpFormatter,
+                        ' and components number.\n\n'
+                        'Subcommands:\n\n' + 90 * '-' + '\n' +
+                        '  fastgreedy\t\t      Performs module detection on tthe input network using the fastgreedy algorithm.\n\n'
+                        '  infomap\t\t      Performs module detection on the input network using the community infomap algorithm.\n\n'
+                        '  leading-eigenvector\t      Performs module detection on the input network using the leading eigenvector algorithm.\n\n'
+                        '  community-walktrap\t      Performs module detection on the input network using the community walktrap algorithm.\n' + 90 * '-',
+            formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=140,
+                                                                              max_help_position=100),
             usage=Fore.RED + Style.BRIGHT + 'pyntacle.py communities' + Fore.GREEN + Style.BRIGHT + ' {fastgreedy, '
                                                                                                    'infomap, leading-eigenvector, community-walktrap} ' + Fore.RED + '[arguments]' + Style.RESET_ALL)
 
@@ -667,9 +720,10 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument('-f', '--format', metavar='',
                             choices=format_dictionary.keys(),
                             help="Specifies the format of the input file passed using the --input-file "
-                                 "command. Different file formats can be specified using different keywords:"
-                                 " \'adjmat\' for adjacency matrix, \'edgelist\' for edge list, \'sif\' for "
-                                 "Simple Interaction format, \'dot\' for DOT file, \'bin\' for binary file")
+                                 "command. "
+                                 "\'adjmat\' for adjacency matrix, \'edgelist\' for edge list, \'sif\' for "
+                                 "Simple Interaction format, \'dot\' for DOT file, \'bin\' for binary file. "
+                                 "See https://goo.gl/9wFRfM for more information and abbreviations.")
 
         parser.add_argument('--input-separator', metavar='', default=None,
                             help="Specifies the field separator for the input file. "
@@ -722,9 +776,6 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                             help="specify a desired output separator for your output files. Default is “\t”. "
                                  "Note: the separator must be specified in quotes.")
 
-        parser.add_argument("--no-plot", action="store_true",
-                            help="Do not ouput the graphical representation of the plot.")
-
         parser.add_argument('-P', '--plot-format', choices=["svg", "pdf", "png"], default="pdf",
                             type=lambda s: s.lower(),
                             help="Use this option to specify the format of choice of the plots produced by "
@@ -736,6 +787,22 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                             help="Comma-separated values that specifies the size of the produced plot(s). "
                                  "Default is “800,800” for graph <= 150 nodes and “1600,1600” for larger "
                                  "graphs. Overridden by --no-plot.")
+        
+        parser.add_argument('--plot-layout', metavar='',
+                            choices=["circle", "fruchterman_reingold", "fr", "kamada_kawai", "kk",
+                                     "large_graph", "lgl", "random", "reingold_tilford", "rt"],
+                            default="fr",
+                            help="This option allows to choose one of the predefined layout for network "
+                                 "plotting. Choices are “fruchterman_reingold” (default), “kamada_kawai”, "
+                                 "“large_graph”, “random”, “reingold_tilford”. Default is "
+                                 "“fruchterman_reingold”. Bypassed if `--no-plot` if specified or the graph "
+                                 "exceeds the maximum number of nodes. NOTE: the layout will be passed to each "
+                                 "subcommunity in the network found using modularity. See The full command "
+                                 "line guide at "
+                                 "https://goo.gl/p9gN62 for more information.")
+        
+        parser.add_argument("--no-plot", action="store_true",
+                            help="Do not ouput the graphical representation of the plot.")
 
         parser.add_argument("--save-binary", action="store_true",
                             help="Save a binary file (with a .graph extension) in the output directory that "
@@ -852,11 +919,20 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser = argparse.ArgumentParser(
             description='Performs set operations (union, intersection, difference) between two networks using'
                         ' graph logical algorithms. Output the resulting network, along with the attributes'
-                        ' of the graphs of origin.\n\nSubcommands:\n'
-                        '  intersect\t      Performs the intersection among two input graph(s). Returns only the common nodes connected by the common edges. It will also give a detailed summary regarding this operation.\n'
-                        '  union\t      Performs the union among the input graph(s) (also called graph merging). Returns a graph storing both input graphs. Nodes and edges in common will retain both the original attributes belonging to them.\n'
-                        '  difference\t              Performs the difference among the two input graphs. Returns the nodes and edges belonging only to the first input graph. NOTE: the results will differ when switching the -1/--input-file-1 and the -2/--input-file-2 arguments.\n',
-            formatter_class=argparse.RawDescriptionHelpFormatter,
+                        ' of the graphs of origin.\n\n'
+                        'Subcommands:\n\n' + 90 * '-' + '\n' +
+                        '  intersect\t      Performs the intersection among two input graph(s). Returns only the '
+                        '\n\t\t      common nodes connected by the common edges. It will also give a '
+                        '\n\t\t      detailed summary regarding this operation.\n\n'
+                        '  union\t\t      Performs the union among the input graph(s) (also called graph merging). '
+                        '\n\t\t      Returns a graph storing both input graphs. Nodes and edges in common '
+                        '\n\t\t      will retain both the original attributes belonging to them.\n\n'
+                        '  difference\t      Performs the difference among the two input graphs. Returns the nodes '
+                        '\n\t\t      and edges belonging only to the first input graph. NOTE: the results '
+                        '\n\t\t      will differ when switching the -1/--input-file-1 and the '
+                        '\n\t\t      -2/--input-file-2 arguments.\n'+ 90 * '-',
+            formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=140,
+                                                                              max_help_position=100),
             usage=Fore.RED + Style.BRIGHT + 'pyntacle.py set ' + Fore.GREEN + Style.BRIGHT + '{union, intersection,'
                                                                                             ' difference}' + Fore.RED + ' [arguments]' + Style.RESET_ALL)
         # NOT prefixing the argument with -- means it's not optional
@@ -878,7 +954,8 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                  "and the -2/--input-file-2 command. Different file formats can be specified "
                                  "using different keywords: 'adjmat' for adjacency matrix, 'edgelist' for "
                                  "edge list, sif for Simple Interaction format, \'dot\' for DOT file, \'bin\'"
-                                 " for binary file. The two files must have the same format. If not, use "
+                                 " for binary file. See https://goo.gl/9wFRfM for more information and "
+                                 "abbreviations. NOTE: The two files must have the same format. If not, use "
                                  "pyntacle Convert to convert your files to the same format")
 
         parser.add_argument('--input-separator', metavar='', default=None,
@@ -897,7 +974,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         parser.add_argument('-v', action="count", help="verbosity level. -vvv is the highest level")
 
-        parser.add_argument('-P', '--plot-format', choices=["svg", "pdf", "png"], default="pdf",
+        parser.add_argument('-P', '--plot-format', choices=["svg", "pdf", "png"], default="pdf", metavar='',
                             type=lambda s: s.lower(),
                             help="Use this option to specify the format of choice of the plots produced by "
                                  "Pyntacle and stored in the “pyntacle-plots” directory inside your output "
@@ -909,6 +986,19 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                  "Default is “800,800” for graph <= 150 nodes and “1600,1600” for larger "
                                  "graphs. Overridden by --no-plot.")
 
+        parser.add_argument('--plot-layout', metavar='',
+                            choices=["circle", "fruchterman_reingold", "fr", "kamada_kawai", "kk",
+                                     "large_graph", "lgl", "random", "reingold_tilford", "rt"],
+                            default="fr",
+                            help="This option allows to choose one of the predefined layout for network "
+                                 "plotting. Choices are “fruchterman_reingold” (default), “kamada_kawai”, "
+                                 "“large_graph”, “random”, “reingold_tilford”. Default is "
+                                 "“fruchterman_reingold”. Bypassed if `--no-plot` if specified or the graph "
+                                 "exceeds the maximum number of nodes. NOTE: the layout will be passed to both"
+                                 " the input and the resulting graph. See The full command "
+                                 "line guide at "
+                                 "https://goo.gl/p9gN62 for more information.")
+        
         parser.add_argument("--no-plot", action="store_true",
                             help="Do not ouput the graphical representation of the plot.")
 
@@ -937,6 +1027,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                  ' has two largest components of the same size.')
 
         parser.add_argument('--report-format', '-r', default="txt", choices=["txt", "csv", "xlsx", "tsv"],
+                            metavar='',
                             help="Specifies the format that will be used to output the report produced by "
                                  "Pyntacle. Choices are “txt” and “tsv” for tab separated value files, “csv” "
                                  "for comma-separated value files, “xlsx” for Excel files. Default is “txt”.")

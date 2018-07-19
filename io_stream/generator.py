@@ -1,7 +1,7 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.1"
+__version__ = "0.2.1"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
@@ -119,9 +119,13 @@ class Generator:
         :return igraph.Graph: an `igraph,Graph` object already initialized to be used for pyntacle's methods
         """
         if seed is not None:
+            print("THIS IS THE SEED", seed)
+    
             if not isinstance(seed, int):
                 raise TypeError("\"seed must be an integer, {} found".format(type(seed).__name__))
         else:
+            print("THIS IS THE SEED (ELSE)", seed)
+    
             random.seed(seed)
 
         if not (len(params) == 4):

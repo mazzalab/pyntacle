@@ -1,7 +1,7 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.1"
+__version__ = "0.2.1"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
@@ -431,7 +431,6 @@ class KeyPlayer():
 
             plot_format = self.args.plot_format
             plot_graph.set_node_labels(labels=graph.vs()["name"])  # assign node labels to graph
-
             pal = sns.color_palette("Accent", 8).as_hex()
             framepal = sns.color_palette("Accent", 8, desat=0.5).as_hex()
 
@@ -581,7 +580,7 @@ class KeyPlayer():
 
                 plot_graph.set_edge_widths(edge_widths)
 
-                plot_graph.set_layouts(layout="fruchterman_reingold")
+                plot_graph.set_layouts(self.args.plot_layout)
 
                 plot_path = os.path.join(plot_dir, "_".join(["keyplayer", graph["name"][0], "report", metric, self.date]) + "." + plot_format)
                 if os.path.exists(plot_path):
