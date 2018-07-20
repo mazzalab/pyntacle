@@ -126,16 +126,33 @@ class LocalTopology:
             count_all = ShortestPath.shortest_path_number_cpu(adj_mat)
 
         node_idx = gUtil(graph).get_node_indices(nodes)
-        del_edg = graph.es.select(_source_in=node_idx)
+        del_edg_src = graph.es.select(_source_in=node_idx)
+        del_edg_tar = graph.es.select(_target_in=node_idx)
         graph_notgroup = graph.copy()
-        graph_notgroup.delete_edges(del_edg)
+        graph_notgroup.delete_edges(del_edg_src)
+        graph_notgroup.delete_edges(del_edg_tar)
         count_notgroup = ShortestPath.shortest_path_number_igraph(graph_notgroup)
         count_group = np.subtract(count_all, count_notgroup)
+        count_group_idx = count_group < 0
+        count_group[count_group_idx] = count_all[count_group_idx]
 
+        # np.seterr(divide='ignore', invalid='ignore')
+        # group_btw_temp = np.divide(count_group, count_all)
+        group_btw_temp = np.divide(count_group, count_all, out=np.zeros_like(count_group, dtype=float), where=count_all != 0)
 
-        group_btw_temp = np.divide(count_group, count_all)
-        group_btw = np.sum(group_btw_temp)
+        # discard group-nodes
+        group_btw_temp[node_idx] = 0
+        group_btw_temp[:, node_idx] = 0
 
+        # sum not nan counts
+        group_btw = np.nansum(group_btw_temp)
+
+        # normalization
+        graph_size = len(graph.vs)
+        group_size = len(nodes)
+        group_btw = (2 * group_btw) / ((graph_size - group_size) * (graph_size - group_size -1))
+
+        return group_btw
 
         # threadsperblock = 32
         # blockspergrid = math.ceil(count3.shape[0] / threadsperblock)
