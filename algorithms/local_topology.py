@@ -171,7 +171,7 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def radiality_reach(graph: Graph, nodes=None, cmode=CmodeEnum.igraph) -> list:
+    def radiality_reach(graph: Graph, nodes=None, cmode: CmodeEnum=CmodeEnum.igraph) -> list:
         """
         Compute the *radiality-reach* of a node or of a list of nodes of an undirected graph.
         The radiality-reach is a weighted version of the canonical radiality measure and it is recommended for
@@ -206,7 +206,7 @@ class LocalTopology:
                         rad = [0]
                     else:
                         part_nodes = subg.vcount()
-                        rad = LocalTopology.radiality(graph=subg, nodes=nodes, implementation=cmode)
+                        rad = LocalTopology.radiality(graph=subg, nodes=nodes, cmode=cmode)
 
                         # rebalance radiality by weighting it over the total number of nodes
                         proportion_nodes = part_nodes / tot_nodes
@@ -225,7 +225,7 @@ class LocalTopology:
                         node_names = list(set(nodes) & set(graph.vs(c)["name"]))
                         subg = graph.induced_subgraph(vertices=c)
                         part_nodes = subg.vcount()
-                        rad = LocalTopology.radiality(graph=subg, nodes=node_names, implementation=cmode)
+                        rad = LocalTopology.radiality(graph=subg, nodes=node_names, cmode=cmode)
 
                         proportion_nodes = part_nodes / tot_nodes
                         rad = [r * proportion_nodes for r in rad]
