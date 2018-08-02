@@ -42,6 +42,7 @@ from colorama import Fore, Style, init
 if os.name == "nt":
     init(convert=True)
 
+
 from cmds.cmds_utils.reporter import *
 # Main commands wrappers
 from cmds.keyplayer import KeyPlayer as kp_command
@@ -63,6 +64,15 @@ def _check_value(self, action, value):
 
 
 # todo: Check all options are documented in <usage>
+
+def threads_type(x):
+    x = int(x)
+    if x < 1:
+        raise argparse.ArgumentTypeError("Minimum threads number is 1")
+    if x > cpu_count():
+        raise argparse.ArgumentTypeError("Maximum threads number is {} for this machine".format(cpu_count()))
+
+    return x
 
 class App:
     def __init__(self):
@@ -238,11 +248,6 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument("--save-binary", action="store_true",
                             help="Save a binary file (with a .graph extension) that contains an igraph.Graph "
                                  "object. This object is the one processed by Pyntacle. ")
-
-        parser.add_argument('-T', "--threads", metavar='', default=n_cpus, type=int,
-                            help="If any parallel computation is required, specify the number of cores that "
-                                 "will be used. Defaults to the maximum number of threads available in "
-                                 "your machine - 1")
         
         parser.add_argument('-v', action="count", help="verbosity level of the internal Pyntacle logger. "
                                                        "-vvv is the highest level (for debugging).")
@@ -277,6 +282,9 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         finder_case_parser.add_argument("-S", "--seed", type=int, help="For greedy optimization, set a seed at the beginning of the computation. Useful for getting reproducible results. Ignored when performing bruteforce search. ",
                                         metavar="", default=None)
+        finder_case_parser.add_argument('-T', "--threads", metavar='', default=n_cpus, type=threads_type,
+                            help="Specify the number of cores that will be used in brute-force. Defaults to "
+                                 "the maximum number of threads available in your machine - 1")
         
         finder_case_parser.set_defaults(which='kp-finder')
 

@@ -85,7 +85,7 @@ class KPWrapper:
             elif not isinstance(m, int) or m <= 0 :
                 raise ValueError("\"m\" must be a positive integer for mreach ")
 
-        self.logger.info("searching the KP POS values for metric {0} using nodes {1}".format(kpp_type.name, ",".join(nodes)))
+        self.logger.info("Computing {0} for nodes {1}".format(kpp_type.name, ",".join(nodes)))
         if kpp_type == KpposEnum.dR:
             single_result = self.kp.dR(graph=self.graph, nodes=nodes, max_distance=max_distance,
                                        implementation=implementation)
@@ -121,7 +121,7 @@ class KPWrapper:
             copy.delete_vertices(nodes)
             
         sys.stdout.write(
-            "Searching the KP NEG values for metric {0} using nodes {1}\n".format(kpp_type.name, ",".join(nodes)))
+            "Computing {0} for nodes {1}\n".format(kpp_type.name, ",".join(nodes)))
 
         if kpp_type == KpnegEnum.dF:
             single_result = self.kp.dF(graph=copy, max_distance=max_distance, implementation=implementation)
@@ -233,7 +233,7 @@ class BFWrapper:
         self.results = {}  # dictionary that will store results
 
     @timeit
-    def run_fragmentation(self, kpp_size:int, kpp_type:KpnegEnum, max_distance=None, implementation=CmodeEnum.igraph):
+    def run_fragmentation(self, kpp_size:int, kpp_type:KpnegEnum, max_distance=None, implementation=CmodeEnum.igraph, threads=n_cpus):
         """
         Wrapper around the Bruteforce Search Module that stores the greedy optimization results for KPPOS metrics in
         the "results" dictionary
@@ -241,7 +241,6 @@ class BFWrapper:
         :param KpnegEnum kpp_type: on of the KPNEGchoices enumerators stored in misc.enums
         :param int max_distances: maximum shortest path distance allowed in the shortest path matrix
         """
-
         if not isinstance(kpp_size, int) or kpp_size < 1:
             raise ValueError("\kpp_size\" must be a positive integer of size 1")
 
@@ -249,11 +248,11 @@ class BFWrapper:
             raise TypeError("\"kpp_type\" must be one of the KPPNEGchoices options available")
 
         bf_results = self.bf.fragmentation(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type,
-                                           max_distance=max_distance, implementation=implementation)
+                                           max_distance=max_distance, implementation=implementation, ncores=threads)
         self.results[kpp_type.name] = [bf_results[0], bf_results[1]]
 
     @timeit
-    def run_reachability(self, kpp_size: int, kpp_type: KpposEnum, m=None, max_distance=None, implementation=CmodeEnum.igraph):
+    def run_reachability(self, kpp_size: int, kpp_type: KpposEnum, m=None, max_distance=None, implementation=CmodeEnum.igraph, threads=n_cpus):
         """
         Wrapper around the Bruteforce Search Module that stores the greedy optimization results for KPPOS metrics
         :param int kpp_size: size of the kpp-set to be found
@@ -274,7 +273,7 @@ class BFWrapper:
                 raise ValueError("\"m\" must be a positive integer for mreach ")
 
         bf_results = self.bf.reachability(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type,
-                                          max_distance=max_distance, m=m, implementation=implementation)
+                                          max_distance=max_distance, m=m, implementation=implementation, ncores=threads)
 
         self.results[kpp_type.name] = [bf_results[0], bf_results[1]]
 

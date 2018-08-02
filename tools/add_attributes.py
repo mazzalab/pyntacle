@@ -251,14 +251,26 @@ class AddAttributes:
         if not "__sif_interaction" in self.__graph.es().attributes():
             self.__graph.es()["__sif_interaction"] = None
             
+            
         '''
         Adding implementation info for functions that require it
         '''
         sp_implementation = CmodeEnum.igraph
-        if self.__graph.vcount() > 2500:  # random number
-            # if cuda_avail:
-            #     sp_implementation = CmodeEnum.gpu
-            # else:
-                sp_implementation = CmodeEnum.cpu
+
+        # if not cuda_avail and n_cpus
+        n_nodes = self.__graph.vcount()
+        
+        if n_nodes > 100:
+            density = self.__graph.ecount()/n_nodes
+            if density < 0.5 and n_nodes <=500:
+                sp_implementation = CmodeEnum.igraph
+            else:
+                if cuda_avail:
+                    sp_implementation = CmodeEnum.gpu
+                else:
+                    if n_cpus >= 2:
+                        sp_implementation = CmodeEnum.cpu
+                    else:
+                        sp_implementation = CmodeEnum.igraph
         
         self.__graph["__implementation"] = sp_implementation

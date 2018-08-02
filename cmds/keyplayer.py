@@ -209,7 +209,7 @@ class KeyPlayer():
                             self.args.k_size))
                     initial_results[KpnegEnum.F.name] = kpp.F(graph)
                     if initial_results[KpnegEnum.F.name] != 1:
-                        kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F)
+                        kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, threads=self.args.threads)
 
                     else:
                         self.logging.warning("Initial value of F is 1. Skipping search.")
@@ -222,7 +222,8 @@ class KeyPlayer():
                     initial_results[KpnegEnum.dF.name] = kpp.dF(graph, implementation=implementation)
                     if initial_results[KpnegEnum.dF.name] != 1:
                         kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
-                                                    max_distance=self.args.max_distances, implementation=implementation)
+                                                    max_distance=self.args.max_distances,
+                                                    implementation=implementation, threads=self.args.threads)
                     else:
                         self.logging.warning("Initial value of dF is 1. Skipping search.")
                         results[KpnegEnum.dF.name] = [[], 1, 1]
@@ -232,14 +233,16 @@ class KeyPlayer():
                         "Finding best set of kp-nodes of size {} using dR (kp pos measure)\n".format(
                             self.args.k_size))
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.dR,
-                                               max_distance=self.args.max_distances, implementation=implementation)
+                                               max_distance=self.args.max_distances,
+                                               implementation=implementation, threads=self.args.threads)
                     
                 if self.args.type in (['mreach', 'pos', 'all']):
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {0} using an MREACH measure of {1} (kp pos measure)\n".format(
                             self.args.k_size, self.args.m_reach))
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.mreach, m=self.args.m_reach,
-                                               max_distance=self.args.max_distances, implementation=implementation)
+                                               max_distance=self.args.max_distances,
+                                               implementation=implementation, threads=self.args.threads)
 
             else:
                 sys.stdout.write("Wrong implementation. Please contact pyntacle Developers and sent this error message, along with a command line and a log.\nQuitting.\n")
@@ -249,24 +252,30 @@ class KeyPlayer():
 
             results.update(kp_runner.get_results())
             
+            sys.stdout.write("\n### RUN SUMMARY ###\n")
+            sys.stdout.write("kp set size: {}\n".format(self.args.k_size))
             for kp in results.keys(): #ONE OF THE keys represent the algorithm, so no else exit in here
-                
-                if len(results[kp][0])>1:
+                if len(results[kp][0])>1 and self.args.implementation=='brute-force':
                     plurals = ['s', 'are']
                 else:
                     plurals = ['', 'is']
+                
+                if self.args.implementation=='brute-force':
+                    list_of_results = ['('+ ', '.join(x) + ')' for x in results[kp][0]]
+                else:
+                    list_of_results = results[kp][0]
                     
                 if kp == KpnegEnum.F.name or kp == KpnegEnum.dF.name:
                     # joining initial results with final ones
                     results[kp].append(initial_results[kp])
                     
                     sys.stdout.write(
-                        'kp set{0} of size {1} for Key Player Metric {2} {3} {4} with value {5} (starting value is {6})\n'.format(
-                            plurals[0], self.args.k_size, kp, plurals[1], results[kp][0], results[kp][1], results[kp][2]))
+                        'kp set{0} for Key Player Metric {2} {3} ({4}) with value {5} (initial {2} value was {6})\n'.format(
+                            plurals[0], self.args.k_size, kp, plurals[1], ', '.join(list_of_results), results[kp][1], results[kp][2]))
 
                 elif kp == KpposEnum.dR.name:
-                    sys.stdout.write('kp set{0} of size {1} for Key Player Metric {2} {3} {4} with value {5}\n'.format(
-                        plurals[0], self.args.k_size, kp, plurals[1], results[kp][0], results[kp][1]))
+                    sys.stdout.write('kp set{0} for Key Player Metric {2} {3} ({4}) with value {5}\n'.format(
+                        plurals[0], self.args.k_size, kp, plurals[1], ', '.join(list_of_results), results[kp][1]))
 
                 elif kp == KpposEnum.mreach.name:
                     results[kp].append(self.args.m_reach)
@@ -276,9 +285,12 @@ class KeyPlayer():
                     else:
                         node_perc_reached = round(node_perc_reached, 2)
                     sys.stdout.write(
-                        'kp set{0} of size {1} with a reach of {2} for Key Player Metric {3} {4} {5} with value {6} (reaching the {7}% of nodes)\n'.format(
-                            plurals[0], self.args.k_size, self.args.m_reach, kp, plurals[1], results[kp][0],
+                        'With the given distance of {2}, {6} nodes are reached by the kp-set{0} ({5}).\n'
+                        'The total percentage of nodes, which includes the kp-set, is {7}%\n'.format(
+                            plurals[0], self.args.k_size, self.args.m_reach, kp, plurals[1], ', '.join(list_of_results),
                             results[kp][1], node_perc_reached))
+            
+            sys.stdout.write("### END OF SUMMARY ###\n\n")
 
 
             if self.args.implementation == "brute-force":

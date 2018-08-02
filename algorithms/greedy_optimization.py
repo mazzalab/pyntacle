@@ -149,7 +149,7 @@ class GreedyOptimization:
                         optimal_set_found = True
 
                 final = graph.vs(S)["name"]
-                sys.stdout.write("A optimal kpp-set of size {} is {} with score {}\n".format(kpp_size, final,
+                sys.stdout.write("An optimal kpp-set of size {} is ({}) with score {}\n".format(kpp_size, ', '.join(final),
                                                                                  fragmentation_score))
                 return final, round(fragmentation_score, 5)
 
@@ -254,6 +254,6 @@ class GreedyOptimization:
             else:
                 optimal_set_found = True
         final = graph.vs(S)["name"]
-        sys.stdout.write("A optimal kpp-set of size {} is {} with score {}\n".format(kpp_size, final,
+        sys.stdout.write("An optimal kpp-set of size {} is ({}) with score {}\n".format(kpp_size, ', '.join(final),
                                                                                    reachability_score))
         return final, round(reachability_score, 5)
