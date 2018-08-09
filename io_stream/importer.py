@@ -401,7 +401,6 @@ class PyntacleImporter:
             raise WrongArgumentError("file is not a binary")
 
         graph = pickle.load(open(file, "rb"))
-        sys.stdout.write("loading file %s from binary\n" % file)
         if not isinstance(graph, Graph):
             raise IOError("binary is not a graph object")
 
