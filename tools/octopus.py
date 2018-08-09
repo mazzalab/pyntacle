@@ -331,19 +331,19 @@ class Octopus:
     # Greedy optimization
     @staticmethod
     @check_graph_consistency
-    def add_GO_F(graph, kpp_size, seed=None):
+    def add_GO_F(graph, kp_size, seed=None):
         kpobj = gow(graph=graph)
-        kpobj.run_fragmentation(kpp_size, KpnegEnum.F, seed=seed)
+        kpobj.run_fragmentation(kp_size, KpnegEnum.F, seed=seed)
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes(
             KpnegEnum.F.name + '_greedy', {tuple(sorted(results_dict[KpnegEnum.F.name][0])): results_dict[KpnegEnum.F.name][1]})
 
     @staticmethod
     @check_graph_consistency
-    def add_GO_dF(graph, kpp_size, max_distance=None, seed=None):
+    def add_GO_dF(graph, kp_size, max_distance=None, seed=None):
         cmode = get_cmode(graph)
         kpobj = gow(graph=graph)
-        kpobj.run_fragmentation(kpp_size, KpnegEnum.dF, max_distance=max_distance, seed=seed, implementation=cmode)
+        kpobj.run_fragmentation(kp_size, KpnegEnum.dF, max_distance=max_distance, seed=seed, implementation=cmode)
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes(
             KpnegEnum.dF.name + '_greedy',
@@ -351,10 +351,10 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def add_GO_dR(graph, kpp_size, max_distance=None, seed=None):
+    def add_GO_dR(graph, kp_size, max_distance=None, seed=None):
         cmode = get_cmode(graph)
         kpobj = gow(graph=graph)
-        kpobj.run_reachability(kpp_size, KpposEnum.dR, max_distance=max_distance, seed=seed, implementation=cmode)
+        kpobj.run_reachability(kp_size, KpposEnum.dR, max_distance=max_distance, seed=seed, implementation=cmode)
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes(
             KpposEnum.dR.name + '_greedy',
@@ -362,10 +362,10 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def add_GO_mreach(graph, kpp_size, m=None, max_distance=None, seed=None):
+    def add_GO_mreach(graph, kp_size, m=None, max_distance=None, seed=None):
         cmode = get_cmode(graph)
         kpobj = gow(graph=graph)
-        kpobj.run_reachability(kpp_size, KpposEnum.mreach, m=m, max_distance=max_distance, seed=seed, implementation=cmode)
+        kpobj.run_reachability(kp_size, KpposEnum.mreach, m=m, max_distance=max_distance, seed=seed, implementation=cmode)
         results_dict = kpobj.get_results()
         attr_name = KpposEnum.mreach.name + '_{}_greedy'.format(str(m))
         AddAttributes(graph).add_graph_attributes(
@@ -374,9 +374,9 @@ class Octopus:
     # Brute-force optimization
     @staticmethod
     @check_graph_consistency
-    def add_BF_F(graph, kpp_size, max_distance=None):
+    def add_BF_F(graph, kp_size, max_distance=None):
         kpobj = bfw(graph=graph)
-        kpobj.run_fragmentation(kpp_size, KpnegEnum.F, max_distance=max_distance)
+        kpobj.run_fragmentation(kp_size, KpnegEnum.F, max_distance=max_distance)
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes(
             KpnegEnum.F.name + '_bruteforce',
@@ -384,9 +384,9 @@ class Octopus:
         
     @staticmethod
     @check_graph_consistency
-    def add_BF_dF(graph, kpp_size, max_distance=None):
+    def add_BF_dF(graph, kp_size, max_distance=None):
         kpobj = bfw(graph=graph)
-        kpobj.run_fragmentation(kpp_size, KpnegEnum.dF, max_distance=max_distance)
+        kpobj.run_fragmentation(kp_size, KpnegEnum.dF, max_distance=max_distance)
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes(
             KpnegEnum.dF.name + '_bruteforce',
@@ -394,9 +394,9 @@ class Octopus:
     
     @staticmethod
     @check_graph_consistency
-    def add_BF_dR(graph, kpp_size, max_distance=None):
+    def add_BF_dR(graph, kp_size, max_distance=None):
         kpobj = bfw(graph=graph)
-        kpobj.run_reachability(kpp_size, KpposEnum.dR, max_distance=max_distance)
+        kpobj.run_reachability(kp_size, KpposEnum.dR, max_distance=max_distance)
         results_dict = kpobj.get_results()
         AddAttributes(graph).add_graph_attributes(
             KpposEnum.dR.name + '_bruteforce',
@@ -404,9 +404,9 @@ class Octopus:
         
     @staticmethod
     @check_graph_consistency
-    def add_BF_mreach(graph, kpp_size, m=None, max_distance=None):
+    def add_BF_mreach(graph, kp_size, m=None, max_distance=None):
         kpobj = bfw(graph=graph)
-        kpobj.run_reachability(kpp_size, KpposEnum.mreach, max_distance=max_distance, m=m)
+        kpobj.run_reachability(kp_size, KpposEnum.mreach, max_distance=max_distance, m=m)
         results_dict = kpobj.get_results()
         attr_name = KpposEnum.mreach.name + '_{}_bruteforce'.format(str(m))
         AddAttributes(graph).add_graph_attributes(

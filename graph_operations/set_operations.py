@@ -175,8 +175,8 @@ class GraphOperations(object):
                 union_v.setdefault(v, []).append(graph2.vs[graph2.vs.find(v).index]["__parent"])
         
         union_v = OrderedDict(sorted(union_v.items()))
-        set1e = set(tuple(sorted(l)) for l in graph1.es["node_names"])
-        set2e = set(tuple(sorted(l)) for l in graph2.es["node_names"])
+        set1e = set(tuple(sorted(l)) for l in graph1.es["adjacent_nodes"])
+        set2e = set(tuple(sorted(l)) for l in graph2.es["adjacent_nodes"])
 
         intersect_e = list(set1e & set2e)
         exclusive1_e = list(set1e - set2e)

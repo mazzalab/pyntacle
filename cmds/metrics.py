@@ -141,7 +141,7 @@ class Metrics:
             reporter = pyntacleReporter(graph=graph) #init reporter
 
             if self.args.nodes is not None:
-                sys.stdout.write("Computing local metrics for nodes {}\n".format(self.args.nodes))
+                sys.stdout.write("Computing local metrics for nodes ({})\n".format(', '.join(self.args.nodes)))
 
                 try:
                     utils.check_name_list(self.args.nodes.split(","))  # to check everything's in order
@@ -238,7 +238,7 @@ class Metrics:
                 other_nodes_size = 25
 
                 if self.args.nodes:  # make node selected of a different colour and bigger than the other ones, so they can be visualized
-                    sys.stdout.write("Highlighting nodes {} in plot\n".format(nodes_list))
+                    sys.stdout.write("Highlighting nodes ({}) in plot\n".format(', '.join(nodes_list)))
                     selected_nodes_colour = pal[0]
                     selected_nodes_frames = framepal[0]
 
@@ -313,7 +313,7 @@ class Metrics:
                 report_prefix_nonodes = "_".join(["pyntacle", graph["name"][0], "global_metrics_nonodes", "report",
                                           self.date])
                 
-                sys.stdout.write("Removing nodes {} from input graph and computing Global Metrics\n".format(self.args.no_nodes))
+                sys.stdout.write("Removing nodes ({}) from input graph and computing Global Metrics\n".format(', '.join(self.args.no_nodes)))
                 nodes_list = self.args.no_nodes.split(",")
 
                 # this will be useful when producing the two global topology plots, one for the global graph and the other one fo all nodes

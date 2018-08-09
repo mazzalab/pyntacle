@@ -45,14 +45,14 @@ class PyntacleExporter:
     @staticmethod
     @check_graph_consistency
     @output_file_checker
-    def AdjacencyMatrix(graph, output_file, sep="\t", header=True) -> None:
+    def AdjacencyMatrix(graph, file, sep="\t", header=True) -> None:
         """
         Export an igraph.Graph object as Adjacency Matrix. A valid path to a file must be provided and the directory
         that will store the file must be writeable. If the directory tree does not exist, it will be created.
         **WARNING** Node attributes will not be exported, for that, see the `export attributes` method in *REFERENCE*
         :param igraph.Graph graph: an `igraph.Graph` object obtained from Pyntacle. See `Pyntacle Minimum Requirements`
         for the object description.
-        :param str output_file: a valid path to a file. If the directory is not specified, the current directory will be used.
+        :param str file: a valid path to a file. If the directory is not specified, the current directory will be used.
         :param str sep: a string that will be used as separator to separate the values in the Adjacency Matrix.
         Default is `\t` (outputs a tab-separated file)
         :param bool header: if `True`(default) the node names (graph.vs["name"] attribute) will be written to rows and
@@ -62,7 +62,7 @@ class PyntacleExporter:
         """
 
         if not isinstance(sep, str):
-            raise TypeError("`sep` must be a string, {} found".format(type(output_file).__name__))
+            raise TypeError("`sep` must be a string, {} found".format(type(file).__name__))
 
         adjmatrix = list(graph.get_adjacency())
 
@@ -70,26 +70,26 @@ class PyntacleExporter:
             nameslist = [name for name in graph.vs()["name"]]
             adjmatrix = pd.DataFrame(adjmatrix, columns=nameslist)
             adjmatrix.insert(0, column='', value=nameslist)
-            adjmatrix.to_csv(output_file, sep=sep, header=True, index=False)
+            adjmatrix.to_csv(file, sep=sep, header=True, index=False)
         else:
             adjmatrix = pd.DataFrame(adjmatrix)
-            adjmatrix.to_csv(path_or_buf=output_file, sep=sep, header=False, index=False)
+            adjmatrix.to_csv(path_or_buf=file, sep=sep, header=False, index=False)
 
 
-        sys.stdout.write("Graph successfully exported to Adjacency Matrix at path: {}\n".format(os.path.abspath(output_file)))
+        sys.stdout.write("Graph successfully exported to Adjacency Matrix at path: {}\n".format(os.path.abspath(file)))
         return None
 
     @staticmethod
     @check_graph_consistency
     @output_file_checker
-    def EdgeList(graph, output_file, sep="\t", header=False) -> None:
+    def EdgeList(graph, file, sep="\t", header=False) -> None:
         """
         Export an igraph.Graph object to an Edge List. A valid path to a file must be provided and the directory
         that will store the file must be writeable. If the directory tree does not exist, it will be created.
         **WARNING** Node attributes will not be exported, for that, see the `export attributes` method in *REFERENCE*
         :param igraph.Graph graph: an `igraph.Graph` object obtained from Pyntacle. See `Pyntacle Minimum Requirements`
         for the object description.
-        :param str output_file: a valid path to a file. If the directory is not specified, the current directory will be used.
+        :param str file: a valid path to a file. If the directory is not specified, the current directory will be used.
         :param str sep: a string that will be used as separator to separate the values in the Edge List.
         Default is `\t` (outputs a tab-separated file)
         :param header: if `True`, a generic header will be produced, separated by the `sep` value (e.g. NodeA\tNodeB)
@@ -97,10 +97,10 @@ class PyntacleExporter:
         """
 
         if not isinstance(sep, str):
-            raise TypeError("`sep` must be a string, {} found".format(type(output_file).__name__))
+            raise TypeError("`sep` must be a string, {} found".format(type(file).__name__))
 
         adjlist = list(graph.get_adjlist())
-        with open(output_file, "w") as outfile:
+        with open(file, "w") as outfile:
 
             if header:
                 outfile.write("NodeA\tNodeB\n")
@@ -112,31 +112,31 @@ class PyntacleExporter:
                 else:
                     outfile.writelines([sep.join([graph.vs(i)["name"][0], x]) + "\n" for x in graph.vs(ver)["name"]])
                     
-        sys.stdout.write("Graph successfully exported to Adjacency Matrix at path: {}\n".format(
-            os.path.abspath(output_file)))
+        sys.stdout.write("Graph successfully exported to Adjacency matrix at path: {}\n".format(
+            os.path.abspath(file)))
         return None
 
     @staticmethod
     @check_graph_consistency
     @output_file_checker
-    def Binary(graph, output_file):
+    def Binary(graph, file):
         """
         Export an `igraph.Graph` object to a binary file that can be reopened using the `pickle` library.
         :param igraph.Graph graph: an `igraph.Graph` object obtained from Pyntacle. See `Pyntacle Minimum Requirements`
         for the object description.
-        :param str output_file: a valid path to a file. If the directory is not specified, the current directory will be used.
+        :param str file: a valid path to a file. If the directory is not specified, the current directory will be used.
         :return: None
         """
-        pickle.dump(graph, open(output_file, "wb"))
-        sys.stdout.write("Graph successfully exported to Binary file at path: {}\n".format(
-            os.path.abspath(output_file)))
+        pickle.dump(graph, open(file, "wb"))
+        sys.stdout.write("Graph successfully exported to Binary at path: {}\n".format(
+            os.path.abspath(file)))
 
         return None
 
     @staticmethod
     @check_graph_consistency
     @output_file_checker
-    def Sif(graph, output_file, sep="\t", header=False):
+    def Sif(graph, file, sep="\t", header=False):
         """
         Write an igraph.Graph object to a Simple Interaction File format (SIF) useful for visualization and parsing using
         external tools, like Cytoscape.
@@ -144,7 +144,7 @@ class PyntacleExporter:
         and "__sif_interaction (edges), for exporting other attributes, see the `export attributes` method in *REFERENCE*
         :param igraph.Graph graph: an `igraph.Graph` object obtained from Pyntacle. See `Pyntacle Minimum Requirements`
         for the object description.
-        :param str output_file: a valid path to a file. If the directory is not specified, the current directory will be used.
+        :param str file: a valid path to a file. If the directory is not specified, the current directory will be used.
         :param str sep: a string that will be used as separator to separate the values in the SIF file.
         Default is `\t` (outputs a tab-separated file)
         :param header: if `True`, it searches for the reserved attributes "__sif_interaction_name" in graph attributes
@@ -154,9 +154,9 @@ class PyntacleExporter:
         """
 
         if not isinstance(sep, str):
-            raise TypeError("`sep` must be a string, {} found".format(type(output_file).__name__))
+            raise TypeError("`sep` must be a string, {} found".format(type(file).__name__))
 
-        with open(output_file, "w") as outfile:
+        with open(file, "w") as outfile:
 
             if header:
 
@@ -206,13 +206,13 @@ class PyntacleExporter:
                 outfile.write(graph.vs(i)["name"][0] + "\n")
 
         sys.stdout.write("Graph successfully exported to SIF at path: {}\n".format(
-            os.path.abspath(output_file)))
+            os.path.abspath(file)))
         return None
 
     @staticmethod
     @check_graph_consistency
     @output_file_checker
-    def Dot(graph, output_file):
+    def Dot(graph, file):
         """
         Write the igraph.Graph object to a Dot file. For the Dot file specifications, see https://www.graphviz.org/doc/info/lang.html.
         Dot is often used by third party tools such as GraphViz to import the network. Here, we wraps the `write_dot` function of igraph.
@@ -220,11 +220,11 @@ class PyntacleExporter:
         **WARNING** Node attributes will not be exported, for that, see the `export attributes` method in *REFERENCE*
         :param igraph.Graph graph: an `igraph.Graph` object obtained from Pyntacle. See `Pyntacle Minimum Requirements`
         for the object description.
-        :param str output_file: a valid path to a file. If the directory is not specified, the current directory will be used.
+        :param str file: a valid path to a file. If the directory is not specified, the current directory will be used.
         :return: None
         """
-        Graph.write_dot(graph, f=output_file)
+        Graph.write_dot(graph, f=file)
         sys.stdout.write("Graph successfully exported to DOT at path: {}\n".format(
-            os.path.abspath(output_file)))
+            os.path.abspath(file)))
 
         return None

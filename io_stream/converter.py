@@ -97,7 +97,7 @@ class PyntacleConverter:
             with open(output_file, "w") as outfile:
                 outfile.writelines([x + "\n" for x in siflist]) #convert each sublist into a string and use the writelines method to dump everything into a file quickly.
 
-            sys.stdout.write("File successfully converted\n")
+            sys.stdout.write("Edge list successfully converted to SIF at path {}\n".format(output_file))
             return output_file
 
     @staticmethod
@@ -154,5 +154,5 @@ class PyntacleConverter:
                     else:
                         outfile.write(tmp[0] + "\t" + tmp[1] + '\n')
                         outfile.write(tmp[1] + "\t" + tmp[0] + '\n')
-
+        sys.stdout.write("SIF successfully converted to edge list at path {}\n".format(output_file))
         return output_file

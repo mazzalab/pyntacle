@@ -140,7 +140,7 @@ class PyntacleImporter:
             AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0],
                                                          node_names=node_names)
 
-            sys.stdout.write("Adjacency Matrix from {} imported\n".format(file))
+            sys.stdout.write("Adjacency matrix from {} imported\n".format(file))
             return graph
 
     @staticmethod
@@ -186,7 +186,7 @@ class PyntacleImporter:
         graph.add_edges(edgs)
         #initialize the graph by calling the graph_initializer() method
         AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
-        sys.stdout.write("Edge List from {} imported\n".format(file))
+        sys.stdout.write("Edge list from {} imported\n".format(file))
         return graph
 
     @staticmethod
@@ -211,7 +211,7 @@ class PyntacleImporter:
 
         graph = Graph()
         graph.vs["name"] = []
-        
+
         with open(file, "r") as f:
         
             """:type: list[str]"""
@@ -278,7 +278,7 @@ class PyntacleImporter:
             # add missing attribute to graph
             AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
     
-            sys.stdout.write("SIF  from {} imported\n".format(file))
+            sys.stdout.write("SIF from {} imported\n".format(file))
 
         return graph
 
@@ -384,7 +384,7 @@ class PyntacleImporter:
             for k in edge_attrs_dict[a]:
                 AddAttributes(graph).add_edge_attributes(k, [edge_attrs_dict[a][k]], [a])
 
-        sys.stdout.write("Dot from {} imported\n".format(file))
+        sys.stdout.write("DOT from {} imported\n".format(file))
         return graph
 
     @staticmethod
@@ -419,5 +419,5 @@ class PyntacleImporter:
                     graph.to_undirected()
 
                 GraphUtils(graph=graph).check_graph()
-                sys.stdout.write("Binary from file {} imported\n".format(file))
+                sys.stdout.write("Binary from  {} imported\n".format(file))
                 return graph

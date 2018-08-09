@@ -53,15 +53,15 @@ def input_file_checker(func):
 def output_file_checker(func):
     """contains a series of operations that can be perfoemrd in orderto verify the integrity of thr output file"""
     @wraps(func)
-    def func_wrapper(graph, output_file, *args, **kwargs):
-        if not isinstance(output_file, str):
-            raise ValueError("\"file \" must be a string, {} found".format(type(output_file).__name__))
+    def func_wrapper(graph, file, *args, **kwargs):
+        if not isinstance(file, str):
+            raise ValueError("\"file \" must be a string, {} found".format(type(file).__name__))
 
         else:
-            if os.path.exists(os.path.abspath(output_file)):
-                sys.stdout.write("A file with the same name exists at {}, will overwrite\n".format(output_file))
+            if os.path.exists(os.path.abspath(file)):
+                sys.stdout.write("A file with the same name exists at {}, will overwrite\n".format(file))
 
-            return func(graph,output_file, *args, **kwargs)
+            return func(graph,file, *args, **kwargs)
 
     return func_wrapper
 

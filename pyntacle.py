@@ -554,7 +554,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         parser.add_argument("-u", "--output-format", metavar="",
                             choices=format_dictionary.keys(),
-                            default='adjmat',
+                            required=True,
                             help='Desired output format for the output communities. \'adjmat\' for '
                                  'adjacency matrix, \'edgelist\' for edge list, \'sif\' for '
                                  'Simple Interaction format, \'dot\' for DOT file, \'bin\' for binary file. '

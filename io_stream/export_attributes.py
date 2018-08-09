@@ -34,9 +34,7 @@ from igraph import Graph
 from exceptions.notagraph_error import NotAGraphError
 
 class ExportAttributes():
-    """
-    **[EXPAND]**
-    """
+
     logger = None
 
     def __init__(self, graph: Graph):
@@ -50,24 +48,24 @@ class ExportAttributes():
         else:
             self.__graph = graph
 
-    def export_edge_attributes(self, filename, mode='standard'):
+    def export_edge_attributes(self, file, mode='standard'):
         """
-        **[EXPAND]**
+        Export edge attributes to a file, either in 'standard' mode (source node|target node|attributes) or
+        'cytoscape' legacy format (see http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html#esf)
 
-        :param filename:
+        :param file:
         :param mode:
-        :return:
         """
         
         warnflag = 0
-        dirname = os.path.dirname(filename) or '.'
+        dirname = os.path.dirname(file) or '.'
         if not os.path.exists(dirname):
             self.logger.warning("The directory tree for the output file does not exist, it will be created")
             os.makedirs(dirname, exist_ok=True)
-        with open(filename, 'w') as out:
+        with open(file, 'w') as out:
             # Writing header
             attributes_tokeep = [x for x in self.__graph.es()[0].attributes() if
-                                 x != 'node_names' and not x.startswith('__')]
+                                 x != 'adjacent_nodes' and not x.startswith('__')]
             if mode == 'standard':
                 out.write('Node1' + '\t' + 'Node2' + '\t' + '\t'.join(attributes_tokeep) + '\n')
             else:
@@ -75,8 +73,8 @@ class ExportAttributes():
 
             for e in self.__graph.es():
                 if mode == 'standard':
-                    out.write(str(e.attributes()['node_names'][0]) + '\t')
-                    out.write(str(e.attributes()['node_names'][1]))
+                    out.write(str(e.attributes()['adjacent_nodes'][0]) + '\t')
+                    out.write(str(e.attributes()['adjacent_nodes'][1]))
                     for attr in attributes_tokeep:
                         # Checking the type of the attribute
                         if not isinstance(e.attributes()[attr], (str, float, int)) and \
@@ -95,9 +93,9 @@ class ExportAttributes():
                         out.write('(interacts with) ')
                     else:
                         for interaction in e.attributes()['__sif_interaction']:
-                            out.write(str(e.attributes()['node_names'][0]) + ' ')
+                            out.write(str(e.attributes()['adjacent_nodes'][0]) + ' ')
                             out.write('(' + interaction + ') ')
-                            out.write(str(e.attributes()['node_names'][1]))
+                            out.write(str(e.attributes()['adjacent_nodes'][1]))
 
                             for attr in attributes_tokeep:
                                 # Checking the type of the attribute
@@ -112,20 +110,21 @@ class ExportAttributes():
                                 else:
                                     out.write('\t' + str(e.attributes()[attr]))
                             out.write('\n')
+        sys.stdout.write("Edge attributes successfully exported at path {}.\n".format(os.path.abspath(file)))
 
-    def export_node_attributes(self, filename):
+
+    def export_node_attributes(self, file):
         """
-        **[EXPAND]**
-        
-        :param filename:
-        :return:
+        Export node attributes to a file
+
+        :param file: the name of the exported attributes file
         """
         warnflag = 0
-        dirname = os.path.dirname(filename) or '.'
+        dirname = os.path.dirname(file) or '.'
         if not os.path.exists(dirname):
             self.logger.warning("The directory tree for the output file does not exist, it will be created")
             os.makedirs(dirname, exist_ok=True)
-        with open(filename, 'w') as out:
+        with open(file, 'w') as out:
             # Writing header
             attributes_tokeep = [x for x in self.__graph.vs()[0].attributes() if
                                  x != 'name' and not x.startswith('__')]
@@ -146,21 +145,24 @@ class ExportAttributes():
                     else:
                         out.write('\t' + str(v.attributes()[attr]))
                 out.write('\n')
-
-    def export_graph_attributes(self, filename):
-        """
-        **[EXPAND]**
         
-        :param filename:
+        sys.stdout.write("Node attributes successfully exported at path {}.\n".format(os.path.abspath(file)))
+
+
+    def export_graph_attributes(self, file):
+        """
+        Export graph attributes to a file.
+        
+        :param file:
         :return:
         """
         warnflag = 0
-        dirname = os.path.dirname(filename) or '.'
+        dirname = os.path.dirname(file) or '.'
         if not os.path.exists(dirname):
             self.logger.warning(
                 "The directory tree for the output file does not exist, it will be created")
             os.makedirs(dirname)
-        with open(filename, 'w') as out:
+        with open(file, 'w') as out:
             # Writing header
             attributes_tokeep = [x for x in self.__graph.attributes() if
                                  not x.startswith('__')]
@@ -183,3 +185,5 @@ class ExportAttributes():
                     out.write(attr + '\tNA' + '\n')
                 else:
                     out.write(attr + '\t' + str(self.__graph[attr]) + '\n')
+        
+        sys.stdout.write("Graph attributes successfully exported at path {}.\n".format(os.path.abspath(file)))

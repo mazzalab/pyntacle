@@ -49,16 +49,16 @@ class ImportAttributes():
         else:
             self.__graph = graph
     
-    def __check_file(self, file_name: str, sep: str):
+    def __check_file(self, file: str, sep: str):
         
-        if not os.path.exists(file_name):
+        if not os.path.exists(file):
             raise FileNotFoundError("File does not exist")
         
         if sep is None:
             self.logger.info("using \"\t\" as default separator")
             sep = "\t"
         
-        with open(file_name, "r") as attrfile:
+        with open(file, "r") as attrfile:
             head = attrfile.readline()
             '''
             if this is a node, the header is not specified
@@ -69,19 +69,19 @@ class ImportAttributes():
                 self.logger.error("header is not specified")
                 raise ValueError("header is not specified")
             
-            return (file_name, sep)
+            return (file, sep)
     
-    def import_graph_attributes(self, file_name, sep=None):
+    def import_graph_attributes(self, file, sep=None):
         
         '''
-        Add an attribute to a graph object
+        Add an attribute to a graph object. The first line is always skipped, aa it is assumed to be a header.
 
         :param attr: file
         :return: an igraph.Graph object
         :param sep: field separator if input is a file
         '''
         
-        check = self.__check_file(file_name=file_name, sep=sep)
+        check = self.__check_file(file=file, sep=sep)
         infile = check[0]
         sep = check[1]
         with open(infile, "r") as attrfile:
@@ -91,15 +91,17 @@ class ImportAttributes():
 
                 AddAttributes(self.__graph).add_graph_attributes(attrs[0],
                                                                  attrs[1])
+        sys.stdout.write("Graph attributes from {} imported.\n".format(file))
 
-    def import_node_attributes(self, file_name: str, sep=None):
+
+    def import_node_attributes(self, file: str, sep=None):
         '''
         This function takes an header file and, optionally, a separator, and add them to a graph imprted in __init
 
-        :param file_name: the name of an existing file name
+        :param file: the name of an existing file name
         :return: an igraph object with the attribute added (a string attribute)
         '''
-        self.logger.info("Reading attributes from file %s and adding them to nodes" % file_name)
+        self.logger.info("Reading attributes from file %s and adding them to nodes" % file)
         self.logger.warning(
             "Attributes will be added as strings, so remember to convert them to proper types")
     
@@ -107,7 +109,7 @@ class ImportAttributes():
         check if file name is properly passed
         '''
         reserved_attrs = ["name", "__parent"]
-        check = self.__check_file(file_name=file_name, sep=sep)
+        check = self.__check_file(file=file, sep=sep)
         infile = check[0]
         sep = check[1]
         attrs_dict = {}
@@ -162,19 +164,19 @@ class ImportAttributes():
         for attr in attrs_dict:
             AddAttributes(self.__graph).add_node_attributes(attr, list(attrs_dict[attr].values()), list(attrs_dict[attr].keys()))
                 
-        self.logger.info("Node attributes successfully added!")
+        sys.stdout.write("Node attributes from {} imported.\n".format(file))
 
-    def import_edge_attributes(self, file_name: str, sep=None, mode='standard'):
+    def import_edge_attributes(self, file: str, sep=None, mode='standard'):
         """
         Add edge attributes specified in a file like (nodeA/nodeB/listofvalues)
         **[EXPAND DESCRIPTIONS OF PARAMS]**
 
-        :param file_name:
+        :param file:
         :param sep:
         :param mode:
         :return:
         """
-        check = self.__check_file(file_name=file_name, sep=sep)
+        check = self.__check_file(file=file, sep=sep)
         infile = check[0]
         sep = check[1]
         edges_list = set()
@@ -227,10 +229,10 @@ class ImportAttributes():
                             if attrnames[i] not in attrs_dict:
                                 attrs_dict[attrnames[i]] = OrderedDict()
                             if obj.upper() in ['NONE', 'NA', '?']:
-                                attrs_dict[attrnames[i]][select[0]["node_names"][0]] = None
+                                attrs_dict[attrnames[i]][select[0]["adjacent_nodes"][0]] = None
                                 # select[0][attrnames[i]] = None
                             else:
-                                attrs_dict[attrnames[i]][select[0]["node_names"][0]] = obj
+                                attrs_dict[attrnames[i]][select[0]["adjacent_nodes"][0]] = obj
                                 # select[0][attrnames[i]] = obj
                     
                     elif len(select) > 1:
@@ -256,3 +258,5 @@ class ImportAttributes():
                 for attr in attrs_dict:
                     AddAttributes(self.__graph).add_edge_attributes(attr, list(attrs_dict[attr].values()),
                                                                     list(attrs_dict[attr].keys()))
+                    
+        sys.stdout.write("Edge attributes from {} imported.\n".format(file))

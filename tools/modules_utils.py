@@ -182,18 +182,18 @@ class ModuleUtils():
                 subgraph.es["__algorithm"] = None
 
             node_names = subgraph.vs()["name"]
-            edge_names = subgraph.es()["node_names"]
+            edge_names = subgraph.es()["adjacent_nodes"]
             select_nodes = self.graph.vs().select(name_in=node_names)
 
             if len(node_names) != len(select_nodes):
                 different_nodes = list(set(node_names) - set([x["name"] for x in select_nodes]))
-                self.logger.warning("Nodes {} not found in input graph".format(",".join(different_nodes)))
+                self.logger.warning("Nodes ({}) not found in input graph".format(", ".join(different_nodes)))
 
             else:
                 self.graph.vs(select_nodes.indices)["__module"] = i
                 self.graph.vs(select_nodes.indices)["__algorthm"] = self.algorithm
 
-            select_edges = select_nodes = self.graph.es().select(node_names_in=edge_names)
+            select_edges = select_nodes = self.graph.es().select(adjacent_nodes_in=edge_names)
             if len(edge_names) != len(select_edges):
                 different_nodes = list(set(edge_names) - set([x["name"] for x in select_edges]))
                 self.logger.warning(

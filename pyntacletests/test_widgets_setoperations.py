@@ -46,7 +46,7 @@ class WidgetTestLogicOps(unittest.TestCase):
         fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/result_set.adjm')
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/set/result_union.adjm')
         output_graph = GraphOperations.union(self.graph1, self.graph2, new_graph_name='result_set')
-        PyntacleExporter.AdjacencyMatrix(graph=output_graph, output_file=os.path.join(current_dir, 'pyntacletests/test_sets/tmp/result_set.adjm'),
+        PyntacleExporter.AdjacencyMatrix(graph=output_graph, file=os.path.join(current_dir, 'pyntacletests/test_sets/tmp/result_set.adjm'),
                                          sep='\t', header=True)
         self.assertEqual(getmd5(fileout), getmd5(expected), 'Wrong checksum for Set, union case')
 
@@ -55,7 +55,7 @@ class WidgetTestLogicOps(unittest.TestCase):
         fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/result_set.adjm')
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/set/result_intersect.adjm')
         output_graph = GraphOperations.intersection(self.graph1, self.graph2, new_graph_name='result_set')
-        PyntacleExporter.AdjacencyMatrix(graph=output_graph, output_file=os.path.join(current_dir, 'pyntacletests/test_sets/tmp/result_set.adjm'),
+        PyntacleExporter.AdjacencyMatrix(graph=output_graph, file=os.path.join(current_dir, 'pyntacletests/test_sets/tmp/result_set.adjm'),
                                          sep='\t', header=True)
         if sys.version_info >= (3, 6):
             self.assertEqual(getmd5(fileout), getmd5(expected), 'Wrong checksum for Set, intersect case')
@@ -65,7 +65,7 @@ class WidgetTestLogicOps(unittest.TestCase):
         fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/result_set.adjm')
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/set/result_difference.adjm')
         output_graph = GraphOperations.difference(self.graph1, self.graph2, new_graph_name='result_set')
-        PyntacleExporter.AdjacencyMatrix(graph=output_graph, output_file=os.path.join(current_dir, 'pyntacletests/test_sets/tmp/result_set.adjm'),
+        PyntacleExporter.AdjacencyMatrix(graph=output_graph, file=os.path.join(current_dir, 'pyntacletests/test_sets/tmp/result_set.adjm'),
                                          sep='\t', header=True)
         self.assertEqual(getmd5(fileout), getmd5(expected), 'Wrong checksum for Set, difference case')
 

@@ -306,7 +306,7 @@ class KeyPlayer():
             kp_runner = kpw(graph=graph)
             results = OrderedDict()
 
-            sys.stdout.write('\nNodes given as input: {}\n'.format(self.args.nodes))
+            sys.stdout.write('\nNodes given as input: ({})\n'.format(', '.join(self.args.nodes)))
             if self.args.type in (['F', 'neg', 'all']):
                 initial_results[KpnegEnum.F.name] = kpp.F(graph)
                 kp_runner.run_KPNeg(self.args.nodes, KpnegEnum.F)
@@ -324,29 +324,30 @@ class KeyPlayer():
                                     max_distance=self.args.max_distances, implementation=implementation)
 
             results.update(kp_runner.get_results())
-
-            sys.stdout.write("Keyplayer metric(s) {}:\n".format(self.args.type.upper()))
+            sys.stdout.write("\n### RUN SUMMARY ###\n")
+            sys.stdout.write("Keyplayer metric(s) {}:\n".format(self.args.type))
             for metric in results.keys():
 
                 if metric == KpnegEnum.F.name or metric == KpnegEnum.dF.name:
                     results[metric].append(initial_results[metric])
                     sys.stdout.write(
-                        "Starting value for {0} is {1}. Removing nodes {2} gives a {0} value of {3}\n".format(
-                            metric, results[metric][2], self.args.nodes, results[metric][1]))
+                        "Starting value for {0} is {1}. Removing nodes ({2}) gives a {0} value of {3}\n".format(
+                            metric, results[metric][2], ', '.join(self.args.nodes), results[metric][1]))
 
                 elif metric == KpposEnum.mreach.name:
                     results[metric].append(self.args.m_reach)
                     perc_node_reached = (results[metric][1] + len(self.args.nodes)) / graph.vcount() * 100
                     sys.stdout.write(
-                        "Nodes {0} have an {1} of {2}, Meaning they can reach the {3}% of nodes in {4} steps\n".format(
-                            results[metric][0], metric, results[metric][1], perc_node_reached,
+                        "Nodes ({0}) have an {1} of {2}, Meaning they can reach the {3}% of nodes in {4} steps\n".format(
+                            ', '.join(results[metric][0]), metric, results[metric][1], perc_node_reached,
                             self.args.m_reach))
 
                 else: #dR case
                     sys.stdout.write(
-                        "{0} value for nodes {1} is {2}\n".format(metric, results[metric][0],
+                        "{0} value for nodes ({1}) is {2}\n".format(metric, ', '.join(results[metric][0]),
                                                                   results[metric][1]))
             r.create_report(report_type=ReportEnum.KPinfo, report=results)
+            sys.stdout.write("### END OF SUMMARY ###\n\n")
 
         else:
             log.critical(
@@ -537,12 +538,12 @@ class KeyPlayer():
                 # add recursive edge widths
                 if metric != "mreach":
 
-                    edge_widths = [5 if any(y in results[metric][0] for y in x["node_names"]) else other_edge_width for
+                    edge_widths = [5 if any(y in results[metric][0] for y in x["adjacent_nodes"]) else other_edge_width for
                                    x in graph.es()]
 
                 else:
                     if self.args.m_reach > 5:
-                        edge_widths = [5 if any(y in results[metric][0] for y in x["node_names"])
+                        edge_widths = [5 if any(y in results[metric][0] for y in x["adjacent_nodes"])
                                        else other_edge_width for x in graph.es()]
                         sys.stdout.write("WARNING - you chose a very high value of m-reach, the edge width "
                                          "may be too big, hence it will not be represented dynamically.\n")

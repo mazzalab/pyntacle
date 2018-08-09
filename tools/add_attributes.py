@@ -134,9 +134,9 @@ class AddAttributes:
         count = 0
         err_count = 0
         for e, a in zip(edges, attr_list):
-            select = self.__graph.es.select(node_names=e)
+            select = self.__graph.es.select(adjacent_nodes=e)
             if len(select) == 0:
-                select = self.__graph.es.select(node_names=(e[1], e[0]))
+                select = self.__graph.es.select(adjacent_nodes=(e[1], e[0]))
             count += 1
             if len(select) == 0:
                 self.logger.warning("Edge %s not found in graph" %str(e))
@@ -161,21 +161,15 @@ class AddAttributes:
         :return: an igraph.Graph object with the node attribute ""
         """
 
-        if readd is True or "node_names" not in self.__graph.es.attributes():
-            self.logger.info("adding attribute \'node_names\' to each edge (will be stored as a tuple)")
+        if readd is True or "adjacent_nodes" not in self.__graph.es.attributes():
+            self.logger.info("adding attribute \'adjacent_nodes\' to each edge (will be stored as a tuple)")
             edge_names = []
             for e in self.__graph.get_edgelist():
                 # print("{0}, {1}".format(self.__graph.vs[e[0]]["name"], self.__graph.vs[e[1]]["name"]))
                 edge_names.append((self.__graph.vs[e[0]]["name"], self.__graph.vs[e[1]]["name"]))
-            self.__graph.es["node_names"] = edge_names
-            # for edge in self.__graph.es():
-            #     source = edge.source
-            #     target = edge.target
-            #     source_name = self.__graph.vs(source)["name"][0]
-            #     target_name = self.__graph.vs(target)["name"][0]
-            #     edge["node_names"] = (source_name, target_name)
+            self.__graph.es["adjacent_nodes"] = edge_names
         else:
-            self.logger.info("attribute \'node_names\' already exist")
+            self.logger.info("attribute \'adjacent_nodes\' already exist")
 
     def add_graph_name(self, namestring):
         """
@@ -236,13 +230,13 @@ class AddAttributes:
             self.add_parent_name()
 
         '''
-        add edge vertices names as an attribute 'node_names'
+        add edge vertices names as an attribute 'adjacent_nodes'
         '''
-        if "node_names" not in self.__graph.es().attributes():
+        if "adjacent_nodes" not in self.__graph.es().attributes():
             '''
             add edge vertices names as an attribute 'adjacent_vertices'
             '''
-            self.logger.info("adding source and target names as \"node name\" attribute to edges")
+            self.logger.info("adding source and target names as \"adjacent_nodes\" attribute to edges")
             self.add_edge_names()
         # for sif file conversion purposes
         if not "__sif_interaction_name" in self.__graph.attributes():

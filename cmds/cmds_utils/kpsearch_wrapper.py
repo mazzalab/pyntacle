@@ -58,16 +58,16 @@ class KPWrapper:
         self.results = {}  # dictionary that will store results
 
     @timeit
-    def run_KPPos(self, nodes, kpp_type:KpposEnum, m=None, max_distance=None, implementation=CmodeEnum.igraph):
+    def run_KPPos(self, nodes, kp_type:KpposEnum, m=None, max_distance=None, implementation=CmodeEnum.igraph):
         """
         Run Single KPP-POS metrics on a single node or a set of nodes, adds everuything to the "results" object
         :param nodes: either a single node name or a list of node names
-        :param KpposEnum kpp_type: one of the KPPNEGchoices defined in misc.enums
-        :param int m: if kpp_type is the m-reach, specifies the maximum distance for mreach to be computed
+        :param KpposEnum kp_type: one of the KPPNEGchoices defined in misc.enums
+        :param int m: if kp_type is the m-reach, specifies the maximum distance for mreach to be computed
         :param int max_distance: maximum shortest path distance allowed (must be a positive integer greater than 0
         """
-        if not isinstance(kpp_type, KpposEnum):
-            raise TypeError("metric must be ones of the \"KPPOSchoices\" metrics, {} found".format(type(kpp_type).__name__))
+        if not isinstance(kp_type, KpposEnum):
+            raise TypeError("metric must be ones of the \"KPPOSchoices\" metrics, {} found".format(type(kp_type).__name__))
 
         if isinstance(nodes, str):
             nodes=[nodes]
@@ -79,33 +79,33 @@ class KPWrapper:
             raise KeyError("one of the nodes not in the vertex [\"name\"] attribute. "
                            "Are you sure those node names are correct?")
 
-        if kpp_type == KpposEnum.mreach:
+        if kp_type == KpposEnum.mreach:
             if not m:
                 raise ValueError("\"m\" must be specified for mreach ")
             elif not isinstance(m, int) or m <= 0 :
                 raise ValueError("\"m\" must be a positive integer for mreach ")
 
-        self.logger.info("Computing {0} for nodes {1}".format(kpp_type.name, ",".join(nodes)))
-        if kpp_type == KpposEnum.dR:
+        self.logger.info("Computing {0} for nodes ({1})".format(kp_type.name, ", ".join(nodes)))
+        if kp_type == KpposEnum.dR:
             single_result = self.kp.dR(graph=self.graph, nodes=nodes, max_distance=max_distance,
                                        implementation=implementation)
 
         else:
             single_result = self.kp.mreach(graph=self.graph, nodes=nodes, max_distance=max_distance, m=m, implementation=implementation)
 
-        self.results[kpp_type.name] = [nodes, single_result]
+        self.results[kp_type.name] = [nodes, single_result]
         self.logger.info("KP POS search completed, results are in the \"results\" dictionary")
 
     @timeit
-    def run_KPNeg(self, nodes, kpp_type:KpnegEnum, max_distance=None, implementation = CmodeEnum.igraph):
+    def run_KPNeg(self, nodes, kp_type:KpnegEnum, max_distance=None, implementation = CmodeEnum.igraph):
         """
         Run KP NEG metrics for a node or a set of nodes
         :param nodes: either a single node name or a list of node names
-        :param KpnegEnum kpp_type: one of the KPPNEGchoices defined in misc.enums
+        :param KpnegEnum kp_type: one of the KPPNEGchoices defined in misc.enums
         :param int max_distance: maximum shortest path distance allowed (must be a positive integer greater than 0.
         """
-        if not isinstance(kpp_type, KpnegEnum):
-            raise TypeError("metric must be ones of the \"KPNEGchoices\" metrics, {} found".format(type(kpp_type).__name__))
+        if not isinstance(kp_type, KpnegEnum):
+            raise TypeError("metric must be ones of the \"KPNEGchoices\" metrics, {} found".format(type(kp_type).__name__))
 
         if isinstance(nodes, str):
             nodes = [nodes]
@@ -121,15 +121,15 @@ class KPWrapper:
             copy.delete_vertices(nodes)
             
         sys.stdout.write(
-            "Computing {0} for nodes {1}\n".format(kpp_type.name, ",".join(nodes)))
+            "Computing {0} for nodes ({1})\n".format(kp_type.name, ", ".join(nodes)))
 
-        if kpp_type == KpnegEnum.dF:
+        if kp_type == KpnegEnum.dF:
             single_result = self.kp.dF(graph=copy, max_distance=max_distance, implementation=implementation)
 
         else:
             single_result = self.kp.F(graph=copy)
 
-        self.results[kpp_type.name] = [nodes, single_result]
+        self.results[kp_type.name] = [nodes, single_result]
         self.logger.info("KP POS search completed, results are in the \"results\" dictionary")
 
     def get_results(self) -> dict:
@@ -163,48 +163,48 @@ class GOWrapper:
         self.results = {}  # dictionary that will store results
 
     @timeit
-    def run_fragmentation(self, kpp_size:int, kpp_type:KpnegEnum, max_distance=None, seed=None, implementation=CmodeEnum.igraph):
+    def run_fragmentation(self, kp_size:int, kp_type:KpnegEnum, max_distance=None, seed=None, implementation=CmodeEnum.igraph):
         """
         Wrapper around the Greedy Optimization Module that stores the greedy optimization results for KPPOS metrics in the
         "results" dictionary
-        :param int kpp_size: size of the kpp-set to be found
-        :param KpnegEnum kpp_type: on of the KPNEGchoices enumerators stored in misc.enums
+        :param int kp_size: size of the kpp-set to be found
+        :param KpnegEnum kp_type: on of the KPNEGchoices enumerators stored in misc.enums
         :param int max_distances: maximum shortest path distance allowed in the shortest path matrix
         :param int seed: a seed that can be passed in order to replicate GO results
         """
-        if not isinstance(kpp_size, int) or kpp_size < 1:
-            raise ValueError("\kpp_size\" must be a positive integer of size 1")
+        if not isinstance(kp_size, int) or kp_size < 1:
+            raise ValueError("\kp_size\" must be a positive integer of size 1")
 
-        if not isinstance(kpp_type, KpnegEnum):
-            raise TypeError("\"kpp_type\" must be one of the KPPNEGchoices options available")
+        if not isinstance(kp_type, KpnegEnum):
+            raise TypeError("\"kp_type\" must be one of the KPPNEGchoices options available")
 
-        go_results = self.go.fragmentation(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type, max_distance=max_distance, seed=seed, implementation=implementation)
-        self.results[kpp_type.name] = [go_results[0], go_results[1]]
+        go_results = self.go.fragmentation(graph=self.graph, kp_size=kp_size, kp_type=kp_type, max_distance=max_distance, seed=seed, implementation=implementation)
+        self.results[kp_type.name] = [go_results[0], go_results[1]]
 
     @timeit
-    def run_reachability(self, kpp_size:int, kpp_type:KpposEnum, m=None, max_distance=None, seed=None, implementation=CmodeEnum.igraph):
+    def run_reachability(self, kp_size:int, kp_type:KpposEnum, m=None, max_distance=None, seed=None, implementation=CmodeEnum.igraph):
         """
         Wrapper around the Greedy Optimization Module that stores the greedy optimization results for KPPOS metrics
-        :param int kpp_size: size of the kpp-set to be found
-        :param KpposEnum kpp_type: on of the KPPOSchoices enumerators stored in misc.enums
+        :param int kp_size: size of the kpp-set to be found
+        :param KpposEnum kp_type: on of the KPPOSchoices enumerators stored in misc.enums
         :param int max_distances: maximum shortest path distance allowed in the shortest path matrix
         :param int seed: a seed that can be passed in order to replicate GO results
         :param int m: for the "mreach" metrics, a positive integer greatrer than one representing the maximum distance for mreach
         """
-        if not isinstance(kpp_size, int) or kpp_size < 1:
-            raise ValueError("\kpp_size\" must be a positive integer of size 1")
+        if not isinstance(kp_size, int) or kp_size < 1:
+            raise ValueError("\kp_size\" must be a positive integer of size 1")
 
-        if not isinstance(kpp_type, KpposEnum):
-            raise TypeError("\"kpp_type\" must be one of the KPPPOSchoices options available")
+        if not isinstance(kp_type, KpposEnum):
+            raise TypeError("\"kp_type\" must be one of the KPPPOSchoices options available")
 
-        if kpp_type == KpposEnum.mreach:
+        if kp_type == KpposEnum.mreach:
             if not m:
                 raise ValueError("\"m\" must be a specified for mreach ")
             elif not isinstance(m, int) or m <= 0 :
                 raise ValueError("\"m\" must be a positive integer for mreach ")
 
-        go_results = self.go.reachability(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type, max_distance=max_distance, seed=seed, m=m, implementation=implementation)
-        self.results[kpp_type.name] = [go_results[0], go_results[1]]
+        go_results = self.go.reachability(graph=self.graph, kp_size=kp_size, kp_type=kp_type, max_distance=max_distance, seed=seed, m=m, implementation=implementation)
+        self.results[kp_type.name] = [go_results[0], go_results[1]]
 
     def get_results(self) -> dict:
         """
@@ -233,49 +233,49 @@ class BFWrapper:
         self.results = {}  # dictionary that will store results
 
     @timeit
-    def run_fragmentation(self, kpp_size:int, kpp_type:KpnegEnum, max_distance=None, implementation=CmodeEnum.igraph, threads=n_cpus):
+    def run_fragmentation(self, kp_size:int, kp_type:KpnegEnum, max_distance=None, implementation=CmodeEnum.igraph, threads=n_cpus):
         """
         Wrapper around the Bruteforce Search Module that stores the greedy optimization results for KPPOS metrics in
         the "results" dictionary
-        :param int kpp_size: size of the kpp-set to be found
-        :param KpnegEnum kpp_type: on of the KPNEGchoices enumerators stored in misc.enums
+        :param int kp_size: size of the kpp-set to be found
+        :param KpnegEnum kp_type: on of the KPNEGchoices enumerators stored in misc.enums
         :param int max_distances: maximum shortest path distance allowed in the shortest path matrix
         """
-        if not isinstance(kpp_size, int) or kpp_size < 1:
-            raise ValueError("\kpp_size\" must be a positive integer of size 1")
+        if not isinstance(kp_size, int) or kp_size < 1:
+            raise ValueError("\kp_size\" must be a positive integer of size 1")
 
-        if not isinstance(kpp_type, KpnegEnum):
-            raise TypeError("\"kpp_type\" must be one of the KPPNEGchoices options available")
+        if not isinstance(kp_type, KpnegEnum):
+            raise TypeError("\"kp_type\" must be one of the KPPNEGchoices options available")
 
-        bf_results = self.bf.fragmentation(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type,
+        bf_results = self.bf.fragmentation(graph=self.graph, kp_size=kp_size, kp_type=kp_type,
                                            max_distance=max_distance, implementation=implementation, ncores=threads)
-        self.results[kpp_type.name] = [bf_results[0], bf_results[1]]
+        self.results[kp_type.name] = [bf_results[0], bf_results[1]]
 
     @timeit
-    def run_reachability(self, kpp_size: int, kpp_type: KpposEnum, m=None, max_distance=None, implementation=CmodeEnum.igraph, threads=n_cpus):
+    def run_reachability(self, kp_size: int, kp_type: KpposEnum, m=None, max_distance=None, implementation=CmodeEnum.igraph, threads=n_cpus):
         """
         Wrapper around the Bruteforce Search Module that stores the greedy optimization results for KPPOS metrics
-        :param int kpp_size: size of the kpp-set to be found
-        :param KpposEnum kpp_type: on of the KPPOSchoices enumerators stored in misc.enums
+        :param int kp_size: size of the kpp-set to be found
+        :param KpposEnum kp_type: on of the KPPOSchoices enumerators stored in misc.enums
         :param int max_distance: maximum shortest path distance allowed in the shortest path matrix
         :param int m: for the "mreach" metrics, a positive integer greatrer than one representing the maximum distance for mreach
         """
-        if not isinstance(kpp_size, int) or kpp_size < 1:
-            raise ValueError("\kpp_size\" must be a positive integer of size 1")
+        if not isinstance(kp_size, int) or kp_size < 1:
+            raise ValueError("\kp_size\" must be a positive integer of size 1")
 
-        if not isinstance(kpp_type, KpposEnum):
-            raise TypeError("\"kpp_type\" must be one of the KPPNEGchoices options available")
+        if not isinstance(kp_type, KpposEnum):
+            raise TypeError("\"kp_type\" must be one of the KPPNEGchoices options available")
 
-        if kpp_type == KpposEnum.mreach:
+        if kp_type == KpposEnum.mreach:
             if not m:
                 raise ValueError("\"m\" must be a specified for mreach ")
             elif not isinstance(m, int) or m <= 0 :
                 raise ValueError("\"m\" must be a positive integer for mreach ")
 
-        bf_results = self.bf.reachability(graph=self.graph, kpp_size=kpp_size, kpp_type=kpp_type,
+        bf_results = self.bf.reachability(graph=self.graph, kp_size=kp_size, kp_type=kp_type,
                                           max_distance=max_distance, m=m, implementation=implementation, ncores=threads)
 
-        self.results[kpp_type.name] = [bf_results[0], bf_results[1]]
+        self.results[kp_type.name] = [bf_results[0], bf_results[1]]
 
     def get_results(self) -> dict:
         """
