@@ -550,8 +550,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                  "generated.")
 
         parser.add_argument("-u", "--output-format", metavar="",
-                            choices=format_dictionary.keys(),
-                            required=True,
+                            choices=format_dictionary.keys(), default="adjmat",
                             help='Desired output format for the output communities. \'adjmat\' for '
                                  'adjacency matrix, \'edgelist\' for edge list, \'sif\' for '
                                  'Simple Interaction format, \'dot\' for DOT file, \'bin\' for binary file. '
