@@ -160,7 +160,7 @@ class LocalTopology:
         num_nodes_minus_one = graph.vcount() - 1
         rad_list = []
 
-        from algorithms.shortest_path import ShortestPath  # TODO: temporarily here to fix circular dependencies
+        from algorithms.shortest_path import ShortestPath
         sps = ShortestPath.get_shortestpaths(graph, nodes=nodes, cmode=cmode)
         for sp in sps:
             partial_sum = sum(diameter_plus_one - distance for distance in sp if distance != 0)

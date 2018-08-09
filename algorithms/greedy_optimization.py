@@ -85,7 +85,6 @@ class GreedyOptimization:
         num_edges = graph.ecount()
         max_edges = num_nodes * (num_edges - 1)
 
-        #todo reminder che l'implementazione è automatica
         if kp_type == KpnegEnum.F or kp_type == KpnegEnum.dF:
             if num_edges == 0:  # TODO: check if this case if possible, given the decorator "check_graph_consistency"
                 return [], 1.0
@@ -139,8 +138,6 @@ class GreedyOptimization:
                     maxKpp = max(kppset_score_pairs, key=kppset_score_pairs.get)
                     max_fragmentation = kppset_score_pairs[maxKpp]
 
-                    #todo Tommaso: how do we handle the case in which there is no optimal fragmentation score that
-                    # maximizes the initial fragmentation score?
                     if max_fragmentation > fragmentation_score:
                         S = list(maxKpp)
                         notS = set(node_indices).difference(set(S))
@@ -155,7 +152,7 @@ class GreedyOptimization:
 
     @staticmethod
     @check_graph_consistency
-    @greedy_search_initializer #todo solve the m problem in this decorator
+    @greedy_search_initializer
     def reachability(graph, kp_size, kp_type: KpposEnum, seed=None, max_distance=None, m=None, implementation=CmodeEnum.igraph) -> (list, float):
         """
         It searches for the best kpp-set of a predefined size that exhibit maximal reachability for a specified

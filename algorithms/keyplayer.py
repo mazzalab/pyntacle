@@ -107,8 +107,7 @@ class KeyPlayer:
         elif num_edges == num_nodes * (num_edges - 1):
             return 0.0
         else:
-            #  TODO: implementation "auto" should consider graph parameters and use the correct implementation
-            #  TODO: and the GPU/MULTICORE one
+
             if not isinstance(implementation, CmodeEnum):
                 raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(CmodeEnum)))
             elif max_distance:

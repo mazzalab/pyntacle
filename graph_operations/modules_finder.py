@@ -105,7 +105,6 @@ class CommunityFinder:
         """
 
         if weights is None:
-            # TODO: why steps=3 if iGraph set 4 as default?
             vertex_dendogram = self.__graph.community_walktrap(steps=steps)
             modules = vertex_dendogram.as_clustering()
             self.__modules = modules.subgraphs()

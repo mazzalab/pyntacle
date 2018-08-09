@@ -62,9 +62,6 @@ def _check_value(self, action, value):
         msg = 'invalid choice: %(value)r'
         raise argparse.ArgumentError(action, msg % args)
 
-
-# todo: Check all options are documented in <usage>
-
 def threads_type(x):
     x = int(x)
     if x < 1:
@@ -562,7 +559,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         parser.add_argument("--output-separator", metavar="",
                             help="Specify a desired output separator for your output files. Default is “\t”."
-                                 " Note: the separator must be specified in quotes. ")
+                                 " Note: the separator must be specified in quotes.")
 
         parser.add_argument("--no-output-header", action="store_true",
                             help='Specify this option if you don’t want a header to be written on your'

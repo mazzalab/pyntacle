@@ -86,7 +86,7 @@ class Set:
             GraphUtils(graph1).check_graph()
             GraphUtils(graph2).check_graph()
         except (UnsupportedGraphError, KeyError, TypeError) as e:
-            raise e  # TODO: handle better this
+            raise e
 
         # init Utils global stuff
         utils1 = GraphUtils(graph=graph1)
