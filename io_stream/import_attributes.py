@@ -168,13 +168,14 @@ class ImportAttributes():
 
     def import_edge_attributes(self, file: str, sep=None, mode='standard'):
         """
-        Add edge attributes specified in a file like (nodeA/nodeB/listofvalues)
-        **[EXPAND DESCRIPTIONS OF PARAMS]**
-
-        :param file:
-        :param sep:
-        :param mode:
-        :return:
+        Add edge attributes specified in a file like (nodeA/nodeB/listofvalues) to the `igraph.Graph` object declared
+        when the class was initialized.
+        :param file: a valid $PATH to a file storing an edge attributes. This file can be either a standard edge attribute file
+        or a Cytoscape Legacy format. See our [file format](http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html)
+        page for details regarding this file format
+        :param sep: a string specified the separator character of your edge attrib ute file. if `None` (default) it will
+        be guessed.
+        :param mode: a strng specified the file format of the edge attributes file. choices are `standard` or `cytoscape`
         """
         check = self.__check_file(file=file, sep=sep)
         infile = check[0]
@@ -216,11 +217,11 @@ class ImportAttributes():
                         attrs = tmp[1:]
                     
                     select = []
-                    match = self.__graph.es.select(node_names=perm_node_names[0])
+                    match = self.__graph.es.select(adjacent_nodes=perm_node_names[0])
                     if len(match) != 0:
                         select.append(match)
                     
-                    match_inv = self.__graph.es.select(node_names=perm_node_names[1])
+                    match_inv = self.__graph.es.select(adjacent_nodes=perm_node_names[1])
                     if len(match_inv) != 0:
                         select.append(match_inv)
                         
