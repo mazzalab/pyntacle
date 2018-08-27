@@ -1,5 +1,5 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2018, The pyntacle Project"
+__copyright__ = "Copyright 2018, The Pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.2.3.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -53,9 +53,10 @@ class Metrics:
             self.args.no_plot = True
 
     def run(self):
-        cursor = CursorAnimation()
-        cursor.daemon = True
-        cursor.start()
+        if not self.args.suppress_cursor:
+            cursor = CursorAnimation()
+            cursor.daemon = True
+            cursor.start()
         if self.args.no_header:
             header = False
         else:
@@ -473,6 +474,8 @@ class Metrics:
             sys.stdout.write("Saving graph to a Binary file\n")
             PyntacleExporter.Binary(graph, binary_path)
 
-        cursor.stop()
+        if not self.args.suppress_cursor:
+            cursor.stop()
+
         sys.stdout.write("pyntacle Metrics completed successfully. Ending\n")
         sys.exit(0)

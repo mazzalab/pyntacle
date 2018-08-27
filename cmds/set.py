@@ -1,5 +1,5 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2018, The pyntacle Project"
+__copyright__ = "Copyright 2018, The Pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.2.3.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -53,10 +53,11 @@ class Set:
             self.args.no_plot = True
 
     def run(self):
-        # process input files
-        cursor = CursorAnimation()
-        cursor.daemon = True
-        cursor.start()
+
+        if not self.args.suppress_cursor:
+            cursor = CursorAnimation()
+            cursor.daemon = True
+            cursor.start()
         if not self.args.input_file_1 or not self.args.input_file_2:
             sys.stderr.write("ERROR: one of the two input files is missing. Quitting\n")
             sys.exit(1)
@@ -436,6 +437,9 @@ class Set:
         reporter1.report.extend(reporter2.report)
         reporter1.report.extend(reporter_final.report)
         reporter1.write_report(report_dir=self.args.directory, format=self.args.report_format)
-        cursor.stop()
+
+        if not self.args.suppress_cursor:
+            cursor.stop()
+
         sys.stdout.write("pyntacle Set completed successfully\n")
         sys.exit(0)

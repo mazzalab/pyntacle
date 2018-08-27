@@ -1,5 +1,5 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2018, The pyntacle Project"
+__copyright__ = "Copyright 2018, The Pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.2.3.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -42,9 +42,11 @@ class Generate():
             random.seed(self.args.seed)
 
     def run(self):
-        cursor = CursorAnimation()
-        cursor.daemon = True
-        cursor.start()
+        if not self.args.suppress_cursor:
+            cursor = CursorAnimation()
+            cursor.daemon = True
+            cursor.start()
+
         if self.args.which == "random":
 
             if self.args.nodes is None:
@@ -373,7 +375,10 @@ class Generate():
                 "Graph ({} nodes) exceeds pyntacle limits for plotting (maximum 1000 nodes). Will not draw Graph".format(
                     graph.vcount()))
             sys.exit(0)
-        cursor.stop()
+
+        if not self.args.suppress_cursor:
+            cursor.stop()
+
         sys.stdout.write("pyntacle Generate completed successfully. Ending\n")
         if self.args.repeat == 1:
             sys.exit(0)

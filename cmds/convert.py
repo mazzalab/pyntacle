@@ -1,5 +1,5 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2018, The pyntacle Project"
+__copyright__ = "Copyright 2018, The Pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.2.3.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -32,7 +32,7 @@ from tools.misc.graph_load import *
 
 class Convert():
     """
-    take input command line arguments in order to quickly convert one file format to another
+    take input network file and convert one file format to another (with several options attached)
     """
     def __init__(self, args):
         self.logging = log
@@ -40,9 +40,11 @@ class Convert():
 
     def run(self):
         # dictionary that stores the basename of the output file
-        cursor = CursorAnimation()
-        cursor.daemon = True
-        cursor.start()
+        if not self.args.suppress_cursor:
+            cursor = CursorAnimation()
+            cursor.daemon = True
+            cursor.start()
+
         if self.args.no_header:
             header = False
         else:
@@ -150,6 +152,8 @@ class Convert():
                         os.path.abspath(self.args.input_file), output_path))
                 PyntacleExporter.Binary(graph, output_path)
 
-            cursor.stop()
+            if not self.args.suppress_cursor:
+                cursor.stop()
+
             sys.stdout.write("{} converted successfully\n".format(os.path.basename(self.args.input_file)))
             sys.exit(0)

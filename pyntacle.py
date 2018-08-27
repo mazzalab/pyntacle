@@ -1,5 +1,5 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2018, The pyntacle Project"
+__copyright__ = "Copyright 2018, The Pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.2.3.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -122,7 +122,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument('-v', action="count", help="Verbosity level of the internal Pyntacle logger. "
                                                        "-vvv is the highest level (for debugging)")
         parser.add_argument('-V', "--version", action="version", version="pyntacle v0.2.3.1",
-                            help="Shows program's version number and exits.")
+                            help="Shows program version number and quits")
 
         # Detect verbosity
         for arg in sys.argv:
@@ -245,9 +245,12 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument("--save-binary", action="store_true",
                             help="Save a binary file (with a .graph extension) that contains an igraph.Graph "
                                  "object. This object is the one processed by Pyntacle. ")
+
+        parser.add_argument('--suppress-cursor', action="store_true", help="suppress Pyntacle animated cursor")
         
         parser.add_argument('-v', action="count", help="verbosity level of the internal Pyntacle logger. "
                                                        "-vvv is the highest level (for debugging).")
+
         
         subparsers = parser.add_subparsers(metavar='', help=argparse.SUPPRESS)
 
@@ -386,6 +389,8 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                  'components or isolates. Will raise an error if the network has two largest'
                                  ' components of the same size.')
 
+        parser.add_argument('--suppress-cursor', metavar="", action="store_true", help="suppress Pyntacle animated cursor")
+
         parser.add_argument('-v', action="count",
                             help="Verbosity level of the internal Pyntacle logger. -vvv is the highest level"
                                  " (for debugging).")
@@ -501,6 +506,8 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                             help="Specify a desired output separator for your output files. Default is “\t”."
                                  " Note: the separator must be specified in quotes.")
 
+        parser.add_argument('--suppress-cursor', metavar="", action="store_true", help="suppress Pyntacle animated cursor")
+
         parser.add_argument('-v', action="count", help="Verbosity level of the internal Pyntacle logger. -vvv"
                                                        " is the highest level (for debugging).")
 
@@ -598,6 +605,8 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument("-R", "--repeat", metavar='', type=int, default=1,
                             help="Specify the number of graphs that will be generated. Default is 1."
                                  " Note: --repeat overrides --seed.")
+
+        parser.add_argument('--suppress-cursor', action="store_true", help="suppress Pyntacle animated cursor")
         
         parser.add_argument('-v', action="count", help="Verbosity level of the internal Pyntacle logger. -vvv"
                                                        " is the highest level (for debugging).")
@@ -820,6 +829,8 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                  ' contains small components or isolates. Will raise an error if the network'
                                  ' has two largest components of the same size.')
 
+        parser.add_argument('--suppress-cursor', action="store_true", help="suppress Pyntacle animated cursor")
+
         parser.add_argument('-v', action="count", help="verbosity level. -vvv is the highest level")
 
         subparsers = parser.add_subparsers(metavar='', help=argparse.SUPPRESS)
@@ -976,8 +987,6 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                  "exist, we will create one at the specified path. Default is the present "
                                  "working directory.")
 
-        parser.add_argument('-v', action="count", help="verbosity level. -vvv is the highest level")
-
         parser.add_argument('-P', '--plot-format', choices=["svg", "pdf", "png"], default="pdf", metavar='',
                             type=lambda s: s.lower(),
                             help="Use this option to specify the format of choice of the plots produced by "
@@ -1036,6 +1045,9 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                  "Pyntacle. Choices are “txt” and “tsv” for tab separated value files, “csv” "
                                  "for comma-separated value files, “xlsx” for Excel files. Default is “txt”.")
 
+        parser.add_argument('--suppress-cursor', action="store_true", help="suppress Pyntacle animated cursor")
+
+        parser.add_argument('-v', action="count", help="verbosity level. -vvv is the highest level")
 
         subparsers = parser.add_subparsers(metavar='', help=argparse.SUPPRESS)
 

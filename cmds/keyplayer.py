@@ -1,5 +1,5 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2018, The pyntacle Project"
+__copyright__ = "Copyright 2018, The Pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.2.3.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -50,9 +50,11 @@ class KeyPlayer():
             self.args.no_plot = True
 
     def run(self):
-        cursor = CursorAnimation()
-        cursor.daemon = True
-        cursor.start()
+        if not self.args.suppress_cursor:
+            cursor = CursorAnimation()
+            cursor.daemon = True
+            cursor.start()
+
         if self.args.m_reach == None and self.args.type in ["pos", "all"]:
             raise Error("m reach distance must be provided")
 
@@ -606,6 +608,8 @@ class KeyPlayer():
 
         elif graph.vcount() >= 1000:
             sys.stdout.write("The graph has too many nodes ({}). Can't draw graph\n".format(graph.vcount()))
-        cursor.stop()
+        if not self.args.suppress_cursor:
+            cursor.stop()
+
         sys.stdout.write("pyntacle Keyplayer completed successfully. Ending\n")
         sys.exit(0)

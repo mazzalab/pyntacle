@@ -3,7 +3,7 @@ A set of enumerators whose values are used as reserved keywords of Pyntacle's fu
 """
 
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
-__copyright__ = "Copyright 2018, The pyntacle Project"
+__copyright__ = "Copyright 2018, The Pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.3"
 __maintainer__ = "Daniele Capocefalo"

@@ -1,5 +1,5 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2018, The pyntacle Project"
+__copyright__ = "Copyright 2018, The Pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.2.3.1"
 __maintainer__ = "Daniele Capocefalo"
@@ -48,9 +48,12 @@ class Communities():
             self.args.no_plot = True
 
     def run(self):
-        cursor = CursorAnimation()
-        cursor.daemon = True
-        cursor.start()
+
+        if not self.args.suppress_cursor:
+            cursor = CursorAnimation()
+            cursor.daemon = True
+            cursor.start()
+
         if not self.args.input_file:
             sys.stderr.write("ERROR: Input file is missing. Quitting\n")
             sys.exit(1)
@@ -410,6 +413,8 @@ class Communities():
                     sys.stdout.write(
                         "Module {0} is above pyntacle Plotting limits ({1} nodes , we support 1000 nodes). Will skip plotting this module.\n".format(
                             i, comm.vcount()))
-        cursor.stop()
+        if not self.args.suppress_cursor:
+            cursor.stop()
+
         sys.stdout.write("Community Finding completed successfully. Ending\n")
         sys.exit(0)
