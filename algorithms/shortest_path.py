@@ -5,11 +5,11 @@ Several implementation to compute shortest paths of a graph
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.4"
+__version__ = "0.1.0"
 __maintainer__ = "Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = ["Release", "Stable"]
-__date__ = "11/07/2018"
+__date__ = "31/08/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -29,7 +29,7 @@ __license__ = u"""
   """
 
 
-import sys
+import sys, math
 from config import threadsperblock
 import statistics
 import numpy as np
@@ -40,6 +40,7 @@ from psutil import virtual_memory
 from tools.enums import CmodeEnum
 from tools.graph_utils import GraphUtils as gUtil
 from tools.misc.graph_routines import check_graph_consistency, vertex_doctor
+from exceptions.wrong_argument_error import WrongArgumentError
 
 
 class ShortestPath:
@@ -114,6 +115,69 @@ class ShortestPath:
             raise ValueError("The specified 'computing mode' is invalid. Choose from: {}".format(list(CmodeEnum)))
 
     @staticmethod
+    def get_shortestpath_count(graph, nodes, cmode: CmodeEnum) -> np.ndarray:
+        """
+        Compute the *shortest paths* starting from a node or of a list of nodes of an undirected graph using the
+        implementation modes specified in the input parameter *cmode*
+        :param graph: an igraph.Graph object. The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the pyntacle's manual.
+        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
+        (default), the index is computed for all nodes of the graph.
+        :param cmode: an enumerator ranging from:
+        * **`cmode.igraph`**: shortest paths computed by iGraph
+        * **`cmode.cpu`**: Dijkstra algorithm implemented for multicore CPU
+        * **`cmode.gpu`**: Dijkstra algorithm implemented for GPU-enabled graphics cards
+        **CAUTION**: this will not work if the GPU is not present or CUDA compatible.
+        :return: a np.ndarray, the first size being the number of input nodes. Each row contains a series of
+        integer values representing the distance from any input node to every other node in the graph.
+        The order of the node list in input is preserved in the np.ndarray.
+        """
+
+        if cmode == CmodeEnum.igraph:
+            count_all = ShortestPath.shortest_path_count_igraph(graph, nodes)
+            count_all = np.array(count_all)
+            return count_all
+        else:
+            if virtual_memory().free < (graph.vcount() ** 2) * 2:  # the rightmost "2" is int16/8
+                sys.stdout.write("WARNING: Memory seems to be low; loading the graph given as input could fail.")
+
+            adj_mat = np.array(graph.get_adjacency().data, dtype=np.uint16, copy=True)
+            adj_mat[adj_mat == 0] = adj_mat.shape[0]
+
+            if cmode == CmodeEnum.cpu:
+                count_all = ShortestPath.shortest_path_count_cpu(adj_mat)
+
+                if nodes:
+                    nodes_idx = gUtil(graph=graph).get_node_indices(node_names=nodes)
+                    count_all = count_all[nodes_idx, :]
+
+                return count_all
+            elif cmode == CmodeEnum.gpu:
+                if cuda.current_context().get_memory_info().free < (graph.vcount() ** 2) * 2:
+                    sys.stdout.write(
+                        "WARNING: GPU Memory seems to be low; loading the graph given as input could fail.")
+
+                if nodes is None:
+                    nodes = list(range(0, graph.vcount()))
+                else:
+                    nodes = gUtil(graph=graph).get_node_indices(nodes)
+
+                if "shortest_path_count_gpu" not in sys.modules:
+                    from algorithms.shortestpath_gpu import shortest_path_count_gpu
+
+                count_all = np.copy(adj_mat)
+                tpb = threadsperblock
+                blockspergrid = math.ceil(graph.vcount() / tpb)
+                shortest_path_count_gpu[blockspergrid, tpb](adj_mat, count_all)
+
+                if len(nodes) < graph.vcount():
+                    count_all = count_all[nodes, :]
+
+                return count_all
+            else:
+                raise ValueError("The specified 'computing mode' is invalid. Choose from: {}".format(list(CmodeEnum)))
+
+    @staticmethod
     @check_graph_consistency
     @vertex_doctor
     def shortest_path_length_igraph(graph: Graph, nodes=None) -> list:
@@ -135,38 +199,43 @@ class ShortestPath:
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def shortest_path_number_igraph(graph: Graph, nodes=None) -> np.ndarray:
+    def shortest_path_count_igraph(graph: Graph, nodes=None) -> np.ndarray:
         """
         Compute the *shortest paths* from any pairs of nodes of an undirected graph using the
-        Dijkstra's algorithm and returns a matrix of predecessors in order to ease the process of reconstructing the
-        physical paths between nodes.
+        Dijkstra's algorithm and returns the path lengths in the upper triangular part and the geodesics counts in the
+        lower triangular part.
         :param graph: an igraph.Graph object. The graph must have specific properties. Please see the
         "Minimum requirements" specifications in the pyntacle's manual.
         :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
         (default), the index is computed for all nodes of the graph.
-        :return: a list of lists, the first size being the number of input nodes. Each list is a path (sequence of
-        nodes) from a start and an end node.
-        The order of the node list in input is preserved.
+        :return: A nxn numpy array, where *n* is the number of *nodes*. The path lengths are in the upper triangular
+        part of the array and the geodesics counts in the lower triangular part. The order of the node list in input is
+        preserved.
         """
 
         if nodes:
             loop_nodes = nodes
         else:
             loop_nodes = graph.vs()
+        loop_nodes_size = len(loop_nodes)
 
-        spaths = np.ndarray(shape=(len(loop_nodes), len(loop_nodes)), dtype=np.int16)
+        spaths = np.zeros(shape=(loop_nodes_size, loop_nodes_size), dtype=np.int16)
 
         for node in loop_nodes:
-            temp_line = np.zeros(shape=len(loop_nodes))
+            temp_row = np.zeros(shape=loop_nodes_size)
+            temp_col = np.zeros(shape=loop_nodes_size)
+
             sp = graph.get_all_shortest_paths(v=node)
             for s in sp:
                 if len(s) > 1:
                     last = s[-1]
-                    temp_line[last] += 1
+                    temp_row[last] += 1
+                    temp_col[last] = len(s) - 1
                 else:
-                    row_index = s[0]
+                    row_col_index = s[0]
 
-            spaths[row_index] = temp_line
+            spaths[row_col_index, row_col_index:loop_nodes_size] = temp_row[row_col_index:loop_nodes_size]
+            spaths[row_col_index:loop_nodes_size, row_col_index] = temp_col[row_col_index:loop_nodes_size]
 
         return spaths
 
@@ -195,18 +264,19 @@ class ShortestPath:
 
     @staticmethod
     @jit(nopython=True, parallel=True)
-    def shortest_path_number_cpu(adjmat) -> np.ndarray:
+    def shortest_path_count_cpu(adjmat) -> np.ndarray:
         """
-        Calculate the shortest path lengths of a graph using the
-        'Floyd-Warshall with path count. The method is implemented using Numba for just-in-time compilation and run
+        Compute the *shortest paths* from any pairs of nodes of an undirected graph using the
+        Dijkstra's algorithm. The method is implemented using Numba for just-in-time compilation and run
         on multiple CPU processors.
-        :param np.ndarray adjmat: a numpy.ndarray containing the adjacency matrix of a graph. Disconnected nodes in the
-        matrix are represented as the total number of nodes in the graph + 1.
-        :return: a numpy array of shortest paths numbers
+        :param np.ndarray adjmat: the adjacency matrix of a graph. Absence of links is represented with a number
+        that equals the total number of nodes in the graph + 1.
+        :return: A nxn numpy array, where *n* is the number of *nodes*. The path lengths are in the upper triangular
+        part of the array and the geodesics counts in the lower triangular part. The order of the node list in input is
+        preserved.
         """
 
         v = adjmat.shape[0]
-        dist = np.copy(adjmat)
 
         count = np.copy(adjmat)
         for i in prange(v):
@@ -214,6 +284,7 @@ class ShortestPath:
                 if count[i, j] == v:
                     count[i, j] = 0
 
+        dist = np.copy(adjmat)
         for k in range(0, v):
             for i in prange(v):
                 for j in range(0, v):
@@ -224,7 +295,28 @@ class ShortestPath:
                             dist[i, j] = dist[i, k] + dist[k, j]
                             count[i, j] = count[i, k] * count[k, j]
 
-        return count
+        dist_count = np.copy(count)
+        for i in prange(0, v):
+            for j in prange(i+1, v):
+                dist_count[j, i] = dist[i, j]
+
+        return dist_count
+
+    @staticmethod
+    @jit(nopython=True, parallel=True)
+    def subtract_count_dist_matrix(count_all: np.ndarray, count_nogroup: np.ndarray) -> np.ndarray:
+        if count_all.shape[0] == count_all.shape[1] == count_nogroup.shape[0] == count_nogroup.shape[1]:
+            v = count_all.shape[0]
+            res = np.copy(count_all)
+
+            for i in prange(v):
+                for j in prange(i, v):
+                    if count_all[j, i] == count_nogroup[j, i]:
+                        res[i, j] = count_all[i, j] - count_nogroup[i, j]
+
+            return res
+        else:
+            raise WrongArgumentError("Parameter error", "The function parameters do not have the same shape")
 
     @staticmethod
     @check_graph_consistency

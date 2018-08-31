@@ -123,7 +123,6 @@ class AdjmUtils:
         self.header = header
         self.adjm = None
 
-
     def __write_adjm(self, adjm: list, separator: str, appendix: str) -> str:
         """
         Hidden function that rewrite an adjacency matrix to the input path (used internally)

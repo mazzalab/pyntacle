@@ -5,11 +5,11 @@ Compute local topology metrics of nodes
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The Pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.6"
+__version__ = "0.1.0"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = "Development"
-__date__ = "03/06/2018"
+__date__ = "31/08/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -33,7 +33,6 @@ from tools.enums import CmodeEnum, GroupDistanceEnum
 from tools.misc.graph_routines import *
 from tools.graph_utils import GraphUtils as gUtil
 from algorithms.shortest_path import ShortestPath
-from algorithms.shortestpath_gpu import shortest_path_number_cpu
 
 
 class LocalTopology:
@@ -63,6 +62,7 @@ class LocalTopology:
     @vertex_doctor
     def group_degree(graph: Graph, nodes: list) -> float:
         """
+        Computes the degree centrality of a group of nodes.
         It is defined as the  number  of  non-group  nodes  that  are connected to group members.
         Multiple ties to the same node are counted only once.
         :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
@@ -100,65 +100,65 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def group_betweenness(graph: Graph, nodes: list, np_counts=None) -> float:
+    def group_betweenness(graph: Graph, nodes: list, cmode: CmodeEnum=CmodeEnum.igraph, np_counts=None) -> float:
         """
-        Computes the betweenness of a group of nodes.
+        Computes the betweenness centrality of a group of nodes.
         The *group betweenness* indicates the proportion of geodesics connecting pairs of non-group members that
         pass through the group. One way to compute this measure is as follows: (a) count the number of geodesics
         between every pair of non-group members, yielding a node-by-node matrix of counts, (b) delete all ties involving
         group members and redo the calculation, creating a new node-by-node matrix of counts, (c) divide each cell in
         the new matrix by the corresponding cell in the first matrix, and (d) take the sum of all these ratios.
 
-        :param np_counts: numpy array containing shortest paths numbers connecting any pair of nodes of the network.
-        Passing this argument would make the overall calculation of the group betweenness index faster.
-        :param igraph.Graph graph: an igraph.Graph object. The graph must have specific properties. Please see the
+        :param np_counts: numpy array containing shortest paths numbers connecting any pair of nodes of the graph.
+        Passing this argument would make the overall calculation of the group betweenness centrality faster.
+        :param igraph.Graph graph: an igraph.Graph object. The graph must hold specific properties. Please see the
         "Minimum requirements" specifications in the pyntacle's manual.
         :param nodes: The group members
+        :param cmode: The available computing modes of the shortest paths. Choices are:
+        * **`igraph`**: use the Dijsktra's algorithm implemented in iGraph
+        * **`parallel_CPU`**: use a parallel implementation of the Floyd-Warshall algorithm running on CPU using Numba
+        * **`parallel_GPU`**: use a parallel implementation of the Floyd-Warshall algorithm running on GPU using Numba
+        **CAUTION:**(requires NVIDIA-compatible graphics cards)
         :return: The normalized group betweenness centrality, obtained by dividing the group betweenness by the number
         of non-group nodes.
         """
 
+        # Count geodesics of the original matrix
         if np_counts:
             count_all = np_counts
         else:
-            adj_mat = np.array(graph.get_adjacency().data)
-            adj_mat[adj_mat == 0] = adj_mat.shape[0]
-            count_all = ShortestPath.shortest_path_number_cpu(adj_mat)
+            count_all = ShortestPath.get_shortestpath_count(graph, nodes=None, cmode=cmode)
 
+        # Count geodesics that do not pass through the group
         node_idx = gUtil(graph).get_node_indices(nodes)
         del_edg_src = graph.es.select(_source_in=node_idx)
         del_edg_tar = graph.es.select(_target_in=node_idx)
         graph_notgroup = graph.copy()
         graph_notgroup.delete_edges(del_edg_src)
         graph_notgroup.delete_edges(del_edg_tar)
-        count_notgroup = ShortestPath.shortest_path_number_igraph(graph_notgroup)
-        count_group = np.subtract(count_all, count_notgroup)
-        count_group_idx = count_group < 0
-        count_group[count_group_idx] = count_all[count_group_idx]
+        count_notgroup = ShortestPath.get_shortestpath_count(graph_notgroup, nodes=None, cmode=cmode)
 
-        # np.seterr(divide='ignore', invalid='ignore')
-        # group_btw_temp = np.divide(count_group, count_all)
-        group_btw_temp = np.divide(count_group, count_all, out=np.zeros_like(count_group, dtype=float), where=count_all != 0)
+        # Count geodesics that do pass through the group
+        count_group = ShortestPath.subtract_count_dist_matrix(count_all, count_notgroup)
 
-        # discard group-nodes
+        # Divide the number of geodesics (g(C) / g)
+        group_btw_temp = np.divide(count_group, count_all,
+                                   out=np.zeros_like(count_group, dtype=np.float),
+                                   where=count_all != 0)
+
+        # discard group-nodes (set group nodes' rows and columns to zero)
         group_btw_temp[node_idx] = 0
         group_btw_temp[:, node_idx] = 0
 
-        # sum not nan counts
-        group_btw = np.nansum(group_btw_temp)
+        # sum not-nan counts upper triangular matrix (SUM u<v)
+        group_btw = np.sum(np.triu(group_btw_temp, 0), dtype=np.float) / 2
 
         # normalization
         graph_size = len(graph.vs)
         group_size = len(nodes)
-        group_btw = (2 * group_btw) / ((graph_size - group_size) * (graph_size - group_size -1))
+        group_btw = (2 * group_btw) / ((graph_size - group_size) * (graph_size - group_size - 1))
 
-        return group_btw
-
-        # threadsperblock = 32
-        # blockspergrid = math.ceil(count3.shape[0] / threadsperblock)
-        # shortest_path_number_cpu[blockspergrid, threadsperblock](adj_mat, count3)
-        # TODO: calculate counts of modified graph
-
+        return round(group_btw, 2)
 
     @staticmethod
     @check_graph_consistency
@@ -204,7 +204,7 @@ class LocalTopology:
     @vertex_doctor
     def group_closeness(graph: Graph, nodes: list, distance: GroupDistanceEnum, np_paths=None) -> float:
         """
-        Computes the closeness of a group of nodes.
+        Computes the closeness centrality of a group of nodes.
         The *group closeness* is defined as the sum of the distances from the group to all vertices outside the group.
         As with individual closeness, this produces an inverse measure of closeness as larger numbers indicate
         less centrality. This definition deliberately leaves unspecified how distance from the group to an outside
