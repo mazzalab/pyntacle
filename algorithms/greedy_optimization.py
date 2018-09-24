@@ -189,19 +189,26 @@ class GreedyOptimization:
         notS = set(node_indices).difference(set(S))
 
         utils = gu(graph=graph)
+
         if kp_type == KpposEnum.mreach and m is None:
             raise WrongArgumentError("'m' is required for the mreach algorithm")
+
         elif kp_type == KpposEnum.mreach:
+
+
             if not isinstance(m, int) or m <= 0:
                 raise TypeError({"'m' must be a positive integer value"})
             else:
                 if implementation != CmodeEnum.igraph:
+
                     sps = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
+
                     type_func = partial(kp.mreach, graph=graph, nodes=S_names, m=m, max_distance=max_distance,
                                         implementation=implementation, sp_matrix=sps)
                 else:
                     type_func = partial(kp.mreach, graph=graph, nodes=S_names, m=m, max_distance=max_distance,
                                         implementation=implementation)
+
         elif kp_type == KpposEnum.dR:
             if implementation != CmodeEnum.igraph:
                 sps = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
@@ -213,8 +220,11 @@ class GreedyOptimization:
         else:
             raise KeyError("'kp_type' not valid. It must be one of the following: {}".format(list(KpposEnum)))
 
-        reachability_score = type_func()
+
+        reachability_score = type_func(graph=graph)
+
         kppset_score_pairs_history = {tuple(S): reachability_score}
+
 
         optimal_set_found = False
         while not optimal_set_found:
@@ -251,6 +261,7 @@ class GreedyOptimization:
             else:
                 optimal_set_found = True
         final = graph.vs(S)["name"]
+
         sys.stdout.write("An optimal kpp-set of size {} is ({}) with score {}\n".format(kp_size, ', '.join(final),
                                                                                    reachability_score))
         return final, round(reachability_score, 5)

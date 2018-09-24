@@ -41,7 +41,7 @@ class ModuleUtils():
     def __init__(self, modules: list, graph: Graph, algorithm: str):
         """
         Implements all the necessary step to check a graph object and add the reserved attribute "__module_number" to
-        each submodule in order to retrace it back. If a graph attribute with that name aòready exist, it will be
+        each submodule in order to retrace it back. If a graph attribute with that name already exists, it will be
         overwritten
         :param modules:a list of graphs already divided by the CommunityFinder class
         :param graph: the input graph used  to find modules

@@ -223,10 +223,13 @@ class KeyPlayer:
 
             if implementation == CmodeEnum.igraph:
                 shortest_path_lengths = sp.shortest_path_igraph(graph, nodes=nodes)
+
             else:
-                if not sp_matrix:
+                if sp_matrix is None:
                     shortest_path_lengths = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=nodes)
+
                 else:
+
                     if not isinstance(sp_matrix, np.ndarray):
                         raise ValueError("'sp_matrix' must be a numpy.ndarray instance")
                     elif sp_matrix.shape[0] != graph.vcount():

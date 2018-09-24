@@ -204,6 +204,7 @@ class GOWrapper:
                 raise ValueError("\"m\" must be a positive integer for mreach ")
 
         go_results = self.go.reachability(graph=self.graph, kp_size=kp_size, kp_type=kp_type, max_distance=max_distance, seed=seed, m=m, implementation=implementation)
+
         self.results[kp_type.name] = [go_results[0], go_results[1]]
 
     def get_results(self) -> dict:
