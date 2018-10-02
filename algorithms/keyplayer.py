@@ -207,49 +207,53 @@ class KeyPlayer:
 
         if not isinstance(m, int):
             raise TypeError("'m' must be an integer value")
+
         elif m < 1:
             raise ValueError("'m' must be greater than zero")
+
         elif m >= graph.vcount() + 1:
             raise ValueError("'m' must be less or equal than the total number of vertices")
-        elif not isinstance(implementation, CmodeEnum):
+
+        if not isinstance(implementation, CmodeEnum):
             raise KeyError("'implementation' not valid. It must be one of the following: {}".format(list(CmodeEnum)))
-        elif max_distance:
+
+        if max_distance:
                 if not isinstance(max_distance, int):
                     raise TypeError("'max_distance' must be an integer value greater than one")
                 if max_distance < 1:
                     raise ValueError("'max_distance' must be an integer value greater than one")
-        else:
-            index_list = gu(graph=graph).get_node_indices(node_names=nodes)
 
-            if implementation == CmodeEnum.igraph:
-                shortest_path_lengths = sp.shortest_path_igraph(graph, nodes=nodes)
+        index_list = gu(graph=graph).get_node_indices(node_names=nodes)
+
+        if implementation == CmodeEnum.igraph:
+            shortest_path_lengths = sp.shortest_path_igraph(graph, nodes=nodes)
+
+        else:
+            if sp_matrix is None:
+                shortest_path_lengths = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=nodes)
 
             else:
-                if sp_matrix is None:
-                    shortest_path_lengths = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=nodes)
 
+                if not isinstance(sp_matrix, np.ndarray):
+                    raise ValueError("'sp_matrix' must be a numpy.ndarray instance")
+                elif sp_matrix.shape[0] != graph.vcount():
+                    raise WrongArgumentError("The dimension of 'sp matrix' is different from the total "
+                                             "number of nodes")
                 else:
+                    shortest_path_lengths = sp_matrix[index_list, :]
 
-                    if not isinstance(sp_matrix, np.ndarray):
-                        raise ValueError("'sp_matrix' must be a numpy.ndarray instance")
-                    elif sp_matrix.shape[0] != graph.vcount():
-                        raise WrongArgumentError("The dimension of 'sp matrix' is different from the total "
-                                                 "number of nodes")
-                    else:
-                        shortest_path_lengths = sp_matrix[index_list, :]
+        if max_distance:
+            shortest_path_lengths = ShortestPathModifier.set_nparray_to_inf(shortest_path_lengths, max_distance)
 
-            if max_distance:
-                shortest_path_lengths = ShortestPathModifier.set_nparray_to_inf(shortest_path_lengths, max_distance)
+        mreach = 0
+        vminusk = set(graph.vs.indices) - set(index_list)
+        for j in vminusk:
+            for spl in shortest_path_lengths:
+                if spl[j] <= m:
+                    mreach += 1
+                    break
 
-            mreach = 0
-            vminusk = set(graph.vs.indices) - set(index_list)
-            for j in vminusk:
-                for spl in shortest_path_lengths:
-                    if spl[j] <= m:
-                        mreach += 1
-                        break
-
-            return mreach
+        return mreach
 
     @staticmethod
     @check_graph_consistency

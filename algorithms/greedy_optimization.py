@@ -146,7 +146,7 @@ class GreedyOptimization:
                         optimal_set_found = True
 
                 final = graph.vs(S)["name"]
-                sys.stdout.write("An optimal kpp-set of size {} for metric {} is ({}) with score {}\n".format(kp_size, KpnegEnum.value, ', '.join(final),
+                sys.stdout.write("An optimal kp-set for metric {} of size {} is ({}) with score {}\n".format(kp_type.name,kp_size, ', '.join(final),
                                                                                  fragmentation_score))
                 return final, round(fragmentation_score, 5)
 
@@ -262,6 +262,6 @@ class GreedyOptimization:
                 optimal_set_found = True
         final = graph.vs(S)["name"]
 
-        sys.stdout.write("An optimal kpp-set of size {} for metric {} is ({}) with score {}\n".format(kp_size, KpposEnum.value, ', '.join(final),
+        sys.stdout.write("An optimal kp-set for metric {} of size {}  is ({}) with score {}\n".format(kp_type.name, kp_size, ', '.join(final),
                                                                                    reachability_score))
         return final, round(reachability_score, 5)
