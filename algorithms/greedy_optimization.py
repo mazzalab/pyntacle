@@ -7,7 +7,7 @@ https://doi.org/10.1007/s10588-006-7084-x
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The Pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.2.3.1"
+__version__ = "0.2.3.2"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
@@ -146,7 +146,7 @@ class GreedyOptimization:
                         optimal_set_found = True
 
                 final = graph.vs(S)["name"]
-                sys.stdout.write("An optimal kp-set for metric {} of size {} is ({}) with score {}\n".format(kp_type.name,kp_size, ', '.join(final),
+                sys.stdout.write("An optimal kp-set for metric {} of size {} is:\n{}\nwith score {}\n".format(kp_type.name,kp_size, "\t" + ", ".join(final),
                                                                                  fragmentation_score))
                 return final, round(fragmentation_score, 5)
 
@@ -265,6 +265,6 @@ class GreedyOptimization:
         if kp_type != KpposEnum.mreach:
             reachability_score = round(reachability_score, 5)
 
-        sys.stdout.write("An optimal kp-set for metric {} of size {}  is ({}) with score {}\n".format(kp_type.name, kp_size, ', '.join(final),
+        sys.stdout.write("An optimal kp-set for metric {} of size {}  is:\n{}\nwith score {}\n".format(kp_type.name, kp_size, "\t"+", ".join(final),
                                                                                    reachability_score))
         return final, reachability_score

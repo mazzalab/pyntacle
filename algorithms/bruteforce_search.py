@@ -7,7 +7,7 @@ It hence selects the KPP-set with the best score.
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The Pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.2.3.1"
+__version__ = "0.2.3.2-dev"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
@@ -180,12 +180,12 @@ class BruteforceSearch:
         maxKpp = round(maxKpp, 5)
         if len(final) > 1:
             sys.stdout.write(
-                "The best kpp-sets for metric {} of size {} are:\n{}with score {}\n".format(kp_type.name, kp_size,",\n".join([",".join(x) for x in final])+"\n",
+                "The best kpp-sets for metric {} of size {} are:\n\t{}with score {}\n".format(kp_type.name, kp_size,",\n\t".join([",".join(x) for x in final])+"\n",
                                                                                            maxKpp))
         else:
             sys.stdout.write(
-                "The best kpp-sets for metric {} of size {} is:\n{}with score {}\n".format(kp_type.name, kp_size,
-                                                                                            ",\n".join([",".join(x) for x in final]) + "\n", maxKpp))
+                "The best kpp-sets for metric {} of size {} is:\n\t{}with score {}\n".format(kp_type.name, kp_size,
+                                                                                            ",\n\t".join([",".join(x) for x in final]) + "\n", maxKpp))
 
         return final, maxKpp
 
@@ -298,12 +298,12 @@ class BruteforceSearch:
 
         if len(final) > 1:
             sys.stdout.write(
-                "The best kpp-sets for metric {} of size {} are:\n{}with score {}\n".format(kp_type.name, kp_size,
-                                                                                           ",\n".join([",".join(x) for x in final])+"\n", maxKpp))
+                "The best kpp-sets for metric {} of size {} are:\n\t{}with score {}\n".format(kp_type.name, kp_size,
+                                                                                           ",\n\t".join([",".join(x) for x in final])+"\n", maxKpp))
         else:
             sys.stdout.write(
-                "The best kpp-sets for metric {} of size {} is:\n{}with score {}\n".format(kp_type.name, kp_size,
-                                                                                            ",\n".join([",".join(x) for x in final]) + "\n", maxKpp))
+                "The best kpp-sets for metric {} of size {} is:\n\t{}with score {}\n".format(kp_type.name, kp_size,
+                                                                                            ",\n\t".join([",".join(x) for x in final]) + "\n", maxKpp))
 
         return final, maxKpp
 

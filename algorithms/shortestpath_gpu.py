@@ -4,7 +4,7 @@ a NVIDIA-compliant GPU, if available"""
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The Pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.2.3.1"
+__version__ = "0.2.3.2"
 __maintainer__ = "Tommaso Mazza"
 __email__ = "t.mazza@css-mendel.it"
 __status__ = "Development"
