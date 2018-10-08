@@ -334,20 +334,20 @@ class KeyPlayer():
                 if metric == KpnegEnum.F.name or metric == KpnegEnum.dF.name:
                     results[metric].append(initial_results[metric])
                     sys.stdout.write(
-                        "Starting value for {0} is {1}.\n Removing nodes ({2}) gives a {0} value of {3}\n\n".format(
+                        "Starting value for {0} is {1}. Removing nodes ({2}) gives a {0} value of {3}\n".format(
                             metric, results[metric][2], ', '.join(self.args.nodes), results[metric][1]))
 
                 elif metric == KpposEnum.mreach.name:
                     results[metric].append(self.args.m_reach)
                     perc_node_reached = round((results[metric][1] + len(self.args.nodes)) / graph.vcount() * 100, 3)
                     sys.stdout.write(
-                        "Nodes ({0}) have an {1} of {2}. This Means they can reach the {3}% of nodes in {4} steps\n\n".format(
+                        "Nodes ({0}) have an {1} of {2}. This Means they can reach the {3}% of nodes in {4} steps\n".format(
                             ', '.join(results[metric][0]), metric, results[metric][1], perc_node_reached,
                             self.args.m_reach))
 
                 else: #dR case
                     sys.stdout.write(
-                        "{0} value for nodes ({1}) is {2}\n\n".format(metric, ', '.join(results[metric][0]),
+                        "{0} value for nodes ({1}) is {2}\n".format(metric, ', '.join(results[metric][0]),
                                                                   results[metric][1]))
             r.create_report(report_type=ReportEnum.KPinfo, report=results)
             sys.stdout.write(Fore.RED + Style.BRIGHT + "### END OF SUMMARY ###\n\n" + Style.RESET_ALL)
