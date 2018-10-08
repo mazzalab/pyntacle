@@ -255,7 +255,7 @@ class KeyPlayer():
 
             results.update(kp_runner.get_results())
             
-            sys.stdout.write(Fore.RED + Style.BRIGHT +"\n### RUN SUMMARY ###\n" + Style.RESET_ALL)
+            sys.stdout.write(Fore.RED + Style.BRIGHT + "\n### RUN SUMMARY ###\n" + Style.RESET_ALL)
             sys.stdout.write("kp set size: {}\n".format(self.args.k_size))
             for kp in results.keys(): #ONE OF THE keys represent the algorithm, so no else exit in here
                 if len(results[kp][0])>1 and self.args.implementation=='brute-force':
@@ -293,7 +293,7 @@ class KeyPlayer():
                             plurals[0], self.args.k_size, self.args.m_reach, kp, plurals[1], ', '.join(list_of_results),
                             results[kp][1], node_perc_reached))
             
-            sys.stdout.write("### END OF SUMMARY ###\n\n")
+            sys.stdout.write(Fore.RED + Style.BRIGHT + "### END OF SUMMARY ###\n\n" + Style.RESET_ALL)
 
 
             if self.args.implementation == "brute-force":
@@ -327,7 +327,7 @@ class KeyPlayer():
                                     max_distance=self.args.max_distances, implementation=implementation)
 
             results.update(kp_runner.get_results())
-            sys.stdout.write(Fore.RED + Style.BRIGHT +"\n### RUN SUMMARY ###\n" + Style.RESET_ALL)
+            sys.stdout.write(Fore.RED + Style.BRIGHT + "\n### RUN SUMMARY ###\n" + Style.RESET_ALL)
             sys.stdout.write("Keyplayer metric(s) {}:\n".format(self.args.type))
             for metric in results.keys():
 
@@ -350,7 +350,7 @@ class KeyPlayer():
                         "{0} value for nodes ({1}) is {2}\n\n".format(metric, ', '.join(results[metric][0]),
                                                                   results[metric][1]))
             r.create_report(report_type=ReportEnum.KPinfo, report=results)
-            sys.stdout.write("### END OF SUMMARY ###\n\n")
+            sys.stdout.write(Fore.RED + Style.BRIGHT + "### END OF SUMMARY ###\n\n" + Style.RESET_ALL)
 
         else:
             log.critical(
