@@ -262,6 +262,9 @@ class GreedyOptimization:
                 optimal_set_found = True
         final = graph.vs(S)["name"]
 
+        if kp_type != KpposEnum.mreach:
+            reachability_score = round(reachability_score, 5)
+
         sys.stdout.write("An optimal kp-set for metric {} of size {}  is ({}) with score {}\n".format(kp_type.name, kp_size, ', '.join(final),
                                                                                    reachability_score))
-        return final, round(reachability_score, 5)
+        return final, reachability_score

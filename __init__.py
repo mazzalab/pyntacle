@@ -1,5 +1,5 @@
 """
-Imports for using pyntacle as package
+Imports for using Pyntacle as Python package
 """
 import sys
 import os

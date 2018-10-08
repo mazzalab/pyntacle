@@ -19,11 +19,11 @@ Instructions for installing from source on various Linux distributions
 and MacOS X are also provided.
 
 
-### Installing pyntacle using Anaconda or Miniconda
+### Installing Pyntacle using Anaconda or Miniconda
 
 Installing Pyntacle and all its dependencies can be challenging for
 inexperienced users. There are several advantages in using Anaconda to
-install not only pyntacle, but also Python and other packages: it is
+install not only Pyntacle, but also Python and other packages: it is
 cross platform (Linux, MacOS X, Windows), you do not require
 administrative rights to install it (it goes in the user’s home
 directory), it allows you to work in virtual environments, which can be
@@ -64,7 +64,7 @@ in it. To put your self inside this environment run:
 source activate name_of_my_env
 ```
 
-And finally, install the latest version of pyntacle:
+And finally, install the latest version of Pyntacle:
 
 ```bash
 conda install -y -c bfxcss -c conda-forge pyntacle
@@ -94,20 +94,20 @@ Then, activate the newly created environment:
 activate name_of_my_env
 ```
 
-Finally, install the latest version of pyntacle:
+Finally, install the latest version of Pyntacle:
 
 ```bash
 conda install -y -c bfxcss -c conda-forge pyntacle
 ```
 
-### Installing pyntacle from source
+### Installing Pyntacle from source
 Installing from source is advised for advanced users only. The following
 instructions were written for Mac OS v.11+ and a few major Linux
 distros. System requirements can vary for other distros/versions.
 
 The source code can be downloaded from our GitHub
 [releases](https://github.com/mazzalab/pyntacle/releases) page as a
-.tar.gz file. Before trying to install pyntacle, there are system
+.tar.gz file. Before trying to install Pyntacle, there are system
 requirements that need to be satisfied on each platform.
 
 #### Debian, Ubuntu
@@ -148,8 +148,8 @@ yum groupinstall -y development kernel-headers-`uname -r` kernel-devel-`uname -r
 wget https://github.com/pygobject/pycairo/releases/download/v1.14.1/pycairo-1.14.1.tar.gz ; tar -xf pycairo-1.14.1.tar.gz; cd pycairo-1.14.1; python3.6 setup.py build ; sudo python3.6 setup.py install; cd ..; rm -rf pycairo-1.14.1*
 ```
 
-Finally, extract the pyntacle [_source tar.gz_](https://github.com/mazzalab/pyntacle/releases) file, navigate into the
-extracted folder and run as an administrator (or add ```--user``` if you do not have admin rights and prefer to install the pyntacle binary in ```~/.local/bin```):
+Finally, extract the Pyntacle [_source tar.gz_](https://github.com/mazzalab/pyntacle/releases) file, navigate into the
+extracted folder and run as an administrator (or add ```--user``` if you do not have admin rights and prefer to install the Pyntacle binary in ```~/.local/bin```):
 
 ```bash
 python3.6 setup.py install
@@ -169,7 +169,7 @@ xcode-select --install
 ```
 and following the prompt on screen.
 
-Additionally, you need other dependencies to compile pyntacle. You can
+Additionally, you need other dependencies to compile Pyntacle. You can
 easily fetch them using the package manager
 [Mac Ports](https://www.macports.org/install.php) .
 
@@ -179,7 +179,7 @@ Once Mac Ports is installed, getting the dependencies is easy:
 port install py36-cairo py36-setuptools py36-pandas py36-seaborn py36-colorama py36-xlsxwriter py36-igraph py36-numba py36-psutil
 ```
 
-Finally, extract the pyntacle [_source tar.gz_](https://github.com/mazzalab/pyntacle/releases) file, navigate into it and run:
+Finally, extract the Pyntacle [_source tar.gz_](https://github.com/mazzalab/pyntacle/releases) file, navigate into it and run:
 
 ```bash
 python3.6 setup.py install --user
@@ -222,7 +222,7 @@ Changelog for current and past releases:
 
 ### 0.1.1:
 
--  The first release of pyntacle.
+-  The first release of Pyntacle.
 
 
 

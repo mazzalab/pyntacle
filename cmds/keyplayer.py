@@ -243,22 +243,13 @@ class KeyPlayer():
                         "Finding best set of kp-nodes of size {0} using an MREACH measure of {1} (kp pos measure)\n".format(
                             self.args.k_size, self.args.m_reach))
 
-                    print("ENTRO IN MREACH")
-                    input()
-
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.mreach, m=self.args.m_reach,
                                                max_distance=self.args.max_distances,
                                                implementation=implementation, threads=self.args.threads)
 
-                    print("ESCO DA MREACH")
-
-
-
             else:
-                sys.stdout.write("Wrong implementation. Please contact pyntacle Developers and sent this error message, along with a command line and a log.\nQuitting.\n")
+                sys.stdout.write("Wrong implementation. Please contact Pyntacle developers and sent this error message, along with a command line and a log.\nQuitting.\n")
                 sys.exit(1)
-            
-            sys.stdout.write("Search for the best kp set completed!\n")
 
             results.update(kp_runner.get_results())
             

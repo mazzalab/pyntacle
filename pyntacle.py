@@ -82,10 +82,10 @@ class App:
 
         parser = argparse.ArgumentParser(
             description="Main description",
-            usage=Fore.RED + Style.BRIGHT + 'pyntacle.py' + Fore.GREEN + ' <command>' + Fore.RED
+            usage=Fore.RED + Style.BRIGHT + 'pyntacle' + Fore.GREEN + ' <command>' + Fore.RED
                   + ''' [<args>]
 
-The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
+The available commands in Pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                   Fore.GREEN + '\n  keyplayer       ' + Fore.CYAN + 'Compute key-player metrics for a specifc'
                                                                     ' set of nodes (kp-info) or perform the '
                                                                     'search of set of nodes that maximize key'
@@ -114,14 +114,14 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                                                     'filtered by nodes and components number.' +
                   Fore.GREEN + '\n  test            ' + Fore.CYAN + 'Performs a series of tests to check '
                                                                     'Pyntacle integrity. Useful after '
-                                                                    'installing pyntacle and for debugging '
+                                                                    'installing Pyntacle and for debugging '
                                                                     'purposes.\n' +
                   Style.RESET_ALL + 100 * '-', )
 
         parser.add_argument('command', help='Subcommand to run', type=lambda s: s.lower())
         parser.add_argument('-v', action="count", help="Verbosity level of the internal Pyntacle logger. "
                                                        "-vvv is the highest level (for debugging)")
-        parser.add_argument('-V', "--version", action="version", version="pyntacle v0.2.3.1",
+        parser.add_argument('-V', "--version", action="version", version="Pyntacle v0.2.3.1",
                             help="Shows program version number and quits")
 
         # Detect verbosity
@@ -159,7 +159,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                         '   kp-info\t           Computes specified key player metrics for a selected subset of nodes.\n' + 100 * '-',
             formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=100,
                                                                               max_help_position=100),
-            usage=Fore.RED + Style.BRIGHT + 'pyntacle.py keyplayer'
+            usage=Fore.RED + Style.BRIGHT + 'pyntacle keyplayer'
                   + Fore.GREEN + Style.BRIGHT + ' {kp-finder, kp-info}'
                   + Fore.LIGHTBLUE_EX + ' --type {pos | neg | all | F | dF | dR | mreach}' + Fore.RED + ' [arguments]\n' + Style.RESET_ALL)
 
@@ -194,7 +194,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument('-M', '--max-distances', metavar='', type=int, help='(Optional) The number of steps upon which two nodes are considered disconnected. By default, no maximum distance is set.')
 
         parser.add_argument('-t', "--type", metavar='', choices=['pos', 'neg', 'all', 'F', 'dF', 'dR', 'mreach'], default='all',
-                            help="The key player metric(s) that will be computed by pyntacle. Choices are "
+                            help="The key player metric(s) that will be computed by Pyntacle. Choices are "
                                  "'all' (all metrics), 'pos' (all reachability metrics, hence dR and mreach),"
                                  " 'neg' (all fragmentation metrics, both F and dF). 'dR', 'mreach', 'F', "
                                  "'dF'. Default is 'all'.")
@@ -219,7 +219,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument('-P', '--plot-format', choices=["svg", "pdf", "png"], default="pdf",
                             type=lambda s: s.lower(), metavar='',
                             help="Use this option to specify the format of choice of the plots produced by "
-                                 "Pyntacle and stored in the “pyntacle-plots” directory inside your output "
+                                 "Pyntacle and stored in the “Plots” directory inside your output "
                                  "directory. Choices are “pdf”, “png” and “svg”. Default is “pdf”. "
                                  "Overridden by --no-plot. ")
 
@@ -256,7 +256,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         # Subparser for the kp-info case
         info_case_parser = subparsers.add_parser("kp-info",
-                                                  usage='pyntacle.py keyplayer kp-info [-h] [-m] [-f] [-N] [-d] [-L] [-M] [-T] [--input-separator] [--save-binary] [--report-format] [--plot-format] [--plot-dim] [--no-plot] --type [TYPE] --input-file [FILE] --nodes NODES',
+                                                  usage='pyntacle keyplayer kp-info [-h] [-m] [-f] [-N] [-d] [-L] [-M] [-T] [--input-separator] [--save-binary] [--report-format] [--plot-format] [--plot-dim] [--no-plot] --type [TYPE] --input-file [FILE] --nodes NODES',
                                                   add_help=False, parents=[parser],
                                                   formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                       max_help_position=100,
@@ -266,7 +266,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                        required=True)
         # Subparser for kp-finder case
         finder_case_parser = subparsers.add_parser("kp-finder",
-                                                   usage='pyntacle.py keyplayer kp-finder [-h] [-m] [-f] [--input-separator] [-N] [-d] [-L] [-M] [-T] [-I] [-S] [--save-binary] [--report-format] [--plot-format] [--plot-dim] [--no-plot] --type [TYPE] --input-file [FILE] -k [K]',
+                                                   usage='pyntacle keyplayer kp-finder [-h] [-m] [-f] [--input-separator] [-N] [-d] [-L] [-M] [-T] [-I] [-S] [--save-binary] [--report-format] [--plot-format] [--plot-dim] [--no-plot] --type [TYPE] --input-file [FILE] -k [K]',
                                                    add_help=False, parents=[parser],
                                                    formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                        max_help_position=100,
@@ -295,7 +295,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         if len(sys.argv) < 4 or (sys.argv[2] not in ('kp-finder', 'kp-info')):
             parser.print_help()
             raise Error(
-                'Usage: pyntacle.py keyplayer {kp-finder, kp-info} [arguments] (use --help for command description)')
+                'Usage: pyntacle keyplayer {kp-finder, kp-info} [arguments] (use --help for command description)')
 
         kp = kp_command(args)
         try:
@@ -318,7 +318,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
             formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=100,
                                                                               max_help_position=100),
-            usage=Fore.RED + Style.BRIGHT + 'pyntacle.py metrics' + Fore.GREEN + Style.BRIGHT + ' {global, local}' + Fore.RED +
+            usage=Fore.RED + Style.BRIGHT + 'pyntacle metrics' + Fore.GREEN + Style.BRIGHT + ' {global, local}' + Fore.RED +
                   ' [arguments]' + Style.RESET_ALL)
         # NOT prefixing the argument with -- means it's not optional
         parser.add_argument('-i', '--input-file', metavar='',
@@ -356,7 +356,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument('-P', '--plot-format', metavar='', choices=["svg", "pdf", "png"], default="pdf",
                             type=lambda s: s.lower(),
                             help="Use this option to specify the format of choice of the plots produced by "
-                                 "Pyntacle and stored in the “pyntacle-plots” directory inside your output "
+                                 "Pyntacle and stored in the “Plots” directory inside your output "
                                  "directory. Choices are “pdf”, “png” and “svg”. Default is “pdf”. "
                                  "Overridden by --no-plot.")
 
@@ -399,7 +399,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         # Subparser for the nodes case
         local_subparser = subparsers.add_parser("local",
-                                                usage='pyntacle.py metrics local [-h] [-f] [-N] [-L] [--input-separator] [--save-binary] [--plot-format] [--plot-dim] [--no-plot] --input-file [FILE] --nodes NODES',
+                                                usage='pyntacle metrics local [-h] [-f] [-N] [-L] [--input-separator] [--save-binary] [--plot-format] [--plot-dim] [--no-plot] --input-file [FILE] --nodes NODES',
                                                 add_help=False, parents=[parser],
                                                 formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                     max_help_position=100,
@@ -430,7 +430,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         # Subparser for global case
         global_subparser = subparsers.add_parser("global",
-                                                 usage='pyntacle.py metrics global [-h] [-f] [-N] [-L] [--input-separator] [--save-binary] [--plot-format] [--plot-dim] [--no-plot] --input-file [FILE] -n/--no-nodes',
+                                                 usage='pyntacle metrics global [-h] [-f] [-N] [-L] [--input-separator] [--save-binary] [--plot-format] [--plot-dim] [--no-plot] --input-file [FILE] -n/--no-nodes',
                                                  add_help=False, parents=[parser],
                                                  formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                      max_help_position=100,
@@ -445,9 +445,9 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         args = parser.parse_args(sys.argv[2:])
 
         if len(sys.argv) < 4 or (sys.argv[2] not in ('global', 'local')):
-            raise Error('usage: pyntacle.py metrics {global, local} [arguments] (use --help for command description)')
+            raise Error('usage: pyntacle metrics {global, local} [arguments] (use --help for command description)')
 
-        sys.stdout.write('Running pyntacle metrics\n')
+        sys.stdout.write('Running Pyntacle metrics\n')
         mt = metrics_command(args)
         try:
             mt.run()
@@ -459,7 +459,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
             description='Easily convert a network file from one format to another.',
             formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=140,
                                                                               max_help_position=100),
-            usage=Fore.RED + Style.BRIGHT + 'pyntacle.py convert [arguments]' + Style.RESET_ALL)
+            usage=Fore.RED + Style.BRIGHT + 'pyntacle convert [arguments]' + Style.RESET_ALL)
 
         parser.add_argument('-i', '--input-file', metavar="", required=True,
                             help=" (Required) Path to the network input file. It can be an Adjacency Matrix, "
@@ -514,7 +514,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         # NOT prefixing the argument with -- means it's not optional
         args = parser.parse_args(sys.argv[2:])
         if len(sys.argv) < 4:
-            raise Error('usage: pyntacle.py convert [arguments] (use --help for command description)')
+            raise Error('usage: pyntacle convert [arguments] (use --help for command description)')
 
         if args.format is not None:
             if format_dictionary[args.format] == format_dictionary[args.output_format]:
@@ -541,7 +541,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                         '  small-world\t      Generate a network following the Watts-Strogatz model.\n'+ 90 * '-',
             formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=140,
                                                                               max_help_position=100),
-            usage=Fore.RED + Style.BRIGHT + 'pyntacle.py generate' + Fore.GREEN + Style.BRIGHT +
+            usage=Fore.RED + Style.BRIGHT + 'pyntacle generate' + Fore.GREEN + Style.BRIGHT +
                   ' {random, scale-free, tree, small-world}' + Fore.RED +
                   ' [arguments]' + Style.RESET_ALL+ Style.RESET_ALL)
 
@@ -575,7 +575,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument('-P', '--plot-format', choices=["svg", "pdf", "png"], metavar='', default="pdf",
                             type=lambda s: s.lower(),
                             help="Use this option to specify the format of choice of the plots produced by "
-                                 "Pyntacle and stored in the “pyntacle-plots” directory inside your output"
+                                 "Pyntacle and stored in the “Plots” directory inside your output"
                                  " directory. Choices are “pdf”, “png” and “svg”. Default is “pdf”."
                                  " Overridden by --no-plot.")
 
@@ -615,7 +615,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         # Subparser for the nodes case
 
         random_subparser = subparsers.add_parser("random",
-                                                 usage='pyntacle.py generate random [-h] [-o] [-d] [-u] [--no-output-header] [--output-separator] [--plot-format] [--plot-dim] [--no-plot] [-S INT] [-R INT] [-n INT] [-p FLOAT] [-e INT]',
+                                                 usage='pyntacle generate random [-h] [-o] [-d] [-u] [--no-output-header] [--output-separator] [--plot-format] [--plot-dim] [--no-plot] [-S INT] [-R INT] [-n INT] [-p FLOAT] [-e INT]',
                                                  add_help=False, parents=[parser],
                                                  formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                      max_help_position=100,
@@ -633,7 +633,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         
         smallworld_subparser = subparsers.add_parser("small-world",
-                                                     usage='pyntacle.py generate small-world [-h] [-o] [-d] [-u] [--no-output-header] [--output-separator] [--plot-format] [--plot-dim] [--no-plot] [-S INT] [-R INT] [-l INT] [-s INT] [--nei INT] [-p FLOAT]',
+                                                     usage='pyntacle generate small-world [-h] [-o] [-d] [-u] [--no-output-header] [--output-separator] [--plot-format] [--plot-dim] [--no-plot] [-S INT] [-R INT] [-l INT] [-s INT] [--nei INT] [-p FLOAT]',
                                                      add_help=False, parents=[parser],
                                                      formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                          max_help_position=100,
@@ -658,7 +658,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                           help="Rewiring Probability. Default is 0.5")
         
         scalefree_subparser = subparsers.add_parser("scale-free",
-                                                    usage='pyntacle.py generate scale-free [-h] [-o] [-d] [-u] [--no-output-header] [--output-separator] [--plot-format] [--plot-dim] [--no-plot] [-S INT] [-R INT] [-n INT] [-a INT]',
+                                                    usage='pyntacle generate scale-free [-h] [-o] [-d] [-u] [--no-output-header] [--output-separator] [--plot-format] [--plot-dim] [--no-plot] [-S INT] [-R INT] [-n INT] [-a INT]',
                                                     add_help=False, parents=[parser],
                                                     formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                         max_help_position=100,
@@ -674,7 +674,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                               " be a number between 10 and 100 (chosen randomly). ")
 
         tree_subparser = subparsers.add_parser("tree",
-                                               usage='pyntacle.py generate tree [-h] [-o] [-d] [-u] [--no-output-header] [--output-separator] [--plot-format] [--plot-dim] [--no-plot] [-S INT] [-R INT] [-n INT] [-c INT]',
+                                               usage='pyntacle generate tree [-h] [-o] [-d] [-u] [--no-output-header] [--output-separator] [--plot-format] [--plot-dim] [--no-plot] [-S INT] [-R INT] [-n INT] [-c INT]',
                                                add_help=False, parents=[parser],
                                                formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                    max_help_position=100,
@@ -690,9 +690,9 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         if len(sys.argv) < 4 or (sys.argv[2] not in ('random', 'scale-free', 'tree', 'small-world')):
             raise Error(
-                'usage: pyntacle.py generate {random, scale-free, tree, small-world} [arguments] (use --help for command description)')
+                'usage: pyntacle generate {random, scale-free, tree, small-world} [arguments] (use --help for command description)')
 
-        sys.stdout.write('Running pyntacle generate\n')
+        sys.stdout.write('Running Pyntacle generate\n')
         original_args = deepcopy(args)
         for r in range(0, args.repeat):
             args = deepcopy(original_args)
@@ -722,7 +722,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                         '  community-walktrap\t      Performs module detection on the input network using the community walktrap algorithm.\n' + 90 * '-',
             formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=140,
                                                                               max_help_position=100),
-            usage=Fore.RED + Style.BRIGHT + 'pyntacle.py communities' + Fore.GREEN + Style.BRIGHT + ' {fastgreedy, '
+            usage=Fore.RED + Style.BRIGHT + 'pyntacle communities' + Fore.GREEN + Style.BRIGHT + ' {fastgreedy, '
                                                                                                    'infomap, leading-eigenvector, community-walktrap} ' + Fore.RED + '[arguments]' + Style.RESET_ALL)
 
         parser.add_argument('-i', '--input-file', metavar='',
@@ -792,7 +792,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument('-P', '--plot-format', choices=["svg", "pdf", "png"], default="pdf",
                             type=lambda s: s.lower(),
                             help="Use this option to specify the format of choice of the plots produced by "
-                                 "Pyntacle and stored in the “pyntacle-plots” directory inside your output "
+                                 "Pyntacle and stored in the “Plots” directory inside your output "
                                  "directory. Choices are “pdf”, “png” and “svg”. Default is “pdf”. "
                                  "Overridden by --no-plot.")
 
@@ -836,7 +836,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         subparsers = parser.add_subparsers(metavar='', help=argparse.SUPPRESS)
 
         fastgreedy_subparser = subparsers.add_parser("fastgreedy",
-                                                     usage='pyntacle.py communities fastgreedy [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [-P] [--input-separator] [--plot-dim] [--no-plot] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE] [--weights FILE] [--weights-format] [--clusters]',
+                                                     usage='pyntacle communities fastgreedy [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [-P] [--input-separator] [--plot-dim] [--no-plot] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE] [--weights FILE] [--weights-format] [--clusters]',
                                                      add_help=False, parents=[parser],
                                                      formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                          max_help_position=100,
@@ -864,7 +864,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                                "is disabled. ")
 
         infomap_subparser = subparsers.add_parser("infomap",
-                                                  usage='pyntacle.py communities infomap [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [-P] [--input-separator] [--plot-dim] [--no-plot] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE]',
+                                                  usage='pyntacle communities infomap [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [-P] [--input-separator] [--plot-dim] [--no-plot] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE]',
                                                   add_help=False, parents=[parser],
                                                   formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                       max_help_position=100,
@@ -872,7 +872,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         infomap_subparser.set_defaults(which='infomap')
 
         leading_eigenvector_subparser = subparsers.add_parser("leading-eigenvector",
-                                                              usage='pyntacle.py communities leading-eigenvector [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [-P] [--input-separator] [--plot-dim] [--no-plot] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE]',
+                                                              usage='pyntacle communities leading-eigenvector [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [-P] [--input-separator] [--plot-dim] [--no-plot] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE]',
                                                               add_help=False, parents=[parser],
                                                               formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                                   max_help_position=100,
@@ -880,7 +880,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         leading_eigenvector_subparser.set_defaults(which='leading-eigenvector')
 
         community_walktrap_subparser = subparsers.add_parser("community-walktrap",
-                                                             usage='pyntacle.py communities community-walktrap [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [-P] [--input-separator] [--plot-dim] [--no-plot] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE] [--clusters] [--steps] [--weights] [--weights-format]',
+                                                             usage='pyntacle communities community-walktrap [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [-P] [--input-separator] [--plot-dim] [--no-plot] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE] [--clusters] [--steps] [--weights] [--weights-format]',
                                                              add_help=False, parents=[parser],
                                                              formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                                  max_help_position=100,
@@ -919,9 +919,9 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         if len(sys.argv) < 4 or (
                     sys.argv[2] not in ('fastgreedy', 'infomap', 'leading-eigenvector', 'community-walktrap')):
             raise Error(
-                'usage: pyntacle.py communities {fastgreedy, infomap, leading-eigenvector, community-walktrap} [arguments] (use --help for command description)')
+                'usage: pyntacle communities {fastgreedy, infomap, leading-eigenvector, community-walktrap} [arguments] (use --help for command description)')
 
-        sys.stdout.write('Running pyntacle communities\n')
+        sys.stdout.write('Running Pyntacle communities\n')
 
         comm = communities_command(args)
         try:
@@ -948,7 +948,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                         '\n\t\t      -2/--input-file-2 arguments.\n'+ 90 * '-',
             formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=140,
                                                                               max_help_position=100),
-            usage=Fore.RED + Style.BRIGHT + 'pyntacle.py set ' + Fore.GREEN + Style.BRIGHT + '{union, intersection,'
+            usage=Fore.RED + Style.BRIGHT + 'pyntacle set ' + Fore.GREEN + Style.BRIGHT + '{union, intersection,'
                                                                                             ' difference}' + Fore.RED + ' [arguments]' + Style.RESET_ALL)
         # NOT prefixing the argument with -- means it's not optional
         parser.add_argument('-1', '--input-file-1', metavar='',
@@ -971,7 +971,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                  "edge list, sif for Simple Interaction format, \'dot\' for DOT file, \'bin\'"
                                  " for binary file. See https://goo.gl/9wFRfM for more information and "
                                  "abbreviations. NOTE: The two files must have the same format. If not, use "
-                                 "pyntacle Convert to convert your files to the same format")
+                                 "pyntacle convert to convert your files to the same format")
 
         parser.add_argument('--input-separator', metavar='', default=None,
                             help="Specifies the field separator for the input files. "
@@ -990,7 +990,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument('-P', '--plot-format', choices=["svg", "pdf", "png"], default="pdf", metavar='',
                             type=lambda s: s.lower(),
                             help="Use this option to specify the format of choice of the plots produced by "
-                                 "Pyntacle and stored in the “pyntacle-plots” directory inside your output "
+                                 "Pyntacle and stored in the “Plots” directory inside your output "
                                  "directory. Choices are “pdf”, “png” and “svg”. Default is “pdf”. Overridden"
                                  " by --no-plot.")
 
@@ -1052,7 +1052,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         subparsers = parser.add_subparsers(metavar='', help=argparse.SUPPRESS)
 
         unite_subparser = subparsers.add_parser("union",
-                                                usage='pyntacle.py set union [-h] [-1] [-2] [-f] [-N] [-d] [-L] [--input-separator] [--report-format] [-P] [--plot-dim] [--no-plot] [-o] [-u] [--output-format STR] [--output-separator] [--no-output-header]',
+                                                usage='pyntacle set union [-h] [-1] [-2] [-f] [-N] [-d] [-L] [--input-separator] [--report-format] [-P] [--plot-dim] [--no-plot] [-o] [-u] [--output-format STR] [--output-separator] [--no-output-header]',
                                                 add_help=False, parents=[parser],
                                                 formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                     max_help_position=100,
@@ -1060,7 +1060,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         unite_subparser.set_defaults(which='union')
         
         intersection_subparser = subparsers.add_parser("intersection",
-                                                       usage='pyntacle.py set intersection [-h] [-1] [-2] [-f] [-N] [-d] [-L] [--input-separator] [--report-format] [-P] [--plot-dim] [--no-plot] [-o] [-u] [--output-format STR] [--output-separator] [--no-output-header]',
+                                                       usage='pyntacle set intersection [-h] [-1] [-2] [-f] [-N] [-d] [-L] [--input-separator] [--report-format] [-P] [--plot-dim] [--no-plot] [-o] [-u] [--output-format STR] [--output-separator] [--no-output-header]',
                                                        add_help=False, parents=[parser],
                                                        formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                            max_help_position=100,
@@ -1068,7 +1068,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         intersection_subparser.set_defaults(which='intersection')
 
         difference_subparser = subparsers.add_parser("difference",
-                                                     usage='pyntacle.py set difference [-h] [-1] [-2] [-f] [-N] [-d] [-L] [--input-separator] [--report-format] [-P] [--plot-dim] [--no-plot] [-o] [-u] [--output-format STR] [--output-separator] [--no-output-header] ',
+                                                     usage='pyntacle set difference [-h] [-1] [-2] [-f] [-N] [-d] [-L] [--input-separator] [--report-format] [-P] [--plot-dim] [--no-plot] [-o] [-u] [--output-format STR] [--output-separator] [--no-output-header] ',
                                                      add_help=False, parents=[parser],
                                                      formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                          max_help_position=100,
@@ -1079,7 +1079,7 @@ The available commands in pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         if len(sys.argv) <= 5 or (sys.argv[2] not in ('union', 'intersection', 'difference')):
             raise Error(
-                'usage: pyntacle.py set {union, intersection, difference} [arguments] (use --help for command description)')
+                'usage: pyntacle set {union, intersection, difference} [arguments] (use --help for command description)')
 
         sys.stdout.write('Running pyntacle set\n')
         set = set_command(args)

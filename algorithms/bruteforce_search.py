@@ -113,7 +113,7 @@ class BruteforceSearch:
         having extracted the nodes belonging to the KP-set.
         The best KP-set will be the one that maximizes the fragmentation of the graph.
         :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
-        "Minimum requirements" specifications in the pyntacle's manual.
+        "Minimum requirements" specifications in the Pyntacle  manual.
         :param int kp_size: the size of the KP-set to be found
         :param KpnegEnum kp_type: any option of the *KpnegEnum* enumerator
         :param int max_distance: The maximum shortest path length over which two nodes are considered unreachable
@@ -166,7 +166,7 @@ class BruteforceSearch:
 
         maxKpp = max(final_set.values())
         if init_fragmentation_score is not None:
-            if maxKpp < init_fragmentation_score:
+            if maxKpp <= init_fragmentation_score:
                 sys.stdout.write(
                     "There is no set of size {} that maximize the initial fragmentation score, "
                     "returning an empty list and the max fragmentation score\n".format(kp_size))
@@ -180,12 +180,12 @@ class BruteforceSearch:
         maxKpp = round(maxKpp, 5)
         if len(final) > 1:
             sys.stdout.write(
-                "The best kpp-sets for metric {} of size {} are {} with score {}\n".format(kp_type.name, kp_size,
-                                                                                           final, maxKpp))
+                "The best kpp-sets for metric {} of size {} are:\n{}with score {}\n".format(kp_type.name, kp_size,",\n".join([",".join(x) for x in final])+"\n",
+                                                                                           maxKpp))
         else:
             sys.stdout.write(
-                "The best kpp-sets for metric {} of size {} is {} with score {}\n".format(kp_type.name, kp_size,
-                                                                                          final, maxKpp))
+                "The best kpp-sets for metric {} of size {} is:\n{}with score {}\n".format(kp_type.name, kp_size,
+                                                                                            ",\n".join([",".join(x) for x in final]) + "\n", maxKpp))
 
         return final, maxKpp
 
@@ -247,7 +247,7 @@ class BruteforceSearch:
         **dR**: min = 0 (unreachable); max = 1 (total reachability)
 
         :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
-        "Minimum requirements" specifications in the pyntacle's manual.
+        "Minimum requirements" specifications in Pyntacle manual.
         :param int kp_size: the size of the KP-set to be found
         :param KpnegEnum kp_type: any option of the *KpposEnum* enumerators
         :param int max_distance: The maximum shortest path length over which two nodes are considered unreachable
@@ -293,16 +293,17 @@ class BruteforceSearch:
 
         maxKpp = max(final_set.values())  # take the maximum value
         final = [x for x in final_set.keys() if final_set[x] == maxKpp]
+
         maxKpp = round(maxKpp, 5)
 
         if len(final) > 1:
             sys.stdout.write(
-                "The best kpp-sets for metric {} of size {} are {} with score {}\n".format(kp_type.name, kp_size,
-                                                                                           final, maxKpp))
+                "The best kpp-sets for metric {} of size {} are:\n{}with score {}\n".format(kp_type.name, kp_size,
+                                                                                           ",\n".join([",".join(x) for x in final])+"\n", maxKpp))
         else:
             sys.stdout.write(
-                "The best kpp-sets for metric {} of size {} is {} with score {}\n".format(kp_type.name, kp_size,
-                                                                                          final, maxKpp))
+                "The best kpp-sets for metric {} of size {} is:\n{}with score {}\n".format(kp_type.name, kp_size,
+                                                                                            ",\n".join([",".join(x) for x in final]) + "\n", maxKpp))
 
         return final, maxKpp
 
