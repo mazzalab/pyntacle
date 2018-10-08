@@ -379,6 +379,6 @@ class Generate():
         if not self.args.suppress_cursor:
             cursor.stop()
 
-        sys.stdout.write("pyntacle Generate completed successfully. Ending\n")
+        sys.stdout.write("pyntacle Generate completed successfully.\n")
         if self.args.repeat == 1:
             sys.exit(0)

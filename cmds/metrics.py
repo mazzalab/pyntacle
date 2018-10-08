@@ -276,7 +276,7 @@ class Metrics:
                                       keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=node_frames)
 
             elif not self.args.no_plot and graph.vcount() >= 1000:
-                sys.stdout.write("The graph has too many nodes ({}). Can't draw graph\n".format(graph.vcount()))
+                sys.stdout.write("The graph has too many nodes ({}). It will not be drawn\n".format(graph.vcount()))
 
         elif self.args.which == "global":
             
@@ -439,7 +439,7 @@ class Metrics:
                                           keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=node_frames)
 
             elif not self.args.no_plot and graph.vcount() >= 1000:
-                sys.stdout.write("The graph has too many nodes ({}). Can't draw graph\n".format(graph.vcount()))
+                sys.stdout.write("The graph has too many nodes ({}). It will not be drawn\n".format(graph.vcount()))
         else:
             self.logging.critical(
                 "This should not happen. Please contact Dedadlus developer and send a command line, along with a log. Quitti9ng\n")
@@ -477,5 +477,5 @@ class Metrics:
         if not self.args.suppress_cursor:
             cursor.stop()
 
-        sys.stdout.write("pyntacle Metrics completed successfully. Ending\n")
+        sys.stdout.write("pyntacle Metrics completed successfully.\n")
         sys.exit(0)

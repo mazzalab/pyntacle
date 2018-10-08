@@ -214,6 +214,7 @@ class pyntacleReporter():
         self.report.append(["Results - Global Metrics of the input graph"])
         self.report.append(["Metric", "Value"])
         for k in reportdict.keys():
+            k = k.replace("_", " ") #replace underscore with space
             self.report.append([k, reportdict[k]])
         
 

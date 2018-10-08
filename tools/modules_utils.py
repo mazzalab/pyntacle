@@ -107,7 +107,7 @@ class ModuleUtils():
         info = [str(x) if x is not None else "NA" for x in (min_nodes, max_nodes, min_components, max_components)]
 
         sys.stdout.write(
-            "Filtering Subgraphs according to your criteria:\nminimum number of nodes per modules: {0}\nmaximum number of nodes per module: {1}\nminimum number of components: {2}\nmaximum number of components: {3}\n".format(
+            "Filtering subgraphs according to the specified criteria, enlisted above:\nminimum number of nodes per module: {0}\nmaximum number of nodes per module: {1}\nminimum number of components: {2}\nmaximum number of components: {3}\n".format(
                 *info))
 
         if not all(x == None for x in [min_nodes, max_nodes, min_components, max_components]):

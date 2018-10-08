@@ -77,7 +77,7 @@ class CommunityFinder:
         (http://igraph.org/python/doc/igraph.Graph-class.html#community_infomap)
         """
 
-        self.logger.info("Running Community Infomap")
+        self.logger.info("Community Infomap")
         temp_modules = self.__graph.community_infomap(edge_weights=None, vertex_weights=None, trials=10)
         self.__modules = temp_modules.subgraphs()
 

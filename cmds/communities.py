@@ -142,19 +142,19 @@ class Communities():
                     sys.stderr.write("argument of \"--clusters\" must be an integer. Quitting\n")
                     sys.exit(1)
 
-            sys.stdout.write("Running Community finding using fastgreedy algorithm\n")
+            sys.stdout.write("Community finding using fastgreedy algorithm\n")
             communities.fast_greedy(weights=weights, n=self.args.clusters)
             mods = communities.modules
             algorithm = "fastgreedy"
 
         elif self.args.which == "infomap":
-            sys.stdout.write("Running Community finding using infomap algorithm\n")
+            sys.stdout.write("Community finding using infomap algorithm\n")
             communities.infomap()
             mods = communities.modules
             algorithm = "infomap"
 
         elif self.args.which == "leading-eigenvector":
-            sys.stdout.write("Running Community finding using leading-eigenvector algorithm\n")
+            sys.stdout.write("Community finding using leading-eigenvector algorithm\n")
             communities.leading_eigenvector()
             mods = communities.modules
             algorithm = "leading-eigenvector"
@@ -189,7 +189,7 @@ class Communities():
                     sys.exit(1)
 
             sys.stdout.write(
-                "Running Community finding using community walktrap algorithm at maximum {} steps\n".format(
+                "Community finding using community walktrap algorithm at maximum {} steps\n".format(
                     self.args.steps))
             communities.community_walktrap(weights=weights, n=self.args.clusters,
                                            steps=self.args.steps)
@@ -210,7 +210,7 @@ class Communities():
                 "\t".join([str(x) for x in [i, elem.vcount(), elem.ecount(), len(elem.components())]]) + "\n")
 
         sys.stdout.write(
-            "pyntacle - Community Finding Report:\nalgorithm:{0}\nTotal number of modules found:"
+            "pyntacle - Community finding report:\nalgorithm:{0}\nTotal number of modules found:"
             "\t{1}\nIndex\tNodes\tEdges \tComponents\n{2}".format(
                 algorithm, len(mods), "".join(mods_report)))
 
@@ -259,7 +259,7 @@ class Communities():
                                        min_components=self.args.min_components,
                                        max_components=self.args.max_components)
             if len(mod_utils.modules) > 0:
-                sys.stdout.write("Filtered out {0} modules. Keeping {1} communities. Producing Output.\n".format(
+                sys.stdout.write("Filtered out {0} modules. Keeping {1} communities. Writing induced subgraph of communities to file.\n".format(
                     (init_mods - len(mod_utils.modules)), len(mod_utils.modules)))
             else:
                 sys.stderr.write("According to your filtering criteria, no community was kept. Quitting.\n")
@@ -416,5 +416,5 @@ class Communities():
         if not self.args.suppress_cursor:
             cursor.stop()
 
-        sys.stdout.write("Community Finding completed successfully. Ending\n")
+        sys.stdout.write("Community Finding completed successfully.\n")
         sys.exit(0)
