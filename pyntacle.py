@@ -520,7 +520,7 @@ The available commands in Pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
             if format_dictionary[args.format] == format_dictionary[args.output_format]:
                 log.error("The output format specified is the same as the input format. Quitting.\n")
                 sys.exit(0)
-        sys.stdout.write("Running pyntacle convert\n")
+        sys.stdout.write("Running Pyntacle convert\n")
 
         cv = convert_command(args)
         try:
@@ -1081,7 +1081,7 @@ The available commands in Pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
             raise Error(
                 'usage: pyntacle set {union, intersection, difference} [arguments] (use --help for command description)')
 
-        sys.stdout.write('Running pyntacle set\n')
+        sys.stdout.write('Running Pyntacle set\n')
         set = set_command(args)
         try:
             set.run()

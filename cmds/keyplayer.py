@@ -87,7 +87,7 @@ class KeyPlayer():
         if not hasattr(self.args, 'which'):
             raise Error("usage: pyntacle.py keyplayer {kp-finder, kp-info} [options]'")
 
-        self.logging.debug('Running pyntacle keyplayer, with arguments')
+        self.logging.debug('Running Pyntacle keyplayer, with arguments')
         self.logging.debug(self.args)
         # Load Graph
         sys.stdout.write("Reading input file...\n")

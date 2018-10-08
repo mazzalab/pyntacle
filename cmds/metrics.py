@@ -81,7 +81,7 @@ class Metrics:
                 os.path.abspath(self.args.directory)))
             os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
 
-        self.logging.debug('Running pyntacle metrics, with arguments')
+        self.logging.debug('Running Pyntacle metrics, with arguments')
         self.logging.debug(self.args)
 
         # Load Graph

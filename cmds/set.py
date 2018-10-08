@@ -182,7 +182,7 @@ class Set:
         
         if self.args.which == "union":
             sys.stdout.write(
-                "Running pyntacle Union on input graph {} and  {}\n".format(self.args.input_file_1,
+                "Running Pyntacle Union on input graph {} and  {}\n".format(self.args.input_file_1,
                                                                            self.args.input_file_2))
 
             output_graph = GraphOperations.union(graph1, graph2, self.args.output_file)
@@ -192,7 +192,7 @@ class Set:
 
         elif self.args.which == "intersection":
             sys.stdout.write(
-                "Running pyntacle Intersection on input graph {} and  {}\n".format(self.args.input_file_1,
+                "RunningPpyntacle Intersection on input graph {} and  {}\n".format(self.args.input_file_1,
                                                                                   self.args.input_file_2))
 
             output_graph = GraphOperations.intersection(graph1, graph2, self.args.output_file)
@@ -203,7 +203,7 @@ class Set:
 
         elif self.args.which == "difference":
             sys.stdout.write(
-                "Running pyntacle Difference on input graph {} and  {}\n".format(self.args.input_file_1,
+                "Running Pyntacle Difference on input graph {} and  {}\n".format(self.args.input_file_1,
                                                                                   self.args.input_file_2))
 
             output_graph = GraphOperations.difference(graph1, graph2, self.args.output_file)
