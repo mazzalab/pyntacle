@@ -105,13 +105,13 @@ The available commands in Pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                                                     'several topologies (useful to compared '
                                                                     'results against predefined network '
                                                                     'topologies). ' +
-                  Fore.GREEN + '\n  communities     ' + Fore.CYAN + 'Find communities within a graph using '
+                  Fore.GREEN + '\n  communities     ' + Fore.CYAN + 'Find communities within a graph using'
                                                                     'several community-finding (or modular '
-                                                                    'decomposition) algorithms. Produces '
-                                                                    'several network files, each one '
-                                                                    'containing an induced subgraph of every '
-                                                                    'community found. Communities can be '
-                                                                    'filtered by nodes and components number.' +
+                                                                    'decomposition)algorithms. It produces '
+                                                                    'several network files, each containing '
+                                                                    'an induced subgraph. ' 
+                                                                    'Communities can be filtered by nodes and '
+                                                                    'component number.' +
                   Fore.GREEN + '\n  test            ' + Fore.CYAN + 'Performs a series of tests to check '
                                                                     'Pyntacle integrity. Useful after '
                                                                     'installing Pyntacle and for debugging '
