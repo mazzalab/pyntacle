@@ -37,6 +37,8 @@ from tools.graph_utils import *
 from tools.misc.graph_load import *
 from tools.enums import ReportEnum, CmodeEnum
 from tools.add_attributes import AddAttributes
+from colorama import Fore, Style, init
+
 
 class KeyPlayer():
     def __init__(self, args):
@@ -253,7 +255,7 @@ class KeyPlayer():
 
             results.update(kp_runner.get_results())
             
-            sys.stdout.write("\n### RUN SUMMARY ###\n")
+            sys.stdout.write(Fore.RED + Style.BRIGHT +"\n### RUN SUMMARY ###\n" + Style.RESET_ALL)
             sys.stdout.write("kp set size: {}\n".format(self.args.k_size))
             for kp in results.keys(): #ONE OF THE keys represent the algorithm, so no else exit in here
                 if len(results[kp][0])>1 and self.args.implementation=='brute-force':
@@ -325,7 +327,7 @@ class KeyPlayer():
                                     max_distance=self.args.max_distances, implementation=implementation)
 
             results.update(kp_runner.get_results())
-            sys.stdout.write("\n### RUN SUMMARY ###\n")
+            sys.stdout.write(Fore.RED + Style.BRIGHT +"\n### RUN SUMMARY ###\n" + Style.RESET_ALL)
             sys.stdout.write("Keyplayer metric(s) {}:\n".format(self.args.type))
             for metric in results.keys():
 
