@@ -166,25 +166,29 @@ class KeyPlayer():
                         "Finding best set of kp-nodes of size {0} using F (kp neg measure)\n".format(
                             self.args.k_size))
                     initial_results[KpnegEnum.F.name] = kpp.F(graph)
-                    if initial_results[KpnegEnum.F.name] != 1:
-                        kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, seed=self.args.seed)
-                    else:
-                        self.logging.warning("Initial value of F is 1. Skipping search.")
-                        results[KpnegEnum.F.name] = [[], 1, 1]
+                    kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, seed=self.args.seed)
+                    # if initial_results[KpnegEnum.F.name] != 1:
+                    #     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, seed=self.args.seed)
+                    # else:
+                    #     self.logging.warning("Initial value of F is 1. Skipping search.")
+                    #     results[KpnegEnum.F.name] = [[], 1, 1]
                         
                 if self.args.type in (['dF', 'neg', 'all']):
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {0} using dF (kp neg measure)\n".format(
                             self.args.k_size))
                     initial_results[KpnegEnum.dF.name] = kpp.dF(graph, implementation=implementation)
+                    kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
+                                                max_distance=self.args.max_distances, seed=self.args.seed,
+                                                implementation=implementation)
 
-                    if initial_results[KpnegEnum.dF.name] != 1:
-                        kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
-                                                    max_distance=self.args.max_distances, seed=self.args.seed,
-                                                    implementation=implementation)
-                    else:
-                        self.logging.warning("Initial value of dF is 1. Skipping search.")
-                        results[KpnegEnum.dF.name] = [[], 1, 1]
+                    # if initial_results[KpnegEnum.dF.name] != 1:
+                    #     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
+                    #                                 max_distance=self.args.max_distances, seed=self.args.seed,
+                    #                                 implementation=implementation)
+                    # else:
+                    #     self.logging.warning("Initial value of dF is 1. Skipping search.")
+                    #     results[KpnegEnum.dF.name] = [[], 1, 1]
 
                 if self.args.type in (['dR', 'pos', 'all']):
                     sys.stdout.write(
@@ -208,29 +212,31 @@ class KeyPlayer():
                 sys.stdout.write("Using Brute Force for searching optimal KP-Set\n")
 
                 if self.args.type in (['F', 'neg', 'all']):
+
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using F (kp neg measure)\n".format(
                             self.args.k_size))
                     initial_results[KpnegEnum.F.name] = kpp.F(graph)
-                    if initial_results[KpnegEnum.F.name] != 1:
-                        kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, threads=self.args.threads)
-
-                    else:
-                        self.logging.warning("Initial value of F is 1. Skipping search.")
-                        results[KpnegEnum.F.name] = [[], 1, 1]
+                    kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, threads=self.args.threads)
+                    # if initial_results[KpnegEnum.F.name] != 1:
+                    #     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, threads=self.args.threads)
+                    #
+                    # else:
+                    #     self.logging.warning("Graph already owns the maximum F value (1.0) Skipping search.")
+                    #     results[KpnegEnum.F.name] = [[None], 1, 1]
 
                 if self.args.type in (['dF', 'neg', 'all']):
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using dF (kp neg measure)\n".format(
                             self.args.k_size))
                     initial_results[KpnegEnum.dF.name] = kpp.dF(graph, implementation=implementation)
-                    if initial_results[KpnegEnum.dF.name] != 1:
-                        kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
+                    kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
                                                     max_distance=self.args.max_distances,
                                                     implementation=implementation, threads=self.args.threads)
-                    else:
-                        self.logging.warning("Initial value of dF is 1. Skipping search.")
-                        results[KpnegEnum.dF.name] = [[], 1, 1]
+                    # if initial_results[KpnegEnum.dF.name] != 1:
+                    # else:
+                    #     self.logging.warning("Graph already owns the maximum dF value (1.0) Skipping search.")
+                    #     results[KpnegEnum.dF.name] = [[None], 1, 1]
 
                 if self.args.type in (['dR', 'pos', 'all']):
                     sys.stdout.write(
@@ -250,27 +256,34 @@ class KeyPlayer():
                                                implementation=implementation, threads=self.args.threads)
 
             else:
-                sys.stdout.write("Wrong implementation. Please contact Pyntacle developers and sent this error message, along with a command line and a log.\nQuitting.\n")
+                sys.stdout.write("Implementation Error. Please contact Pyntacle developers and sent this error message, along with a command line and a log.\nQuitting.\n")
                 sys.exit(1)
 
             results.update(kp_runner.get_results())
-            
+
+
             sys.stdout.write(Fore.RED + Style.BRIGHT + "\n### RUN SUMMARY ###\n" + Style.RESET_ALL)
             sys.stdout.write("kp set size: {}\n".format(self.args.k_size))
             for kp in results.keys(): #ONE OF THE keys represent the algorithm, so no else exit in here
-                if len(results[kp][0])>1 and self.args.implementation=='brute-force':
+
+                if len(results[kp][0]) > 1 and self.args.implementation == 'brute-force':
                     plurals = ['s', 'are']
                 else:
                     plurals = ['', 'is']
+
+                if results[kp][0][0] is None:  # the case in which there's no solution
+                    results[kp][0] = ["None"]
                 
                 if self.args.implementation == 'brute-force':
                     list_of_results = ['('+ ', '.join(x) + ')' for x in results[kp][0]]
+
                 else:
                     list_of_results = results[kp][0]
                     
                 if kp == KpnegEnum.F.name or kp == KpnegEnum.dF.name:
                     # joining initial results with final ones
                     results[kp].append(initial_results[kp])
+
                     
                     sys.stdout.write(
                         'kp set{0} for Key Player Metric {2} {3} ({4}) with value {5} (initial {2} value was {6})\n'.format(
@@ -334,27 +347,27 @@ class KeyPlayer():
                 if metric == KpnegEnum.F.name or metric == KpnegEnum.dF.name:
                     results[metric].append(initial_results[metric])
                     sys.stdout.write(
-                        "Starting value for {0} is {1}. Removing nodes ({2}) gives a {0} value of {3}\n".format(
+                        "Starting value for {0} is {1}. Removing nodes:\n({2})\ngives a {0} value of {3}\n".format(
                             metric, results[metric][2], ', '.join(self.args.nodes), results[metric][1]))
 
                 elif metric == KpposEnum.mreach.name:
                     results[metric].append(self.args.m_reach)
                     perc_node_reached = round((results[metric][1] + len(self.args.nodes)) / graph.vcount() * 100, 3)
                     sys.stdout.write(
-                        "Nodes ({0}) have an {1} of {2}. This Means they can reach the {3}% of nodes in {4} steps\n".format(
+                        "Nodes:\n({0})\nhave an {1} of {2}. This Means they can reach the {3}% of nodes in {4} steps\n".format(
                             ', '.join(results[metric][0]), metric, results[metric][1], perc_node_reached,
                             self.args.m_reach))
 
                 else: #dR case
                     sys.stdout.write(
-                        "{0} value for nodes ({1}) is {2}\n".format(metric, ', '.join(results[metric][0]),
+                        "{0} value for node:\n({1})\nis {2}\n".format(metric, ', '.join(results[metric][0]),
                                                                   results[metric][1]))
             r.create_report(report_type=ReportEnum.KPinfo, report=results)
             sys.stdout.write(Fore.RED + Style.BRIGHT + "### END OF SUMMARY ###\n\n" + Style.RESET_ALL)
 
         else:
             log.critical(
-                "This should not happen. Please contact pyntacle Developers and send your command line. Quitting\n.")
+                "Subcommand Error. Please contact Pyntacle Developers at bioinformatics@css-mendel.it and report this problem, along with the command you tried. Quitting\n.")
             sys.exit(1)
 
         # reporting and plotting part
@@ -373,7 +386,7 @@ class KeyPlayer():
         
         if self.args.save_binary:
             #reproduce octopus behaviour by adding kp information to the graph before saving it
-            sys.stdout.write("Saving graph to a Binary file\n")
+            sys.stdout.write("Saving graph to a binary pickle file with \'.graph\' extension \n")
             #step 1: decidee the type of the implementation
 
             bf = False

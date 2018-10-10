@@ -136,8 +136,8 @@ class BruteforceSearch:
             if graph.ecount() == 0:
                 sys.stdout.write(
                     "Graph is consisted of isolates, so there is no optimal KP-set that can fragment the network. "
-                    "Returning an empty list and the maximum {} value (1.0).\n".format(kp_type.name))
-                return [], 1.0
+                    "Returning a list with \'None\' and the maximum {} value (1.0).\n".format(kp_type.name))
+                return [None], 1.0
 
         # define an initial fragmentation status of the graph
         if kp_type == KpnegEnum.F:
@@ -168,9 +168,9 @@ class BruteforceSearch:
         if init_fragmentation_score is not None:
             if maxKpp <= init_fragmentation_score:
                 sys.stdout.write(
-                    "There is no set of size {} that maximize the initial fragmentation score, "
-                    "returning an empty list and the max fragmentation score\n".format(kp_size))
-                return [], round(init_fragmentation_score, 5)
+                    "There is no set of size {0} that maximize the initial fragmentation score for {1}. "
+                    "Returning \'None\' and the minimum {1} value (0)\n".format(kp_size, kp_type.name))
+                return [None], round(init_fragmentation_score, 5)
             else:
                 S = [list(x) for x in final_set.keys() if final_set[x] == maxKpp]
         else:
@@ -198,7 +198,7 @@ class BruteforceSearch:
         elif kp_type == KpnegEnum.dF:
             type_func = partial(KeyPlayer.dF, graph=graph, max_distance=max_distance, implementation=implementation)
         else:  # TODO: change to raise exceptions
-            sys.stdout.write("{} Not yet implemented, please come back later!\n".format(kp_type.name))
+            sys.stdout.write("{} Not yet implemented\n".format(kp_type.name))
             sys.exit(0)
 
         node_indices = graph.vs.indices

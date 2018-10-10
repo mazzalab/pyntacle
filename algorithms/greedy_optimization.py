@@ -81,15 +81,18 @@ class GreedyOptimization:
                 * kp-value (float): a float number representing the kp score of the graph when the set is removed
         """
 
-        num_nodes = graph.vcount()
         num_edges = graph.ecount()
-        max_edges = num_nodes * (num_edges - 1)
+        num_nodes = graph.vcount()
+        #max_edges = (num_nodes * (num_edges - 1))/2 #the maximum number of edges in a complete graph is n*n-1/2
 
         if kp_type == KpnegEnum.F or kp_type == KpnegEnum.dF:
-            if num_edges == 0:  # TODO: check if this case if possible, given the decorator "check_graph_consistency"
-                return [], 1.0
-            elif num_edges == max_edges:
-                return [], 0.0
+            if num_edges == 0:  # TODO: this never happens when the 'check_graph_consistency' module is active
+                sys.stdout.write(
+                    "Graph consists of isolates. It already achieved its maximum {} value (1.0).\n"
+                    "Returning a list with [\'None\'] and 1.0 .\n".format(kp_type.name))
+                return [None], 1.0
+            #TODO: opposite case: the graph is complete, hence removing any set of nodes should give the maximum fragmentation value. Is this correct
+
             else:
                 node_indices = graph.vs.indices
                 random.shuffle(node_indices)
