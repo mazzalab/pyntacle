@@ -192,7 +192,7 @@ class KeyPlayer():
                             self.args.k_size))
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.dR,
                                                max_distance=self.args.max_distances, seed=self.args.seed,
-                                               implementation=implementation)
+                                               implementation = implementation)
 
                 if self.args.type in (['mreach', 'pos', 'all']):
                     sys.stdout.write(
@@ -223,11 +223,11 @@ class KeyPlayer():
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {} using dF (kp neg measure)\n".format(
                             self.args.k_size))
-                    initial_results[KpnegEnum.dF.name] = kpp.dF(graph, implementation=implementation)
+                    initial_results[KpnegEnum.dF.name] = kpp.dF(graph, implementation=CmodeEnum.igraph)
                     if initial_results[KpnegEnum.dF.name] != 1:
                         kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
                                                     max_distance=self.args.max_distances,
-                                                    implementation=implementation, threads=self.args.threads)
+                                                    implementation=CmodeEnum.igraph, threads=self.args.threads)
                     else:
                         self.logging.warning("Initial value of dF is 1. Skipping search.")
                         results[KpnegEnum.dF.name] = [[], 1, 1]
@@ -238,7 +238,7 @@ class KeyPlayer():
                             self.args.k_size))
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.dR,
                                                max_distance=self.args.max_distances,
-                                               implementation=implementation, threads=self.args.threads)
+                                               implementation=CmodeEnum.igraph, threads=self.args.threads)
                     
                 if self.args.type in (['mreach', 'pos', 'all']):
                     sys.stdout.write(
@@ -247,10 +247,10 @@ class KeyPlayer():
 
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.mreach, m=self.args.m_reach,
                                                max_distance=self.args.max_distances,
-                                               implementation=implementation, threads=self.args.threads)
+                                               implementation=CmodeEnum.igraph, threads=self.args.threads)
 
             else:
-                sys.stdout.write("Wrong implementation. Please contact Pyntacle developers and sent this error message, along with a command line and a log.\nQuitting.\n")
+                sys.stdout.write("Uncorrect Choice. Please contact Pyntacle developers and sent this error message, along with a command line and a log.\nQuitting.\n")
                 sys.exit(1)
 
             results.update(kp_runner.get_results())
