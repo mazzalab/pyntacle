@@ -321,13 +321,13 @@ The available commands in Pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
             usage=Fore.RED + Style.BRIGHT + 'pyntacle metrics' + Fore.GREEN + Style.BRIGHT + ' {global, local}' + Fore.RED +
                   ' [arguments]' + Style.RESET_ALL)
         # NOT prefixing the argument with -- means it's not optional
-        parser.add_argument('-i', '--input-file', metavar='',
+        parser.add_argument('-i', '--input-file', metavar="",
                             help="(Required) Path to the network input file. It can be an Adjacency Matrix, an "
                                  "Edge List, a Simple Interaction File (SIF), a DOT file or a Binary file "
                                  "storing an igraph.Graph object. See File Format Specifications on the "
                                  "website for more details.")
         # These are options instead
-        parser.add_argument('-f', '--format', metavar='',
+        parser.add_argument('-f', '--format', metavar="",
                             choices=format_dictionary.keys(),
                             help="Specifies the format of the input file passed using the --input-file "
                                  "command. "
@@ -335,7 +335,7 @@ The available commands in Pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                  "Simple Interaction format, \'dot\' for DOT file, \'bin\' for binary file. "
                                  "See https://goo.gl/9wFRfM for more information and abbreviations.")
 
-        parser.add_argument('--input-separator', metavar='', default=None, help="Specifies the field separator for the input file. "
+        parser.add_argument('--input-separator', metavar="", default=None, help="Specifies the field separator for the input file. "
                                                                                 "If not provided, Pyntacle tries to guess it automatically.")
         
         parser.add_argument('-N', '--no-header', default=False, action='store_true',
@@ -343,17 +343,17 @@ The available commands in Pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                  '(Adjacency Matrix, Edge List, SIF file) doesn’t contain one. By default, '
                                  'we assume a header is present.')
 
-        parser.add_argument('-d', "--directory", default=os.getcwd(), metavar='',
+        parser.add_argument('-d', "--directory", default=os.getcwd(), metavar="",
                             help="Directory that will store Pyntacle results. If the directory does not "
                                  "exist, we will create one at the specified path. Default is the present "
                                  "working directory. ")
 
-        parser.add_argument('--report-format', '-r', metavar='', default="txt", choices=["txt", "csv", "xlsx", "tsv"],
+        parser.add_argument('--report-format', '-r', metavar="", default="txt", choices=["txt", "csv", "xlsx", "tsv"],
                             help="Specifies the format that will be used to output the report produced by "
                                  "Pyntacle. Choices are “txt” and “tsv” for tab separated value files, “csv” "
                                  "for comma-separated value files, “xlsx” for Excel files. Default is “txt”.")
 
-        parser.add_argument('-P', '--plot-format', metavar='', choices=["svg", "pdf", "png"], default="pdf",
+        parser.add_argument('-P', '--plot-format', metavar="", choices=["svg", "pdf", "png"], default="pdf",
                             type=lambda s: s.lower(),
                             help="Use this option to specify the format of choice of the plots produced by "
                                  "Pyntacle and stored in the “Plots” directory inside your output "
@@ -368,7 +368,7 @@ The available commands in Pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         parser.add_argument("--no-plot", action="store_true",
                             help="Do not ouput the graphical representation of the plot.")
 
-        parser.add_argument('--plot-layout', metavar='',
+        parser.add_argument('--plot-layout', metavar="",
                             choices=["circle", "fruchterman_reingold", "fr", "kamada_kawai", "kk",
                                      "large_graph", "lgl", "random", "reingold_tilford", "rt"],
                             default="fr",
@@ -389,13 +389,13 @@ The available commands in Pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                  'components or isolates. Will raise an error if the network has two largest'
                                  ' components of the same size.')
 
-        parser.add_argument('--suppress-cursor', metavar="", action="store_true", help="suppress Pyntacle animated cursor")
+        parser.add_argument('--suppress-cursor', action="store_true", help="suppress Pyntacle animated cursor")
 
         parser.add_argument('-v', action="count",
                             help="Verbosity level of the internal Pyntacle logger. -vvv is the highest level"
                                  " (for debugging).")
 
-        subparsers = parser.add_subparsers(metavar='', help=argparse.SUPPRESS)
+        subparsers = parser.add_subparsers(metavar="", help=argparse.SUPPRESS)
 
         # Subparser for the nodes case
         local_subparser = subparsers.add_parser("local",
@@ -435,7 +435,7 @@ The available commands in Pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                                                  formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                      max_help_position=100,
                                                                                                      width=150))
-        global_subparser.add_argument('-n', '--no-nodes', metavar='', type=str,
+        global_subparser.add_argument('-n', '--no-nodes', metavar="", type=str,
                                       help='Remove a set of nodes and compute global metrics without these nodes.')
 
         global_subparser.set_defaults(which='global')
@@ -506,7 +506,7 @@ The available commands in Pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                             help="Specify a desired output separator for your output files. Default is “\t”."
                                  " Note: the separator must be specified in quotes.")
 
-        parser.add_argument('--suppress-cursor', metavar="", action="store_true", help="suppress Pyntacle animated cursor")
+        parser.add_argument('--suppress-cursor', action="store_true", help="suppress Pyntacle animated cursor")
 
         parser.add_argument('-v', action="count", help="Verbosity level of the internal Pyntacle logger. -vvv"
                                                        " is the highest level (for debugging).")
