@@ -196,7 +196,7 @@ class KeyPlayer():
                             self.args.k_size))
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.dR,
                                                max_distance=self.args.max_distances, seed=self.args.seed,
-                                               implementation=implementation)
+                                               implementation = implementation)
 
                 if self.args.type in (['mreach', 'pos', 'all']):
                     sys.stdout.write(
