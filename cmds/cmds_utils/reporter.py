@@ -117,7 +117,9 @@ class pyntacleReporter():
             for x in self.report:
                 list(map(str, x))
 
-            self.report = [ list(map(str,x)) for x in self.report ]
+            self.report = [list(map(str,x)) for x in self.report]
+            #replace all the underscores with spaces
+            self.report = [[y.replace("_", " ")for y in x] for x in self.report]
 
         if format not in choices.keys():
             raise WrongArgumentError("file format {} is not supported".format(format))
@@ -135,7 +137,7 @@ class pyntacleReporter():
                 report_dir = os.path.abspath(report_dir)
 
         if len(self.graph["name"]) > 1:
-            self.logger.warning("using first \"name\" attribute of graph name since more than one is specified")
+            self.logger.warning("Using the first \"name\" attribute of graph name since more than one is specified")
         
         graphname = self.graph["name"][0]
         
@@ -214,7 +216,6 @@ class pyntacleReporter():
         self.report.append(["Results - Global Metrics of the input graph"])
         self.report.append(["Metric", "Value"])
         for k in reportdict.keys():
-            k = k.replace("_", " ") #replace underscore with space
             self.report.append([k, reportdict[k]])
         
 

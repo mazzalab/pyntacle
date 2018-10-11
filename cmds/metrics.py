@@ -314,7 +314,7 @@ class Metrics:
                 report_prefix_nonodes = "_".join(["pyntacle", graph["name"][0], "global_metrics_nonodes", "report",
                                           self.date])
                 
-                sys.stdout.write("Removing nodes ({}) from input graph and computing Global Metrics\n".format(', '.join(self.args.no_nodes)))
+                sys.stdout.write("Removing nodes:\n\t{}\nfrom input graph and computing Global Metrics\n".format(self.args.no_nodes))
                 nodes_list = self.args.no_nodes.split(",")
 
                 # this will be useful when producing the two global topology plots, one for the global graph and the other one fo all nodes
