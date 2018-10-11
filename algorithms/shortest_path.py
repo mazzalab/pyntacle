@@ -35,14 +35,16 @@ import statistics
 import numpy as np
 from igraph import Graph
 from math import isinf, ceil
-from numba import jit, prange, cuda, config
+from numba import jit, prange, cuda #, config
 from psutil import virtual_memory
 from tools.enums import CmodeEnum
 from tools.graph_utils import GraphUtils as gUtil
 from tools.misc.graph_routines import check_graph_consistency, vertex_doctor
 from algorithms.global_topology import GlobalTopology
 
-config.THREADING_LAYER = 'forksafe'
+#TODO: uncomment this for when the multiprocess-numba is solved
+#config.THREADING_LAYER = 'forksafe'
+
 
 class ShortestPath:
 
