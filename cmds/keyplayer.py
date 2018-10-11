@@ -207,7 +207,8 @@ class KeyPlayer():
                                                implementation=implementation)
 
             elif self.args.implementation == "brute-force":
-                #the implementation is overridden to igraph for conflicts with numba
+                #TODO: the implementation is overridden to igraph for conflicts with numba
+
                 report_type = ReportEnum.KP_bruteforce.name
                 kp_runner = bfw(graph=graph)
                 sys.stdout.write("Using Brute Force for searching optimal KP-Set\n")
