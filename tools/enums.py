@@ -1,15 +1,15 @@
 """
-A set of enumerators whose values are used as reserved keywords of Pyntacle's functions
+A set of enumerators whose values are used as reserved keywords in Pyntacle's functions
 """
 
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.0.4"
+__version__ = "0.0.5"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
-__date__ = "07/06/2018"
+__date__ = "02/10/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -70,6 +70,12 @@ class LocalAttributeEnum(Enum):
     clustering_coefficient = 11
     average_shortest_path_length = 12
     median_shortest_path_length = 13
+
+
+class GroupCentralityEnum(Enum):
+    group_degree = 1
+    group_betweenness = 2
+    group_closeness = 3
 
 
 class GlobalAttributeEnum(Enum):
