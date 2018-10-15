@@ -1,7 +1,7 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The Pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.2.3.3"
+__version__ = "0.2.4"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
@@ -60,6 +60,8 @@ class WidgetTestKeyplayer(unittest.TestCase):
         self.Args.threads = 1
         self.Args.type = 'all'
         self.Args.v = None
+        self.Args.suppress_cursor = True
+
         
     def test_kpinfo(self):
         sys.stdout.write("Testing kp-info\n")
@@ -137,6 +139,6 @@ class WidgetTestKeyplayer(unittest.TestCase):
         files = glob.glob(os.path.join(current_dir, 'pyntacletests/test_sets/tmp/*'))
         for f in files:
             os.remove(f)
-        
+    #
 if __name__ == '__main__':
     unittest.main()

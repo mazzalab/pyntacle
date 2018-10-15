@@ -1,7 +1,7 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The Pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.2.3.3"
+__version__ = "0.2.4"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
@@ -51,6 +51,8 @@ class WidgetTestGenerator(unittest.TestCase):
         self.Args.seed = 1
         self.Args.repeat = 1
         self.Args.v = None
+        self.Args.suppress_cursor = True
+
 
     def test_random(self):
         sys.stdout.write("Testing random generator\n")

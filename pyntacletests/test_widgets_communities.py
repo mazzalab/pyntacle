@@ -1,7 +1,7 @@
 __author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = "Copyright 2018, The Pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.2.3.3"
+__version__ = "0.2.4"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
@@ -60,6 +60,8 @@ class WidgetTestCommunities(unittest.TestCase):
         self.Args.weights_format = 'standard'
         self.Args.weights_name = None
         self.Args.v = None
+        self.Args.suppress_cursor = True
+
 
     def test_fastgreedy(self):
         sys.stdout.write("Testing fast_greedy community finder\n")
