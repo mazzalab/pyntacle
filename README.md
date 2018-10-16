@@ -47,27 +47,23 @@ installer](https://www.anaconda.com/download/) or the
 
 The next step is to create a new conda environment (if you are familiar
 with virtual environments, these are analogous to a virtualenv but they
-also allow you to specify precisely which Python version to install).
+also allow you to specify precisely which Python version to install), and install the latest Pyntacle release within the environment. We **highly** reccommend creating a new environment for Pyntacle, as there are many required dependencies that you may not want addedd to an existing environment.
 
 #### Linux and MacOS X
 
 Run the following commands from a terminal window:
 
 ```bash
-conda create -n name_of_my_env python=3.6
+wget http://pyntacle.css-mendel.it/resources/pyntacle_latest.yml
+conda env create -n pyntacle_env --file pyntacle_latest.yml
+# OPTIONAL CLEANUP
+rm pyntacle_latest.yml
 ```
 
-This will create a minimal environment with only Python v.3.6 installed
-in it. To put your self inside this environment run:
+This will create a complete and working Pyntacle environment. Now you just need to activate it using its name:
 
 ```bash
-source activate name_of_my_env
-```
-
-And finally, install the latest version of Pyntacle:
-
-```bash
-conda install -y -c bfxcss -c conda-forge pyntacle
+source activate pyntacle_env
 ```
 
 #### Windows
@@ -79,25 +75,19 @@ here and here. If this happens, a workaround could be to create a new
 user without whitespaces (e.g. "C:\John<b>_</b>Appleseed\).
 </aside>
 
+First, download the environment file by right-clicking [here](http://pyntacle.css-mendel.it/resources/pyntacle_latest.yml) and clicking "Save as".
 
 Open a cmd terminal window or - better - an
-[Anaconda prompt](https://chrisconlan.com/wp-content/uploads/2017/05/anaconda_prompt.png)
-, and type:
+[Anaconda prompt](https://chrisconlan.com/wp-content/uploads/2017/05/anaconda_prompt.png), navigate to the folder where you downloaded the environment file and type:
 
 ```bash
-conda create -y -n name_of_my_env python=3.6
+conda env create -n pyntacle_env --file pyntacle_latest.yml
 ```
 
 Then, activate the newly created environment:
 
 ```bash
-activate name_of_my_env
-```
-
-Finally, install the latest version of Pyntacle:
-
-```bash
-conda install -y -c bfxcss -c conda-forge pyntacle
+activate pyntacle_env
 ```
 
 ### Installing Pyntacle from source
