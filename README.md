@@ -43,7 +43,7 @@ language agnostic (it can play a similar role to a pip and virtualenv
 combination), and you need to set it up by running either the [Anaconda
 installer](https://www.anaconda.com/download/) or the
 [Miniconda installer](https://conda.io/miniconda.html) , choosing the
-++Python 3.6++ version.
+**Python 3.7** version.
 
 The next step is to create a new conda environment (if you are familiar
 with virtual environments, these are analogous to a virtualenv but they
