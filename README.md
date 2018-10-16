@@ -75,7 +75,7 @@ here and here. If this happens, a workaround could be to create a new
 user without whitespaces (e.g. "C:\John<b>_</b>Appleseed\).
 </aside>
 
-First, download the environment file by right-clicking [here](http://pyntacle.css-mendel.it/resources/pyntacle_latest.yml) and clicking "Save as".
+First, download the environment file by right-clicking [here](http://pyntacle.css-mendel.it/resources/envs/win/pyntacle_latest.yml) and clicking "Save as".
 
 Open a cmd terminal window or - better - an
 [Anaconda prompt](https://chrisconlan.com/wp-content/uploads/2017/05/anaconda_prompt.png), navigate to the folder where you downloaded the environment file and type:
