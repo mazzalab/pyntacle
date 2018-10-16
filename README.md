@@ -60,7 +60,7 @@ conda env create -n pyntacle_env --file pyntacle_latest.yml
 rm pyntacle_latest.yml
 ```
 
-This will create a complete and working Pyntacle environment. Now you just need to activate it using its name:
+This will download and recreate a complete and working Pyntacle environment. Now you just need to activate it using its name:
 
 ```bash
 source activate pyntacle_env
