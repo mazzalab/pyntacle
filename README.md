@@ -54,7 +54,7 @@ also allow you to specify precisely which Python version to install), and instal
 Run the following commands from a terminal window:
 
 ```bash
-wget http://pyntacle.css-mendel.it/resources/pyntacle_latest.yml
+wget http://pyntacle.css-mendel.it/resources/envs/unix/pyntacle_latest.yml
 conda env create -n pyntacle_env --file pyntacle_latest.yml
 # OPTIONAL CLEANUP
 rm pyntacle_latest.yml
