@@ -255,7 +255,7 @@ class AddAttributes:
         n_nodes = self.__graph.vcount()
         
         if n_nodes > 100:
-            density = self.__graph.ecount()/n_nodes
+            density = (2*(self.__graph.ecount()))/(n_nodes*(n_nodes-1))
             if density < 0.5 and n_nodes <=500:
                 sp_implementation = CmodeEnum.igraph
             else:
