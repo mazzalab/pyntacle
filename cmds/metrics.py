@@ -297,8 +297,7 @@ class Metrics:
                                                   GlobalAttributeEnum.average_radiality_reach.name: GlobalTopology.average_radiality_reach(graph=graph, cmode=implementation),
                                                   GlobalAttributeEnum.completeness_naive.name: Sparseness.completeness_naive(graph=graph),
                                                   GlobalAttributeEnum.completeness.name: Sparseness.completeness(graph=graph),
-                                                  GlobalAttributeEnum.compactness.name: Sparseness.compactness(graph=graph),
-                                                  GlobalAttributeEnum.compactness_correct.name: Sparseness.compactness_correct(graph=graph)
+                                                  GlobalAttributeEnum.compactness.name: Sparseness.compactness(graph=graph)
                                                   })
 
             sys.stdout.write("Producing report\n")
@@ -348,7 +347,6 @@ class Metrics:
                     GlobalAttributeEnum.completeness_naive.name: Sparseness.completeness_naive(graph=graph_nonodes),
                     GlobalAttributeEnum.completeness.name: Sparseness.completeness(graph=graph_nonodes),
                     GlobalAttributeEnum.compactness.name: Sparseness.compactness(graph=graph_nonodes),
-                    GlobalAttributeEnum.compactness_correct.name: Sparseness.compactness_correct(graph=graph_nonodes)
                 })
 
                 sys.stdout.write("Producing report\n")

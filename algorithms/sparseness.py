@@ -129,29 +129,3 @@ class Sparseness:
         compactness = addend_left * addend_right
 
         return round(compactness, 5)
-
-    @staticmethod
-    @check_graph_consistency
-    def compactness_correct(graph) -> float:
-        """
-        It computes the correct formulation of the Randić and DeAlba's *compactness* index [Ref1]_ as:
-        (Undirected graphs) rho = ((n^2 / 2E) -1)^-1 * (1- 1/n)^-1
-        (Directed graphs) rho = ((n^2 / E)^ -1)^-1 * (1- 1/n)^-1, where n is the number of nodes of the graph and
-        E is the total number of edges, as for [Ref2]_
-        [Ref1]https://pubs.acs.org/doi/abs/10.1021/ci970241z?journalCode=jcics1
-        [Ref2] https://doi.org/10.1093/bib/bbp060
-        :param igraph.Graph graph: an igraph.Graph object.
-        :return: The corrected compactness index
-        """
-
-        if graph.is_directed():
-            e = graph.ecount()
-        else:
-            e = graph.ecount() * 2
-
-        node_tot = graph.vcount()
-        addend_left = (math.pow(node_tot, 2) / e) - 1
-        addend_right = 1 - (1 / node_tot)
-        compactness = math.pow(addend_left, -1) * math.pow(addend_right, -1)
-
-        return round(compactness, 5)

@@ -45,8 +45,18 @@ from igraph import Graph
 import multiprocessing as mp
 
 
-def crunch_reachability_combinations(allS, graph: Graph, kp_type: KpposEnum, m: int,
-                                     max_distance: int, implementation: CmodeEnum) -> dict:
+def __crunch_reachability_combinations(allS, graph: Graph, kp_type: KpposEnum, m: int,
+                                       max_distance: int, implementation: CmodeEnum) -> dict:
+    """
+
+    :param allS:
+    :param graph:
+    :param kp_type:
+    :param m:
+    :param max_distance:
+    :param implementation:
+    :return:
+    """
     # print("{}: {}".format(os.getpid(), len(allS)))
     kppset_score_pairs = {}
     if kp_type == KpposEnum.mreach:
@@ -73,8 +83,8 @@ def crunch_reachability_combinations(allS, graph: Graph, kp_type: KpposEnum, m: 
     return kppset_score_pairs
 
 
-def crunch_fragmentation_combinations(allS, graph: Graph, kp_type: KpnegEnum,
-                                      implementation: CmodeEnum, max_distance) -> dict:
+def __crunch_fragmentation_combinations(allS, graph: Graph, kp_type: KpnegEnum,
+                                        implementation: CmodeEnum, max_distance) -> dict:
     kppset_score_pairs_partial = {}
     # print("{}: {}".format(os.getpid(), len(allS)))
 
@@ -224,7 +234,7 @@ class BruteforceSearch:
         allS = itertools.combinations(node_indices, kp_size)
         pool = mp.Pool(ncores)
         for partial_result in pool.imap_unordered(
-                partial(crunch_fragmentation_combinations, graph=graph, kp_type=kp_type,
+                partial(__crunch_fragmentation_combinations, graph=graph, kp_type=kp_type,
                         implementation=implementation, max_distance=max_distance), allS):
             kppset_score_pairs = {**kppset_score_pairs, **partial_result}
 
@@ -361,7 +371,7 @@ class BruteforceSearch:
         pool = mp.Pool(ncores)
 
         for partial_result in pool.imap_unordered(
-                partial(crunch_reachability_combinations, graph=graph, kp_type=kp_type, m=m,
+                partial(__crunch_reachability_combinations, graph=graph, kp_type=kp_type, m=m,
                         max_distance=max_distance, implementation=implementation), allS):
             kppset_score_pairs = {**kppset_score_pairs, **partial_result}
 

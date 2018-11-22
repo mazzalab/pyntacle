@@ -147,12 +147,6 @@ class Octopus:
     def add_compactness(graph):
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.compactness.name,
                                                   Sparseness.compactness(graph))
-
-    @staticmethod
-    @check_graph_consistency
-    def add_compactness_correct(graph):
-        AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.compactness_correct.name,
-                                                  Sparseness.compactness_correct(graph))
         
     # Local properties
     @staticmethod
