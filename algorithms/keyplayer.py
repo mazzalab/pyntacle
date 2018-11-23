@@ -107,7 +107,8 @@ class KeyPlayer:
         elif num_edges == num_nodes * (num_edges - 1):
             return 0.0
         else:
-
+            #  TODO: implementation "auto" should consider graph parameters and use the correct implementation
+            #  TODO: and the GPU/MULTICORE one
             if not isinstance(implementation, CmodeEnum):
                 raise KeyError("\"implementation\" not valid, must be one of the following: {}".format(list(CmodeEnum)))
             elif max_distance:
@@ -136,7 +137,7 @@ class KeyPlayer:
 
         number_nodes = graph.vcount()
         df_denum = number_nodes * (number_nodes - 1)
-        shortest_path_lengths = sp.shortest_path_igraph(graph=graph)
+        shortest_path_lengths = sp.shortest_path_length_igraph(graph=graph)
 
         if max_distance:
             shortest_path_lengths = ShortestPathModifier.set_list_to_inf(
@@ -222,25 +223,22 @@ class KeyPlayer:
                     raise TypeError("'max_distance' must be an integer value greater than one")
                 if max_distance < 1:
                     raise ValueError("'max_distance' must be an integer value greater than one")
-
-        index_list = gu(graph=graph).get_node_indices(node_names=nodes)
-
-        if implementation == CmodeEnum.igraph:
-            shortest_path_lengths = sp.shortest_path_igraph(graph, nodes=nodes)
-
         else:
-            if sp_matrix is None:
-                shortest_path_lengths = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=nodes)
+            index_list = gu(graph=graph).get_node_indices(node_names=nodes)
 
+            if implementation == CmodeEnum.igraph:
+                shortest_path_lengths = sp.shortest_path_length_igraph(graph, nodes=nodes)
             else:
-
-                if not isinstance(sp_matrix, np.ndarray):
-                    raise ValueError("'sp_matrix' must be a numpy.ndarray instance")
-                elif sp_matrix.shape[0] != graph.vcount():
-                    raise WrongArgumentError("The dimension of 'sp matrix' is different from the total "
-                                             "number of nodes")
+                if not sp_matrix:
+                    shortest_path_lengths = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=nodes)
                 else:
-                    shortest_path_lengths = sp_matrix[index_list, :]
+                    if not isinstance(sp_matrix, np.ndarray):
+                        raise ValueError("'sp_matrix' must be a numpy.ndarray instance")
+                    elif sp_matrix.shape[0] != graph.vcount():
+                        raise WrongArgumentError("The dimension of 'sp matrix' is different from the total "
+                                                 "number of nodes")
+                    else:
+                        shortest_path_lengths = sp_matrix[index_list, :]
 
         if max_distance:
             shortest_path_lengths = ShortestPathModifier.set_nparray_to_inf(shortest_path_lengths, max_distance)
@@ -290,7 +288,7 @@ class KeyPlayer:
             index_list = gu(graph=graph).get_node_indices(node_names=nodes)
 
             if implementation == CmodeEnum.igraph:
-                shortest_path_lengths = sp.shortest_path_igraph(graph=graph, nodes=nodes)
+                shortest_path_lengths = sp.shortest_path_length_igraph(graph=graph, nodes=nodes)
             else:
                 if sp_matrix is None:
                     shortest_path_lengths = sp.get_shortestpaths(graph=graph, nodes=nodes, cmode=implementation)

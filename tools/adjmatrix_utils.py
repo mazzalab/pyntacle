@@ -37,7 +37,7 @@ import numpy as np
 import sys
 
 
-class AdjmUtils():
+class AdjmUtils:
     logger = None
 
     def __init__(self, file: str, header: bool, sep="\t"):
@@ -122,7 +122,6 @@ class AdjmUtils():
         self.sep = sep
         self.header = header
         self.adjm = None
-
 
     def __write_adjm(self, adjm: list, separator: str, appendix: str) -> str:
         """

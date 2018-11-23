@@ -32,6 +32,7 @@ import random
 
 """Utilities for checking the consistency of the parameters passed in greedy or bruteforce optimization"""
 
+
 def greedy_search_initializer(func):
     """
     checks that the arguments passed to the KP functions for greedy optimization
@@ -60,9 +61,6 @@ def greedy_search_initializer(func):
 
         if max_distance is not None and not isinstance(max_distance, int) and max_distance > 1 and max_distance <= graph.vcount():
             raise ValueError("\"max_sp\" must be an integer greater than one and lesser tan the total number of nodes")
-
-        # sys.stdout.write(
-        #     "Greedily-optimized search of a kpp-set of size {0} for metric {1}\n".format(kp_size, kp_type.name))
 
         return func(graph, kp_size, kp_type, seed, max_distance, *args, **kwargs)
 

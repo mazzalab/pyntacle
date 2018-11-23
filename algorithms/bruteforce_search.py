@@ -1,7 +1,9 @@
 """
-Brute-force search optimization algorithms for the best kp-set.
-This algorithm makes all possible combinations of node sets of a specified size and applies the KP-algorithm on them.
-It hence selects the KPP-set with the best score.
+Brute-force search optimization algorithms for the best set of nodes, according to a number of metrics.
+This algorithm generates all possible combinations of nodes, with a specified size, and applies the Borgatti's
+fragmentation or reachability algorithms, as described in
+https://doi.org/10.1007/s10588-006-7084-x, or it computes degree, closeness or betweenness group-centrality, as
+described in https://doi.org/10.1080/0022250X.1999.9990219. Finally, it selects the sets with the best score.
 """
 
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
@@ -30,352 +32,341 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-
 from config import *
 import itertools
+import numpy as np
 from functools import partial
 from algorithms.keyplayer import KeyPlayer
+from algorithms.local_topology import LocalTopology
 from algorithms.shortest_path import ShortestPath as sp
 from exceptions.wrong_argument_error import WrongArgumentError
-from tools.enums import KpposEnum, KpnegEnum, CmodeEnum
+from tools.enums import KpposEnum, KpnegEnum, CmodeEnum, GroupCentralityEnum, GroupDistanceEnum
 from tools.misc.kpsearch_utils import bruteforce_search_initializer
 from tools.misc.graph_routines import check_graph_consistency
-from tools.graph_utils import GraphUtils as gu
 from igraph import Graph
 import multiprocessing as mp
 
 
-def __crunch_reachability_combinations(allS, graph: Graph, kp_type: KpposEnum, m: int,
-                                       max_distance: int, implementation: CmodeEnum) -> dict:
-    """
+def crunch_fragmentation_combinations(graph: Graph, kpp_type: KpnegEnum,
+                                      max_distance: int, implementation: CmodeEnum, node_names: list) -> dict:
+    kppset_score_pairs_partial = {}
+    temp_graph = graph.copy()
+    temp_graph.delete_vertices(node_names)
 
-    :param allS:
-    :param graph:
-    :param kp_type:
-    :param m:
-    :param max_distance:
-    :param implementation:
-    :return:
-    """
-    # print("{}: {}".format(os.getpid(), len(allS)))
+    if kpp_type == KpnegEnum.F:
+        kppset_score_pairs_partial[node_names] = KeyPlayer.F(temp_graph)
+
+    elif kpp_type == KpnegEnum.dF:
+        kppset_score_pairs_partial[node_names] = KeyPlayer.dF(graph=temp_graph, max_distance=max_distance,
+                                                              implementation=implementation)
+    else:
+        raise WrongArgumentError("{} function not yet implemented.".format(kpp_type.name))
+
+    return kppset_score_pairs_partial
+
+
+def crunch_reachability_combinations(graph: Graph, kp_type: KpposEnum, m: int,
+                                     max_distance: int, implementation: CmodeEnum, node_names: list) -> dict:
     kppset_score_pairs = {}
     if kp_type == KpposEnum.mreach:
         if implementation != CmodeEnum.igraph:
             sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
-            reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distance=max_distance,
+            reachability_score = KeyPlayer.mreach(graph=graph, nodes=node_names, m=m, max_distance=max_distance,
                                                   implementation=implementation, sp_matrix=sp_matrix)
         else:
-            reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distance=max_distance,
+            reachability_score = KeyPlayer.mreach(graph=graph, nodes=node_names, m=m, max_distance=max_distance,
                                                   implementation=implementation)
     elif kp_type == KpposEnum.dR:
         if implementation != CmodeEnum.igraph:
             sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
-            reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distance=max_distance,
+            reachability_score = KeyPlayer.dR(graph=graph, nodes=node_names, max_distance=max_distance,
                                               implementation=implementation, sp_matrix=sp_matrix)
         else:
-            reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distance=max_distance,
+            reachability_score = KeyPlayer.dR(graph=graph, nodes=node_names, max_distance=max_distance,
                                               implementation=implementation)
+    else:
+        raise WrongArgumentError("{} function not yet implemented.".format(kpp_type.name))
 
     else:  # TODO: change to raise and exception
         sys.stdout.write("{} not yet implemented".format(kp_type.name))
         sys.exit(0)
     kppset_score_pairs[allS] = reachability_score
+    kppset_score_pairs[node_names] = reachability_score
     return kppset_score_pairs
 
 
-def __crunch_fragmentation_combinations(allS, graph: Graph, kp_type: KpnegEnum,
-                                        implementation: CmodeEnum, max_distance) -> dict:
-    kppset_score_pairs_partial = {}
-    # print("{}: {}".format(os.getpid(), len(allS)))
+def crunch_groupcentrality_combinations(graph: Graph, gc_enum: GroupCentralityEnum,
+                                        distance_type: GroupDistanceEnum,
+                                        cmode: CmodeEnum, np_counts: np.ndarray, node_names: list) -> dict:
+    score_pairs_partial = {}
 
-    temp_graph = graph.copy()
-    temp_graph.delete_vertices(allS)
+    if gc_enum == GroupCentralityEnum.group_degree:
+        score = LocalTopology.group_degree(graph, nodes=node_names)
+    elif gc_enum == GroupCentralityEnum.group_closeness:
+        score = LocalTopology.group_closeness(graph, node_names, distance=distance_type, cmode=cmode)
+    elif gc_enum == GroupCentralityEnum.group_betweenness:
+        if np_counts.size == 0:
+            np_counts = sp.get_shortestpath_count(graph, nodes=None, cmode=cmode)
+        score = LocalTopology.group_betweenness(graph, node_names, cmode=cmode, np_counts=np_counts)
+    else:
+        raise WrongArgumentError("{} function not yet implemented.".format(gc_enum.name))
 
-    if kp_type == KpnegEnum.F:
-        kppset_score_pairs_partial[allS] = KeyPlayer.F(temp_graph)
-
-    elif kp_type == KpnegEnum.dF:
-        kppset_score_pairs_partial[allS] = KeyPlayer.dF(graph=temp_graph, max_distance=max_distance,
-                                                        implementation=implementation)
-
-    else:  # here all the other KPNEG functions we want to insert
-        sys.stdout.write("{} Not yet implemented".format(kp_type.name))
-        sys.exit(0)
-
-    # kppset_score_pairs[allS] = type_func(temp_graph) #, graph=temp_graph, max_distance=max_distance, implementation=implementation)
-    return kppset_score_pairs_partial
+    score_pairs_partial[tuple(node_names)] = score
+    return score_pairs_partial
 
 
 class BruteforceSearch:
     """
-    Brute-force search for the best kp-set using either parallel or single core implementation. Return all the best
-    KP-sets for a given reachability or fragmentation metrics
+    Brute-force search for the best set of nodes using either parallel or single core implementations.
+    It returns all the best sets for a given centrality metrics.
     """
 
     @staticmethod
     @check_graph_consistency
     @bruteforce_search_initializer
-    def fragmentation(graph, kp_size, kp_type: KpnegEnum, max_distance=None, implementation=CmodeEnum.igraph,
-                      ncores=n_cpus) -> (list, float):
+    def fragmentation(graph: Graph, kp_size: int, kpp_type: KpnegEnum, max_distance: int = None,
+                      implementation: CmodeEnum = CmodeEnum.igraph, parallel: bool = False, ncores: int = None) -> (
+            list, float):
         """
-        It searches and finds the kpp-set of a predefined dimension that best disrupts the graph.
-        It generates all the possible KP-sets and calculates the fragmentation score of the residual graph, after
-        having extracted the nodes belonging to the KP-set.
-        The best KP-set will be the one that maximizes the fragmentation of the graph.
+        It searches and finds the kp-set of a predefined size that maximally disrupts the graph.
+        It generates all the possible kp-sets and calculates the fragmentation score of the residual graph, after
+        having extracted the nodes belonging to the kp-set. The best kp-set will be the one that maximizes the
+        fragmentation of the graph.
         :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
-        "Minimum requirements" specifications in the Pyntacle  manual.
-        :param int kp_size: the size of the KP-set to be found
-        :param KpnegEnum kp_type: any option of the *KpnegEnum* enumerator
-        :param int max_distance: The maximum shortest path length over which two nodes are considered unreachable
+        "Minimum requirements" specifications in the Pyntacle's manual.
+        :param int kp_size: the size of the kp-set to be found
+        :param KpnegEnum kp_type: the fragmentation algorithm to be applied
+        :param int max_distance: the maximum shortest path length over which two nodes are considered unreachable
         :param CmodeEnum.igraph implementation: Computation of the shortest paths is deferred
         to the following implementations:
-        *`imps.auto`: the most performing implementation is automatically chosen according to the geometry of graph
-        *`imps.igraqh`: (default) use the default shortest path implementation in igraph (run on a single computing core)
-        *`imps.pyntacle`: compute shortest paths using the Floyd-Warshall algorithm designed for HPC hardware (multicore
-        processors or NVIDIA-enabled GPU graphic cards. This method returns a matrix (`:type np.ndarray:`) of shortest
-        paths. Infinite distances actually equal the total number of vertices plus one.
-        :param bool parallel: whether to use multicore processing
-        :param int ncores: Positive integer specifying the number of cores that will be used to perform parallel
-        computing. If `None` (default) the number of cores will be set to the maximum number of cores -1
-        :return: - S: a list of lists containing all the possible sets of nodes that optimize the kp-sets
-                 - best_fragmentation_score: The value obtained when the S set is removed from the graph. If there are
-                 multiple sets available, the fragmentation score represents the value when **any** of the sets
-                 are removed
+        *`implementation.auto`: the most performing computing mode is automatically chosen according to the properties of graph
+        *`implementation.igraqh`: (default) use the shortest paths implementation provided by igraph
+        *`implementation.cpu`: compute shortest paths using the Floyd-Warshall algorithm designed for HPC hardware (multicore
+        processors). This method returns a matrix (`:type np.ndarray:`) of shortest paths. Infinite distances actually
+        equal the total number of vertices plus one.
+        *`implementation.gpu`: compute shortest paths using the Floyd-Warshall algorithm designed for NVIDIA-enabled GPU graphic
+        cards. This method returns a matrix (`:type np.ndarray:`) of shortest paths. Infinite distances actually equal
+        the total number of vertices plus one.
+        :param bool parallel: whether to use multicore processors to run the algorithm iterations in parallel
+        :param int ncores: Positive integer specifying the number of computing . If `None` (default) the number of
+        cores will be set to the maximum number of available cores -1
+        :return: a tuple containing (left) a list of all kp-sets with maximum group centrality score; (right) the maximum
+        achieved score.
         """
-        if kp_type == KpnegEnum.F or kp_type == KpnegEnum.dF:
-            if graph.ecount() == 0:
-                sys.stdout.write(
-                    "Graph is consisted of isolates, so there is no optimal KP-set that can fragment the network. "
-                    "Returning a list with \'None\' and the maximum {} value (1.0).\n".format(kp_type.name))
-                return [None], 1.0
 
-        # define an initial fragmentation status of the graph
-        if kp_type == KpnegEnum.F:
-            init_fragmentation_score = KeyPlayer.F(graph=graph)
-        elif kp_type == KpnegEnum.dF:
-            init_fragmentation_score = KeyPlayer.dF(graph=graph,implementation=implementation,max_distance=max_distance)
-        else:
-            init_fragmentation_score = None
-
-        parallel = False
-        if ncores > 1:
-            parallel = True
-            # sys.stdout.write("Brute-Force Fragmentation will be performed in parallel using {} cores\n".format(ncores))
-
-            
-        if parallel:
-            final_set = BruteforceSearch.__bruteforce_fragmentation_parallel(graph=graph, kp_size=kp_size,
-                                                                             kp_type=kp_type, ncores=ncores,
-                                                                             max_distance=max_distance,
-                                                                             implementation=implementation)
-        else:
-            final_set = BruteforceSearch.__bruteforce_fragmentation_single(graph=graph, kp_size=kp_size,
-                                                                           kp_type=kp_type,
-                                                                           max_distance=max_distance,
-                                                                           implementation=implementation)
-
-        maxKpp = max(final_set.values())
-        if init_fragmentation_score is not None:
-            if maxKpp <= init_fragmentation_score:
-                sys.stdout.write(
-                    "There is no set of size {0} that maximize the initial fragmentation score for {1}. "
-                    "Returning \'None\' and the minimum {1} value (0)\n".format(kp_size, kp_type.name))
-                return [None], round(init_fragmentation_score, 5)
-            else:
-                S = [list(x) for x in final_set.keys() if final_set[x] == maxKpp]
-        else:
-            S = [list(x) for x in final_set.keys() if final_set[x] == maxKpp]
-
-        final = [graph.vs(x)["name"] for x in S]
-        maxKpp = round(maxKpp, 5)
-        if len(final) > 1:
-            sys.stdout.write(
-                "The best kpp-sets for metric {} of size {} are:\n\t{}with score {}\n".format(kp_type.name, kp_size,",\n\t".join([",".join(x) for x in final])+"\n",
-                                                                                           maxKpp))
-        else:
-            sys.stdout.write(
-                "The best kpp-sets for metric {} of size {} is:\n\t{}with score {}\n".format(kp_type.name, kp_size,
-                                                                                            ",\n\t".join([",".join(x) for x in final]) + "\n", maxKpp))
-
-        return final, maxKpp
-
-    @staticmethod
-    def __bruteforce_fragmentation_single(graph: Graph, kp_size: int, kp_type: KpnegEnum,
-                                          implementation: CmodeEnum, max_distance):
-
-        if kp_type == KpnegEnum.F:
-            type_func = partial(KeyPlayer.F, graph=graph)
-        elif kp_type == KpnegEnum.dF:
-            type_func = partial(KeyPlayer.dF, graph=graph, max_distance=max_distance, implementation=implementation)
-        else:  # TODO: change to raise exceptions
-            sys.stdout.write("{} Not yet implemented\n".format(kp_type.name))
-            sys.exit(0)
-
-        node_indices = graph.vs.indices
-        allS = itertools.combinations(node_indices, kp_size)
-        kppset_score_pairs = {}
-
-        for S in allS:
-            temp_graph = graph.copy()
-            temp_graph.delete_vertices(S)
-            kppset_score_pairs[tuple(S)] = type_func(graph=temp_graph)
-
-        return kppset_score_pairs
-
-    @staticmethod
-    def __bruteforce_fragmentation_parallel(graph: Graph, kp_size: int, kp_type: KpnegEnum, ncores: int,
-                                            implementation: CmodeEnum, max_distance=None) -> dict:
-
-        kppset_score_pairs = {}
+        kpset_score_pairs = {}
         """: type: dic{(), float}"""
+        node_names = graph.vs["name"]
+        allS = itertools.combinations(node_names, kp_size)
 
-        # Generation of all combinations of nodes (all kpp-sets) of size kp_size
-        node_indices = graph.vs.indices
-        allS = itertools.combinations(node_indices, kp_size)
-        pool = mp.Pool(ncores)
-        for partial_result in pool.imap_unordered(
-                partial(__crunch_fragmentation_combinations, graph=graph, kp_type=kp_type,
-                        implementation=implementation, max_distance=max_distance), allS):
-            kppset_score_pairs = {**kppset_score_pairs, **partial_result}
+        if parallel:
+            if ncores is None:
+                ncores = mp.cpu_count() - 1
+            elif not isinstance(ncores, int) or ncores < 1:
+                raise TypeError("'ncores' must be a positive integer value")
 
-        pool.close()
-        pool.join()
+            sys.stdout.write(
+                "Brute-force search of the best kp-set of size {} using {} cores\n".format(kp_size, ncores))
 
-        return kppset_score_pairs
+            pool = mp.Pool(ncores)
+            for partial_result in pool.imap_unordered(
+                    partial(crunch_fragmentation_combinations, graph, kpp_type, max_distance, implementation), allS):
+                kpset_score_pairs = {**kpset_score_pairs, **partial_result}
+
+            pool.close()
+            pool.join()
+        else:
+            sys.stdout.write("Brute-force search of the best kp-set of size {}\n".format(kp_size))
+
+            for S in allS:
+                partial_result = crunch_fragmentation_combinations(graph=graph, kpp_type=kpp_type,
+                                                                   max_distance=max_distance,
+                                                                   implementation=implementation, node_names=S)
+                kpset_score_pairs = {**kpset_score_pairs, **partial_result}
+
+        maxKpp = max(kpset_score_pairs.values())
+        final = [list(x) for x in kpset_score_pairs.keys() if kpset_score_pairs[x] == maxKpp]
+        maxKpp = round(maxKpp, 5)
+        sys.stdout.write(
+            "Best group{}: {}\n Group{} size = {}\n Metric = {}\n Score = {}\n".format("s" if len(final) > 1 else "",
+                                                                                       "{" + str(final).replace("'",
+                                                                                                                "")[
+                                                                                             1:-1] + "}",
+                                                                                       "s" if len(final) > 1 else "",
+                                                                                       kp_size,
+                                                                                       kpp_type.name.replace("_", " "),
+                                                                                       maxKpp))
+        return final, maxKpp
 
     @staticmethod
     @check_graph_consistency
     @bruteforce_search_initializer
-    def reachability(graph, kp_size, kp_type: KpposEnum, max_distance=None, m=None, implementation=CmodeEnum.igraph,
-                     ncores=n_cpus) -> (list, float):
+    def reachability(graph, kp_size, kpp_type: KpposEnum, max_distance=None, m=None, implementation=CmodeEnum.igraph,
+                     parallel=False, ncores=None) -> (list, float):
+        # TODO: please change 'implementation' to 'cmode'
         """
-        It searches and finds the kpp-set of a predefined dimension that best reaches all other nodes in the graph.
-        It generates all the possible kpp-sets and calculates their reachability scores.
-        The best kpp-set will be the one that best reaches all other nodes of the graph.
-
-        **m-reach**: min = 0 (unreachable); max = size(graph) - kp_size (total reachability)
+        It searches and finds the kp-set of a predefined size that best reaches all other nodes in the graph.
+        It generates all the possible kp-sets and calculates their reachability scores.
+        The best kp-set will be the one that best reaches all other nodes of the graph.
+        **m-reach**: min = 0 (unreachable); max = size(graph) - kpp_size (total reachability)
         **dR**: min = 0 (unreachable); max = 1 (total reachability)
 
         :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
-        "Minimum requirements" specifications in Pyntacle manual.
-        :param int kp_size: the size of the KP-set to be found
-        :param KpnegEnum kp_type: any option of the *KpposEnum* enumerators
-        :param int max_distance: The maximum shortest path length over which two nodes are considered unreachable
+        "Minimum requirements" specifications in the Pyntacle's manual.
+        :param int kp_size: the size of the kp-set to be found
+        :param KpposEnum kp_type: any option of the *KpposEnum* enumerators
+        :param int max_distance: the maximum shortest path length over which two nodes are considered unreachable
+        :param int m: The number of steps of the m-reach algorithm
         :param CmodeEnum.igraph implementation: Computation of the shortest paths is deferred
         to the following implementations:
-        *`imps.auto`: the most performing implementation is automatically chosen according to the geometry of graph
-        *`imps.igraqh`: (default) use the default shortest path implementation in igraph (run on a single computing core)
-        *`imps.pyntacle`: compute shortest paths using the Floyd-Warshall algorithm designed for HPC hardware (multicore
-        processors or NVIDIA-enabled GPU graphic cards. This method returns a matrix (`:type np.ndarray:`) of shortest
-        paths. Infinite distances actually equal the total number of vertices plus one.
-        :param bool parallel: whether to use multicore processing
-        :param int ncores: Positive integer specifying the number of cores that will be used to perform parallel
-        computing. If `None` (default) the number of cores will be set to the maximum number of cores -1
-
-        :return: - S: a list of lists containing all the possible sets of nodes that optimize the kp-sets
-         - best_reachability_score: The value for the S set that maximmixes the *KP-pos* metrics requested. If there are
-         multiple sets available, then there are multiple solutions to the reachability scores, meaning that
-         different sets of nodes maximumze the reachability metric queried
+        *`implementation.auto`: the most performing computing mode is automatically chosen according to the properties of graph
+        *`implementation.igraqh`: (default) use the shortest paths implementation provided by igraph
+        *`implementation.cpu`: compute shortest paths using the Floyd-Warshall algorithm designed for HPC hardware (multicore
+        processors). This method returns a matrix (`:type np.ndarray:`) of shortest paths. Infinite distances actually
+        equal the total number of vertices plus one.
+        *`implementation.gpu`: compute shortest paths using the Floyd-Warshall algorithm designed for NVIDIA-enabled GPU graphic
+        cards. This method returns a matrix (`:type np.ndarray:`) of shortest paths. Infinite distances actually equal
+        the total number of vertices plus one.
+        :param bool parallel: whether to use multicore processors to run the algorithm iterations in parallel
+        :param int ncores: Positive integer specifying the number of computing . If `None` (default) the number of
+        cores will be set to the maximum number of available cores -1
+        :return: a tuple containing (left) a list of all kp-sets with maximum group centrality score; (right) the maximum
+        achieved score.
         """
 
-        if kp_type == KpposEnum.mreach and m is None:
-            raise WrongArgumentError("\"m\" must be specified for mreach")
-        if kp_type == KpposEnum.mreach and isinstance(m, int) and m <= 0:
-            raise TypeError({"'m' must be a positive integer"})
+        if kpp_type == KpposEnum.mreach and m is None:
+            raise WrongArgumentError("The parameter m must be specified")
+        if kpp_type == KpposEnum.mreach and isinstance(m, int) and m <= 0:
+            raise TypeError("The parameter m must be a positive integer value")
 
-        parallel = False
-        if ncores > 1:
-            parallel = True
-            # sys.stdout.write("Brute-Force Reachability will be performed in parallel using {} cores\n".format(ncores))
+        kpset_score_pairs = {}
+        """: type: dic{(), float}"""
+        node_names = graph.vs["name"]
+        allS = itertools.combinations(node_names, kp_size)
 
         if parallel:
-            final_set = BruteforceSearch.__bruteforce_reachability_parallel(graph=graph, kp_size=kp_size,
-                                                                            kp_type=kp_type, m=m,
-                                                                            max_distance=max_distance,
-                                                                            implementation=implementation,
-                                                                            ncores=ncores)
-            
-        else:
-            final_set = BruteforceSearch.__bruteforce_reachability_single(graph=graph, kp_size=kp_size,
-                                                                          kp_type=kp_type, m=m,
-                                                                          max_distance=max_distance,
-                                                                          implementation=implementation)
+            if ncores is None:
+                ncores = mp.cpu_count() - 1
+            elif not isinstance(ncores, int) or ncores < 1:
+                raise TypeError("'ncores' must be a positive integer value")
 
-        maxKpp = max(final_set.values())  # take the maximum value
-        final = [x for x in final_set.keys() if final_set[x] == maxKpp]
-
-        maxKpp = round(maxKpp, 5)
-
-        if len(final) > 1:
             sys.stdout.write(
-                "The best kpp-sets for metric {} of size {} are:\n\t{}with score {}\n".format(kp_type.name, kp_size,
-                                                                                           ",\n\t".join([",".join(x) for x in final])+"\n", maxKpp))
-        else:
-            sys.stdout.write(
-                "The best kpp-sets for metric {} of size {} is:\n\t{}with score {}\n".format(kp_type.name, kp_size,
-                                                                                            ",\n\t".join([",".join(x) for x in final]) + "\n", maxKpp))
+                "Brute-force search of the best kp-set of size {} using {} cores\n".format(kp_size, ncores))
 
-        return final, maxKpp
+            pool = mp.Pool(ncores)
+            for partial_result in pool.imap_unordered(
+                    partial(crunch_reachability_combinations, graph, kpp_type, m, max_distance, implementation), allS):
+                kpset_score_pairs = {**kpset_score_pairs, **partial_result}
+
+            pool.close()
+            pool.join()
+        else:
+            sys.stdout.write("Brute-force search of the best kp-set of size {}\n".format(kp_size))
+            for S in allS:
+                partial_result = crunch_reachability_combinations(graph=graph, kpp_type=kpp_type, m=m,
+                                                                  max_distance=max_distance,
+                                                                  implementation=implementation, node_names=S)
+                kpset_score_pairs = {**kpset_score_pairs, **partial_result}
+
+        _group_score = max(kpset_score_pairs.values())  # take the maximum value
+        final = [list(x) for x in kpset_score_pairs.keys() if kpset_score_pairs[x] == _group_score]
+        _group_score = round(_group_score, 5)
+
+        sys.stdout.write(
+            "Best group{}: {}\n Group{} size = {}\n Metric = {}{}\n Score = {}\n".format("s" if len(final) > 1 else "",
+                "{" + str(final).replace("'","")[1:-1] + "}",
+                "s" if len(final) > 1 else "",
+                kp_size,
+                kpp_type.name.replace("_"," "),
+                ", m=" + str(m) if kpp_type == KpposEnum.mreach else "",
+                _group_score))
+        return final, _group_score
 
     @staticmethod
-    def __bruteforce_reachability_single(graph: Graph, kp_size: int, kp_type: KpposEnum, m: int,
-                                         max_distance: int, implementation=CmodeEnum.igraph):
+    @check_graph_consistency
+    # @bruteforce_search_initializer  TODO: If needed, add this search initializer
+    def group_centrality(graph, group_size, gc_enum: GroupCentralityEnum, distance_type: GroupDistanceEnum = GroupDistanceEnum.minimum,
+                         cmode=CmodeEnum.igraph, parallel=False, ncores=None) -> (list, float):
+        """
+        It searches and finds the sets of nodes of a predefined size that exhibit the maximum group centrality value.
+        It generates all the possible sets of nodes and calculates their group centrality value. Available centrality
+        metrics are: *group degree*, *group closeness* and *group betweenness*. The best sets will be those with maximum
+        centrality score.
+        **group degree**: min = 0 (lowest centrality); max = 1 (highest centrality)
+        **group closeness**: min = 0 (lowest centrality); max = 1 (highest centrality)
+        **group betweenness**: min = 0 (lowest centrality); max = 1 (highest centrality)
 
-        kppset_score_pairs = {}
-        node_indices = graph.vs.indices
-        allS = itertools.combinations(node_indices, kp_size)
+        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
+        "Minimum requirements" specifications in the Pyntacle's manual.
+        :param int group_size: the size of the group of nodes to be found
+        :param GroupCentralityEnum gc_enum: The centrality algorithm to be computed. It can be any value of the
+        enumerator  GroupCentralityEnum
+        :param GroupDistanceEnum distance_type: The definition of distance between any non-group and group nodes.
+        It can be any value of the enumerator GroupDistanceEnum
+        :param CmodeEnum cmode: Computation of the shortest paths is deferred to the following implementations:
+        *`cmode.auto`: the most performing computing mode is automatically chosen according to the properties of graph
+        *`cmode.igraqh`: (default) use the shortest paths implementation provided by igraph
+        *`cmode.cpu`: compute shortest paths using the Floyd-Warshall algorithm designed for HPC hardware (multicore
+        processors). This method returns a matrix (`:type np.ndarray:`) of shortest paths. Infinite distances actually
+        equal the total number of vertices plus one.
+        *`cmode.gpu`: compute shortest paths using the Floyd-Warshall algorithm designed for NVIDIA-enabled GPU graphic
+        cards. This method returns a matrix (`:type np.ndarray:`) of shortest paths. Infinite distances actually equal
+        the total number of vertices plus one.
+        :param bool parallel: whether to use multicore processors to run the algorithm iterations in parallel
+        :param int ncores: Positive integer specifying the number of computing . If `None` (default) the number of
+        cores will be set to the maximum number of available cores -1
+        :return: a tuple containing (left) a list of all sets with maximum group centrality score; (right) the maximum
+        achieved score.
+        """
 
-        utils = gu(graph=graph)
-        for S in allS:
-            nodes = utils.get_node_names(list(S))
-
-            if kp_type == KpposEnum.mreach:
-                if implementation != CmodeEnum.igraph:
-                    sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
-                    reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distance=max_distance,
-                                                          implementation=implementation, sp_matrix=sp_matrix)
-                else:
-                    reachability_score = KeyPlayer.mreach(graph=graph, nodes=nodes, m=m, max_distance=max_distance,
-                                                          implementation=implementation)
-
-            elif kp_type == KpposEnum.dR:
-                if implementation != CmodeEnum.igraph:
-                    sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
-                    reachability_score = KeyPlayer.dR(graph=graph, nodes=nodes, max_distance=max_distance,
-                                                      implementation=implementation, sp_matrix=sp_matrix)
-                else:
-                    reachability_score = KeyPlayer.dR(graph=graph, nodes=nodes, max_distance=max_distance,
-                                                      implementation=implementation)
-
-            else:  # TODO: change to raise exceptions
-                sys.stdout.write("{} Not yet implemented".format(kp_type.name))
-                sys.exit(1)
-
-            kppset_score_pairs[tuple(graph.vs(S)['name'])] = reachability_score
-        
-        return kppset_score_pairs
-
-    @staticmethod
-    def __bruteforce_reachability_parallel(graph: Graph, kp_size: int, kp_type: KpposEnum, m: int,
-                                           max_distance: int, implementation: CmodeEnum, ncores: int) -> (list, float):
-
-        kppset_score_pairs = {}
+        score_pairs = {}
         """: type: dic{(), float}"""
 
-        # Generation of all combinations of nodes (all kpp-sets) of size kp_size
-        utils = gu(graph=graph)
-        all_node_names = utils.get_node_names(graph.vs.indices)
-        allS = itertools.combinations(all_node_names, kp_size)
-        # node_indices = graph.vs.indices
-        # allS = itertools.combinations(node_indices, kp_size)
-        pool = mp.Pool(ncores)
+        node_names = graph.vs["name"]
+        allS = itertools.combinations(node_names, group_size)
+        np_counts = sp.get_shortestpath_count(graph, nodes=None, cmode=cmode)
 
-        for partial_result in pool.imap_unordered(
-                partial(__crunch_reachability_combinations, graph=graph, kp_type=kp_type, m=m,
-                        max_distance=max_distance, implementation=implementation), allS):
-            kppset_score_pairs = {**kppset_score_pairs, **partial_result}
+        if parallel:
+            if ncores is None:
+                ncores = mp.cpu_count() - 1
+            elif not isinstance(ncores, int) or ncores < 1:
+                raise TypeError("'ncores' must be a positive integer value")
 
-        pool.close()
-        pool.join()
-        # print(kppset_score_pairs)
-        return kppset_score_pairs
+            sys.stdout.write("Brute-force search of the best group of nodes of size {} using {} cores\n".format(
+                group_size, ncores))
+
+            pool = mp.Pool(ncores)
+            for partial_result in pool.imap_unordered(
+                    partial(crunch_groupcentrality_combinations, graph, gc_enum, distance_type, cmode, np_counts),
+                    allS):
+                score_pairs = {**score_pairs, **partial_result}
+
+            pool.close()
+            pool.join()
+
+        else:
+            sys.stdout.write("Brute-force search of the best group of nodes of size {}\n".format(group_size))
+
+            for node_names_iter in allS:
+                score_pair_partial = crunch_groupcentrality_combinations(graph, gc_enum, distance_type,
+                                                                         cmode, np_counts, node_names_iter)
+                score_pairs = {**score_pairs, **score_pair_partial}
+
+        _group_score = max(score_pairs.values())  # take the maximum value
+        final = [list(x) for x in score_pairs.keys() if score_pairs[x] == _group_score]
+        _group_score = round(_group_score, 5)
+
+        metrics_distance_str = gc_enum.name.replace("_", " ") \
+            if gc_enum != GroupCentralityEnum.group_closeness \
+            else gc_enum.name.replace("_", " ") + " - Distance function = " + distance_type.name
+        sys.stdout.write(
+            "Best group{}: {}\n Group{} size = {}\n Metric = {}\n Score = {}\n".format("s" if len(final) > 1 else "",
+                                                                                       "{" + str(final).replace("'",
+                                                                                                                "")[
+                                                                                             1:-1] + "}",
+                                                                                       "s" if len(final) > 1 else "",
+                                                                                       group_size,
+                                                                                       metrics_distance_str,
+                                                                                       _group_score))
+
+        return final, _group_score

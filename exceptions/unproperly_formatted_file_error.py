@@ -30,7 +30,8 @@ __license__ = u"""
 
 
 class UnproperlyFormattedFileError(ValueError):
-    def __init__(self, message):
-        super().__init__(message)
-        # Custom errors here
-        # self.errors = errors
+    class NotAGraphError(ValueError):
+        def __init__(self, message, errors=None):
+            super().__init__(message)
+            # Custom errors here
+            self.errors = errors

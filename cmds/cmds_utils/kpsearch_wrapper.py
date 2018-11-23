@@ -261,8 +261,8 @@ class BFWrapper:
         :param int max_distance: maximum shortest path distance allowed in the shortest path matrix
         :param int m: for the "mreach" metrics, a positive integer greatrer than one representing the maximum distance for mreach
         """
-        if not isinstance(kp_size, int) or kp_size < 1:
-            raise ValueError("\kp_size\" must be a positive integer of size 1")
+        if not isinstance(kp_size, int) or kpp_size < 1:
+            raise ValueError("\kpp_size\" must be a positive integer of size 1")
 
         if not isinstance(kp_type, KpposEnum):
             raise TypeError("\"kp_type\" must be one of the KPPNEGchoices options available")

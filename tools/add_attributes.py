@@ -46,7 +46,7 @@ class AddAttributes:
             raise WrongArgumentError("object is not a igraph.Graph")
         else:
             self.__graph = graph
-
+    #todo: this was merged with conflicts - re-test it
     def add_graph_attributes(self, attr_name: str, attr):
         """
         Add an attribute to a graph object
