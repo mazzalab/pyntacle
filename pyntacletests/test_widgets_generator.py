@@ -51,6 +51,7 @@ class WidgetTestGenerator(unittest.TestCase):
         self.Args.seed = 1
         self.Args.repeat = 1
         self.Args.v = None
+        self.Args.suppress_cursor = True
 
     def test_random(self):
         sys.stdout.write("Testing random generator\n")

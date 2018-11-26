@@ -26,10 +26,8 @@ __license__ = u"""
 
 """ This module uses igraph' s builtin function to determine wether the power law fit for an `igraph.Graph` object"""
 
-from config import *
-from tools.misc.graph_routines import *
 from igraph import statistics as st
-
+from private.graph_routines import check_graph_consistency
 
 class FitPowerLaw:
 

@@ -27,7 +27,7 @@ __license__ = u"""
   """
 
 from algorithms.local_topology import LocalTopology
-from tools.misc.graph_routines import check_graph_consistency
+from private.graph_routines import check_graph_consistency
 from statistics import mean
 from igraph import Graph
 from tools.enums import CmodeEnum

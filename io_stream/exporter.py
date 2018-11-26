@@ -27,11 +27,12 @@ __license__ = u"""
 Export the `igraph.Graph` object into one of the pyntacle-supported formats
 """
 
-from tools.misc.graph_routines import *
-from tools.misc.io_utils import *
 from config import *
 import pandas as pd
 import pickle
+from igraph import Graph
+from private.graph_routines import check_graph_consistency
+from private.io_utils import output_file_checker
 
 class PyntacleExporter:
     """ export your igraph/Pyntacle object to a text file in the following formats:

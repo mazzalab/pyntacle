@@ -60,6 +60,7 @@ class WidgetTestKeyplayer(unittest.TestCase):
         self.Args.threads = 1
         self.Args.type = 'all'
         self.Args.v = None
+        self.Args.suppress_cursor = True
         
     def test_kpinfo(self):
         sys.stdout.write("Testing kp-info\n")

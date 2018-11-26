@@ -33,7 +33,8 @@ from io_stream.exporter import PyntacleExporter
 from cmds.cmds_utils.plotter import PlotGraph
 from cmds.cmds_utils.reporter import *
 from tools.enums import ReportEnum
-from tools.misc.graph_load import *
+from tools.graph_utils import GraphUtils
+from private.graph_load import GraphLoad,separator_detect
 
 
 class Set:

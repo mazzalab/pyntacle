@@ -36,8 +36,8 @@ from algorithms.shortest_path import ShortestPath
 from algorithms.sparseness import Sparseness
 from algorithms.keyplayer import KeyPlayer
 from tools.enums import *
-from tools.misc.graph_routines import check_graph_consistency
-from tools.misc.shortest_path_modifications import ShortestPathModifier
+from private import check_graph_consistency
+from private import ShortestPathModifier
 from cmds.cmds_utils.kpsearch_wrapper import KPWrapper as kpw
 from cmds.cmds_utils.kpsearch_wrapper import GOWrapper as gow
 from cmds.cmds_utils.kpsearch_wrapper import BFWrapper as bfw

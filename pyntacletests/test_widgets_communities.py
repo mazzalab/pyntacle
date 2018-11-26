@@ -60,6 +60,7 @@ class WidgetTestCommunities(unittest.TestCase):
         self.Args.weights_format = 'standard'
         self.Args.weights_name = None
         self.Args.v = None
+        self.Args.suppress_cursor = True
 
     def test_fastgreedy(self):
         sys.stdout.write("Testing fast_greedy community finder\n")

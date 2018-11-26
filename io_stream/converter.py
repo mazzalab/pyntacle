@@ -31,8 +31,7 @@ __license__ = u"""
 
 from config import *
 from tools.edgelist_utils import EglUtils
-from tools.misc.io_utils import input_file_checker, separator_sniffer, randomword
-from exceptions.unproperly_formatted_file_error import UnproperlyFormattedFileError
+from private.io_utils import input_file_checker, separator_sniffer, randomword
 
 
 class PyntacleConverter:

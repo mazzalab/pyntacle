@@ -34,10 +34,10 @@ from io_stream.exporter import PyntacleExporter
 from cmds.cmds_utils.plotter import *
 from cmds.cmds_utils.reporter import *
 from tools.graph_utils import *
-from tools.misc.graph_load import *
+from private.graph_load import GraphLoad, separator_detect
 from tools.enums import ReportEnum, CmodeEnum
 from tools.add_attributes import AddAttributes
-from colorama import Fore, Style, init
+from colorama import Fore, Style
 
 
 class KeyPlayer():

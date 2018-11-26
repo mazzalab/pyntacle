@@ -24,15 +24,14 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-from config import *
 from warnings import simplefilter
 from graph_operations.modules_finder import CommunityFinder
 from io_stream.exporter import PyntacleExporter
 from cmds.cmds_utils.plotter import PlotGraph
 from io_stream.import_attributes import ImportAttributes
 from tools.modules_utils import ModuleUtils
-from tools.misc.graph_load import *
 from tools.graph_utils import *
+from private.graph_load import GraphLoad, separator_detect
 
 class Communities():
     def __init__(self, args):

@@ -33,12 +33,9 @@ current_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pa
 from config import *
 import re
 from cmds.metrics import Metrics as metrics_command
-from tools.misc.graph_load import GraphLoad
-from algorithms.global_topology import GlobalTopology
+from private.graph_load import GraphLoad
 from algorithms.shortest_path import ShortestPath
 from tools.enums import *
-
-from pyntacletests import getmd5
 
 
 class DummyObj:
@@ -62,6 +59,7 @@ class WidgetTestMetrics(unittest.TestCase):
         self.Args.input_separator = '\t'
         self.Args.save_binary = False
         self.Args.v = None
+        self.Args.suppress_cursor = True
 
     def test_global(self):
         sys.stdout.write("Testing global metrics\n")

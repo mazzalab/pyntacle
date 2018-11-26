@@ -27,7 +27,7 @@ __license__ = u"""
 from config import *
 import csv
 import numpy as np
-from tools.misc.binarycheck import is_binary_file
+from private.binarycheck import is_binary_file
 from io_stream.importer import PyntacleImporter
 from tools.graph_utils import GraphUtils
 from exceptions.unproperly_formatted_file_error import UnproperlyFormattedFileError

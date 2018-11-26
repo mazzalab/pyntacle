@@ -33,7 +33,8 @@ from io_stream.exporter import PyntacleExporter
 from cmds.cmds_utils.plotter import *
 from warnings import simplefilter
 
-class Generate():
+
+class Generate:
     def __init__(self, args):
         self.logging = log
         self.args = None

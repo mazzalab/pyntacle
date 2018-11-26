@@ -30,11 +30,11 @@ __license__ = u"""
 
 import numpy as np
 from tools.enums import CmodeEnum
-from tools.misc.graph_routines import *
 from tools.graph_utils import GraphUtils as gu
-from tools.misc.shortest_path_modifications import *
 from algorithms.shortest_path import ShortestPath as sp
-
+from private.graph_routines import check_graph_consistency, vertex_doctor
+from private.shortest_path_modifications import ShortestPathModifier
+from exceptions.wrong_argument_error import WrongArgumentError
 
 class KeyPlayer:
     """

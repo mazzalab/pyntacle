@@ -41,8 +41,8 @@ from algorithms.local_topology import LocalTopology
 from algorithms.shortest_path import ShortestPath as sp
 from exceptions.wrong_argument_error import WrongArgumentError
 from tools.enums import KpposEnum, KpnegEnum, CmodeEnum, GroupCentralityEnum, GroupDistanceEnum
-from tools.misc.kpsearch_utils import bruteforce_search_initializer
-from tools.misc.graph_routines import check_graph_consistency
+from private.graph_routines import check_graph_consistency
+from private.kpsearch_utils import bruteforce_search_initializer
 from igraph import Graph
 import multiprocessing as mp
 
@@ -66,32 +66,30 @@ def crunch_fragmentation_combinations(graph: Graph, kpp_type: KpnegEnum,
 
 
 def crunch_reachability_combinations(graph: Graph, kp_type: KpposEnum, m: int,
-                                     max_distance: int, implementation: CmodeEnum, node_names: list) -> dict:
+                                     max_distance: int, implementation: CmodeEnum, allS: list) -> dict:
     kppset_score_pairs = {}
     if kp_type == KpposEnum.mreach:
         if implementation != CmodeEnum.igraph:
             sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
-            reachability_score = KeyPlayer.mreach(graph=graph, nodes=node_names, m=m, max_distance=max_distance,
+            reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distance=max_distance,
                                                   implementation=implementation, sp_matrix=sp_matrix)
         else:
-            reachability_score = KeyPlayer.mreach(graph=graph, nodes=node_names, m=m, max_distance=max_distance,
+            reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distance=max_distance,
                                                   implementation=implementation)
     elif kp_type == KpposEnum.dR:
         if implementation != CmodeEnum.igraph:
             sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
-            reachability_score = KeyPlayer.dR(graph=graph, nodes=node_names, max_distance=max_distance,
+            reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distance=max_distance,
                                               implementation=implementation, sp_matrix=sp_matrix)
         else:
-            reachability_score = KeyPlayer.dR(graph=graph, nodes=node_names, max_distance=max_distance,
+            reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distance=max_distance,
                                               implementation=implementation)
-    else:
-        raise WrongArgumentError("{} function not yet implemented.".format(kpp_type.name))
 
     else:  # TODO: change to raise and exception
         sys.stdout.write("{} not yet implemented".format(kp_type.name))
         sys.exit(0)
     kppset_score_pairs[allS] = reachability_score
-    kppset_score_pairs[node_names] = reachability_score
+    kppset_score_pairs[allS] = reachability_score
     return kppset_score_pairs
 
 
@@ -263,9 +261,9 @@ class BruteforceSearch:
         else:
             sys.stdout.write("Brute-force search of the best kp-set of size {}\n".format(kp_size))
             for S in allS:
-                partial_result = crunch_reachability_combinations(graph=graph, kpp_type=kpp_type, m=m,
+                partial_result = crunch_reachability_combinations(graph=graph, kp_type=kpp_type, m=m,
                                                                   max_distance=max_distance,
-                                                                  implementation=implementation, node_names=S)
+                                                                  implementation=implementation, allS=S)
                 kpset_score_pairs = {**kpset_score_pairs, **partial_result}
 
         _group_score = max(kpset_score_pairs.values())  # take the maximum value

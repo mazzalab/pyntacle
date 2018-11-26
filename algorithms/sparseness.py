@@ -34,8 +34,7 @@ __license__ = u"""
 
 
 import math
-from tools.misc.graph_routines import *
-
+from private.graph_routines import check_graph_consistency
 
 class Sparseness:
     @staticmethod

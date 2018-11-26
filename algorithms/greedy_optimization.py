@@ -6,10 +6,9 @@ https://doi.org/10.1080/0022250X.1999.9990219
 from algorithms.local_topology import LocalTopology
 
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
-__copyright__ = "Copyright 2018, The Pyntacle Project"
+__copyright__ = "Copyright 2018, The pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
 __version__ = "0.0.5"
-__version__ = "0.2.3.3"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "d.capocefalo@css-mendel.it"
 __status__ = "Development"
@@ -17,31 +16,27 @@ __date__ = "15/10/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
-
   This program is free software; you can use and redistribute it under
   the terms of the BY-NC-ND license as published by
   Creative Commons; either version 4 of the License, or
   (at your option) any later version.
-
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   License for more details.
-
   You should have received a copy of the license along with this
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
 import random
+import sys
 from functools import partial
-from tools.misc.graph_routines import *
 from tools.enums import KpposEnum, KpnegEnum, CmodeEnum, GroupCentralityEnum, GroupDistanceEnum
-from tools.graph_utils import GraphUtils as gu
 from algorithms.keyplayer import KeyPlayer as kp
 from algorithms.shortest_path import ShortestPath as sp
 from exceptions.wrong_argument_error import WrongArgumentError
-from tools.misc.kpsearch_utils import greedy_search_initializer
-
+from private.graph_routines import check_graph_consistency
+from private.kpsearch_utils import greedy_search_initializer
 
 class GreedyOptimization:
     """
@@ -117,11 +112,9 @@ class GreedyOptimization:
         Available KP-Neg choices:
         * KpnegEnum.F: min = 0 (the network is complete); max = 1 (all nodes are isolates)
         * KpnegEnum.dF: min = 0 (the network is complete); max = 1 (all nodes are isolates)
-
         Args:
             graph (igraph.Graph): The graph must have specific properties. Please see the
         "Minimum requirements" specifications in the pyntacle's manual.
-
             kp_size (int): the size of the kp-set
             kp_type (KpnegEnum): a *KpnegEnum* enumerators. *F*, and *dF* options are available.
             seed (int): a seed to allow repeatability. Default is None
@@ -132,7 +125,6 @@ class GreedyOptimization:
             * **`cmode.cpu`**: Dijkstra algorithm implemented for multicore CPU
             * **`cmode.gpu`**: Dijkstra algorithm implemented for GPU-enabled graphics cards
             **CAUTION**: this will not work if the GPU is not present or CUDA compatible.
-
         Returns:
             KP-set (list), KP-value (float)
                 * kp-set (list): a list containing the node names of the optimal set found
@@ -156,45 +148,12 @@ class GreedyOptimization:
                 S = node_indices[0:kp_size]
                 S.sort()
 
-                fragmentation_score = type_func(graph=graph)
-                kppset_score_pairs_history = {tuple(S): fragmentation_score}
-                optimal_set_found = False
+                if kp_type == KpnegEnum.F:
+                    type_func = partial(kp.F)
+                else:
+                    type_func = partial(kp.dF, max_distance=max_distance, implementation=implementation)
 
-                while not optimal_set_found:
-                    kppset_score_pairs = {}
-
-                    for si in S:
-                        temp_kpp_set = S.copy()
-                        temp_kpp_set.remove(si)
-
-                        for notsi in notS:
-                            temp_kpp_set.append(notsi)
-                            temp_kpp_set.sort()
-                            temp_kpp_set_tuple = tuple(temp_kpp_set)
-
-                            if temp_kpp_set_tuple in kppset_score_pairs_history:
-                                kppset_score_pairs[temp_kpp_set_tuple] = kppset_score_pairs_history[temp_kpp_set_tuple]
-
-                            else:
-                                temp_graph = graph.copy()
-                                temp_graph.delete_vertices(temp_kpp_set)
-                                temp_kpp_func_value = type_func(graph=temp_graph)
-                                kppset_score_pairs[temp_kpp_set_tuple] = temp_kpp_func_value
-                                kppset_score_pairs_history[temp_kpp_set_tuple] = temp_kpp_func_value
-
-                            temp_kpp_set.remove(notsi)
-
-                    maxKpp = max(kppset_score_pairs, key=kppset_score_pairs.get)
-                    max_fragmentation = kppset_score_pairs[maxKpp]
-
-                    #todo Tommaso: how do we handle the case in which there is no optimal fragmentation score that
-                    # maximizes the initial fragmentation score?
-                    if max_fragmentation > fragmentation_score:
-                        S = list(maxKpp)
-                        notS = set(node_indices).difference(set(S))
-                        fragmentation_score = max_fragmentation
-                    else:
-                        optimal_set_found = True
+                final, fragmentation_score = GreedyOptimization.__optimization_loop(graph, S, type_func)
 
                 final = graph.vs(S)["name"]
                 sys.stdout.write(
@@ -219,11 +178,9 @@ class GreedyOptimization:
         KP-Pos metric. Available KP-Pos choices:
         * m-reach: min = 0 (unreachable); max = size(graph) - kp_size (total reachability)
         * dR: min = 0 (unreachable); max = 1 (full reachability)
-
         Args:
             graph (igraph.Graph): The graph must have specific properties. Please see the
         "Minimum requirements" specifications in the pyntacle's manual.
-
             kp_size (int): the size of the kp-set
             kp_type (KpposEnum): a *KpposEnum* enumerators. *mreach*, and *dR* options are available.
             seed (int): a seed to allow repeatability. Default is None
@@ -308,7 +265,6 @@ class GreedyOptimization:
         **group degree**: min = 0 (lowest centrality); max = 1 (highest centrality)
         **group closeness**: min = 0 (lowest centrality); max = 1 (highest centrality)
         **group betweenness**: min = 0 (lowest centrality); max = 1 (highest centrality)
-
         :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
         "Minimum requirements" specifications in the Pyntacle's manual.
         :param int group_size: the size of the group of nodes to be found
