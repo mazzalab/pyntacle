@@ -9,9 +9,9 @@ described in https://doi.org/10.1080/0022250X.1999.9990219. Finally, it selects 
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The Pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.2.3.3"
+__version__ = "1.0.0"
 __maintainer__ = "Daniele Capocefalo"
-__email__ = "d.capocefalo@css-mendel.it"
+__email__ = "bioinformatics@css-mendel.it"
 __status__ = "Development"
 __date__ = "27/04/2018"
 __license__ = u"""

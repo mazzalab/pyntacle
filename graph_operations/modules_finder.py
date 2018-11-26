@@ -5,9 +5,9 @@ Community finding algorithms borrowed from iGraph
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The Pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
-__version__ = "0.2.3.3"
+__version__ = "1.0.0"
 __maintainer__ = "Daniele Capocefalo"
-__email__ = "d.capocefalo@css-mendel.it"
+__email__ = "bioinformatics@css-mendel.it"
 __status__ = "Development"
 __date__ = "28/04/2018"
 __license__ = u"""
