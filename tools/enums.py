@@ -9,7 +9,7 @@ __version__ = "0.0.5"
 __maintainer__ = "Daniele Capocefalo"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = "Development"
-__date__ = "02/10/2018"
+__date__ = "26/11/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
