@@ -178,7 +178,7 @@ class GOWrapper:
         if not isinstance(kp_type, KpnegEnum):
             raise TypeError("\"kp_type\" must be one of the KPPNEGchoices options available")
 
-        go_results = self.go.fragmentation(graph=self.graph, kp_size=kp_size, kp_type=kp_type, max_distance=max_distance, seed=seed, implementation=implementation)
+        go_results = self.go.fragmentation(graph=self.graph, kp_size=kp_size, kp_type=kp_type, max_distance=max_distance, seed=seed, cmode=implementation)
         self.results[kp_type.name] = [go_results[0], go_results[1]]
 
     @timeit
@@ -203,7 +203,7 @@ class GOWrapper:
             elif not isinstance(m, int) or m <= 0 :
                 raise ValueError("\"m\" must be a positive integer for mreach ")
 
-        go_results = self.go.reachability(graph=self.graph, kp_size=kp_size, kp_type=kp_type, max_distance=max_distance, seed=seed, m=m, implementation=implementation)
+        go_results = self.go.reachability(graph=self.graph, kp_size=kp_size, kp_type=kp_type, max_distance=max_distance, seed=seed, m=m, cmode=implementation)
 
         self.results[kp_type.name] = [go_results[0], go_results[1]]
 
@@ -249,7 +249,7 @@ class BFWrapper:
             raise TypeError("\"kp_type\" must be one of the KPPNEGchoices options available")
 
         bf_results = self.bf.fragmentation(graph=self.graph, kp_size=kp_size, kp_type=kp_type,
-                                           max_distance=max_distance, implementation=implementation, ncores=threads)
+                                           max_distance=max_distance, cmode=implementation, ncores=threads)
         self.results[kp_type.name] = [bf_results[0], bf_results[1]]
 
     @timeit
@@ -274,7 +274,7 @@ class BFWrapper:
                 raise ValueError("\"m\" must be a positive integer for mreach ")
 
         bf_results = self.bf.reachability(graph=self.graph, kp_size=kp_size, kp_type=kp_type,
-                                          max_distance=max_distance, m=m, implementation=implementation, ncores=threads)
+                                          max_distance=max_distance, m=m, cmode=implementation, ncores=threads)
 
         self.results[kp_type.name] = [bf_results[0], bf_results[1]]
 

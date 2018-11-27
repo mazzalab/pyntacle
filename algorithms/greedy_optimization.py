@@ -104,7 +104,7 @@ class GreedyOptimization:
     @check_graph_consistency
     @greedy_search_initializer
     def fragmentation(graph, kp_size: int, kp_type: KpnegEnum, seed=None, max_distance: int=None,
-                      implementation=CmodeEnum.igraph) -> (list, float):
+                      cmode=CmodeEnum.igraph) -> (list, float):
         """
         It searches for the best kp-set of a predefined size, removes it and measures the residual
         fragmentation score for a specified KP-Neg metric.
@@ -120,7 +120,7 @@ class GreedyOptimization:
             seed (int): a seed to allow repeatability. Default is None
             max_distance (int): an integer specifying the maximum distance after that two nodes will be considered
             disconnected. Useful when searching for short-range interactions.
-            implementation (CmodeEnum): an enumerator ranging from:
+            cmode (CmodeEnum): an enumerator ranging from:
             * **`cmode.igraph`**: shortest paths computed by iGraph
             * **`cmode.cpu`**: Dijkstra algorithm implemented for multicore CPU
             * **`cmode.gpu`**: Dijkstra algorithm implemented for GPU-enabled graphics cards
@@ -131,39 +131,33 @@ class GreedyOptimization:
                 * kp-value (float): a float number representing the kp score of the graph when the set is removed
         """
 
-        num_nodes = graph.vcount()
-        num_edges = graph.ecount()
-        max_edges = num_nodes * (num_edges - 1)
 
         # TODO: reminder che l'implementazione è automatica
         if kp_type == KpnegEnum.F or kp_type == KpnegEnum.dF:
-            if num_edges == 0:  # TODO: check if this case if possible, given the decorator "check_graph_consistency"
-                return [], 1.0
-            elif num_edges == max_edges:
-                return [], 0.0
+
+            node_indices = graph.vs.indices
+            random.shuffle(node_indices)
+
+            S = node_indices[0:kp_size]
+            S.sort()
+
+            if kp_type == KpnegEnum.F:
+                type_func = partial(kp.F)
             else:
-                node_indices = graph.vs.indices
-                random.shuffle(node_indices)
+                type_func = partial(kp.dF, max_distance=max_distance, implementation=cmode)
 
-                S = node_indices[0:kp_size]
-                S.sort()
+            final, fragmentation_score = GreedyOptimization.__optimization_loop(graph, S, type_func)
 
-                if kp_type == KpnegEnum.F:
-                    type_func = partial(kp.F)
-                else:
-                    type_func = partial(kp.dF, max_distance=max_distance, implementation=implementation)
+            final = graph.vs(S)["name"]
+            sys.stdout.write(
+                "Optimal group: {}\n Group size = {}\n Metric = {}\n Score = {}\n".format(
+                    "{" + str(final).replace("'", "")[1:-1] + "}",
+                    kp_size,
+                    kp_type.name.replace("_", " "),
+                    fragmentation_score))
 
-                final, fragmentation_score = GreedyOptimization.__optimization_loop(graph, S, type_func)
+            return final, round(fragmentation_score, 5)
 
-                final = graph.vs(S)["name"]
-                sys.stdout.write(
-                    "Optimal group: {}\n Group size = {}\n Metric = {}\n Score = {}\n".format(
-                        "{" + str(final).replace("'", "")[1:-1] + "}",
-                        kp_size,
-                        kp_type.name.replace("_", " "),
-                        fragmentation_score))
-
-                return final, round(fragmentation_score, 5)
         else:
             raise KeyError(
                 "The parameter 'kp_type' is not valid. It must be one of the following: {}".format(list(KpnegEnum)))
@@ -172,7 +166,7 @@ class GreedyOptimization:
     @check_graph_consistency
     @greedy_search_initializer  # todo solve the m problem in this decorator
     def reachability(graph, kp_size: int, kp_type: KpposEnum, seed=None, max_distance: int=None, m=None,
-                     implementation=CmodeEnum.igraph) -> (list, float):
+                     cmode=CmodeEnum.igraph) -> (list, float):
         """
         It searches for the best kpp-set of a predefined size that exhibit maximal reachability for a specified
         KP-Pos metric. Available KP-Pos choices:
@@ -187,7 +181,7 @@ class GreedyOptimization:
             max_distance (int): an integer specifying the maximum distance after that two nodes will be considered
             disconnected. Useful when searching for short-range interactions.
             m (int): maximum path length between the kpp-set and the other nodes of the graph
-            implementation (CmodeEnum): an enumerator ranging from:
+            cmode (CmodeEnum): an enumerator ranging from:
             * **`cmode.igraph`**: shortest paths computed by iGraph
             * **`cmode.cpu`**: Dijkstra algorithm implemented for multicore CPU
             * **`cmode.gpu`**: Dijkstra algorithm implemented for GPU-enabled graphics cards
@@ -198,56 +192,48 @@ class GreedyOptimization:
                 * kp-value (float): a float number representing the kp score of the graph
         """
 
-        num_nodes = graph.vcount()
-        num_edges = graph.ecount()
-        max_edges = num_nodes * (num_edges - 1)
-
         if kp_type == KpposEnum.mreach or kp_type == KpposEnum.dR:
             if kp_type == KpposEnum.mreach and m is None:
                 raise WrongArgumentError("The parameter 'm' is required for m-reach algorithm")
             elif kp_type == KpposEnum.mreach and (not isinstance(m, int) or m <= 0):
                 raise TypeError({"The parameter 'm' must be a positive integer value"})
             else:
-                if num_edges == 0:  # TODO: check if this case if possible given the decorator "check_graph_consistency"
-                    return [], 0.0
-                elif num_edges == max_edges:
-                    return [], num_nodes
-                else:
-                    node_indices = graph.vs.indices
-                    random.shuffle(node_indices)
 
-                    S = node_indices[0:kp_size]
-                    S.sort()
-                    S_names = graph.vs(S)["name"]
+                node_indices = graph.vs.indices
+                random.shuffle(node_indices)
 
-                    if kp_type == KpposEnum.mreach:
-                        if implementation != CmodeEnum.igraph:
-                            sps = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
-                            type_func = partial(kp.mreach, nodes=S_names, m=m, max_distance=max_distance,
-                                                implementation=implementation, sp_matrix=sps)
-                        else:
-                            type_func = partial(kp.mreach, nodes=S_names, m=m, max_distance=max_distance,
-                                                implementation=implementation)
+                S = node_indices[0:kp_size]
+                S.sort()
+                S_names = graph.vs(S)["name"]
+
+                if kp_type == KpposEnum.mreach:
+                    if cmode != CmodeEnum.igraph:
+                        sps = sp.get_shortestpaths(graph=graph, cmode=cmode, nodes=None)
+                        type_func = partial(kp.mreach, nodes=S_names, m=m, max_distance=max_distance,
+                                            implementation=cmode, sp_matrix=sps)
                     else:
-                        if implementation != CmodeEnum.igraph:
-                            sps = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
-                            type_func = partial(kp.dR, nodes=S_names, max_distance=max_distance,
-                                                implementation=implementation, sp_matrix=sps)
-                        else:
-                            type_func = partial(kp.dR, nodes=S_names, max_distance=max_distance,
-                                                implementation=implementation)
+                        type_func = partial(kp.mreach, nodes=S_names, m=m, max_distance=max_distance,
+                                            implementation=cmode)
+                else:
+                    if cmode != CmodeEnum.igraph:
+                        sps = sp.get_shortestpaths(graph=graph, cmode=cmode, nodes=None)
+                        type_func = partial(kp.dR, nodes=S_names, max_distance=max_distance,
+                                            implementation=cmode, sp_matrix=sps)
+                    else:
+                        type_func = partial(kp.dR, nodes=S_names, max_distance=max_distance,
+                                            implementation=cmode)
 
-                    final, reachability_score = GreedyOptimization.__optimization_loop(graph, S, type_func)
+                final, reachability_score = GreedyOptimization.__optimization_loop(graph, S, type_func)
 
-                    final = graph.vs(S)["name"]
-                    sys.stdout.write(
-                        "Optimal group: {}\n Group size = {}\n Metric = {}\n Score = {}\n".format(
-                            "{" + str(final).replace("'", "")[1:-1] + "}",
-                            kp_size,
-                            kp_type.name.replace("_", " "),
-                            reachability_score))
+                final = graph.vs(S)["name"]
+                sys.stdout.write(
+                    "Optimal group: {}\n Group size = {}\n Metric = {}\n Score = {}\n".format(
+                        "{" + str(final).replace("'", "")[1:-1] + "}",
+                        kp_size,
+                        kp_type.name.replace("_", " "),
+                        reachability_score))
 
-                    return final, round(reachability_score, 5)
+                return final, round(reachability_score, 5)
         else:
             raise KeyError(
                 "The parameter 'kp_type' is not valid. It must be one of the following: {}".format(list(KpposEnum)))

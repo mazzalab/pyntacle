@@ -60,7 +60,8 @@ def crunch_fragmentation_combinations(graph: Graph, kpp_type: KpnegEnum,
         kppset_score_pairs_partial[node_names] = KeyPlayer.dF(graph=temp_graph, max_distance=max_distance,
                                                               implementation=implementation)
     else:
-        raise WrongArgumentError("{} function not yet implemented.".format(kpp_type.name))
+        raise KeyError(
+            "The parameter 'kp_type' is not valid. It must be one of the following: {}".format(list(KpnegEnum)))
 
     return kppset_score_pairs_partial
 
@@ -85,9 +86,10 @@ def crunch_reachability_combinations(graph: Graph, kp_type: KpposEnum, m: int,
             reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distance=max_distance,
                                               implementation=implementation)
 
-    else:  # TODO: change to raise and exception
-        sys.stdout.write("{} not yet implemented".format(kp_type.name))
-        sys.exit(0)
+    else:
+        raise KeyError(
+            "The parameter 'kp_type' is not valid. It must be one of the following: {}".format(list(KpposEnum)))
+
     kppset_score_pairs[allS] = reachability_score
     kppset_score_pairs[allS] = reachability_score
     return kppset_score_pairs
@@ -123,7 +125,7 @@ class BruteforceSearch:
     @check_graph_consistency
     @bruteforce_search_initializer
     def fragmentation(graph: Graph, kp_size: int, kpp_type: KpnegEnum, max_distance: int = None,
-                      implementation: CmodeEnum = CmodeEnum.igraph, parallel: bool = False, ncores: int = None) -> (
+                      cmode: CmodeEnum = CmodeEnum.igraph, parallel: bool = False, ncores: int = None) -> (
             list, float):
         """
         It searches and finds the kp-set of a predefined size that maximally disrupts the graph.
@@ -135,7 +137,7 @@ class BruteforceSearch:
         :param int kp_size: the size of the kp-set to be found
         :param KpnegEnum kp_type: the fragmentation algorithm to be applied
         :param int max_distance: the maximum shortest path length over which two nodes are considered unreachable
-        :param CmodeEnum.igraph implementation: Computation of the shortest paths is deferred
+        :param CmodeEnum.igraph cmode: Computation of the shortest paths is deferred
         to the following implementations:
         *`implementation.auto`: the most performing computing mode is automatically chosen according to the properties of graph
         *`implementation.igraqh`: (default) use the shortest paths implementation provided by igraph
@@ -168,7 +170,7 @@ class BruteforceSearch:
 
             pool = mp.Pool(ncores)
             for partial_result in pool.imap_unordered(
-                    partial(crunch_fragmentation_combinations, graph, kpp_type, max_distance, implementation), allS):
+                    partial(crunch_fragmentation_combinations, graph, kpp_type, max_distance, cmode), allS):
                 kpset_score_pairs = {**kpset_score_pairs, **partial_result}
 
             pool.close()
@@ -179,7 +181,7 @@ class BruteforceSearch:
             for S in allS:
                 partial_result = crunch_fragmentation_combinations(graph=graph, kpp_type=kpp_type,
                                                                    max_distance=max_distance,
-                                                                   implementation=implementation, node_names=S)
+                                                                   implementation=cmode, node_names=S)
                 kpset_score_pairs = {**kpset_score_pairs, **partial_result}
 
         maxKpp = max(kpset_score_pairs.values())
@@ -199,9 +201,8 @@ class BruteforceSearch:
     @staticmethod
     @check_graph_consistency
     @bruteforce_search_initializer
-    def reachability(graph, kp_size, kpp_type: KpposEnum, max_distance=None, m=None, implementation=CmodeEnum.igraph,
+    def reachability(graph, kp_size, kpp_type: KpposEnum, max_distance=None, m=None, cmode=CmodeEnum.igraph,
                      parallel=False, ncores=None) -> (list, float):
-        # TODO: please change 'implementation' to 'cmode'
         """
         It searches and finds the kp-set of a predefined size that best reaches all other nodes in the graph.
         It generates all the possible kp-sets and calculates their reachability scores.
@@ -215,7 +216,7 @@ class BruteforceSearch:
         :param KpposEnum kp_type: any option of the *KpposEnum* enumerators
         :param int max_distance: the maximum shortest path length over which two nodes are considered unreachable
         :param int m: The number of steps of the m-reach algorithm
-        :param CmodeEnum.igraph implementation: Computation of the shortest paths is deferred
+        :param CmodeEnum.igraph cmode: Computation of the shortest paths is deferred
         to the following implementations:
         *`implementation.auto`: the most performing computing mode is automatically chosen according to the properties of graph
         *`implementation.igraqh`: (default) use the shortest paths implementation provided by igraph
@@ -253,7 +254,7 @@ class BruteforceSearch:
 
             pool = mp.Pool(ncores)
             for partial_result in pool.imap_unordered(
-                    partial(crunch_reachability_combinations, graph, kpp_type, m, max_distance, implementation), allS):
+                    partial(crunch_reachability_combinations, graph, kpp_type, m, max_distance, cmode), allS):
                 kpset_score_pairs = {**kpset_score_pairs, **partial_result}
 
             pool.close()
@@ -263,7 +264,7 @@ class BruteforceSearch:
             for S in allS:
                 partial_result = crunch_reachability_combinations(graph=graph, kp_type=kpp_type, m=m,
                                                                   max_distance=max_distance,
-                                                                  implementation=implementation, allS=S)
+                                                                  implementation=cmode, allS=S)
                 kpset_score_pairs = {**kpset_score_pairs, **partial_result}
 
         _group_score = max(kpset_score_pairs.values())  # take the maximum value
