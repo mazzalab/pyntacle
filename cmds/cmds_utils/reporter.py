@@ -64,10 +64,10 @@ class pyntacleReporter():
         """
 
         if not isinstance(report_type, ReportEnum):
-            raise TypeError("\"report_type\" must be on of the \"ReportEnum\" enumerators, {} found".format(type(report_type).__name__))
+            raise TypeError("'report_type' must be on of the 'ReportEnum' enumerators, {} found".format(type(report_type).__name__))
 
         if not isinstance(report, OrderedDict):
-            raise ValueError("\"report\" must be an ordered Dictionary")
+            raise ValueError("'report' must be an ordered Dictionary")
 
         self.report_type = report_type
         self.report = []
@@ -110,7 +110,7 @@ class pyntacleReporter():
 
         if not self.report:
             raise EnvironmentError(
-                "a report must be created first using the \"create_report()\" function")
+                "a report must be created first using the 'create_report()' function")
 
         else:
             #cast every element of the list of lists to string, just in case:
@@ -137,7 +137,7 @@ class pyntacleReporter():
                 report_dir = os.path.abspath(report_dir)
 
         if len(self.graph["name"]) > 1:
-            self.logger.warning("Using the first \"name\" attribute of graph name since more than one is specified")
+            self.logger.warning("Using the first 'name' attribute of graph name since more than one is specified")
         
         graphname = self.graph["name"][0]
         

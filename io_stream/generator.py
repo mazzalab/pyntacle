@@ -31,13 +31,13 @@ from private.io_utils import generatorscanner, randomword
 
 
 class Generator:
-    """Generate :py:class:`igraph.Graph` simulated network objects that follow  different topologies and  turn them into
+    r"""Generate :py:class:`igraph.Graph` simulated network objects that follow  different topologies and  turn them into
     Pyntacle-ready networks to be used for simulations"""
 
     @staticmethod
     @generatorscanner
     def Random(params, name="Random", seed=None) -> Graph:
-        """
+        r"""
         Generate a Random Network by wrapping the Erdos-Renyi generator provided by igraph and makes it ready to be used
         for pyntacle. Node `name` attribute will be the relative index (represented as string), while the graph name it
         is assigned as a combination of:
@@ -51,17 +51,21 @@ class Generator:
         :param name: optional, if you want to assign a name to the `name` graph attribute. Default is **"Random"**
         :param int seed: optional: provide a seed to the random generator
 
-        :return igraph.Graph: an `igraph,Graph` object already initialized to be used for pyntacle's methods
+        :return igraph.Graph: a py:class:`igraph,Graph` object arranged randomly, initialized for Pyntacle usage
+
+        :raise TypeError:
+        :raise ValueError:
         """
+
         if seed is not None:
             if not isinstance(seed, int):
-                raise TypeError("\"Seed must be an integer, {} found".format(type(seed).__name__))
+                raise TypeError(u"'Seed must be an integer, {} found".format(type(seed).__name__))
 
         else:
             random.seed(seed)
 
         if not (len(params) == 2):
-            raise ValueError('Wrong number of parameters for Erdos-Renyi graph generation')
+            raise ValueError(u'Wrong number of parameters for Erdos-Renyi graph generation')
 
         if isinstance(params[1], float) and 0 <= params[1] <= 1:
             graph = Graph.Erdos_Renyi(params[0], p=params[1])
@@ -69,7 +73,7 @@ class Generator:
             graph = Graph.Erdos_Renyi(params[0], m=params[1])
 
         else:
-            raise ValueError('Second parameter is not a positive float or a positive integer greater than 1')
+            raise ValueError(u'Second parameter is not a positive float or a positive integer greater than 1')
         ad(graph=graph).graph_initializer(graph_name=(randomword(10, prefix="_".join([name, str(graph.vcount()), str(graph.ecount())]))))
 
         return graph
@@ -77,7 +81,7 @@ class Generator:
     @staticmethod
     @generatorscanner
     def ScaleFree(params, name="Scale_Free", seed=None) -> Graph:
-        """
+        r"""
         Generates a Scale-Free Network according to the Lazslo-Barabasi model by wrapping the Scale free network
         generator provided by igraph.
 
@@ -85,21 +89,24 @@ class Generator:
         :param str name: optional, if you want to assign a name to the `name` graph attribute. Default is **"Scale_Free"**
         :param int seed: optional: provide a seed to the random generator
 
-        :return igraph.Graph: an `igraph,Graph` object already initialized to be used for pyntacle's methods
+        :return igraph.Graph: a py:class:`igraph,Graph` object that follow a scale-free topology, initialized for Pyntacle usage
+
+        :raise TypeError:
+        :raise ValueError:
         """
 
         if seed is not None:
             if not isinstance(seed, int):
-                raise TypeError("\"seed must be an integer, {} found".format(type(seed).__name__))
+                raise TypeError(u"'seed must be an integer, {} found".format(type(seed).__name__))
         else:
             random.seed(seed)
 
         if not (len(params) == 2):
-            raise ValueError('Wrong number of parameters for Scale-free graph generation')
+            raise ValueError(u'Wrong number of parameters for Scale-free graph generation')
         elif not (isinstance(params[0], int) and isinstance(params[1], int)):
-            raise TypeError('Wrong parameter type(s) for Scale-free graph generation')
+            raise TypeError(u'Wrong parameter type(s) for Scale-free graph generation')
         elif not (0 < params[0] and 0 < params[1]):
-            raise ValueError('The value of one or more parameters is not allowed')
+            raise ValueError(u'The value of one or more parameters is not allowed')
         else:
             graph = Graph.Barabasi(params[0], params[1])
             ad(graph=graph).graph_initializer(graph_name=(
@@ -110,7 +117,7 @@ class Generator:
     @staticmethod
     @generatorscanner
     def SmallWorld(params, name="SmallWorld", seed=None) -> Graph:
-        """
+        r"""
         Generates a Small World Network by wrapping the `Watts_Strogatz` function of `igraph`. `igraph` creates first
         a lattice
 
@@ -123,28 +130,32 @@ class Generator:
         :param str name: optional, if you want to assign a name to the `name` graph attribute. Default is **"Small_World"**
         :param int seed: optional: provide a seed to the random generator
 
-        :return igraph.Graph: an `igraph,Graph` object already initialized to be used for Pyntacle methods
+        :return igraph.Graph: a py:class:`igraph,Graph` object that follow a small-world topology, initialized for Pyntacle usage
+
+        :raise TypeError:
+        :raise ValueError:
         """
+
         if seed is not None:
             # print("THIS IS THE SEED", seed)
     
             if not isinstance(seed, int):
-                raise TypeError("\"seed must be an integer, {} found".format(type(seed).__name__))
+                raise TypeError("'seed' must be an integer, {} found".format(type(seed).__name__))
         else:
             # print("THIS IS THE SEED (ELSE)", seed)
     
             random.seed(seed)
 
         if not (len(params) == 4):
-            raise ValueError('Wrong number of parameters for Small-world graph generation (4 params needed)')
+            raise ValueError(u'Wrong number of parameters for Small-world graph generation (4 params needed)')
         elif not (isinstance(params[0], int)
                   and isinstance(params[1], int)
                   and isinstance(params[2], int)
                   and isinstance(params[3], float)):
 
-            raise TypeError('Wrong parameter type(s) for Small-world graph generation')
+            raise TypeError(u'Wrong parameter type(s) for Small-world graph generation')
         elif not (0 < params[0] and 0 < params[1] and 0 < params[2] and 0 <= params[3] <= 1):
-            raise ValueError('The value of one or more parameters is not allowed')
+            raise ValueError(u'The value of one or more parameters is not allowed')
 
         else:
             graph = Graph.Watts_Strogatz(params[0], params[1], params[2], params[3])
@@ -157,7 +168,7 @@ class Generator:
     @staticmethod
     @generatorscanner
     def Tree(params: list, name: str="Tree", seed: int or None=None) -> Graph:
-        """
+        r"""
         Generates a Network that Follows a Tree hierarchy, as described in the ` Wolfram Alpha documentation <http://mathworld.wolfram.com/Tree.html>`_.
         Each vertex wil have as many `children` vertices specified by the second value in the ``param`` argument.
 
@@ -171,23 +182,24 @@ class Generator:
         :param str name: optional, if you want to assign a name to the ``name`` graph attribute. Default is *Tree*.
         :param int, None seed: optional: provide a seed to the network generator in order to reproduce the same network over time. Defaults to :py:class:`None` (no seed is set)
 
-        :return igraph.Graph: an `igraph,Graph` object already initialized to be used for Pyntacle methods
+        :return igraph.Graph: a py:class:`igraph,Graph` object that follow a Tree hierarchy, initialized for Pyntacle usage
 
         :raise TypeError:
         :raise ValueError:
         """
+
         if seed is not None:
             if not isinstance(seed, int):
-                raise TypeError("\"seed must be an integer, {} found".format(type(seed).__name__))
+                raise TypeError(u"'seed' must be an integer, {} found".format(type(seed).__name__))
         else:
             random.seed(seed)
 
         if not (len(params) == 2):
-            raise ValueError('Wrong number of parameters for Tree generation')
+            raise ValueError(u'Wrong number of parameters for Tree generation')
         elif not (isinstance(params[0], int) and isinstance(params[1], int)):
-            raise TypeError('Wrong parameter type(s) for Tree generation')
+            raise TypeError(u'Wrong parameter type(s) for Tree generation')
         elif not (0 < params[0] and 0 < params[1]):
-            raise ValueError('The value of one or more parameters is not allowed')
+            raise ValueError(u'The value of one or more parameters is not allowed')
         else:
             graph = Graph.Tree(params[0], params[1])
             ad(graph=graph).graph_initializer(graph_name=(

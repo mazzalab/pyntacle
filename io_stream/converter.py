@@ -84,7 +84,7 @@ class PyntacleConverter:
             sys.stdout.write(u"A file named {} already exists. It will be overwritten\n".format(output_file))
 
         if not isinstance(output_sep, str):
-            raise TypeError(u"\"output_sep\" must be a string, {} found".format(type(output_sep).__name__))
+            raise TypeError(u"'output_sep' must be a string, {} found".format(type(output_sep).__name__))
 
         eglutils = EglUtils(file=file, header=header, sep=sep)
 
@@ -154,7 +154,7 @@ class PyntacleConverter:
         :raise TypeError: if ``output_sep`` is not a string
         """
         if not isinstance(output_sep, str):
-            raise TypeError(u"\"output_sep\" must be a string, {} found".format(type(output_sep).__name__))
+            raise TypeError(u"'output_sep' must be a string, {} found".format(type(output_sep).__name__))
 
         if not output_file:
             output_file = os.path.join(os.getcwd(),

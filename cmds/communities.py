@@ -84,7 +84,7 @@ class Communities():
 
             except MultipleSolutionsError:
                 sys.stderr.write(
-                    "The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the \"--largest-component\" option. Quitting\n")
+                    "The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the '--largest-component' option. Quitting\n")
                 sys.exit(1)
 
         # initialize module finder method
@@ -138,7 +138,7 @@ class Communities():
                     self.args.clusters = int(self.args.clusters)
 
                 except:
-                    sys.stderr.write("argument of \"--clusters\" must be an integer. Quitting\n")
+                    sys.stderr.write("argument of '--clusters' must be an integer. Quitting\n")
                     sys.exit(1)
 
             sys.stdout.write("Community finding using fastgreedy algorithm\n")
@@ -163,7 +163,7 @@ class Communities():
                 self.args.steps = int(self.args.steps)
 
             except:
-                sys.stderr.write("Argument of \"--steps\" must be an integer. Quitting\n")
+                sys.stderr.write("Argument of '--steps' must be an integer. Quitting\n")
                 sys.exit(1)
 
             if self.args.weights is not None:
@@ -184,7 +184,7 @@ class Communities():
                     self.args.clusters = int(self.args.clusters)
 
                 except:
-                    sys.stderr.write("argument of \"--clusters\" must be an integer. Quitting\n")
+                    sys.stderr.write("argument of '--clusters' must be an integer. Quitting\n")
                     sys.exit(1)
 
             sys.stdout.write(
@@ -227,7 +227,7 @@ class Communities():
                     self.args.min_nodes = int(self.args.min_nodes)
 
                 except:
-                    sys.stderr.write("argument of \"--min-set\" must be an integer. Quitting\n")
+                    sys.stderr.write("argument of '--min-set' must be an integer. Quitting\n")
                     sys.exit(1)
 
             if self.args.max_nodes is not None:

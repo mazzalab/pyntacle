@@ -103,7 +103,7 @@ class Metrics:
                 sys.stdout.write("Taking the largest component of the input graph as you requested ({} nodes, {} edges)\n".format(graph.vcount(), graph.ecount()))
 
             except MultipleSolutionsError:
-                sys.stderr.write("The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the \"--largest-component\" option. Quitting\n")
+                sys.stderr.write("The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the '--largest-component' option. Quitting\n")
                 sys.exit(1)
 
         # Check provided dimensions' format
@@ -224,7 +224,7 @@ class Metrics:
 
                 if os.path.isdir(plot_dir):
                     self.logging.warning(
-                        "A directory named \"pyntacle-plots\" already exists, I may overwrite something in there")
+                        "A directory named 'pyntacle-plots' already exists, I may overwrite something in there")
 
                 else:
                     os.makedirs(plot_dir, exist_ok=True)
@@ -369,7 +369,7 @@ class Metrics:
 
                 if os.path.isdir(plot_dir):
                     self.logging.warning(
-                        "WARNING: A directory named \"pyntacle-plots\" already exists, I may overwrite something in there")
+                        "WARNING: A directory named 'pyntacle-plots' already exists, I may overwrite something in there")
 
                 else:
                     os.mkdir(plot_dir)

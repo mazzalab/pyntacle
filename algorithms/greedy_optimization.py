@@ -129,7 +129,7 @@ class GreedyOptimization:
 
         if metric == KpnegEnum.F or metric == KpnegEnum.dF:
             if max_distance is not None and not isinstance(max_distance, int) and max_distance > 1 and max_distance <= graph.vcount():
-                raise ValueError(u"\"max_distance\" must be an integer greater than one and lesser than the total number of nodes")
+                raise ValueError(u"'max_distance' must be an integer greater than one and lesser than the total number of nodes")
 
             node_indices = graph.vs.indices
             random.shuffle(node_indices)
@@ -193,7 +193,7 @@ class GreedyOptimization:
         if metric == KpposEnum.mreach or metric == KpposEnum.dR:
 
             if max_distance is not None and not isinstance(max_distance, int) and max_distance > 1 and max_distance <= graph.vcount():
-                raise ValueError(u"\"max_distance\" must be an integer greater than one and lesser than the total number of nodes")
+                raise ValueError(u"'max_distance' must be an integer greater than one and lesser than the total number of nodes")
 
             if metric == KpposEnum.mreach and m is None:
                 raise WrongArgumentError("The parameter 'm' is required for m-reach algorithm")

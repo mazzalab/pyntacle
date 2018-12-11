@@ -47,24 +47,23 @@ class ImportAttributes():
         self.logger = log
         
         if type(graph) is not Graph:
-            raise WrongArgumentError("object is not a igraph.Graph")
+            raise WrongArgumentError(u"object is not a igraph.Graph")
         else:
             self.__graph = graph
     
     def __check_file(self, file: str, sep: str):
         
         if not os.path.exists(file):
-            raise FileNotFoundError("uFile does not exist")
+            raise FileNotFoundError(u"File does not exist")
         
         if sep is None:
-            self.logger.info(u"using \"\t\" as default separator")
+            self.logger.info(u"using '\t' as default separator")
             sep = "\t"
         
         with open(file, "r") as attrfile:
             head = attrfile.readline()
-            '''
-            if this is a node, the header is not specified
-            '''
+
+            # if this is a node, the header is not specified
             first = head.split(sep)[0]
             
             if first in self.__graph.vs("name"):
@@ -74,14 +73,14 @@ class ImportAttributes():
             return (file, sep)
     
     def import_graph_attributes(self, file, sep=None):
-        
-        '''
+        r"""
         Add an attribute to a graph object. The first line is always skipped, aa it is assumed to be a header.
 
         :param attr: file
-        :return: an igraph.Graph object
         :param sep: field separator if input is a file
-        '''
+
+        :return: an igraph.Graph object
+        """
         
         check = self.__check_file(file=file, sep=sep)
         infile = check[0]
@@ -93,23 +92,24 @@ class ImportAttributes():
 
                 AddAttributes(self.__graph).add_graph_attributes(attrs[0],
                                                                  attrs[1])
-        sys.stdout.write("Graph attributes from {} imported.\n".format(file))
+        sys.stdout.write(u"Graph attributes from {} imported.\n".format(file))
 
 
     def import_node_attributes(self, file: str, sep=None):
-        '''
+        r"""
         This function takes an header file and, optionally, a separator, and add them to a graph imprted in __init
 
         :param file: the name of an existing file name
+
         :return: an igraph object with the attribute added (a string attribute)
-        '''
-        self.logger.info("Reading attributes from file %s and adding them to nodes" % file)
+        """
+
+        self.logger.info(u"Reading attributes from file %s and adding them to nodes" % file)
         self.logger.warning(
-            "Attributes will be added as strings, so remember to convert them to proper types")
-    
-        '''
-        check if file name is properly passed
-        '''
+            u"Attributes will be added as strings, so remember to convert them to proper types")
+
+        #check if file name is properly passed
+
         reserved_attrs = ["name", "__parent"]
         check = self.__check_file(file=file, sep=sep)
         infile = check[0]
@@ -120,7 +120,7 @@ class ImportAttributes():
             # Checking if one or more attributes' names start with '__'. Avoids malicious injection.
             if any(i in reserved_attrs for i in attrfile.readline().rstrip().split(sep)):
                 raise KeyError(
-                    "One of the attributes in your attributes/weights file starts with __ (double underscore)."
+                    u"One of the attributes in your attributes/weights file starts with __ (double underscore)."
                     "This notation is reserved to private variables, please avoid using it.")
             attrfile.seek(last_pos)
         
@@ -131,14 +131,14 @@ class ImportAttributes():
             for line in attrfile:
             
                 if line in ['\n', '\r\n']:
-                    self.logger.warning("Skipping empty line")
+                    self.logger.warning(u"Skipping empty line")
             
                 else:
                     tmp = line.rstrip().split(sep)
                     name = tmp[0]
                     attrs = tmp[1:]
                     if any(x.upper() in ["NA", "NONE", "?"] for x in attrs):
-                        self.logger.warning("NAs found for node {}, replacing it with None")
+                        self.logger.warning(u"NAs found for node {}, replacing it with None")
                         attrs = [None if x in ["NA", "NONE", "?"] else x for x in attrs]
                     # select node with attribute name matching the node attribute "name"
                     select = self.__graph.vs.select(name=name)
@@ -147,11 +147,11 @@ class ImportAttributes():
                         names_list.add(name)
                     else:
                         self.logger.warning(
-                            "WARNING: Node {} has already been assigned an attribute, will be overwritten".format(
+                            u"WARNING: Node {} has already been assigned an attribute, will be overwritten".format(
                                 name))
                 
                     if len(select) == 0:
-                        self.logger.warning("node %s not found in graph" % name)
+                        self.logger.warning(u"node %s not found in graph" % name)
                 
                     elif len(select) == 1:
                         for i, obj in enumerate(attrs):
@@ -160,23 +160,21 @@ class ImportAttributes():
                             attrs_dict[attrnames[i]][select[0]["name"]] = obj
                     else:
                         self.logger.error(
-                            "Node %s has multiple name hits, please check your attribute file" % name)
-                        raise ValueError("multiple node hits")
+                            u"Node %s has multiple name hits, please check your attribute file" % name)
+                        raise ValueError(u"multiple node hits")
                     
         for attr in attrs_dict:
             AddAttributes(self.__graph).add_node_attributes(attr, list(attrs_dict[attr].values()), list(attrs_dict[attr].keys()))
                 
-        sys.stdout.write("Node attributes from {} imported.\n".format(file))
+        sys.stdout.write(u"Node attributes from {} imported.\n".format(file))
 
     def import_edge_attributes(self, file: str, sep=None, mode='standard'):
-        """
+        r"""
         Add edge attributes specified in a file like (nodeA/nodeB/listofvalues) to the `igraph.Graph` object declared
         when the class was initialized.
-        :param file: a valid $PATH to a file storing an edge attributes. This file can be either a standard edge attribute file
-        or a Cytoscape Legacy format. See our [file format](http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html)
-        page for details regarding this file format
-        :param sep: a string specified the separator character of your edge attrib ute file. if `None` (default) it will
-        be guessed.
+
+        :param file: a valid $PATH to a file storing an edge attributes. This file can be either a standard edge attribute file or a Cytoscape Legacy format. See our [file format](http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html) page for details regarding this file format
+        :param sep: a string specified the separator character of your edge attrib ute file. if `None` (default) it will be guessed.
         :param mode: a strng specified the file format of the edge attributes file. choices are `standard` or `cytoscape`
         """
         check = self.__check_file(file=file, sep=sep)
@@ -193,7 +191,7 @@ class ImportAttributes():
             line_count = 0
             for line in attrfile:
                 if line in ['\n', '\r\n']:
-                    self.logger.warning("Skipping empty line")
+                    self.logger.warning(u"Skipping empty line")
                 
                 else:
                     tmp = line.rstrip().split(sep)
@@ -209,7 +207,7 @@ class ImportAttributes():
                     else:
                         # This happens when the attribute list has a duplicate edge.
                         self.logger.warning(
-                            "Edge {0}-{1} has already been assigned an attribute, will be overwritten".format(
+                            u"Edge {0}-{1} has already been assigned an attribute, will be overwritten".format(
                                 tmp[0],
                                 tmp[1]))
                     
@@ -240,7 +238,7 @@ class ImportAttributes():
                     
                     elif len(select) > 1:
                         raise UnsupportedGraphError(
-                            "More than one edge with the same name is present in the graph. Probably a Multigraph")
+                            u"More than one edge with the same name is present in the graph. Probably a Multigraph")
                         # OVERWRITTEN AND REPLACED BY AN ERROR
                         # This happens if the graph has duplicate edges. Should not happen.
                         # self.logger.info(
@@ -251,15 +249,15 @@ class ImportAttributes():
                     
                     else:
                         err_count += 1
-                        self.logger.warning("Edge (%s,%s) not found" % (tmp[0], tmp[1]))
+                        self.logger.warning(u"Edge (%s,%s) not found" % (tmp[0], tmp[1]))
                     line_count += 1
             
             if err_count == line_count:
-                raise IllegalArgumentNumberError("Error: edge attributes not added; all lines in the attribute file were skipped.")
+                raise IllegalArgumentNumberError(u"Edge attributes not added; all lines in the attribute file were skipped.")
             else:
                 self.logger.info("Edge attributes added")
                 for attr in attrs_dict:
                     AddAttributes(self.__graph).add_edge_attributes(attr, list(attrs_dict[attr].values()),
                                                                     list(attrs_dict[attr].keys()))
                     
-        sys.stdout.write("Edge attributes from {} imported.\n".format(file))
+        sys.stdout.write(u"Edge attributes from {} imported.\n".format(file))

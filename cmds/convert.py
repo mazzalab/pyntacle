@@ -89,7 +89,7 @@ class Convert():
         out_form = format_dictionary.get(self.args.output_format, "NA")
 
         if out_form == "NA":
-            sys.stderr.write("Output extension specified is not supported, see  \"--help\" for more info\n. Quitting")
+            sys.stderr.write("Output extension specified is not supported, see  '--help' for more info\n. Quitting")
             sys.exit(1)
 
         output_path = os.path.join(self.args.directory, ".".join([self.args.output_file, out_form]))

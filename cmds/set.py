@@ -103,7 +103,7 @@ class Set:
 
             except MultipleSolutionsError:
                 sys.stderr.write(
-                    "Graph {} has two largest components of the same size. Cannot choose one. Please parse your file or remove the \"--largest-component\" option. Quitting\n".format(graph1["name"]))
+                    "Graph {} has two largest components of the same size. Cannot choose one. Please parse your file or remove the '--largest-component' option. Quitting\n".format(graph1["name"]))
                 sys.exit(1)
 
             try:
@@ -114,7 +114,7 @@ class Set:
 
             except MultipleSolutionsError:
                 sys.stderr.write(
-                    "Graph {} has two largest components of the same size. Cannot choose one. Please parse your file or remove the \"--largest-component\" option. Quitting\n".format(
+                    "Graph {} has two largest components of the same size. Cannot choose one. Please parse your file or remove the '--largest-component' option. Quitting\n".format(
                         graph2["name"]))
                 sys.exit(1)
 
@@ -255,7 +255,7 @@ class Set:
         sys.stdout.write("Path to generated Graph is: {}\n".format(output_path))
 
         if self.args.output_separator is None:
-            sys.stdout.write("Using \"\\t\" as default separator for output file\n")
+            sys.stdout.write("Using '\\t' as default separator for output file\n")
             self.args.output_separator = "\t"
 
         if os.path.exists(output_path):
@@ -295,7 +295,7 @@ class Set:
 
             if os.path.isdir(plot_dir):
                 self.logging.warning(
-                    "A directory named \"pyntacle-plots\" already exists, I may overwrite something in there")
+                    "A directory named 'pyntacle-plots' already exists, I may overwrite something in there")
 
             else:
                 os.mkdir(plot_dir)

@@ -215,7 +215,7 @@ class PyntacleExporter:
                 else:
                     # print(type(self.graph.vs(edge.target)["name"]))
                     raise ValueError(
-                        u"node \"name\" attribute is unproperly formatted. Cannot interpret him. Quitting")
+                        u"node 'name' attribute is unproperly formatted. Cannot interpret him. Quitting")
 
             # remove vertices from graph in order to write remaining vertices
             remaining_nodes = list(set(graph.vs().indices) - set(nodes_done_list))

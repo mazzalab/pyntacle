@@ -47,7 +47,7 @@ class FitPowerLaw:
         :raise ValueError: if ``xmin`` is not a positive float
         """
         if xmin is not None and xmin is not isinstance(xmin,(int,float)) and xmin < 0:
-            raise ValueError(u"\"xmin\" must be a float greater than 0")
+            raise ValueError(u"'xmin' must be a float greater than 0")
 
         degree = graph.degree()
 

@@ -67,7 +67,7 @@ class KPWrapper:
         :param int max_distance: maximum shortest path distance allowed (must be a positive integer greater than 0
         """
         if not isinstance(kp_type, KpposEnum):
-            raise TypeError("metric must be ones of the \"KPPOSchoices\" metrics, {} found".format(type(kp_type).__name__))
+            raise TypeError("metric must be ones of the 'KPPOSchoices' metrics, {} found".format(type(kp_type).__name__))
 
         if isinstance(nodes, str):
             nodes=[nodes]
@@ -76,14 +76,14 @@ class KPWrapper:
                 raise ValueError("Nodes must be a list of string")
 
         if not all(x in self.graph.vs()["name"] for x in nodes):
-            raise KeyError("one of the nodes not in the vertex [\"name\"] attribute. "
+            raise KeyError("one of the nodes not in the vertex ['name'] attribute. "
                            "Are you sure those node names are correct?")
 
         if kp_type == KpposEnum.mreach:
             if not m:
-                raise ValueError("\"m\" must be specified for mreach ")
+                raise ValueError("'m' must be specified for mreach ")
             elif not isinstance(m, int) or m <= 0 :
-                raise ValueError("\"m\" must be a positive integer for mreach ")
+                raise ValueError("'m' must be a positive integer for mreach ")
 
         self.logger.info("Computing {0} for nodes ({1})".format(kp_type.name, ", ".join(nodes)))
         if kp_type == KpposEnum.dR:
@@ -94,7 +94,7 @@ class KPWrapper:
             single_result = self.kp.mreach(graph=self.graph, nodes=nodes, max_distance=max_distance, m=m, cmode=implementation)
 
         self.results[kp_type.name] = [nodes, single_result]
-        self.logger.info("KP POS search completed, results are in the \"results\" dictionary")
+        self.logger.info("KP POS search completed, results are in the 'results' dictionary")
 
     @timeit
     def run_KPNeg(self, nodes, kp_type:KpnegEnum, max_distance=None, implementation = CmodeEnum.igraph):
@@ -105,7 +105,7 @@ class KPWrapper:
         :param int max_distance: maximum shortest path distance allowed (must be a positive integer greater than 0.
         """
         if not isinstance(kp_type, KpnegEnum):
-            raise TypeError("metric must be ones of the \"KPNEGchoices\" metrics, {} found".format(type(kp_type).__name__))
+            raise TypeError("metric must be ones of the 'KPNEGchoices' metrics, {} found".format(type(kp_type).__name__))
 
         if isinstance(nodes, str):
             nodes = [nodes]
@@ -114,7 +114,7 @@ class KPWrapper:
                 raise ValueError("Nodes must be a list of string")
 
         if not all(x in self.graph.vs()["name"] for x in nodes):
-            raise KeyError("one of the nodes not in the vertex [\"name\"] attribute. Are you sure those node names are correct?")
+            raise KeyError("one of the nodes not in the vertex ['name'] attribute. Are you sure those node names are correct?")
 
         else:
             copy = self.graph.copy()
@@ -130,7 +130,7 @@ class KPWrapper:
             single_result = self.kp.F(graph=copy)
 
         self.results[kp_type.name] = [nodes, single_result]
-        self.logger.info("KP POS search completed, results are in the \"results\" dictionary")
+        self.logger.info("KP POS search completed, results are in the 'results' dictionary")
 
     def get_results(self) -> dict:
         """
@@ -173,10 +173,10 @@ class GOWrapper:
         :param int seed: a seed that can be passed in order to replicate GO results
         """
         if not isinstance(kp_size, int) or kp_size < 1:
-            raise ValueError("\kp_size\" must be a positive integer of size 1")
+            raise ValueError("\kp_size' must be a positive integer of size 1")
 
         if not isinstance(kp_type, KpnegEnum):
-            raise TypeError("\"kp_type\" must be one of the KPPNEGchoices options available")
+            raise TypeError("'kp_type' must be one of the KPPNEGchoices options available")
 
         go_results = self.go.fragmentation(graph=self.graph, k=kp_size, metric=kp_type, max_distance=max_distance, seed=seed, cmode=implementation)
         self.results[kp_type.name] = [go_results[0], go_results[1]]
@@ -192,16 +192,16 @@ class GOWrapper:
         :param int m: for the "mreach" metrics, a positive integer greatrer than one representing the maximum distance for mreach
         """
         if not isinstance(kp_size, int) or kp_size < 1:
-            raise ValueError("\kp_size\" must be a positive integer of size 1")
+            raise ValueError("\kp_size' must be a positive integer of size 1")
 
         if not isinstance(kp_type, KpposEnum):
-            raise TypeError("\"kp_type\" must be one of the KPPPOSchoices options available")
+            raise TypeError("'kp_type' must be one of the KPPPOSchoices options available")
 
         if kp_type == KpposEnum.mreach:
             if not m:
-                raise ValueError("\"m\" must be a specified for mreach ")
+                raise ValueError("'m' must be a specified for mreach ")
             elif not isinstance(m, int) or m <= 0 :
-                raise ValueError("\"m\" must be a positive integer for mreach ")
+                raise ValueError("'m' must be a positive integer for mreach ")
 
         go_results = self.go.reachability(graph=self.graph, k=kp_size, metric=kp_type, max_distance=max_distance, seed=seed, m=m, cmode=implementation)
 
@@ -243,10 +243,10 @@ class BFWrapper:
         :param int max_distances: maximum shortest path distance allowed in the shortest path matrix
         """
         if not isinstance(kp_size, int) or kp_size < 1:
-            raise ValueError("\kp_size\" must be a positive integer of size 1")
+            raise ValueError("\kp_size' must be a positive integer of size 1")
 
         if not isinstance(kp_type, KpnegEnum):
-            raise TypeError("\"kp_type\" must be one of the KPPNEGchoices options available")
+            raise TypeError("'kp_type' must be one of the KPPNEGchoices options available")
 
         bf_results = self.bf.fragmentation(graph=self.graph, k=kp_size, metric=kp_type,
                                            max_distance=max_distance, cmode=implementation, ncores=threads)
@@ -262,16 +262,16 @@ class BFWrapper:
         :param int m: for the "mreach" metrics, a positive integer greatrer than one representing the maximum distance for mreach
         """
         if not isinstance(kp_size, int) or kp_size < 1:
-            raise ValueError("\kpp_size\" must be a positive integer of size 1")
+            raise ValueError("\kpp_size' must be a positive integer of size 1")
 
         if not isinstance(kp_type, KpposEnum):
-            raise TypeError("\"kp_type\" must be one of the KPPNEGchoices options available")
+            raise TypeError("'kp_type' must be one of the KPPNEGchoices options available")
 
         if kp_type == KpposEnum.mreach:
             if not m:
-                raise ValueError("\"m\" must be a specified for mreach ")
+                raise ValueError("'m' must be a specified for mreach ")
             elif not isinstance(m, int) or m <= 0 :
-                raise ValueError("\"m\" must be a positive integer for mreach ")
+                raise ValueError("'m' must be a positive integer for mreach ")
 
         bf_results = self.bf.reachability(graph=self.graph, k=kp_size, metric=kp_type,
                                           max_distance=max_distance, m=m, cmode=implementation, ncores=threads)

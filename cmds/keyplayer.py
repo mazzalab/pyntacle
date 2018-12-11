@@ -118,7 +118,7 @@ class KeyPlayer():
 
             except MultipleSolutionsError:
                 sys.stderr.write(
-                    "The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the \"--largest-component\" option. Quitting\n")
+                    "The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the '--largest-component' option. Quitting\n")
                 sys.exit(1)
 
         # Check provided dimensions' format
@@ -454,7 +454,7 @@ class KeyPlayer():
 
             if os.path.isdir(plot_dir):
                 self.logging.warning(
-                    "A directory named \"pyntacle-plots\" already exists, I may overwrite something in there")
+                    "A directory named 'pyntacle-plots' already exists, I may overwrite something in there")
 
             else:
                 os.mkdir(plot_dir)

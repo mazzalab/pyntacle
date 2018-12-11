@@ -260,14 +260,14 @@ class Generate:
         out_form = format_dictionary.get(self.args.output_format, "NA")
 
         if out_form == "NA":
-            sys.stderr.write("Output extension specified is not supported, see  \"--help\" for more info\n. Quitting")
+            sys.stderr.write("Output extension specified is not supported, see  '--help' for more info\n. Quitting")
             sys.exit(1)
 
         output_path = os.path.join(self.args.directory, ".".join([self.args.output_file, out_form]))
         sys.stdout.write("Path to generated Graph is: {}\n".format(output_path))
 
         if self.args.output_separator is None:
-            sys.stdout.write("Using \"\\t\" as default separator for output file\n")
+            sys.stdout.write("Using '\\t' as default separator for output file\n")
             self.args.output_separator = "\t"
 
         if os.path.exists(output_path):
@@ -304,7 +304,7 @@ class Generate:
 
             if os.path.isdir(plot_dir):
                 self.logging.warning(
-                    "A directory named \"pyntacle-plots\" already exist, I may overwrite something in there")
+                    "A directory named 'pyntacle-plots' already exist, I may overwrite something in there")
 
             else:
                 os.mkdir(plot_dir)

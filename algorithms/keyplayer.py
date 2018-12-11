@@ -107,7 +107,7 @@ class KeyPlayer:
             return 0.0
         else:
             if not isinstance(cmode, CmodeEnum):
-                raise KeyError("\"cmode\" not valid, must be one of the following: {}".format(list(CmodeEnum)))
+                raise KeyError("'cmode' not valid, must be one of the following: {}".format(list(CmodeEnum)))
             elif max_distance:
                 if not isinstance(max_distance, int):
                     raise TypeError("'max_distance' must be an integer")

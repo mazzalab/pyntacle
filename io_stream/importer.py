@@ -107,6 +107,7 @@ class PyntacleImporter:
         :param bool header: Whether the header is present or not (default is `True`
 
         :return igraph.Graph: the :py:class:`igraph.Graph` object representing the original adjacenchy matrix ready to be used in Pyntacle methods.
+
         :raise WrongArgumentError: if ``sep`` is not found in the adjacency matrix
         """
 
@@ -200,8 +201,7 @@ class PyntacleImporter:
         The SIF file may contain an header(*header=True*).
 
         :param str file: a valid path to the Edge List File
-        :param sep: if None(default) we will try to guess the separator. Otherwise, you can place the string
-        representing the rows and columns separator.
+        :param sep: if None(default) we will try to guess the separator. Otherwise, you can place the string representing the rows and columns separator.
         :param bool header: Whether the header is present or not (default is `False`)
 
         :return: an `igraph.Graph` object.
@@ -285,15 +285,17 @@ class PyntacleImporter:
     @separator_sniffer
     def Dot(file, **kwargs):
         r"""
+
         :param file:
         :param kwargs:
+
         :return igraph.Graph:
         """
         graph = Graph()
         graph.vs()["name"] = None
         graph.es()["__sif_interaction"] = None
 
-        ''' initialize empty graph'''
+        # initialize empty graph
 
         dotdata = open(file)
         last_pos = dotdata.tell()
@@ -392,6 +394,7 @@ class PyntacleImporter:
         not already).
 
         :param str file_name: Path to the binary file
+
         :return igraph.Graph: an iGraph.Graph object
         """
 

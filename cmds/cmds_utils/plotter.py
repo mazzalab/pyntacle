@@ -86,20 +86,20 @@ class PlotGraph():
         """
 
         if "label" in self.graph.vs.attributes():
-            self.logger.info("attribute \"label\" already exists, will overwrite")
+            self.logger.info("attribute 'label' already exists, will overwrite")
             self.graph.vs()["label"] = None
 
         if not isinstance(labels, list):
-            raise TypeError("\"labels\" must be a list, {} found".format(type(labels).__name__))
+            raise TypeError("'labels' must be a list, {} found".format(type(labels).__name__))
 
         if not all(isinstance(x, str) for x in labels):
-            raise ValueError("One of the items in \"labels\" is not a string")
+            raise ValueError("One of the items in 'labels' is not a string")
 
         tot = self.graph.vcount()
 
         if len(labels) < tot:
             self.logger.warning(
-                "\"labels\" do not cover all the edges, replacing missing ones with Nonetype")
+                "'labels' do not cover all the edges, replacing missing ones with Nonetype")
 
         if len(labels) > tot:
             self.logger.warning("Labels specified exceeds the maximum number of vertices, slicing the input list to the total number of nodes")
@@ -121,23 +121,23 @@ class PlotGraph():
         """
 
         if "color" in self.graph.vs.attributes():
-            self.logger.info("attribute \"color\" already exists, will overwrite")
+            self.logger.info("attribute 'color' already exists, will overwrite")
             self.graph.vs()["color"] = None
 
         if not isinstance(colors, list):
-            raise TypeError("\"colors\" must be a list, {} found".format(type(colors).__name__))
+            raise TypeError("'colors' must be a list, {} found".format(type(colors).__name__))
 
         if not all(isinstance(x, str) for x in colors):
-            raise ValueError("One of the items in \"colors\" is not a string")
+            raise ValueError("One of the items in 'colors' is not a string")
 
         tot = self.graph.vcount()
 
         if len(colors) < tot:
             self.logger.warning(
-                "\"colors\" do not cover all the edges, replacing missing ones with Nonetype")
+                "'colors' do not cover all the edges, replacing missing ones with Nonetype")
 
         if len(colors) > tot:
-            self.logger.warning("\"colors\" exceed the maximum number of vertices, slicing the input list to the total number of nodes")
+            self.logger.warning("'colors' exceed the maximum number of vertices, slicing the input list to the total number of nodes")
             colors = colors[:self.graph.vcount()]
 
         self.graph.vs["color"] = colors
@@ -155,23 +155,23 @@ class PlotGraph():
         :param: list sizes: a list of node sizes (must be positive integers or floats)
         """
         if "size" in self.graph.vs.attributes():
-            self.logger.info("attribute \"size\" already exists, will overwrite")
+            self.logger.info("attribute 'size' already exists, will overwrite")
             self.graph.vs()["size"] = None
 
         if not isinstance(sizes, list):
-            raise TypeError("\"sizes\" must be a list, {} found".format(type(sizes).__name__))
+            raise TypeError("'sizes' must be a list, {} found".format(type(sizes).__name__))
 
         if not all(isinstance(x, (int, float)) and x > 0 for x in sizes):
-            raise ValueError("One of the items in \"sizes\" is not positive integer or float")
+            raise ValueError("One of the items in 'sizes' is not positive integer or float")
 
         tot = self.graph.vcount()
 
         if len(sizes) < tot:
             self.logger.warning(
-                "\"sizes\" do not cover all the edges, replacing missing ones with Nonetype")
+                "'sizes' do not cover all the edges, replacing missing ones with Nonetype")
 
         if len(sizes) > tot:
-            self.logger.warning("\"sizes\" specified exceed the maximum number of vertices, slicing the input list to the total number of nodes")
+            self.logger.warning("'sizes' specified exceed the maximum number of vertices, slicing the input list to the total number of nodes")
             sizes = sizes[:self.graph.vcount()]
 
         self.graph.vs["size"] = sizes
@@ -199,26 +199,26 @@ class PlotGraph():
         shapes_legal_values = ["rectangle", "circle", "hidden", "triangle-up", "triangle-down", "square"]
 
         if "shape" in self.graph.vs.attributes():
-            self.logger.info("attribute \"shape\" already exists, will overwrite")
+            self.logger.info("attribute 'shape' already exists, will overwrite")
             self.graph.vs()["shape"] = None
 
         if not isinstance(shapes, list):
-            raise TypeError("\"shapes\" must be a list, {} found".format(type(shapes).__name__))
+            raise TypeError("'shapes' must be a list, {} found".format(type(shapes).__name__))
 
         if not all(isinstance(x, str) for x in shapes):
-            raise ValueError("One of the items in \"shapes\" is not a string")
+            raise ValueError("One of the items in 'shapes' is not a string")
 
         if not all(x in shapes_legal_values for x in shapes):
-            raise ValueError("One of the items in \"shapes\" does not match the available options (\"{}\")".format(",".join(shapes_legal_values)))
+            raise ValueError("One of the items in 'shapes' does not match the available options ('{}')".format(",".join(shapes_legal_values)))
 
         tot = self.graph.vcount()
 
         if len(shapes) < tot:
             self.logger.warning(
-                "\"shapes\" do not cover all the nodes, replacing missing ones with Nonetype")
+                "'shapes' do not cover all the nodes, replacing missing ones with Nonetype")
 
         if len(shapes) > tot:
-            self.logger.warning("\"shapes\" specified exceed the maximum number of vertices, slicing the input list to the total number of nodes")
+            self.logger.warning("'shapes' specified exceed the maximum number of vertices, slicing the input list to the total number of nodes")
             shapes = shapes[:self.graph.vcount()]
 
         self.graph.vs["shape"] = shapes
@@ -236,23 +236,23 @@ class PlotGraph():
         """
 
         if "label" in self.graph.es.attributes():
-            self.logger.info("attribute \"label\" already exists, will overwrite")
+            self.logger.info("attribute 'label' already exists, will overwrite")
             self.graph.es()["label"] = None
 
         if not isinstance(labels, list):
-            raise TypeError("\"labels\" must be a list, {} found".format(type(labels).__name__))
+            raise TypeError("'labels' must be a list, {} found".format(type(labels).__name__))
 
         if not all(isinstance(x, (str)) for x in labels):
-            raise ValueError("One of the items in \"labels\" is not a string")
+            raise ValueError("One of the items in 'labels' is not a string")
 
         tot = self.graph.ecount()
 
         if len(labels) < tot:
             self.logger.info(
-                "\"labels\" do not cover all the nodes, replacing missing ones with Nonetype")
+                "'labels' do not cover all the nodes, replacing missing ones with Nonetype")
 
         if len(labels) > tot:
-            self.logger.info("\"labels\" specified exceed the maximum number of vertices, slicing the input list")
+            self.logger.info("'labels' specified exceed the maximum number of vertices, slicing the input list")
             labels = labels[:self.graph.ecount()]
 
         self.graph.es["label"] = labels
@@ -269,23 +269,23 @@ class PlotGraph():
         """
 
         if "width" in self.graph.es.attributes():
-            self.logger.info("attribute \"width\" already exists, will overwrite")
+            self.logger.info("attribute 'width' already exists, will overwrite")
             self.graph.es()["width"] = None
 
         if not isinstance(widths, list):
-            raise TypeError("\"widths\" must be a list, {} found".format(type(widths).__name__))
+            raise TypeError("'widths' must be a list, {} found".format(type(widths).__name__))
 
         if not all(isinstance(x, (int, float)) and x > 0 for x in widths):
-            raise ValueError("One of the items in \"widths\" is not a positive integer or float")
+            raise ValueError("One of the items in 'widths' is not a positive integer or float")
 
         tot = self.graph.ecount()
 
         if len(widths) < tot:
             self.logger.warning(
-                "\"widths\" do not cover all the edges, replacing missing ones with Nonetype")
+                "'widths' do not cover all the edges, replacing missing ones with Nonetype")
 
         if len(widths) > tot:
-            self.logger.warning("\"widths\" specified exceed the maximum number of vertices, slicing the input list to the total number of edges")
+            self.logger.warning("'widths' specified exceed the maximum number of vertices, slicing the input list to the total number of edges")
             widths = widths[:self.graph.ecount()]
 
         self.graph.es["width"] = widths

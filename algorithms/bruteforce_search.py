@@ -155,7 +155,7 @@ class BruteforceSearch:
         allS = itertools.combinations(node_names, k)
 
         if max_distance is not None and not isinstance(max_distance, int) and max_distance > 1 and max_distance <= graph.vcount():
-            raise ValueError(u"\"max_distance\" must be an integer greater than one and lesser than the total number of nodes")
+            raise ValueError(u"'max_distance' must be an integer greater than one and lesser than the total number of nodes")
 
         if parallel:
             if ncores is None:
@@ -226,7 +226,7 @@ class BruteforceSearch:
         """
 
         if max_distance is not None and not isinstance(max_distance, int) and max_distance > 1 and max_distance <= graph.vcount():
-            raise ValueError(u"\"max_distance\" must be an integer greater than one and lesser than the total number of nodes")
+            raise ValueError(u"'max_distance' must be an integer greater than one and lesser than the total number of nodes")
 
         if metric == KpposEnum.mreach and m is None:
             raise WrongArgumentError(u"The parameter m must be specified")
