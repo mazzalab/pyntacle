@@ -113,18 +113,18 @@ class ExportAttributes():
                             warnflag = 1
     
                         if e.attributes()[attr] is None:
-                            out.write('\t' + 'NA')
+                            out.write("\t" + "NA")
                         else:
-                            out.write('\t' + str(e.attributes()[attr]))
-                    out.write('\n')
+                            out.write("\t" + str(e.attributes()[attr]))
+                    out.write("\n")
                 else:
-                    if e.attributes()['__sif_interaction'] is None:
-                        out.write('(interacts with) ')
+                    if e.attributes()["__sif_interaction"] is None:
+                        out.write("(interacts with) ")
                     else:
-                        for interaction in e.attributes()['__sif_interaction']:
-                            out.write(str(e.attributes()['adjacent_nodes'][0]) + ' ')
-                            out.write('(' + interaction + ') ')
-                            out.write(str(e.attributes()['adjacent_nodes'][1]))
+                        for interaction in e.attributes()["__sif_interaction"]:
+                            out.write(str(e.attributes()["adjacent_nodes"][0]) + ' ')
+                            out.write('(' + interaction + ") ")
+                            out.write(str(e.attributes()["adjacent_nodes"][1]))
 
                             for attr in attributes_tokeep:
                                 # Checking the type of the attribute
@@ -135,16 +135,16 @@ class ExportAttributes():
                                     warnflag = 1
             
                                 if e.attributes()[attr] is None:
-                                    out.write('\t' + 'NA')
+                                    out.write("\t" + "NA")
                                 else:
-                                    out.write('\t' + str(e.attributes()[attr]))
+                                    out.write("\t" + str(e.attributes()[attr]))
                             out.write('\n')
         sys.stdout.write(u"Edge attributes successfully exported at path {}.\n".format(os.path.abspath(file)))
 
 
     def export_node_attributes(self,  file :str):
         r"""
-        Export attributes belonging to vertices of the :py:class:`igraph.Graph` object into a tab-delimited format that
+        Export attributes belonging to *vertices* of the :py:class:`igraph.Graph` object into a tab-delimited format that
         later reused in Pyntacle (by means of the :class:`~pyntacle.io_stream.import_attributes.ImportAttributes` or
         ported to other network analysis tools.
 
@@ -157,17 +157,17 @@ class ExportAttributes():
         :param str file: the path at which the node attribute file will be written to. A directory tree will be created if the path does not point to an existent directory.
         """
         warnflag = 0
-        dirname = os.path.dirname(file) or '.'
+        dirname = os.path.dirname(file) or "."
         if not os.path.exists(dirname):
             self.logger.warning(u"The directory tree for the output file does not exist, it will be created")
             os.makedirs(dirname, exist_ok=True)
-        with open(file, 'w') as out:
+        with open(file, "w") as out:
             # Writing header
             attributes_tokeep = [x for x in self.__graph.vs()[0].attributes() if
-                                 x != 'name' and not x.startswith('__')]
-            out.write('Node' + '\t' + '\t'.join(attributes_tokeep) + '\n')
+                                 x != "name" and not x.startswith('__')]
+            out.write("Node" + "\t" + "\t".join(attributes_tokeep) + "\n")
             for v in self.__graph.vs():
-                out.write(str(v.attributes()['name']))
+                out.write(str(v.attributes()["name"]))
                 for attr in attributes_tokeep:
 
                     # Checking the type of the attribute
@@ -178,17 +178,17 @@ class ExportAttributes():
                         warnflag = 1
 
                     if v.attributes()[attr] is None:
-                        out.write('\t' + 'NA')
+                        out.write("\t" + "NA")
                     else:
-                        out.write('\t' + str(v.attributes()[attr]))
-                out.write('\n')
+                        out.write("\t" + str(v.attributes()[attr]))
+                out.write("\n")
         
         sys.stdout.write(u"Node attributes successfully exported at path {}.\n".format(os.path.abspath(file)))
 
 
     def export_graph_attributes(self, file):
         """
-        Exports graph attributes to a tab-separated file. These graph attributes are a property of the :py:class:`igraph.Graph` input object
+        Exports *network* attributes to a tab-separated file. These graph attributes are a property of the :py:class:`igraph.Graph` input object
 
         .. note:: We recommend visit the `Pyntacle File Formats Guide <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html#ga>`_ for more information on how graph attribute files are formatted
 
@@ -199,21 +199,21 @@ class ExportAttributes():
         :param str file: the path to the graph attribute file. A directory tree will be created if the path does not point to an existent directory.
         """
         warnflag = 0
-        dirname = os.path.dirname(file) or '.'
+        dirname = os.path.dirname(file) or "."
         if not os.path.exists(dirname):
             self.logger.warning(
                 u"The directory tree for the output file does not exist, it will be created")
             os.makedirs(dirname)
-        with open(file, 'w') as out:
+        with open(file, "w") as out:
             # Writing header
             attributes_tokeep = [x for x in self.__graph.attributes() if
-                                 not x.startswith('__')]
-            out.write('Attribute' + '\t' + 'Value' + '\n')
+                                 not x.startswith("__")]
+            out.write("Attribute" + "\t" + "Value" + "\n")
 
             for attr in attributes_tokeep:
 
-                if attr == 'name':
-                    out.write(attr + '\t' + str(self.__graph[attr]) + '\n')
+                if attr == "name":
+                    out.write(attr + "\t" + str(self.__graph[attr]) + "\n")
                     continue
 
                 # Checking the type of the attribute
@@ -224,8 +224,8 @@ class ExportAttributes():
                     warnflag = 1
 
                 elif self.__graph[attr] is None:
-                    out.write(attr + '\tNA' + '\n')
+                    out.write(attr + "\tNA" + "\n")
                 else:
-                    out.write(attr + '\t' + str(self.__graph[attr]) + '\n')
+                    out.write(attr + "\t" + str(self.__graph[attr]) + "\n")
         
         sys.stdout.write(u"Graph attributes successfully exported at path {}.\n".format(os.path.abspath(file)))

@@ -389,7 +389,7 @@ class KeyPlayer():
         
         if self.args.save_binary:
             #reproduce octopus behaviour by adding kp information to the graph before saving it
-            sys.stdout.write("Saving graph to a binary pickle file with \'.graph\' extension \n")
+            sys.stdout.write("Saving graph to a binary pickle file with '.graph' extension \n")
             #step 1: decidee the type of the implementation
 
             bf = False

@@ -163,14 +163,14 @@ class AddAttributes:
         """
 
         if readd is True or "adjacent_nodes" not in self.__graph.es.attributes():
-            self.logger.info("adding attribute \'adjacent_nodes\' to each edge (will be stored as a tuple)")
+            self.logger.info("adding attribute 'adjacent_nodes' to each edge (will be stored as a tuple)")
             edge_names = []
             for e in self.__graph.get_edgelist():
                 # print("{0}, {1}".format(self.__graph.vs[e[0]]["name"], self.__graph.vs[e[1]]["name"]))
                 edge_names.append((self.__graph.vs[e[0]]["name"], self.__graph.vs[e[1]]["name"]))
             self.__graph.es["adjacent_nodes"] = edge_names
         else:
-            self.logger.info(u"attribute \'adjacent_nodes\' already exist")
+            self.logger.info(u"attribute 'adjacent_nodes' already exist")
 
     def add_graph_name(self, namestring):
         r"""
@@ -179,7 +179,7 @@ class AddAttributes:
         :param str namestring:
         """
 
-        self.logger.info(u"adding attribute \'name\' to the graph")
+        self.logger.info(u"adding attribute 'name' to the graph")
 
         self.__graph["name"] = [namestring]
 
@@ -188,7 +188,7 @@ class AddAttributes:
         Add the graph ``name`` attribute to each vertex, under the ``__parent``  reserved attribute.
         """
 
-        self.logger.info(u"adding reserved attribute \'__parent\' to the vertices")
+        self.logger.info(u"adding reserved attribute '__parent' to the vertices")
 
         self.__graph.vs["__parent"] = self.__graph["name"]
 
@@ -225,7 +225,7 @@ class AddAttributes:
 
         #add parent name to vertices
         if "__parent" not in self.__graph.vs().attributes():
-            self.logger.info(u"adding reserved attribute \'__parent\' to the vertices")
+            self.logger.info(u"adding reserved attribute '__parent' to the vertices")
             self.add_parent_name()
 
         if "adjacent_nodes" not in self.__graph.es().attributes():

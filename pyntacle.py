@@ -173,8 +173,8 @@ The available commands in Pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         # These are options instead
         parser.add_argument('-f', '--format', metavar='',
                             choices=format_dictionary.keys(),
-                            help="Input format. \'adjmat\' for adjacency matrix, \'edgelist\' for edge list, "
-                                 "\'sif\' for Simple Interaction format, \'dot\' for DOT file, \'bin\' "
+                            help="Input format. 'adjmat' for adjacency matrix, 'edgelist' for edge list, "
+                                 "'sif' for Simple Interaction format, 'dot' for DOT file, 'bin' "
                                  "for binary file. See https://goo.gl/9wFRfM for more information and abbreviations.")
 
         parser.add_argument('--input-separator', metavar='', default=None, help="Specifies the field separator for the input file. "
@@ -331,8 +331,8 @@ The available commands in Pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                             choices=format_dictionary.keys(),
                             help="Specifies the format of the input file passed using the --input-file "
                                  "command. "
-                                 "\'adjmat\' for adjacency matrix, \'edgelist\' for edge list, \'sif\' for "
-                                 "Simple Interaction format, \'dot\' for DOT file, \'bin\' for binary file. "
+                                 "'adjmat' for adjacency matrix, 'edgelist' for edge list, 'sif' for "
+                                 "Simple Interaction format, 'dot' for DOT file, 'bin' for binary file. "
                                  "See https://goo.gl/9wFRfM for more information and abbreviations.")
 
         parser.add_argument('--input-separator', metavar="", default=None, help="Specifies the field separator for the input file. "
@@ -471,8 +471,8 @@ The available commands in Pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                             choices=format_dictionary.keys(),
                             help="Specifies the format of the input file passed using the --input-file "
                                  "command. Different file formats can be specified using different keywords:"
-                                 " \'adjmat\' for adjacency matrix, \'edgelist\' for edge list, \'sif\' for "
-                                 "Simple Interaction format, \'dot\' for DOT file, \'bin\' for binary file.")
+                                 " 'adjmat' for adjacency matrix, 'edgelist' for edge list, 'sif' for "
+                                 "Simple Interaction format, 'dot' for DOT file, 'bin' for binary file.")
 
         parser.add_argument('--input-separator', metavar='', default=None,
                             help="Specifies the field separator for the input file. "
@@ -558,10 +558,10 @@ The available commands in Pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
 
         parser.add_argument("-u", "--output-format", metavar="",
                             choices=format_dictionary.keys(), default="adjmat",
-                            help='Desired output format for the output communities. \'adjmat\' for '
-                                 'adjacency matrix, \'edgelist\' for edge list, \'sif\' for '
-                                 'Simple Interaction format, \'dot\' for DOT file, \'bin\' for binary file. '
-                                 'See https://goo.gl/9wFRfM for more information and abbreviations.')
+                            help="Desired output format for the output communities. 'adjmat' for "
+                                 "'adjacency matrix', 'edgelist' for edge list, 'sif' for "
+                                 "Simple Interaction format, 'dot' for DOT file, 'bin' for binary file. "
+                                 "'See https://goo.gl/9wFRfM for more information and abbreviations.")
 
         parser.add_argument("--output-separator", metavar="",
                             help="Specify a desired output separator for your output files. Default is “\t”."
@@ -734,8 +734,8 @@ The available commands in Pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                             choices=format_dictionary.keys(),
                             help="Specifies the format of the input file passed using the --input-file "
                                  "command. "
-                                 "\'adjmat\' for adjacency matrix, \'edgelist\' for edge list, \'sif\' for "
-                                 "Simple Interaction format, \'dot\' for DOT file, \'bin\' for binary file. "
+                                 "'adjmat' for adjacency matrix, 'edgelist' for edge list, 'sif' for "
+                                 "Simple Interaction format, 'dot' for DOT file, 'bin' for binary file. "
                                  "See https://goo.gl/9wFRfM for more information and abbreviations.")
 
         parser.add_argument('--input-separator', metavar='', default=None,
@@ -968,7 +968,7 @@ The available commands in Pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
                             help="Specifies the format of the input file passed using the -1/--input-file-1 "
                                  "and the -2/--input-file-2 command. Different file formats can be specified "
                                  "using different keywords: 'adjmat' for adjacency matrix, 'edgelist' for "
-                                 "edge list, sif for Simple Interaction format, \'dot\' for DOT file, \'bin\'"
+                                 "edge list, sif for Simple Interaction format, 'dot' for DOT file, 'bin'"
                                  " for binary file. See https://goo.gl/9wFRfM for more information and "
                                  "abbreviations. NOTE: The two files must have the same format. If not, use "
                                  "pyntacle convert to convert your files to the same format")

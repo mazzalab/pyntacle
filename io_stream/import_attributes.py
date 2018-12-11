@@ -183,9 +183,9 @@ class ImportAttributes():
         edges_list = set()
         attrs_dict = {}
         with open(infile, "r") as attrfile:
-            if mode == 'standard':
+            if mode == "standard":
                 attrnames = [x for x in attrfile.readline().rstrip().split(sep)[2:]]
-            elif mode == 'cytoscape':
+            elif mode == "cytoscape":
                 attrnames = [x for x in attrfile.readline().rstrip().split(sep)[1:]]
             err_count = 0
             line_count = 0
@@ -195,9 +195,9 @@ class ImportAttributes():
                 
                 else:
                     tmp = line.rstrip().split(sep)
-                    if mode == 'standard':
+                    if mode == "standard":
                         perm_node_names = [(tmp[0], tmp[1]), (tmp[1], tmp[0])]
-                    elif mode == 'cytoscape':
+                    elif mode == "cytoscape":
                         perm_node_names = [(tmp[0].split(' ')[0], tmp[0].split(' ')[2]),
                                            (tmp[0].split(' ')[2], tmp[0].split(' ')[0])]
                     
@@ -211,9 +211,9 @@ class ImportAttributes():
                                 tmp[0],
                                 tmp[1]))
                     
-                    if mode == 'standard':
+                    if mode == "standard":
                         attrs = tmp[2:]
-                    elif mode == 'cytoscape':
+                    elif mode == "cytoscape":
                         attrs = tmp[1:]
                     
                     select = []
@@ -229,7 +229,7 @@ class ImportAttributes():
                         for i, obj in enumerate(attrs):
                             if attrnames[i] not in attrs_dict:
                                 attrs_dict[attrnames[i]] = OrderedDict()
-                            if obj.upper() in ['NONE', 'NA', '?']:
+                            if obj.upper() in ["NONE", "NA", "?"]:
                                 attrs_dict[attrnames[i]][select[0]["adjacent_nodes"][0]] = None
                                 # select[0][attrnames[i]] = None
                             else:

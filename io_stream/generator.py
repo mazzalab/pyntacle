@@ -36,7 +36,7 @@ class Generator:
 
     @staticmethod
     @generatorscanner
-    def Random(params, name="Random", seed=None) -> Graph:
+    def Random(params: list, name: str="Random", seed: int or None=None) -> Graph:
         r"""
         Generate a Random Network by wrapping the Erdos-Renyi generator provided by igraph and makes it ready to be used
         for pyntacle. Node `name` attribute will be the relative index (represented as string), while the graph name it
@@ -80,14 +80,14 @@ class Generator:
 
     @staticmethod
     @generatorscanner
-    def ScaleFree(params, name="Scale_Free", seed=None) -> Graph:
+    def ScaleFree(params: list, name: str="Scale_Free", seed:int or None=None) -> Graph:
         r"""
         Generates a Scale-Free Network according to the Lazslo-Barabasi model by wrapping the Scale free network
         generator provided by igraph.
 
         :param  list params: a list of two elements: the first element is the number of nodes of the graph, the second element is the average number of incoming/outcoming edges per node
         :param str name: optional, if you want to assign a name to the `name` graph attribute. Default is **"Scale_Free"**
-        :param int seed: optional: provide a seed to the random generator
+        :param int,None seed: optional: provide a seed to the random generator
 
         :return igraph.Graph: a py:class:`igraph,Graph` object that follow a scale-free topology, initialized for Pyntacle usage
 
@@ -116,7 +116,7 @@ class Generator:
 
     @staticmethod
     @generatorscanner
-    def SmallWorld(params, name="SmallWorld", seed=None) -> Graph:
+    def SmallWorld(params: list, name:str ="SmallWorld", seed: int or None=None) -> Graph:
         r"""
         Generates a Small World Network by wrapping the `Watts_Strogatz` function of `igraph`. `igraph` creates first
         a lattice
