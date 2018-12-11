@@ -1,7 +1,3 @@
-"""
-Octopus is a Pyntacle's command line tool that adds properties computed by Pyntacle itself to vertices or to the Graph
-"""
-
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The Pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -51,12 +47,15 @@ def get_cmode(graph):
     
     
 class Octopus:
-    
+    r"""
+    Octopus is a Pyntacle's command line tool that adds properties computed by Pyntacle itself to vertices or to the Graph
+    """
+
     # Global properties
     @staticmethod
     @check_graph_consistency
     def add_diameter(graph):
-        """
+        r"""
 
         :param graph:
         :return:
@@ -66,7 +65,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_radius(graph):
-        """
+        r"""
 
         :param graph:
         :return:
@@ -76,7 +75,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_components(graph):
-        """
+        r"""
 
         :param graph:
         :return:
@@ -86,7 +85,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_density(graph):
-        """
+        r"""
 
         :param graph:
         :return:
@@ -96,7 +95,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_pi(graph):
-        """
+        r"""
 
         :param graph:
         :return:
@@ -106,7 +105,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_average_clustering_coefficient(graph):
-        """
+        r"""
 
         :param graph:
         :return:
@@ -117,7 +116,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_weighted_clustering_coefficient(graph):
-        """
+        r"""
 
         :param graph:
         :return:
@@ -128,7 +127,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_average_degree(graph):
-        """
+        r"""
 
         :param graph:
         :return:
@@ -139,7 +138,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_average_closeness(graph):
-        """
+        r"""
 
         :param graph:
         :return:
@@ -150,7 +149,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_average_eccentricity(graph):
-        """
+        r"""
 
         :param graph:
         :return:
@@ -161,7 +160,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_average_radiality(graph):
-        """
+        r"""
 
         :param graph:
         :return:
@@ -173,7 +172,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_average_radiality_reach(graph):
-        """
+        r"""
 
         :param graph:
         :return:
@@ -185,7 +184,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_average_shortest_path_length(graph):
-        """
+        r"""
 
         :param graph:
         :return:
@@ -198,7 +197,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_completeness_naive(graph):
-        """
+        r"""
 
         :param graph:
         :return:
@@ -209,7 +208,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_completeness(graph):
-        """
+        r"""
 
         :param graph:
         :return:
@@ -220,7 +219,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_compactness(graph):
-        """
+        r"""
 
         :param graph:
         :return:
@@ -232,7 +231,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_degree(graph, node_names=None):
-        """
+        r"""
 
         :param graph:
         :param node_names:
@@ -246,7 +245,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_betweenness(graph, node_names=None):
-        """
+        r"""
 
         :param graph:
         :param node_names:
@@ -260,7 +259,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_clustering_coefficient(graph, node_names=None):
-        """
+        r"""
 
         :param graph:
         :param node_names:
@@ -274,7 +273,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_closeness(graph, node_names=None):
-        """
+        r"""
 
         :param graph:
         :param node_names:
@@ -288,7 +287,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_eccentricity(graph, node_names=None):
-        """
+        r"""
 
         :param graph:
         :param node_names:
@@ -302,7 +301,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_radiality(graph, node_names=None):
-        """
+        r"""
 
         :param graph:
         :param node_names:
@@ -318,7 +317,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_radiality_reach(graph, node_names=None):
-        """
+        r"""
 
         :param graph:
         :param node_names:
@@ -333,7 +332,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_eigenvector_centrality(graph, node_names=None, scaled=False):
-        """
+        r"""
 
         :param graph:
         :param node_names:
@@ -349,7 +348,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_pagerank(graph, node_names=None, weights=None, damping=0.85):
-        """
+        r"""
 
         :param graph:
         :param node_names:
@@ -357,6 +356,7 @@ class Octopus:
         :param damping:
         :return:
         """
+
         if node_names is None:
             node_names = graph.vs["name"]
         if "weights" in graph.es.attributes():
@@ -368,7 +368,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_shortest_path_igraph(graph, node_names=None):
-        """
+        r"""
 
         :param graph:
         :param node_names:
@@ -383,7 +383,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_shortest_path(graph, node_names=None):
-        """
+        r"""
 
         :param graph:
         :param node_names:
@@ -399,7 +399,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_average_shortest_path_length(graph, node_names=None):
-        """
+        r"""
 
         :param graph:
         :param node_names:
@@ -415,7 +415,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_median_shortest_path_length(graph, node_names=None):
-        """
+        r"""
 
         :param graph:
         :param node_names:
@@ -432,7 +432,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_F(graph):
-        """
+        r"""
 
         :param graph:
         :return:
@@ -442,7 +442,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_dF(graph, max_distance=None):
-        """
+        r"""
 
         :param graph:
         :param max_distance:
@@ -455,7 +455,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_kp_F(graph, nodes):
-        """
+        r"""
 
         :param graph:
         :param nodes:
@@ -470,7 +470,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_kp_dF(graph, nodes, max_distance=None):
-        """
+        r"""
 
         :param graph:
         :param nodes:
@@ -488,13 +488,14 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_kp_dR(graph, nodes, max_distance=None):
-        """
+        r"""
 
         :param graph:
         :param nodes:
         :param max_distance:
         :return:
         """
+
         cmode = get_cmode(graph)
         kpobj = kpw(graph=graph)
         kpobj.run_KPPos(nodes, KpposEnum.dR, max_distance=max_distance, implementation=cmode)
@@ -506,7 +507,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_kp_mreach(graph, nodes, m=None, max_distance=None):
-        """
+        r"""
 
         :param graph:
         :param nodes:
@@ -526,7 +527,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_GO_F(graph, kp_size, seed=None):
-        """
+        r"""
 
         :param graph:
         :param kp_size:
@@ -542,7 +543,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_GO_dF(graph, kp_size, max_distance=None, seed=None):
-        """
+        r"""
 
         :param graph:
         :param kp_size:
@@ -561,7 +562,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_GO_dR(graph, kp_size, max_distance=None, seed=None):
-        """
+        r"""
 
         :param graph:
         :param kp_size:
@@ -580,7 +581,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_GO_mreach(graph, kp_size, m=None, max_distance=None, seed=None):
-        """
+        r"""
 
         :param graph:
         :param kp_size:
@@ -601,7 +602,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_BF_F(graph, kp_size, max_distance=None):
-        """
+        r"""
 
         :param graph:
         :param kp_size:
@@ -618,7 +619,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_BF_dF(graph, kp_size, max_distance=None):
-        """
+        r"""
 
         :param graph:
         :param kp_size:
@@ -635,7 +636,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_BF_dR(graph, kp_size, max_distance=None):
-        """
+        r"""
 
         :param graph:
         :param kp_size:
@@ -652,7 +653,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_BF_mreach(graph, kp_size, m=None, max_distance=None):
-        """
+        r"""
 
         :param graph:
         :param kp_size:

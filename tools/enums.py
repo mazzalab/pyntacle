@@ -43,7 +43,7 @@ class GraphTypeEnum(enum.Enum):
 
 
 class CmodeEnum(enum.Enum):
-    """
+    r"""
     An enumerator that is used to use different heuristics for the computation of the shortest paths among all nodes in the graph
     In detail, the avilable enumerators are:
         * ``igraph``: uses the :meth:`shortest_paths<igraph:igraph.Graph.shortest_paths>` embedded in :class:`~pyntacle.shortest_path.ShortestPath`
@@ -61,33 +61,38 @@ class CmodeEnum(enum.Enum):
 
 
 class KpnegEnum(enum.Enum):
-    """
+    r"""
     A series of enumerators that stores the possible negative *key player* measures to compute *fragmentation*.
     See the `What are Key Players guide <http://pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html>`_
     for more info on how fragmentation indices can be used to find critical nodes
+
     Choices are:
-        * ``F``: *fragmentation*, a measure based on the number of components
-        * ``dF``: *distance-based fragmentation*, a measure that relies on distances (shortest paths) among nodes.
+
+    * ``F``: *fragmentation*, a measure based on the number of components
+    * ``dF``: *distance-based fragmentation*, a measure that relies on distances (shortest paths) among nodes.
+
     """
     F = 1
     dF = 2
 
 
 class KpposEnum(enum.Enum):
-    """
+    r"""
     A series of enumerators that stores the possible positive *key player* measures to compute *reachability*.
     See the `What are Key Players guide <http://pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html>`_
     for more info on how reachability indices can be used to find critical nodes responsible for information flow in the graph
+
     Choices are:
-        * ``mreach``: *m-reach*, a measure based on the number of nodes that can be reached by a selected group of nodes
-        * ``dR``: *distance based reach*, a measure based on the distances among a group of nodes and the rest of the graph
+
+    * ``mreach``: *m-reach*, a measure based on the number of nodes that can be reached by a selected group of nodes
+    * ``dR``: *distance based reach*, a measure based on the distances among a group of nodes and the rest of the graph
     """
     mreach = 1
     dR = 2
 
 
 class GroupCentralityEnum(enum.Enum):
-    """
+    r"""
     The available group centrality metrics that can be found either by :class:`~pyntacle.algorithms.bruteforce_search.BruteforceSearch` or by :class:`~pyntacle.algorithms.greedy_optimization.GreedyOptimization`
     """
     group_degree = 1
@@ -96,7 +101,7 @@ class GroupCentralityEnum(enum.Enum):
 
 
 class GroupDistanceEnum(enum.Enum):
-    """
+    r"""
     Enumerators for considering distances between a group of nodes and the rest of the graph.
     """
     minimum = 1
@@ -105,7 +110,7 @@ class GroupDistanceEnum(enum.Enum):
 
 
 class GraphOperationEnum(enum.Enum):
-    """
+    r"""
     The logical operations that can be passed to :func:`~pyntacle.graph_operations.set_operations.GraphOperations.make_sets`
     """
     Union = 1
@@ -114,7 +119,7 @@ class GraphOperationEnum(enum.Enum):
 
 
 class LocalAttributeEnum(enum.Enum):
-    """
+    r"""
     A series of internal attributes for local centrality measures
     """
     degree = 1
@@ -133,7 +138,7 @@ class LocalAttributeEnum(enum.Enum):
 
 
 class GlobalAttributeEnum(enum.Enum):
-    """
+    r"""
     A series of internal attributes for global centrality measures
     """
     average_shortest_path_length = 1
@@ -157,7 +162,7 @@ class GlobalAttributeEnum(enum.Enum):
 
 
 class ReportEnum(enum.Enum):
-    """
+    r"""
     Internal enumerators for choosing the type of report that will be outputted by Pyntacle command line utility
     """
     Global = 1

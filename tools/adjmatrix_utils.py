@@ -26,9 +26,7 @@ __license__ = u"""
   02110-1301 USA
   """
 
-"""
-Utilities made for common adjacency matrix file operations
-"""
+
 from config import *
 import os
 import logging
@@ -38,10 +36,13 @@ import sys
 
 
 class AdjmUtils:
+    r"""
+    Utilities for common adjacency matrices file checking and conversion to Pyntacle-ready Adjacencu matrices
+    """
     logger = None
 
     def __init__(self, file: str, header: bool, sep="\t"):
-        """
+        r"""
         Initialize the Adjacency Matrix Utils class by giving the parser all the necessary information.
 
         :param str file: a valid PATH to the input adjacency matrix
@@ -51,13 +52,13 @@ class AdjmUtils:
 
         self.logger = log
         if not os.path.exists(file):
-            raise FileNotFoundError("Input file does not exist")
+            raise FileNotFoundError(u"Input file does not exist")
 
         else:
             self.adjfile = file
 
         if not isinstance(sep, str):
-            raise TypeError("\"sep\" must be a string, {} found".format(type(sep).__name__))
+            raise TypeError(u"\"sep\" must be a string, {} found".format(type(sep).__name__))
 
         else:
             self.sep = sep
@@ -67,12 +68,12 @@ class AdjmUtils:
         self.adjm=None
 
     def is_squared(self) -> bool:
-        """
+        r"""
         Utility to check if an adjaceny matrix is squared or not by checking if the number of rows and columns (must be equal)
 
         :return bool: ``True`` if the matrix is squared, ``False`` otherwise
         """
-        self.logger.info("Checking if adjacency matrix is squared")
+        self.logger.info(u"Checking if adjacency matrix is squared")
         with open(self.adjfile, "r") as file:
             firstline = file.readline()
             nrow = len(firstline.rstrip().split(self.sep))
@@ -80,9 +81,9 @@ class AdjmUtils:
             for line in file:
                 tmp = line.split(self.sep)
                 if len(tmp) != nrow or len(tmp) != ncol:
-                    self.logger.info("Matrix is not squared")
+                    self.logger.info(u"Matrix is not squared")
                     return False
-        self.logger.info("Matrix is squared")
+        self.logger.info(u"Matrix is squared")
         return True
 
     def __store_adjm(self):
@@ -110,7 +111,7 @@ class AdjmUtils:
             return self.adjm
 
     def get_adjm(self, file: str, header: bool, sep="\t"):
-        """
+        r"""
         Replace the current adjacency Matrix with another one
 
         :param str file: valid path to the newl added input adjacency matrix
@@ -127,8 +128,7 @@ class AdjmUtils:
         o = os.path.splitext(os.path.abspath(self.adjfile))
         outpath = o[0] + "_" + appendix + o[-1]
         with open(outpath, "w") as out:
-            self.logger.info("rewriting adjacency matrix")
-            self.logger.info("adjacency path: " + outpath)
+            self.logger.info(u"rewriting adjacency matrix at path: {}".format(outpath))
 
             if self.header:
                 out.write(separator.join(self.headlist) + "\n")
@@ -143,7 +143,7 @@ class AdjmUtils:
 
     def is_weighted(self) -> bool:
         """
-        Function that returns a boolean telling whether the adjacency matrix contains weights (values different from 1s and 0s)
+        uFunction that returns a boolean telling whether the adjacency matrix contains weights (values different from 1s and 0s)
 
         :return  bool: ``True`` if the graph is weighted ``False`` otherwise
         """
@@ -160,7 +160,7 @@ class AdjmUtils:
         return self.weightbool
 
     def remove_weigths(self):
-        """
+        r"""
         Convert matrix to unweighted by setting every value different from 1 to 1 and write it to a new file. Zeroes
         will be preserved. Will create a file in the same directory  where the input adjacency matrix is stored
         with the "_unweighted.adjm" extension
@@ -172,10 +172,10 @@ class AdjmUtils:
         self.__store_adjm()  # store adjacency matrix into a list
 
         if not self.is_weighted():
-            self.logger.info("matrix is already unweighted")
+            self.logger.info(u"matrix is already unweighted")
             return None
 
-        self.logger.info("removing weights from adjacency matrix")
+        self.logger.info(u"removing weights from adjacency matrix")
 
         for i, elem in enumerate(self.adjm):
             self.adjm[i] = ["0" if float(x) == 0.0 else "1" for x in elem]
@@ -184,7 +184,7 @@ class AdjmUtils:
         return outpath
 
     def is_direct(self) -> bool:
-        """
+        r"""
         Checks whether an adjacency matrix is direct or not (so if the upperand lower triangular matrix match perfectly)
 
         :return: directbool, a value representing True if the matrix is direct and False otherwise
@@ -192,7 +192,7 @@ class AdjmUtils:
 
         self.directbool = False
         self.__store_adjm()  # store adjacency matrix into a list
-        self.logger.info("checking if the adjacency matrix is direct")
+        self.logger.info(u"checking if the adjacency matrix is direct")
         for i, elem in enumerate(self.adjm):
             for e, el in enumerate(elem):
                 if self.adjm[e][i] != el:
@@ -202,21 +202,20 @@ class AdjmUtils:
         return self.directbool
 
     def make_undirect(self) -> str:
-        """
+        r"""
         Convert an direct Adjacency Matrix to an undirect one (so make it symmetric) and store it into a new file with
         the *"_undirect.adjm"* extension. If the matrix is weighted, we will take the maximum value in each cell and
         assign it to the corresponding one.
 
-        :return str outpath: a valid path where the new (undirected) adjacency matrix will be stored with the
-        "_unweighted.adjm extension"
+        :return str outpath: a valid path where the new (undirected) adjacency matrix will be stored with the "_unweighted.adjm extension"
         """
 
         self.__store_adjm()
         if not self.is_direct():
-            self.logger.info("the input matrix is already undirect, returning the same matrix")
+            self.logger.info(u"the input matrix is already undirect, returning the same matrix")
             return self.adjfile
 
-        self.logger.info("Converting Matrix to undirect")
+        self.logger.info(u"Converting Matrix to undirect")
         self.adjm = np.array(self.adjm, dtype=float)
 
         aa = np.maximum(self.adjm, self.adjm.transpose())

@@ -1,7 +1,3 @@
-"""
-Merge, intersect or unify two graphs
-"""
-
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The Pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -36,10 +32,13 @@ from tools.add_attributes import AddAttributes
 
 
 class GraphOperations(object):
+    r"""
+    Perform logical set operatiuons (*union*, *intersection*, *difference*) among two graphs of interest.
+    """
 
     @staticmethod
     def union(graph1: Graph, graph2: Graph, new_graph_name: str) -> Graph:
-        """
+        r"""
         **[EXPAND]**
 
         :param graph1:
@@ -61,7 +60,7 @@ class GraphOperations(object):
 
     @staticmethod
     def intersection(graph1: Graph, graph2: Graph, new_graph_name: str) -> Graph:
-        """
+        r"""
         **[EXPAND]**
 
         :param graph1:
@@ -94,7 +93,7 @@ class GraphOperations(object):
 
     @staticmethod
     def difference(graph1: Graph, graph2: Graph, new_graph_name: str) -> Graph:
-        """
+        r"""
         **[EXPAND]**
 
         :param graph1:
@@ -148,7 +147,7 @@ class GraphOperations(object):
 
     @staticmethod
     def make_sets(graph1: Graph, graph2: Graph, operation: GraphOperationEnum):
-        """
+        r"""
         **[EXPAND]**
         
         :param graph1:

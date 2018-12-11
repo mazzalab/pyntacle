@@ -1,4 +1,5 @@
-""" `graph_operations* covers common operations that can be used to rework your graph(s), such as set operations, community finding in order to work on modules and """
+""" This module covers common operations that can be used to rework your graph(s),
+such as set operations, community finding and so on"""
 
 import sys
 import os

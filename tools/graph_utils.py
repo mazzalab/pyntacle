@@ -43,8 +43,8 @@ from exceptions.multiple_solutions_error import MultipleSolutionsError
 
 
 class GraphUtils:
-    """
-    Generic utilities for graph management and safety checks
+    r"""
+    A set of generic utilities for determining the structural integrity of the graph and retrieve its properties.
     """
 
     logger = None
@@ -53,69 +53,74 @@ class GraphUtils:
         self.logger = log
 
         if not isinstance(graph, Graph):
-            raise NotAGraphError("input graph is not a graph")
+            raise NotAGraphError(u"input graph is not a graph")
 
         if graph.vcount() < 1:
-            self.logger.fatal("This graph does not contain vertices")
-            raise IllegalGraphSizeError("This graph does not contain vertices")
+            self.logger.fatal(u"This graph does not contain vertices")
+            raise IllegalGraphSizeError(u"This graph does not contain vertices")
 
         elif graph.ecount() < 1:
-            self.logger.fatal("This graph does not contain edges")
-            raise IllegalGraphSizeError("This graph does not contain edges")
+            self.logger.fatal(u"This graph does not contain edges")
+            raise IllegalGraphSizeError(u"This graph does not contain edges")
 
         else:
             self.__graph = graph
 
     def check_graph(self) -> bool:
-        """
+        r"""
         Check that the input graph is consistent according to the Pyntacle's minimum requirements
-        :raise UnsupportedGraphError: An error occurred because the graph is not compliant with the Pyhtacle's
-        minimum requirements
+
+        :return: Whether the graph is sound. If it is not, an exception is raised
+
+        :raise UnsupportedGraphError: An error occurred because the graph is not compliant with the Pyhtacle's minimum requirements
         :raise KeyError: An error occurred because nodes must hold a 'name' attribute
         :raise TypeError: An error occurred because node's name attribute must be of type *string*
-        :return: Whether the graph is sound. If it is not, an exception is raised
         """
+
         # TODO: Handle exceptions wherever this method is used
+
         if Graph.is_directed(self.__graph):
-            raise UnsupportedGraphError("Input graph is direct, pyntacle supports only undirected graphs")
+            raise UnsupportedGraphError(u"Input graph is direct, pyntacle supports only undirected graphs")
         elif not Graph.is_simple(self.__graph):
-            raise UnsupportedGraphError("Input Graph contains self loops and multiple edges")
+            raise UnsupportedGraphError(u"Input Graph contains self loops and multiple edges")
         elif "name" not in self.__graph.vs().attributes():
-            raise KeyError("nodes must have the attribute  \"name\"")
+            raise KeyError(u"nodes must have the attribute  \"name\"")
         elif not all(isinstance(item, str) for item in self.__graph.vs()["name"]):
-            raise TypeError("node \"name\" attribute must be a string")
+            raise TypeError(u"node \"name\" attribute must be a string")
         elif len(set(self.__graph.vs()["name"])) != len(self.__graph.vs()["name"]):
-            raise UnsupportedGraphError("Node names must be unique, check the \"name\" attribute in graph")
+            raise UnsupportedGraphError(u"Node names must be unique, check the \"name\" attribute in graph")
         else:
             return True
 
     def check_index_list(self, index_list):
-        """
+        r"""
         Check that an index list is consistent with respect to the input `igraph.Graph` object (so, that indices are not
         negative integers and that are within the total number of vertices' boundaries
+
         :param list index_list: a list of integers
         """
         self.check_graph()
 
         if not isinstance(index_list, list):
-            raise ValueError("index list is not a list")
+            raise ValueError(u"index list is not a list")
 
         if len(index_list) < 0:
-            raise WrongArgumentError("List is empty")
+            raise WrongArgumentError(u"List is empty")
 
         for ind in index_list:
             if not isinstance(ind, int) or ind < 0:
                 raise ValueError("indices must be positive integers")
 
         if set(index_list) > set(self.__graph.vs.indices):
-            self.logger.error("The input node index '{}' does not exist in the graph".format(index_list))
-            raise WrongArgumentError("The input node index '{}' does not exist in the graph".format(index_list))
+            self.logger.error(u"The input node index '{}' does not exist in the graph".format(index_list))
+            raise WrongArgumentError(u"The input node index '{}' does not exist in the graph".format(index_list))
 
         return None
 
     def check_name_list(self, names_list: list):
-        """
+        r"""
         Checks that a single node or a list of node *names* (the graph.vs["name"] attribute) is present in the graph
+
         :param names_list: a single node name (as a string) or a list of node names (a list of strings)
         """
         self.check_graph()
@@ -125,51 +130,56 @@ class GraphUtils:
             names_list = [names_list]
 
         if not isinstance(names_list, list):
-            raise ValueError("node names list is not a list")
+            raise ValueError(u"node names list is not a list")
 
         if len(names_list) < 0:
-            raise WrongArgumentError("List is empty")
+            raise WrongArgumentError(u"List is empty")
 
         for name in names_list:
             if not isinstance(name, str):
-                raise ValueError("node names must be strings")
+                raise ValueError(u"node names must be strings")
 
             if name not in self.__graph.vs()["name"]:
-                raise MissingAttributeError("node {} is not in vertex \"name\" attribute".format(name))
+                raise MissingAttributeError(u"node {} is not in vertex \"name\" attribute".format(name))
 
         if len(list(set(names_list))) != len(names_list):
-            self.logger.warning("The names list contains duplicated node names, "
+            self.logger.warning(u"The names list contains duplicated node names, "
                                 "so there will be a double index in index list")
 
     def attribute_in_nodes(self, attribute):
-        """
+        r"""
         Checks that a given attribute (such as the ones stored in `tools/private/enums`) is present as  node attribute
         (so is in graph.vs.attributes())
         :param attribute: the attribute you're looking for
+
         :raise MissingAttributeError: if the attribute is in node attributes
         """
         self.check_graph()
 
         if attribute not in self.__graph.vs().attributes():
-            raise MissingAttributeError("attribute specified has not been initialized in node attributes")
+            raise MissingAttributeError(u"Attribute specified has not been initialized in node attributes")
 
     def attribute_in_edges(self, attribute):
-        """
+        r"""
         Checks that a given attribute (such as the ones stored in `tools/private/enums`) is present as edge attribute
         (so is in graph.es.attributes())
+
         :param attribute: the attribute you're looking for
+
         :raise MissingAttributeError: if the attribute is not in edge attributes()
         """
         self.check_graph()
 
         if attribute not in self.__graph.es().attributes():
-            raise MissingAttributeError("attribute specified has not been initialized in edge attributes")
+            raise MissingAttributeError(u"attribute specified has not been initialized in edge attributes")
 
     def attribute_in_graph(self, attribute):
-        """
+        r"""
         Checks that a given attribute (such as the ones stored in `tools/private/enums`) is present as graph attribute
         (so is in graph.attributes())
+
         :param attribute: the attribute you're looking for
+
         :raise MissingAttributeError: if the attribute is not in graph attributes()
         """
         self.check_graph()
@@ -178,10 +188,12 @@ class GraphUtils:
             raise MissingAttributeError("attribute specified has not been initialized in graph attributes")
 
     def check_attribute_type(self, attribute, attribute_types):
-        """
+        r"""
         Check that attributes are of the specified type in the input `igraph.Graph` object
+
         :param attribute: a the input attribute to be checked
         :param attribute_types: a type of enumerator that will be screened
+
         :raise ValueError: if the attribute type is not of the selected enumerator
         """
         attribute_types = (attribute_types,)
@@ -189,11 +201,12 @@ class GraphUtils:
             raise MissingAttributeError("the value {} is not a  legal AttributeType".format(str(attribute)))
 
     def check_attributes_types(self, attributes_list: list, attribute_types):
-        """
+        r"""
         Check that attributes are coherent and present in the graph
 
         :param attributes_list: a list of attributes asked to be reported
         :param attribute_types: a type of enumerator or a list of enumerators that will be screened
+
         :raise ValueError: if the attribute type is not of the selected enumerator
         """
 
@@ -205,12 +218,14 @@ class GraphUtils:
 
         for elem in attributes_list:
             if not isinstance(elem, attribute_types):
-                raise MissingAttributeError("the value {} is not a  legal AttributeType".format(str(elem)))
+                raise MissingAttributeError(u"the value {} is not a  legal AttributeType".format(str(elem)))
 
     def get_node_names(self, index_list: list) -> list:
-        """
+        r"""
         Take a list of integers returns the corresponding graph.vs["name"] attribute of the node that matches each index
+
         :param list index_list: a list of integers containing indices present in graph (will check for that)
+
         :return: a list of the corresponding graph.vs["name"] strings
         """
         self.check_graph()
@@ -219,11 +234,12 @@ class GraphUtils:
         return names_list
 
     def get_node_indices(self, node_names) -> list:
-        """
+        r"""
         Return a list of indices of the node names passed in input.
+
         :param node_names: A single string or a list of strings containing node names in the graph
-        :return: a list of indices of the corresponding node names given in input. The order of the input list
-        is preserved
+
+        :return: a list of indices of the corresponding node names given in input. The order of the input list is preserved
         """
 
         if not isinstance(node_names, list):
@@ -238,7 +254,7 @@ class GraphUtils:
         for name in names:
             select = self.__graph.vs.select(name=name)
             if len(select) > 1:
-                raise IndexError("name is not unique, node names must be unique, plese check your graph")
+                raise IndexError(u"name is not unique, node names must be unique, plese check your graph")
 
             else:
                 index = select[0].index
@@ -247,12 +263,13 @@ class GraphUtils:
         return index_list
 
     def get_attribute_names(self, attribute_list: list, type="graph") -> list:
-        """
+        r"""
         given a specified enumerator (such as the ones stored in `tools/private/enums`, check iuf the attribute is initialized
         at the corresponding `type` level (choices are "graph", "node", "edge")
 
         :param attribute_list:
         :param type:
+
         :return:
         """
         self.check_graph()
@@ -265,16 +282,16 @@ class GraphUtils:
                     attr = self.__graph[attribute.name]
                     attribute_names.append(attribute.name)
                     if attr is None:
-                        self.logger.warning("Attribute specified has None value")
+                        self.logger.warning(u"Attribute specified has None value")
 
                 except KeyError:
-                    self.logger.warning("Attribute {} is not in graph".format(attribute))
+                    self.logger.warning(u"Attribute {} is not in graph".format(attribute))
 
         elif type == "node":  # search for node attributes
             for attribute in attribute_list:
 
                 if attribute.name not in self.__graph.vs().attributes():
-                    self.logger.warning("Attribute {} not present in nodee attributes".format(attribute))
+                    self.logger.warning(u"Attribute {} not present in nodee attributes".format(attribute))
 
                 else:
                     attribute_names.append(attribute.name)
@@ -283,30 +300,31 @@ class GraphUtils:
             for attribute in attribute_list:
 
                 if attribute.name not in self.__graph.es().attributes():
-                    self.logger.warning("Attribute {} not present in edge attributes".format(attribute))
+                    self.logger.warning(u"Attribute {} not present in edge attributes".format(attribute))
 
                 else:
                     attribute_names.append(attribute.name)
 
         else:
-            raise ValueError("attribute type not supported. Legal options are \"graph\", \"node\", \"edge\"")
+            raise ValueError(u"Attribute type not supported. Legal options are \"graph\", \"node\", \"edge\"")
 
         return attribute_names
 
     def get_largest_component(self):
-        """
+        r"""
         Return the maximum component of a graph (a subrgraph of the original one)
 
         :return: a graph object with the only the largest component. If more than one component if present
+
         :raise MultipleSolutionsError: if there is more than one largest component
         """
         
-        self.logger.info("Getting the largest component of the input graph")
+        self.logger.info(u"Getting the largest component of the input graph")
 
         components = self.__graph.components()
 
         comp_len = [len(comp) for comp in components]
-        self.logger.info("Graph has the following components: {}".format(",".join(map(str, comp_len))))
+        self.logger.info(u"Graph has the following components: {}".format(",".join(map(str, comp_len))))
 
         max_comp = max(comp_len)
         max_ind= np.argmax(comp_len)
@@ -314,13 +332,13 @@ class GraphUtils:
         max_list = [i for i, x in enumerate(comp_len) if x == max_comp]
 
         if len(max_list) > 1:
-            raise MultipleSolutionsError("there are {} largest components, cannot choose one".format(len(max_list)))
+            raise MultipleSolutionsError(u"There are {} largest components, cannot choose one".format(len(max_list)))
 
         else:
             subgraph = self.__graph.induced_subgraph(components[max_ind])
 
             self.logger.info(
-                "Largest component has {0} nodes and {1} edges (out of {2} nodes and {3} edges in total)".format(
+                u"Largest component has {0} nodes and {1} edges (out of {2} nodes and {3} edges in total)".format(
                     subgraph.vcount(), subgraph.ecount(), self.__graph.vcount(), self.__graph.ecount()))
 
             return subgraph

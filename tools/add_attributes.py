@@ -34,8 +34,8 @@ from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
 
 
 class AddAttributes:
-    """
-    add specific and generic properties to the `igraph.Graph` object at several levels
+    r"""
+    Add specific and generic properties to any of the py:class:`igraph.Graph` object elements
     """
 
     logger = None
@@ -43,12 +43,12 @@ class AddAttributes:
     def __init__(self, graph: Graph):
         self.logger = log
         if type(graph) is not Graph:
-            raise WrongArgumentError("object is not a igraph.Graph")
+            raise WrongArgumentError(u"object is not a igraph.Graph")
         else:
             self.__graph = graph
     #todo: this was merged with conflicts - re-test it
     def add_graph_attributes(self, attr_name: str, attr):
-        """
+        r"""
         Add an attribute to a graph object
 
         :param attr: Any object being added as attribute
@@ -56,7 +56,7 @@ class AddAttributes:
         """
 
         if not isinstance(attr_name, str):
-            raise TypeError("Attribute name is not a string")
+            raise TypeError(u"Attribute name is not a string")
         else:
             if isinstance(attr, dict):
                 if attr_name in self.__graph.attributes():
@@ -68,8 +68,8 @@ class AddAttributes:
                 self.__graph[attr_name] = attr
 
     def add_node_attributes(self, attr_name, attr_list, nodes):
-        """
-        This function takes an header file and, optionally, a separator, and add them to a graph imprted in __init
+        r"""
+        This method takes an header file and, optionally, a separator, and add them to a graph imprted in __init
 
         :param attr_list: the object being added as attribute
         :param attr_name: string. The name of the attribute being imported
@@ -79,17 +79,17 @@ class AddAttributes:
         """
 
         if not isinstance(attr_name, str):
-            raise TypeError("Attribute name is not a string")
+            raise TypeError(u"Attribute name is not a string")
         
         if isinstance(nodes, str):
-            self.logger.warning("WARNING: converting string nodes to list of nodes")
+            self.logger.warning(u"converting string nodes to list of nodes")
             nodes = [nodes]
         if attr_name.startswith('__'):
             raise KeyError(
-                "One of the attributes being added starts with __ (double underscore)."
+                u"One of the attributes being added starts with __ (double underscore)."
                 "This notation is reserved to private variables, please avoid using it.")
         
-        assert len(attr_list) == len(nodes), "in add_node_attributes, length of attributes list cannot be " \
+        assert len(attr_list) == len(nodes), u"in add_node_attributes, length of attributes list cannot be " \
                                              "different from length of list of nodes."
         
         count = 0
@@ -98,21 +98,21 @@ class AddAttributes:
             select = self.__graph.vs.select(name=n)
             count += 1
             if len(select) == 0:
-                self.logger.warning("Node %s not found in graph" % n)
+                self.logger.warning(u"Node %s not found in graph" % n)
                 err_count += 1
             elif len(select) == 1:
                 select[0][attr_name] = a
             else:
-                self.logger.error("Node %s has multiple name hits, please check your attribute file" % n)
-                raise ValueError("Multiple node hits")
+                self.logger.error(u"Node %s has multiple name hits, please check your attribute file" % n)
+                raise ValueError(u"Multiple node hits")
         
         if err_count == count:
-            raise WrongArgumentError("All the attributes pointed to non-existing nodes.")
+            raise WrongArgumentError(u"All the attributes pointed to non-existing nodes.")
         else:
-            self.logger.info("Node attribute {} successfully added!".format(attr_name))
+            self.logger.info(u"Node attribute {} successfully added!".format(attr_name))
 
     def add_edge_attributes(self, attr_name, attr_list, edges):
-        """
+        r"""
         Add edge attributes specified in a file like (nodeA/nodeB/listofvalues)
         **[EXPAND DESCRIPTIONS OF PARAMS]**
 
@@ -129,10 +129,10 @@ class AddAttributes:
         # Checking if one or more attributes' names start with '__'. Avoids malicious injection.
         if attr_name.startswith('__'):
             raise KeyError(
-                "One of the attributes in your attributes/weights file starts with __ (double underscore)."
+                u"One of the attributes in your attributes/weights file starts with __ (double underscore)."
                 "This notation is reserved to private variables, please avoid using it.")
         
-        assert len(attr_list) == len(edges), "in add_edge_attributes, length of attributes list cannot be " \
+        assert len(attr_list) == len(edges), u"in add_edge_attributes, length of attributes list cannot be " \
                                              "different from length of list of nodes."
         count = 0
         err_count = 0
@@ -142,15 +142,15 @@ class AddAttributes:
                 select = self.__graph.es.select(adjacent_nodes=(e[1], e[0]))
             count += 1
             if len(select) == 0:
-                self.logger.warning("Edge %s not found in graph" %str(e))
+                self.logger.warning(u"Edge %s not found in graph" %str(e))
                 err_count += 1
             
             elif len(select) == 1:
                 select[0][attr_name] = a
                 
             else:
-                self.logger.error("Edge %s has multiple name hits, please check your attribute file" % str(e))
-                raise ValueError("Multiple edge hits")
+                self.logger.error(u"Edge %s has multiple name hits, please check your attribute file" % str(e))
+                raise ValueError(u"Multiple edge hits")
         
         if err_count == count:
             raise WrongArgumentError("All the attributes pointed to non-existing edges.")
@@ -158,10 +158,8 @@ class AddAttributes:
             return attr_name  # return the names of the attributes
 
     def add_edge_names(self, readd=False):
-        """
+        r"""
         Add adjacent edge as attribute stored in a tuple to each edge
-
-        :return: an igraph.Graph object with the node attribute ""
         """
 
         if readd is True or "adjacent_nodes" not in self.__graph.es.attributes():
@@ -172,71 +170,68 @@ class AddAttributes:
                 edge_names.append((self.__graph.vs[e[0]]["name"], self.__graph.vs[e[1]]["name"]))
             self.__graph.es["adjacent_nodes"] = edge_names
         else:
-            self.logger.info("attribute \'adjacent_nodes\' already exist")
+            self.logger.info(u"attribute \'adjacent_nodes\' already exist")
 
     def add_graph_name(self, namestring):
-        """
-        Assign a name to a graph (or replace it)
+        r"""
+        Initialize or replace the graph ``name`` attribute with the strng stored in the ``namestring`` parameter.
 
-        :param namestring:
-
-        :return:
+        :param str namestring:
         """
 
-        self.logger.info("adding attribute \'name\' to the graph")
+        self.logger.info(u"adding attribute \'name\' to the graph")
 
         self.__graph["name"] = [namestring]
 
     def add_parent_name(self):
-        """
-        Add the graph's name to each vertex, as the "__parent" attribute
+        r"""
+        Add the graph ``name`` attribute to each vertex, under the ``__parent``  reserved attribute.
         """
 
-        self.logger.info("adding reserved attribute \'__parent\' to the vertices")
+        self.logger.info(u"adding reserved attribute \'__parent\' to the vertices")
 
         self.__graph.vs["__parent"] = self.__graph["name"]
 
-    def graph_initializer(self, graph_name: object, node_names: object = None):
-        """
-        **EXPAND**
+    def graph_initializer(self, graph_name: str, node_names: list or None= None):
+        r"""
+        Turns the input :py:class:`igraph.Graph` object into a Ptyntacle-ready network by making it compliant to the
+        Pyntacle `Minimum requirements <http://pyntacle.css-mendel.it/requirements.html>`_
 
-        :param graph_name:
-        :param node_names:
-        :return:
+        :param str graph_name: The network name (will be stored in the graph ``name`` attribute
+        :param str, None node_names: optional, a list of strings matching the total number of vertices of the graph. Each item in the list becomes the vertex ``name`` attribute sequentially (index-by-index correspondance). Defaults to py:class:`None` (node ``name`` attribute is filled by node indices).
         """
         self.__graph.to_undirected() #reconvert graph to directed
         if "name" not in self.__graph.attributes():
-            self.logger.info("adding file name to graph name")
+            self.logger.info(u"adding file name to graph name")
             self.add_graph_name(graph_name)
 
 
         #add vertex names
         if "name" not in self.__graph.vs.attributes():
             if node_names is None:
-                self.logger.info("adding node names to graph corresponding to their indices")
+                self.logger.info(u"adding node names to graph corresponding to their indices")
                 self.__graph.vs()["name"] = [str(x.index) for x in self.__graph.vs()]
 
             else:
                 if not isinstance(node_names, list) or not all(isinstance(item, str) for item in node_names):
-                    raise WrongArgumentError("node names must be a list of strings")
+                    raise WrongArgumentError(u"node names must be a list of strings")
 
                 if len(node_names) != self.__graph.vcount():
-                    raise IllegalArgumentNumberError("node names must be of the same length of vertices")
+                    raise IllegalArgumentNumberError(u"node names must be of the same length of vertices")
 
-                self.logger.info("Adding node names to graph using the provided node names")
+                self.logger.info(u"Adding node names to graph using the provided node names")
                 self.__graph.vs["name"] = node_names
 
 
         #add parent name to vertices
         if "__parent" not in self.__graph.vs().attributes():
-            self.logger.info("adding reserved attribute \'__parent\' to the vertices")
+            self.logger.info(u"adding reserved attribute \'__parent\' to the vertices")
             self.add_parent_name()
 
         if "adjacent_nodes" not in self.__graph.es().attributes():
-            '''
-            add edge vertices names as an attribute 'adjacent_vertices'
-            '''
-            self.logger.info("adding source and target names as \"adjacent_nodes\" attribute to edges")
+
+            # add edge vertices names as an attribute 'adjacent_vertices'
+            self.logger.info(u"adding source and target names as \"adjacent_nodes\" attribute to edges")
             self.add_edge_names()
         # for sif file conversion purposes
         if not "__sif_interaction_name" in self.__graph.attributes():

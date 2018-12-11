@@ -49,8 +49,8 @@ class PyntacleExporter:
         r"""
         Export a py:class`igraph.Graph` object to an Adjacency Matrix. A valid path to a file must be provided and the
         directory that will store the file must be writeable. If the directory tree does not exist, it will be created.
-        We refer the user to the `File Formats Guide <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html>`_
-        for more details on how adjacency matrices are treated by Pyntacle.
+        We refer the user to the `File Formats Guide <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html#adjm>`_
+        for more details on how adjacency matrices are handled by Pyntacle.
 
         .. warning:: any attribute of the :py:class:`igraph.Graph` will not be exported, as the format does not allow porting of attributes. We recomment using the :class:`~pyntacle.io_stream.export_attributes.ExportAttributes` class for exporting the attribute(s) of interest
 
@@ -86,8 +86,11 @@ class PyntacleExporter:
     @output_file_checker
     def EdgeList(graph: Graph, file, sep: str="\t", header: bool=False) -> None:
         r"""
-        Export a py:class:`igraph.Graph` object to an edge list. A valid path to a file must be provided and the
-        directory that will store the file must be writeable. If the directory tree does not exist, it will be created.
+        Export a py:class:`igraph.Graph` object to an undirect  edge list. We refer the user to the
+        `File Formats Guide <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html#egl>`_
+        for more details on the nature of edge lists and how they are handled by Pyntacle.
+        A valid path to a file must be provided and the directory that will store the file must be writeable.
+        If the directory tree does not exist, it will be created.
 
         .. warning:: any attribute of the :py:class:`igraph.Graph` will not be exported, as the format does not allow porting of attributes. We recomment using the :class:`~pyntacle.io_stream.export_attributes.ExportAttributes` class for exporting the attribute(s) of interest
 
@@ -149,9 +152,9 @@ class PyntacleExporter:
     @output_file_checker
     def Sif(graph: Graph, file: str, sep: str="\t", header: bool=False) -> None:
         r"""
-        Write a :py:class:`igraph.Graph` object to a Simple Interaction File (SIF), a relaxed network file format used by
-        many other network analysis and visualization tools, such as `Cytoscape <https://cytoscape.org>`_.
-        For more information on how Pyntacle handles the SIF format, please refer to the `File Formats Guide <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html#ecy>`_
+        Write a :py:class:`igraph.Graph` object to a Simple Interaction File (SIF), a flexible network file format used
+        by many other network analysis and visualization tools, such as `Cytoscape <https://cytoscape.org>`_.
+        For more information on how Pyntacle handles the SIF format, please refer to the `File Formats Guide <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html#sif>`_
         of the Pyntacle official page.
 
         .. note:: SIF is a flexible file format, in which the column order is generally not important. Pyntacle limits this flexibility by always reporting the source node in the 1st column, the interaction type in the 2nd column and the target node in the 3rd column.
@@ -229,12 +232,14 @@ class PyntacleExporter:
     @output_file_checker
     def Dot(graph: Graph, file: str) -> None:
         r"""
-        Write the igraph.Graph object to a Dot file. For the Dot file specifications, see https://www.graphviz.org/doc/info/lang.html.
-        Dot is often used by third party tools such as GraphViz to import the network. Here, we wraps the `write_dot` function of igraph.
+        Write the igraph.Graph object to a Dot file.  Dot is a network file format designed for network visualization
+        by `GraphViz <https://www.graphviz.org/>`_ and other tools to trustfully reproduce network properties graphically .
 
-        .. node:: This method is a wrapper of the ``write_dot`` method of :py:class:`igraph`.
+        The main documentation on Dot can be found `here <https://www.graphviz.org/doc/info/lang.html>`_
 
-        .. warning:: any attribute of the :py:class:`igraph.Graph` will not be exported, as the format does not allow porting of attributes. We recomment using the :class:`~pyntacle.io_stream.export_attributes.ExportAttributes` class for exporting the attribute(s) of interest
+        .. node:: This method is a wrapper of the py:class:`~igraph.Graph.write_dot` method in igraph method of igraph
+
+        .. warning:: the attributes of the py:class:`igraph.Graph` object may not be exported correctly. for this reason, we recommend to export these attributes externally by means of the :class:`~pyntacle.io_stream.export_attributes.ExportAttributes` module
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param str file: a valid path to a file. If the directory is not specified, the current  working directory will be used.

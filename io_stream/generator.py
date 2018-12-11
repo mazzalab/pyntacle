@@ -123,7 +123,7 @@ class Generator:
         :param str name: optional, if you want to assign a name to the `name` graph attribute. Default is **"Small_World"**
         :param int seed: optional: provide a seed to the random generator
 
-        :return igraph.Graph: an `igraph,Graph` object already initialized to be used for pyntacle's methods
+        :return igraph.Graph: an `igraph,Graph` object already initialized to be used for Pyntacle methods
         """
         if seed is not None:
             # print("THIS IS THE SEED", seed)
@@ -156,18 +156,25 @@ class Generator:
 
     @staticmethod
     @generatorscanner
-    def Tree(params, name="Tree", seed=None) -> Graph:
+    def Tree(params: list, name: str="Tree", seed: int or None=None) -> Graph:
         """
-        Generates a Network that Follows a Tree scheme, as described in the ` Wolfram Alpha documentation <http://mathworld.wolfram.com/Tree.html>`_.
-        Each vertex wil have as many `children` vertices specifed by the second value in the ``param`` argument.
+        Generates a Network that Follows a Tree hierarchy, as described in the ` Wolfram Alpha documentation <http://mathworld.wolfram.com/Tree.html>`_.
+        Each vertex wil have as many `children` vertices specified by the second value in the ``param`` argument.
 
-        This is a wrapper to the `Tree` method of `igraph`
+        This is a wrapper to the :py:class:`igraph.Graph.Tree` method of igraph
 
-        :param params: a list of two arguments: #1. the toal number of nodes and #.the number of *children* each *parent* node will have
-        :param str name: optional, if you want to assign a name to the `name` graph attribute. Default is **"Tree"**
-        :param int seed: optional: provide a seed to the random generator
+        :param params: a list of two arguments:
 
-        :return igraph.Graph: an `igraph,Graph` object already initialized to be used for pyntacle's methods
+            #. the toal number of nodes for the resulting :py:class:`igraph.Graph` object
+            #. the number of *children* each *parent* node will have
+
+        :param str name: optional, if you want to assign a name to the ``name`` graph attribute. Default is *Tree*.
+        :param int, None seed: optional: provide a seed to the network generator in order to reproduce the same network over time. Defaults to :py:class:`None` (no seed is set)
+
+        :return igraph.Graph: an `igraph,Graph` object already initialized to be used for Pyntacle methods
+
+        :raise TypeError:
+        :raise ValueError:
         """
         if seed is not None:
             if not isinstance(seed, int):
