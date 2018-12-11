@@ -29,7 +29,7 @@ __license__ = u"""
   """
 
 
-class IllegalKppsetSizeError(ValueError):
+class IllegalKpsetSizeError(ValueError):
     def __init__(self, message, errors=None):
         super().__init__(message)
         # Custom errors here

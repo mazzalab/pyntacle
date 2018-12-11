@@ -132,6 +132,7 @@ class WidgetTestKeyplayer(unittest.TestCase):
                          'Wrong checksum for KeyPlayer, kp-finder bruteforce case')
 
     def tearDown(self):
+        # pass
         self.cleanup()
 
     def cleanup(self):

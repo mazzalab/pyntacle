@@ -26,10 +26,6 @@ __license__ = u"""
   02110-1301 USA
   """
 
-"""
-add specific and generic properties to the `igraph.Graph` object at several levels
-"""
-
 from config import *
 from igraph import Graph
 from tools.enums import CmodeEnum
@@ -38,6 +34,10 @@ from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
 
 
 class AddAttributes:
+    """
+    add specific and generic properties to the `igraph.Graph` object at several levels
+    """
+
     logger = None
 
     def __init__(self, graph: Graph):
@@ -50,6 +50,7 @@ class AddAttributes:
     def add_graph_attributes(self, attr_name: str, attr):
         """
         Add an attribute to a graph object
+
         :param attr: Any object being added as attribute
         :param attr_name: The name of the attribute being imported
         """
@@ -73,6 +74,7 @@ class AddAttributes:
         :param attr_list: the object being added as attribute
         :param attr_name: string. The name of the attribute being imported
         :param nodes: list. Nodes to which attributes will be applied.
+
         :return: an igraph object with the attribute added
         """
 
@@ -117,6 +119,7 @@ class AddAttributes:
         :param attr_name: string. The name of the attribute being imported
         :param attr_list: the object being added as attribute
         :param edges: list. edges to which attributes will be applied.
+
         :return:
         """
 
@@ -174,6 +177,10 @@ class AddAttributes:
     def add_graph_name(self, namestring):
         """
         Assign a name to a graph (or replace it)
+
+        :param namestring:
+
+        :return:
         """
 
         self.logger.info("adding attribute \'name\' to the graph")
@@ -192,6 +199,7 @@ class AddAttributes:
     def graph_initializer(self, graph_name: object, node_names: object = None):
         """
         **EXPAND**
+
         :param graph_name:
         :param node_names:
         :return:
@@ -201,9 +209,8 @@ class AddAttributes:
             self.logger.info("adding file name to graph name")
             self.add_graph_name(graph_name)
 
-        '''
-        add vertices names
-        '''
+
+        #add vertex names
         if "name" not in self.__graph.vs.attributes():
             if node_names is None:
                 self.logger.info("adding node names to graph corresponding to their indices")
@@ -219,19 +226,12 @@ class AddAttributes:
                 self.logger.info("Adding node names to graph using the provided node names")
                 self.__graph.vs["name"] = node_names
 
-        '''
-        add parent's name to vertices
-        '''
+
+        #add parent name to vertices
         if "__parent" not in self.__graph.vs().attributes():
-            '''
-            add parent's name to vertices
-            '''
             self.logger.info("adding reserved attribute \'__parent\' to the vertices")
             self.add_parent_name()
 
-        '''
-        add edge vertices names as an attribute 'adjacent_nodes'
-        '''
         if "adjacent_nodes" not in self.__graph.es().attributes():
             '''
             add edge vertices names as an attribute 'adjacent_vertices'
@@ -245,15 +245,12 @@ class AddAttributes:
         if not "__sif_interaction" in self.__graph.es().attributes():
             self.__graph.es()["__sif_interaction"] = None
             
-            
-        '''
-        Adding implementation info for functions that require it
-        '''
+
+        #Adding implementation info for functions that require it
         sp_implementation = CmodeEnum.igraph
 
-        # if not cuda_avail and n_cpus
         n_nodes = self.__graph.vcount()
-        
+
         if n_nodes > 100:
             density = (2*(self.__graph.ecount()))/(n_nodes*(n_nodes-1))
             if density < 0.5 and n_nodes <=500:

@@ -36,8 +36,8 @@ from algorithms.shortest_path import ShortestPath
 from algorithms.sparseness import Sparseness
 from algorithms.keyplayer import KeyPlayer
 from tools.enums import *
-from private import check_graph_consistency
-from private import ShortestPathModifier
+from private.graph_routines import check_graph_consistency
+from private.shortest_path_modifications import ShortestPathModifier
 from cmds.cmds_utils.kpsearch_wrapper import KPWrapper as kpw
 from cmds.cmds_utils.kpsearch_wrapper import GOWrapper as gow
 from cmds.cmds_utils.kpsearch_wrapper import BFWrapper as bfw
@@ -56,61 +56,116 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_diameter(graph):
+        """
+
+        :param graph:
+        :return:
+        """
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.diameter.name, GlobalTopology.diameter(graph))
 
     @staticmethod
     @check_graph_consistency
     def add_radius(graph):
+        """
+
+        :param graph:
+        :return:
+        """
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.radius.name, GlobalTopology.radius(graph))
         
     @staticmethod
     @check_graph_consistency
     def add_components(graph):
+        """
+
+        :param graph:
+        :return:
+        """
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.components.name, GlobalTopology.components(graph))
 
     @staticmethod
     @check_graph_consistency
     def add_density(graph):
+        """
+
+        :param graph:
+        :return:
+        """
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.density.name, GlobalTopology.density(graph))
         
     @staticmethod
     @check_graph_consistency
     def add_pi(graph):
+        """
+
+        :param graph:
+        :return:
+        """
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.pi.name, GlobalTopology.pi(graph))
     
     @staticmethod
     @check_graph_consistency
     def add_average_clustering_coefficient(graph):
+        """
+
+        :param graph:
+        :return:
+        """
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.average_clustering_coefficient.name,
                                                   GlobalTopology.average_clustering_coefficient(graph))
 
     @staticmethod
     @check_graph_consistency
     def add_weighted_clustering_coefficient(graph):
+        """
+
+        :param graph:
+        :return:
+        """
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.weighted_clustering_coefficient.name,
                                                   GlobalTopology.weighted_clustering_coefficient(graph))
     
     @staticmethod
     @check_graph_consistency
     def add_average_degree(graph):
+        """
+
+        :param graph:
+        :return:
+        """
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.average_degree.name,
                                                   GlobalTopology.average_degree(graph))
     
     @staticmethod
     @check_graph_consistency
     def add_average_closeness(graph):
+        """
+
+        :param graph:
+        :return:
+        """
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.average_closeness.name,
                                                   GlobalTopology.average_closeness(graph))
     
     @staticmethod
     @check_graph_consistency
     def add_average_eccentricity(graph):
+        """
+
+        :param graph:
+        :return:
+        """
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.average_eccentricity.name,
                                                   GlobalTopology.average_eccentricity(graph))
     
     @staticmethod
     @check_graph_consistency
     def add_average_radiality(graph):
+        """
+
+        :param graph:
+        :return:
+        """
         cmode = get_cmode(graph)
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.average_radiality.name,
                                                   GlobalTopology.average_radiality(graph, cmode))
@@ -118,6 +173,11 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_average_radiality_reach(graph):
+        """
+
+        :param graph:
+        :return:
+        """
         cmode = get_cmode(graph)
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.average_radiality_reach.name,
                                                   GlobalTopology.average_radiality_reach(graph, cmode))
@@ -125,6 +185,11 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_average_shortest_path_length(graph):
+        """
+
+        :param graph:
+        :return:
+        """
         cmode = get_cmode(graph)
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.average_shortest_path_length.name,
                                                   ShortestPath.average_global_shortest_path_length(
@@ -133,18 +198,33 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_completeness_naive(graph):
+        """
+
+        :param graph:
+        :return:
+        """
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.completeness_naive.name,
                                                   Sparseness.completeness_naive(graph))
     
     @staticmethod
     @check_graph_consistency
     def add_completeness(graph):
+        """
+
+        :param graph:
+        :return:
+        """
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.completeness.name,
                                                   Sparseness.completeness(graph))
         
     @staticmethod
     @check_graph_consistency
     def add_compactness(graph):
+        """
+
+        :param graph:
+        :return:
+        """
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.compactness.name,
                                                   Sparseness.compactness(graph))
         
@@ -152,6 +232,12 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_degree(graph, node_names=None):
+        """
+
+        :param graph:
+        :param node_names:
+        :return:
+        """
         if node_names is None:
             node_names = graph.vs["name"]
         AddAttributes(graph).add_node_attributes(LocalAttributeEnum.degree.name, 
@@ -160,6 +246,12 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_betweenness(graph, node_names=None):
+        """
+
+        :param graph:
+        :param node_names:
+        :return:
+        """
         if node_names is None:
             node_names = graph.vs["name"]
         AddAttributes(graph).add_node_attributes(LocalAttributeEnum.betweenness.name, 
@@ -168,6 +260,12 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_clustering_coefficient(graph, node_names=None):
+        """
+
+        :param graph:
+        :param node_names:
+        :return:
+        """
         if node_names is None:
             node_names = graph.vs["name"]
         AddAttributes(graph).add_node_attributes(LocalAttributeEnum.clustering_coefficient.name, 
@@ -176,6 +274,12 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_closeness(graph, node_names=None):
+        """
+
+        :param graph:
+        :param node_names:
+        :return:
+        """
         if node_names is None:
             node_names = graph.vs["name"]
         AddAttributes(graph).add_node_attributes(LocalAttributeEnum.closeness.name, 
@@ -184,6 +288,12 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_eccentricity(graph, node_names=None):
+        """
+
+        :param graph:
+        :param node_names:
+        :return:
+        """
         if node_names is None:
             node_names = graph.vs["name"]
         AddAttributes(graph).add_node_attributes(LocalAttributeEnum.eccentricity.name, 
@@ -192,6 +302,12 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_radiality(graph, node_names=None):
+        """
+
+        :param graph:
+        :param node_names:
+        :return:
+        """
         cmode = get_cmode(graph)
         if node_names is None:
             node_names = graph.vs["name"]
@@ -202,6 +318,12 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_radiality_reach(graph, node_names=None):
+        """
+
+        :param graph:
+        :param node_names:
+        :return:
+        """
         cmode = get_cmode(graph)
         if node_names is None:
             node_names = graph.vs["name"]
@@ -211,6 +333,13 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_eigenvector_centrality(graph, node_names=None, scaled=False):
+        """
+
+        :param graph:
+        :param node_names:
+        :param scaled:
+        :return:
+        """
         if node_names is None:
             node_names = graph.vs["name"]
         AddAttributes(graph).add_node_attributes(LocalAttributeEnum.eigenvector_centrality.name,
@@ -220,6 +349,14 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_pagerank(graph, node_names=None, weights=None, damping=0.85):
+        """
+
+        :param graph:
+        :param node_names:
+        :param weights:
+        :param damping:
+        :return:
+        """
         if node_names is None:
             node_names = graph.vs["name"]
         if "weights" in graph.es.attributes():
@@ -231,6 +368,12 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_shortest_path_igraph(graph, node_names=None):
+        """
+
+        :param graph:
+        :param node_names:
+        :return:
+        """
         if node_names is None:
             node_names = graph.vs["name"]
         AddAttributes(graph).add_node_attributes(LocalAttributeEnum.shortest_path_igraph.name,
@@ -240,6 +383,12 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_shortest_path(graph, node_names=None):
+        """
+
+        :param graph:
+        :param node_names:
+        :return:
+        """
         cmode = get_cmode(graph)
         distances = ShortestPath.get_shortestpaths(graph, node_names, cmode=cmode)
         if node_names is None:
@@ -250,6 +399,12 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_average_shortest_path_length(graph, node_names=None):
+        """
+
+        :param graph:
+        :param node_names:
+        :return:
+        """
         cmode = get_cmode(graph)
         if node_names is None:
             node_names = graph.vs["name"]
@@ -260,6 +415,12 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_median_shortest_path_length(graph, node_names=None):
+        """
+
+        :param graph:
+        :param node_names:
+        :return:
+        """
         cmode = get_cmode(graph)
         if node_names is None:
             node_names = graph.vs["name"]
@@ -271,18 +432,35 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_F(graph):
+        """
+
+        :param graph:
+        :return:
+        """
         AddAttributes(graph).add_graph_attributes(KpnegEnum.F.name, KeyPlayer.F(graph))
 
     @staticmethod
     @check_graph_consistency
     def add_dF(graph, max_distance=None):
+        """
+
+        :param graph:
+        :param max_distance:
+        :return:
+        """
         cmode = get_cmode(graph)
-        AddAttributes(graph).add_graph_attributes(KpnegEnum.dF.name, KeyPlayer.dF(graph, implementation=cmode,
+        AddAttributes(graph).add_graph_attributes(KpnegEnum.dF.name, KeyPlayer.dF(graph, cmode=cmode,
                                                                                   max_distance=max_distance))
 
     @staticmethod
     @check_graph_consistency
     def add_kp_F(graph, nodes):
+        """
+
+        :param graph:
+        :param nodes:
+        :return:
+        """
         kpobj = kpw(graph=graph)
         kpobj.run_KPNeg(nodes, KpnegEnum.F)
         results_dict = kpobj.get_results()
@@ -292,6 +470,13 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_kp_dF(graph, nodes, max_distance=None):
+        """
+
+        :param graph:
+        :param nodes:
+        :param max_distance:
+        :return:
+        """
         cmode = get_cmode(graph)
         kpobj = kpw(graph=graph)
         kpobj.run_KPNeg(nodes, KpnegEnum.dF, max_distance=max_distance, implementation=cmode)
@@ -303,6 +488,13 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_kp_dR(graph, nodes, max_distance=None):
+        """
+
+        :param graph:
+        :param nodes:
+        :param max_distance:
+        :return:
+        """
         cmode = get_cmode(graph)
         kpobj = kpw(graph=graph)
         kpobj.run_KPPos(nodes, KpposEnum.dR, max_distance=max_distance, implementation=cmode)
@@ -314,6 +506,14 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_kp_mreach(graph, nodes, m=None, max_distance=None):
+        """
+
+        :param graph:
+        :param nodes:
+        :param m:
+        :param max_distance:
+        :return:
+        """
         cmode = get_cmode(graph)
         kpobj = kpw(graph=graph)
         kpobj.run_KPPos(nodes, KpposEnum.mreach, m=m, max_distance=max_distance, implementation=cmode)
@@ -326,6 +526,13 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_GO_F(graph, kp_size, seed=None):
+        """
+
+        :param graph:
+        :param kp_size:
+        :param seed:
+        :return:
+        """
         kpobj = gow(graph=graph)
         kpobj.run_fragmentation(kp_size, KpnegEnum.F, seed=seed)
         results_dict = kpobj.get_results()
@@ -335,6 +542,14 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_GO_dF(graph, kp_size, max_distance=None, seed=None):
+        """
+
+        :param graph:
+        :param kp_size:
+        :param max_distance:
+        :param seed:
+        :return:
+        """
         cmode = get_cmode(graph)
         kpobj = gow(graph=graph)
         kpobj.run_fragmentation(kp_size, KpnegEnum.dF, max_distance=max_distance, seed=seed, implementation=cmode)
@@ -346,6 +561,14 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_GO_dR(graph, kp_size, max_distance=None, seed=None):
+        """
+
+        :param graph:
+        :param kp_size:
+        :param max_distance:
+        :param seed:
+        :return:
+        """
         cmode = get_cmode(graph)
         kpobj = gow(graph=graph)
         kpobj.run_reachability(kp_size, KpposEnum.dR, max_distance=max_distance, seed=seed, implementation=cmode)
@@ -357,6 +580,15 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_GO_mreach(graph, kp_size, m=None, max_distance=None, seed=None):
+        """
+
+        :param graph:
+        :param kp_size:
+        :param m:
+        :param max_distance:
+        :param seed:
+        :return:
+        """
         cmode = get_cmode(graph)
         kpobj = gow(graph=graph)
         kpobj.run_reachability(kp_size, KpposEnum.mreach, m=m, max_distance=max_distance, seed=seed, implementation=cmode)
@@ -369,6 +601,13 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_BF_F(graph, kp_size, max_distance=None):
+        """
+
+        :param graph:
+        :param kp_size:
+        :param max_distance:
+        :return:
+        """
         kpobj = bfw(graph=graph)
         kpobj.run_fragmentation(kp_size, KpnegEnum.F, max_distance=max_distance)
         results_dict = kpobj.get_results()
@@ -379,6 +618,13 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_BF_dF(graph, kp_size, max_distance=None):
+        """
+
+        :param graph:
+        :param kp_size:
+        :param max_distance:
+        :return:
+        """
         kpobj = bfw(graph=graph)
         kpobj.run_fragmentation(kp_size, KpnegEnum.dF, max_distance=max_distance)
         results_dict = kpobj.get_results()
@@ -389,6 +635,13 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_BF_dR(graph, kp_size, max_distance=None):
+        """
+
+        :param graph:
+        :param kp_size:
+        :param max_distance:
+        :return:
+        """
         kpobj = bfw(graph=graph)
         kpobj.run_reachability(kp_size, KpposEnum.dR, max_distance=max_distance)
         results_dict = kpobj.get_results()
@@ -399,6 +652,14 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_BF_mreach(graph, kp_size, m=None, max_distance=None):
+        """
+
+        :param graph:
+        :param kp_size:
+        :param m:
+        :param max_distance:
+        :return:
+        """
         kpobj = bfw(graph=graph)
         kpobj.run_reachability(kp_size, KpposEnum.mreach, max_distance=max_distance, m=m)
         results_dict = kpobj.get_results()

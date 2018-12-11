@@ -24,8 +24,6 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-"Wraps up all the importers for several type of network representation files (all the file formats supported by Pyntacle"
-
 import pandas as pd
 import pickle
 from private.binarycheck import *
@@ -93,36 +91,34 @@ def dot_edgeattrlist_to_dict(mylist):
 
 
 class PyntacleImporter:
+    "A series of methods to import several Pyntacle supported file formats  and transform them into a :py:class:`igraph.Graph`"
+
     @staticmethod
     @input_file_checker
     @separator_sniffer
     def AdjacencyMatrix(file, sep=None, header=True) -> Graph:
-        """
-        Import an Adjacency matrix file to an `igraph.Graph` object ready to be used by Pyntacle's methods.
-        for more specifications on Adjacency Matrix please visit [Ref]_
-        *IMPORTANT* We support unweighted undirected Adjacency Matrices, so only zeroes and ones are allowed in the
-        input file. The string separing the values inside the adjacency mateix can be specified. If not, Pyntacle will
-        try to guess it. By default, Pyntacle assumes that an header if present. The header must contain unique names
-        (so two nodes can't have the same name). if not, an  error wil be raised. The header names will be assigned to
-        the "name" node attribute in the `igraph.Graph` object. If the header is not present, the node "name" attribute
-        will be the relative index assigned by igraph (represented as a string)
-        [Ref] http://mathworld.wolfram.com/AdjacencyMatrix.html
-        :param str file: the path to the Adjacency Matrix File
-        :param sep: if None(default) we will try to guess the separator. Otherwise, you can place the string
-        representing the rows and columns separator.
+        r"""
+        Import an Adjacency matrix file to a :py:class:`igraph.Graph` object ready to be used by Pyntacle's methods.
+        for more specifications on Adjacency Matrix we refer the user to the `File Formats Guide <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html>`_ of Pyntacle website
+        .. note:: We support unweighted undirected Adjacency Matrices, so only zeroes and ones are allowed in the input file. The string separing the values inside the adjacency matrix can be specified. If not, Pyntacle will try to guess it. By default, Pyntacle assumes that an header if present. The header must contain unique names (so two nodes can't have the same name). if not, an  error wil be raised. The header names will be assigned to the "name" node attribute in the `igraph.Graph` object. If the header is not present, the node "name" attribute will be the relative index assigned by igraph (represented as a string)
+
+        :param str file: the path to the file storing the adjacency matrix
+        :param None, str sep: if :py:class:`None` (default) we will try to guess the separator. Otherwise, you can place the string representing the rows and columns separator.
         :param bool header: Whether the header is present or not (default is `True`
-        :return: an `igraph.Graph` object.
+
+        :return igraph.Graph: the :py:class:`igraph.Graph` object representing the original adjacenchy matrix ready to be used in Pyntacle methods.
+        :raise WrongArgumentError: if ``sep`` is not found in the adjacency matrix
         """
 
         if not AdjmUtils(file=file, header=header, sep=sep).is_squared():
-            raise ValueError("Matrix is not squared")
+            raise ValueError(u"Matrix is not squared")
 
         with open(file, "r") as adjmatrix:
             iterator = iter(adjmatrix.readline, '')
 
             first_line = next(iterator, None).rstrip()
             if sep not in first_line:
-                raise WrongArgumentError('The specified separator "{}" is not present in the adjacency matrix file'.format(sep))
+                raise WrongArgumentError(u'The specified separator "{}" is not present in the adjacency matrix file'.format(sep))
             # else:
             #     n_cols = len(first_line.split(sep))
 
@@ -139,31 +135,32 @@ class PyntacleImporter:
             AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0],
                                                          node_names=node_names)
 
-            sys.stdout.write("Adjacency matrix from {} imported\n".format(file))
+            sys.stdout.write(u"Adjacency matrix from {} imported\n".format(file))
             return graph
 
     @staticmethod
     @input_file_checker
     @separator_sniffer
     def EdgeList(file, sep=None, header=False):
-        """
+        r"""
         Take an edge list and turns it into an `igraph.Graph` object that stores the input edge list. An Edge List is a
         text file that represnt all the edges in a graph with a scheme, *nodeA* **separator** *nodeB*. We accept
         undirected edge list, so the node pairs must be repeated twice, with the node names inverted (so a line with
         *nodeB* **separator** *nodeB* must be present or it will raise an error.
+
         :param str file: a valid path to the Edge List File
-        :param sep: if None(default) we will try to guess the separator. Otherwise, you can place the string
-        representing the rows and columns separator.
+        :param None, int sep: if None(default) we will try to guess the separator. Otherwise, you can place the string representing the rows and columns separator.
         :param bool header: Whether the header is present or not (default is *False*)
+
         :return: an `igraph.Graph` object.
         """
         eglutils = EglUtils(file=file, header=header, sep=sep)
         
         if eglutils.is_direct():
-            raise ValueError("Edgelist is not ready to be parsed by Pyntacle, it's direct. Use the `edgelist_utils` module in `tools` to make it undirect")
+            raise ValueError(u"Edgelist is not ready to be parsed by Pyntacle, it's direct. Use the `edgelist_utils` module in `tools` to make it undirect")
         
         elif eglutils.is_multigraph():
-            raise ValueError("Edgelist contains multiple edges. It is not ready to be parsed by Pyntacle, Use the `edgelist_utils` module in `tools` to turn it into a simple graph.")
+            raise ValueError(u"Edgelist contains multiple edges. It is not ready to be parsed by Pyntacle, Use the `edgelist_utils` module in `tools` to turn it into a simple graph.")
 
         graph = Graph() #initialize an empty graph that will be filled
         
@@ -185,14 +182,14 @@ class PyntacleImporter:
         graph.add_edges(edgs)
         #initialize the graph by calling the graph_initializer() method
         AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
-        sys.stdout.write("Edge list from {} imported\n".format(file))
+        sys.stdout.write(u"Edge list from {} imported\n".format(file))
         return graph
 
     @staticmethod
     @input_file_checker
     @separator_sniffer
     def Sif(file, sep=None, header=True) -> Graph:
-        """
+        r"""
         Import a Simple Interaction File (**SIF**) usually used by tools like Cytoscape to visualize and analyze networks
         inside the Cytoscape Framework, as well as by other Cytscape-like applications. For information regarding the SIF
         file specification, visit: `The Official Cytoscape Page`_. Here, we accept Cytoscape file **with the interaction
@@ -201,10 +198,12 @@ class PyntacleImporter:
         and `__sif_interaction_name` respectively.
         _The Official Cytoscape Page: http://wiki.cytoscape.org/Cytoscape_User_Manual/Network_Formats.
         The SIF file may contain an header(*header=True*).
+
         :param str file: a valid path to the Edge List File
         :param sep: if None(default) we will try to guess the separator. Otherwise, you can place the string
         representing the rows and columns separator.
         :param bool header: Whether the header is present or not (default is `False`)
+
         :return: an `igraph.Graph` object.
         """
 
@@ -241,7 +240,7 @@ class PyntacleImporter:
                             if elem[1] not in edgeslist[(elem[2], elem[0])]:
                                 edgeslist[(elem[2], elem[0])].append(elem[1])
                         else:
-                            raise KeyError("This should not happen - SIF formatting looks weirs. "
+                            raise KeyError(u"This should not happen - SIF formatting looks weirs. "
                                            "Please contact the developers.")
 
                 elif len(elem) >= 4:
@@ -262,7 +261,7 @@ class PyntacleImporter:
                                 if interaction not in edgeslist[(n, first)]:
                                     edgeslist[(n, first)].append(interaction)
                             else:
-                                raise KeyError("This should not happen - SIF formatting looks weird. "
+                                raise KeyError(u"This should not happen - SIF formatting looks weird. "
                                                  "Please contact the developers.")
                             
     
@@ -277,7 +276,7 @@ class PyntacleImporter:
             # add missing attribute to graph
             AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
     
-            sys.stdout.write("SIF from {} imported\n".format(file))
+            sys.stdout.write(u"SIF from {} imported\n".format(file))
 
         return graph
 
@@ -285,11 +284,10 @@ class PyntacleImporter:
     @input_file_checker
     @separator_sniffer
     def Dot(file, **kwargs):
-        # todo Mauro and Tommaso, can you document this method please?
-        """
+        r"""
         :param file:
         :param kwargs:
-        :return:
+        :return igraph.Graph:
         """
         graph = Graph()
         graph.vs()["name"] = None
@@ -366,14 +364,14 @@ class PyntacleImporter:
                         graph.add_vertex(name=n)
 
             if graph.are_connected(a[0], a[1]):
-                sys.stdout.write("An edge already exists between node %s and node %s,"
+                sys.stdout.write(u"An edge already exists between node %s and node %s,"
                                  "skipping this edge (we recommend to check again your file\n" % (
                                      a[0], a[1]))
             else:
                 graph.add_edge(source=a[0], target=a[1])
 
         if Graph.is_directed(graph):
-            sys.stdout.write("Converting graph to undirect\n")
+            sys.stdout.write(u"Converting graph to undirect\n")
             graph.to_undirected()
 
         AddAttributes(graph=graph).graph_initializer(graph_name=graphname,
@@ -383,29 +381,30 @@ class PyntacleImporter:
             for k in edge_attrs_dict[a]:
                 AddAttributes(graph).add_edge_attributes(k, [edge_attrs_dict[a][k]], [a])
 
-        sys.stdout.write("DOT from {} imported\n".format(file))
+        sys.stdout.write(u"DOT from {} imported\n".format(file))
         return graph
 
     @staticmethod
     @input_file_checker
     def Binary(file) -> Graph:
-        """
-        Reload a binary file that stores an `igraph.Graph` object and makes it ready to be used for pyntacle (if it's
+        r"""
+        Reload a binary file  (a :py:class:`pickle` object) that stores an ``igraph.Graph`` object and makes it ready to be used for Pyntacle (if it's
         not already).
-        :param file_name: Path to the binary file
-        :return: an iGraph.Graph object
+
+        :param str file_name: Path to the binary file
+        :return igraph.Graph: an iGraph.Graph object
         """
 
         if not is_binary_file(file):
-            raise WrongArgumentError("file is not a binary")
+            raise WrongArgumentError(u"file is not a binary")
 
         graph = pickle.load(open(file, "rb"))
         if not isinstance(graph, Graph):
-            raise IOError("binary is not a graph object")
+            raise IOError(u"binary is not a graph object")
 
         else:
             if graph.ecount() < 1 and graph.vcount() < 2:
-                raise IllegalGraphSizeError("Graph must contain at least 2 nodes linked by one edge")
+                raise IllegalGraphSizeError(u"Graph must contain at least 2 nodes linked by one edge")
 
             else:
                 AddAttributes(graph=graph).graph_initializer(
@@ -413,9 +412,9 @@ class PyntacleImporter:
 
                 if Graph.is_directed(graph):
 
-                    sys.stdout.write("Converting graph to undirect\n")
+                    sys.stdout.write(u"Converting graph to undirect\n")
                     graph.to_undirected()
 
                 GraphUtils(graph=graph).check_graph()
-                sys.stdout.write("Binary from  {} imported\n".format(file))
+                sys.stdout.write(u"Binary from  {} imported\n".format(file))
                 return graph

@@ -1,7 +1,3 @@
-"""
-Several implementation to compute shortest paths of a graph
-"""
-
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = "Copyright 2018, The Pyntacle Project"
 __credits__ = ["Ferenc Jordan"]
@@ -44,26 +40,28 @@ from exceptions.wrong_argument_error import WrongArgumentError
 
 
 class ShortestPath:
+    r"""
+    This class contains a series of operations revolved around the shortest paths computation of a network, from their
+    computation to their processing to obtain relevant statistics by modelling the shortest path distribution for each
+    node
+    """
 
-    # @profile
-    # todo check if i can see the environment variables so I don't have to recall cuda.is_available() every time
+    # @profile #uncomment to time the shortest path search when changes are made
     @staticmethod
-    def get_shortestpaths(graph, nodes, cmode: CmodeEnum) -> np.ndarray:
-        """
-        Compute the *shortest paths* starting from a node or of a list of nodes of an undirected graph using the
-        implementation modes specified in the input parameter *cmode*
-        :param graph: an igraph.Graph object. The graph must have specific properties. Please see the
-        "Minimum requirements" specifications in the pyntacle's manual.
-        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
-        (default), the index is computed for all nodes of the graph.
-        :param cmode: an enumerator ranging from:
-        * **`cmode.igraph`**: shortest paths computed by iGraph
-        * **`cmode.cpu`**: Dijkstra algorithm implemented for multicore CPU
-        * **`cmode.gpu`**: Dijkstra algorithm implemented for GPU-enabled graphics cards
-        **CAUTION**: this will not work if the GPU is not present or CUDA compatible.
-        :return: a np.ndarray, the first size being the number of input nodes. Each row contains a series of
-        integer values representing the distance from any input node to every other node in the graph.
-        The order of the node list in input is preserved in the np.ndarray.
+    def get_shortestpaths(graph: Graph, nodes: int or list or None, cmode: CmodeEnum) -> np.ndarray:
+        r"""
+        Returns the *shortest paths*, the minimum least distance between a node :math:`i` and any node :math:`j` of the
+        input graph.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param None,str,list nodes: The input nodes  in the graph. When :py:class:`None`, it returns the shortest paths for all nodes in the graph, sorted by index. Otherwise, a single node ``name`` or a list of node ``name`` s can be passed.
+        :param cmodeEnum cmode: the implementation that will be used to compute the shortest paths. See :class:`~pyntacle.tools.enums.CmodeEnum`.
+
+        :return numpy.ndarray: a matrix stored in a numpy array, the number of rows corresponding to the input nodes, while the number of columns is the size of the graph. Each row contains a series of integer values representing the distance from any input node to every other node in the input graph. The rows are sorted by vertex ``index`` if ``nodes`` is :py:class:`None`, or in the same order in which they are given otherwise. :warning: disconnected nodes  exhibit a distance greater than the size of the graph
+
+        :raise TypeError: when ``nodes`` is a list of strings matching the vertex ``name`` attribute
+        :raise KeyError: when any of the node ``name`` attribute passed to the function is not present in the input graph
+        :raise: ValueError: if ``cmode`` is not one of ther valid :class:`~pyntacle.tools.enums.GroupCentralityEnum`
         """
 
         if cmode == CmodeEnum.igraph:
@@ -73,7 +71,7 @@ class ShortestPath:
             return sps
         elif cmode == CmodeEnum.cpu or cmode == CmodeEnum.gpu:
             if virtual_memory().free < (graph.vcount() ** 2) * 2:  # the rightmost "2" is int16/8
-                sys.stdout.write("WARNING: Memory seems to be low; loading the graph given as input could fail.")
+                sys.stdout.write(u"WARNING: Memory seems to be low; loading the graph given as input could fail.")
 
             graph_size = graph.vcount() + 1
             # np.set_printoptions(linewidth=graph_size * 10)
@@ -93,7 +91,7 @@ class ShortestPath:
             elif cmode == CmodeEnum.gpu:
                 if cmode == CmodeEnum.gpu and cuda.current_context().get_memory_info().free < (graph.vcount() ** 2) * 2:
                     sys.stdout.write(
-                        "WARNING: GPU Memory seems to be low; loading the graph given as input could fail.")
+                        u"WARNING: GPU Memory seems to be low; loading the graph given as input could fail.")
 
                 if nodes is None:
                     nodes = list(range(0, graph.vcount()))
@@ -112,25 +110,21 @@ class ShortestPath:
 
                     return sps
         else:
-            raise ValueError("The specified 'computing mode' is invalid. Choose from: {}".format(list(CmodeEnum)))
+            raise ValueError(u"The specified 'computing mode' is invalid. Choose from: {}".format(list(CmodeEnum)))
 
     @staticmethod
-    def get_shortestpath_count(graph, nodes, cmode: CmodeEnum) -> np.ndarray:
-        """
-        Compute the *shortest paths* starting from a node or of a list of nodes of an undirected graph using the
-        implementation modes specified in the input parameter *cmode*
-        :param graph: an igraph.Graph object. The graph must have specific properties. Please see the
-        "Minimum requirements" specifications in the pyntacle's manual.
-        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
-        (default), the index is computed for all nodes of the graph.
-        :param cmode: an enumerator ranging from:
-        * **`cmode.igraph`**: shortest paths computed by iGraph
-        * **`cmode.cpu`**: Dijkstra algorithm implemented for multicore CPU
-        * **`cmode.gpu`**: Dijkstra algorithm implemented for GPU-enabled graphics cards
-        **CAUTION**: this will not work if the GPU is not present or CUDA compatible.
-        :return: a np.ndarray, the first size being the number of input nodes. Each row contains a series of
-        integer values representing the distance from any input node to every other node in the graph.
-        The order of the node list in input is preserved in the np.ndarray.
+    def get_shortestpath_count(graph: Graph, nodes: str or list or None, cmode: CmodeEnum) -> np.ndarray:
+        r"""
+        Returns the number of shortest paths (*shortest path counts*) for a node, a list of nodes or all nodes in the
+        graph in a numpy array of positive integers.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param None,str,list nodes: The input nodes on which to compute the counts of shortest paths. When :py:class:`None`, the counts are computed for all nodes in the graph. Otherwise, a single node (identified using the ``name`` attribute) or a list of node names can be passed.
+        :param cmodeEnum cmode: the implementation that will be used to compute the shortest paths counts. See :class:`~pyntacle.tools.enums.CmodeEnum`. Default is the igraph brute-force shortest path search wrapped in :func:`~pyntacle.algorithms.shortest_path.ShortestPath.shortest_path_length_igraph`
+
+        :return numpy.ndarray: a matrix stored in a :py:class:`numpy.ndarray`, the number of rows corresponding to the length of the input nodes and the number of columns being the size of the graph. The nodes are sorted by index if ``nodes`` is :py:class:`None`, or they are in the same order in which they're presented otherwise.
+
+        :raise: ValueError: if ``cmode`` is not one of the valid :class:`~pyntacle.tools.enums.GroupCentralityEnum`
         """
 
         if cmode == CmodeEnum.igraph:
@@ -139,7 +133,7 @@ class ShortestPath:
             return count_all
         else:
             if virtual_memory().free < (graph.vcount() ** 2) * 2:  # the rightmost "2" is int16/8
-                sys.stdout.write("WARNING: Memory seems to be low; loading the graph given as input could fail.")
+                sys.stdout.write(u"WARNING: Memory seems to be low; loading the graph given as input could fail.")
 
             adj_mat = np.array(graph.get_adjacency().data, dtype=np.uint16, copy=True)
             adj_mat[adj_mat == 0] = adj_mat.shape[0]
@@ -155,7 +149,7 @@ class ShortestPath:
             elif cmode == CmodeEnum.gpu:
                 if cuda.current_context().get_memory_info().free < (graph.vcount() ** 2) * 2:
                     sys.stdout.write(
-                        "WARNING: GPU Memory seems to be low; loading the graph given as input could fail.")
+                        u"WARNING: GPU Memory seems to be low; loading the graph given as input could fail.")
 
                 if nodes is None:
                     nodes = list(range(0, graph.vcount()))
@@ -175,23 +169,27 @@ class ShortestPath:
 
                 return count_all
             else:
-                raise ValueError("The specified 'computing mode' is invalid. Choose from: {}".format(list(CmodeEnum)))
+                raise ValueError(u"The specified 'computing mode' is invalid. Choose from: {}".format(list(CmodeEnum)))
 
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
     def shortest_path_length_igraph(graph: Graph, nodes=None) -> list:
-        """
-        Compute the *shortest paths* lengths between any pairs of nodes of an undirected graph, using the
-        Dijkstra's algorithm. The shortest path is defined as the minimum distance from an input node to every other
-        node in a graph. The distance between two disconnected nodes is infinite.
-        :param graph: an igraph.Graph object. The graph must have specific properties. Please see the
-        "Minimum requirements" specifications in the pyntacle's manual.
-        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
-        (default), the index is computed for all nodes of the graph.
-        :return: a list of lists, the first size being the number of input nodes. Each list contains a series of
-        integer values representing the distance from any input node to every other node in the graph.
-        The order of the node list in input is preserved.
+        r"""
+        Compute the *shortest paths*  between any pairs of nodes of an undirected graph. The shortest path is
+        defined as the minimum distance from an node :math:`i`to every other node :math:`j`in a graph.
+        :py:func:`igraph.Graph.shortest_paths` method from igraph, that alternate the Djikstra's algorithm for a handful
+        of nodes to a brute-force shortest path implementation for all nodes.
+
+        .. note:: The distance between two disconnected nodes is represented as  infinite (a :py:class:`math.inf` object).
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param None,str,list nodes: The input nodes on which to compute the centrality index. When :py:class:`None`, it computes the radiality reach for all nodes in the graph. Otherwise, a single node  (identified using the ``name`` attribute) or a list of node names can be passed to compute radiality reach only for the subset of node of interest.
+
+        :return list: a list of lists equals to the size of the input nodes and sorted by node ``index`` if ``nodes`` is :py:class:`None` or in the same order on which vertex name are provided, Each sublist stores positive integers representing the geodesics among nodes, or infinite if the nodes are disconnected.
+
+        :raise TypeError: when ``nodes`` is a list of strings matching the vertex ``name`` attribute
+        :raise KeyError: when any of the node ``name`` attribute passed to the function is not present in the input graph
         """
 
         return graph.shortest_paths(source=nodes) if nodes else graph.shortest_paths()
@@ -199,18 +197,19 @@ class ShortestPath:
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def shortest_path_count_igraph(graph: Graph, nodes=None) -> np.ndarray:
-        """
-        Compute the *shortest paths* from any pairs of nodes of an undirected graph using the
-        Dijkstra's algorithm and returns the path lengths in the upper triangular part and the geodesics counts in the
-        lower triangular part.
-        :param graph: an igraph.Graph object. The graph must have specific properties. Please see the
-        "Minimum requirements" specifications in the pyntacle's manual.
-        :param nodes: Nodes which computing the index for. It can be an individual node or a list of nodes. When *None*
-        (default), the index is computed for all nodes of the graph.
-        :return: A nxn numpy array, where *n* is the number of *nodes*. The path lengths are in the upper triangular
-        part of the array and the geodesics counts in the lower triangular part. The order of the node list in input is
-        preserved.
+    def shortest_path_count_igraph(graph: Graph, nodes=None or str or list) -> np.ndarray:
+        r"""
+        Compute the *shortest paths* from any pairs of nodes of an undirected graph using the and returns a matrix
+        (represented as a numpy array) storing the path lengths in the upper triangular part and the geodesics counts
+        in the lower triangular part.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param None,str,list nodes: The input nodes on which to count the number of shortest paths. When :py:class:`None`, the counts are computed for the whole graph. Otherwise, a single node  (identified using the ``name`` attribute) or a list of node names can be passed to compute radiality reach only for the subset of node of interest.
+
+        :return numpy.ndarray: A :math:`NxN` numpy array, where :math:`N` is the number of vertices in a graph. The path lengths are in the upper triangular part of the array and the geodesics counts in the lower triangular part. The order of the node list in input is preserved if ``nodes`` is not :py:class:`None`.
+
+        :raise TypeError: when ``nodes`` is a list of strings matching the vertex ``name`` attribute
+        :raise KeyError: when any of the node ``name`` attribute passed to the function is not present in the input graph
         """
 
         if nodes:
@@ -241,14 +240,16 @@ class ShortestPath:
 
     @staticmethod
     @jit(nopython=True, parallel=True)
-    def shortest_path_length_cpu(adjmat) -> np.ndarray:
-        """
+    def shortest_path_length_cpu(adjmat: np.ndarray) -> np.ndarray:
+        r"""
         Calculate the shortest path lengths of a graph for a single node, a set of nodes or all nodes in the graph using
-        'Floyd-Warshall Implementation <https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm>'_. The forumla
-        is implemented using Numba for just-in-time compilation and run on multiple CPU processors.
-        :param np.ndarray adjmat: a numpy.ndarray containing the adjacency matrix of a graph. Disconnected nodes in the
-        matrix are represented as the total number of nodes in the graph + 1, while the diagonal must contain zeroes.
-        :return: a numpy array of shortest path lengths
+        `Floyd-Warshall Implementation <https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm>`_. The formula
+        is implemented using `Numba <http://numba.pydata.org/>`_ for just-in-time (JIT) compilation and run on
+        multiple CPU processors.
+
+        :param numpy.ndarray adjmat: a squared :py:class:`numpy.ndarray` of positive integers and equals to the size of the graph, storing the adjacency matrix representation of the graph. Disconnected nodes in the matrix are represented as the total number of nodes in the graph + 1, while the diagonal must contain zeroes.
+
+        :return numpy.ndarray: a numpy array of shortest path lengths :warning: if nodes are disconnected, the distance is not represented as infinite but as the :math:`N + 1`, :math:`N` being the size of the graph.
         """
 
         v = adjmat.shape[0]
@@ -264,16 +265,17 @@ class ShortestPath:
 
     @staticmethod
     @jit(nopython=True, parallel=True)
-    def shortest_path_count_cpu(adjmat) -> np.ndarray:
-        """
+    def shortest_path_count_cpu(adjmat: np.ndarray) -> np.ndarray:
+        r"""
         Compute the *shortest paths* from any pairs of nodes of an undirected graph using the
-        Dijkstra's algorithm. The method is implemented using Numba for just-in-time compilation and run
-        on multiple CPU processors.
-        :param np.ndarray adjmat: the adjacency matrix of a graph. Absence of links is represented with a number
-        that equals the total number of nodes in the graph + 1.
-        :return: A nxn numpy array, where *n* is the number of *nodes*. The path lengths are in the upper triangular
-        part of the array and the geodesics counts in the lower triangular part. The order of the node list in input is
-        preserved.
+        Dijkstra's algorithm. The method is implemented using `Numba <http://numba.pydata.org/>`_
+        for just-in-time compilation and run on multiple CPU processors.
+
+        .. warning:: This method by default forces the search of the shortest paths on all machine cores
+
+        :param numpy.ndarray adjmat: the adjacency matrix of a graph. Absence of links is represented with a number that equals the total number of nodes in the graph + 1.
+
+        :return numpy.ndarray: A :math:`NxN` numpy array, where *n* is the number of *nodes*. The path lengths are in the upper triangular part of the array and the geodesics counts in the lower triangular part. The order of the node list in input is preserved.
         """
 
         v = adjmat.shape[0]
@@ -316,29 +318,24 @@ class ShortestPath:
 
             return res
         else:
-            raise WrongArgumentError("Parameter error", "The function parameters do not have the same shape")
+            raise WrongArgumentError(u"Parameter error", "The function parameters do not have the same shape")
 
     @staticmethod
     @check_graph_consistency
     def average_global_shortest_path_length(graph: Graph, cmode=CmodeEnum.igraph) -> float:
-        """
+        r"""
         Compute the global *average shortest path length* as defined in https://en.wikipedia.org/wiki/Average_path_length
-        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
-        "Minimum requirements" specifications in the pyntacle's manual. If the graph as more than one component, the average
-        shortest path length is the sum of each component's shortest path length (both directions are counted) divided
-        by the total number of components. Isolated nodes counts as single components, but their distance to all other
-        nodes in the graph is 0.
-        :param cmode: the implementation that will be used to compute the average shortest path length value.
-        Choices are:
-        **igraph:* uses the igraph implementation
-        **parallel_CPU:* uses the Floyd-Warshall algorithm implemented in Numba for multicore processors
-        **parallel_GPU:* uses the Floyd-Warshall algorithm implemented in Numba for GPU devices (requires
-        CUDA-compatible nVIDIA graphic cards)
-        :return: a positive float value representing the average shortest path length for the graph
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param cmodeEnum cmode: the implementation that will be used to compute the shortest paths. See :class:`~pyntacle.tools.enums.CmodeEnum`. Default is the igraph brute-force shortest path search.
+
+        :return float: a positive float value representing the average shortest path length for the graph
+
+        :raise KeyError: if ``cmode`` is not one of the valid :class:`~pyntacle.tools.enums.CmodeEnum`
         """
 
         if not isinstance(cmode, CmodeEnum):
-            raise KeyError("'cmode' not valid, must be one of the following: {}".format(list(CmodeEnum)))
+            raise KeyError(u"'cmode' not valid, must be one of the following: {}".format(list(CmodeEnum)))
         elif cmode == CmodeEnum.igraph:
             avg_sp = Graph.average_path_length(graph, directed=False, unconn=False)
             return round(avg_sp, 5)
@@ -365,20 +362,17 @@ class ShortestPath:
     @check_graph_consistency
     @vertex_doctor
     def average_shortest_path_lengths(graph: Graph, nodes=None, cmode=CmodeEnum.igraph) -> list:
-        """
+        r"""
         Compute the average shortest paths issuing from each node in input or of all nodes in the graph if None provided.
-        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
-        "Minimum requirements" specifications in the pyntacle's manual.
-        :param nodes: if a node name, returns the shortest paths of the input node. If a list of node names is provided,
-        the shortest paths between the input nodes and all other nodes in the graph are returned for all node names.
-        If None (default), the degree is computed for all nodes in the graph.
-        :param cmode: the implementation that will be used to compute the average shortest path length value.
-        Choices are:
-        **igraph:* uses the igraph implementation
-        **parallel_CPU:* uses the Floyd-Warshall algorithm implemented in Numba for multicore processors
-        **parallel_GPU:* uses the Floyd-Warshall algorithm implemented in Numba for GPU devices (requires
-        CUDA-compatible nVIDIA graphic cards)
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param None,str,list nodes: The input nodes. When :py:class:`None`, the counts are computed for the whole graph. Otherwise, a single node  (identified using the ``name`` attribute) or a list of node names can be passed to perform computations for the subset of node(s) of interest.
+        :param cmodeEnum cmode: the implementation that will be used to compute the shortest paths counts. See :class:`~pyntacle.tools.enums.CmodeEnum`. Default is the igraph brute-force shortest path search wrapped in :func:`~pyntacle.algorithms.shortest_path.ShortestPath.shortest_path_length_igraph`
+
         :return: a list of average shortest path lengths, one for each node provided in input
+
+        :raise TypeError: when ``nodes`` is a list of strings matching the vertex ``name`` attribute
+        :raise KeyError: when any of the node ``name`` attribute passed to the function is not present in the input graph
         """
 
         if cmode == CmodeEnum.igraph:
@@ -395,7 +389,7 @@ class ShortestPath:
             sps = sps.astype(np.float)
             sps[sps > graph.vcount()] = np.nan
             sps[sps == 0] = np.nan
-            avg_sps = np.nanmean(sps, axis=1)  # TODO: check axis = 0 or 1
+            avg_sps = np.nanmean(sps, axis=1)
             avg_sps = avg_sps.tolist()
 
         return avg_sps
@@ -403,14 +397,15 @@ class ShortestPath:
     @staticmethod
     @check_graph_consistency
     def median_global_shortest_path_length(graph: Graph) -> float:
+        r"""
+        Compute the median shortest path length across all shortest paths of all node in the graph.
+        This is useful if one needs to estimate the trend of the shortest path distances.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+
+        :return float: the median shortest path length across all shortest path distances
         """
-        Compute the median shortest path length across all shortest paths in the graph. This is useful if one needs
-        to estimate the trend of the shortest path distances.
-        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
-        "Minimum requirements" specifications in the pyntacle's manual.
-        :return: the median shortest path length across all shortest path distances
-        """
-        sps = ShortestPath.shortest_path_length_igraph(graph=graph)  # TODO: Include other implementations
+        sps = ShortestPath.shortest_path_length_igraph(graph=graph)
         sps = np.array(sps)
 
         return float(np.median(sps[sps != 0]))
@@ -419,23 +414,19 @@ class ShortestPath:
     @check_graph_consistency
     @vertex_doctor
     def median_shortest_path_lengths(graph: Graph, nodes=None, cmode=CmodeEnum.igraph) -> list:
-        """
-        Compute the median among the shortest paths for each a single node, a lists of nodes or all nodes in the graph.
-        :param igraph.Graph graph: an igraph.Graph object, The graph must have specific properties. Please see the
-        "Minimum requirements" specifications in the pyntacle's manual.
-        :param nodes: if a node name, returns the median shortest paths of the input nodes. If a list of node names is
-        provided, the shortest path between the input nodes and all other nodes in the graph is returned for all nodes.
-        If None (default), the median shortest paths are computed for the whole graph.
-        :param cmode: the implementation that will be used to compute the average shortest path length value.
-        Choices are:
-        **igraph:* uses the igraph implementation
-        **parallel_CPU:* uses the Floyd-Warshall algorithm implemented in Numba for multicore processors
-        **parallel_GPU:* uses the Floyd-Warshall algorithm implemented in Numba for GPU devices (requires
-        CUDA-compatible nVIDIA graphic cards)
-        :return: a list of float values corresponding to the median shortest paths of each input node.
-        If a node is an isolate, 'nan' will be returned.
-        """
+        r"""
+        Compute the median among all the possible shortest paths for a single node, a lists of nodes or all nodes in the graph.
 
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param None,str,list nodes: The input nodes. When :py:class:`None`, it computes the median shortest path for each node in the graph. Otherwise, a single node  (identified using the ``name`` attribute) or a list of node names can be passed to compute the measure for a subset of node of interest
+        :param cmodeEnum cmode: the implementation that will be used to compute the shortest paths. See :class:`~pyntacle.tools.enums.CmodeEnum`. Default is the igraph brute-force shortest path search.
+
+
+        :return list: the median shortest path. If the node is an isolate, :py:class:'nan' will be returned. The list is ordered by index if ``nodes`` is :py:class:`None` or the same order in which nodes are given.
+
+        :raise TypeError: when ``nodes`` is a list of strings matching the vertex ``name`` attribute
+        :raise KeyError: when any of the node ``name`` attribute passed to the function is not present in the input graph
+        """
         if cmode == CmodeEnum.igraph:
             sps = ShortestPath.shortest_path_length_igraph(graph=graph, nodes=nodes)
             median_sps = []
@@ -452,7 +443,7 @@ class ShortestPath:
 
             sps[sps > graph.vcount()] = np.nan
             sps[sps == 0] = np.nan
-            median_sps = np.nanmedian(sps, axis=1)  # TODO: check axis = 0 or 1
+            median_sps = np.nanmedian(sps, axis=1)
             median_sps = median_sps.tolist()
 
         return median_sps

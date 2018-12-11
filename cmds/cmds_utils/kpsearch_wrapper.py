@@ -88,10 +88,10 @@ class KPWrapper:
         self.logger.info("Computing {0} for nodes ({1})".format(kp_type.name, ", ".join(nodes)))
         if kp_type == KpposEnum.dR:
             single_result = self.kp.dR(graph=self.graph, nodes=nodes, max_distance=max_distance,
-                                       implementation=implementation)
+                                       cmode=implementation)
 
         else:
-            single_result = self.kp.mreach(graph=self.graph, nodes=nodes, max_distance=max_distance, m=m, implementation=implementation)
+            single_result = self.kp.mreach(graph=self.graph, nodes=nodes, max_distance=max_distance, m=m, cmode=implementation)
 
         self.results[kp_type.name] = [nodes, single_result]
         self.logger.info("KP POS search completed, results are in the \"results\" dictionary")
@@ -124,7 +124,7 @@ class KPWrapper:
             "Computing {0} for nodes ({1})\n".format(kp_type.name, ", ".join(nodes)))
 
         if kp_type == KpnegEnum.dF:
-            single_result = self.kp.dF(graph=copy, max_distance=max_distance, implementation=implementation)
+            single_result = self.kp.dF(graph=copy, max_distance=max_distance, cmode=implementation)
 
         else:
             single_result = self.kp.F(graph=copy)
@@ -178,7 +178,7 @@ class GOWrapper:
         if not isinstance(kp_type, KpnegEnum):
             raise TypeError("\"kp_type\" must be one of the KPPNEGchoices options available")
 
-        go_results = self.go.fragmentation(graph=self.graph, kp_size=kp_size, kp_type=kp_type, max_distance=max_distance, seed=seed, cmode=implementation)
+        go_results = self.go.fragmentation(graph=self.graph, k=kp_size, metric=kp_type, max_distance=max_distance, seed=seed, cmode=implementation)
         self.results[kp_type.name] = [go_results[0], go_results[1]]
 
     @timeit
@@ -203,7 +203,7 @@ class GOWrapper:
             elif not isinstance(m, int) or m <= 0 :
                 raise ValueError("\"m\" must be a positive integer for mreach ")
 
-        go_results = self.go.reachability(graph=self.graph, kp_size=kp_size, kp_type=kp_type, max_distance=max_distance, seed=seed, m=m, cmode=implementation)
+        go_results = self.go.reachability(graph=self.graph, k=kp_size, metric=kp_type, max_distance=max_distance, seed=seed, m=m, cmode=implementation)
 
         self.results[kp_type.name] = [go_results[0], go_results[1]]
 
@@ -248,7 +248,7 @@ class BFWrapper:
         if not isinstance(kp_type, KpnegEnum):
             raise TypeError("\"kp_type\" must be one of the KPPNEGchoices options available")
 
-        bf_results = self.bf.fragmentation(graph=self.graph, kp_size=kp_size, kp_type=kp_type,
+        bf_results = self.bf.fragmentation(graph=self.graph, k=kp_size, metric=kp_type,
                                            max_distance=max_distance, cmode=implementation, ncores=threads)
         self.results[kp_type.name] = [bf_results[0], bf_results[1]]
 
@@ -273,7 +273,7 @@ class BFWrapper:
             elif not isinstance(m, int) or m <= 0 :
                 raise ValueError("\"m\" must be a positive integer for mreach ")
 
-        bf_results = self.bf.reachability(graph=self.graph, kp_size=kp_size, kp_type=kp_type,
+        bf_results = self.bf.reachability(graph=self.graph, k=kp_size, metric=kp_type,
                                           max_distance=max_distance, m=m, cmode=implementation, ncores=threads)
 
         self.results[kp_type.name] = [bf_results[0], bf_results[1]]

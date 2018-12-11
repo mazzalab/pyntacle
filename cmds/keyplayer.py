@@ -177,7 +177,7 @@ class KeyPlayer():
                     sys.stdout.write(
                         "Finding best set of kp-nodes of size {0} using dF (kp neg measure)\n".format(
                             self.args.k_size))
-                    initial_results[KpnegEnum.dF.name] = kpp.dF(graph, implementation=implementation)
+                    initial_results[KpnegEnum.dF.name] = kpp.dF(graph, cmode=implementation)
                     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
                                                 max_distance=self.args.max_distances, seed=self.args.seed,
                                                 implementation=implementation)
@@ -232,7 +232,7 @@ class KeyPlayer():
                         "Finding best set of kp-nodes of size {} using dF (kp neg measure)\n".format(
                             self.args.k_size))
 
-                    initial_results[KpnegEnum.dF.name] = kpp.dF(graph, implementation=CmodeEnum.igraph)
+                    initial_results[KpnegEnum.dF.name] = kpp.dF(graph, cmode=CmodeEnum.igraph)
                     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
                                                     max_distance=self.args.max_distances,
                                                     implementation=CmodeEnum.igraph, threads=self.args.threads)
@@ -330,7 +330,7 @@ class KeyPlayer():
                 initial_results[KpnegEnum.F.name] = kpp.F(graph)
                 kp_runner.run_KPNeg(self.args.nodes, KpnegEnum.F)
             if self.args.type in (['dF', 'neg', 'all']):
-                initial_results[KpnegEnum.dF.name] = kpp.dF(graph, implementation=implementation)
+                initial_results[KpnegEnum.dF.name] = kpp.dF(graph, cmode=implementation)
                 kp_runner.run_KPNeg(self.args.nodes, KpnegEnum.dF, max_distance=self.args.max_distances,
                                     implementation=implementation)
 

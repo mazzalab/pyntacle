@@ -119,7 +119,7 @@ class pyntacleReporter():
 
             self.report = [list(map(str,x)) for x in self.report]
             #replace all the underscores with spaces
-            self.report = [[y.replace("_", " ")for y in x] for x in self.report]
+            self.report[0] = [x.replace("_", " ") for x in self.report[0]]
 
         if format not in choices.keys():
             raise WrongArgumentError("file format {} is not supported".format(format))
@@ -325,6 +325,7 @@ class pyntacleReporter():
 
         if KpnegEnum.F.name in reportdict.keys():
             init_F = reportdict[KpnegEnum.F.name][2]
+
 
             if 0.0 <= init_F <= 1.0:
                 self.report.append(["initial F value (whole graph)", init_F])

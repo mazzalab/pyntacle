@@ -26,7 +26,7 @@ __license__ = u"""
 
 from config import *
 from functools import wraps
-from exceptions.illegal_kppset_size_error import IllegalKppsetSizeError
+from exceptions.illegal_kpset_size_error import IllegalKpsetSizeError
 from tools.enums import KpposEnum, KpnegEnum
 import random
 
@@ -37,18 +37,20 @@ def greedy_search_initializer(func):
     """
     checks that the arguments passed to the KP functions for greedy optimization
     are correct according to the parameters that are given as argument
+
     :param func: the kp-function passed
+
     :return: the function checked for integrity to the KP-SEARCH function
     """
 
     @wraps(func)
-    def func_wrapper(graph, kp_size, kp_type, seed=None, max_distance=None, *args, **kwargs):
-        if not isinstance(kp_size, int):
-            raise TypeError("The kp_size argument ('{}') is not an integer number".format(kp_size))
+    def func_wrapper(graph, k, metric, seed=None, *args, **kwargs):
+        if not isinstance(k, int):
+            raise TypeError("The k argument ('{}') is not an integer number".format(k))
 
         else:
-            if kp_size >= graph.vcount():
-                raise IllegalKppsetSizeError("The kp_size must be strictly less than the graph size")
+            if k >= graph.vcount():
+                raise IllegalKpsetSizeError("The k must be strictly less than the graph size")
 
         if seed is not None:
             if not isinstance(seed, int):
@@ -56,13 +58,7 @@ def greedy_search_initializer(func):
             else:
                 random.seed(seed)
 
-        if not isinstance(kp_type, (KpposEnum, KpnegEnum)):
-            raise TypeError("\"kpp-type\" must be either a \"KPPOSchoices\" enumerator or a \"KPNEGchoices\",  {} found".format(type(kp_type).__name__))
-
-        if max_distance is not None and not isinstance(max_distance, int) and max_distance > 1 and max_distance <= graph.vcount():
-            raise ValueError("\"max_sp\" must be an integer greater than one and lesser tan the total number of nodes")
-
-        return func(graph, kp_size, kp_type, seed, max_distance, *args, **kwargs)
+        return func(graph, k, metric, seed, *args, **kwargs)
 
     return func_wrapper
 
@@ -70,28 +66,22 @@ def bruteforce_search_initializer(func):
     """
     checks that the arguments passed to the KP functions for bruteforce search
     are correct according to the parameters that are given as argument
+
     :param func: the kp-function passed
+
     :return: the function checked for integrity to the KP-SEARCH function
     """
 
     @wraps(func)
-    def func_wrapper(graph, kp_size, kp_type, max_distance=None, *args, **kwargs):
+    def func_wrapper(graph, k, metric, *args, **kwargs):
 
-        if not isinstance(kp_size, int):
-            raise TypeError("The kp_size argument ('{}') is not an integer number".format(kp_size))
+        if not isinstance(k, int):
+            raise TypeError("The k argument ('{}') is not an integer number".format(k))
 
         else:
-            if kp_size >= graph.vcount():
-                raise IllegalKppsetSizeError("The kp_size must be strictly less than the graph size")
+            if k >= graph.vcount():
+                raise IllegalKpsetSizeError("The k must be strictly less than the graph size")
 
-        if not isinstance(kp_type, (KpposEnum, KpnegEnum)):
-            raise TypeError("\"kpp-type\" must be either a \"KPPOSchoices\" enumerator or a \"KPNEGchoices\",  {} found".format(type(kp_type).__name__))
-
-        if max_distance is not None and not isinstance(max_distance, int) and max_distance > 1 and max_distance <= graph.vcount():
-            raise ValueError("\"max_sp\" must be an integer greater than one and lesser than the total number of nodes")
-
-        # sys.stdout.write("Brute-force search of the best kpp-set of size {}\n".format(kp_size))
-
-        return func(graph, kp_size, kp_type,max_distance, *args, **kwargs)
+        return func(graph, k, metric, *args, **kwargs)
 
     return func_wrapper

@@ -24,9 +24,7 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-"""
-Import attributes for an `igraph.Graph` object stored in a file and adds it to the Graph that has to be studied
-"""
+
 from config import *
 from igraph import Graph
 from collections import OrderedDict
@@ -38,6 +36,10 @@ from exceptions.wrong_argument_error import WrongArgumentError
 from tools.add_attributes import AddAttributes
 
 class ImportAttributes():
+    r"""
+    Import attributes for an `igraph.Graph` object stored in a file and adds it to the Graph that has to be studied
+    """
+
     logger = None
     
     def __init__(self, graph: Graph):
@@ -52,10 +54,10 @@ class ImportAttributes():
     def __check_file(self, file: str, sep: str):
         
         if not os.path.exists(file):
-            raise FileNotFoundError("File does not exist")
+            raise FileNotFoundError("uFile does not exist")
         
         if sep is None:
-            self.logger.info("using \"\t\" as default separator")
+            self.logger.info(u"using \"\t\" as default separator")
             sep = "\t"
         
         with open(file, "r") as attrfile:

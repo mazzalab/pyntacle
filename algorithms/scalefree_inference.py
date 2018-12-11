@@ -24,25 +24,30 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-""" This module uses igraph' s builtin function to determine wether the power law fit for an `igraph.Graph` object"""
-
 from igraph import statistics as st
 from private.graph_routines import check_graph_consistency
 
 class FitPowerLaw:
+    r""" This module uses igraph' s builtin function to determine whether the power law fit for an ``igraph.Graph`` object"""
 
     @staticmethod
     @check_graph_consistency
     def alpha(graph, xmin=None) -> float:
-        """
-        Find the alpha of the power law of a Graph Object (the coefficient used to assume a graph
-        follows a Scale.Free Topology)
-        :param float xmin: at what "x" on the degree distribution the power law will be fitted
-        :return: a float representing the fitted power low distribution of the graph
-        """
 
+        r"""
+        Find the :math:`\alpha` of the `power law <https://en.wikipedia.org/wiki/Power_law>`_ of an
+        :py:class:`~igraph.Graph` (the coefficient used to infer whether the graph topology can be
+        approximated to a `scale-free <https://en.wikipedia.org/wiki/Scale-free_network>`_.
+
+        .. note:: this method is recommended for graph of large size (:math:`N \geq 10000`)
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param float xmin: at what :math:`x` on the degree distribution the power law will be fitted. If not specified, will be automatically found.
+        :return float: a float representing the fitted power low distribution of the graph
+        :raise ValueError: if ``xmin`` is not a positive float
+        """
         if xmin is not None and xmin is not isinstance(xmin,(int,float)) and xmin < 0:
-            raise ValueError("\"xmin\" must be a float greater than 0")
+            raise ValueError(u"\"xmin\" must be a float greater than 0")
 
         degree = graph.degree()
 

@@ -32,7 +32,7 @@ from functools import wraps
 from collections import Counter
 
 
-def check_graph_consistency(func: object) -> object:
+def check_graph_consistency(func):
     """
     It checks the structural integrity of a graph
     :param func: The decorated function

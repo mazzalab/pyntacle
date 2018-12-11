@@ -1,5 +1,5 @@
 Quick Graph Overview	
-graph name	figure_8	
+graph name	figure 8	
 components	1	
 nodes	32	
 edges	56	

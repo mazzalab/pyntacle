@@ -43,6 +43,7 @@ class AdjmUtils:
     def __init__(self, file: str, header: bool, sep="\t"):
         """
         Initialize the Adjacency Matrix Utils class by giving the parser all the necessary information.
+
         :param str file: a valid PATH to the input adjacency matrix
         :param bool header: a boolean specifying whether the adjacency matrix contains an header or not on both rows and columns
         :param str sep: a string specifying the delimiter amon adjacency matrix fields. Default it "\t" (tab separated)
@@ -68,7 +69,8 @@ class AdjmUtils:
     def is_squared(self) -> bool:
         """
         Utility to check if an adjaceny matrix is squared or not by checking if the number of rows and columns (must be equal)
-        :return: a boolean representing True if the matrix is squared or False otherwise
+
+        :return bool: ``True`` if the matrix is squared, ``False`` otherwise
         """
         self.logger.info("Checking if adjacency matrix is squared")
         with open(self.adjfile, "r") as file:
@@ -84,9 +86,6 @@ class AdjmUtils:
         return True
 
     def __store_adjm(self):
-        """
-        Store the input adjacency matrix in a list of lists
-        """
         if self.adjm is None:
             self.adjm = []
             with open(self.adjfile, "r") as infile:
@@ -113,6 +112,7 @@ class AdjmUtils:
     def get_adjm(self, file: str, header: bool, sep="\t"):
         """
         Replace the current adjacency Matrix with another one
+
         :param str file: valid path to the newl added input adjacency matrix
         :param bool header: Boolean to specify whether the header is present or not
         :param str sep: cell separator. Default is "\t"
@@ -124,10 +124,6 @@ class AdjmUtils:
         self.adjm = None
 
     def __write_adjm(self, adjm: list, separator: str, appendix: str) -> str:
-        """
-        Hidden function that rewrite an adjacency matrix to the input path (used internally)
-        :return: the path to the (new) adjacency matrix
-        """
         o = os.path.splitext(os.path.abspath(self.adjfile))
         outpath = o[0] + "_" + appendix + o[-1]
         with open(outpath, "w") as out:
@@ -148,7 +144,8 @@ class AdjmUtils:
     def is_weighted(self) -> bool:
         """
         Function that returns a boolean telling whether the adjacency matrix contains weights (values different from 1s and 0s)
-        :return: a boolean with `True` if the graph is weighted and `False` otherwise
+
+        :return  bool: ``True`` if the graph is weighted ``False`` otherwise
         """
         self.__store_adjm()
         self.logger.info("checking if the matrix is weighted")
@@ -167,6 +164,7 @@ class AdjmUtils:
         Convert matrix to unweighted by setting every value different from 1 to 1 and write it to a new file. Zeroes
         will be preserved. Will create a file in the same directory  where the input adjacency matrix is stored
         with the "_unweighted.adjm" extension
+
         :return str outpath: a path to a valid file. Will be in the same directory of the input adjacencuy matrix, with
         the "unweighted" extension.
         """
@@ -188,6 +186,7 @@ class AdjmUtils:
     def is_direct(self) -> bool:
         """
         Checks whether an adjacency matrix is direct or not (so if the upperand lower triangular matrix match perfectly)
+
         :return: directbool, a value representing True if the matrix is direct and False otherwise
         """
 
@@ -205,7 +204,7 @@ class AdjmUtils:
     def make_undirect(self) -> str:
         """
         Convert an direct Adjacency Matrix to an undirect one (so make it symmetric) and store it into a new file with
-        the "_undirect.adjm" extension. If the matrix is weighted, we will take the maximum value in each cell and
+        the *"_undirect.adjm"* extension. If the matrix is weighted, we will take the maximum value in each cell and
         assign it to the corresponding one.
 
         :return str outpath: a valid path where the new (undirected) adjacency matrix will be stored with the
