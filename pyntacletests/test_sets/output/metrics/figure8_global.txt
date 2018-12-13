@@ -24,4 +24,3 @@ average_radiality_reach	5.91734
 completeness_naive	0.12727	
 completeness	3.80702	
 compactness	7.88839	
-compactness_correct	0.12677	

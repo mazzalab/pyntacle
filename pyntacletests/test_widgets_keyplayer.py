@@ -132,11 +132,9 @@ class WidgetTestKeyplayer(unittest.TestCase):
                          'Wrong checksum for KeyPlayer, kp-finder bruteforce case')
 
     def tearDown(self):
-        # pass
         self.cleanup()
 
     def cleanup(self):
-        # pass
         files = glob.glob(os.path.join(current_dir, 'pyntacletests/test_sets/tmp/*'))
         for f in files:
             os.remove(f)

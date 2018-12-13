@@ -1,4 +1,3 @@
-pyntacle Report 2018-12-13-115503	
 Quick Graph Overview	
 graph name	figure_8	
 components	1	
