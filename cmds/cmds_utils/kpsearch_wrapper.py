@@ -29,7 +29,7 @@ from tools.enums import CmodeEnum
 from algorithms.greedy_optimization import GreedyOptimization
 from algorithms.bruteforce_search import BruteforceSearch
 from tools.graph_utils import GraphUtils as gu
-from private.timeit import timeit
+from internal.timeit import timeit
 from tools.enums import KpposEnum, KpnegEnum
 from algorithms.keyplayer import KeyPlayer
 from igraph import Graph
@@ -62,7 +62,7 @@ class KPWrapper:
         """
         Run Single KPP-POS metrics on a single node or a set of nodes, adds everuything to the "results" object
         :param nodes: either a single node name or a list of node names
-        :param KpposEnum kp_type: one of the KPPNEGchoices defined in private.enums
+        :param KpposEnum kp_type: one of the KPPNEGchoices defined in internal.enums
         :param int m: if kp_type is the m-reach, specifies the maximum distance for mreach to be computed
         :param int max_distance: maximum shortest path distance allowed (must be a positive integer greater than 0
         """
@@ -101,7 +101,7 @@ class KPWrapper:
         """
         Run KP NEG metrics for a node or a set of nodes
         :param nodes: either a single node name or a list of node names
-        :param KpnegEnum kp_type: one of the KPPNEGchoices defined in private.enums
+        :param KpnegEnum kp_type: one of the KPPNEGchoices defined in internal.enums
         :param int max_distance: maximum shortest path distance allowed (must be a positive integer greater than 0.
         """
         if not isinstance(kp_type, KpnegEnum):
@@ -168,7 +168,7 @@ class GOWrapper:
         Wrapper around the Greedy Optimization Module that stores the greedy optimization results for KPPOS metrics in the
         "results" dictionary
         :param int kp_size: size of the kpp-set to be found
-        :param KpnegEnum kp_type: on of the KPNEGchoices enumerators stored in private.enums
+        :param KpnegEnum kp_type: on of the KPNEGchoices enumerators stored in internal.enums
         :param int max_distances: maximum shortest path distance allowed in the shortest path matrix
         :param int seed: a seed that can be passed in order to replicate GO results
         """
@@ -186,7 +186,7 @@ class GOWrapper:
         """
         Wrapper around the Greedy Optimization Module that stores the greedy optimization results for KPPOS metrics
         :param int kp_size: size of the kpp-set to be found
-        :param KpposEnum kp_type: on of the KPPOSchoices enumerators stored in private.enums
+        :param KpposEnum kp_type: on of the KPPOSchoices enumerators stored in internal.enums
         :param int max_distances: maximum shortest path distance allowed in the shortest path matrix
         :param int seed: a seed that can be passed in order to replicate GO results
         :param int m: for the "mreach" metrics, a positive integer greatrer than one representing the maximum distance for mreach
@@ -239,7 +239,7 @@ class BFWrapper:
         Wrapper around the Bruteforce Search Module that stores the greedy optimization results for KPPOS metrics in
         the "results" dictionary
         :param int kp_size: size of the kpp-set to be found
-        :param KpnegEnum kp_type: on of the KPNEGchoices enumerators stored in private.enums
+        :param KpnegEnum kp_type: on of the KPNEGchoices enumerators stored in internal.enums
         :param int max_distances: maximum shortest path distance allowed in the shortest path matrix
         """
         if not isinstance(kp_size, int) or kp_size < 1:
@@ -257,7 +257,7 @@ class BFWrapper:
         """
         Wrapper around the Bruteforce Search Module that stores the greedy optimization results for KPPOS metrics
         :param int kp_size: size of the kpp-set to be found
-        :param KpposEnum kp_type: on of the KPPOSchoices enumerators stored in private.enums
+        :param KpposEnum kp_type: on of the KPPOSchoices enumerators stored in internal.enums
         :param int max_distance: maximum shortest path distance allowed in the shortest path matrix
         :param int m: for the "mreach" metrics, a positive integer greatrer than one representing the maximum distance for mreach
         """

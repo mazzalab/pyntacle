@@ -37,8 +37,15 @@ from tools.add_attributes import AddAttributes
 
 class ImportAttributes():
     r"""
-    Import attributes for an `igraph.Graph` object stored in a file and adds it to the Graph that has to be studied
+    Imports attributes for nodes, edges or the whole graph from a text file and adds it to the ``igraph.Graph`` object of
+    interest at the appropriate layer. We refer to the `File Formats Guide <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html#aff>`_
+    on Pyntacle website for more details on the allowed types of attribute files.
+
+    :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+
+    :raise NotAGraphError: if the initialized object is not of :py:class:`igraph.Graph`
     """
+    #todo Mauro: make the methods static
 
     logger = None
     
@@ -72,19 +79,36 @@ class ImportAttributes():
             
             return (file, sep)
     
-    def import_graph_attributes(self, file, sep=None):
+    def import_graph_attributes(self, file: str, sep: str or None=None):
         r"""
-        Add an attribute to a graph object. The first line is always skipped, aa it is assumed to be a header.
+        Adds attributes at the ``graph`` level of a :py:class:`igraph.Graph` object. this file is usually a tabular
+        file with each line storing in the first column the attribute name and in the second the attribute value, i.e.:
 
-        :param attr: file
-        :param sep: field separator if input is a file
+        +------------+-------+
+        |  Attribute | Value |
+        +============+=======+
+        |   diameter |  2    |
+        +------------+-------+
 
-        :return: an igraph.Graph object
+        We refer the user to the `graph attribute <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html#ga>`_
+        file specification guide in the Pyntacle official page for further details on attribute files.
+
+        .. note:: The first line is always skipped, as it is assumed to be a header.
+
+        .. note:: each value is orted as a :py:class:`str`, be sure to turn it into your type of interest if needed.
+
+
+        :param str file: the path to the attribute file
+        :param str,None sep: field separator between columns. If :py:class:`None` it will be guessed
         """
         
         check = self.__check_file(file=file, sep=sep)
         infile = check[0]
         sep = check[1]
+
+        # todo mauro: add ctrls (e.g. input file exists, input file is a string, sep is a string
+        # todo mauro add controls on whether an edge attribute starts with `__` (reserved for private attributes)
+
         with open(infile, "r") as attrfile:
             next(attrfile)
             for line in attrfile:
@@ -95,13 +119,35 @@ class ImportAttributes():
         sys.stdout.write(u"Graph attributes from {} imported.\n".format(file))
 
 
-    def import_node_attributes(self, file: str, sep=None):
+    def import_node_attributes(self, file: str, sep: str or None=None):
         r"""
-        This function takes an header file and, optionally, a separator, and add them to a graph imprted in __init
+        This method takes an attribute node file and add each attribute to the the :py:class:`igraph.Graph` object.
+        A node attribute file is a table in which the first column matches the vertex``name`` attribute of the
+        :py:class:`igraph.Graph` object and the rest of the column are attributes that are assigned to the target node,
+        such as:
 
-        :param file: the name of an existing file name
+        +------------+-------------+-------------+
+        | Node_Name  | Attribute_1 | Attribute_2 |
+        +============+=============+=============+
+        | node_A     | NA          |        NA   |
+        | node_B     | 3.3         |      0.012  |
+        | node_C     | -2.3        |      0.054  |
+        +------------+-------------+-------------+
 
-        :return: an igraph object with the attribute added (a string attribute)
+        .. note:: the attribute file **must** have an header, that is used to specify the attribute name. The first cell of the header is skipped
+
+        .. note:: to represent an empty value for the selected nodes, one can use ``NA``, ``?`` or ``NONE``. This will return an attribute value of type :py:class:`None` for the attribute of the selected vertex
+
+        .. warning:: the attribute name cannot start with `__`, as this is usually reserved for private attributes
+
+
+        We refer the user to the `graph attribute <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html#na>`_
+        file specification guide in the Pyntacle official page for further details on attribute files.
+
+        :param str file: the path to the attribute file
+        :param str,None sep: field separator between columns. If :py:class:`None` it will be guessed
+
+        :raise KeyError: if any of the attribute names starts with ``__``
         """
 
         self.logger.info(u"Reading attributes from file %s and adding them to nodes" % file)
@@ -120,8 +166,8 @@ class ImportAttributes():
             # Checking if one or more attributes' names start with '__'. Avoids malicious injection.
             if any(i in reserved_attrs for i in attrfile.readline().rstrip().split(sep)):
                 raise KeyError(
-                    u"One of the attributes in your attributes/weights file starts with __ (double underscore)."
-                    "This notation is reserved to private variables, please avoid using it.")
+                    u"One of the attributes in your attributes/weights file starts with `__`."
+                    "This notation is reserved to internal variables, please avoid using it.")
             attrfile.seek(last_pos)
         
             # read the first line as header and store the attribute names
@@ -147,7 +193,7 @@ class ImportAttributes():
                         names_list.add(name)
                     else:
                         self.logger.warning(
-                            u"WARNING: Node {} has already been assigned an attribute, will be overwritten".format(
+                            u"Node {} has already been assigned an attribute, will be overwritten".format(
                                 name))
                 
                     if len(select) == 0:
@@ -159,8 +205,6 @@ class ImportAttributes():
                                 attrs_dict[attrnames[i]] = OrderedDict()
                             attrs_dict[attrnames[i]][select[0]["name"]] = obj
                     else:
-                        self.logger.error(
-                            u"Node %s has multiple name hits, please check your attribute file" % name)
                         raise ValueError(u"multiple node hits")
                     
         for attr in attrs_dict:
@@ -168,15 +212,39 @@ class ImportAttributes():
                 
         sys.stdout.write(u"Node attributes from {} imported.\n".format(file))
 
-    def import_edge_attributes(self, file: str, sep=None, mode='standard'):
+    def import_edge_attributes(self, file: str, sep: str or None=None, mode: str='standard'):
         r"""
-        Add edge attributes specified in a file like (nodeA/nodeB/listofvalues) to the `igraph.Graph` object declared
-        when the class was initialized.
+        This method imports attributes at the edge level of a :py:class:`igraph.Graph` object.
 
-        :param file: a valid $PATH to a file storing an edge attributes. This file can be either a standard edge attribute file or a Cytoscape Legacy format. See our [file format](http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html) page for details regarding this file format
-        :param sep: a string specified the separator character of your edge attrib ute file. if `None` (default) it will be guessed.
-        :param mode: a strng specified the file format of the edge attributes file. choices are `standard` or `cytoscape`
+        We offer two ways to import edge attributes, that can be specified in the ``mode`` parameter:
+
+        * a ``standard`` mode, a table like format format in which the first two columns represent the ``source`` and the ``target`` vertices that uniquely identifies the edge The order of the spurce and target node is not important. The third columns onwards represents the attrobute that will be assigned to each edge in the :py:class:`igraph.Graph`, like in the following example:
+
+        +--------+--------+------------+------------+
+        | Source | Target | Attribute1 | Attribute2 |
+        +========+========+============+============+
+        | node_A | node_B |  12        |     18     |
+        | node_B | node_C | int_a      |     NA     |
+        +--------+--------+------------+------------+
+
+        .. note:: the attribute file **must** have an header, that is used to specify the edge attribute name. The first two cells of the header are skipped, as only the source and target are used to identify edges
+
+        * a ``cytoscape`` mode, in which we port the `Cytoscape Legacy format <http://manual.cytoscape.org/en/stable/Node_and_Edge_Column_Data.html?highlight=legacy>`_ for edge attributes
+
+        .. note:: to represent an empty value for the selected nodes, one can use ``NA``, ``?`` or ``NONE``. This will return an attribute value of type :py:class:`None` for the attribute of the selected edge
+
+        We refer the user to the `graph attribute <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html#na>`_
+        file specification guide in the Pyntacle official page for further details on attribute files.
+
+        :param str file: the path to the attribute file
+        :param str,None sep: field separator between columns. If :py:class:`None` it will be guessed
+        :param str mode: either ``standard`` or ``cytoscape``
+
+        :raise UnsupportedGraphError: if the :py:class:`igraph.Graph` has multiple edges (occurs when the graph does not respect the minimum requirements for Pyntacle)
+        :raise IllegalArgumentNumberError: if the formatting of the edge attribute file does not meet the desired requirements
         """
+        # todo mauro add controls on whether an edge attribute starts with `__` (reserved for private attributes)
+
         check = self.__check_file(file=file, sep=sep)
         infile = check[0]
         sep = check[1]
@@ -185,18 +253,23 @@ class ImportAttributes():
         with open(infile, "r") as attrfile:
             if mode == "standard":
                 attrnames = [x for x in attrfile.readline().rstrip().split(sep)[2:]]
+
             elif mode == "cytoscape":
                 attrnames = [x for x in attrfile.readline().rstrip().split(sep)[1:]]
             err_count = 0
             line_count = 0
+
             for line in attrfile:
+
                 if line in ['\n', '\r\n']:
                     self.logger.warning(u"Skipping empty line")
                 
                 else:
                     tmp = line.rstrip().split(sep)
+
                     if mode == "standard":
                         perm_node_names = [(tmp[0], tmp[1]), (tmp[1], tmp[0])]
+
                     elif mode == "cytoscape":
                         perm_node_names = [(tmp[0].split(' ')[0], tmp[0].split(' ')[2]),
                                            (tmp[0].split(' ')[2], tmp[0].split(' ')[0])]
@@ -204,6 +277,7 @@ class ImportAttributes():
                     if perm_node_names[0] not in edges_list and perm_node_names[1] not in edges_list:
                         edges_list.add(perm_node_names[0])
                         edges_list.add(perm_node_names[1])
+
                     else:
                         # This happens when the attribute list has a duplicate edge.
                         self.logger.warning(
@@ -213,6 +287,7 @@ class ImportAttributes():
                     
                     if mode == "standard":
                         attrs = tmp[2:]
+
                     elif mode == "cytoscape":
                         attrs = tmp[1:]
                     
@@ -226,12 +301,16 @@ class ImportAttributes():
                         select.append(match_inv)
                         
                     if len(select) == 1:
+
                         for i, obj in enumerate(attrs):
+
                             if attrnames[i] not in attrs_dict:
                                 attrs_dict[attrnames[i]] = OrderedDict()
+
                             if obj.upper() in ["NONE", "NA", "?"]:
                                 attrs_dict[attrnames[i]][select[0]["adjacent_nodes"][0]] = None
                                 # select[0][attrnames[i]] = None
+
                             else:
                                 attrs_dict[attrnames[i]][select[0]["adjacent_nodes"][0]] = obj
                                 # select[0][attrnames[i]] = obj
@@ -254,8 +333,10 @@ class ImportAttributes():
             
             if err_count == line_count:
                 raise IllegalArgumentNumberError(u"Edge attributes not added; all lines in the attribute file were skipped.")
+
             else:
                 self.logger.info("Edge attributes added")
+
                 for attr in attrs_dict:
                     AddAttributes(self.__graph).add_edge_attributes(attr, list(attrs_dict[attr].values()),
                                                                     list(attrs_dict[attr].keys()))

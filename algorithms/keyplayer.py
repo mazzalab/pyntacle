@@ -30,8 +30,8 @@ import igraph
 from tools.enums import CmodeEnum
 from tools.graph_utils import GraphUtils as gu
 from algorithms.shortest_path import ShortestPath as sp
-from private.graph_routines import check_graph_consistency, vertex_doctor
-from private.shortest_path_modifications import ShortestPathModifier
+from internal.graph_routines import check_graph_consistency, vertex_doctor
+from internal.shortest_path_modifications import ShortestPathModifier
 from exceptions.wrong_argument_error import WrongArgumentError
 
 

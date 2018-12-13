@@ -33,7 +33,7 @@ current_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pa
 from config import *
 import re
 from cmds.metrics import Metrics as metrics_command
-from private.graph_load import GraphLoad
+from internal.graph_load import GraphLoad
 from algorithms.shortest_path import ShortestPath
 from tools.enums import *
 

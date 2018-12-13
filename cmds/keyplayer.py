@@ -34,7 +34,7 @@ from io_stream.exporter import PyntacleExporter
 from cmds.cmds_utils.plotter import *
 from cmds.cmds_utils.reporter import *
 from tools.graph_utils import *
-from private.graph_load import GraphLoad, separator_detect
+from internal.graph_load import GraphLoad, separator_detect
 from tools.enums import ReportEnum, CmodeEnum
 from tools.add_attributes import AddAttributes
 from colorama import Fore, Style

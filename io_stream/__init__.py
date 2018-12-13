@@ -5,7 +5,7 @@ be added to the ``igraph.Graph`` object to enriches graph elements of additional
 to external tools (i.e. `Cytoscape <https://cytoscape.org/>`_
 Moreover, it provides a subset of utilities to convert quickly a file format without importing it into Pyntacle.
 Finally, it produces simulated networks that follows several well-known topologies by wrapping some of the :py:class:`igraph`
-network generators into comfortable utilities that export directly into one of the desired file formats.
+network generators into comfortable utilities that initialize them for Pyntacle usage and testing.
 
 For a more comprehensive view on the supported network file format, please visit the `File Formats Guide <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html>`_
 on the Pyntacle official page, that is regularly updated and shows examples for each file format.
@@ -23,7 +23,7 @@ The module is organized as follows:
     * `tree <https://en.wikipedia.org/wiki/Tree_(graph_theory)>`_
 
 * :class:`~pyntacle.io_stream.import_attributes`: Import network attributes for graph, nodes and edges and adds them to the ``igraph.Graph`` object
-* :class:`~pyntacle.io_stream.export_attributes`: Export network attroibutes into tab-delimited file or some formats compliant with Cytoscape requirements.
+* :class:`~pyntacle.io_stream.export_attributes`: Export network attributes into tab-delimited file or some formats compliant with Cytoscape requirements.
 
 """
 

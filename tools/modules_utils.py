@@ -145,8 +145,8 @@ class ModuleUtils():
                 u"graph attribute \"name\" must be unique, found {} instead, will use first name only.".format(
                     ",".join[self.graph["name"]]))
 
-        self.logger.info(u"adding algorithm used to each module in the \"__module_algorithm\" private attribute")
-        self.logger.info(u"adding original graph name to each module in the \"__origin_graph\" private attribute")
+        self.logger.info(u"adding algorithm used to each module in the \"__module_algorithm\" internal attribute")
+        self.logger.info(u"adding original graph name to each module in the \"__origin_graph\" internal attribute")
 
         for subgraph in self.modules:
             if "__module_algorithm" not in subgraph.attributes():

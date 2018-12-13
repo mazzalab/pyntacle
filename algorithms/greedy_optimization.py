@@ -29,8 +29,8 @@ from algorithms.keyplayer import KeyPlayer as kp
 from algorithms.shortest_path import ShortestPath as sp
 from algorithms.local_topology import LocalTopology
 from exceptions.wrong_argument_error import WrongArgumentError
-from private.graph_routines import check_graph_consistency
-from private.group_search_utils import greedy_search_initializer
+from internal.graph_routines import check_graph_consistency
+from internal.group_search_utils import greedy_search_initializer
 
 class GreedyOptimization:
     r"""

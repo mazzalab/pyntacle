@@ -34,7 +34,7 @@ from io_stream.exporter import PyntacleExporter
 from cmds.cmds_utils.plotter import *
 from cmds.cmds_utils.reporter import *
 from io_stream.import_attributes import ImportAttributes
-from private.graph_load import GraphLoad,separator_detect
+from internal.graph_load import GraphLoad,separator_detect
 
 from tools.graph_utils import GraphUtils
 from tools.add_attributes import AddAttributes

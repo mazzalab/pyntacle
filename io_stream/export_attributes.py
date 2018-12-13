@@ -34,8 +34,11 @@ class ExportAttributes():
     Export Attributes stored into the ``igraph.Graph`` object as text files. These attributes can belong to the whole
     graph, nodes or edges that belong to the input network.
 
+    :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+
     :raise NotAGraphError: if the initialized object is not of :py:class:`igraph.Graph`
     """
+    # todo Mauro: make the methods static
 
     logger = None
 
@@ -49,7 +52,7 @@ class ExportAttributes():
         else:
             self.__graph = graph
 
-    def export_edge_attributes(self, file :str, mode :str='standard'):
+    def export_edge_attributes(self, file: str, mode: str='standard'):
         r"""
         Export attributes related to the  *edges* of a network stored into an :py:class:`igraph.Graph` object to a text
         file. Pyntacle can export edges in two formats:

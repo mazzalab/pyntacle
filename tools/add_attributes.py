@@ -36,6 +36,9 @@ from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
 class AddAttributes:
     r"""
     Add specific and generic properties to any of the py:class:`igraph.Graph` object elements
+
+    :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+
     """
 
     logger = None
@@ -46,13 +49,13 @@ class AddAttributes:
             raise WrongArgumentError(u"object is not a igraph.Graph")
         else:
             self.__graph = graph
-    #todo: this was merged with conflicts - re-test it
-    def add_graph_attributes(self, attr_name: str, attr):
+
+    def add_graph_attributes(self, attr_name: str, attr: object):
         r"""
         Add an attribute to a graph object
 
-        :param attr: Any object being added as attribute
-        :param attr_name: The name of the attribute being imported
+        :param str attr_name: The name of the attribute being imported
+        :param object attr: Any object being added as attribute
         """
 
         if not isinstance(attr_name, str):
@@ -67,15 +70,13 @@ class AddAttributes:
             else:
                 self.__graph[attr_name] = attr
 
-    def add_node_attributes(self, attr_name, attr_list, nodes):
+    def add_node_attributes(self, attr_name: str, attr_list: list, nodes: list):
         r"""
         This method takes an header file and, optionally, a separator, and add them to a graph imprted in __init
 
         :param attr_list: the object being added as attribute
         :param attr_name: string. The name of the attribute being imported
         :param nodes: list. Nodes to which attributes will be applied.
-
-        :return: an igraph object with the attribute added
         """
 
         if not isinstance(attr_name, str):
@@ -87,7 +88,7 @@ class AddAttributes:
         if attr_name.startswith('__'):
             raise KeyError(
                 u"One of the attributes being added starts with __ (double underscore)."
-                "This notation is reserved to private variables, please avoid using it.")
+                "This notation is reserved to internal variables, please avoid using it.")
         
         assert len(attr_list) == len(nodes), u"in add_node_attributes, length of attributes list cannot be " \
                                              "different from length of list of nodes."
@@ -111,16 +112,16 @@ class AddAttributes:
         else:
             self.logger.info(u"Node attribute {} successfully added!".format(attr_name))
 
-    def add_edge_attributes(self, attr_name, attr_list, edges):
+    def add_edge_attributes(self, attr_name: str, attr_list: list, edges: list):
         r"""
         Add edge attributes specified in a file like (nodeA/nodeB/listofvalues)
-        **[EXPAND DESCRIPTIONS OF PARAMS]**
+
 
         :param attr_name: string. The name of the attribute being imported
         :param attr_list: the object being added as attribute
         :param edges: list. edges to which attributes will be applied.
 
-        :return:
+        :return str:
         """
 
         if not isinstance(attr_name, str):
@@ -129,8 +130,8 @@ class AddAttributes:
         # Checking if one or more attributes' names start with '__'. Avoids malicious injection.
         if attr_name.startswith('__'):
             raise KeyError(
-                u"One of the attributes in your attributes/weights file starts with __ (double underscore)."
-                "This notation is reserved to private variables, please avoid using it.")
+                u"One of the attributes in your attributes/weights file starts with `__`."
+                "This notation is reserved to internal variables, please avoid using it.")
         
         assert len(attr_list) == len(edges), u"in add_edge_attributes, length of attributes list cannot be " \
                                              "different from length of list of nodes."
@@ -154,12 +155,12 @@ class AddAttributes:
         
         if err_count == count:
             raise WrongArgumentError("All the attributes pointed to non-existing edges.")
-        else:
-            return attr_name  # return the names of the attributes
 
-    def add_edge_names(self, readd=False):
+    def add_edge_names(self, readd: bool=False):
         r"""
         Add adjacent edge as attribute stored in a tuple to each edge
+
+        :param bool: a :py:class:`bool` that specifies whether the edge names should be re-added or not
         """
 
         if readd is True or "adjacent_nodes" not in self.__graph.es.attributes():
@@ -172,11 +173,11 @@ class AddAttributes:
         else:
             self.logger.info(u"attribute 'adjacent_nodes' already exist")
 
-    def add_graph_name(self, namestring):
+    def add_graph_name(self, namestring: str):
         r"""
-        Initialize or replace the graph ``name`` attribute with the strng stored in the ``namestring`` parameter.
+        Initialize or replace the graph ``name`` attribute with the value stored in the ``namestring`` parameter.
 
-        :param str namestring:
+        :param str namestring: a string representing the name of the graph to be added.
         """
 
         self.logger.info(u"adding attribute 'name' to the graph")

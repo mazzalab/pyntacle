@@ -148,7 +148,7 @@ class GraphUtils:
 
     def attribute_in_nodes(self, attribute):
         r"""
-        Checks that a given attribute (such as the ones stored in `tools/private/enums`) is present as  node attribute
+        Checks that a given attribute (such as the ones stored in `tools/internal/enums`) is present as  node attribute
         (so is in graph.vs.attributes())
         :param attribute: the attribute you're looking for
 
@@ -161,7 +161,7 @@ class GraphUtils:
 
     def attribute_in_edges(self, attribute):
         r"""
-        Checks that a given attribute (such as the ones stored in `tools/private/enums`) is present as edge attribute
+        Checks that a given attribute (such as the ones stored in `tools/internal/enums`) is present as edge attribute
         (so is in graph.es.attributes())
 
         :param attribute: the attribute you're looking for
@@ -175,7 +175,7 @@ class GraphUtils:
 
     def attribute_in_graph(self, attribute):
         r"""
-        Checks that a given attribute (such as the ones stored in `tools/private/enums`) is present as graph attribute
+        Checks that a given attribute (such as the ones stored in `tools/internal/enums`) is present as graph attribute
         (so is in graph.attributes())
 
         :param attribute: the attribute you're looking for
@@ -264,7 +264,7 @@ class GraphUtils:
 
     def get_attribute_names(self, attribute_list: list, type="graph") -> list:
         r"""
-        given a specified enumerator (such as the ones stored in `tools/private/enums`, check iuf the attribute is initialized
+        given a specified enumerator (such as the ones stored in `tools/internal/enums`, check iuf the attribute is initialized
         at the corresponding `type` level (choices are "graph", "node", "edge")
 
         :param attribute_list:

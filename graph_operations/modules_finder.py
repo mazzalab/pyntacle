@@ -55,6 +55,7 @@ class CommunityFinder:
         This algorithm merges individual nodes into communities in a way that greedily maximizes the modularity score
         of the graph. This algorithm is said to run almost in linear time on sparse graphs.
         (http://igraph.org/python/doc/igraph.Graph-class.html#community_fastgreedy)
+
         :param weights: edge attribute name or a list containing edge weights
         :param n: if specified, it represents the desired number of modules to be computed
         """

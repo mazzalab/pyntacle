@@ -28,7 +28,7 @@ from config import *
 from warnings import simplefilter
 from io_stream.exporter import PyntacleExporter
 from io_stream.converter import PyntacleConverter
-from private.graph_load import GraphLoad, separator_detect
+from internal.graph_load import GraphLoad, separator_detect
 
 class Convert():
     """

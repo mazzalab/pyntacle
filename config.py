@@ -60,7 +60,7 @@ class CursorAnimation(threading.Thread):
         self.flag = True
 
         if os.name == "nt":
-            self.animation_char = u'|/-\'
+            self.animation_char = u"|/-\""
         else:
             self.animation_char = u'⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
         self.idx = 0

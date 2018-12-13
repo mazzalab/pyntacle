@@ -35,7 +35,7 @@ from numba import jit, prange, cuda
 from psutil import virtual_memory
 from tools.enums import CmodeEnum
 from tools.graph_utils import GraphUtils as gUtil
-from private.graph_routines import check_graph_consistency, vertex_doctor
+from internal.graph_routines import check_graph_consistency, vertex_doctor
 from exceptions.wrong_argument_error import WrongArgumentError
 
 

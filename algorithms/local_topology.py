@@ -28,7 +28,7 @@ __license__ = u"""
 from tools.enums import CmodeEnum, GroupDistanceEnum
 from tools.graph_utils import GraphUtils as gUtil
 from algorithms.shortest_path import ShortestPath
-from private.graph_routines import check_graph_consistency, vertex_doctor
+from internal.graph_routines import check_graph_consistency, vertex_doctor
 from igraph import Graph
 import numpy as np
 from math import inf, isinf

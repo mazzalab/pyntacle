@@ -31,7 +31,7 @@ from cmds.cmds_utils.plotter import PlotGraph
 from io_stream.import_attributes import ImportAttributes
 from tools.modules_utils import ModuleUtils
 from tools.graph_utils import *
-from private.graph_load import GraphLoad, separator_detect
+from internal.graph_load import GraphLoad, separator_detect
 
 class Communities():
     def __init__(self, args):

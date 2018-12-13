@@ -26,7 +26,7 @@ __license__ = u"""
 
 
 import math
-from private.graph_routines import check_graph_consistency
+from internal.graph_routines import check_graph_consistency
 
 class Sparseness:
     r"""

@@ -33,8 +33,8 @@ from algorithms.local_topology import LocalTopology
 from algorithms.shortest_path import ShortestPath as sp
 from exceptions.wrong_argument_error import WrongArgumentError
 from tools.enums import KpposEnum, KpnegEnum, CmodeEnum, GroupCentralityEnum, GroupDistanceEnum
-from private.graph_routines import check_graph_consistency
-from private.group_search_utils import bruteforce_search_initializer
+from internal.graph_routines import check_graph_consistency
+from internal.group_search_utils import bruteforce_search_initializer
 from igraph import Graph
 import multiprocessing as mp
 

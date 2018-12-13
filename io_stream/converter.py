@@ -27,7 +27,7 @@ __license__ = u"""
 
 from config import *
 from tools.edgelist_utils import EglUtils
-from private.io_utils import input_file_checker, separator_sniffer, randomword
+from internal.io_utils import input_file_checker, separator_sniffer, randomword
 
 
 class PyntacleConverter:
@@ -122,7 +122,7 @@ class PyntacleConverter:
     def sifToEdgelist(file: str, sep=None, header: bool=False, output_file: str=None, output_sep: str="\t"):
 
         r"""
-        Convert a Simple Interaction Format file (*SIF*) to an undirected edge list.
+        Converts a Simple Interaction Format file (*SIF*) to an undirected edge list.
 
         .. note :: while the SIF file is quite relaxed in terms of columns order, we **force** the user to give Pyntacle the more common way in which a SIF file is written (see below) All the other values from the 4th column onwards are assumed to be other target nodes connected to the input node. Thus, no attributes are present in the sif file.
 
