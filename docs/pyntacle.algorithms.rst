@@ -19,5 +19,6 @@ Submodules
    pyntacle.algorithms.local_topology
    pyntacle.algorithms.scalefree_inference
    pyntacle.algorithms.shortest_path
+   pyntacle.algorithms.shortest_path_gpu
    pyntacle.algorithms.sparseness
 

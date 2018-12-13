@@ -1,6 +1,5 @@
 """
-Pyntacle' tests manager script.
-
+Pyntacle tests manager script.
 """
 import sys
 import os

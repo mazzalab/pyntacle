@@ -136,9 +136,10 @@ class WidgetTestKeyplayer(unittest.TestCase):
         self.cleanup()
 
     def cleanup(self):
+        # pass
         files = glob.glob(os.path.join(current_dir, 'pyntacletests/test_sets/tmp/*'))
         for f in files:
             os.remove(f)
-        
+
 if __name__ == '__main__':
     unittest.main()

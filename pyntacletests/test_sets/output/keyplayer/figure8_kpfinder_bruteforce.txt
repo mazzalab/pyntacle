@@ -1,3 +1,4 @@
+pyntacle Report 2018-12-13-115252	
 Quick Graph Overview	
 graph name	figure_8	
 components	1	
@@ -7,13 +8,13 @@ edges	56
 	
 Pyntacle Command:	KP_bruteforce	
 maximum mreach distance	2	
-initial F value (whole graph)	0.0	
+initial F value (whole graph)	0	
 initial dF value (whole graph)	0.64755	
 Results: Brute-force Search	
-Metric	Nodes	Value
-mreach	HA,NP	25		
+Metric	Nodes	Value	
 F	WD,HB	0.70575	
 	HA,HB	0.70575	
 dF	WD,HB	0.81506	
 dR	KR,HB	0.64063	
 	BS3,HB	0.64063	
+mreach	HA,NP	25	

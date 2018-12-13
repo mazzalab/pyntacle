@@ -1,5 +1,6 @@
+pyntacle Report 2018-12-13-115503	
 Quick Graph Overview	
-graph name	figure 8	
+graph name	figure_8	
 components	1	
 nodes	32	
 edges	56	
@@ -7,11 +8,11 @@ edges	56
 	
 Pyntacle Command:	KP_greedy	
 maximum mreach distance	2	
-initial F value (whole graph)	0.0	
+initial F value (whole graph)	0	
 initial dF value (whole graph)	0.64755	
 Results: Greedily-Optimized Search for selected KP Metrics	
 Metric	Nodes	Value	
-F	PH,BM	0.62989	
-dF	PH,BM	0.78904	
-dR	KR,HB	0.64063	
-mreach	HA,NP	25	
+F	PH,WL	0.62989	
+dF	PH,WL	0.78904	
+dR	PH,WL	0.64063	
+mreach	PH,WL	25	

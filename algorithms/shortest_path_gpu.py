@@ -34,7 +34,7 @@ def shortest_path_gpu(adjmat: np.ndarray):
     Calculate all the shortest paths of a graph, represented as adjacency matrix, using the `Floyd-Warshall <https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm>`_ algorithm.
     The overall calculation is delegated to the GPU, if available, through the NUMBA python package.
 
-    :param np.ndarray adjmat: a numpy.ndarray containing the adjecency matrix of the graph . Infinite distance is represented as the length of the longest possible path within the graph +1. The diagonal of the matrix holds zero values.
+    :param np.ndarray adjmat: a numpy.ndarray containing the adjacency matrix of the graph . Infinite distance is represented as the length of the longest possible path within the graph +1. The diagonal of the matrix holds zero values.
     """
 
     i = cuda.grid(1)
@@ -57,12 +57,10 @@ def shortest_path_count_gpu(adjmat, count):
     r"""
     Calculate the shortest path lengths of a graph using the
     Floyd-Warshall algorithm with path count. The overall calculation is delegated to the GPU, if available, through
-    the NUMBA python package.
+    the Numba library.
 
-    :param np.ndarray adjmat: the adjacency matrix of a graph. Absence of links is represented with a number
-            that equals the total number of nodes in the graph + 1. This object will be modified during the computation.
-    :param np.ndarray count: the adjacency matrix of a graph. After the overall computation it will contain the path
-            lengths are in the upper triangular part of the array and the geodesics counts in the lower triangular part.
+    :param np.ndarray adjmat: the adjacency matrix of a graph. Absence of links is represented with a number that equals the total number of nodes in the graph + 1. This object will be modified during the computation.
+    :param np.ndarray count: the adjacency matrix of a graph. After the overall computation it will contain the path lengths are in the upper triangular part of the array and the geodesics counts in the lower triangular part.
     """
 
     i = cuda.grid(1)

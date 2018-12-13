@@ -1,3 +1,4 @@
+pyntacle Report 2018-12-13-115503	
 Quick Graph Overview	
 graph name	figure_8	
 components	1	
@@ -7,7 +8,7 @@ edges	56
 	
 Pyntacle Command:	KPinfo	
 maximum mreach distance	2	
-initial F value (whole graph)	0.0	
+initial F value (whole graph)	0	
 initial dF value (whole graph)	0.64755	
 
 	
