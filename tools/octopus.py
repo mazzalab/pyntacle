@@ -48,7 +48,8 @@ def get_cmode(graph):
     
 class Octopus:
     r"""
-    Octopus is a Pyntacle's command line tool that adds properties computed by Pyntacle itself to vertices or to the Graph
+    Octopus is a Pyntacle swiss knife tool aimed at using Pyntacle tools and metrics and import them directly into the
+    :py:class:`igraph.Graph` object as graph, node or edge attribute.
     """
 
     # Global properties
@@ -56,39 +57,52 @@ class Octopus:
     @check_graph_consistency
     def add_diameter(graph):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.diameter` method in
+        :class:`~pyntacle.algorithm.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
+        object under the graph name ``diameter``
 
-        :param graph:
-        :return:
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
+
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.diameter.name, GlobalTopology.diameter(graph))
 
     @staticmethod
     @check_graph_consistency
     def add_radius(graph):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.radius` method in
+        :class:`~pyntacle.algorithm.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
+        object under the graph name ``radius``
 
-        :param graph:
-        :return:
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
+
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.radius.name, GlobalTopology.radius(graph))
         
     @staticmethod
     @check_graph_consistency
     def add_components(graph):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.components` method in
+        :class:`~pyntacle.algorithm.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
+        object under the graph name ``components``
 
-        :param graph:
-        :return:
+        .. note:: this method adds the **number** of components, not the components themselves
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
+
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.components.name, GlobalTopology.components(graph))
 
     @staticmethod
     @check_graph_consistency
     def add_density(graph):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.radius` method in
+        :class:`~pyntacle.algorithm.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
+        object under the graph name ``radius``
 
-        :param graph:
-        :return:
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.density.name, GlobalTopology.density(graph))
         
