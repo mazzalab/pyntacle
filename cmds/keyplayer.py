@@ -24,9 +24,9 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-from cmds.cmds_utils.kpsearch_wrapper import KPWrapper as kpw
-from cmds.cmds_utils.kpsearch_wrapper import GOWrapper as gow
-from cmds.cmds_utils.kpsearch_wrapper import BFWrapper as bfw
+from cmds.cmds_utils.group_search_wrapper import InfoWrapper as kpw
+from cmds.cmds_utils.group_search_wrapper import GOWrapper as gow
+from cmds.cmds_utils.group_search_wrapper import BFWrapper as bfw
 from algorithms.keyplayer import KeyPlayer as kpp
 from itertools import chain
 from exceptions.generic_error import Error

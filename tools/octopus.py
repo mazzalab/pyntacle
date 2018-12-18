@@ -34,9 +34,9 @@ from algorithms.keyplayer import KeyPlayer
 from tools.enums import *
 from internal.graph_routines import check_graph_consistency
 from internal.shortest_path_modifications import ShortestPathModifier
-from cmds.cmds_utils.kpsearch_wrapper import KPWrapper as kpw
-from cmds.cmds_utils.kpsearch_wrapper import GOWrapper as gow
-from cmds.cmds_utils.kpsearch_wrapper import BFWrapper as bfw
+from cmds.cmds_utils.group_search_wrapper import InfoWrapper as kpw
+from cmds.cmds_utils.group_search_wrapper import GOWrapper as gow
+from cmds.cmds_utils.group_search_wrapper import BFWrapper as bfw
 
 
 def get_cmode(graph):

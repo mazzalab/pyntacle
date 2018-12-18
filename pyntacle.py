@@ -303,6 +303,11 @@ The available commands in Pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
         except KeyboardInterrupt:
             sys.stderr.write("\nReceived SIGKILL from Keyboard\n")
 
+    def group_centrality(self):
+        #TODO compila da qua
+        pass
+
+
 
     def metrics(self):
 

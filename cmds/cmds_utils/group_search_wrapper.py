@@ -38,7 +38,7 @@ from igraph import Graph
 enables to wrap the result into a structure that can be passed to Pyntacle commands"""
 
 
-class KPWrapper:
+class InfoWrapper:
     '''
     Wrapper for the KeyPlayer class, in order to pass proper data structures to the reporter class
     '''
