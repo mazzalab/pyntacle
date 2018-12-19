@@ -37,6 +37,7 @@ from exceptions.unproperly_formatted_file_error import UnproperlyFormattedFileEr
 from pyparsing import *
 from itertools import product
 from collections import OrderedDict
+from ordered_set import OrderedSet
 
 
 def dot_attrlist_to_dict(mylist):
@@ -176,7 +177,7 @@ class PyntacleImporter:
 
         if eglutils.is_direct():
             raise ValueError(u"Edgelist is not ready to be parsed by Pyntacle, it's direct. Use the `edgelist_utils` module in `tools` to make it undirect")
-        
+
         elif eglutils.is_multigraph():
             raise ValueError(u"Edgelist contains multiple edges. It is not ready to be parsed by Pyntacle, Use the `edgelist_utils` module in `tools` to turn it into a simple graph.")
 
@@ -194,9 +195,7 @@ class PyntacleImporter:
         adj = adj.drop_duplicates()
         adj.dropna(how="all", inplace=True) #remove all empty lines
 
-        #todo mauro: ordered set instead of normal set
-
-        graph.add_vertices(list(str(x) for x in set(adj[0].tolist() + adj[1].tolist())))
+        graph.add_vertices(list(str(x) for x in OrderedSet(adj[0].tolist() + adj[1].tolist())))
         edgs = adj.values.tolist()
 
         graph.add_edges(edgs)

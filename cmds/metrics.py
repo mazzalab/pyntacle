@@ -171,7 +171,7 @@ class Metrics:
                     else:
                         #Needs a file that has a 'weights' column.
                         sys.stdout.write("Adding Edge Weights from file {}\n".format(self.args.weights))
-                        ImportAttributes(graph=graph).import_edge_attributes(self.args.weights, sep=separator_detect(self.args.weights), mode=self.args.weights_format)
+                        ImportAttributes.import_edge_attributes(graph, self.args.weights, sep=separator_detect(self.args.weights), mode=self.args.weights_format)
                         try:
                             weights = [float(x) if x!=None else 1.0 for x in graph.es()["weights"]]
                         except KeyError:

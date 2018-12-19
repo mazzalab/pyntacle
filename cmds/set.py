@@ -200,6 +200,8 @@ class Set:
             if output_graph.ecount() == 0:
                 sys.stdout.write(
                     "No intersection was possible for the two input graphs. No output will be generated\n")
+                if not self.args.suppress_cursor:
+                    cursor.stop()
                 sys.exit(0)
 
         elif self.args.which == "difference":

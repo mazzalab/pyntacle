@@ -127,7 +127,7 @@ class Communities():
                     sys.exit(1)
 
                 else:
-                    ImportAttributes(graph=graph).import_edge_attributes(self.args.weights, sep=separator_detect(self.args.weights), mode=self.args.weights_format)
+                    ImportAttributes.import_edge_attributes(graph, self.args.weights, sep=separator_detect(self.args.weights), mode=self.args.weights_format)
                     weights = [float(x) if x != None else 1.0 for x in graph.es()["weights"]]
 
             else:
@@ -173,7 +173,7 @@ class Communities():
                     sys.exit(1)
 
                 else:
-                    ImportAttributes(graph=graph).import_edge_attributes(self.args.weights, sep=separator_detect(self.args.weights), mode=self.args.weights_format)
+                    ImportAttributes.import_edge_attributes(graph, self.args.weights, sep=separator_detect(self.args.weights), mode=self.args.weights_format)
                     weights = [float(x) if x != None else 1.0 for x in graph.es()["weights"]]
 
             else:
