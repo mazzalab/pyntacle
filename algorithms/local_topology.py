@@ -31,6 +31,7 @@ from algorithms.shortest_path import ShortestPath
 from internal.graph_routines import check_graph_consistency, vertex_doctor
 from igraph import Graph
 import numpy as np
+import itertools
 from math import inf, isinf
 
 class LocalTopology:
@@ -74,11 +75,14 @@ class LocalTopology:
         :raise KeyError: when any of the node ``name`` attribute passed to the function is not present in the input graph.
         """
 
+        gu = gUtil(graph)
+        nodes_ind = gu.get_node_indices(nodes)
+
         selected_neig = graph.neighborhood(nodes, order=1, mode="all")
-        flat_list = [item for sublist in selected_neig for item in sublist if item not in nodes]
+        flat_list = [item for sublist in selected_neig for item in sublist if item not in nodes_ind]
         normalized_score = len(set(flat_list)) / (len(graph.vs) - len(nodes))
 
-        return round(normalized_score, 2)
+        return round(normalized_score, 5)
 
     @staticmethod
     @check_graph_consistency
@@ -124,22 +128,32 @@ class LocalTopology:
 
         :return float: The normalized group betweenness centrality, obtained by dividing the group betweenness by the number of non-group nodes.
 
-        :raise TypeError: when ``nodes`` is a list of strings matching the vertex ``name`` attribute
+        :raise TypeError: when ``nodes`` is a list of strings matching the vertex ``name`` attribute or ``np_counts`` is not either a :py:class:`numpy.ndarray` or is empty
         :raise KeyError: when any of the node ``name`` attribute passed to the function is not present in the input graph
         """
 
         # Count geodesics of the original graph
-        if np_counts.size is not None:
+        if np_counts is not None:
+            if not isinstance(np_counts, np.ndarray):
+                raise TypeError("np_counts must be None or a nump.nparray, {} found".format(type(np_counts).__name__))
+
+            if not all(x == graph.vcount() for x in np_counts.shape):
+                raise ValueError("np_counts must be squared and of the same size of the graph ({})".format(graph.vcount()))
+
             count_all = np_counts
+
         else:
             count_all = ShortestPath.get_shortestpath_count(graph, nodes=None, cmode=cmode)
 
         # Get the corresponding node indices
         nodes_index = gUtil(graph).get_node_indices(nodes)
+        # print(nodes_index)
+        # input()
 
         # Count geodesics that do not pass through the group
         del_edg = [graph.incident(vertex=nidx) for nidx in nodes_index]
-        del1 = set(del_edg[0] + del_edg[1])
+        del1 = set(list(itertools.chain(*del_edg)))
+
         graph_notgroup = graph.copy()
         graph_notgroup.delete_edges(del1)
         count_notgroup = ShortestPath.get_shortestpath_count(graph_notgroup, nodes=None, cmode=cmode)
@@ -164,7 +178,7 @@ class LocalTopology:
         group_size = len(nodes_index)
         group_btw = (2 * group_btw) / ((graph_size - group_size) * (graph_size - group_size - 1))
 
-        return round(group_btw, 2)
+        return round(group_btw, 5)
 
     @staticmethod
     @check_graph_consistency
@@ -267,7 +281,7 @@ class LocalTopology:
                 group_closeness += dist_func(temp_list)
 
         normalized_score = len(nongroup_nodes) / group_closeness
-        return round(normalized_score, 2)
+        return round(normalized_score, 5)
 
     @staticmethod
     @check_graph_consistency
@@ -450,8 +464,7 @@ class LocalTopology:
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page
         :param None,str,list nodes: The input nodes on which to compute the selected index. When :py:class:`None`, it computes the pagerank for all nodes in the graph. Otherwise, a single node ``name`` or a list of them can be passed to compute degree only for a selected subset of nodes
-        :param list, None weights: a list of float numbers less or equal than the total number of edges
-        :param float damping: positive float representing the probability to reset the random walk distribution at each pagerank iteration. Default is 0.85.
+        :param list, None weights: a list of float numbers less or equal than the total number of edges. The order of the list shoould match the indices of the edge elements of the input graph. Defaults to :py:class:`None` (no weights added).
 
         :return list: a list of numeric values, the length being the number of input nodes. Each values represents the PageRank of the input node. The order of the node list in input is preserved.
 

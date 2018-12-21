@@ -156,7 +156,7 @@ class Generator:
 
         .. warning:: we recommend keeping the size of the initial lattice low. Large lattices may cause memory issues.
 
-        :param list params:a list of 4 arguments
+        :param list: a list of 4 arguments
 
             #. the size of the initial lattice :math:`n`.
             #. the dimension of the lattice across all spaces :math:`m`.

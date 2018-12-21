@@ -138,7 +138,7 @@ class KeyPlayer:
         shortest_path_lengths = sp.shortest_path_length_igraph(graph=graph)
 
         if max_distance:
-            shortest_path_lengths = ShortestPathModifier.set_list_to_inf(
+            shortest_path_lengths = ShortestPathModifier.set_max_distances_igraph(
                 shortest_path_lengths, max_distance=max_distance)
 
         df_num = 0
@@ -167,7 +167,7 @@ class KeyPlayer:
         shortest_path_lengths = sp.get_shortestpaths(graph=graph, nodes=None, cmode=cmode)
 
         if max_distance:
-            shortest_path_lengths = ShortestPathModifier.set_nparray_to_inf(
+            shortest_path_lengths = ShortestPathModifier.set_max_distances_nparray(
                 shortest_path_lengths, max_distance=max_distance)
 
         rec = shortest_path_lengths[np.triu_indices(shortest_path_lengths.shape[0], k=1)]
@@ -237,7 +237,7 @@ class KeyPlayer:
                         shortest_path_lengths = sp_matrix[index_list, :]
 
         if max_distance:
-            shortest_path_lengths = ShortestPathModifier.set_nparray_to_inf(shortest_path_lengths, max_distance)
+            shortest_path_lengths = ShortestPathModifier.set_max_distances_nparray(shortest_path_lengths, max_distance)
 
         mreach = 0
         vminusk = set(graph.vs.indices) - set(index_list)
@@ -299,7 +299,7 @@ class KeyPlayer:
                         shortest_path_lengths = sp_matrix[index_list, :]
 
             if max_distance:
-                shortest_path_lengths = ShortestPathModifier.set_nparray_to_inf(sp_matrix, max_distance)
+                shortest_path_lengths = ShortestPathModifier.set_max_distances_nparray(sp_matrix, max_distance)
 
             dr_num = 0
             vminusk = set(graph.vs.indices) - set(index_list)

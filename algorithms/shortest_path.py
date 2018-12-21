@@ -48,7 +48,7 @@ class ShortestPath:
 
     # @profile #uncomment to time the shortest path search when changes are made
     @staticmethod
-    def get_shortestpaths(graph: Graph, nodes: int or list or None, cmode: CmodeEnum) -> np.ndarray:
+    def get_shortestpaths(graph: Graph, nodes: int or list or None =None, cmode: CmodeEnum = CmodeEnum.igraph) -> np.ndarray:
         r"""
         Returns the *shortest paths*, the minimum least distance between a node :math:`i` and any node :math:`j` of the
         input graph.

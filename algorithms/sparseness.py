@@ -111,7 +111,7 @@ class Sparseness:
 
     @staticmethod
     @check_graph_consistency
-    def compactness(graph) -> float:
+    def compactness(graph, correct: bool = False) -> float:
         r"""
         It computes the *compactness* index described by `Randić and DeAlba <https://pubs.acs.org/doi/abs/10.1021/ci970241z?journalCode=jcics1>`_
         as:
@@ -119,8 +119,10 @@ class Sparseness:
         |br|
         |br| :math:`rho = \frac{N^2}{E} -1 \cdot 1-\frac{1}{N}` for directed networks,
         |br| where :math:`N` is the number of nodes of the graph and :math:`E` is the total number of edges.
+        **note** add correct formulation
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page
+        :param bool: correct whether to use the original implementation by Randić and deAlba or a *correct* version, in which the the inverse  of the number of nodes over all possible edges is used
 
         :return float: The compactness index
         """
@@ -133,6 +135,9 @@ class Sparseness:
         node_tot = graph.vcount()
         addend_left = (math.pow(node_tot, 2) / e) - 1
         addend_right = 1 - (1 / node_tot)
-        compactness = addend_left * addend_right
+        if correct:
+            compactness = math.pow(addend_left, -1) * math.pow(addend_right, -1)
+        else:
+            compactness = addend_left * addend_right
 
         return round(compactness, 5)

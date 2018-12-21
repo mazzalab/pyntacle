@@ -29,6 +29,7 @@ __license__ = u"""
 from config import *
 from igraph import Graph
 from tools.enums import CmodeEnum
+from internal.graph_routines import  check_graph_consistency, vertex_doctor #addattributes become  a static method
 from exceptions.wrong_argument_error import WrongArgumentError
 from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
 

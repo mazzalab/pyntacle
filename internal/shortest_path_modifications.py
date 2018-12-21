@@ -31,13 +31,13 @@ import numpy as np
 
 class ShortestPathModifier:
     @staticmethod
-    def set_nparray_to_inf(shortest_paths: np.ndarray, max_distance: int) -> np.ndarray:
+    def set_max_distances_nparray(shortest_paths: np.ndarray, max_distance: int) -> np.ndarray:
         """
         Set all distances greater than 'max_distance' to infinite (number of nodes in the graph plus one).
         The number of nodes is the first size of the numpy array
         :param np.ndarray shortest_paths: the input numpy.ndarray
         :param int max_distance: The maximum shortest path length over which two nodes are considered unreachable
-        :return: a `np.ndarray` with values exceeding 'max_dinstance' set to infinite (number of nodes in the graph
+        :return: a `np.ndarray` with values exceeding 'max_distance' set to infinite (number of nodes in the graph
         plus one).
         """
 
@@ -46,7 +46,7 @@ class ShortestPathModifier:
         return sp
 
     @staticmethod
-    def set_list_to_inf(shortest_paths, max_distance: int) -> list:
+    def set_max_distances_igraph(shortest_paths, max_distance: int) -> list:
         """
         Take an input list of distances and set distances greater than max_sp to `inf` (a `math.inf` object)
         :param list shortest_paths: the list of shortest paths outputted by the `shortest_path()` method in igraph

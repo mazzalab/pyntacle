@@ -32,6 +32,7 @@ from algorithms.shortest_path import ShortestPath
 from algorithms.sparseness import Sparseness
 from algorithms.keyplayer import KeyPlayer
 from tools.enums import *
+from math import isinf
 from internal.graph_routines import check_graph_consistency
 from internal.shortest_path_modifications import ShortestPathModifier
 from cmds.cmds_utils.group_search_wrapper import InfoWrapper as kpw
@@ -59,7 +60,7 @@ class Octopus:
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.diameter` method in
         :class:`~pyntacle.algorithm.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
-        object under the graph name ``diameter``
+        object under the graph attribute``diameter``
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
@@ -72,7 +73,7 @@ class Octopus:
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.radius` method in
         :class:`~pyntacle.algorithm.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
-        object under the graph name ``radius``
+        object under the graph ``radius``
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
@@ -85,7 +86,7 @@ class Octopus:
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.components` method in
         :class:`~pyntacle.algorithm.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
-        object under the graph name ``components``
+        object under the graph ``components``
 
         .. note:: this method adds the **number** of components, not the components themselves
 
@@ -98,32 +99,39 @@ class Octopus:
     @check_graph_consistency
     def add_density(graph):
         r"""
-        Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.radius` method in
+        Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.density` method in
         :class:`~pyntacle.algorithm.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
-        object under the graph name ``radius``
+        object under the graph attribute ``density``
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
+
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.density.name, GlobalTopology.density(graph))
         
     @staticmethod
     @check_graph_consistency
     def add_pi(graph):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.PI` method in
+        :class:`~pyntacle.algorithm.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
+        object under the graph attribute ``PI``
 
-        :param graph:
-        :return:
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
+
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.pi.name, GlobalTopology.pi(graph))
     
     @staticmethod
     @check_graph_consistency
     def add_average_clustering_coefficient(graph):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.average_clustering_coefficient` method in
+        :class:`~pyntacle.algorithm.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
+        object under the graph attribute ``average_clustering_coefficient``
 
-        :param graph:
-        :return:
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
+
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.average_clustering_coefficient.name,
                                                   GlobalTopology.average_clustering_coefficient(graph))
 
@@ -131,10 +139,13 @@ class Octopus:
     @check_graph_consistency
     def add_weighted_clustering_coefficient(graph):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.weighted_clustering_coefficient` method in
+        :class:`~pyntacle.algorithm.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
+        object under the graph attribute ``weighted_clustering_coefficient``
 
-        :param graph:
-        :return:
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
+
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.weighted_clustering_coefficient.name,
                                                   GlobalTopology.weighted_clustering_coefficient(graph))
     
@@ -142,10 +153,13 @@ class Octopus:
     @check_graph_consistency
     def add_average_degree(graph):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.average_degree` method in
+        :class:`~pyntacle.algorithm.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
+        object under the graph attribute ``average_degree``
 
-        :param graph:
-        :return:
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
+
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.average_degree.name,
                                                   GlobalTopology.average_degree(graph))
     
@@ -153,10 +167,13 @@ class Octopus:
     @check_graph_consistency
     def add_average_closeness(graph):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.average_closeness` method in
+        :class:`~pyntacle.algorithm.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
+        object under the graph attribute ``average_closeness``
 
-        :param graph:
-        :return:
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
+
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.average_closeness.name,
                                                   GlobalTopology.average_closeness(graph))
     
@@ -164,10 +181,13 @@ class Octopus:
     @check_graph_consistency
     def add_average_eccentricity(graph):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.average_eccentricity` method in
+        :class:`~pyntacle.algorithm.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
+        object under the graph attribute ``average_eccentricity``
 
-        :param graph:
-        :return:
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
+
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.average_eccentricity.name,
                                                   GlobalTopology.average_eccentricity(graph))
     
@@ -175,10 +195,13 @@ class Octopus:
     @check_graph_consistency
     def add_average_radiality(graph):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.average_radiality` method in
+        :class:`~pyntacle.algorithm.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
+        object under the graph attribute ``average_radiality``
 
-        :param graph:
-        :return:
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
+
         cmode = get_cmode(graph)
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.average_radiality.name,
                                                   GlobalTopology.average_radiality(graph, cmode))
@@ -187,10 +210,13 @@ class Octopus:
     @check_graph_consistency
     def add_average_radiality_reach(graph):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.average_radiality_reach` method in
+        :class:`~pyntacle.algorithm.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
+        object under the graph attribute ``average_radiality_reach``
 
-        :param graph:
-        :return:
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
+
         cmode = get_cmode(graph)
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.average_radiality_reach.name,
                                                   GlobalTopology.average_radiality_reach(graph, cmode))
@@ -199,9 +225,11 @@ class Octopus:
     @check_graph_consistency
     def add_average_shortest_path_length(graph):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.shortest_path.ShortestPath.average_shortest_path_length` method in
+        :class:`~pyntacle.algorithm.shortest_path.ShortestPath` and adds it to the input :py:class:`~igraph.Graph`
+        object under the graph attribute ``average_shortest_path_length``
 
-        :param graph:
-        :return:
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
         cmode = get_cmode(graph)
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.average_shortest_path_length.name,
@@ -212,9 +240,11 @@ class Octopus:
     @check_graph_consistency
     def add_completeness_naive(graph):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.sparseness.Sparseness.completeness_naive` method in
+        :class:`~pyntacle.algorithm.sparseness.Sparseness` and adds it to the input :py:class:`~igraph.Graph`
+        object under the graph attribute ``completeness_naive``
 
-        :param graph:
-        :return:
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.completeness_naive.name,
                                                   Sparseness.completeness_naive(graph))
@@ -223,224 +253,266 @@ class Octopus:
     @check_graph_consistency
     def add_completeness(graph):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.sparseness.Sparseness.completeness_naive` method in
+        :class:`~pyntacle.algorithm.sparseness.Sparseness` and adds it to the input :py:class:`~igraph.Graph`
+        object under the graph attribute ``completeness_naive``
 
-        :param graph:
-        :return:
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.completeness.name,
                                                   Sparseness.completeness(graph))
         
     @staticmethod
     @check_graph_consistency
-    def add_compactness(graph):
+    def add_compactness(graph, correct: bool =False):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.sparseness.Sparseness.compactness` method in
+        :class:`~pyntacle.algorithm.sparseness.Sparseness` and adds it to the input :py:class:`~igraph.Graph`
+        object under the graph attribute ``compactness``
 
-        :param graph:
-        :return:
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+
         """
         AddAttributes(graph).add_graph_attributes(GlobalAttributeEnum.compactness.name,
-                                                  Sparseness.compactness(graph))
+                                                  Sparseness.compactness(graph, correct=correct))
         
     # Local properties
     @staticmethod
     @check_graph_consistency
-    def add_degree(graph, node_names=None):
+    def add_degree(graph, nodes: str or list or None =None):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.degree` method in
+        :class:`~pyntacle.algorithms.local_topology.LocalTopology` and adds it to the input :py:class:`~igraph.Graph`
+        object vertices, under the attribute name ``degree``.
 
-        :param graph:
-        :param node_names:
-        :return:
+        .. note:: The metric can be added either to all nodes on the graph or to a subset of nodes. In the latter, nodes with no betweenness assigned will still exhibit a ``betweenness`` attribute, but it will be empty.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param str,list,None nodes: the vertex ``name`` attribute corresponding to node names. If :py:class:`None`, it adds the selected metric to all nodes in the graph. Otherwise, it can be either a string specifying a single node name or a list of strings, each one representing a node in the graph.
         """
-        if node_names is None:
-            node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes(LocalAttributeEnum.degree.name, 
-                                                 LocalTopology.degree(graph, node_names), node_names)
+
+        if nodes is None:
+            nodes = graph.vs["name"]
+        AddAttributes(graph).add_node_attributes(LocalAttributeEnum.degree.name,
+                                                 LocalTopology.degree(graph, nodes), nodes)
     
     @staticmethod
     @check_graph_consistency
-    def add_betweenness(graph, node_names=None):
+    def add_betweenness(graph, nodes: str or list or None=None):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.betweenness` method in
+        :class:`~pyntacle.algorithms.local_topology.LocalTopology` and adds it to the input :py:class:`~igraph.Graph`
+        object vertices, under the attribute name ``betweenness``.
 
-        :param graph:
-        :param node_names:
-        :return:
+        .. note:: The metric can be added either to all nodes on the graph or to a subset of nodes. In the latter, nodes with no betweenness assigned will still exhibit a ``betweenness`` attribute, but it will be empty.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param str,list,None nodes: the vertex ``name`` attribute corresponding to node names. If :py:class:`None`, it adds the selected metric to all nodes in the graph. Otherwise, it can be either a string specifying a single node name or a list of strings, each one representing a node in the graph.
         """
-        if node_names is None:
-            node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes(LocalAttributeEnum.betweenness.name, 
-                                                 LocalTopology.betweenness(graph, node_names), node_names)
+
+        if nodes is None:
+            nodes = graph.vs["name"]
+        AddAttributes(graph).add_node_attributes(LocalAttributeEnum.betweenness.name,
+                                                 LocalTopology.betweenness(graph, nodes), nodes)
         
     @staticmethod
     @check_graph_consistency
-    def add_clustering_coefficient(graph, node_names=None):
+    def add_clustering_coefficient(graph, nodes: str or list or None=None):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.clustering_coefficient` method in
+        :class:`~pyntacle.algorithms.local_topology.LocalTopology` and adds it to the input :py:class:`~igraph.Graph`
+        object vertices, under the attribute name ``clustering_coefficient``.
 
-        :param graph:
-        :param node_names:
-        :return:
+        .. note:: The metric can be added either to all nodes on the graph or to a subset of nodes. In the latter, nodes with no clustering coefficient assigned will still exhibit a ``clustering_coefficient`` attribute, but it will be empty.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param str,list,None nodes: the vertex ``name`` attribute corresponding to node names. If :py:class:`None`, it adds the selected metric to all nodes in the graph. Otherwise, it can be either a string specifying a single node name or a list of strings, each one representing a node in the graph.
         """
-        if node_names is None:
-            node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes(LocalAttributeEnum.clustering_coefficient.name, 
-                                                 LocalTopology.clustering_coefficient(graph, node_names), node_names)
+
+        if nodes is None:
+            nodes = graph.vs["name"]
+        AddAttributes(graph).add_node_attributes(LocalAttributeEnum.clustering_coefficient.name,
+                                                 LocalTopology.clustering_coefficient(graph, nodes), nodes)
     
     @staticmethod
     @check_graph_consistency
-    def add_closeness(graph, node_names=None):
+    def add_closeness(graph, nodes: str or list or None=None):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.closeness` method in
+        :class:`~pyntacle.algorithms.local_topology.LocalTopology` and adds it to the input :py:class:`~igraph.Graph`
+        object vertices, under the attribute name ``closeness``.
 
-        :param graph:
-        :param node_names:
-        :return:
+        .. note:: The metric can be added either to all nodes on the graph or to a subset of nodes. In the latter, nodes with no closeness assigned will still exhibit a ``clustering_coefficient`` attribute, but it will be empty.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param str,list,None nodes: the vertex ``name`` attribute corresponding to node names. If :py:class:`None`, it adds the selected metric to all nodes in the graph. Otherwise, it can be either a string specifying a single node name or a list of strings, each one representing a node in the graph.
         """
-        if node_names is None:
-            node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes(LocalAttributeEnum.closeness.name, 
-                                                 LocalTopology.closeness(graph, node_names), node_names)
+
+        if nodes is None:
+            nodes = graph.vs["name"]
+        AddAttributes(graph).add_node_attributes(LocalAttributeEnum.closeness.name,
+                                                 LocalTopology.closeness(graph, nodes), nodes)
         
     @staticmethod
     @check_graph_consistency
-    def add_eccentricity(graph, node_names=None):
+    def add_eccentricity(graph, nodes: str or list or None=None):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.eccentricity` method in
+        :class:`~pyntacle.algorithms.local_topology.LocalTopology` and adds it to the input :py:class:`~igraph.Graph`
+        object vertices, under the attribute name ``eccentricity``.
 
-        :param graph:
-        :param node_names:
-        :return:
+        .. note:: The metric can be added either to all nodes on the graph or to a subset of nodes. In the latter, nodes with no eccentricity assigned will still exhibit a ``eccentricity`` attribute, but it will be empty.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param str,list,None nodes: the vertex ``name`` attribute corresponding to node names. If :py:class:`None`, it adds the selected metric to all nodes in the graph. Otherwise, it can be either a string specifying a single node name or a list of strings, each one representing a node in the graph.
         """
-        if node_names is None:
-            node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes(LocalAttributeEnum.eccentricity.name, 
-                                                 LocalTopology.eccentricity(graph, node_names), node_names)
+
+        if nodes is None:
+            nodes = graph.vs["name"]
+        AddAttributes(graph).add_node_attributes(LocalAttributeEnum.eccentricity.name,
+                                                 LocalTopology.eccentricity(graph, nodes), nodes)
     
     @staticmethod
     @check_graph_consistency
-    def add_radiality(graph, node_names=None):
+    def add_radiality(graph, nodes: str or list or None=None):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.radiality` method in
+        :class:`~pyntacle.algorithms.local_topology.LocalTopology` and adds it to the input :py:class:`~igraph.Graph`
+        object vertices, under the attribute name ``radiality``.
 
-        :param graph:
-        :param node_names:
-        :return:
+        .. note:: The metric can be added either to all nodes on the graph or to a subset of nodes. In the latter, nodes with no radiality assigned will still exhibit a ``radiality`` attribute, but it will be empty.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param str,list,None nodes: the vertex ``name`` attribute corresponding to node names. If :py:class:`None`, it adds the selected metric to all nodes in the graph. Otherwise, it can be either a string specifying a single node name or a list of strings, each one representing a node in the graph.
         """
+
         cmode = get_cmode(graph)
-        if node_names is None:
-            node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes(LocalAttributeEnum.radiality.name, 
-                                                 LocalTopology.radiality(graph, node_names, cmode),
-                                                 node_names)
+        if nodes is None:
+            nodes = graph.vs["name"]
+        AddAttributes(graph).add_node_attributes(LocalAttributeEnum.radiality.name,
+                                                 LocalTopology.radiality(graph, nodes, cmode),
+                                                 nodes)
         
     @staticmethod
     @check_graph_consistency
-    def add_radiality_reach(graph, node_names=None):
+    def add_radiality_reach(graph, nodes: str or list or None=None):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.radiality_reach` method in
+        :class:`~pyntacle.algorithms.local_topology.LocalTopology` and adds it to the input :py:class:`~igraph.Graph`
+        object vertices, under the attribute name ``radiality_reach``.
 
-        :param graph:
-        :param node_names:
-        :return:
+        .. note:: The metric can be added either to all nodes on the graph or to a subset of nodes. In the latter, nodes with no radiality reach assigned will still exhibit a ``radiality_reach`` attribute, but it will be empty.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param str,list,None nodes: the vertex ``name`` attribute corresponding to node names. If :py:class:`None`, it adds the selected metric to all nodes in the graph. Otherwise, it can be either a string specifying a single node name or a list of strings, each one representing a node in the graph.
         """
+
         cmode = get_cmode(graph)
-        if node_names is None:
-            node_names = graph.vs["name"]
+        if nodes is None:
+            nodes = graph.vs["name"]
         AddAttributes(graph).add_node_attributes(LocalAttributeEnum.radiality_reach.name,
-                                                 LocalTopology.radiality_reach(graph, node_names, cmode), node_names)
+                                                 LocalTopology.radiality_reach(graph, nodes, cmode), nodes)
         
     @staticmethod
     @check_graph_consistency
-    def add_eigenvector_centrality(graph, node_names=None, scaled=False):
+    def add_eigenvector_centrality(graph, nodes: str or list or None=None, scaled: bool=False):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.eigenvector_centrality` method in
+        :class:`~pyntacle.algorithms.local_topology.LocalTopology` and adds it to the input :py:class:`~igraph.Graph`
+        object vertices, under the attribute name ``eigenvector_centrality``.
 
-        :param graph:
-        :param node_names:
-        :param scaled:
-        :return:
+        .. note:: The metric can be added either to all nodes on the graph or to a subset of nodes. In the latter, nodes with no radiality reach assigned will still exhibit a ``eigenvector_centrality`` attribute, but it will be empty.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param str,list,None nodes: the vertex ``name`` attribute corresponding to node names. If :py:class:`None`, it adds the selected metric to all nodes in the graph. Otherwise, it can be either a string specifying a single node name or a list of strings, each one representing a node in the graph.
+        :param bool scaled: a boolean value to scale the eigenvector centrality using the reciprocal of the eigenvector :math:`\frac{1}{eigenvector}`. ``False` by default.
         """
-        if node_names is None:
-            node_names = graph.vs["name"]
+
+        if nodes is None:
+            nodes = graph.vs["name"]
         AddAttributes(graph).add_node_attributes(LocalAttributeEnum.eigenvector_centrality.name,
-                                                 LocalTopology.eigenvector_centrality(graph, node_names, scaled),
-                                                 node_names)
+                                                 LocalTopology.eigenvector_centrality(graph, nodes, scaled),
+                                                 nodes)
         
     @staticmethod
     @check_graph_consistency
-    def add_pagerank(graph, node_names=None, weights=None, damping=0.85):
+    def add_pagerank(graph, nodes: str or list or None=None, weights: float or int or None =None, damping: float =0.85):
         r"""
+        Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.pagerank` method in
+        :class:`~pyntacle.algorithms.local_topology.LocalTopology` and adds it to the input :py:class:`~igraph.Graph`
+        object vertices, under the attribute name ``pagerank``.
 
-        :param graph:
-        :param node_names:
-        :param weights:
-        :param damping:
-        :return:
+        .. note:: The metric can be added either to all nodes on the graph or to a subset of nodes. In the latter, nodes with no radiality reach assigned will still exhibit a ``eigenvector_centrality`` attribute, but it will be empty.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param str,list,None nodes: the vertex ``name`` attribute corresponding to node names. If :py:class:`None`, it adds the selected metric to all nodes in the graph. Otherwise, it can be either a string specifying a single node name or a list of strings, each one representing a node in the graph.
+        :param list, None weights: a list of float numbers less or equal than the total number of edges. The order of the list shoould match the indices of the edge elements of the input graph. Defaults to :py:class:`None` (no weights added).
+        :param float damping: positive float representing the probability to reset the random walk distribution at each pagerank iteration. Default is 0.85.
         """
 
-        if node_names is None:
-            node_names = graph.vs["name"]
+        if nodes is None:
+            nodes = graph.vs["name"]
         if "weights" in graph.es.attributes():
             weights = graph.es["weights"]
         AddAttributes(graph).add_node_attributes(LocalAttributeEnum.pagerank.name,
-                                                 LocalTopology.pagerank(graph, node_names, weights, damping),
-                                                 node_names)
-        
-    @staticmethod
-    @check_graph_consistency
-    def add_shortest_path_igraph(graph, node_names=None):
-        r"""
-
-        :param graph:
-        :param node_names:
-        :return:
-        """
-        if node_names is None:
-            node_names = graph.vs["name"]
-        AddAttributes(graph).add_node_attributes(LocalAttributeEnum.shortest_path_igraph.name,
-                                                 ShortestPath.get_shortestpaths(graph, node_names, CmodeEnum.igraph),
-                                                 node_names)
+                                                 LocalTopology.pagerank(graph, nodes, weights, damping),
+                                                 nodes)
 
     @staticmethod
     @check_graph_consistency
-    def add_shortest_path(graph, node_names=None):
+    def add_shortest_paths(graph, nodes: str or list or None=None):
         r"""
 
         :param graph:
-        :param node_names:
+        :param nodes:
         :return:
         """
         cmode = get_cmode(graph)
-        distances = ShortestPath.get_shortestpaths(graph, node_names, cmode=cmode)
-        if node_names is None:
-            node_names = graph.vs["name"]
-        distances_with_inf = ShortestPathModifier.set_nparray_to_inf(distances, graph.vcount() + 1)
-        AddAttributes(graph).add_node_attributes(LocalAttributeEnum.shortest_path.name, distances_with_inf, node_names)
+
+        if nodes is None:
+            nodes = graph.vs["name"]
+
+        tot_nodes = graph.vcount()
+
+        distances = ShortestPath.get_shortestpaths(graph, nodes, cmode=cmode).astype(float)
+        distances[distances >= tot_nodes +1] = float("inf")
+        distances = distances.tolist() #convert to a list of lists
+        #cast everything not infinite to integer
+        distances = [[int(x) if not isinf(x) else x for x in y] for y in distances]
+
+        AddAttributes(graph).add_node_attributes(LocalAttributeEnum.shortest_paths.name, distances, nodes)
 
     @staticmethod
     @check_graph_consistency
-    def add_average_shortest_path_length(graph, node_names=None):
+    def add_average_shortest_path_length(graph, nodes: str or list or None=None):
         r"""
 
         :param graph:
-        :param node_names:
+        :param nodes:
         :return:
         """
         cmode = get_cmode(graph)
-        if node_names is None:
-            node_names = graph.vs["name"]
+        if nodes is None:
+            nodes = graph.vs["name"]
         AddAttributes(graph).add_node_attributes(LocalAttributeEnum.average_shortest_path_length.name,
-                                                 ShortestPath.average_shortest_path_lengths(graph, node_names, cmode),
-                                                 node_names)
+                                                 ShortestPath.average_shortest_path_lengths(graph, nodes, cmode),
+                                                 nodes)
 
     @staticmethod
     @check_graph_consistency
-    def add_median_shortest_path_length(graph, node_names=None):
+    def add_median_shortest_path_length(graph, nodes: str or list or None=None):
         r"""
 
         :param graph:
-        :param node_names:
+        :param nodes:
         :return:
         """
         cmode = get_cmode(graph)
-        if node_names is None:
-            node_names = graph.vs["name"]
+        if nodes is None:
+            nodes = graph.vs["name"]
         AddAttributes(graph).add_node_attributes(LocalAttributeEnum.median_shortest_path_length.name,
-                                                 ShortestPath.median_shortest_path_lengths(graph, node_names, cmode),
-                                                 node_names)
+                                                 ShortestPath.median_shortest_path_lengths(graph, nodes, cmode),
+                                                 nodes)
    
     # Topology metrics
     @staticmethod
@@ -455,7 +527,7 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def add_dF(graph, max_distance=None):
+    def add_dF(graph, max_distance: int or None=None):
         r"""
 
         :param graph:
@@ -468,7 +540,7 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def add_kp_F(graph, nodes):
+    def add_kp_F(graph, nodes: str or list or None):
         r"""
 
         :param graph:
@@ -483,7 +555,7 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def add_kp_dF(graph, nodes, max_distance=None):
+    def add_kp_dF(graph, nodes: str or list or None, max_distance=None):
         r"""
 
         :param graph:
@@ -501,7 +573,7 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def add_kp_dR(graph, nodes, max_distance=None):
+    def add_kp_dR(graph, nodes: str or list or None, max_distance=None):
         r"""
 
         :param graph:
@@ -511,6 +583,7 @@ class Octopus:
         """
 
         cmode = get_cmode(graph)
+
         kpobj = kpw(graph=graph)
         kpobj.run_KPPos(nodes, KpposEnum.dR, max_distance=max_distance, implementation=cmode)
         results_dict = kpobj.get_results()
@@ -520,7 +593,7 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def add_kp_mreach(graph, nodes, m=None, max_distance=None):
+    def add_kp_mreach(graph, nodes: str or list or None, m: int or None=None, max_distance: int or None=None):
         r"""
 
         :param graph:
@@ -530,6 +603,7 @@ class Octopus:
         :return:
         """
         cmode = get_cmode(graph)
+
         kpobj = kpw(graph=graph)
         kpobj.run_KPPos(nodes, KpposEnum.mreach, m=m, max_distance=max_distance, implementation=cmode)
         results_dict = kpobj.get_results()
@@ -540,7 +614,7 @@ class Octopus:
     # Greedy optimization
     @staticmethod
     @check_graph_consistency
-    def add_GO_F(graph, kp_size, seed=None):
+    def add_GO_F(graph, kp_size: int, seed: int or None=None):
         r"""
 
         :param graph:
@@ -556,7 +630,7 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def add_GO_dF(graph, kp_size, max_distance=None, seed=None):
+    def add_GO_dF(graph, kp_size: int, max_distance: int or None=None, seed: int or None=None):
         r"""
 
         :param graph:
@@ -575,7 +649,7 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def add_GO_dR(graph, kp_size, max_distance=None, seed=None):
+    def add_GO_dR(graph, kp_size: int, max_distance: int or None=None, seed: int or None=None):
         r"""
 
         :param graph:
@@ -594,7 +668,7 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def add_GO_mreach(graph, kp_size, m=None, max_distance=None, seed=None):
+    def add_GO_mreach(graph, kp_size: int, m: int or None=None, max_distance: int or None=None, seed: int or None=None):
         r"""
 
         :param graph:
@@ -615,7 +689,7 @@ class Octopus:
     # Brute-force optimization
     @staticmethod
     @check_graph_consistency
-    def add_BF_F(graph, kp_size, max_distance=None):
+    def add_BF_F(graph, kp_size: int, max_distance: int or None=None):
         r"""
 
         :param graph:
@@ -632,7 +706,7 @@ class Octopus:
         
     @staticmethod
     @check_graph_consistency
-    def add_BF_dF(graph, kp_size, max_distance=None):
+    def add_BF_dF(graph, kp_size: int, max_distance: int or None=None):
         r"""
 
         :param graph:
@@ -649,7 +723,7 @@ class Octopus:
     
     @staticmethod
     @check_graph_consistency
-    def add_BF_dR(graph, kp_size, max_distance=None):
+    def add_BF_dR(graph, kp_size: int, max_distance: int or None=None):
         r"""
 
         :param graph:
@@ -666,7 +740,7 @@ class Octopus:
         
     @staticmethod
     @check_graph_consistency
-    def add_BF_mreach(graph, kp_size, m=None, max_distance=None):
+    def add_BF_mreach(graph, kp_size: int, m: int or None=None, max_distance: int or None=None):
         r"""
 
         :param graph:
