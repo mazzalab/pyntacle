@@ -33,26 +33,10 @@ class ExportAttributes():
     r"""
     Export Attributes stored into the ``igraph.Graph`` object as text files. These attributes can belong to the whole
     graph, nodes or edges that belong to the input network.
-
-    :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
-
-    :raise NotAGraphError: if the initialized object is not of :py:class:`igraph.Graph`
     """
-    # todo Mauro: make the methods static
 
-    logger = None
-
-    def __init__(self, graph: Graph):
-
-        self.logger = log
-
-        if type(graph) is not Graph:
-            raise NotAGraphError(u"object is not a igraph.Graph object")
-
-        else:
-            self.__graph = graph
-
-    def export_edge_attributes(self, file: str, mode: str='standard'):
+    @staticmethod
+    def export_edge_attributes(graph: Graph, file: str, mode: str='standard'):
         r"""
         Export attributes related to the  *edges* of a network stored into an :py:class:`igraph.Graph` object to a text
         file. Pyntacle can export edges in two formats:
@@ -89,11 +73,11 @@ class ExportAttributes():
         warnflag = 0
         dirname = os.path.dirname(file) or '.'
         if not os.path.exists(dirname):
-            self.logger.warning(u"The directory tree for the output file does not exist, it will be created")
+            sys.stdout.write(u"WARNING: The directory tree for the output file does not exist, it will be created\n")
             os.makedirs(dirname, exist_ok=True)
         with open(file, 'w') as out:
             # Writing header
-            attributes_tokeep = [x for x in self.__graph.es()[0].attributes() if
+            attributes_tokeep = [x for x in graph.es()[0].attributes() if
                                  x != 'adjacent_nodes' and not x.startswith('__')]
             if mode == 'standard':
                 out.write('Node1' + '\t' + 'Node2' + '\t' + '\t'.join(attributes_tokeep) + '\n')
@@ -103,7 +87,7 @@ class ExportAttributes():
                 raise ValueError(u"{0} is not valid, it must be either 'standard' or 'cytoscape, {0} found'".format(mode))
 
 
-            for e in self.__graph.es():
+            for e in graph.es():
                 if mode == 'standard':
                     out.write(str(e.attributes()['adjacent_nodes'][0]) + '\t')
                     out.write(str(e.attributes()['adjacent_nodes'][1]))
@@ -111,8 +95,8 @@ class ExportAttributes():
                         # Checking the type of the attribute
                         if not isinstance(e.attributes()[attr], (str, float, int)) and \
                                         e.attributes()[attr] is not None and warnflag == 0:
-                            self.logger.warning("The attribute {} looks like an iterable. "
-                                                "It will be written as it is.".format(attr))
+                            sys.stdout.write("WARNING: The attribute {} looks like an iterable. "
+                                                "It will be written as it is.\n".format(attr))
                             warnflag = 1
     
                         if e.attributes()[attr] is None:
@@ -133,8 +117,8 @@ class ExportAttributes():
                                 # Checking the type of the attribute
                                 if not isinstance(e.attributes()[attr], (str, float, int)) and \
                                                 e.attributes()[attr] is not None and warnflag == 0:
-                                    self.logger.warning(u"The attribute {} looks like an iterable. "
-                                                        "It will be written as it is.".format(attr))
+                                    sys.stdout.write(u"WARNING: The attribute {} looks like an iterable. "
+                                                        "It will be written as it is.\n".format(attr))
                                     warnflag = 1
             
                                 if e.attributes()[attr] is None:
@@ -144,8 +128,8 @@ class ExportAttributes():
                             out.write('\n')
         sys.stdout.write(u"Edge attributes successfully exported at path {}.\n".format(os.path.abspath(file)))
 
-
-    def export_node_attributes(self,  file :str):
+    @staticmethod
+    def export_node_attributes(graph: Graph, file :str):
         r"""
         Export attributes belonging to *vertices* of the :py:class:`igraph.Graph` object into a tab-delimited format that
         later reused in Pyntacle (by means of the :class:`~pyntacle.io_stream.import_attributes.ImportAttributes` or
@@ -162,22 +146,22 @@ class ExportAttributes():
         warnflag = 0
         dirname = os.path.dirname(file) or "."
         if not os.path.exists(dirname):
-            self.logger.warning(u"The directory tree for the output file does not exist, it will be created")
+            sys.stdout.write(u"WARNING: The directory tree for the output file does not exist, it will be created\n")
             os.makedirs(dirname, exist_ok=True)
         with open(file, "w") as out:
             # Writing header
-            attributes_tokeep = [x for x in self.__graph.vs()[0].attributes() if
+            attributes_tokeep = [x for x in graph.vs()[0].attributes() if
                                  x != "name" and not x.startswith('__')]
             out.write("Node" + "\t" + "\t".join(attributes_tokeep) + "\n")
-            for v in self.__graph.vs():
+            for v in graph.vs():
                 out.write(str(v.attributes()["name"]))
                 for attr in attributes_tokeep:
 
                     # Checking the type of the attribute
                     if not isinstance(v.attributes()[attr], (str, float, int)) and \
                                     v.attributes()[attr] is not None and warnflag == 0:
-                        self.logger.warning("The attribute {} looks like an iterable. "
-                                            "It will be written as it is.".format(attr))
+                        sys.stdout.write("WARNING: The attribute {} looks like an iterable. "
+                                            "It will be written as it is.\n".format(attr))
                         warnflag = 1
 
                     if v.attributes()[attr] is None:
@@ -188,8 +172,8 @@ class ExportAttributes():
         
         sys.stdout.write(u"Node attributes successfully exported at path {}.\n".format(os.path.abspath(file)))
 
-
-    def export_graph_attributes(self, file):
+    @staticmethod
+    def export_graph_attributes(graph: Graph, file):
         """
         Exports *network* attributes to a tab-separated file. These graph attributes are a property of the :py:class:`igraph.Graph` input object
 
@@ -204,31 +188,31 @@ class ExportAttributes():
         warnflag = 0
         dirname = os.path.dirname(file) or "."
         if not os.path.exists(dirname):
-            self.logger.warning(
-                u"The directory tree for the output file does not exist, it will be created")
+            sys.stdout.write(
+                u"WARNING: The directory tree for the output file does not exist, it will be created\n")
             os.makedirs(dirname)
         with open(file, "w") as out:
             # Writing header
-            attributes_tokeep = [x for x in self.__graph.attributes() if
+            attributes_tokeep = [x for x in graph.attributes() if
                                  not x.startswith("__")]
             out.write("Attribute" + "\t" + "Value" + "\n")
 
             for attr in attributes_tokeep:
 
                 if attr == "name":
-                    out.write(attr + "\t" + str(self.__graph[attr]) + "\n")
+                    out.write(attr + "\t" + str(graph[attr]) + "\n")
                     continue
 
                 # Checking the type of the attribute
-                if not isinstance(self.__graph[attr], (str, float, int)) and \
-                                self.__graph[attr] is not None and warnflag == 0:
-                    self.logger.warning(u"The attribute {} looks like an iterable. "
-                                        "It will be written as it is.".format(attr))
+                if not isinstance(graph[attr], (str, float, int)) and \
+                                graph[attr] is not None and warnflag == 0:
+                    sys.stdout.write(u"WARNING: The attribute {} looks like an iterable. "
+                                        "It will be written as it is.\n".format(attr))
                     warnflag = 1
 
-                elif self.__graph[attr] is None:
+                elif graph[attr] is None:
                     out.write(attr + "\tNA" + "\n")
                 else:
-                    out.write(attr + "\t" + str(self.__graph[attr]) + "\n")
+                    out.write(attr + "\t" + str(graph[attr]) + "\n")
         
         sys.stdout.write(u"Graph attributes successfully exported at path {}.\n".format(os.path.abspath(file)))

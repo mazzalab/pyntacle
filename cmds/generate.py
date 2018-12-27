@@ -123,7 +123,7 @@ class Generate:
 
             try:
                 sys.stdout.write(
-                    "Generating Graph with Scale Free Topology\nParameters:\nNumber of Nodes: {0}\nNumber of Outging edges: {1}\n".format(
+                    "Generating Graph with Scale Free Topology\nParameters:\nNumber of Nodes: {0}\nNumber of Outgoing edges: {1}\n".format(
                         self.args.nodes, self.args.avg_edges))
                 graph = Generator.ScaleFree([self.args.nodes, self.args.avg_edges], name="ScaleFree", seed=self.args.seed)
 
@@ -375,7 +375,6 @@ class Generate:
             self.logging.warning(
                 "Graph ({} nodes) exceeds pyntacle limits for plotting (maximum 1000 nodes). Will not draw Graph".format(
                     graph.vcount()))
-            sys.exit(0)
 
         if not self.args.suppress_cursor:
             cursor.stop()

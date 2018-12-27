@@ -115,6 +115,10 @@ class Convert():
             
             if in_form == out_form:
                 sys.stdout.write("The output format specified is the same as the input format. Quitting.\n")
+
+                if not self.args.suppress_cursor:
+                    cursor.stop()
+
                 sys.exit(0)
                 
             if out_form == "adjm":
