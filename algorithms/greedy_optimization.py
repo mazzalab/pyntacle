@@ -180,6 +180,7 @@ class GreedyOptimization:
         :param KpposEnum metric: on of the available :class:`~pyntacle.tools.enums.KpposEnum`
         :param int,None seed: optional, a positive integer that can be used to replicate the greedy optimization run. If :py:class:`~None` (default), the greedy optimization may return different results at each run.
         :param int,None max_distance: optional, define a maximum shortest path after which two nodes will be considered disconnected. Default is  :py:class:`~None` (no maximum distance is set)
+        :param int m: The number of steps of the m-reach algorithm. Required if the the required metrics is the :func:`~tools.enums.KPPosEnum.mreach`
         :param cmodeEnum cmode: the implementation that will be used to compute the shortest paths. See :class:`~pyntacle.tools.enums.CmodeEnum`. Default is the igraph brute-force shortest path search.
 
         :return tuple: a tuple storing in ``[0]`` a list containing the node ``name`` attribute of the optimal *kp-set* and in ``[1]``  the optimal *kp-pos* value for the selected metric

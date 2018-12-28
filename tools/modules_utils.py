@@ -135,8 +135,8 @@ class ModuleUtils():
         Adds all the information regarding the modules to each subgraph found using community detection algorithms.
         These information are, specifically:
 
-        #. an hidden attribute named "__module_algorithm" that store the type of algorithm that was used to identify the community
-        #. an hidden attribute named "__origin_graph" the first element of the graph["name"] attribute (ideally, the name of the input graph)
+        #. a hidden attribute named "__module_algorithm" that store the type of algorithm that was used to identify the community
+        #. a hidden attribute named "__origin_graph" the first element of the graph["name"] attribute (ideally, the name of the input graph)
 
         """
 
@@ -161,7 +161,7 @@ class ModuleUtils():
         Specifically, two reserved attributed will be filled in each of the elemenf in `modules`:
 
         #. a ``__module`` name will be assigned to the reserved ``__module`` attribute for each  subgraph, node and edge the element in the modules was found into. specifying the name of the module (usually a string representing a positive integer)
-        #. an ``__algorithm`` attribute will be assigned to each subgraph, node, and edge attributes showing the name of the algorithm that was passed to the ModuleUtils() class specifying the name of the algorithm that was used to find communities.
+        #. a ``__algorithm`` attribute will be assigned to each subgraph, node, and edge attributes showing the name of the algorithm that was passed to the ModuleUtils() class specifying the name of the algorithm that was used to find communities.
         """
 
         self.logger.info(u"Adding attribute \"__module\" to each node")

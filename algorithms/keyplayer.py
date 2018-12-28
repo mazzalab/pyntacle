@@ -194,7 +194,7 @@ class KeyPlayer:
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param list nodes: a list of strings that matches the node ``name`` attribute of the selected nodes.
-        :param int m: an integer (greater than zero) representing the maximum m-reach distance. Required
+        :param int m: an integer (greater than zero) representing the maximum m-reach distance.
         :param int,None max_distance: The maximum shortest path length over which two nodes are considered unreachable. Default is :py:class:`None` (distances are preserved)
         :param cmodeEnum cmode: the implementation that will be used to compute the shortest paths required dstance based fragmentation. See :class:`~pyntacle.tools.enums.CmodeEnum`. Default is the igraph brute-force shortest path search.
         :param None, np.ndarray sp_matrix:  A :math:`NxN` (:math:`N` being the size of the graph) :py:class:`numpy.ndarray` storing integers representing the distances between nodes. :warning: Disconected nodes **must** be represented as a distance greater than :math:`N`. If provided, ``cmode`` is ignored and the shortest paths are derived from the matrix directly. default is py:class:`None`.

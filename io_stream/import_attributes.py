@@ -32,8 +32,8 @@ from collections import OrderedDict
 from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
 from exceptions.unsupported_graph_error import UnsupportedGraphError
 # pyntacle Libraries
-from exceptions.wrong_argument_error import WrongArgumentError
 from tools.add_attributes import AddAttributes
+from internal.graph_routines import check_graph_consistency
 
 
 def check_file(graph: Graph, file: str, sep: str):
@@ -68,6 +68,7 @@ class ImportAttributes():
     """
 
     @staticmethod
+    @check_graph_consistency
     def import_graph_attributes(graph: Graph, file: str, sep: str or None=None):
         r"""
         Adds attributes at the ``graph`` level of a :py:class:`igraph.Graph` object. this file is usually a tabular
@@ -103,11 +104,12 @@ class ImportAttributes():
                     sys.stdout.write("ERROR: attributes should not start with a double underscore (\"__\") as"
                                      "this notation is reserved for private attributes. Skipping {}\n".format(attrs[0]))
                     continue
-                AddAttributes(graph).add_graph_attributes(attrs[0],
+                AddAttributes.add_graph_attributes(graph, attrs[0],
                                                                  attrs[1])
         sys.stdout.write(u"Graph attributes from {} imported.\n".format(file))
 
     @staticmethod
+    @check_graph_consistency
     def import_node_attributes(graph: Graph, file: str, sep: str or None=None):
         r"""
         This method takes an attribute node file and add each attribute to the the :py:class:`igraph.Graph` object.
@@ -197,11 +199,12 @@ class ImportAttributes():
                         raise ValueError(u"multiple node hits")
                     
         for attr in attrs_dict:
-            AddAttributes(graph).add_node_attributes(attr, list(attrs_dict[attr].values()), list(attrs_dict[attr].keys()))
+            AddAttributes.add_node_attributes(graph, attr, list(attrs_dict[attr].values()), list(attrs_dict[attr].keys()))
                 
         sys.stdout.write(u"Node attributes from {} imported.\n".format(file))
 
     @staticmethod
+    @check_graph_consistency
     def import_edge_attributes(graph: Graph, file: str, sep: str or None=None, mode: str='standard'):
         r"""
         This method imports attributes at the edge level of a :py:class:`igraph.Graph` object.
@@ -330,7 +333,7 @@ class ImportAttributes():
 
             else:
                 for attr in attrs_dict:
-                    AddAttributes(graph).add_edge_attributes(attr, list(attrs_dict[attr].values()),
+                    AddAttributes.add_edge_attributes(graph, attr, list(attrs_dict[attr].values()),
                                                                     list(attrs_dict[attr].keys()))
                     sys.stdout.write("Edge attribute {} added\n".format(attr))
                     

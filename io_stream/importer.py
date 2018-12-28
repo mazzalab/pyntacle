@@ -24,16 +24,18 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+from igraph import Graph
 import pandas as pd
 import pickle
 from internal.binarycheck import *
 from internal.io_utils import input_file_checker, separator_sniffer
-from tools.graph_utils import GraphUtils
-from tools.add_attributes import *
+from tools.graph_utils import GraphUtils as GUtils
+from tools.add_attributes import AddAttributes
 from tools.adjmatrix_utils import AdjmUtils
 from tools.edgelist_utils import EglUtils
 from exceptions.illegal_graph_size_error import IllegalGraphSizeError
 from exceptions.unproperly_formatted_file_error import UnproperlyFormattedFileError
+from exceptions.wrong_argument_error import WrongArgumentError
 from pyparsing import *
 from itertools import product
 from collections import OrderedDict
@@ -139,7 +141,7 @@ class PyntacleImporter:
                 node_names = [str(x) for x in range(0, len(f.columns))]
 
             graph = Graph.Adjacency(f.values.tolist(), mode="UPPER")
-            AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0],
+            GUtils(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0],
                                                          node_names=node_names)
 
             sys.stdout.write(u"Adjacency matrix from {} imported\n".format(file))
@@ -200,7 +202,7 @@ class PyntacleImporter:
 
         graph.add_edges(edgs)
         #initialize the graph by calling the graph_initializer() method
-        AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
+        GUtils(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
         sys.stdout.write(u"Edge list from {} imported\n".format(file))
         return graph
 
@@ -294,7 +296,7 @@ class PyntacleImporter:
             graph.es()["__sif_interaction"] = list(edgeslist.values())
 
             # add missing attribute to graph
-            AddAttributes(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
+            GUtils(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
     
             sys.stdout.write(u"SIF from {} imported\n".format(file))
 
@@ -380,7 +382,7 @@ class PyntacleImporter:
 
         for a in graph_attrs_dict:
             for k in graph_attrs_dict[a]:
-                AddAttributes(graph).add_graph_attributes(k, graph_attrs_dict[a][k])
+                AddAttributes.add_graph_attributes(graph, k, graph_attrs_dict[a][k])
                 if k == 'name':
                     graphname = k
 
@@ -389,7 +391,7 @@ class PyntacleImporter:
                 if a not in graph.vs()["name"]:
                     graph.add_vertex(name=a)
                 if k != 'name':
-                    AddAttributes(graph).add_node_attributes(k, [node_attrs_dict[a][k]], [a])
+                    AddAttributes.add_node_attributes(graph, k, [node_attrs_dict[a][k]], [a])
 
         for a in edge_attrs_dict:
             for n in a:
@@ -407,12 +409,12 @@ class PyntacleImporter:
             sys.stdout.write(u"Converting graph to undirect\n")
             graph.to_undirected()
 
-        AddAttributes(graph=graph).graph_initializer(graph_name=graphname,
+        GUtils(graph=graph).graph_initializer(graph_name=graphname,
                                                      node_names=graph.vs["name"])
 
         for a in edge_attrs_dict:
             for k in edge_attrs_dict[a]:
-                AddAttributes(graph).add_edge_attributes(k, [edge_attrs_dict[a][k]], [a])
+                AddAttributes.add_edge_attributes(graph, k, [edge_attrs_dict[a][k]], [a])
 
         sys.stdout.write(u"DOT from {} imported\n".format(file))
         return graph
@@ -447,7 +449,7 @@ class PyntacleImporter:
                 raise IllegalGraphSizeError(u"Graph must contain at least 2 nodes linked by one edge")
 
             else:
-                AddAttributes(graph=graph).graph_initializer(
+                GUtils(graph=graph).graph_initializer(
                     graph_name=os.path.splitext(os.path.basename(file))[0])
 
                 if Graph.is_directed(graph):
@@ -455,6 +457,6 @@ class PyntacleImporter:
                     sys.stdout.write(u"Converting graph to undirect\n")
                     graph.to_undirected()
 
-                GraphUtils(graph=graph).check_graph()
+                GUtils(graph=graph).check_graph()
                 sys.stdout.write(u"Binary from  {} imported\n".format(file))
                 return graph

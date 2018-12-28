@@ -26,7 +26,7 @@ __license__ = u"""
 
 import random
 from igraph import Graph
-from tools.add_attributes import AddAttributes as ad
+from tools.graph_utils import GraphUtils as GUtils
 from internal.io_utils import generatorscanner, randomword
 
 
@@ -87,7 +87,7 @@ class Generator:
 
         else:
             raise ValueError(u'Second parameter is not a positive float or a positive integer greater than 1')
-        ad(graph=graph).graph_initializer(graph_name=(randomword(10, prefix="_".join([name, str(graph.vcount()), str(graph.ecount())]))))
+        GUtils(graph=graph).graph_initializer(graph_name=(randomword(10, prefix="_".join([name, str(graph.vcount()), str(graph.ecount())]))))
 
         return graph
 
@@ -140,7 +140,7 @@ class Generator:
 
         else:
             graph = Graph.Barabasi(params[0], params[1])
-            ad(graph=graph).graph_initializer(graph_name=(
+            GUtils(graph=graph).graph_initializer(graph_name=(
             randomword(10, prefix="_".join([name, str(graph.vcount()), str(graph.ecount())]))))
 
             return graph
@@ -197,7 +197,7 @@ class Generator:
         else:
             graph = Graph.Watts_Strogatz(params[0], params[1], params[2], params[3])
 
-            ad(graph=graph).graph_initializer(graph_name=(
+            GUtils(graph=graph).graph_initializer(graph_name=(
             randomword(10, prefix="_".join([name, str(graph.vcount()), str(graph.ecount())]))))
 
             return graph
@@ -241,6 +241,6 @@ class Generator:
             raise ValueError(u'The value of one or more parameters is not allowed')
         else:
             graph = Graph.Tree(params[0], params[1])
-            ad(graph=graph).graph_initializer(graph_name=(
+            GUtils(graph=graph).graph_initializer(graph_name=(
             randomword(10, prefix="_".join([name, str(graph.vcount()), str(graph.ecount())]))))
             return graph

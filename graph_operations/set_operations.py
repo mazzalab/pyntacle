@@ -29,7 +29,7 @@ from igraph import Graph
 from collections import OrderedDict
 from tools.enums import GraphOperationEnum
 from tools.add_attributes import AddAttributes
-
+from tools.graph_utils import GraphUtils as GUtil
 
 class GraphOperations(object):
     r"""
@@ -52,9 +52,9 @@ class GraphOperations(object):
         merged_g.add_vertices(list(union_v.keys()))
         merged_g.add_edges(union_e)
 
-        AddAttributes(graph=merged_g).add_edge_names()
+        AddAttributes.add_edge_names(graph=merged_g)
         merged_g.vs["__parent"] = list(union_v.values())
-        AddAttributes(graph=merged_g).graph_initializer(graph_name=new_graph_name)
+        GUtil(graph=merged_g).graph_initializer(graph_name=new_graph_name)
 
         return merged_g
 
@@ -85,9 +85,9 @@ class GraphOperations(object):
         intersection_g.add_vertices(list(intersect_v.keys()))
         intersection_g.add_edges(intersect_e)
 
-        AddAttributes(graph=intersection_g).add_edge_names()
+        AddAttributes.add_edge_names(graph=intersection_g)
         intersection_g.vs["__parent"] = list(intersect_v.values())
-        AddAttributes(graph=intersection_g).graph_initializer(graph_name=new_graph_name)
+        GUtil(graph=intersection_g).graph_initializer(graph_name=new_graph_name)
 
         return intersection_g
 
@@ -121,7 +121,7 @@ class GraphOperations(object):
         exclusive_g1["name"] = [new_graph_name]
         exclusive_g1.add_vertices(list(exclusive1_v.keys()))
         exclusive_g1.add_edges(exclusive1_e)
-        AddAttributes(graph=exclusive_g1).add_edge_names()
+        AddAttributes.add_edge_names(graph=exclusive_g1)
         exclusive_g1.vs["__parent"] = list(exclusive1_v.values())
 
         # exclusive2_v = {x: union_v[x] for x in exclusive2_v}
@@ -142,7 +142,7 @@ class GraphOperations(object):
         # for v in exclusive_g2.vs():
         #     print(v)
 
-        AddAttributes(graph=exclusive_g1).graph_initializer(graph_name=new_graph_name)
+        GUtil(graph=exclusive_g1).graph_initializer(graph_name=new_graph_name)
         return exclusive_g1
 
     @staticmethod

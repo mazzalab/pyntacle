@@ -214,7 +214,7 @@ class BruteforceSearch:
         :param int k: the size of the kp-set to be found
         :param KpposEnum metric: any available option of the enumerators :class:`~pyntacle.tools.enums.KpposEnum`
         :param int,None max_distance: optional, define a maximum shortest path after which two nodes will be considered disconnected. Default is  :py:class:`~None` (no maximum distance is set)
-        :param int m: The number of steps of the m-reach algorithm
+        :param int m: The number of steps of the m-reach algorithm. Required if the the required metrics is the :func:`~tools.enums.KPPosEnum.mreach`
         :param cmodeEnum cmode: the implementation that will be used to compute the shortest paths. See :class:`~pyntacle.tools.enums.CmodeEnum`. Default is the igraph brute-force shortest path search.
         :param bool parallel: whether to use multicore processors to run the algorithm iterations in parallel.
         :param int ncores: Positive integer specifying the number of computing . If :type:`None` (default) the number of cores will be set to the maximum number of available cores -1

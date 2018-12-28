@@ -455,7 +455,7 @@ class Metrics:
                 else:
                     nodes_list = graph.vs["name"]
                 for key in local_attributes_dict:
-                    AddAttributes(graph).add_node_attributes(key, local_attributes_dict[key], nodes_list)
+                    AddAttributes.add_node_attributes(graph, key, local_attributes_dict[key], nodes_list)
 
             elif self.args.which == 'global':
                 if self.args.no_nodes:
@@ -463,12 +463,12 @@ class Metrics:
                     sys.stdout.write("Since the --no-nodes option was selected to calculate the global metrics, a second graph without those "
                                      "nodes and said metrics will be saved in a second Binary file.\n".format(os.path.basename(binary_path_nonodes)))
                     for key in global_attributes_dict_nonodes:
-                        AddAttributes(graph_nonodes).add_graph_attributes(key, global_attributes_dict_nonodes[key])
+                        AddAttributes.add_graph_attributes(graph_nonodes, key, global_attributes_dict_nonodes[key])
                     
                     PyntacleExporter.Binary(graph_nonodes, binary_path_nonodes)
 
                 for key in global_attributes_dict:
-                    AddAttributes(graph).add_graph_attributes(key, global_attributes_dict[key])
+                    AddAttributes.add_graph_attributes(graph, key, global_attributes_dict[key])
                     
             sys.stdout.write("Saving graph to a Binary file\n")
             PyntacleExporter.Binary(graph, binary_path)

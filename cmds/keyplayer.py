@@ -411,35 +411,35 @@ class KeyPlayer():
                 k = "_".join([KpnegEnum.F.name, bin_type])
 
                 if bf:
-                    AddAttributes(graph).add_graph_attributes(k, {tuple(tuple(x) for x in results[KpnegEnum.F.name][0]): results[KpnegEnum.F.name][1]})
+                    AddAttributes.add_graph_attributes(graph, k, {tuple(tuple(x) for x in results[KpnegEnum.F.name][0]): results[KpnegEnum.F.name][1]})
                 else:
-                    AddAttributes(graph).add_graph_attributes(k, {tuple(results[KpnegEnum.F.name][0]): results[KpnegEnum.F.name][1]})
+                    AddAttributes.add_graph_attributes(graph, k, {tuple(results[KpnegEnum.F.name][0]): results[KpnegEnum.F.name][1]})
 
             if KpnegEnum.dF.name in queried_stuff:
                 graph[KpnegEnum.dF.name] = results[KpnegEnum.dF.name][-1]  #initial dF value
                 k = "_".join([KpnegEnum.dF.name, bin_type])
 
                 if bf:
-                    AddAttributes(graph).add_graph_attributes(k, {tuple(tuple(x) for x in results[KpnegEnum.dF.name][0]): results[KpnegEnum.dF.name][1]})
+                    AddAttributes.add_graph_attributes(graph, k, {tuple(tuple(x) for x in results[KpnegEnum.dF.name][0]): results[KpnegEnum.dF.name][1]})
                 else:
-                    AddAttributes(graph).add_graph_attributes(k, {tuple(results[KpnegEnum.dF.name][0]):results[KpnegEnum.dF.name][1]})
+                    AddAttributes.add_graph_attributes(graph, k, {tuple(results[KpnegEnum.dF.name][0]):results[KpnegEnum.dF.name][1]})
 
             if KpposEnum.dR.name in queried_stuff:
                 k = "_".join([KpposEnum.dR.name, bin_type])
                 if bf:
-                    AddAttributes(graph).add_graph_attributes(k, {
+                    AddAttributes.add_graph_attributes(graph, k, {
                         tuple(tuple(x) for x in results[KpposEnum.dR.name][0]): results[KpposEnum.dR.name][1]})
                 else:
-                    AddAttributes(graph).add_graph_attributes(k, {tuple(results[KpposEnum.dR.name][0]):results[KpposEnum.dR.name][1]})
+                    AddAttributes.add_graph_attributes(graph, k, {tuple(results[KpposEnum.dR.name][0]):results[KpposEnum.dR.name][1]})
 
             if KpposEnum.mreach.name in queried_stuff:
                 k = "_".join([KpposEnum.mreach.name, str(results[KpposEnum.mreach.name][-1]), bin_type])
 
                 if bf:
-                    AddAttributes(graph).add_graph_attributes(k, {
+                    AddAttributes.add_graph_attributes(graph, k, {
                         tuple(tuple(x) for x in results[KpposEnum.mreach.name][0]): results[KpposEnum.mreach.name][1]})
                 else:
-                    AddAttributes(graph).add_graph_attributes(k, {
+                    AddAttributes.add_graph_attributes(graph, k, {
                         tuple(results[KpposEnum.mreach.name][0]): results[KpposEnum.mreach.name][1]})
             binary_prefix = "_".join(["pyntacle", graph["name"][0], "kpsize", str(k_size),
                                       report_type, self.date])
