@@ -206,7 +206,6 @@ class EglUtils:
 
             return outpath
 
-
     def __write_edgelist(self, edgelist:list, path:str):
         r"""
         Internal method to write an edgelist into a file at a specified path
