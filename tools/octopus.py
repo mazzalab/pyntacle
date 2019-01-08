@@ -573,7 +573,7 @@ class Octopus:
         :param str,list,None nodes: the vertex ``name`` attribute corresponding to node names. If :py:class:`None`, it adds the selected metric to all nodes in the graph. Otherwise, it can be either a string specifying a single node name or a list of strings, each one representing a node in the graph.
         """
         kpobj = kpw(graph=graph)
-        kpobj.run_KPNeg(nodes, KpnegEnum.F)
+        kpobj.run_fragmentation(nodes, KpnegEnum.F)
         results_dict = kpobj.get_results()
         AddAttributes.add_graph_attributes(graph,
             KpnegEnum.F.name + '_kpinfo', {tuple(sorted(results_dict[KpnegEnum.F.name][0])): results_dict[KpnegEnum.F.name][1]})
@@ -596,7 +596,7 @@ class Octopus:
         """
         cmode = get_cmode(graph)
         kpobj = kpw(graph=graph)
-        kpobj.run_KPNeg(nodes, KpnegEnum.dF, max_distance=max_distance, implementation=cmode)
+        kpobj.run_fragmentation(nodes, KpnegEnum.dF, max_distance=max_distance, implementation=cmode)
         results_dict = kpobj.get_results()
         AddAttributes.add_graph_attributes(graph,
             KpnegEnum.dF.name + '_kpinfo',
@@ -622,7 +622,7 @@ class Octopus:
         cmode = get_cmode(graph)
 
         kpobj = kpw(graph=graph)
-        kpobj.run_KPPos(nodes, KpposEnum.dR, max_distance=max_distance, implementation=cmode)
+        kpobj.run_reachability(nodes, KpposEnum.dR, max_distance=max_distance, implementation=cmode)
         results_dict = kpobj.get_results()
         AddAttributes.add_graph_attributes(graph,
             KpposEnum.dR.name + '_kpinfo',
@@ -648,7 +648,7 @@ class Octopus:
         cmode = get_cmode(graph)
 
         kpobj = kpw(graph=graph)
-        kpobj.run_KPPos(nodes, KpposEnum.mreach, m=m, max_distance=max_distance, implementation=cmode)
+        kpobj.run_reachability(nodes, KpposEnum.mreach, m=m, max_distance=max_distance, implementation=cmode)
         results_dict = kpobj.get_results()
         attr_name = KpposEnum.mreach.name + '_{}_kpinfo'.format(str(m))
         AddAttributes.add_graph_attributes(graph,

@@ -48,9 +48,9 @@ class Metrics:
         self.date = runtime_date
 
         # Check for pycairo
-        if not self.args.no_plot and util.find_spec("cairo") is None:
-            sys.stdout.write("WARNING: It seems that the pycairo library is not installed/available. Plots"
-                             "will not be produced.")
+        if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
+            sys.stdout.write("Warning: It seems that the pycairo library is not installed/available. Graph plot(s)"
+                             "will not be produced.\n")
             self.args.no_plot = True
 
     def run(self):
@@ -70,11 +70,11 @@ class Metrics:
         if self.args.input_file is None:
             self.logging.error(
                 "Please specify an input file using the -i option.".format(self.args.input_file))
-            sys.exit()
+            sys.exit(1)
 
         if not os.path.exists(self.args.input_file):
             self.logging.error("Cannot find {}. Is the path correct?".format(self.args.input_file))
-            sys.exit()
+            sys.exit(1)
 
         # check output directory
         if not os.path.isdir(self.args.directory):
@@ -476,5 +476,5 @@ class Metrics:
         if not self.args.suppress_cursor:
             cursor.stop()
 
-        sys.stdout.write("pyntacle Metrics completed successfully.\n")
+        sys.stdout.write("Pyntacle Metrics completed successfully.\n")
         sys.exit(0)

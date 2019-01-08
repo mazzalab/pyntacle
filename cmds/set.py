@@ -38,9 +38,6 @@ from internal.graph_load import GraphLoad,separator_detect
 
 
 class Set:
-    """
-    **[EXPAND]**
-    """
 
     def __init__(self, args):
         self.logging = log
@@ -49,8 +46,8 @@ class Set:
 
         # Check for pycairo
         if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
-            sys.stdout.write("WARNING: It seems that the pycairo library is not installed/available. Plots"
-                             "will not be produced.")
+            sys.stdout.write("Warning: It seems that the pycairo library is not installed/available. Graph plot(s)"
+                             "will not be produced.\n")
             self.args.no_plot = True
 
     def run(self):
@@ -175,7 +172,7 @@ class Set:
                     "This should not happen. Please contact pyntacle developers and send a log of the error.\nQuitting.")
                 sys.exit(1)
 
-            sys.stdout.write("basename of output graph: {}\n".format(self.args.output_file))
+            sys.stdout.write("Basename of output graph: {}\n".format(self.args.output_file))
 
         # NOT prefixing the argument with -- means it's not optional
 
@@ -283,7 +280,7 @@ class Set:
             simplefilter("ignore", RuntimeWarning)
             PyntacleExporter.Dot(output_graph, output_path)
 
-        elif out_form == "bin":
+        elif out_form == "graph":
             sys.stdout.write("Storing the created graph into a .graph (binary) file\n")
             PyntacleExporter.Binary(output_graph, output_path)
 
@@ -444,5 +441,5 @@ class Set:
         if not self.args.suppress_cursor:
             cursor.stop()
 
-        sys.stdout.write("pyntacle Set completed successfully\n")
+        sys.stdout.write("Pyntacle Set completed successfully\n")
         sys.exit(0)

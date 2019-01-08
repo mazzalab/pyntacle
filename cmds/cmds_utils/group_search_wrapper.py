@@ -58,7 +58,7 @@ class InfoWrapper:
         self.results = {}  # dictionary that will store results
 
     @timeit
-    def run_KPPos(self, nodes, kp_type:KpposEnum, m=None, max_distance=None, implementation=CmodeEnum.igraph):
+    def run_reachability(self, nodes, kp_type:KpposEnum, m=None, max_distance=None, implementation=CmodeEnum.igraph):
         """
         Run Single KPP-POS metrics on a single node or a set of nodes, adds everuything to the "results" object
         :param nodes: either a single node name or a list of node names
@@ -97,7 +97,7 @@ class InfoWrapper:
         self.logger.info("KP POS search completed, results are in the 'results' dictionary")
 
     @timeit
-    def run_KPNeg(self, nodes, kp_type:KpnegEnum, max_distance=None, implementation = CmodeEnum.igraph):
+    def run_fragmentation(self, nodes, kp_type:KpnegEnum, max_distance=None, implementation = CmodeEnum.igraph):
         """
         Run KP NEG metrics for a node or a set of nodes
         :param nodes: either a single node name or a list of node names
@@ -131,6 +131,10 @@ class InfoWrapper:
 
         self.results[kp_type.name] = [nodes, single_result]
         self.logger.info("KP POS search completed, results are in the 'results' dictionary")
+
+    #todo wrap the group centrality here
+    def run_GR(self):
+        pass
 
     def get_results(self) -> dict:
         """
@@ -277,6 +281,10 @@ class BFWrapper:
                                           max_distance=max_distance, m=m, cmode=implementation, ncores=threads)
 
         self.results[kp_type.name] = [bf_results[0], bf_results[1]]
+
+    # todo wrap the group centrality here
+    def run_GR(self):
+        pass
 
     def get_results(self) -> dict:
         """

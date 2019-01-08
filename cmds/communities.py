@@ -42,8 +42,8 @@ class Communities():
             self.args.output_separator = '\t'
         # Check for pycairo
         if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
-            sys.stdout.write("WARNING: It seems that the pycairo library is not installed/available. Plots"
-                             "will not be produced.")
+            sys.stdout.write("Warning: It seems that the pycairo library is not installed/available. Graph plot(s)"
+                             "will not be produced.\n")
             self.args.no_plot = True
 
     def run(self):
@@ -53,12 +53,13 @@ class Communities():
             cursor.daemon = True
             cursor.start()
 
-        if not self.args.input_file:
-            sys.stderr.write("ERROR: Input file is missing. Quitting\n")
+        if self.args.input_file is None:
+            sys.stderr.write(
+                "Please specify an input file using the `-i/--input-file` option. Quitting.\n")
             sys.exit(1)
 
         if not os.path.exists(self.args.input_file):
-            sys.stderr.write("ERROR: path {} does not exist. Quitting\n".format(self.args.input_file))
+            sys.stderr.write("Cannot find {}. Is the path correct?".format(self.args.input_file))
             sys.exit(1)
 
         input_header = True
@@ -78,13 +79,13 @@ class Communities():
             try:
                 graph = utils.get_largest_component()
                 sys.stdout.write(
-                    "Taking the largest component of the input graph as you requested ({} nodes, {} edges)\n".format(
+                    "Taking the largest component of the input graph as you requested ({} nodes, {} edges).\n".format(
                         graph.vcount(), graph.ecount()))
 
 
             except MultipleSolutionsError:
                 sys.stderr.write(
-                    "The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the '--largest-component' option. Quitting\n")
+                    "The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the '--largest-component' option. Quitting.\n")
                 sys.exit(1)
 
         # initialize module finder method
@@ -101,12 +102,12 @@ class Communities():
 
                 except ValueError:
                     sys.stderr.write(
-                        "Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting\n")
+                        "Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting.\n")
                     sys.exit(1)
 
                 if self.args.plot_dim[i] <= 0:
                     sys.stderr.write(
-                        "Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting\n")
+                        "Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting.\n")
                     sys.exit(1)
 
             plot_size = tuple(self.args.plot_dim)
@@ -123,7 +124,7 @@ class Communities():
             if self.args.weights is not None:
                 # import edge attributes
                 if not os.path.exists(self.args.weights):
-                    sys.stderr.write("Weights file {} does not exist. Quitting\n".format(self.args.weights))
+                    sys.stderr.write("Attribute file {} does not exist. Quitting\n".format(self.args.weights))
                     sys.exit(1)
 
                 else:
@@ -138,22 +139,22 @@ class Communities():
                     self.args.clusters = int(self.args.clusters)
 
                 except:
-                    sys.stderr.write("argument of '--clusters' must be an integer. Quitting\n")
+                    sys.stderr.write("argument of '--clusters' must be an integer. Quitting.\n")
                     sys.exit(1)
 
-            sys.stdout.write("Community finding using fastgreedy algorithm\n")
+            sys.stdout.write("Running community-finding using the fastgreedy algorithm...\n")
             communities.fast_greedy(weights=weights, n=self.args.clusters)
             mods = communities.modules
             algorithm = "fastgreedy"
 
         elif self.args.which == "infomap":
-            sys.stdout.write("Community finding using infomap algorithm\n")
+            sys.stdout.write("Running community-finding using the infomap algorithm...\n")
             communities.infomap()
             mods = communities.modules
             algorithm = "infomap"
 
         elif self.args.which == "leading-eigenvector":
-            sys.stdout.write("Community finding using leading-eigenvector algorithm\n")
+            sys.stdout.write("Running community-finding using the leading-eigenvector algorithm...\n")
             communities.leading_eigenvector()
             mods = communities.modules
             algorithm = "leading-eigenvector"
@@ -163,13 +164,13 @@ class Communities():
                 self.args.steps = int(self.args.steps)
 
             except:
-                sys.stderr.write("Argument of '--steps' must be an integer. Quitting\n")
+                sys.stderr.write("Argument of '--steps' must be an integer. Quitting.\n")
                 sys.exit(1)
 
             if self.args.weights is not None:
                 # import edge attributes
                 if not os.path.exists(self.args.weights):
-                    sys.stderr.write("Weights file {} does not exist. Quitting\n".format(self.args.weights))
+                    sys.stderr.write("Weights file {} does not exist. Quitting.\n".format(self.args.weights))
                     sys.exit(1)
 
                 else:
@@ -184,11 +185,11 @@ class Communities():
                     self.args.clusters = int(self.args.clusters)
 
                 except:
-                    sys.stderr.write("argument of '--clusters' must be an integer. Quitting\n")
+                    sys.stderr.write("Argument of '--clusters' must be an integer. Quitting.\n")
                     sys.exit(1)
 
             sys.stdout.write(
-                "Community finding using community walktrap algorithm at maximum {} steps\n".format(
+                "Running community-finding using the community walktrap algorithm at maximum {} steps.\n".format(
                     self.args.steps))
             communities.community_walktrap(weights=weights, n=self.args.clusters,
                                            steps=self.args.steps)
@@ -196,8 +197,8 @@ class Communities():
             algorithm = "community-walktrap"
 
         else:
-            self.logging.critical("This should not happen. Please contact pyntacle Developers and send your "
-                                  "command line, along with a log. Quitting\n.")
+            sys.stderr.write("This should not happen. Please contact Pyntacle developers and send your "
+                                  "command line, along with a log. Quitting.\n")
             sys.exit(1)
 
         mods_report = []
@@ -209,7 +210,7 @@ class Communities():
                 "\t".join([str(x) for x in [i, elem.vcount(), elem.ecount(), len(elem.components())]]) + "\n")
 
         sys.stdout.write(
-            "pyntacle - Community finding report:\nalgorithm:{0}\nTotal number of modules found:"
+            "Pyntacle - Community finding report:\nAlgorithm:{0}\nTotal number of modules found:"
             "\t{1}\nIndex\tNodes\tEdges \tComponents\n{2}".format(
                 algorithm, len(mods), "".join(mods_report)))
 
@@ -227,7 +228,7 @@ class Communities():
                     self.args.min_nodes = int(self.args.min_nodes)
 
                 except:
-                    sys.stderr.write("argument of '--min-set' must be an integer. Quitting\n")
+                    sys.stderr.write("Argument of '--min-set' must be an integer. Quitting.\n")
                     sys.exit(1)
 
             if self.args.max_nodes is not None:
@@ -235,7 +236,7 @@ class Communities():
                     self.args.max_nodes = int(self.args.max_nodes)
 
                 except:
-                    sys.stderr.write("argument of \"--max-set\" must be an integer. Quitting\n")
+                    sys.stderr.write("Argument of '--max-set' must be an integer. Quitting.\n")
                     sys.exit(1)
 
             if self.args.max_components is not None:
@@ -243,7 +244,7 @@ class Communities():
                     self.args.max_components = int(self.args.max_components)
 
                 except:
-                    sys.stderr.write("argument of \"--max-components\" must be an integer. Quitting\n")
+                    sys.stderr.write("Argument of '--max-components' must be an integer. Quitting.\n")
                     sys.exit(1)
 
             if self.args.min_components is not None:
@@ -251,35 +252,35 @@ class Communities():
                     self.args.min_components = int(self.args.min_components)
 
                 except:
-                    sys.stderr.write("argument of \"--min_components\" must be an integer. Quitting\n")
+                    sys.stderr.write("Argument of '--min_components' must be an integer. Quitting.\n")
                     sys.exit(1)
 
             mod_utils.filter_subgraphs(min_nodes=self.args.min_nodes, max_nodes=self.args.max_nodes,
                                        min_components=self.args.min_components,
                                        max_components=self.args.max_components)
             if len(mod_utils.modules) > 0:
-                sys.stdout.write("Filtered out {0} modules. Keeping {1} communities. Writing induced subgraph of communities to file.\n".format(
+                sys.stdout.write("Filtered out {0} modules. Keeping {1} communities. Writing induced subgraph of communities to file...\n".format(
                     (init_mods - len(mod_utils.modules)), len(mod_utils.modules)))
             else:
                 sys.stderr.write("According to your filtering criteria, no community was kept. Quitting.\n")
                 sys.exit(1)
 
         else:
-            sys.stdout.write("No modules to filter. Proceeding.\n")
+            sys.stdout.write("No modules to filter.\n")
 
         mod_utils.label_modules_in_graph()
         final_mods = mod_utils.get_modules()
 
         # producing output graph
         if self.args.no_output_header:
-            sys.stdout.write("Not creating header on output files as you requested\n")
+            sys.stdout.write("Skipping header writing on output graph community files, as you requested.\n")
             output_header = False
 
         else:
             output_header = True
 
         if not os.path.isdir(self.args.directory):
-            sys.stdout.write("Warning: Output directory does not exists, will create one at {}.\n".format(
+            sys.stdout.write("Warning: output directory does not exists, will create one at {}.\n".format(
                 os.path.abspath(self.args.directory)))
             os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
 
@@ -293,7 +294,7 @@ class Communities():
             # insert random name generator
             self.args.output_file = "_".join(["pyntacle", graph["name"][0], algorithm])
             sys.stdout.write(
-                "output modules name not specified. Basename of the output modules will be {}\n".format(
+                "Output modules name not specified. Basename of the output modules will be {} (default).\n".format(
                     self.args.output_file))
 
         output_basename = os.path.join(self.args.directory, self.args.output_file)
@@ -301,25 +302,25 @@ class Communities():
         for elem in final_mods:
             output_path = ".".join(["_".join([output_basename, str(elem["__module_number"]), self.date]), out_form])
             if out_form == "adjm":
-                sys.stdout.write("Creating Adjacency Matrix of each community\n")
+                sys.stdout.write("Creating adjacency matrix for each community found...\n")
                 PyntacleExporter.AdjacencyMatrix(elem, output_path, sep=self.args.output_separator,
                                                  header=output_header)
             elif out_form == "egl":
-                sys.stdout.write("Creating Edge List of each final community\n")
+                sys.stdout.write("Creating edge list for each community found...\n")
                 PyntacleExporter.EdgeList(elem, output_path, sep=self.args.output_separator, header=output_header)
 
             elif out_form == "sif":
-                sys.stdout.write("Creating Simple Interaction File of each final community\n")
+                sys.stdout.write("Creating Simple Interaction Format (SIF) file for each community found...\n")
                 PyntacleExporter.Sif(elem, output_path, sep=self.args.output_separator, header=output_header)
 
             elif out_form == "dot":
-                sys.stdout.write("Creating DOT File of the each final community\n")
+                sys.stdout.write("Creating DOT file for each community found...\n")
                 # Ignore ugly RuntimeWarnings while creating a dot
                 simplefilter("ignore", RuntimeWarning)
                 PyntacleExporter.Dot(elem, output_path)
 
             elif out_form == "bin":
-                sys.stdout.write("Storing each community into a .graph (binary) file\n")
+                sys.stdout.write("Writing each community found into a binary file (ending in .graph)...\n")
                 PyntacleExporter.Binary(elem, output_path)
 
         # save the original graph into a binary file
@@ -327,7 +328,7 @@ class Communities():
             binary_name = ".".join(["pyntacle_communities", "graph"])
             binary_path = os.path.join(self.args.directory, binary_name)
             sys.stdout.write(
-                "Storing the input graph with module labels into .graph file at path {}\n".format(
+                "Storing the input graph with module labels into a binary file (ending in .graph) at {} .\n".format(
                     binary_path))
 
         if not self.args.no_plot:
@@ -336,7 +337,7 @@ class Communities():
 
             if os.path.isdir(plot_dir):
                 self.logging.warning(
-                    "A directory named \"pyntacle-plots\" already exists, I may overwrite something in there")
+                    "A directory named \"pyntacle-plots\" already exists, I may overwrite something in there.")
 
             else:
                 os.mkdir(plot_dir)
@@ -348,14 +349,14 @@ class Communities():
 
             if graph.vcount() < 1000:
 
-                sys.stdout.write("Generating plots in {} format.\n".format(self.args.plot_format))
+                sys.stdout.write("Plotting graph in {} format.\n".format(self.args.plot_format))
 
                 main_plot_path = os.path.join(plot_dir, ".".join(["_".join(
                     ["pyntacle", os.path.splitext(os.path.basename(self.args.input_file))[0], "modules",
                      self.date]), self.args.plot_format]))
 
                 # initialize general graph Drawer
-                sys.stdout.write("Drawing Original Graph with corresponding modules\n")
+                sys.stdout.write("Drawing original graph highlighting communities...\n")
                 graph_plotter = PlotGraph(graph=graph)
                 graph_plotter.set_node_labels(labels=graph.vs()["name"])
                 graph_plotter.set_node_sizes([30] * graph.vcount())
@@ -381,15 +382,15 @@ class Communities():
                                          vertex_frame_color=bord_list)
             else:
                 sys.stdout.write(
-                    "Input Graph is above pyntacle plotting capability ({} nodes, we support 1000 nodes). Will skip plotting this module.\n".format(
+                    "Input graph is above Pyntacle plotting capability ({} nodes, we plot graph with at best 1000 nodes). Will skip plotting this module.\n".format(
                         graph.vcount()))
 
             if len(final_mods) > 20:
                 self.logging.warning(
-                    "The number of modules ({}) is quite high, hence the node colors of each module may be very similar".format(
+                    "The number of modules found ({}) is very high. The plot of the input graph will have nuanced colors.".format(
                         len(final_mods)))
 
-            sys.stdout.write("Drawing Each Module Separately\n")
+            sys.stdout.write("Drawing Each Module Separately.\n")
 
             for i,comm in enumerate(final_mods):
                 if comm.vcount() <= 1000:
@@ -410,10 +411,10 @@ class Communities():
 
                 else:
                     sys.stdout.write(
-                        "Module {0} is above pyntacle Plotting limits ({1} nodes , we support 1000 nodes). Will skip plotting this module.\n".format(
+                        "Module {0} is above Pyntacle plotting limits ({1} nodes, we support 1000 nodes). Will skip plotting this module.\n".format(
                             i, comm.vcount()))
         if not self.args.suppress_cursor:
             cursor.stop()
 
-        sys.stdout.write("Community Finding completed successfully.\n")
+        sys.stdout.write("Pyntacle communities completed successfully. Ending.\n")
         sys.exit(0)

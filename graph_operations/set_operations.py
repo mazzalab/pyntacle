@@ -31,20 +31,25 @@ from tools.enums import GraphOperationEnum
 from tools.add_attributes import AddAttributes
 from tools.graph_utils import GraphUtils as GUtil
 
+#TODO problema attributi: vanno portati quello del grafo originale
+
+
 class GraphOperations(object):
     r"""
-    Perform logical set operatiuons (*union*, *intersection*, *difference*) among two graphs of interest.
+    Perform logical set operations (*union*, *intersection*, *difference*) among two graphs of interest.
+
+    .. warning:: If the same attribute is present at graph, node or edge level, but the same attribute holds a different value in the two graph of origin, only the attribute belonging to the first graph (in order) is preserved.
     """
 
     @staticmethod
     def union(graph1: Graph, graph2: Graph, new_graph_name: str) -> Graph:
         r"""
-        **[EXPAND]**
+        Perform the union among two graph as described by  `Wolfram <http://mathworld.wolfram.com/GraphUnion.html>`_
 
-        :param graph1:
-        :param graph2:
-        :param new_graph_name:
-        :return:
+        :param igraph.Graph graph1:
+        :param igraph.Graph graph2:
+        :param str new_graph_name:
+        :return igraph.Graph:
         """
         union_v, union_e = GraphOperations.make_sets(graph1, graph2, GraphOperationEnum.Union)
         merged_g = Graph()
@@ -61,12 +66,12 @@ class GraphOperations(object):
     @staticmethod
     def intersection(graph1: Graph, graph2: Graph, new_graph_name: str) -> Graph:
         r"""
-        **[EXPAND]**
+        Perform the intersection among two graph as described by  `Wolfram <http://mathworld.wolfram.com/GraphIntersection.html>`_
 
-        :param graph1:
-        :param graph2:
-        :param new_graph_name:
-        :return:
+        :param igraph.Graph graph1:
+        :param igraph.Graph graph2:
+        :param str new_graph_name:
+        :return igraph.Graph:
         """
         intersect_v, intersect_e, union_v = GraphOperations.make_sets(graph1, graph2, GraphOperationEnum.Intersection)
 
@@ -94,12 +99,12 @@ class GraphOperations(object):
     @staticmethod
     def difference(graph1: Graph, graph2: Graph, new_graph_name: str) -> Graph:
         r"""
-        **[EXPAND]**
+        Perform the intersection among two graph as described by  `Wolfram <http://mathworld.wolfram.com/GraphDifference.html>`_
 
-        :param graph1:
-        :param graph2:
-        :param new_graph_name:
-        :return:
+        :param igraph.Graph graph1:
+        :param igraph.Graph graph2:
+        :param str new_graph_name:
+        :return igraph.Graph:
         """
         exclusive1_v, exclusive1_e, union_v = GraphOperations.make_sets(graph1, graph2, GraphOperationEnum.Difference)
 
@@ -145,15 +150,15 @@ class GraphOperations(object):
         GUtil(graph=exclusive_g1).graph_initializer(graph_name=new_graph_name)
         return exclusive_g1
 
+    #todo this becomes external
     @staticmethod
     def make_sets(graph1: Graph, graph2: Graph, operation: GraphOperationEnum):
         r"""
-        **[EXPAND]**
         
         :param graph1:
         :param graph2:
         :param operation:
-        :return:
+        :return igraph.Graph:
         """
         set1v = set(graph1.vs["name"])
         set2v = set(graph2.vs["name"])

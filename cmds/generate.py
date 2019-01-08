@@ -42,6 +42,16 @@ class Generate:
         if self.args.seed:
             random.seed(self.args.seed)
 
+        self.date = runtime_date
+        if not self.args.output_separator:
+            self.args.output_separator = '\t'
+        # Check for pycairo
+
+        if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
+            sys.stdout.write("Warning: It seems that the pycairo library is not installed/available. Graph plot(s)"
+                             "will not be produced.\n")
+            self.args.no_plot = True
+
     def run(self):
         if not self.args.suppress_cursor:
             cursor = CursorAnimation()
@@ -57,21 +67,21 @@ class Generate:
                     self.args.nodes = int(self.args.nodes)
 
                 except ValueError:
-                    sys.stderr.write("Number of nodes must be a positive integer. Quitting\n")
+                    sys.stderr.write("Number of nodes must be a positive integer. Quitting.\n")
                     sys.exit(1)
 
             if not self.args.probability and self.args.edges:
 
                 try:
                     self.args.edges = int(self.args.edges)
-                    "Generating Graph with Scale Random Topology\nParameters:\nNumber of Nodes: {0}\nNumber of Edges: {1}\n".format(
+                    "Generating graph with random topology.\nParameters:\nNumber of nodes: {0}\nNumber of edges: {1}\n".format(
                         self.args.nodes, self.args.edges)
                     
                     graph = Generator.Random([self.args.nodes, self.args.edges], name="Random", seed=self.args.seed)
 
                 except (ValueError, TypeError, IllegalGraphSizeError):
                     sys.stderr.write(
-                        "Number of nodes must be a positive integer greater than 2 and number of edges must be a positive integer greater than zero. Quitting\n")
+                        "Number of nodes must be a positive integer greater than 2 and number of edges must be a positive integer greater than zero. Quitting.\n")
                     sys.exit(1)
 
             else:
@@ -85,17 +95,18 @@ class Generate:
                             raise ValueError
 
                     except ValueError:
-                        sys.stderr.write("Probability must be a float between 0 and 1. Quitting.")
+                        sys.stderr.write("Probability must be a float between 0 and 1. Quitting.\n")
+                        sys.exit(1)
 
                 try:
                     sys.stdout.write(
-                        "Generating Graph with Random Topology\nParameters:\nNumber of Nodes: {0}\nProbability of wiring: {1}\n".format(
+                        "Generating graph with random topology.\nParameters:\nNumber of nodes: {0}\nProbability of wiring: {1}\n".format(
                             self.args.nodes, self.args.probability))
                     graph = Generator.Random([self.args.nodes, self.args.probability], name="Random", seed=self.args.seed)
 
                 except (ValueError, TypeError, IllegalGraphSizeError):
                     sys.stderr.write(
-                        "Number of nodes must be a positive integer greater than 2 and a probability must be a float between 0 and 1. Quitting\n")
+                        "Number of nodes must be a positive integer greater than 2 and a probability must be a float between 0 and 1. Quitting.\n")
                     sys.exit(1)
                 
         elif self.args.which == "scale-free":
@@ -107,7 +118,7 @@ class Generate:
                     self.args.nodes = int(self.args.nodes)
 
                 except ValueError:
-                    sys.stderr.write("Number of nodes must be a positive integer. Quitting\n")
+                    sys.stderr.write("Number of nodes must be a positive integer. Quitting.\n")
                     sys.exit(1)
 
             if self.args.avg_edges is None:
@@ -118,18 +129,18 @@ class Generate:
                     self.args.avg_edges = int(self.args.nodes)
 
                 except ValueError:
-                    sys.stderr.write("Number of outgoing edges must be a positive integer. Quitting\n")
+                    sys.stderr.write("Number of outgoing edges must be a positive integer. Quitting.\n")
                     sys.exit(1)
 
             try:
                 sys.stdout.write(
-                    "Generating Graph with Scale Free Topology\nParameters:\nNumber of Nodes: {0}\nNumber of Outgoing edges: {1}\n".format(
+                    "Generating graph with scale-free topology.\nParameters:\nNumber of Nodes: {0}\nNumber of Outgoing edges: {1}\n".format(
                         self.args.nodes, self.args.avg_edges))
                 graph = Generator.ScaleFree([self.args.nodes, self.args.avg_edges], name="ScaleFree", seed=self.args.seed)
 
             except (ValueError, TypeError, IllegalGraphSizeError):
                 sys.stderr.write(
-                    "Number of nodes  and number of outgoing edges must be positive integersmust be a positive integer. Quitting\n")
+                    "Number of nodes and number of outgoing edges must be positive integers. Quitting.\n")
                 sys.exit(1)
 
         elif self.args.which == "tree":
@@ -142,7 +153,7 @@ class Generate:
                     self.args.nodes = int(self.args.nodes)
 
                 except ValueError:
-                    sys.stderr.write("Number of nodes must be a positive integer. Quitting\n")
+                    sys.stderr.write("Number of nodes must be a positive integer. Quitting.\n")
                     sys.exit(1)
 
             if self.args.children is None:
@@ -153,18 +164,18 @@ class Generate:
                     self.args.children = int(self.args.nodes)
 
                 except ValueError:
-                    sys.stderr.write("Number of children must be a positive integer. Quitting\n")
+                    sys.stderr.write("Number of children must be a positive integer. Quitting.\n")
                     sys.exit(1)
 
             try:
                 sys.stdout.write(
-                    "Generating Graph with Tree Topology\nParameters:\nNumber of Nodes: {0}\nChildren per Node: {1}\n".format(
+                    "Generating Graph with tree topology.\nParameters:\nNumber of nodes: {0}\nChildren per node: {1}\n".format(
                         self.args.nodes, self.args.children))
                 graph = Generator.Tree([self.args.nodes, self.args.children], name="Tree", seed=self.args.seed)
 
             except (ValueError, TypeError, IllegalGraphSizeError):
                 sys.stderr.write(
-                    "Number of nodes and number of children must be positive integersmust be a positive integer. Quitting\n")
+                    "Number of nodes and number of children must be positive integers. Quitting.\n")
                 sys.exit(1)
 
         elif self.args.which == "small-world":
@@ -197,22 +208,22 @@ class Generate:
 
                 except ValueError:
                     sys.stderr.write(
-                        "ERROR: One of the parameters you specified is not the proper type or it is out of boundaries. Quitting\n")
+                        "ERROR: One of the parameters you specified is not the proper type or it is out of boundaries. Quitting.\n")
                     sys.exit(1)
 
             try:
                 sys.stdout.write(
-                    "Generating Graph with Small World Topology\nParameters:\nLattice Dimensions: {0}\nLattice Size: {1}\nNei (number of edges that connect each graph): {2}\nRewiring Probability: {3}\n".format(
+                    "Generating Graph with small-world topology.\nParameters:\nInitial lattice dimensions: {0}\nLattice size: {1}\nNei (number of edges that connect each graph): {2}\nRewiring probability: {3}\n".format(
                         self.args.lattice, self.args.lattice_size, self.args.nei, self.args.probability))
                 graph = Generator.SmallWorld(
                     [self.args.lattice, self.args.lattice_size, self.args.nei, self.args.probability], name="SmallWorld", seed=self.args.seed)
 
             except(TypeError, ValueError, IllegalArgumentNumberError):
                 sys.stderr.write(
-                    "ERROR : The parameters you chose were invalid. Please check your command line. Quitting.\n")
+                    "The parameters you chose were invalid. Please check your command line. Quitting.\n")
 
         else:
-            raise Error("This should not appear. Contact pyntacle Developer for Debugging")
+            raise Error("This message should not appear. Please contact Pyntacle Developer and report this bug.")
 
         # Check provided dimensions' format
         if self.args.plot_dim:  # define custom format
@@ -224,12 +235,12 @@ class Generate:
         
                 except ValueError:
                     sys.stderr.write(
-                        "Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting\n")
+                        "Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting.\n")
                     sys.exit(1)
         
                 if self.args.plot_dim[i] <= 0:
                     sys.stderr.write(
-                        "Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting\n")
+                        "Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting.\n")
                     sys.exit(1)
     
             plot_size = tuple(self.args.plot_dim)
@@ -243,14 +254,14 @@ class Generate:
                 plot_size = (1600, 1600)
                 
         if self.args.no_output_header:
-            sys.stdout.write("Not outputting header as you requested\n")
+            sys.stdout.write("Skipping header on output graph file, as requested...\n")
             output_header = False
 
         else:
             output_header = True
 
         if not os.path.isdir(self.args.directory):
-            sys.stdout.write("Warning: Output directory does not exist, will create one at {}.\n".format(
+            sys.stdout.write("Warning: output directory does not exist, will create one at {}.\n".format(
                 os.path.abspath(self.args.directory)))
             os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
 
@@ -260,51 +271,51 @@ class Generate:
         out_form = format_dictionary.get(self.args.output_format, "NA")
 
         if out_form == "NA":
-            sys.stderr.write("Output extension specified is not supported, see  '--help' for more info\n. Quitting")
+            sys.stderr.write("Output extension specified is not supported. Quitting.\n")
             sys.exit(1)
 
         output_path = os.path.join(self.args.directory, ".".join([self.args.output_file, out_form]))
-        sys.stdout.write("Path to generated Graph is: {}\n".format(output_path))
+        sys.stdout.write("Path to graph : {}\n".format(output_path))
 
         if self.args.output_separator is None:
-            sys.stdout.write("Using '\\t' as default separator for output file\n")
+            sys.stdout.write("Using '\\t' as default separator for output file.\n")
             self.args.output_separator = "\t"
 
         if os.path.exists(output_path):
-            self.logging.warning("A file named {} already exist, I will overwrite it".format(output_path))
+            self.logging.warning("A file named {} already exist, I will overwrite it.".format(output_path))
 
         # output generated networks
         if out_form == "adjm":
-            sys.stdout.write("Creating Adjacency Matrix of the generated graph\n")
+            sys.stdout.write("Creating adjacency matrix of the generated graph...\n")
             PyntacleExporter.AdjacencyMatrix(graph, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "egl":
-            sys.stdout.write("Creating Edge List of the generated graph\n")
+            sys.stdout.write("Creating edge list of the generated graph...\n")
             PyntacleExporter.EdgeList(graph, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "sif":
-            sys.stdout.write("Creating Simple Interaction File of the generated graph\n")
+            sys.stdout.write("Creating Simple Interaction Format (SIF) file of the generated graph...\n")
             PyntacleExporter.Sif(graph, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "dot":
-            sys.stdout.write("Creating DOT File of the generated graph\n")
+            sys.stdout.write("Creating DOT file of the generated graph...\n")
 
             # Ignore ugly RuntimeWarnings while creating a dot
             simplefilter("ignore", RuntimeWarning)
             PyntacleExporter.Dot(graph, output_path)
 
         elif out_form == "graph":
-            sys.stdout.write("Storing the created graph into a .graph (binary) file\n")
+            sys.stdout.write("Storing the created graph into a binary file (ending in .graph)...\n")
             PyntacleExporter.Binary(graph, output_path)
 
         if not self.args.no_plot and graph.vcount() < 1000:
-            sys.stdout.write("Drawing Generated Graph\n")
+            sys.stdout.write("Drawing generated graph...\n")
             # generates plot directory
             plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
 
             if os.path.isdir(plot_dir):
                 self.logging.warning(
-                    "A directory named 'pyntacle-plots' already exist, I may overwrite something in there")
+                    "A directory named 'pyntacle-plots' already exist, I may overwrite something in there.")
 
             else:
                 os.mkdir(plot_dir)
@@ -367,18 +378,18 @@ class Generate:
 
             if os.path.exists(plot_path):
                 self.logging.warning(
-                    "A path with the same name already exist. I will overwrite current drawing")
+                    "A path with the same name already exist. I will overwrite current drawing.")
 
             plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2, keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=frame_vertex_colour)
 
         elif not self.args.no_plot and graph.vcount() >= 1000:
             self.logging.warning(
-                "Graph ({} nodes) exceeds pyntacle limits for plotting (maximum 1000 nodes). Will not draw Graph".format(
+                "Generated graph is above Pyntacle plotting capability ({} nodes, we plot graph with at best 1000 nodes). Graph plotting will be skipped.".format(
                     graph.vcount()))
 
         if not self.args.suppress_cursor:
             cursor.stop()
 
-        sys.stdout.write("pyntacle Generate completed successfully.\n")
+        sys.stdout.write("Pyntacle generate completed successfully. Ending.\n")
         if self.args.repeat == 1:
             sys.exit(0)
