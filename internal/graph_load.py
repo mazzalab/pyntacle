@@ -1,11 +1,11 @@
-__author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2018, The Pyntacle Project"
-__credits__ = ["Ferenc Jordan"]
-__version__ = "1.0.0"
-__maintainer__ = "Daniele Capocefalo"
+__author__ = u"Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
+__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__credits__ = [u"Ferenc Jordan"]
+__version__ = u"1.0.0"
+__maintainer__ = u"Daniele Capocefalo"
 __email__ = "bioinformatics@css-mendel.it"
-__status__ = "Development"
-__date__ = "26/11/2018"
+__status__ = u"Development"
+__date__ = u"26/11/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -35,13 +35,14 @@ import codecs
 
 
 def unescaped_str(arg_str):
-    return codecs.decode(str(arg_str), 'unicode_escape')
+    return codecs.decode(str(arg_str), u'unicode_escape')
 
 
 def separator_detect(filename):
-    """
+    r"""
     Uses csv.Sniffer to detect the delimiter in the
     first line of a table.
+
     :param str filename: input file
     :return: the separator as a string
     """
@@ -49,12 +50,11 @@ def separator_detect(filename):
         try:
             firstline = f.readline()
         except UnicodeDecodeError:
-            return('\t')
+            return(u'\t')
         else:
             sniffer = csv.Sniffer()
             separator = sniffer.sniff(firstline).delimiter
             return separator
-
 
 class GraphLoad():
     def __init__(self, input_file, file_format, header, separator=None):
@@ -62,21 +62,20 @@ class GraphLoad():
         self.input_file = input_file
         self.file_format = file_format
         if self.file_format == "NA":
-            self.logger.info("Unspecified or unrecognized file format. Will try to guess it.")
+            self.logger.info(u"Unspecified or unrecognized file format. Will try to guess it.")
 
         self.header = header
         self.separator = separator
         
     def get_format(self):
         return self.file_format
-    
-    # @property
+
     def graph_load(self):
         
         # First of all, check if binary. If so, any attempt to read as text would fail with UnicodeDecodeError.
 
         if is_binary_file(self.input_file) and self.file_format == "NA":
-            self.logger.info("Guessed file format: binary")
+            self.logger.info(u"Guessed file format: binary")
             self.file_format = 'graph'
             self.header = False
             
@@ -87,7 +86,7 @@ class GraphLoad():
 
         # If no format is specified, the header, separator and format itself will be guessed
         if self.file_format == "NA":
-            self.logger.info("Trying to guess input format for file {}".format(self.input_file))
+            self.logger.info(u"Trying to guess input format for file {}".format(self.input_file))
             self.file_format, self.header, self.separator = self.guess_format(self.input_file)
 
         # Graph import
@@ -101,13 +100,13 @@ class GraphLoad():
             except (ValueError):
                 if not self.header: #in case header has been specified
                     sys.stderr.write(
-                        "Adjacency Matrix is either direct or malformed. Please note that you specified "
+                        u"Adjacency Matrix is either direct or malformed. Please note that you specified "
                         "the header is not present, If that's not the case, remove the \"--no-header\" "
                         "option. Quitting.\n")
                     sys.exit(1)
                 else:
                     sys.stderr.write(
-                        "Adjacency Matrix is either direct or malformed. Please note that you specified "
+                        u"Adjacency Matrix is either direct or malformed. Please note that you specified "
                         "the header was present. If that's not the case, use the \"--no-header\" option. "
                         "Quitting.\n")
                     sys.exit(1)
@@ -120,7 +119,7 @@ class GraphLoad():
 
             except IOError:
                 sys.stderr.write(
-                    "Binary format does not contain an igraph.Graph object or the Graph passed is invalid. "
+                    u"Binary format does not contain an igraph.Graph object or the Graph passed is invalid. "
                     "Check your binary. Quitting.\n")
                 sys.exit(1)
 
@@ -131,7 +130,7 @@ class GraphLoad():
                 graph = PyntacleImporter.Dot(self.input_file)
             except:
                 sys.stderr.write(
-                    "Dot file is not supporter by our parser. Or other formatting errors has occured. "
+                    u"Dot file is not supporter by our parser. Or other formatting errors has occured. "
                     "Please check our documentation in order to check out DOT file specifications. "
                     "Quitting.\n")
                 sys.exit(1)
@@ -141,26 +140,26 @@ class GraphLoad():
                 graph = PyntacleImporter.Sif(file=self.input_file, sep=self.separator, header=self.header)
             except UnproperlyFormattedFileError:
                 sys.stderr.write(
-                    "Sif is unproperly formatted or a header is present and --no-header was declared in "
+                    u"Sif is unproperly formatted or a header is present and --no-header was declared in "
                     "input (also check if the separator is correct). Quitting.\n")
                 sys.exit(1)
 
         else:
-            sys.stderr.write("Unsupported file format {}. This should not happen. Please send this line to "
+            sys.stderr.write(u"Unsupported file format {}. This should not happen. Please send this line to "
                              "pyntacle Developer. Quitting\n".format(self.file_format))
             sys.exit(1)
 
-        self.logger.debug("Graph: name:{}\tNodes: {}\tEdges: {}".format(graph["name"], graph.vcount(),
+        self.logger.debug(u"Graph: name:{}\tNodes: {}\tEdges: {}".format(graph["name"], graph.vcount(),
                                                                         graph.ecount()))
-        self.logger.debug("Header:{}".format(self.header))
-        self.logger.debug("Separator:{}".format(repr(self.separator)))
+        self.logger.debug(u"Header:{}".format(self.header))
+        self.logger.debug(u"Separator:{}".format(repr(self.separator)))
         
         GraphUtils(graph=graph).check_graph()
 
         return graph
 
     def guess_format(self, filename):
-        """
+        r"""
         Tries to guess the input format using several criteria:
         the extension first and, if unsuccessful, by the matrix shape
         
@@ -180,12 +179,12 @@ class GraphLoad():
             if not self.separator:
                 self.separator = separator_detect(filename)
             else:
-                self.logger.info("Separator provided: {}".format(self.separator))
+                self.logger.info(u"Separator provided: {}".format(self.separator))
                 self.separator = unescaped_str(self.separator)
             
         # Guessing by extension
         if file_ext in valid_extensions:
-            self.logger.info("Guessed from extension: {}".format(valid_extensions[file_ext]))
+            self.logger.info(u"Guessed from extension: {}".format(valid_extensions[file_ext]))
             return valid_extensions[file_ext], self.header, self.separator
         
         # Easy .dot guessing by keyword at the beginning
@@ -211,7 +210,7 @@ class GraphLoad():
                                   delimiter=self.separator, dtype=str)
 
             except:
-                sys.stderr.write("\nCould not load_graph data from file. Please specify --no-header if "
+                sys.stderr.write(u"\nCould not load_graph data from file. Please specify --no-header if "
                                  "necessary.\n")
                 sys.exit()
         else:
@@ -225,35 +224,35 @@ class GraphLoad():
                                   delimiter=self.separator, dtype=str)
             except:
                 sys.stderr.write(
-                    "\nCould not load_graph data from file. If it is written in one of the supported formats,"
+                    u"\nCould not load_graph data from file. If it is written in one of the supported formats,"
                     "please specify it with the --format option, and/or specify the correct field delimiter with --input-separator\n")
                 sys.exit()
 
         if len(f.shape) == 1 or (f.shape[1] >= 3 and (f.shape[1] != f.shape[0] or ('1' not in f or '0' not in f))):
             if len(f.shape) == 1:
-                self.logger.warning("WARNING: the input file seems to be very small (1 edge).")
-            self.logger.info("Guessed file format: Simple Interaction Format")
+                self.logger.warning(u"Warning: the input file seems to be very small (1 edge).")
+            self.logger.info(u"Guessed file format: Simple Interaction Format")
             return "sif", self.header, self.separator
 
         if f.shape[1] == 2:
             if f.shape[0] == 2 and ('1' in f or '0' in f):
-                self.logger.info("Guessed file format: Adjacency Matrix")
+                self.logger.info(u"Guessed file format: Adjacency Matrix")
                 return "adjm", self.header, self.separator
             else:
-                self.logger.info("Guessed file format: Edge List")
+                self.logger.info(u"Guessed file format: Edge List")
                 return "egl", self.header, self.separator
         elif f.shape[1] == f.shape[0] and f.shape[1] > 2:
-            self.logger.info("Guessed file format: Adjacency Matrix")
+            self.logger.info(u"Guessed file format: Adjacency Matrix")
             return "adjm", self.header, self.separator
         else:
-            self.logger.error("It was not possible to guess file format. Please specify it with the "
-                              "--format option.")
+            self.logger.error(u"It was not possible to guess file format. Please specify it with the "
+                              " '--format' option.")
             sys.exit()
 
     def get_header(self):
-        '''
-        Find if the input file has an header
-        
-        :return: a boolean True if the file has an header, false otherwise
+        r'''
+        Finds if the input file has an header.
+
+        :return bool: a boolean True if the file has an header, false otherwise
         '''
         return self.header

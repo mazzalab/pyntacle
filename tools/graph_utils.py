@@ -2,14 +2,14 @@
 Generic utilities for graph management and safety checks
 """
 
-__author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2018, The Pyntacle Project"
-__credits__ = ["Ferenc Jordan"]
-__version__ = "1.0.0"
-__maintainer__ = "Daniele Capocefalo"
+__author__ = u"Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
+__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__credits__ = [u"Ferenc Jordan"]
+__version__ = u"1.0.0"
+__maintainer__ = u"Daniele Capocefalo"
 __email__ = "bioinformatics@css-mendel.it"
-__status__ = "Development"
-__date__ = "26/11/2018"
+__status__ = u"Development"
+__date__ = u"26/11/2018"
 __license__ = u"""
   Copyright (C) 20016-2017  Tommaso Mazza <t,mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -43,6 +43,7 @@ from exceptions.multiple_solutions_error import MultipleSolutionsError
 from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
 from tools.enums import CmodeEnum
 from tools.add_attributes import AddAttributes
+from internal.name_checker import attribute_name_checker
 
 class GraphUtils:
     r"""
@@ -349,6 +350,13 @@ class GraphUtils:
         :param str graph_name: The network name (will be stored in the graph ``name`` attribute)
         :param str, None node_names: optional, a list of strings matching the total number of vertices of the graph. Each item in the list becomes the vertex ``name`` attribute sequentially (index-by-index correspondance). Defaults to py:class:`None` (node ``name`` attribute is filled by node indices).
         """
+
+        try:
+            attribute_name_checker(graph_name)
+        except ValueError:
+            sys.stderr.write("'graph_name' is invalid\n")
+            sys.exit(1)
+
         self.__graph.to_undirected()  # reconvert graph to directed
         if "name" not in self.__graph.attributes():
             self.logger.info(u"adding file name to graph name")
@@ -357,7 +365,7 @@ class GraphUtils:
         # add vertex names
         if "name" not in self.__graph.vs.attributes():
             if node_names is None:
-                self.logger.info(u"adding node names to graph corresponding to their indices")
+                self.logger.info(u"Adding node names to graph corresponding to their indices")
                 self.__graph.vs()["name"] = [str(x.index) for x in self.__graph.vs()]
 
             else:
@@ -372,12 +380,12 @@ class GraphUtils:
 
         # add parent name to vertices
         if "__parent" not in self.__graph.vs().attributes():
-            self.logger.info(u"adding reserved attribute '__parent' to the vertices")
+            self.logger.info(u"Adding reserved attribute '__parent' to the vertices")
             AddAttributes.add_parent_name(self.__graph)
 
         if "adjacent_nodes" not in self.__graph.es().attributes():
             # add edge vertices names as an attribute 'adjacent_vertices'
-            self.logger.info(u"adding source and target names as \"adjacent_nodes\" attribute to edges")
+            self.logger.info(u"Adding source and target names as \"adjacent_nodes\" attribute to edges")
             AddAttributes.add_edge_names(self.__graph)
 
         # for sif file conversion purposes

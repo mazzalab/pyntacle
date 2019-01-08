@@ -1,11 +1,11 @@
-__author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2018, The Pyntacle Project"
-__credits__ = ["Ferenc Jordan"]
-__version__ = "1.0.0"
-__maintainer__ = "Daniele Capocefalo"
+__author__ = u"Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
+__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__credits__ = [u"Ferenc Jordan"]
+__version__ = u"1.0.0"
+__maintainer__ = u"Daniele Capocefalo"
 __email__ = "bioinformatics@css-mendel.it"
-__status__ = "Development"
-__date__ = "26/11/2018"
+__status__ = u"Development"
+__date__ = u"26/11/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -29,7 +29,7 @@ __license__ = u"""
 from config import *
 
 def is_binary_file(filepathname):
-    """
+    r"""
 
     :param filepathname: input file to check
     :return: boolean, True if file is a binary

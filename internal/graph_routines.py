@@ -1,13 +1,13 @@
 """Python decorators for consistency check of graph and graph's elements"""
 
-__author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2018, The Pyntacle Project"
-__credits__ = ["Ferenc Jordan"]
-__version__ = "1.0.0"
-__maintainer__ = "Daniele Capocefalo"
+__author__ = u"Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
+__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__credits__ = [u"Ferenc Jordan"]
+__version__ = u"1.0.0"
+__maintainer__ = u"Daniele Capocefalo"
 __email__ = "bioinformatics@css-mendel.it"
-__status__ = "Development"
-__date__ = "26/11/2018"
+__status__ = u"Development"
+__date__ = u"26/11/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -33,51 +33,53 @@ from collections import Counter
 
 
 def check_graph_consistency(func):
-    """
+    r"""
     It checks the structural integrity of a graph
+
     :param func: The decorated function
     :return: The function in input if the check was successful
     """
     @wraps(func)
     def func_wrapper(graph, *args, **kwargs):
         if not isinstance(graph, Graph):
-            raise WrongArgumentError("The input graph is not an instance of igraph.Graph")
+            raise WrongArgumentError(u"The input graph is not an instance of igraph.Graph")
 
         if graph.vcount() == 0:
-            raise IllegalGraphSizeError('The input graph does not contain any vertex')
+            raise IllegalGraphSizeError(u"The input graph does not contain any vertex")
 
         # if graph.ecount() < 1:
         #     raise IllegalGraphSizeError("Input Graph does not have any edges")
 
         if "name" not in graph.attributes():
-            raise MissingAttributeError("Graph must have a \"name\" attribute")
+            raise MissingAttributeError(u"Graph must have a \"name\" attribute")
 
         if "name" not in graph.vs.attributes():
-            raise MissingAttributeError("Input vertices don't have a \"name\" attribute")
+            raise MissingAttributeError(u"Input vertices don't have a \"name\" attribute")
         else:
             if None in graph.vs["name"]:
-                raise MissingAttributeError("The 'name' attribute must be assigned to all nodes of the graph")
+                raise MissingAttributeError(u"The 'name' attribute must be assigned to all nodes of the graph")
 
-            counter = Counter(graph.vs["name"])
+            counter = Counter(graph.vs[u"name"])
             duplicates = [v for k, v in counter.items() if v > 1]
             if duplicates:
-                raise MissingAttributeError("The 'name' attribute is duplicated for [{}] nodes".format(duplicates))
+                raise MissingAttributeError(u"The 'name' attribute is duplicated for [{}] nodes".format(duplicates))
 
         if Graph.is_directed(graph):
-            raise UnsupportedGraphError("The input graph is directed. Pyntacle currently supports undirected graphs")
+            raise UnsupportedGraphError(u"The input graph is directed. Pyntacle currently supports undirected graphs")
 
         if not Graph.is_simple(graph):
             raise UnsupportedGraphError(
-                "The input graph contains self loops or multiple edges. Pyntacle currently supports simple graphs")
+                u"The input graph contains self loops or multiple edges. Pyntacle currently supports simple graphs")
 
         return func(graph, *args, **kwargs)
     return func_wrapper
 
 
 def vertex_doctor(func):
-    """
-    It decorates functions with at a *graph* and a *node* or a list/tuple of *nodes* as parameters.
+    r"""
+    It decorates functions with at a *graph* and a *node* or a list/tuple of *nodes*.
     It checks that the specified nodes are all contained in the graph
+
     :param func: The decorated function
     :return: The function in input if the check was successful
     """

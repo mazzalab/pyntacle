@@ -1,11 +1,11 @@
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
-__copyright__ = "Copyright 2018, The Pyntacle Project"
-__credits__ = ["Ferenc Jordan"]
-__version__ = "1.0.0"
-__maintainer__ = "Daniele Capocefalo"
+__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__credits__ = [u"Ferenc Jordan"]
+__version__ = u"1.0.0"
+__maintainer__ = u"Daniele Capocefalo"
 __email__ = "bioinformatics@css-mendel.it"
-__status__ = "Development"
-__date__ = "26/11/2018"
+__status__ = u"Development"
+__date__ = u"26/11/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -160,7 +160,7 @@ class GreedyOptimization:
 
     @staticmethod
     @check_graph_consistency
-    @greedy_search_initializer  # todo solve the m problem in this decorator
+    @greedy_search_initializer
     def reachability(graph, k: int, metric: KpposEnum, seed=None, max_distance: int=None, m=None,
                      cmode=CmodeEnum.igraph) -> (list, float):
         r"""

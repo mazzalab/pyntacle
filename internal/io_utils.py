@@ -1,11 +1,11 @@
-__author__ = "Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
-__copyright__ = "Copyright 2018, The Pyntacle Project"
-__credits__ = ["Ferenc Jordan"]
-__version__ = "1.0.0"
-__maintainer__ = "Daniele Capocefalo"
+__author__ = u"Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
+__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__credits__ = [u"Ferenc Jordan"]
+__version__ = u"1.0.0"
+__maintainer__ = u"Daniele Capocefalo"
 __email__ = "bioinformatics@css-mendel.it"
-__status__ = "Development"
-__date__ = "26/11/2018"
+__status__ = u"Development"
+__date__ = u"26/11/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -33,8 +33,9 @@ import string
 import random
 
 def input_file_checker(func):
-    """
+    r"""
     decorator to check the integrity of an input file
+
     :param func:  function given in input
     :return: the same function with checked properties
     """
@@ -51,7 +52,7 @@ def input_file_checker(func):
     return func_wrapper
 
 def output_file_checker(func):
-    """contains a series of operations that can be perfoemrd in orderto verify the integrity of thr output file"""
+    r"""contains a series of operations that can be perfoemrd in order to verify the integrity of the output file"""
     @wraps(func)
     def func_wrapper(graph, file, *args, **kwargs):
         if not isinstance(file, str):
@@ -66,9 +67,10 @@ def output_file_checker(func):
     return func_wrapper
 
 def separator_sniffer(func):
-    """
+    r"""
     a function imported from graph_load.py that automatically detects the separator of the input file (if not provided)
     and replace the "sep" argument in the Importers function's call
+
     :param func:
     :return:
     """

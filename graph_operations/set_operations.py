@@ -1,11 +1,11 @@
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
-__copyright__ = "Copyright 2018, The Pyntacle Project"
-__credits__ = ["Ferenc Jordan"]
-__version__ = "1.0.0"
-__maintainer__ = "Daniele Capocefalo"
+__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__credits__ = [u"Ferenc Jordan"]
+__version__ = u"1.0.0"
+__maintainer__ = u"Daniele Capocefalo"
 __email__ = "bioinformatics@css-mendel.it"
-__status__ = "Development"
-__date__ = "26/11/2018"
+__status__ = u"Development"
+__date__ = u"26/11/2018"
 __license__ = u"""
   Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -33,6 +33,49 @@ from tools.graph_utils import GraphUtils as GUtil
 
 #TODO problema attributi: vanno portati quello del grafo originale
 
+def make_sets(graph1: Graph, graph2: Graph, operation: GraphOperationEnum):
+    r"""
+    This should be skipped in documentation
+
+    :param graph1:
+    :param graph2:
+    :param operation:
+    :return igraph.Graph:
+    """
+    set1v = set(graph1.vs["name"])
+    set2v = set(graph2.vs["name"])
+
+    intersect_v = sorted(list(set1v & set2v))
+    exclusive1_v = sorted(list(set1v - set2v))
+    # exclusive2_v = list(set2v - set1v)
+    union_v = {}
+
+    for v in list(set1v | set2v):
+        # Looping through the Union set of vertices NAMES
+        if v in intersect_v:
+            union_v.setdefault(v, []).append(graph1.vs[graph1.vs.find(v).index]["__parent"])
+            union_v.setdefault(v, []).append(graph2.vs[graph2.vs.find(v).index]["__parent"])
+        elif v in exclusive1_v:
+            union_v.setdefault(v, []).append(graph1.vs[graph1.vs.find(v).index]["__parent"])
+        else:
+            union_v.setdefault(v, []).append(graph2.vs[graph2.vs.find(v).index]["__parent"])
+
+    union_v = OrderedDict(sorted(union_v.items()))
+    set1e = set(tuple(sorted(l)) for l in graph1.es["adjacent_nodes"])
+    set2e = set(tuple(sorted(l)) for l in graph2.es["adjacent_nodes"])
+
+    intersect_e = list(set1e & set2e)
+    exclusive1_e = list(set1e - set2e)
+    # exclusive2_e = list(set2e - set1e)
+    union_e = list(set1e | set2e)
+
+    if operation == GraphOperationEnum.Union:
+        return union_v, union_e
+    elif operation == GraphOperationEnum.Intersection:
+        return intersect_v, intersect_e, union_v
+    elif operation == GraphOperationEnum.Difference:
+        return exclusive1_v, exclusive1_e, union_v
+
 
 class GraphOperations(object):
     r"""
@@ -51,7 +94,7 @@ class GraphOperations(object):
         :param str new_graph_name:
         :return igraph.Graph:
         """
-        union_v, union_e = GraphOperations.make_sets(graph1, graph2, GraphOperationEnum.Union)
+        union_v, union_e = make_sets(graph1, graph2, GraphOperationEnum.Union)
         merged_g = Graph()
         merged_g["name"] = [new_graph_name]
         merged_g.add_vertices(list(union_v.keys()))
@@ -73,7 +116,7 @@ class GraphOperations(object):
         :param str new_graph_name:
         :return igraph.Graph:
         """
-        intersect_v, intersect_e, union_v = GraphOperations.make_sets(graph1, graph2, GraphOperationEnum.Intersection)
+        intersect_v, intersect_e, union_v = make_sets(graph1, graph2, GraphOperationEnum.Intersection)
 
         # Intersect: to avoid isolated nodes, we take the intersection of EDGES as a reference.
         # Therefore, removal of nodes not involved in these edges is necessary
@@ -106,7 +149,7 @@ class GraphOperations(object):
         :param str new_graph_name:
         :return igraph.Graph:
         """
-        exclusive1_v, exclusive1_e, union_v = GraphOperations.make_sets(graph1, graph2, GraphOperationEnum.Difference)
+        exclusive1_v, exclusive1_e, union_v = make_sets(graph1, graph2, GraphOperationEnum.Difference)
 
         for e in exclusive1_e:
             if e[0] not in exclusive1_v:
@@ -149,47 +192,3 @@ class GraphOperations(object):
 
         GUtil(graph=exclusive_g1).graph_initializer(graph_name=new_graph_name)
         return exclusive_g1
-
-    #todo this becomes external
-    @staticmethod
-    def make_sets(graph1: Graph, graph2: Graph, operation: GraphOperationEnum):
-        r"""
-        
-        :param graph1:
-        :param graph2:
-        :param operation:
-        :return igraph.Graph:
-        """
-        set1v = set(graph1.vs["name"])
-        set2v = set(graph2.vs["name"])
-
-        intersect_v = sorted(list(set1v & set2v))
-        exclusive1_v = sorted(list(set1v - set2v))
-        # exclusive2_v = list(set2v - set1v)
-        union_v = {}
-
-        for v in list(set1v | set2v):
-            # Looping through the Union set of vertices NAMES
-            if v in intersect_v:
-                union_v.setdefault(v, []).append(graph1.vs[graph1.vs.find(v).index]["__parent"])
-                union_v.setdefault(v, []).append(graph2.vs[graph2.vs.find(v).index]["__parent"])
-            elif v in exclusive1_v:
-                union_v.setdefault(v, []).append(graph1.vs[graph1.vs.find(v).index]["__parent"])
-            else:
-                union_v.setdefault(v, []).append(graph2.vs[graph2.vs.find(v).index]["__parent"])
-        
-        union_v = OrderedDict(sorted(union_v.items()))
-        set1e = set(tuple(sorted(l)) for l in graph1.es["adjacent_nodes"])
-        set2e = set(tuple(sorted(l)) for l in graph2.es["adjacent_nodes"])
-
-        intersect_e = list(set1e & set2e)
-        exclusive1_e = list(set1e - set2e)
-        # exclusive2_e = list(set2e - set1e)
-        union_e = list(set1e | set2e)
-
-        if operation == GraphOperationEnum.Union:
-            return union_v, union_e
-        elif operation == GraphOperationEnum.Intersection:
-            return intersect_v, intersect_e, union_v
-        elif operation == GraphOperationEnum.Difference:
-            return exclusive1_v, exclusive1_e, union_v

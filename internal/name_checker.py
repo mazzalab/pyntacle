@@ -24,27 +24,20 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-"""   Wrap the usage time, report it"""
-
 from config import *
-import time, sys
-from functools import wraps
-def timeit(func):
-    r"""
-    Decorator to give the total elapsed time (in seconds) for a given algorithm
+import re
 
-    :param func: the input function
-    :return: the elapsed time the function took to develop its iteration
-    """
+def attribute_name_checker(name:str):
+    #NOTE: this checks the basename of the graph name only
+    if not name:
+        raise ValueError("Empty string found")
 
-    @wraps(func)
-    def timed(*args, **kwargs):
-        ts = time.perf_counter()
-        result = func(*args, **kwargs)
-        te = time.perf_counter()
+    if not isinstance(name, str):
+        raise ValueError("Graph name must be a string, {} found".format(type(name).__name__))
 
-        sys.stdout.write(u"Elapsed Time: %2.2f sec" % (te - ts))
+    if name.isspace():
+        raise ValueError("Graph name must contain at least a non-empty character")
+    if not re.match(r"^[\w\.\-\ \:\+\[\]\(\)\{\}\=]+$", name):
+        raise ValueError("Graph name contains illegal characters")
 
-        return result
 
-    return timed
