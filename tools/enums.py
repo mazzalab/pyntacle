@@ -157,6 +157,8 @@ class GlobalAttributeEnum(enum.Enum):
     completeness_naive = 15
     completeness = 16
     compactness = 17
+    average_global_shortest_path_length = 18
+    median_global_shortest_path_length = 19
 
 
 class ReportEnum(enum.Enum):
