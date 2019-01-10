@@ -23,28 +23,32 @@ __license__ = u"""
   You should have received a copy of the license along with this
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
-
+from config import *
 from warnings import simplefilter
 from graph_operations.modules_finder import CommunityFinder
+from io_stream.import_attributes import ImportAttributes
 from io_stream.exporter import PyntacleExporter
 from cmds.cmds_utils.plotter import PlotGraph
-from io_stream.import_attributes import ImportAttributes
 from tools.modules_utils import ModuleUtils
 from tools.graph_utils import *
 from internal.graph_load import GraphLoad, separator_detect
+from exceptions.generic_error import Error
 
 class Communities():
     def __init__(self, args):
         self.logging = log
         self.args = args
         self.date = runtime_date
-        if not self.args.output_separator:
-            self.args.output_separator = '\t'
+        if not hasattr(self.args, 'which'):
+            raise Error(u"usage: pyntacle.py communities{infomap, community-walktrap, fastgreedy, leading-eigenvector} [options]'")
         # Check for pycairo
         if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
             sys.stdout.write(u"Warning: It seems that the pycairo library is not installed/available. Graph plot(s)"
                              "will not be produced.\n")
             self.args.no_plot = True
+
+        if not self.args.output_separator:
+            self.args.output_separator = '\t'
 
     def run(self):
 
@@ -81,6 +85,7 @@ class Communities():
                 sys.stdout.write(
                     u"Taking the largest component of the input graph as you requested ({} nodes, {} edges).\n".format(
                         graph.vcount(), graph.ecount()))
+                utils.set_graph(graph)
 
 
             except MultipleSolutionsError:
@@ -302,25 +307,25 @@ class Communities():
         for elem in final_mods:
             output_path = ".".join(["_".join([output_basename, str(elem["__module_number"]), self.date]), out_form])
             if out_form == "adjm":
-                sys.stdout.write(u"Creating adjacency matrix for each community found...\n")
+                sys.stdout.write(u"Writing each community to an adjacency matrix...\n")
                 PyntacleExporter.AdjacencyMatrix(elem, output_path, sep=self.args.output_separator,
                                                  header=output_header)
             elif out_form == "egl":
-                sys.stdout.write(u"Creating edge list for each community found...\n")
+                sys.stdout.write(u"Writing each community to an edge list...\n")
                 PyntacleExporter.EdgeList(elem, output_path, sep=self.args.output_separator, header=output_header)
 
             elif out_form == "sif":
-                sys.stdout.write(u"Creating Simple Interaction Format (SIF) file for each community found...\n")
+                sys.stdout.write(u"Writing each community to a Simple Interaction Format (SIF) file...\n")
                 PyntacleExporter.Sif(elem, output_path, sep=self.args.output_separator, header=output_header)
 
             elif out_form == "dot":
-                sys.stdout.write(u"Creating DOT file for each community found...\n")
+                sys.stdout.write(u"Writing each community to a DOT file...\n")
                 # Ignore ugly RuntimeWarnings while creating a dot
                 simplefilter("ignore", RuntimeWarning)
                 PyntacleExporter.Dot(elem, output_path)
 
             elif out_form == "bin":
-                sys.stdout.write(u"Writing each community found into a binary file (ending in .graph)...\n")
+                sys.stdout.write(u"Writing each community to a binary file (ending in .graph)...\n")
                 PyntacleExporter.Binary(elem, output_path)
 
         # save the original graph into a binary file

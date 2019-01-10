@@ -35,13 +35,15 @@ from tools.graph_utils import GraphUtils as GUtil
 
 def make_sets(graph1: Graph, graph2: Graph, operation: GraphOperationEnum):
     r"""
-    This should be skipped in documentation
-
     :param graph1:
     :param graph2:
     :param operation:
     :return igraph.Graph:
     """
+
+    GUtil(graph=graph1).check_graph()
+    GUtil(graph=graph2).check_graph()
+
     set1v = set(graph1.vs["name"])
     set2v = set(graph2.vs["name"])
 
@@ -116,6 +118,7 @@ class GraphOperations(object):
         :param str new_graph_name:
         :return igraph.Graph:
         """
+
         intersect_v, intersect_e, union_v = make_sets(graph1, graph2, GraphOperationEnum.Intersection)
 
         # Intersect: to avoid isolated nodes, we take the intersection of EDGES as a reference.

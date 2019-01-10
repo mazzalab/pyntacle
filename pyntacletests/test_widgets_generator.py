@@ -67,7 +67,7 @@ class WidgetTestGenerator(unittest.TestCase):
         self.assertEqual(the_exception.code, 0)
         fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/random.adjm')
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/generate/random/random.adjm')
-        self.assertEqual(getmd5(fileout), getmd5(expected), 'Wrong checksum for Generator, random case')
+        self.assertEqual(getmd5(fileout), getmd5(expected), 'Wrong checksum for PyntacleGenerator, random case')
 
     def test_scalefree(self):
         sys.stdout.write("Testing scale-free generator\n")
@@ -83,7 +83,7 @@ class WidgetTestGenerator(unittest.TestCase):
         self.assertEqual(the_exception.code, 0)
         fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/scalefree.adjm')
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/generate/scalefree/scalefree.adjm')
-        self.assertEqual(getmd5(fileout), getmd5(expected), 'Wrong checksum for Generator, scale-free case')
+        self.assertEqual(getmd5(fileout), getmd5(expected), 'Wrong checksum for PyntacleGenerator, scale-free case')
 
     def test_tree(self):
         sys.stdout.write("Testing tree generator\n")
@@ -100,7 +100,7 @@ class WidgetTestGenerator(unittest.TestCase):
         fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/tree.adjm')
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/generate/tree/tree.adjm')
         self.assertEqual(getmd5(fileout), getmd5(expected),
-                         'Wrong checksum for Generator, tree case')
+                         'Wrong checksum for PyntacleGenerator, tree case')
 
     def test_smallworld(self):
         sys.stdout.write("Testing smallworld generator\n")
@@ -120,7 +120,7 @@ class WidgetTestGenerator(unittest.TestCase):
         fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/smallworld.adjm')
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/generate/smallworld/smallworld.adjm')
         self.assertEqual(getmd5(fileout), getmd5(expected),
-                         'Wrong checksum for Generator, smallworld case')
+                         'Wrong checksum for PyntacleGenerator, smallworld case')
         
     def tearDown(self):
         self.cleanup()

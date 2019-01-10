@@ -30,15 +30,16 @@ from tools.modules_utils import *
 
 class CommunityFinder:
     r"""
-    A series odf algorithms, mostly borrowed from :py:class:`igraph` for *community finding* within a network of interest.
+    A series of algorithms, mostly borrowed from :py:class:`igraph` toi perform community finding on a network of interest.
     """
     logger = None
 
     def __init__(self, graph: Graph):
+        #check that graph is properly set
         GraphUtils(graph=graph).check_graph()
-        self.__graph = graph
+        self.graph = graph
         self.logger = log
-        self.__modules = []
+        self.mods = []
 
     @property
     def modules(self):
@@ -46,11 +47,11 @@ class CommunityFinder:
 
         :return:
         """
-        return self.__modules
+        return self.modules
 
     def fast_greedy(self, weights=None, n=None):
         r"""
-        Community structure based on the greedy optimization of modularity.
+        Community findings based on the greedy optimization of modularity.
         This algorithm merges individual nodes into communities in a way that greedily maximizes the modularity score
         of the graph. This algorithm is said to run almost in linear time on sparse graphs.
         (http://igraph.org/python/doc/igraph.Graph-class.html#community_fastgreedy)
@@ -64,12 +65,12 @@ class CommunityFinder:
         else:
             self.logger.info(u"Computing Fastgreedy module search")
 
-        modules = self.__graph.community_fastgreedy(weights=weights)
+        modules = self.graph.community_fastgreedy(weights=weights)
         if not isinstance(n, int) and n is not None:
             raise ValueError(u"'n' must be an integer value")
         else:
             modules = modules.as_clustering(n=n)
-            self.__modules = modules.subgraphs()
+            self.mods = modules.subgraphs()
 
     def infomap(self):
         r"""
@@ -78,8 +79,8 @@ class CommunityFinder:
         """
 
         self.logger.info(u"Community Infomap")
-        temp_modules = self.__graph.community_infomap(edge_weights=None, vertex_weights=None, trials=10)
-        self.__modules = temp_modules.subgraphs()
+        temp_modules = self.graph.community_infomap(edge_weights=None, vertex_weights=None, trials=10)
+        self.mods = temp_modules.subgraphs()
 
     def leading_eigenvector(self):
         r"""
@@ -90,8 +91,8 @@ class CommunityFinder:
         """
 
         self.logger.info(u"Calculating the leading eigenvectors")
-        temp_modules = self.__graph.community_leading_eigenvector()
-        self.__modules = temp_modules.subgraphs()
+        temp_modules = self.graph.community_leading_eigenvector()
+        self.mods = temp_modules.subgraphs()
 
     def community_walktrap(self, weights=None, steps: int=3, n: int=None):
         r"""
@@ -106,17 +107,17 @@ class CommunityFinder:
         """
 
         if weights is None:
-            vertex_dendogram = self.__graph.community_walktrap(steps=steps)
+            vertex_dendogram = self.graph.community_walktrap(steps=steps)
             modules = vertex_dendogram.as_clustering()
-            self.__modules = modules.subgraphs()
+            self.mods = modules.subgraphs()
         else:
-            if not isinstance(weights, list) or 'weights' not in self.__graph.es.attributes():
+            if not isinstance(weights, list) or 'weights' not in self.graph.es.attributes():
                 raise ValueError(u"'weights' must be either a list or an edge graph attribute present in graph")
 
             else:
-                vertex_dendogram = self.__graph.community_walktrap(steps=steps, weights=weights)
+                vertex_dendogram = self.graph.community_walktrap(steps=steps, weights=weights)
                 if not isinstance(n, int) and n is not None:
                     raise ValueError(u"'n' must be an integer value")
                 else:
                     modules = vertex_dendogram.as_clustering(n=None)
-                    self.__modules = modules.subgraphs()
+                    self.mods = modules.subgraphs()

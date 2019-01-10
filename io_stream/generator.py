@@ -30,7 +30,7 @@ from tools.graph_utils import GraphUtils as GUtils
 from internal.io_utils import generatorscanner, randomword
 
 
-class Generator:
+class PyntacleGenerator:
     r"""Generate :py:class:`igraph.Graph` simulated network objects that follow  different topologies and  turn them into
     Pyntacle-ready networks to be used for simulations or testing"""
 

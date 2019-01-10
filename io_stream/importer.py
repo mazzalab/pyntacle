@@ -29,7 +29,7 @@ import pandas as pd
 import pickle
 from internal.binarycheck import *
 from internal.io_utils import input_file_checker, separator_sniffer
-from tools.graph_utils import GraphUtils as GUtils
+from tools.graph_utils import GraphUtils as gu
 from tools.add_attributes import AddAttributes
 from tools.adjmatrix_utils import AdjmUtils
 from tools.edgelist_utils import EglUtils
@@ -40,7 +40,6 @@ from pyparsing import *
 from itertools import product
 from collections import OrderedDict
 from ordered_set import OrderedSet
-
 
 def dot_attrlist_to_dict(mylist):
     mydict = {}
@@ -141,8 +140,9 @@ class PyntacleImporter:
                 node_names = [str(x) for x in range(0, len(f.columns))]
 
             graph = Graph.Adjacency(f.values.tolist(), mode="UPPER")
-            GUtils(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0],
-                                                         node_names=node_names)
+            gu(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0],
+                                              node_names=node_names)
+            gu.check_graph()
 
             sys.stdout.write(u"Adjacency matrix from {} imported\n".format(file))
             return graph
@@ -202,7 +202,9 @@ class PyntacleImporter:
 
         graph.add_edges(edgs)
         #initialize the graph by calling the graph_initializer() method
-        GUtils(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
+        gu(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
+        gu.check_graph()
+
         sys.stdout.write(u"Edge list from {} imported\n".format(file))
         return graph
 
@@ -295,8 +297,9 @@ class PyntacleImporter:
             graph.add_edges(edgeslist.keys())
             graph.es()["__sif_interaction"] = list(edgeslist.values())
 
-            # add missing attribute to graph
-            GUtils(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
+            # initialize graph
+            gu(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
+            gu.check_graph()
     
             sys.stdout.write(u"SIF from {} imported\n".format(file))
 
@@ -409,8 +412,9 @@ class PyntacleImporter:
             sys.stdout.write(u"Converting graph to undirect\n")
             graph.to_undirected()
 
-        GUtils(graph=graph).graph_initializer(graph_name=graphname,
-                                                     node_names=graph.vs["name"])
+        gu(graph=graph).graph_initializer(graph_name=graphname,
+                                          node_names=graph.vs["name"])
+        gu.check_graph()
 
         for a in edge_attrs_dict:
             for k in edge_attrs_dict[a]:
@@ -449,14 +453,14 @@ class PyntacleImporter:
                 raise IllegalGraphSizeError(u"Graph must contain at least 2 nodes linked by one edge")
 
             else:
-                GUtils(graph=graph).graph_initializer(
+                gu(graph=graph).graph_initializer(
                     graph_name=os.path.splitext(os.path.basename(file))[0])
 
                 if Graph.is_directed(graph):
 
-                    sys.stdout.write(u"Converting graph to undirect\n")
+                    sys.stdout.write(u"Converting graph to undirect.\n")
                     graph.to_undirected()
 
-                GUtils(graph=graph).check_graph()
-                sys.stdout.write(u"Binary from  {} imported\n".format(file))
+                gu(graph=graph).check_graph()
+                sys.stdout.write(u"Binary from {} imported\n".format(file))
                 return graph

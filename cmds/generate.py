@@ -25,13 +25,15 @@ __license__ = u"""
   """
 
 from config import *
+from warnings import simplefilter
+
 from exceptions.generic_error import Error
 from exceptions.illegal_graph_size_error import IllegalGraphSizeError
 from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
-from io_stream.generator import *
+from io_stream.generator import PyntacleGenerator
 from io_stream.exporter import PyntacleExporter
 from cmds.cmds_utils.plotter import *
-from warnings import simplefilter
+
 
 
 class Generate:
@@ -77,7 +79,7 @@ class Generate:
                     u"Generating graph with random topology.\nParameters:\nNumber of nodes: {0}\nNumber of edges: {1}\n".format(
                         self.args.nodes, self.args.edges)
                     
-                    graph = Generator.Random([self.args.nodes, self.args.edges], name="Random", seed=self.args.seed)
+                    graph = PyntacleGenerator.Random([self.args.nodes, self.args.edges], name="Random", seed=self.args.seed)
 
                 except (ValueError, TypeError, IllegalGraphSizeError):
                     sys.stderr.write(
@@ -102,7 +104,7 @@ class Generate:
                     sys.stdout.write(
                         "uGenerating graph with random topology.\nParameters:\nNumber of nodes: {0}\nProbability of wiring: {1}\n".format(
                             self.args.nodes, self.args.probability))
-                    graph = Generator.Random([self.args.nodes, self.args.probability], name="Random", seed=self.args.seed)
+                    graph = PyntacleGenerator.Random([self.args.nodes, self.args.probability], name="Random", seed=self.args.seed)
 
                 except (ValueError, TypeError, IllegalGraphSizeError):
                     sys.stderr.write(
@@ -136,7 +138,7 @@ class Generate:
                 sys.stdout.write(
                     u"Generating graph with scale-free topology.\nParameters:\nNumber of Nodes: {0}\nNumber of Outgoing edges: {1}\n".format(
                         self.args.nodes, self.args.avg_edges))
-                graph = Generator.ScaleFree([self.args.nodes, self.args.avg_edges], name="ScaleFree", seed=self.args.seed)
+                graph = PyntacleGenerator.ScaleFree([self.args.nodes, self.args.avg_edges], name="ScaleFree", seed=self.args.seed)
 
             except (ValueError, TypeError, IllegalGraphSizeError):
                 sys.stderr.write(
@@ -171,7 +173,7 @@ class Generate:
                 sys.stdout.write(
                     u"Generating Graph with tree topology.\nParameters:\nNumber of nodes: {0}\nChildren per node: {1}\n".format(
                         self.args.nodes, self.args.children))
-                graph = Generator.Tree([self.args.nodes, self.args.children], name="Tree", seed=self.args.seed)
+                graph = PyntacleGenerator.Tree([self.args.nodes, self.args.children], name="Tree", seed=self.args.seed)
 
             except (ValueError, TypeError, IllegalGraphSizeError):
                 sys.stderr.write(
@@ -215,7 +217,7 @@ class Generate:
                 sys.stdout.write(
                     u"Generating Graph with small-world topology.\nParameters:\nInitial lattice dimensions: {0}\nLattice size: {1}\nNei (number of edges that connect each graph): {2}\nRewiring probability: {3}\n".format(
                         self.args.lattice, self.args.lattice_size, self.args.nei, self.args.probability))
-                graph = Generator.SmallWorld(
+                graph = PyntacleGenerator.SmallWorld(
                     [self.args.lattice, self.args.lattice_size, self.args.nei, self.args.probability], name="SmallWorld", seed=self.args.seed)
 
             except(TypeError, ValueError, IllegalArgumentNumberError):
@@ -286,26 +288,26 @@ class Generate:
 
         # output generated networks
         if out_form == "adjm":
-            sys.stdout.write(u"Creating adjacency matrix of the generated graph...\n")
+            sys.stdout.write(u"Writing generated graph to an adjacency matrix...\n")
             PyntacleExporter.AdjacencyMatrix(graph, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "egl":
-            sys.stdout.write(u"Creating edge list of the generated graph...\n")
+            sys.stdout.write(u"Writing generated graph to an edge list...\n")
             PyntacleExporter.EdgeList(graph, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "sif":
-            sys.stdout.write(u"Creating Simple Interaction Format (SIF) file of the generated graph...\n")
+            sys.stdout.write(u"Writing generated graph to a Simple Interaction Format (SIF) file...\n")
             PyntacleExporter.Sif(graph, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "dot":
-            sys.stdout.write(u"Creating DOT file of the generated graph...\n")
+            sys.stdout.write(u"Writing generated graph to a DOT file...\n")
 
             # Ignore ugly RuntimeWarnings while creating a dot
             simplefilter("ignore", RuntimeWarning)
             PyntacleExporter.Dot(graph, output_path)
 
         elif out_form == "graph":
-            sys.stdout.write(u"Storing the created graph into a binary file (ending in .graph)...\n")
+            sys.stdout.write(u"Writing generated graph to a binary file (ending in .graph)...\n")
             PyntacleExporter.Binary(graph, output_path)
 
         if not self.args.no_plot and graph.vcount() < 1000:

@@ -35,7 +35,7 @@ from collections import OrderedDict
 """ Utility to produce the report for global topology, local topology and modules """
 
 
-class pyntacleReporter():
+class PyntacleReporter():
     """
     This method creates a report according to the type of analysis run by pyntacle
     """
@@ -48,9 +48,6 @@ class pyntacleReporter():
         # store first graph
         self.graph = graph
 
-        # initialize graph utility class
-        self.utils = gu(graph=self.graph)
-        self.utils.check_graph()  # check that input graph is properly set
         self.report_type = None #this will be instanced in create_report
         self.report = [] #this will be used in create_report
         self.dat = runtime_date

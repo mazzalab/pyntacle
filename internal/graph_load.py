@@ -153,8 +153,6 @@ class GraphLoad():
                                                                         graph.ecount()))
         self.logger.debug(u"Header:{}".format(self.header))
         self.logger.debug(u"Separator:{}".format(repr(self.separator)))
-        
-        GraphUtils(graph=graph).check_graph()
 
         return graph
 

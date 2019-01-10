@@ -30,7 +30,7 @@ __license__ = u"""
 from tools.graph_utils import *
 from functools import wraps
 from collections import Counter
-
+from tools.graph_utils import GraphUtils as gu
 
 def check_graph_consistency(func):
     r"""
@@ -41,35 +41,8 @@ def check_graph_consistency(func):
     """
     @wraps(func)
     def func_wrapper(graph, *args, **kwargs):
-        if not isinstance(graph, Graph):
-            raise WrongArgumentError(u"The input graph is not an instance of igraph.Graph")
 
-        if graph.vcount() == 0:
-            raise IllegalGraphSizeError(u"The input graph does not contain any vertex")
-
-        # if graph.ecount() < 1:
-        #     raise IllegalGraphSizeError("Input Graph does not have any edges")
-
-        if "name" not in graph.attributes():
-            raise MissingAttributeError(u"Graph must have a \"name\" attribute")
-
-        if "name" not in graph.vs.attributes():
-            raise MissingAttributeError(u"Input vertices don't have a \"name\" attribute")
-        else:
-            if None in graph.vs["name"]:
-                raise MissingAttributeError(u"The 'name' attribute must be assigned to all nodes of the graph")
-
-            counter = Counter(graph.vs[u"name"])
-            duplicates = [v for k, v in counter.items() if v > 1]
-            if duplicates:
-                raise MissingAttributeError(u"The 'name' attribute is duplicated for [{}] nodes".format(duplicates))
-
-        if Graph.is_directed(graph):
-            raise UnsupportedGraphError(u"The input graph is directed. Pyntacle currently supports undirected graphs")
-
-        if not Graph.is_simple(graph):
-            raise UnsupportedGraphError(
-                u"The input graph contains self loops or multiple edges. Pyntacle currently supports simple graphs")
+        gu(graph).check_graph()
 
         return func(graph, *args, **kwargs)
     return func_wrapper

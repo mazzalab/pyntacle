@@ -37,7 +37,7 @@ from importlib import util
 
 pycairo_check = util.find_spec("cairo")
 if pycairo_check is None:
-    raise EnvironmentError("pyntacle needs the pycairo library to be installed and available "
+    raise EnvironmentError("Pyntacle needs the pycairo library to be installed and available "
                            "in order to produce plots. Please install it and try again.")
 
 class PlotGraph():
@@ -59,8 +59,6 @@ class PlotGraph():
         self.logger = log
 
         self.graph = graph.copy()  # creates a copy of the graph to work on
-        self.utils = Gu(graph=self.graph)
-        self.utils.check_graph()  # checks that input graph is properly set
 
         if seed is not None:
             if not isinstance(seed, int):

@@ -56,18 +56,22 @@ class GraphUtils:
         self.logger = log
 
         if not isinstance(graph, Graph):
-            raise NotAGraphError(u"input graph is not a graph")
-
-        if graph.vcount() < 1:
-            raise IllegalGraphSizeError(u"This graph does not contain vertices")
-
-        elif graph.ecount() < 1:
-            raise IllegalGraphSizeError(u"This graph does not contain edges")
+            raise NotAGraphError(u"'graph' if not an igraph.Graph object ")
 
         else:
-            self.__graph = graph
+            self.graph = graph
 
-    def check_graph(self) -> bool:
+    def set_graph(self, graph: Graph):
+        r"""
+        Replaces the original Graph object with another one
+
+        :param graph: a :py:class:`igraph.Graph` object
+        """
+        self.graph = graph
+
+        self.check_graph()
+
+    def check_graph(self):
         r"""
         Check that the input graph is consistent according to the Pyntacle's minimum requirements
 
@@ -78,20 +82,57 @@ class GraphUtils:
         :raise TypeError: An error occurred because node's name attribute must be of type *string*
         """
 
-        # TODO: Handle exceptions wherever this method is used
+        if Graph.is_directed(self.graph):
+            raise UnsupportedGraphError(u"Graph is direct")
+        if not Graph.is_simple(self.graph):
+            raise UnsupportedGraphError(u"Graph contains self-loops and multiple edges")
+        if self.graph.vcount() < 2:
+            raise UnsupportedGraphError(u"Graph must contain at least two nodes")
 
-        if Graph.is_directed(self.__graph):
-            raise UnsupportedGraphError(u"Input graph is direct, pyntacle supports only undirected graphs")
-        elif not Graph.is_simple(self.__graph):
-            raise UnsupportedGraphError(u"Input Graph contains self loops and multiple edges")
-        elif "name" not in self.__graph.vs().attributes():
-            raise KeyError(u"nodes must have the attribute  \"name\"")
-        elif not all(isinstance(item, str) for item in self.__graph.vs()["name"]):
-            raise TypeError(u"node \"name\" attribute must be a string")
-        elif len(set(self.__graph.vs()["name"])) != len(self.__graph.vs()["name"]):
-            raise UnsupportedGraphError(u"Node names must be unique, check the \"name\" attribute in graph")
+        if self.graph.ecount() < 1:
+            raise UnsupportedGraphError(u"Graph must contain at least one edge")
+
+        if "name" not in self.graph.vs().attributes() and all(x == str for x in self.graph.vs()["name"]):
+            raise KeyError(u"Nodes must have the attribute  'name' and it must be filled with strings")
+
+        if len(set(self.graph.vs()["name"])) != len(self.graph.vs()["name"]):
+            raise UnsupportedGraphError(u"Node 'name' attribute  must be unique, check the \"name\" attribute in graph")
+
+        if "name" not in self.graph.attributes():
+            raise UnsupportedGraphError(u"Graph must have a 'name' attribute")
         else:
-            return True
+            if not isinstance(self.graph["name"], str):
+                raise TypeError(u"Graph 'name' attribute must be a string.")
+            else:
+                try:
+                    attribute_name_checker(self.graph["name"])
+                except ValueError:
+                    raise UnsupportedGraphError(u"Graph 'name' attribute contains illegal characters.")
+
+        if any(x not in self.graph.attributes() for x in ["__sif_interaction_name", "__implementation"]):
+            raise UnsupportedGraphError(u"One of the Pyntacle reserved graph attribute is missing, see goo.gl/MCsnd1 for more informations and initialize the `graph_initializer` method in `tools.graph_utils` To initialize your graph.")
+
+        else:
+            if not isinstance(self.graph["__sif_interaction_name"], (str, type(None))):
+                raise TypeError("__sif_interaction_name must be either of type ''str' or None")
+
+            if not isinstance(self.graph["__implementation"], CmodeEnum):
+                raise TypeError("__implementation must be filled with one of the CmodeEnums")
+
+        if any(x not in self.graph.vs.attributes() for x in ["__parent"]):
+            raise UnsupportedGraphError(u"Pyntacle reserved vertex attribute missing, see goo.gl/MCsnd1 for more informations and initialize the `graph_initializer` method in `tools.graph_utils` To initialize your graph.")
+        else:
+            if not isinstance(self.graph.vs["__parent"], (str, type(None))):
+                raise TypeError("`__parent` node attribute must be either of type ''str' or None")
+
+        if any(x not in self.graph.es.attributes() for x in ["__sif_interaction", "adjacent_nodes"]):
+            raise UnsupportedGraphError(u"Pyntacle reserved edge attribute missing, see goo.gl/MCsnd1 for more informations")
+
+        else:
+            if not isinstance(self.graph.es["__sif_interaction"], (str, type(None))):
+                raise TypeError("__sif_interaction must be either of type ''str' or None")
+            if not isinstance(self.graph.es["__adjacent_nodes"], tuple):
+                raise TypeError("__adjacent_nodes must be a tuple of strings")
 
     def check_index_list(self, index_list):
         r"""
@@ -100,20 +141,18 @@ class GraphUtils:
 
         :param list index_list: a list of integers
         """
-        self.check_graph()
 
         if not isinstance(index_list, list):
             raise ValueError(u"index list is not a list")
 
-        if len(index_list) < 0:
+        if len(index_list) == 0:
             raise WrongArgumentError(u"List is empty")
 
         for ind in index_list:
             if not isinstance(ind, int) or ind < 0:
                 raise ValueError("indices must be positive integers")
 
-        if set(index_list) > set(self.__graph.vs.indices):
-            self.logger.error(u"The input node index '{}' does not exist in the graph".format(index_list))
+        if set(index_list) > set(self.graph.vs.indices):
             raise WrongArgumentError(u"The input node index '{}' does not exist in the graph".format(index_list))
 
         return None
@@ -124,23 +163,21 @@ class GraphUtils:
 
         :param names_list: a single node name (as a string) or a list of node names (a list of strings)
         """
-        self.check_graph()
-        # print(names_list)
-        # print (self.graph.vs()["name"])
+
         if isinstance(names_list, str):
             names_list = [names_list]
 
         if not isinstance(names_list, list):
-            raise ValueError(u"node names list is not a list")
+            raise ValueError(u"Node names must be a list")
 
         if len(names_list) < 0:
             raise WrongArgumentError(u"List is empty")
 
         for name in names_list:
             if not isinstance(name, str):
-                raise ValueError(u"node names must be strings")
+                raise ValueError(u"Node names must be strings")
 
-            if name not in self.__graph.vs()["name"]:
+            if name not in self.graph.vs()["name"]:
                 raise MissingAttributeError(u"node {} is not in vertex \"name\" attribute".format(name))
 
         if len(list(set(names_list))) != len(names_list):
@@ -155,9 +192,8 @@ class GraphUtils:
 
         :raise MissingAttributeError: if the attribute is in node attributes
         """
-        self.check_graph()
 
-        if attribute not in self.__graph.vs().attributes():
+        if attribute not in self.graph.vs().attributes():
             raise MissingAttributeError(u"Attribute specified has not been initialized in node attributes")
 
     def attribute_in_edges(self, attribute):
@@ -169,9 +205,8 @@ class GraphUtils:
 
         :raise MissingAttributeError: if the attribute is not in edge attributes()
         """
-        self.check_graph()
 
-        if attribute not in self.__graph.es().attributes():
+        if attribute not in self.graph.es().attributes():
             raise MissingAttributeError(u"attribute specified has not been initialized in edge attributes")
 
     def attribute_in_graph(self, attribute):
@@ -183,9 +218,8 @@ class GraphUtils:
 
         :raise MissingAttributeError: if the attribute is not in graph attributes()
         """
-        self.check_graph()
 
-        if attribute not in self.__graph.attributes():
+        if attribute not in self.graph.attributes():
             raise MissingAttributeError("attribute specified has not been initialized in graph attributes")
 
     def check_attribute_type(self, attribute, attribute_types):
@@ -229,9 +263,9 @@ class GraphUtils:
 
         :return: a list of the corresponding graph.vs["name"] strings
         """
-        self.check_graph()
+
         self.check_index_list(index_list)
-        names_list = self.__graph.vs(index_list)["name"]
+        names_list = self.graph.vs(index_list)["name"]
         return names_list
 
     def get_node_indices(self, node_names: str or list) -> list:
@@ -247,12 +281,11 @@ class GraphUtils:
         else:
             names = node_names
 
-        self.check_graph()
         self.check_name_list(node_names)
         index_list = []
 
         for name in names:
-            select = self.__graph.vs.select(name=name)
+            select = self.graph.vs.select(name=name)
             if len(select) > 1:
                 raise IndexError(u"name is not unique, node names must be unique, plese check your graph")
 
@@ -272,14 +305,13 @@ class GraphUtils:
 
         :return list: A list of the corresponding name of the enumerator attribute
         """
-        self.check_graph()
 
         attribute_names = []
 
         if layer == "graph":  # search for graph attributes
             for attribute in attribute_list:
                 try:
-                    attr = self.__graph[attribute.name]
+                    attr = self.graph[attribute.name]
                     attribute_names.append(attribute.name)
                     if attr is None:
                         self.logger.warning(u"Attribute specified has None value")
@@ -290,7 +322,7 @@ class GraphUtils:
         elif layer == "node":  # search for node attributes
             for attribute in attribute_list:
 
-                if attribute.name not in self.__graph.vs().attributes():
+                if attribute.name not in self.graph.vs().attributes():
                     self.logger.warning(u"Attribute {} not present in nodee attributes".format(attribute))
 
                 else:
@@ -299,7 +331,7 @@ class GraphUtils:
         elif layer == "edge":
             for attribute in attribute_list:
 
-                if attribute.name not in self.__graph.es().attributes():
+                if attribute.name not in self.graph.es().attributes():
                     self.logger.warning(u"Attribute {} not present in edge attributes".format(attribute))
 
                 else:
@@ -317,10 +349,10 @@ class GraphUtils:
         :return igraph.Graph: a graph object with the only the largest component. If more than one component if present
         :raise MultipleSolutionsError: if there is more than one largest component
         """
-        
+
         self.logger.info(u"Getting the largest component of the input graph")
 
-        components = self.__graph.components()
+        components = self.graph.components()
 
         comp_len = [len(comp) for comp in components]
         self.logger.info(u"Graph has the following components: {}".format(",".join(map(str, comp_len))))
@@ -334,11 +366,11 @@ class GraphUtils:
             raise MultipleSolutionsError(u"There are {} largest components, cannot choose one".format(len(max_list)))
 
         else:
-            subgraph = self.__graph.induced_subgraph(components[max_ind])
+            subgraph = self.graph.induced_subgraph(components[max_ind])
 
             self.logger.info(
                 u"Largest component has {0} nodes and {1} edges (out of {2} nodes and {3} edges in total)".format(
-                    subgraph.vcount(), subgraph.ecount(), self.__graph.vcount(), self.__graph.ecount()))
+                    subgraph.vcount(), subgraph.ecount(), self.graph.vcount(), self.graph.ecount()))
 
             return subgraph
 
@@ -354,54 +386,54 @@ class GraphUtils:
         try:
             attribute_name_checker(graph_name)
         except ValueError:
-            sys.stderr.write("'graph_name' is invalid\n")
+            sys.stderr.write("Graph 'name' attribute contains illegal characters.\n")
             sys.exit(1)
 
-        self.__graph.to_undirected()  # reconvert graph to directed
-        if "name" not in self.__graph.attributes():
+        self.graph.to_undirected()  # reconvert graph to directed
+        if "name" not in self.graph.attributes():
             self.logger.info(u"adding file name to graph name")
-            AddAttributes.add_graph_name(self.__graph, graph_name)
+            AddAttributes.add_graph_name(self.graph, graph_name)
 
         # add vertex names
-        if "name" not in self.__graph.vs.attributes():
+        if "name" not in self.graph.vs.attributes():
             if node_names is None:
                 self.logger.info(u"Adding node names to graph corresponding to their indices")
-                self.__graph.vs()["name"] = [str(x.index) for x in self.__graph.vs()]
+                self.graph.vs()["name"] = [str(x.index) for x in self.graph.vs()]
 
             else:
                 if not isinstance(node_names, list) or not all(isinstance(item, str) for item in node_names):
-                    raise WrongArgumentError(u"node names must be a list of strings")
+                    raise WrongArgumentError(u"`node_names` argument must be a list of strings")
 
-                if len(node_names) != self.__graph.vcount():
-                    raise IllegalArgumentNumberError(u"node names must be of the same length of vertices")
+                if len(node_names) != self.graph.vcount():
+                    raise IllegalArgumentNumberError(u"`node_names` argument must be of the same length of vertices")
 
                 self.logger.info(u"Adding node names to graph using the provided node names")
-                self.__graph.vs["name"] = node_names
+                self.graph.vs["name"] = node_names
 
         # add parent name to vertices
-        if "__parent" not in self.__graph.vs().attributes():
+        if "__parent" not in self.graph.vs().attributes():
             self.logger.info(u"Adding reserved attribute '__parent' to the vertices")
-            AddAttributes.add_parent_name(self.__graph)
+            AddAttributes.add_parent_name(self.graph)
 
-        if "adjacent_nodes" not in self.__graph.es().attributes():
+        if "adjacent_nodes" not in self.graph.es().attributes():
             # add edge vertices names as an attribute 'adjacent_vertices'
             self.logger.info(u"Adding source and target names as \"adjacent_nodes\" attribute to edges")
-            AddAttributes.add_edge_names(self.__graph)
+            AddAttributes.add_edge_names(self.graph)
 
         # for sif file conversion purposes
-        if not "__sif_interaction_name" in self.__graph.attributes():
-            self.__graph["__sif_interaction_name"] = None
+        if not "__sif_interaction_name" in self.graph.attributes():
+            self.graph["__sif_interaction_name"] = None
 
-        if not "__sif_interaction" in self.__graph.es().attributes():
-            self.__graph.es()["__sif_interaction"] = None
+        if not "__sif_interaction" in self.graph.es().attributes():
+            self.graph.es()["__sif_interaction"] = None
 
         # Adding implementation info for functions that require it
         sp_implementation = CmodeEnum.igraph
 
-        n_nodes = self.__graph.vcount()
+        n_nodes = self.graph.vcount()
 
         if n_nodes > 100:
-            density = (2 * (self.__graph.ecount())) / (n_nodes * (n_nodes - 1))
+            density = (2 * (self.graph.ecount())) / (n_nodes * (n_nodes - 1))
             if density < 0.5 and n_nodes <= 500:
                 sp_implementation = CmodeEnum.igraph
             else:
@@ -413,4 +445,4 @@ class GraphUtils:
                     else:
                         sp_implementation = CmodeEnum.igraph
 
-        self.__graph["__implementation"] = sp_implementation
+        self.graph["__implementation"] = sp_implementation

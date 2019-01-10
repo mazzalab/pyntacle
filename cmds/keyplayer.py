@@ -24,20 +24,29 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+
+from config import *
+from collections import OrderedDict
+from colorama import Fore, Style
+from itertools import chain
+from igraph import Graph
+
 from cmds.cmds_utils.group_search_wrapper import InfoWrapper as kpw
 from cmds.cmds_utils.group_search_wrapper import GOWrapper as gow
 from cmds.cmds_utils.group_search_wrapper import BFWrapper as bfw
 from algorithms.keyplayer import KeyPlayer as kpp
-from itertools import chain
-from exceptions.generic_error import Error
+
+
 from io_stream.exporter import PyntacleExporter
-from cmds.cmds_utils.plotter import *
-from cmds.cmds_utils.reporter import *
-from tools.graph_utils import *
-from internal.graph_load import GraphLoad, separator_detect
-from tools.enums import ReportEnum, CmodeEnum
+from cmds.cmds_utils.plotter import PlotGraph
+from cmds.cmds_utils.reporter import PyntacleReporter
+from tools.graph_utils import GraphUtils as gu
+from tools.enums import ReportEnum, CmodeEnum, KpnegEnum, KpposEnum
 from tools.add_attributes import AddAttributes
-from colorama import Fore, Style
+from internal.graph_load import GraphLoad
+from exceptions.generic_error import Error
+from exceptions.multiple_solutions_error import MultipleSolutionsError
+
 
 
 class KeyPlayer():
@@ -52,6 +61,9 @@ class KeyPlayer():
             self.args.no_plot = True
 
     def run(self):
+        if not hasattr(self.args, 'which'):
+            raise Error(u"usage: pyntacle.py keyplayer {kp-finder, kp-info} [options]'")
+
         if not self.args.suppress_cursor:
             cursor = CursorAnimation()
             cursor.daemon = True
@@ -76,49 +88,19 @@ class KeyPlayer():
         else:
             header = True
 
-        # check output directory
-
-        if not os.path.isdir(self.args.directory):
-            sys.stdout.write(u"Warning: output directory does not exist, will create one at {}.\n".format(
-                os.path.abspath(self.args.directory)))
-            os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
-
-        # Parsing optional node list
-        if hasattr(self.args, 'nodes'):
-            self.args.nodes = self.args.nodes.split(',')
-            # self.args.nodes = [str.lower(x) for x in self.args.nodes]
-
-        if not hasattr(self.args, 'which'):
-            raise Error(u"usage: pyntacle.py keyplayer {kp-finder, kp-info} [options]'")
-
-        self.logging.debug(u"Running Pyntacle keyplayer, with arguments")
-        self.logging.debug(self.args)
         # Load Graph
 
         sys.stdout.write("Reading input file...\n")
         graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header, separator=self.args.input_separator).graph_load()
-        # print(graph.summary())
-        # print(graph.vs()["name"])
-        # for elem in graph.vs():
-        #     print (elem["name"], elem.index, elem.degree())
-        # sys.exit(0)
 
-        if hasattr(self.args, 'nodes'):
-            if not all(x in graph.vs["name"] for x in self.args.nodes):
-                sys.stderr.write(u"One or more nodes you supplied could not be found in the input graph.\n")
-                sys.exit(1)
+        # init graph utils class
+        utils = gu(graph=graph)
 
-        # init Utils global stuff
-        utils = GraphUtils(graph=graph)
-        
-        if '__implementation' in graph.attributes():
-            implementation = graph['__implementation']
-        else:
-            implementation = CmodeEnum.igraph
-            
         if self.args.largest_component:
             try:
-                graph = utils.get_largest_component()
+                graph = gu.get_largest_component()
+                utils.set_graph(graph)
+
                 sys.stdout.write(
                     u"Taking the largest component of the input graph as you requested ({} nodes, {} edges)...\n".format(
                         graph.vcount(), graph.ecount()))
@@ -128,33 +110,17 @@ class KeyPlayer():
                     u"The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the '--largest-component' option. Quitting.\n")
                 sys.exit(1)
 
-        # Check provided dimensions' format
-        if self.args.plot_dim:  # define custom format
-            self.args.plot_dim = self.args.plot_dim.split(",")
-    
-            for i in range(0, len(self.args.plot_dim)):
-                try:
-                    self.args.plot_dim[i] = int(self.args.plot_dim[i])
+        if hasattr(self.args, 'nodes'):
+            if not all(x in graph.vs["name"] for x in self.args.nodes):
+                sys.stderr.write(u"One or more nodes you supplied could not be found in the input graph.\n")
+                sys.exit(1)
 
-                    if self.args.plot_dim[i] <= 0:
-                        raise ValueError
+
         
-                except ValueError:
-                    sys.stderr.write(
-                        u"Format specified must be a comma-separated list of positive integers (e.g. 1920,1080). Quitting\n")
-                    sys.exit(1)
-    
-            plot_size = tuple(self.args.plot_dim)
-
+        if '__implementation' in graph.attributes():
+            implementation = graph['__implementation']
         else:
-            # generate different formats according to graph size
-            if graph.vcount() <= 150:
-                plot_size = (800, 800)
-    
-            else:
-                plot_size = (1600, 1600)
-        
-        r = pyntacleReporter(graph=graph)
+            implementation = CmodeEnum.igraph
 
         if self.args.which == 'kp-finder':
             k_size = self.args.k_size
@@ -263,7 +229,7 @@ class KeyPlayer():
                                                implementation=CmodeEnum.igraph, threads=self.args.threads)
 
             else:
-                sys.stdout.write(u"Critcal Error. Please contact Pyntacle developers and Report this issue, along with your command line. Quitting.\n")
+                sys.stdout.write(u"Critical Error. Please contact Pyntacle developers and report this issue, along with your command line. Quitting.\n")
                 sys.exit(1)
 
             results.update(kp_runner.get_results())
@@ -316,7 +282,41 @@ class KeyPlayer():
             
             sys.stdout.write(Fore.RED + Style.BRIGHT + u"### END OF SUMMARY ###\n" + Style.RESET_ALL)
 
+            # check output directory
+            if not os.path.isdir(self.args.directory):
+                sys.stdout.write(u"Warning: output directory does not exist, will create one at {}.\n".format(
+                    os.path.abspath(self.args.directory)))
+                os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
 
+            # Check provided dimensions' format
+            if self.args.plot_dim:  # define custom format
+                self.args.plot_dim = self.args.plot_dim.split(",")
+
+                for i in range(0, len(self.args.plot_dim)):
+                    try:
+                        self.args.plot_dim[i] = int(self.args.plot_dim[i])
+
+                        if self.args.plot_dim[i] <= 0:
+                            raise ValueError
+
+                    except ValueError:
+                        sys.stderr.write(
+                            u"Format specified must be a comma-separated list of positive integers (e.g. 1920,1080). Quitting\n")
+                        sys.exit(1)
+
+                plot_size = tuple(self.args.plot_dim)
+
+            else:
+                # generate different formats according to graph size
+                if graph.vcount() <= 150:
+                    plot_size = (800, 800)
+
+                else:
+                    plot_size = (1600, 1600)
+
+            r = PyntacleReporter(graph=graph)
+
+            sys.stdout.write("Creating report in {} format...\n".format(self.args.report_format))
             if self.args.implementation == "brute-force":
                 r.create_report(report_type=ReportEnum.KP_bruteforce, report=results)
             elif self.args.implementation == "greedy":
@@ -369,8 +369,14 @@ class KeyPlayer():
                     sys.stdout.write(
                         "{0} value for node:\n({1}) is {2}\n".format(metric, ', '.join(results[metric][0]),
                                                                   results[metric][1]))
-            r.create_report(report_type=ReportEnum.KPinfo, report=results)
+
             sys.stdout.write(Fore.RED + Style.BRIGHT + "### END OF SUMMARY ###\n" + Style.RESET_ALL)
+
+            # check output directory
+            if not os.path.isdir(self.args.directory):
+                sys.stdout.write(u"Warning: output directory does not exist, will create one at {}.\n".format(
+                    os.path.abspath(self.args.directory)))
+                os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
 
         else:
             log.critical(
@@ -378,7 +384,6 @@ class KeyPlayer():
             sys.exit(1)
 
         # reporting and plotting part
-
         sys.stdout.write(u"Producing report in {} format...\n".format(self.args.report_format))
         report_prefix = "_".join(
             ["pyntacle", self.args.which, graph["name"][0], "kpsize", str(k_size), report_type, "report", self.date])
@@ -573,7 +578,7 @@ class KeyPlayer():
                     else:
                         mreach_nodes = results[metric][0]
                         # get node indices of corresponding kpset
-                        indices = GraphUtils(graph=graph).get_node_indices(mreach_nodes)
+                        indices = utils.get_node_indices(mreach_nodes)
     
                         edge_widths = [other_edge_width] * graph.ecount()  # define a starting list of values
     
@@ -632,5 +637,5 @@ class KeyPlayer():
         if not self.args.suppress_cursor:
             cursor.stop()
 
-        sys.stdout.write(u"Pyntacle keyplayer completed successfully.\n")
+        sys.stdout.write(u"Pyntacle keyplayer completed successfully. Ending.\n")
         sys.exit(0)

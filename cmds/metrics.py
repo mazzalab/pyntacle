@@ -23,29 +23,32 @@ __license__ = u"""
   You should have received a copy of the license along with this
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
-
+from config import *
+from collections import OrderedDict
 from algorithms.shortest_path import ShortestPath
 from algorithms.global_topology import GlobalTopology
 from algorithms.local_topology import LocalTopology
 from algorithms.sparseness import *
-from exceptions.generic_error import Error
-from exceptions.multiple_solutions_error import MultipleSolutionsError
 from io_stream.exporter import PyntacleExporter
-from cmds.cmds_utils.plotter import *
-from cmds.cmds_utils.reporter import *
 from io_stream.import_attributes import ImportAttributes
-from internal.graph_load import GraphLoad,separator_detect
-
-from tools.graph_utils import GraphUtils
+from cmds.cmds_utils.plotter import PlotGraph
+from cmds.cmds_utils.reporter import PyntacleReporter
+from tools.graph_utils import GraphUtils as gu
 from tools.add_attributes import AddAttributes
 from tools.enums import *
+from internal.graph_load import GraphLoad,separator_detect
 from exceptions.missing_attribute_error import MissingAttributeError
+from exceptions.generic_error import Error
+from exceptions.multiple_solutions_error import MultipleSolutionsError
 
 class Metrics:
     def __init__(self, args):
         self.logging = log
         self.args = args
         self.date = runtime_date
+
+        if not hasattr(self.args, 'which'):
+            raise Error(u"usage: pyntacle.py metrics {local, global} [options]'")
 
         # Check for pycairo
         if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
@@ -76,12 +79,6 @@ class Metrics:
             self.logging.error(u"Cannot find {}. Is the path correct?".format(self.args.input_file))
             sys.exit(1)
 
-        # check output directory
-        if not os.path.isdir(self.args.directory):
-            sys.stdout.write(u"Warning: Output directory does not exist, will create one at {}.\n".format(
-                os.path.abspath(self.args.directory)))
-            os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
-
         self.logging.debug(u'Running Pyntacle metrics, with arguments ')
         self.logging.debug(self.args)
 
@@ -89,7 +86,7 @@ class Metrics:
         sys.stdout.write(u"Importing graph from file...\n")
         graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header, separator=self.args.input_separator).graph_load()
         # init Utils global stuff
-        utils = GraphUtils(graph=graph)
+        utils = gu(graph=graph)
 
         # Decide implementation
         if '__implementation' in graph.attributes():
@@ -101,6 +98,7 @@ class Metrics:
             try:
                 graph = utils.get_largest_component()
                 sys.stdout.write(u"Taking the largest component of the input graph as you requested ({} nodes, {} edges)\n".format(graph.vcount(), graph.ecount()))
+                utils.set_graph(graph)
 
             except MultipleSolutionsError:
                 sys.stderr.write(u"The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the '--largest-component' option. Quitting\n")
@@ -140,7 +138,7 @@ class Metrics:
 
         if self.args.which == "local":
 
-            reporter = pyntacleReporter(graph=graph) #init reporter
+            reporter = PyntacleReporter(graph=graph) #init reporter
 
             if self.args.nodes is not None:
                 sys.stdout.write(u"Computing local metrics for nodes ({})\n".format(', '.join(self.args.nodes)))
@@ -205,6 +203,12 @@ class Metrics:
             
             if self.args.nodes:
                 local_attributes_dict["nodes"] = self.args.nodes
+
+            # check output directory
+            if not os.path.isdir(self.args.directory):
+                sys.stdout.write(u"Warning: Output directory does not exist, will create one at {}.\n".format(
+                    os.path.abspath(self.args.directory)))
+                os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
 
             sys.stdout.write(u"Producing report in {} format...\n".format(self.args.report_format))
             report_path = os.path.join(self.args.directory, report_prefix + self.args.report_format)
@@ -306,7 +310,7 @@ class Metrics:
                 ["pyntacle", graph["name"][0], "global_metrics_report",
                  self.date])
             
-            reporter = pyntacleReporter(graph=graph)  # init reporter
+            reporter = PyntacleReporter(graph=graph)  # init reporter
             reporter.create_report(ReportEnum.Global, global_attributes_dict)
             reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
@@ -352,7 +356,7 @@ class Metrics:
 
                 sys.stdout.write(u"Producing global metrics report for the input graph after node removal...\n")
                 graph_nonodes["name"][0] += '_without_nodes'
-                reporter = pyntacleReporter(graph=graph_nonodes)  # init reporter
+                reporter = PyntacleReporter(graph=graph_nonodes)  # init reporter
                 reporter.create_report(ReportEnum.Global, global_attributes_dict_nonodes)
                 reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
@@ -476,5 +480,5 @@ class Metrics:
         if not self.args.suppress_cursor:
             cursor.stop()
 
-        sys.stdout.write(u"Pyntacle metrics completed successfully.Ending.\n")
+        sys.stdout.write(u"Pyntacle metrics completed successfully. Ending.\n")
         sys.exit(0)

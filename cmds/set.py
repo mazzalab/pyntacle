@@ -24,18 +24,21 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
+from config import *
+from collections import OrderedDict
 import filecmp
 from warnings import simplefilter
-from exceptions.multiple_solutions_error import MultipleSolutionsError
-from exceptions.unsupported_graph_error import UnsupportedGraphError
+
 from graph_operations.set_operations import GraphOperations
 from io_stream.exporter import PyntacleExporter
 from cmds.cmds_utils.plotter import PlotGraph
-from cmds.cmds_utils.reporter import *
+from cmds.cmds_utils.reporter import PyntacleReporter
 from tools.enums import ReportEnum
 from tools.graph_utils import GraphUtils
-from internal.graph_load import GraphLoad,separator_detect
-
+from internal.graph_load import GraphLoad
+from exceptions.multiple_solutions_error import MultipleSolutionsError
+from exceptions.unsupported_graph_error import UnsupportedGraphError
+from exceptions.generic_error import Error
 
 class Set:
 
@@ -43,6 +46,9 @@ class Set:
         self.logging = log
         self.args = args
         self.date = runtime_date
+
+        if not hasattr(self.args, 'which'):
+            raise Error(u"usage: pyntacle.py set {union, intersection, difference} [options]'")
 
         # Check for pycairo
         if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
@@ -81,12 +87,6 @@ class Set:
         graph2 = GraphLoad(self.args.input_file_2, file_format=input_format,
                            header=input_header, separator=self.args.input_separator).graph_load()
 
-        try:
-            GraphUtils(graph1).check_graph()
-            GraphUtils(graph2).check_graph()
-        except (UnsupportedGraphError, KeyError, TypeError) as e:
-            raise e
-
         # init Utils global stuff
         utils1 = GraphUtils(graph=graph1)
         utils2 = GraphUtils(graph=graph2)
@@ -94,6 +94,7 @@ class Set:
         if self.args.largest_component:
             try:
                 graph1 = utils1.get_largest_component()
+                utils1.set_graph(graph1)
                 sys.stdout.write(
                     u"Taking the largest component of the input graph {0} as you requested ({1} nodes, {2} edges)\n".format(graph2["name"],
                         graph1.vcount(), graph1.ecount()))
@@ -105,6 +106,7 @@ class Set:
 
             try:
                 graph2 = utils2.get_largest_component()
+                utils2.set_graph(graph2)
                 sys.stdout.write(
                     u"Taking the largest component of the input graph {0} as you requested ({1} nodes, {2} edges)\n".format(
                         graph2["name"],graph2.vcount(), graph2.ecount()))
@@ -235,13 +237,6 @@ class Set:
                                                                                output_graph.ecount(),
                                                                                len(output_graph.components())))
 
-        # producing output graph
-        if self.args.no_output_header:
-            sys.stdout.write(u"Skipping header on output files...\n")
-            output_header = False
-
-        else:
-            output_header = True
 
         if not os.path.isdir(self.args.directory):
             sys.stdout.write(u"Warning: Output directory does not exist, will create one at {}.\n".format(
@@ -252,6 +247,14 @@ class Set:
         output_path = os.path.join(self.args.directory, ".".join([self.args.output_file, out_form]))
 
         sys.stdout.write(u"Path to generated graph is: {}\n".format(output_path))
+
+        # producing output graph
+        if self.args.no_output_header:
+            sys.stdout.write(u"Skipping header on output files...\n")
+            output_header = False
+
+        else:
+            output_header = True
 
         if self.args.output_separator is None:
             sys.stdout.write(u"Using '\\t' as default separator for output file\n")
@@ -405,9 +408,9 @@ class Set:
         
         
         # Report
-        reporter1 = pyntacleReporter(graph=graph1)  # init reporter1
-        reporter2 = pyntacleReporter(graph=graph2)  # init reporter2
-        reporter_final = pyntacleReporter(graph=output_graph)
+        reporter1 = PyntacleReporter(graph=graph1)  # init reporter1
+        reporter2 = PyntacleReporter(graph=graph2)  # init reporter2
+        reporter_final = PyntacleReporter(graph=output_graph)
         
         set1_attr_dict = OrderedDict()
         set2_attr_dict = OrderedDict()
