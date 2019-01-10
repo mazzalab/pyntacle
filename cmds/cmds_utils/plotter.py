@@ -32,23 +32,23 @@ import datetime
 from igraph import Graph, plot
 import os
 import random
-from tools.graph_utils import GraphUtils as Gu
 from importlib import util
 
 pycairo_check = util.find_spec("cairo")
 if pycairo_check is None:
-    raise EnvironmentError("Pyntacle needs the pycairo library to be installed and available "
+    raise EnvironmentError(u"Pyntacle needs the pycairo library to be installed and available "
                            "in order to produce plots. Please install it and try again.")
 
 class PlotGraph():
-    """
+    r"""
     This method prepare the igraph.Graph object to be plotted into a file into several formats, by setting proper
     attributes defined by igraph and by defining other external properties such as layouts.
     """
+
     logger = None
 
     def __init__(self, graph: Graph, seed=None):
-        """
+        r"""
         Initialize the plotter function by importing the graph and (optionally) defining a seed for custom graph
         reproducibility. Will not touch the input :py:class:`igraph.Graph`, that will  therefore be copied.
 
@@ -62,7 +62,7 @@ class PlotGraph():
 
         if seed is not None:
             if not isinstance(seed, int):
-                raise TypeError("Seed must be an integer")
+                raise TypeError(u"Seed must be an integer")
 
             else:
                 self.seed = seed  # initialize seed
@@ -72,7 +72,7 @@ class PlotGraph():
         self.layout = None #will be replaced by the layout function
 
     def set_node_labels(self, labels: list):
-        """
+        r"""
         Take a list corresponding to node labels that you want to represent in the plot (e.g., node ["name"] attribute)
         and assign it to the "label" attribute in order to be recognized by the `igraph.plot` function.
 
@@ -84,29 +84,29 @@ class PlotGraph():
         """
 
         if "label" in self.graph.vs.attributes():
-            self.logger.info("attribute 'label' already exists, will overwrite")
+            self.logger.info(u"attribute 'label' already exists, will overwrite")
             self.graph.vs()["label"] = None
 
         if not isinstance(labels, list):
-            raise TypeError("'labels' must be a list, {} found".format(type(labels).__name__))
+            raise TypeError(u"'labels' must be a list, {} found".format(type(labels).__name__))
 
         if not all(isinstance(x, str) for x in labels):
-            raise ValueError("One of the items in 'labels' is not a string")
+            raise ValueError(u"One of the items in 'labels' is not a string")
 
         tot = self.graph.vcount()
 
         if len(labels) < tot:
             self.logger.warning(
-                "'labels' do not cover all the edges, replacing missing ones with Nonetype")
+                u"'labels' do not cover all the edges, replacing missing ones with Nonetype")
 
         if len(labels) > tot:
-            self.logger.warning("Labels specified exceeds the maximum number of vertices, slicing the input list to the total number of nodes")
+            self.logger.warning(u"Labels specified exceeds the maximum number of vertices, slicing the input list to the total number of nodes")
             labels = labels[:self.graph.vcount()]
 
         self.graph.vs["label"] = labels
 
     def set_node_colors(self, colors: list):
-        """
+        r"""
         Take a list corresponding to node colors. (either the literal name, e.g. "white" or the RGB color e.g.#F0000)
         that you want to represent in the plot and assign it to the "color"  node attribute  in the `igraph.Graph` object
         in order to be recognized by the `igraph.plot` function.
@@ -119,29 +119,29 @@ class PlotGraph():
         """
 
         if "color" in self.graph.vs.attributes():
-            self.logger.info("attribute 'color' already exists, will overwrite")
+            self.logger.info(u"attribute 'color' already exists, will overwrite")
             self.graph.vs()["color"] = None
 
         if not isinstance(colors, list):
-            raise TypeError("'colors' must be a list, {} found".format(type(colors).__name__))
+            raise TypeError(u"'colors' must be a list, {} found".format(type(colors).__name__))
 
         if not all(isinstance(x, str) for x in colors):
-            raise ValueError("One of the items in 'colors' is not a string")
+            raise ValueError(u"One of the items in 'colors' is not a string")
 
         tot = self.graph.vcount()
 
         if len(colors) < tot:
             self.logger.warning(
-                "'colors' do not cover all the edges, replacing missing ones with Nonetype")
+                u"'colors' do not cover all the edges, replacing missing ones with Nonetype")
 
         if len(colors) > tot:
-            self.logger.warning("'colors' exceed the maximum number of vertices, slicing the input list to the total number of nodes")
+            self.logger.warning(u"'colors' exceed the maximum number of vertices, slicing the input list to the total number of nodes")
             colors = colors[:self.graph.vcount()]
 
         self.graph.vs["color"] = colors
 
     def set_node_sizes(self, sizes: list):
-        """
+        r"""
         Take a list corresponding to node sizes. (positive float or integers)
         that you want to represent in the plot and assign it to the "size"  node attribute  in the `igraph.Graph` object
         in order to be recognized by the `igraph.plot` function.
@@ -153,29 +153,29 @@ class PlotGraph():
         :param: list sizes: a list of node sizes (must be positive integers or floats)
         """
         if "size" in self.graph.vs.attributes():
-            self.logger.info("attribute 'size' already exists, will overwrite")
+            self.logger.info(u"attribute 'size' already exists, will overwrite")
             self.graph.vs()["size"] = None
 
         if not isinstance(sizes, list):
             raise TypeError("'sizes' must be a list, {} found".format(type(sizes).__name__))
 
         if not all(isinstance(x, (int, float)) and x > 0 for x in sizes):
-            raise ValueError("One of the items in 'sizes' is not positive integer or float")
+            raise ValueError(u"One of the items in 'sizes' is not positive integer or float")
 
         tot = self.graph.vcount()
 
         if len(sizes) < tot:
             self.logger.warning(
-                "'sizes' do not cover all the edges, replacing missing ones with Nonetype")
+                u"'sizes' do not cover all the edges, replacing missing ones with Nonetype")
 
         if len(sizes) > tot:
-            self.logger.warning("'sizes' specified exceed the maximum number of vertices, slicing the input list to the total number of nodes")
+            self.logger.warning(u"'sizes' specified exceed the maximum number of vertices, slicing the input list to the total number of nodes")
             sizes = sizes[:self.graph.vcount()]
 
         self.graph.vs["size"] = sizes
 
     def set_node_shapes(self, shapes:list):
-        """
+        r"""
         Take a list corresponding to node shapes in order to assign it to the "shape" node attribute, so it will be
         recognized by the `igraph.plot` object. Available shapes that will be plotted are:
 
@@ -197,32 +197,32 @@ class PlotGraph():
         shapes_legal_values = ["rectangle", "circle", "hidden", "triangle-up", "triangle-down", "square"]
 
         if "shape" in self.graph.vs.attributes():
-            self.logger.info("attribute 'shape' already exists, will overwrite")
+            self.logger.info(u"attribute 'shape' already exists, will overwrite")
             self.graph.vs()["shape"] = None
 
         if not isinstance(shapes, list):
-            raise TypeError("'shapes' must be a list, {} found".format(type(shapes).__name__))
+            raise TypeError(u"'shapes' must be a list, {} found".format(type(shapes).__name__))
 
         if not all(isinstance(x, str) for x in shapes):
-            raise ValueError("One of the items in 'shapes' is not a string")
+            raise ValueError(u"One of the items in 'shapes' is not a string")
 
         if not all(x in shapes_legal_values for x in shapes):
-            raise ValueError("One of the items in 'shapes' does not match the available options ('{}')".format(",".join(shapes_legal_values)))
+            raise ValueError(u"One of the items in 'shapes' does not match the available options ('{}')".format(",".join(shapes_legal_values)))
 
         tot = self.graph.vcount()
 
         if len(shapes) < tot:
             self.logger.warning(
-                "'shapes' do not cover all the nodes, replacing missing ones with Nonetype")
+                u"'shapes' do not cover all the nodes, replacing missing ones with Nonetype")
 
         if len(shapes) > tot:
-            self.logger.warning("'shapes' specified exceed the maximum number of vertices, slicing the input list to the total number of nodes")
+            self.logger.warning(u"'shapes' specified exceed the maximum number of vertices, slicing the input list to the total number of nodes")
             shapes = shapes[:self.graph.vcount()]
 
         self.graph.vs["shape"] = shapes
 
     def set_edge_label(self, labels: list):
-        """
+        r"""
         Take a list corresponding to edge labels that you want to represent in the plot (e.g., edge ["name"] attribute,
         if present) and assign it to the "label" edge attribute in order to be recognized by the `igraph.plot` function.
 
@@ -247,7 +247,7 @@ class PlotGraph():
 
         if len(labels) < tot:
             self.logger.info(
-                "'labels' do not cover all the nodes, replacing missing ones with Nonetype")
+                u"'labels' do not cover all the nodes, replacing missing ones with Nonetype")
 
         if len(labels) > tot:
             self.logger.info("'labels' specified exceed the maximum number of vertices, slicing the input list")
@@ -256,7 +256,7 @@ class PlotGraph():
         self.graph.es["label"] = labels
 
     def set_edge_widths(self, widths: list):
-        """
+        r"""
         Take a list if positive floats or integers  and  assign it to the corresponding edges
 
         .. warning:: if an edge attribute named "widths" exists, will be cancelled and overwritten
@@ -289,7 +289,7 @@ class PlotGraph():
         self.graph.es["width"] = widths
 
     def set_layouts(self, layout="fruchterman_reingold", **kwargs):
-        """
+        r"""
         Define a series of layouts imported from the igraph package in order to plot a given geometry
 
         :param str layout: one of the following layouts:
@@ -321,30 +321,33 @@ class PlotGraph():
                           "rt": Graph.layout_reingold_tilford(self.graph, **kwargs)}
 
         except TypeError:
-            raise KeyError("Invalid kwargs passed")
+            raise KeyError(u"Invalid kwargs passed")
 
         if layout.lower() not in layout_dic.keys():
-            raise KeyError("layout specified is not available")
+            raise KeyError(u"layout specified is not available")
 
         else:
             self.layout = layout_dic[layout.lower()]
 
     def plot_graph(self, path=None, **kwargs):
-        '''
+        r"""
         Plot graph to a specific file. Available formats: ``jpg"``, ``pdf``, ``svg``, ``png``
+
         :param path: optional - a path in which results will be plotted. Default is the current working directory.
-        '''
+        :param kwargs:
+        :return:
+        """
 
         formats = ["jpg", "pdf", "svg", "png"]
         if path is None:
             now = datetime.datetime.now()
-            now = now.strftime("%d-%m-%A_%H%M")
-            path = os.path.join(os.getcwd(), "pyntacle_plot" + now + ".pdf")
-            self.logger.info("plot will be stored as PDF at path {}".format(path))
+            now = now.strftime(u"%d-%m-%A_%H%M")
+            path = os.path.join(os.getcwd(), u"pyntacle_plot" + now + ".pdf")
+            self.logger.info(u"plot will be stored as PDF at path {}".format(path))
 
         else:
             if os.path.splitext(path)[-1][1:] not in formats:
-                raise ValueError("Format not accepted. Available formats are {}".format(",".join(formats)))
+                raise ValueError(u"Format not accepted. Available formats are {}".format(",".join(formats)))
 
         visual_style = {}  # empty tuple that will contain all the preiously instanced parameters
         if self.layout is not None:
@@ -355,14 +358,14 @@ class PlotGraph():
         if kwargs:
             for key in kwargs:
                 if key not in additional_params:
-                    raise KeyError("param {} cannot be specified".format(key))
+                    raise KeyError(u"param {} cannot be specified".format(key))
                 else:
                     visual_style[key] = kwargs[key]
-        
+
         plot(self.graph, **visual_style, target=path)
 
     def get_graph(self):
-        """
+        r"""
         Returns the modified :py:class:`igraph.Graph` object
 
         :return Graph: the igraph.Graph object with the label added and used for plotting

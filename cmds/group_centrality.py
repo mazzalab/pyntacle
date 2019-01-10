@@ -42,6 +42,7 @@ from algorithms.bruteforce_search import BruteforceSearch as bf
 from itertools import chain
 from exceptions.generic_error import Error
 from exceptions.multiple_solutions_error import MultipleSolutionsError
+from exceptions.missing_attribute_error import MissingAttributeError
 from io_stream.exporter import PyntacleExporter
 from cmds.cmds_utils.plotter import PlotGraph
 from cmds.cmds_utils.reporter import PyntacleReporter
@@ -140,5 +141,3 @@ class GroupCentrality():
 
         sys.stdout.write(u"Pyntacle groupcentrality completed successfully. Ending.\n")
         sys.exit(0)
-
-##########################################################################################################

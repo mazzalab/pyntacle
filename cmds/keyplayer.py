@@ -151,7 +151,7 @@ class KeyPlayer():
                     initial_results[KpnegEnum.dF.name] = kpp.dF(graph, cmode=implementation)
                     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
                                                 max_distance=self.args.max_distances, seed=self.args.seed,
-                                                implementation=implementation)
+                                                cmode=implementation)
 
                     # if initial_results[KpnegEnum.dF.name] != 1:
                     #     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
@@ -167,7 +167,7 @@ class KeyPlayer():
                             self.args.k_size))
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.dR,
                                                max_distance=self.args.max_distances, seed=self.args.seed,
-                                               implementation = implementation)
+                                               cmode= implementation)
 
                 if self.args.type in (['mreach', 'pos', 'all']):
                     sys.stdout.write(
@@ -175,7 +175,7 @@ class KeyPlayer():
                             self.args.k_size, self.args.m_reach))
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.mreach, m=self.args.m_reach,
                                                max_distance=self.args.max_distances, seed=self.args.seed,
-                                               implementation=implementation)
+                                               cmode=implementation)
 
             elif self.args.implementation == "brute-force":
 
@@ -204,8 +204,8 @@ class KeyPlayer():
 
                     initial_results[KpnegEnum.dF.name] = kpp.dF(graph, cmode=CmodeEnum.igraph)
                     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
-                                                    max_distance=self.args.max_distances,
-                                                    implementation=CmodeEnum.igraph, threads=self.args.threads)
+                                                max_distance=self.args.max_distances,
+                                                cmode=CmodeEnum.igraph, threads=self.args.threads)
                     # if initial_results[KpnegEnum.dF.name] != 1:
                     # else:
                     #     self.logging.warning("Graph already owns the maximum dF value (1.0) Skipping search.")
@@ -217,7 +217,7 @@ class KeyPlayer():
                             self.args.k_size))
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.dR,
                                                max_distance=self.args.max_distances,
-                                               implementation=CmodeEnum.igraph, threads=self.args.threads)
+                                               cmode=CmodeEnum.igraph, threads=self.args.threads)
                     
                 if self.args.type in (['mreach', 'pos', 'all']):
                     sys.stdout.write(
@@ -226,7 +226,7 @@ class KeyPlayer():
 
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.mreach, m=self.args.m_reach,
                                                max_distance=self.args.max_distances,
-                                               implementation=CmodeEnum.igraph, threads=self.args.threads)
+                                               cmode=CmodeEnum.igraph, threads=self.args.threads)
 
             else:
                 sys.stdout.write(u"Critical Error. Please contact Pyntacle developers and report this issue, along with your command line. Quitting.\n")
@@ -327,25 +327,25 @@ class KeyPlayer():
             report_type = ReportEnum.KPinfo.name
             k_size = len(self.args.nodes)
             initial_results = {}
-            kp_runner = kpw(graph=graph)
+            kp_runner = kpw(graph=graph, nodes=self.args.nodes)
             results = OrderedDict()
 
             sys.stdout.write(u"\nNodes given as input: ({})\n".format(', '.join(self.args.nodes)))
             if self.args.type in (['F', 'neg', 'all']):
                 initial_results[KpnegEnum.F.name] = kpp.F(graph)
-                kp_runner.run_fragmentation(self.args.nodes, KpnegEnum.F)
+                kp_runner.run_fragmentation(KpnegEnum.F)
             if self.args.type in (['dF', 'neg', 'all']):
                 initial_results[KpnegEnum.dF.name] = kpp.dF(graph, cmode=implementation)
                 kp_runner.run_fragmentation(self.args.nodes, KpnegEnum.dF, max_distance=self.args.max_distances,
-                                            implementation=implementation)
+                                            cmode=implementation)
 
             if self.args.type in (['dR', 'pos', 'all']):
-                kp_runner.run_reachability(self.args.nodes, KpposEnum.dR, max_distance=self.args.max_distances,
-                                           implementation=implementation)
+                kp_runner.run_reachability(KpposEnum.dR, max_distance=self.args.max_distances,
+                                           cmode=implementation)
 
             if self.args.type in (['mreach', 'pos', 'all']):
-                kp_runner.run_reachability(self.args.nodes, KpposEnum.mreach, m=self.args.m_reach,
-                                           max_distance=self.args.max_distances, implementation=implementation)
+                kp_runner.run_reachability(KpposEnum.mreach, m=self.args.m_reach,
+                                           max_distance=self.args.max_distances, cmode=implementation)
 
             results.update(kp_runner.get_results())
             sys.stdout.write(Fore.RED + Style.BRIGHT + u"\n### RUN SUMMARY ###\n" + Style.RESET_ALL)

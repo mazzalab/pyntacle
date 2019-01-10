@@ -29,15 +29,12 @@ import csv, os, xlsxwriter
 from igraph import Graph
 from tools.enums import KpnegEnum, KpposEnum, ReportEnum
 from exceptions.wrong_argument_error import WrongArgumentError
-from tools.graph_utils import GraphUtils as gu # swiss knife for graph utilities
 from collections import OrderedDict
-
-""" Utility to produce the report for global topology, local topology and modules """
 
 
 class PyntacleReporter():
-    """
-    This method creates a report according to the type of analysis run by pyntacle
+    r"""
+    This method creates a report according to the type of analysis run by Pyntacle
     """
     logger = None
 
@@ -53,18 +50,19 @@ class PyntacleReporter():
         self.dat = runtime_date
         
     def create_report(self, report_type: ReportEnum, report: OrderedDict):
-        """
+        r"""
         initialize the report object by writing generic information on the input graph and calling the internal report
         creators, according to the value passed by the "Report" enumerator
+
         :param Report  report_type: one of the type onside the "Report" enumerator
         :param OrderedDict report: a dictionary containing all the information to be reported
         """
 
         if not isinstance(report_type, ReportEnum):
-            raise TypeError("'report_type' must be on of the 'ReportEnum' enumerators, {} found".format(type(report_type).__name__))
+            raise TypeError(u"'report_type' must be on of the 'ReportEnum' enumerators, {} found".format(type(report_type).__name__))
 
         if not isinstance(report, OrderedDict):
-            raise ValueError("'report' must be an ordered Dictionary")
+            raise ValueError(u"'report' must be an ordered Dictionary")
 
         self.report_type = report_type
         self.report = []
@@ -92,22 +90,25 @@ class PyntacleReporter():
         elif report_type == ReportEnum.Set:
             self.__set_report(reportdict=report)
         else:
-            raise ValueError("Report specified does not exists")
+            raise ValueError(u"Report specified does not exists")
 
     def write_report(self, report_dir=None, format="tsv", choices=report_format) -> str:
-        """
+        r"""
         Create a text file containing the information created previously by the any of the *report* functions.
         By default, if the `report_path` function is not initialized, a generic name is created and a tab-separated file
-        is generated (named *pyntacle_report_**GRAPHNAME**_**COMMAND**_**DATE**.tsv* where **GRAPHNAME** is the value
-        stroed in the graph["name"] attribute, **COMMAND** is the name of the command requested by the user and
-        **DATE** is the date when the pyntacle run was completed. This file will be stored in the current directory
-        :param str report_path: a :type: str containing a valid path to a file. If not specified (default is  None. Read above)
+        is generated (named *Pyntacle_report_**GRAPHNAME**_**COMMAND**_**DATE**.tsv* where:_
+
+        * **graphname** is the value stored in the graph["name"] attribute,
+        * **Command** is the name of the command requested by the user and
+        * **Date** is the date when the Pyntacle run was completed. This file will be stored in the current directory
+
+
         :return: the path where the report is stored
         """
 
         if not self.report:
             raise EnvironmentError(
-                "a report must be created first using the 'create_report()' function")
+                u"A report must be created first using the 'create_report()' function")
 
         else:
             #cast every element of the list of lists to string, just in case:
@@ -119,29 +120,29 @@ class PyntacleReporter():
             self.report[0] = [x.replace("_", " ") for x in self.report[0]]
 
         if format not in choices.keys():
-            raise WrongArgumentError("file format {} is not supported".format(format))
+            raise WrongArgumentError(u"file format {} is not supported".format(format))
 
         if report_dir is None:
-            self.logger.info("Directory not specified. Using current directory")
+            self.logger.info(u"Directory not specified. Using current directory")
             report_dir = os.path.abspath(os.getcwd())
 
         else:
             if not os.path.isdir(report_dir):
-                self.logger.warning("Specified directory does not exists, creating it")
+                self.logger.warning(u"Specified directory does not exists, creating it")
                 os.makedirs(report_dir, exist_ok=True)
 
             else:
                 report_dir = os.path.abspath(report_dir)
 
         if len(self.graph["name"]) > 1:
-            self.logger.warning("Using the first 'name' attribute of graph name since more than one is specified")
+            self.logger.warning(u"Using the first 'name' attribute of graph name since more than one is specified")
         
         graphname = self.graph["name"][0]
         
         if self.report_type.name == 'Set':
-            report_path = os.path.join(report_dir, "_".join(["pyntacle_report", self.report_type.name, self.dat])+".tsv")
+            report_path = os.path.join(report_dir, "_".join(["Pyntacle_Report", self.report_type.name, self.dat])+".tsv")
         else:
-            report_path = os.path.join(report_dir, "_".join(["pyntacle_report", graphname, self.report_type.name, self.dat])+".tsv")
+            report_path = os.path.join(report_dir, "_".join(["Pyntacle_Report", graphname, self.report_type.name, self.dat])+".tsv")
 
         extension = choices[format]
 
@@ -150,23 +151,23 @@ class PyntacleReporter():
             with open(report_path, "w") as out:
 
                 if extension == "tsv":
-                    self.logger.info("writing pyntacle report to a tab-separated file (tsv)")
+                    self.logger.info(u"Writing Pyntacle report to a tab-separated file (tsv)")
                     for elem in self.report:
                         elem.append("\n")
                     out.writelines(["\t".join(x) for x in self.report])
                     
                 elif extension == "csv":
-                    self.logger.info("writing pyntacle report to a comma-separated value file (csv)")
+                    self.logger.info(u"Writing Pyntacle report to a comma-separated value file (csv)")
                     writer = csv.writer(out)
                     writer.writerows(self.report)
 
         else:
-            self.logger.info("writing pyntacle report to a an excel-Ready file (xlsx)")
+            self.logger.info(u"Writing Pyntacle report to a an excel-Ready file (xlsx)")
             workbook = xlsxwriter.Workbook(report_path, {'constant_memory': True})
             workbook.use_zip64()
             format = workbook.add_format()
 
-            worksheet = workbook.add_worksheet("pyntacle Report")
+            worksheet = workbook.add_worksheet("Pyntacle Report")
 
             for row, elem in enumerate(self.report):
                 for col, p in enumerate(elem):
@@ -177,10 +178,11 @@ class PyntacleReporter():
         return report_path
 
     def __local_report(self, reportdict:OrderedDict):
-        """
+        r"""
         Fill the `report` object  with information regarding the metrics for each node (nodes must be specified in
         the reportdic `nodes' key. if that kjey is not specified, it will assume that the local metrics are
         reported for all nodes)
+
         :param reportdict: a report dictionary object with each local attribute as key and a list of values as value,
         representing the corresponding the value of the metrics for the corresponding node
         """
@@ -196,6 +198,7 @@ class PyntacleReporter():
         self.report.append(["Results - Local Metrics for each Node in input"])
         self.report.append(["Node Name"] + [x for x in reportdict.keys()])
         addendum = [] #list that will be added to the self.report object
+
         for i, elem in enumerate(nodes):
             temp = []
             temp.append(elem) #append the node names to the appendum
@@ -205,8 +208,9 @@ class PyntacleReporter():
         self.report = self.report + addendum
 
     def __global_report(self, reportdict:OrderedDict):
-        """
+        r"""
         Fill the `report` o0bject with information regarding all the global metrics stored in the reportdict object
+
         :param reportdict: a dictionary like {name of the global metric: metric}
         """
 
@@ -217,7 +221,7 @@ class PyntacleReporter():
         
 
     def __KPinfo_report(self, reportdict:OrderedDict):
-        """
+        r"""
         fill the *self.__report* object with all the values conatined in the KPINFO Run
         :param reportdict: a dictionary with KPPOSchoices or KPNEGchoices as  `keys` and a list as `values`
         """
@@ -229,7 +233,7 @@ class PyntacleReporter():
             m = reportdict[KpposEnum.mreach.name][2]
 
             if not isinstance(m, int) and m < 1:
-                raise ValueError("m must be a positive integer")
+                raise ValueError(u"m must be a positive integer")
             else:
                 self.report.append(["maximum mreach distance", reportdict[KpposEnum.mreach.name][2]])
 
@@ -239,15 +243,15 @@ class PyntacleReporter():
             if 0.0 <= init_F <= 1.0:
                 self.report.append(["initial F value (whole graph)", init_F])
             else:
-                raise ValueError("Initial F must range between 0 and 1")
+                raise ValueError(u"Initial F must range between 0 and 1")
 
         if KpnegEnum.dF.name in reportdict.keys():
             init_dF = reportdict[KpnegEnum.dF.name][2]
 
             if 0.0 <= init_dF <= 1.0:
-                self.report.append(["initial dF value (whole graph)", init_dF])
+                self.report.append(["Initial dF value (whole graph)", init_dF])
             else:
-                raise ValueError("Initial dF must range between 0 and 1")
+                raise ValueError(u"Initial dF must range between 0 and 1")
 
         self.report.append(["\n"])
         self.report.append(["Results: Key-Player Metrics for the input set of nodes"])
@@ -262,8 +266,9 @@ class PyntacleReporter():
 
     #TODO: correct this and optimize it for group centrality
     def __GRinfo_report(self, reportdict: OrderedDict):
-        """
+        r"""
         fill the *self.__report* object with all the values conatined in the KPINFO Run
+
         :param reportdict: a dictionary with KPPOSchoices or KPNEGchoices as  `keys` and a list as `values`
         """
         # this doesn't work for now: keys are strings and not KP choices.
@@ -274,7 +279,7 @@ class PyntacleReporter():
             m = reportdict[KpposEnum.mreach.name][2]
 
             if not isinstance(m, int) and m < 1:
-                raise ValueError("m must be a positive integer")
+                raise ValueError(u"`m` must be a positive integer")
             else:
                 self.report.append(["maximum mreach distance", reportdict[KpposEnum.mreach.name][2]])
 
@@ -284,7 +289,7 @@ class PyntacleReporter():
             if 0.0 <= init_F <= 1.0:
                 self.report.append(["initial F value (whole graph)", init_F])
             else:
-                raise ValueError("Initial F must range between 0 and 1")
+                raise ValueError(u"Initial F must range between 0 and 1")
 
         if KpnegEnum.dF.name in reportdict.keys():
             init_dF = reportdict[KpnegEnum.dF.name][2]
@@ -292,7 +297,7 @@ class PyntacleReporter():
             if 0.0 <= init_dF <= 1.0:
                 self.report.append(["initial dF value (whole graph)", init_dF])
             else:
-                raise ValueError("Initial dF must range between 0 and 1")
+                raise ValueError(u"Initial dF must range between 0 and 1")
 
         self.report.append(["\n"])
         self.report.append(["Results: Key-Player Metrics for the input set of nodes"])
@@ -306,8 +311,9 @@ class PyntacleReporter():
                 self.report.append([k, ",".join(reportdict[k][0]), round(reportdict[k][1], 5)])
 
     def __greedy_report(self, reportdict: OrderedDict):
-        """
+        r"""
         fill the *self.__report* object with all the values contained in the Greedy Optimization Run
+
         :param reportdict: a dictionary with KPPOSchoices or KPNEGchoices as  `keys` and a list as `values`
         """
 
@@ -318,7 +324,7 @@ class PyntacleReporter():
             m = reportdict[KpposEnum.mreach.name][2]
 
             if not isinstance(m, int) and m < 1:
-                raise ValueError("m must be a positive integer")
+                raise ValueError(u"'m' must be a positive integer")
             else:
                 self.report.append(["maximum mreach distance", reportdict[KpposEnum.mreach.name][2]])
 
@@ -328,7 +334,7 @@ class PyntacleReporter():
             if 0.0 <= init_F <= 1.0:
                 self.report.append(["initial F value (whole graph)", init_F])
             else:
-                raise ValueError("Initial F must range between 0 and 1")
+                raise ValueError(u"Initial F must range between 0 and 1")
 
         if KpnegEnum.dF.name in reportdict.keys():
             init_dF = reportdict[KpnegEnum.dF.name][2]
@@ -336,7 +342,7 @@ class PyntacleReporter():
             if 0.0 <= init_dF <= 1.0:
                 self.report.append(["initial dF value (whole graph)", init_dF])
             else:
-                raise ValueError("Initial dF must range between 0 and 1")
+                raise ValueError(u"Initial dF must range between 0 and 1")
 
         self.report.append(["Results: Greedily-Optimized Search for selected KP Metrics"])
         self.report.append(["Metric", "Nodes", "Value"])
@@ -349,8 +355,9 @@ class PyntacleReporter():
                 self.report.append([k, ",".join(reportdict[k][0]), reportdict[k][1]])
 
     def __bruteforce_report(self, reportdict: OrderedDict):
-        """
-        fill the *self.__report* object with all the values contained in the Greedy Optimization Run
+        r"""
+        Fill the ``self.__report`` object with all the values contained in the brute-force search run
+
         :param reportdict: a dictionary with KPPOSchoices or KPNEGchoices as  `keys` and a list as `values`
         """
 
@@ -361,7 +368,7 @@ class PyntacleReporter():
             m = reportdict[KpposEnum.mreach.name][2]
 
             if not isinstance(m, int) and m < 1:
-                raise ValueError("m must be a positive integer")
+                raise ValueError(u"'m' must be a positive integer")
             else:
                 self.report.append(["maximum mreach distance", reportdict[KpposEnum.mreach.name][2]])
 
@@ -372,7 +379,7 @@ class PyntacleReporter():
             if 0.0 <= init_F <= 1.0:
                 self.report.append(["initial F value (whole graph)", init_F])
             else:
-                raise ValueError("Initial F must range between 0 and 1")
+                raise ValueError(u"Initial F must range between 0 and 1")
 
         if KpnegEnum.dF.name in reportdict.keys():
             init_dF = reportdict[KpnegEnum.dF.name][2]
@@ -380,7 +387,7 @@ class PyntacleReporter():
             if 0.0 <= init_dF <= 1.0:
                 self.report.append(["initial dF value (whole graph)", init_dF])
             else:
-                raise ValueError("Initial dF must range between 0 and 1")
+                raise ValueError(u"Initial dF must range between 0 and 1")
 
         self.report.append(["Results: Brute-force Search"])
         self.report.append(["Metric", "Nodes", "Value"])
@@ -403,10 +410,11 @@ class PyntacleReporter():
                     self.report.append([k, ",".join(reportdict[k][0][0]), reportdict[k][1]])
 
     def __communities_report(self, reportdict: OrderedDict):
-        """
+        r"""
         Report General information regarding the communities (nodes, edges, component, algorithm)
         stored in the reportdic. The reportdic **MUST** also contain a `algorithms` key that will be used to report the
         type of algorithm used
+
         :param reportdict: a dictionary from pyntacle communities
         """
         self.report.append(["Results: Community finding in input graph"])

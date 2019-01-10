@@ -643,8 +643,8 @@ class Octopus:
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param str,list,None nodes: the vertex ``name`` attribute corresponding to node names. If :py:class:`None`, it adds the selected metric to all nodes in the graph. Otherwise, it can be either a string specifying a single node name or a list of strings, each one representing a node in the graph.
         """
-        kpobj = kpw(graph=graph)
-        kpobj.run_fragmentation(nodes, KpnegEnum.F)
+        kpobj = kpw(graph=graph, nodes=nodes)
+        kpobj.run_fragmentation(KpnegEnum.F)
         results_dict = kpobj.get_results()
         AddAttributes.add_graph_attributes(graph,
             KpnegEnum.F.name + '_kpinfo', {tuple(sorted(results_dict[KpnegEnum.F.name][0])): results_dict[KpnegEnum.F.name][1]})
@@ -666,8 +666,8 @@ class Octopus:
         :param int,None max_distance: The maximum shortest path length over which two nodes are considered unreachable. Default is :py:class:`None` (distances are preserved).
         """
         cmode = get_cmode(graph)
-        kpobj = kpw(graph=graph)
-        kpobj.run_fragmentation(nodes, KpnegEnum.dF, max_distance=max_distance, implementation=cmode)
+        kpobj = kpw(graph=graph, nodes=nodes)
+        kpobj.run_fragmentation(KpnegEnum.dF, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
         AddAttributes.add_graph_attributes(graph,
             KpnegEnum.dF.name + '_kpinfo',
@@ -692,8 +692,8 @@ class Octopus:
 
         cmode = get_cmode(graph)
 
-        kpobj = kpw(graph=graph)
-        kpobj.run_reachability(nodes, KpposEnum.dR, max_distance=max_distance, implementation=cmode)
+        kpobj = kpw(graph=graph, nodes=nodes)
+        kpobj.run_reachability(KpposEnum.dR, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
         AddAttributes.add_graph_attributes(graph,
             KpposEnum.dR.name + '_kpinfo',
@@ -718,8 +718,8 @@ class Octopus:
         """
         cmode = get_cmode(graph)
 
-        kpobj = kpw(graph=graph)
-        kpobj.run_reachability(nodes, KpposEnum.mreach, m=m, max_distance=max_distance, implementation=cmode)
+        kpobj = kpw(graph=graph, nodes=nodes)
+        kpobj.run_reachability(KpposEnum.mreach, m=m, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
         attr_name = KpposEnum.mreach.name + '_{}_kpinfo'.format(str(m))
         AddAttributes.add_graph_attributes(graph,
@@ -772,7 +772,7 @@ class Octopus:
 
         cmode = get_cmode(graph)
         kpobj = gow(graph=graph)
-        kpobj.run_fragmentation(k, KpnegEnum.dF, max_distance=max_distance, seed=seed, implementation=cmode)
+        kpobj.run_fragmentation(k, KpnegEnum.dF, max_distance=max_distance, seed=seed, cmode=cmode)
         results_dict = kpobj.get_results()
         AddAttributes.add_graph_attributes(graph,
             KpnegEnum.dF.name + '_greedy',
@@ -800,7 +800,7 @@ class Octopus:
 
         cmode = get_cmode(graph)
         kpobj = gow(graph=graph)
-        kpobj.run_reachability(k, KpposEnum.dR, max_distance=max_distance, seed=seed, implementation=cmode)
+        kpobj.run_reachability(k, KpposEnum.dR, max_distance=max_distance, seed=seed, cmode=cmode)
         results_dict = kpobj.get_results()
         AddAttributes.add_graph_attributes(graph,
             KpposEnum.dR.name + '_greedy',
@@ -828,7 +828,7 @@ class Octopus:
         """
         cmode = get_cmode(graph)
         kpobj = gow(graph=graph)
-        kpobj.run_reachability(k, KpposEnum.mreach, m=m, max_distance=max_distance, seed=seed, implementation=cmode)
+        kpobj.run_reachability(k, KpposEnum.mreach, m=m, max_distance=max_distance, seed=seed, cmode=cmode)
         results_dict = kpobj.get_results()
         attr_name = KpposEnum.mreach.name + '_{}_greedy'.format(str(m))
         AddAttributes.add_graph_attributes(graph,
