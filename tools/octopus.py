@@ -238,6 +238,29 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
+    def add_average_global_shortest_path_length(graph):
+        """
+
+        :param graph:
+        :return:
+        """
+        cmode = get_cmode(graph)
+        AddAttributes.add_graph_attributes(graph, GlobalAttributeEnum.average_global_shortest_path_length.name,
+                                           ShortestPath.average_global_shortest_path_length(graph, cmode))
+
+    @staticmethod
+    @check_graph_consistency
+    def add_median_global_shortest_path_length(graph):
+        """
+
+        :param graph:
+        :return:
+        """
+        AddAttributes.add_graph_attributes(graph, GlobalAttributeEnum.median_global_shortest_path_length.name,
+                                           ShortestPath.median_global_shortest_path_length(graph))
+
+    @staticmethod
+    @check_graph_consistency
     def add_completeness_naive(graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.sparseness.Sparseness.completeness_naive` method in
@@ -296,6 +319,20 @@ class Octopus:
         AddAttributes.add_node_attributes(graph, LocalAttributeEnum.degree.name,
                                                  LocalTopology.degree(graph, nodes), nodes)
 
+
+    @staticmethod
+    @check_graph_consistency
+    def add_group_degree(graph, nodes: list):
+        """
+
+        :param graph:
+        :param nodes:
+        :return:
+        """
+        AddAttributes.add_graph_attributes(graph, GroupCentralityEnum.group_degree.name,
+                                                  LocalTopology.group_degree(graph, nodes))
+
+
     @staticmethod
     @check_graph_consistency
     def add_betweenness(graph, nodes: str or list or None=None):
@@ -314,6 +351,22 @@ class Octopus:
             nodes = graph.vs["name"]
         AddAttributes.add_node_attributes(graph, LocalAttributeEnum.betweenness.name,
                                                  LocalTopology.betweenness(graph, nodes), nodes)
+
+    @staticmethod
+    @check_graph_consistency
+    def add_group_betweenness(graph, nodes: list or None =None):
+        """
+
+        :param graph:
+        :param nodes:
+        :return:
+        """
+        cmode = get_cmode(graph)
+        if nodes is None:
+            nodes = graph.vs["name"]
+
+        AddAttributes.add_graph_attributes(graph, GroupCentralityEnum.group_betweenness.name,
+                                                 LocalTopology.group_betweenness(graph, nodes, cmode))
 
     @staticmethod
     @check_graph_consistency
@@ -352,6 +405,24 @@ class Octopus:
             nodes = graph.vs["name"]
         AddAttributes.add_node_attributes(graph, LocalAttributeEnum.closeness.name,
                                                  LocalTopology.closeness(graph, nodes), nodes)
+
+    @staticmethod
+    @check_graph_consistency
+    def add_group_closeness(graph, nodes: list or None=None, distance: GroupDistanceEnum or None=None):
+        """
+
+        :param graph:
+        :param nodes:
+        :param distance:
+        :return:
+        """
+
+        cmode = get_cmode(graph)
+        if nodes is None:
+            nodes = graph.vs["name"]
+
+        AddAttributes.add_graph_attributes(graph, GroupCentralityEnum.group_closeness.name,
+                                           LocalTopology.group_closeness(graph, nodes, distance, cmode))
 
     @staticmethod
     @check_graph_consistency
@@ -763,6 +834,13 @@ class Octopus:
         AddAttributes.add_graph_attributes(graph,
             attr_name, {tuple(sorted(results_dict[KpposEnum.mreach.name][0])): results_dict[KpposEnum.mreach.name][1]})
 
+    # @staticmethod
+    # @check_graph_consistency
+    # def add_GO_group_degree(graph, k: int, seed: int or None=None, distance: GroupDistanceEnum or None=None, ):
+    #     metric = GroupCentralityEnum.group_degree
+    #     cmode = get_cmode(graph)
+    #     AddAttributes.add_graph_attributes(graph, GroupCentralityEnum.group_degree.name, )
+
     # Brute-force optimization
     @staticmethod
     @check_graph_consistency
@@ -865,16 +943,10 @@ class Octopus:
             {tuple(tuple(sorted(x)) for x in results_dict[KpposEnum.mreach.name][0]): results_dict[KpposEnum.mreach.name][1]})
 
     # todo mauro - missing octopus metrics:
-    # todo global metrics:
-    # todo median_global_shortest_path_length
-    # todo average_global_shortest_path_length
-    # todo group centrality metrics:
-    # todo add_group_degree
-    # todo add_group_betweenness
-    # todo add_group_closeness
+
     # todo add_GO_group_degree
-    # todo add_GO_group_betweenness
-    # todo add_GO_group_closeness
+    # todo add_GO_group_betweenness        cmode = get_cmode(graph)
+    # todo add_GO_group_closeness         cmode = get_cmode(graph)
     # todo add_BF_group_closeness
     # todo add_BF_group_degree
     # todo add_BF_group_betweenness
