@@ -140,9 +140,10 @@ class PyntacleImporter:
                 node_names = [str(x) for x in range(0, len(f.columns))]
 
             graph = Graph.Adjacency(f.values.tolist(), mode="UPPER")
-            gu(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0],
-                                              node_names=node_names)
-            gu.check_graph()
+
+            util = gu(graph=graph)
+            util.graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
+            util.check_graph()
 
             sys.stdout.write(u"Adjacency matrix from {} imported\n".format(file))
             return graph
@@ -202,8 +203,9 @@ class PyntacleImporter:
 
         graph.add_edges(edgs)
         #initialize the graph by calling the graph_initializer() method
-        gu(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
-        gu.check_graph()
+        util = gu(graph=graph)
+        util.graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
+        util.check_graph()
 
         sys.stdout.write(u"Edge list from {} imported\n".format(file))
         return graph
@@ -298,8 +300,9 @@ class PyntacleImporter:
             graph.es()["__sif_interaction"] = list(edgeslist.values())
 
             # initialize graph
-            gu(graph=graph).graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
-            gu.check_graph()
+            util = gu(graph=graph)
+            util.graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
+            util.check_graph()
     
             sys.stdout.write(u"SIF from {} imported\n".format(file))
 
@@ -412,9 +415,9 @@ class PyntacleImporter:
             sys.stdout.write(u"Converting graph to undirect\n")
             graph.to_undirected()
 
-        gu(graph=graph).graph_initializer(graph_name=graphname,
-                                          node_names=graph.vs["name"])
-        gu.check_graph()
+        util = gu(graph=graph)
+        util.graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
+        util.check_graph()
 
         for a in edge_attrs_dict:
             for k in edge_attrs_dict[a]:
