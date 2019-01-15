@@ -27,9 +27,11 @@ __license__ = u"""
   """
 
 
-
+from tools.graph_utils import *
 from functools import wraps
-from tools.graph_utils import GraphUtils
+# from collections import Counter
+# from tools.graph_utils import GraphUtils as gu
+
 
 def check_graph_consistency(func):
     r"""
@@ -40,8 +42,8 @@ def check_graph_consistency(func):
     """
     @wraps(func)
     def func_wrapper(graph, *args, **kwargs):
-
-        GraphUtils(graph).check_graph()
+        from tools.graph_utils import GraphUtils
+        # GraphUtils(graph).check_graph()
 
         return func(graph, *args, **kwargs)
     return func_wrapper
