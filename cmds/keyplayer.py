@@ -88,6 +88,28 @@ class KeyPlayer():
         else:
             header = True
 
+        # check that output directory is properly set
+        if not os.path.isdir(self.args.directory):
+            createdir = True
+
+        #control plot dimensions
+        if self.args.plot_dim:  # define custom format
+            self.args.plot_dim = self.args.plot_dim.split(",")
+
+            for i in range(0, len(self.args.plot_dim)):
+                try:
+                    self.args.plot_dim[i] = int(self.args.plot_dim[i])
+
+                    if self.args.plot_dim[i] <= 0:
+                        raise ValueError
+
+                except ValueError:
+                    sys.stderr.write(
+                        u"Format specified must be a comma-separated list of positive integers (e.g. 1920,1080). Quitting\n")
+                    sys.exit(1)
+
+            plot_size = tuple(self.args.plot_dim)
+
         # Load Graph
 
         sys.stdout.write("Reading input file...\n")
@@ -96,36 +118,59 @@ class KeyPlayer():
         # init graph utils class
         utils = gu(graph=graph)
 
+
+        if '__implementation' in graph.attributes():
+            implementation = graph['__implementation']
+        else:
+            implementation = CmodeEnum.igraph
+
+        if hasattr(self.args, 'nodes'):
+            self.args.nodes = self.args.nodes.split(",")
+
+            try:
+                utils.nodes_in_graph(self.args.nodes)
+
+            except:
+                sys.stderr.write(
+                    "One or more of the specified nodes is not present in the graph. Please check your spelling and the presence of empty spaces in between node names. Quitting.\n")
+                sys.exit(1)
+
         if self.args.largest_component:
             try:
                 graph = gu.get_largest_component()
-                utils.set_graph(graph)
-
                 sys.stdout.write(
                     u"Taking the largest component of the input graph as you requested ({} nodes, {} edges)...\n".format(
                         graph.vcount(), graph.ecount()))
+                # reinitialize graph utils class
+                utils.set_graph(graph)
 
             except MultipleSolutionsError:
                 sys.stderr.write(
                     u"The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the '--largest-component' option. Quitting.\n")
                 sys.exit(1)
 
-        if hasattr(self.args, 'nodes'):
-            if not all(x in graph.vs["name"] for x in self.args.nodes):
-                sys.stderr.write(u"One or more nodes you supplied could not be found in the input graph.\n")
-                sys.exit(1)
+            # check that the nodes are in the largest component
+            if self.args.nodes is not None:
 
+                try:
+                    utils.nodes_in_graph(self.args.nodes)
 
-        
-        if '__implementation' in graph.attributes():
-            implementation = graph['__implementation']
-        else:
-            implementation = CmodeEnum.igraph
+                except:
+                    sys.stderr.write(
+                        "One or more of the specified nodes is not present in the largest graph component. Select a different set or remove this option. Quitting.\n")
+                    sys.exit(1)
+
+        #initialize reporter for later usage and plot dimension for later usage
+        r = PyntacleReporter(graph=graph)
+        initial_results = {}
+        results = OrderedDict()
+
+        if graph.vcount() > 150:
+            plot_size = (1600, 1600)
 
         if self.args.which == 'kp-finder':
             k_size = self.args.k_size
-            initial_results = {}
-            results = OrderedDict()
+
             # Greedy optimization
             if self.args.implementation == "greedy":
                 report_type = ReportEnum.KP_greedy.name
@@ -138,11 +183,6 @@ class KeyPlayer():
                             self.args.k_size))
                     initial_results[KpnegEnum.F.name] = kpp.F(graph)
                     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, seed=self.args.seed)
-                    # if initial_results[KpnegEnum.F.name] != 1:
-                    #     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, seed=self.args.seed)
-                    # else:
-                    #     self.logging.warning("Initial value of F is 1. Skipping search.")
-                    #     results[KpnegEnum.F.name] = [[], 1, 1]
                         
                 if self.args.type in (['dF', 'neg', 'all']):
                     sys.stdout.write(
@@ -153,21 +193,13 @@ class KeyPlayer():
                                                 max_distance=self.args.max_distances, seed=self.args.seed,
                                                 cmode=implementation)
 
-                    # if initial_results[KpnegEnum.dF.name] != 1:
-                    #     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
-                    #                                 max_distance=self.args.max_distances, seed=self.args.seed,
-                    #                                 implementation=implementation)
-                    # else:
-                    #     self.logging.warning("Initial value of dF is 1. Skipping search.")
-                    #     results[KpnegEnum.dF.name] = [[], 1, 1]
-
                 if self.args.type in (['dR', 'pos', 'all']):
                     sys.stdout.write(
                         u"KP-POS: Finding optimal set of nodes of size {0} that maximizes the dR index...\n".format(
                             self.args.k_size))
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.dR,
                                                max_distance=self.args.max_distances, seed=self.args.seed,
-                                               cmode= implementation)
+                                               cmode=implementation)
 
                 if self.args.type in (['mreach', 'pos', 'all']):
                     sys.stdout.write(
@@ -190,12 +222,7 @@ class KeyPlayer():
                             self.args.k_size))
                     initial_results[KpnegEnum.F.name] = kpp.F(graph)
                     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, threads=self.args.threads)
-                    # if initial_results[KpnegEnum.F.name] != 1:
-                    #     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, threads=self.args.threads)
-                    #
-                    # else:
-                    #     self.logging.warning("Graph already owns the maximum F value (1.0) Skipping search.")
-                    #     results[KpnegEnum.F.name] = [[None], 1, 1]
+
 
                 if self.args.type in (['dF', 'neg', 'all']):
                     sys.stdout.write(
@@ -206,10 +233,6 @@ class KeyPlayer():
                     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
                                                 max_distance=self.args.max_distances,
                                                 cmode=CmodeEnum.igraph, threads=self.args.threads)
-                    # if initial_results[KpnegEnum.dF.name] != 1:
-                    # else:
-                    #     self.logging.warning("Graph already owns the maximum dF value (1.0) Skipping search.")
-                    #     results[KpnegEnum.dF.name] = [[None], 1, 1]
 
                 if self.args.type in (['dR', 'pos', 'all']):
                     sys.stdout.write(
@@ -283,38 +306,13 @@ class KeyPlayer():
             sys.stdout.write(Fore.RED + Style.BRIGHT + u"### END OF SUMMARY ###\n" + Style.RESET_ALL)
 
             # check output directory
-            if not os.path.isdir(self.args.directory):
+            if not createdir:
                 sys.stdout.write(u"Warning: output directory does not exist, will create one at {}.\n".format(
                     os.path.abspath(self.args.directory)))
                 os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
 
-            # Check provided dimensions' format
-            if self.args.plot_dim:  # define custom format
-                self.args.plot_dim = self.args.plot_dim.split(",")
 
-                for i in range(0, len(self.args.plot_dim)):
-                    try:
-                        self.args.plot_dim[i] = int(self.args.plot_dim[i])
 
-                        if self.args.plot_dim[i] <= 0:
-                            raise ValueError
-
-                    except ValueError:
-                        sys.stderr.write(
-                            u"Format specified must be a comma-separated list of positive integers (e.g. 1920,1080). Quitting\n")
-                        sys.exit(1)
-
-                plot_size = tuple(self.args.plot_dim)
-
-            else:
-                # generate different formats according to graph size
-                if graph.vcount() <= 150:
-                    plot_size = (800, 800)
-
-                else:
-                    plot_size = (1600, 1600)
-
-            r = PyntacleReporter(graph=graph)
 
             sys.stdout.write("Creating report in {} format...\n".format(self.args.report_format))
             if self.args.implementation == "brute-force":

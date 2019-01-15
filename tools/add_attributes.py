@@ -116,7 +116,7 @@ class AddAttributes:
             sys.stdout.write(u"Node attribute {} successfully added!".format(attr_name))
 
     @staticmethod
-    @check_graph_consistency
+    # @check_graph_consistency
     def add_edge_attributes(graph: Graph, attr_name: str, attr_list: list, edges: list):
         r"""
         Add edge attributes to the target a :py:class:`igraph.Graph` object under the attribute name specified in ``attr_name``
@@ -162,7 +162,7 @@ class AddAttributes:
             raise WrongArgumentError("All the attributes pointed to non-existing edges.")
 
     @staticmethod
-    @check_graph_consistency
+    # @check_graph_consistency
     def add_edge_names(graph: Graph, readd: bool=False):
         r"""
         Add adjacent edge as attribute stored in a tuple to each edge
@@ -187,7 +187,7 @@ class AddAttributes:
             sys.stdout.write(u"attribute 'adjacent_nodes' already exist")
 
     @staticmethod
-    @check_graph_consistency
+    # @check_graph_consistency
     def add_graph_name(graph: Graph, name: str):
         r"""
         Initialize or replace the graph ``name`` attribute with the value stored in the ``namestring`` parameter.
@@ -203,7 +203,7 @@ class AddAttributes:
         graph["name"] = [name]
 
     @staticmethod
-    @check_graph_consistency
+    # @check_graph_consistency
     def add_parent_name(graph: Graph):
         r"""
         Add the graph ``name`` attribute to each vertex, under the ``__parent``  reserved attribute.

@@ -72,8 +72,10 @@ class GroupCentrality():
             cursor.daemon = True
             cursor.start()
 
-        if self.args.group_distances is None and self.args.type in ["all", "closeness"]:
-            sys.stderr.write(u"Group distance must be required for group closeness (--param). Quitting.\n")
+        if self.args.type in ["all", "closeness"]:
+            if self.args.group_distances is None:
+                sys.stderr.write(u"Group distance must be specified for group closeness using the `-D --group-distance` argument. Quitting.\n")
+                sys.exit(1)
 
         if self.args.input_file is None:
             sys.stderr.write(
@@ -83,11 +85,6 @@ class GroupCentrality():
         if not os.path.exists(self.args.input_file):
             sys.stdout.write(u"Cannot find {}. Is the path correct?\n".format(self.args.input_file))
             sys.exit(1)
-
-        if not os.path.isdir(self.args.directory):
-            sys.stdout.write(u"Warning: output directory does not exist, will create one at {}.\n".format(
-                os.path.abspath(self.args.directory)))
-            os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
 
         # Parsing optional node list
         if hasattr(self.args, 'nodes'):
@@ -109,6 +106,16 @@ class GroupCentrality():
         # init graph utils class
         utils = gu(graph=graph)
 
+        if hasattr(self.args, 'nodes'):
+            self.args.nodes = self.args.nodes.split(",")
+
+            try:
+                utils.nodes_in_graph(self.args.nodes)
+
+            except:
+                sys.stderr.write("One or more of the specified nodes is not present in the graph. Please check your spelling and the presence of empty spaces in between node names. Quitting.\n")
+                sys.exit(1)
+
         if self.args.largest_component:
             try:
                 graph = gu.get_largest_component()
@@ -123,21 +130,23 @@ class GroupCentrality():
                     u"The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the '--largest-component' option. Quitting.\n")
                 sys.exit(1)
 
-        if hasattr(self.args, 'nodes'):
-            try:
-                utils.check_name_list(self.args.nodes)
-            except:
-                #REMINDER: FERMATO QUA, fixa il problema della largest component
-                if self.args.nodes is not None:
-                    sys.stdout.write(u"Computing local metrics for nodes ({})\n".format(', '.join(self.args.nodes)))
+            #check that the nodes are in the largest component
+            if self.args.nodes is not None:
 
-                    try:
-                        utils.check_name_list(self.args.nodes.split(","))  # to check everything's in order
+                try:
+                    utils.nodes_in_graph(self.args.nodes)
 
-                    except MissingAttributeError:
-                        sys.stderr.write(
-                            u"One of the nodes you specified is not in the input graph, check your node list and its formatting.Quitting.\n")
-                        sys.exit(1)
+                except:
+                    sys.stderr.write("One or more of the specified nodes is not present in the largest graph component. Select a different set or remove this option. Quitting.\n")
+                    sys.exit(1)
+
+
+
+        #output part
+        if not os.path.isdir(self.args.directory):
+            sys.stdout.write(u"Warning: output directory does not exist, will create one at {}.\n".format(
+                os.path.abspath(self.args.directory)))
+            os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
 
         sys.stdout.write(u"Pyntacle groupcentrality completed successfully. Ending.\n")
         sys.exit(0)

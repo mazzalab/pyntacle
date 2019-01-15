@@ -157,7 +157,7 @@ class GraphUtils:
 
         return None
 
-    def check_name_list(self, names_list: list):
+    def nodes_in_graph(self, names_list: list):
         r"""
         Checks that a single node or a list of node *names* (the graph.vs["name"] attribute) is present in the graph
 
@@ -281,7 +281,7 @@ class GraphUtils:
         else:
             names = node_names
 
-        self.check_name_list(node_names)
+        self.nodes_in_graph(node_names)
         index_list = []
 
         for name in names:

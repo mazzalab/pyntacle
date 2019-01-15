@@ -144,7 +144,7 @@ class Metrics:
                 sys.stdout.write(u"Computing local metrics for nodes ({})\n".format(', '.join(self.args.nodes)))
 
                 try:
-                    utils.check_name_list(self.args.nodes.split(","))  # to check everything's in order
+                    utils.nodes_in_graph(self.args.nodes.split(","))  # to check everything's in order
 
                 except MissingAttributeError:
                     sys.stderr.write(

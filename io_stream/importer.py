@@ -143,7 +143,6 @@ class PyntacleImporter:
 
             util = gu(graph=graph)
             util.graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
-            util.check_graph()
 
             sys.stdout.write(u"Adjacency matrix from {} imported\n".format(file))
             return graph
@@ -205,7 +204,6 @@ class PyntacleImporter:
         #initialize the graph by calling the graph_initializer() method
         util = gu(graph=graph)
         util.graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
-        util.check_graph()
 
         sys.stdout.write(u"Edge list from {} imported\n".format(file))
         return graph
@@ -302,7 +300,6 @@ class PyntacleImporter:
             # initialize graph
             util = gu(graph=graph)
             util.graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
-            util.check_graph()
     
             sys.stdout.write(u"SIF from {} imported\n".format(file))
 
@@ -417,7 +414,6 @@ class PyntacleImporter:
 
         util = gu(graph=graph)
         util.graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
-        util.check_graph()
 
         for a in edge_attrs_dict:
             for k in edge_attrs_dict[a]:

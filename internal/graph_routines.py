@@ -26,10 +26,7 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 
-
-
 from functools import wraps
-from tools.graph_utils import GraphUtils
 
 def check_graph_consistency(func):
     r"""
@@ -40,7 +37,7 @@ def check_graph_consistency(func):
     """
     @wraps(func)
     def func_wrapper(graph, *args, **kwargs):
-
+        from tools.graph_utils import GraphUtils
         GraphUtils(graph).check_graph()
 
         return func(graph, *args, **kwargs)
