@@ -93,7 +93,7 @@ class GraphUtils:
             raise UnsupportedGraphError(u"Graph must contain at least one edge")
 
         if "name" not in self.graph.vs().attributes() and all(x == str for x in self.graph.vs()["name"]):
-            raise KeyError(u"Nodes must have the attribute  'name' and it must be filled with strings")
+            raise KeyError(u"Nodes must have the attribute 'name' and it must be filled with strings")
 
         if len(set(self.graph.vs()["name"])) != len(self.graph.vs()["name"]):
             raise UnsupportedGraphError(u"Node 'name' attribute  must be unique, check the \"name\" attribute in graph")

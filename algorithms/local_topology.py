@@ -147,8 +147,6 @@ class LocalTopology:
 
         # Get the corresponding node indices
         nodes_index = gUtil(graph).get_node_indices(nodes)
-        # print(nodes_index)
-        # input()
 
         # Count geodesics that do not pass through the group
         del_edg = [graph.incident(vertex=nidx) for nidx in nodes_index]
@@ -230,7 +228,7 @@ class LocalTopology:
     @check_graph_consistency
     @vertex_doctor
     def group_closeness(graph: Graph, nodes: list, distance: GroupDistanceEnum=GroupDistanceEnum.minimum,
-                        cmode: CmodeEnum=CmodeEnum.igraph) -> float:
+                        np_paths: np.ndarray=None) -> float:
         r"""
         Computes the closeness centrality for a group of nodes, rather than a single-node resolution as in
         :func:`~pyntacle.algorithms.local_topology.LocalTopology.closeness`. The *group closeness* is defined as the sum
@@ -248,9 +246,10 @@ class LocalTopology:
         that larger numbers indicate greater centrality.
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
-        :param cmodeEnum cmode: the implementation that will be used to compute the shortest paths required for group closeness. See :class:`~pyntacle.tools.enums.CmodeEnum`. Default is the igraph brute-force shortest path search. Will be ignored if ``np_cpunts`` is provided
-        :param GroupDistanceEnum distance_type: The definition of distance between any non-group and group nodes. It can be any value of the enumerator :class:`~pyntacle.tools.enums.GroupDistanceEnum`. By default, the minimum least distance :math:`D` between the group :math:`k` and the rest of the graph :math:`N-k` is used
         :param list nodes: A list of node ``name``\s (the vertex ``name`` attribute) of the nodes belonging to the group
+        :param GroupDistanceEnum distance: The definition of distance between any non-group and group nodes. It can be any value of the enumerator :class:`~pyntacle.tools.enums.GroupDistanceEnum`. By default, the minimum least distance :math:`D` between the group :math:`k` and the rest of the graph :math:`N-k` is used
+        :param cmodeEnum cmode: the implementation that will be used to compute the shortest paths required for group closeness. See :class:`~pyntacle.tools.enums.CmodeEnum`. Default is the igraph brute-force shortest path search. Will be ignored if ``np_cpunts`` is provided
+        :param np.ndarray,None np_paths: a :py:class:`numpy.ndarray` of positive integers representing a :math`NxN` squared matrix storing shortest paths between any pair of nodes of the graph. Passing this argument would make the overall calculation faster. Recommended for large Graps (:math:`N>1000`)
 
         :return float: The normalized group closeness centrality, obtained by dividing the group closeness by the number of non-group nodes.
 
@@ -272,10 +271,13 @@ class LocalTopology:
 
         group_indices = gUtil(graph).get_node_indices(nodes)
         nongroup_nodes = list(set(graph.vs["name"]) - set(nodes))
-        np_paths = ShortestPath.get_shortestpaths(graph, nongroup_nodes, cmode=cmode)
+        nongroup_nodes_indices = gUtil(graph).get_node_indices(nongroup_nodes)
+        # nongroup_np_paths2 = ShortestPath.get_shortestpaths(graph, nongroup_nodes, cmode=cmode)
+        nongroup_np_paths = np_paths.take(nongroup_nodes_indices, axis=0)
+        # assert (nongroup_np_paths == nongroup_np_paths2).all(), "Error"
 
         group_closeness = 0
-        for np_path in np_paths:
+        for np_path in nongroup_np_paths:
             temp_list = [elem for elem in np_path[group_indices] if elem != MAX_PATH_LENGHT]
             if temp_list:
                 group_closeness += dist_func(temp_list)

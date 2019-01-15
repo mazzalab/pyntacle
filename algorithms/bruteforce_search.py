@@ -1,13 +1,13 @@
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
-__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__copyright__ = u"Copyright 2019, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.0.0"
+__version__ = u"1.0.1"
 __maintainer__ = u"Daniele Capocefalo"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"11/01/2019"
 __license__ = u"""
-  Copyright (C) 2016-2018  Tommaso Mazza <t.mazza@css-mendel.it>
+  Copyright (C) 2016-2019  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
 
   This program is free software; you can use and redistribute it under
@@ -27,7 +27,6 @@ __license__ = u"""
 from config import *
 import itertools
 import numpy as np
-from functools import partial
 from algorithms.keyplayer import KeyPlayer
 from algorithms.local_topology import LocalTopology
 from algorithms.shortest_path import ShortestPath as sp
@@ -37,74 +36,8 @@ from internal.graph_routines import check_graph_consistency
 from internal.group_search_utils import bruteforce_search_initializer
 from igraph import Graph
 import multiprocessing as mp
-
-
-def crunch_fragmentation_combinations(graph: Graph, kpp_type: KpnegEnum,
-                                      max_distance: int, implementation: CmodeEnum, node_names: list) -> dict:
-    kppset_score_pairs_partial = {}
-    temp_graph = graph.copy()
-    temp_graph.delete_vertices(node_names)
-
-    if kpp_type == KpnegEnum.F:
-        kppset_score_pairs_partial[node_names] = KeyPlayer.F(temp_graph)
-
-    elif kpp_type == KpnegEnum.dF:
-        kppset_score_pairs_partial[node_names] = KeyPlayer.dF(graph=temp_graph, max_distance=max_distance,
-                                                              cmode=implementation)
-    else:
-        raise KeyError(
-            u"The parameter 'kp_type' is not valid. It must be one of the following: {}".format(list(KpnegEnum)))
-
-    return kppset_score_pairs_partial
-
-
-def crunch_reachability_combinations(graph: Graph, kp_type: KpposEnum, m: int,
-                                     max_distance: int, implementation: CmodeEnum, allS: list) -> dict:
-    kppset_score_pairs = {}
-    if kp_type == KpposEnum.mreach:
-        if implementation != CmodeEnum.igraph:
-            sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
-            reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distance=max_distance,
-                                                  cmode=implementation, sp_matrix=sp_matrix)
-        else:
-            reachability_score = KeyPlayer.mreach(graph=graph, nodes=allS, m=m, max_distance=max_distance,
-                                                  cmode=implementation)
-    elif kp_type == KpposEnum.dR:
-        if implementation != CmodeEnum.igraph:
-            sp_matrix = sp.get_shortestpaths(graph=graph, cmode=implementation, nodes=None)
-            reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distance=max_distance,
-                                              cmode=implementation, sp_matrix=sp_matrix)
-        else:
-            reachability_score = KeyPlayer.dR(graph=graph, nodes=allS, max_distance=max_distance,
-                                              cmode=implementation)
-
-    else:
-        raise KeyError(
-            u"The parameter 'kp_type' is not valid. It must be one of the following: {}".format(list(KpposEnum)))
-
-    kppset_score_pairs[allS] = reachability_score
-    kppset_score_pairs[allS] = reachability_score
-    return kppset_score_pairs
-
-
-def crunch_groupcentrality_combinations(graph: Graph, gc_enum: GroupCentralityEnum,
-                                        distance_type: GroupDistanceEnum,
-                                        cmode: CmodeEnum, np_counts: np.ndarray, node_names: list) -> dict:
-    score_pairs_partial = {}
-
-    if gc_enum == GroupCentralityEnum.group_degree:
-        score = LocalTopology.group_degree(graph, nodes=node_names)
-    elif gc_enum == GroupCentralityEnum.group_closeness:
-        score = LocalTopology.group_closeness(graph, node_names, distance=distance_type, cmode=cmode)
-    elif gc_enum == GroupCentralityEnum.group_betweenness:
-        if np_counts.size == 0:
-            np_counts = sp.get_shortestpath_count(graph, nodes=None, cmode=cmode)
-        score = LocalTopology.group_betweenness(graph, node_names, cmode=cmode, np_counts=np_counts)
-    else:
-        raise WrongArgumentError("{} function not yet implemented.".format(gc_enum.name))
-
-    score_pairs_partial[tuple(node_names)] = score
-    return score_pairs_partial
+from concurrent.futures import ProcessPoolExecutor, as_completed
+import math
 
 
 class BruteforceSearch:
@@ -152,49 +85,83 @@ class BruteforceSearch:
         kpset_score_pairs = {}
         """: type: dic{(), float}"""
         node_names = graph.vs["name"]
-        allS = itertools.combinations(node_names, k)
 
-        if max_distance is not None and not isinstance(max_distance, int) and max_distance > 1 and max_distance <= graph.vcount():
-            raise ValueError(u"'max_distance' must be an integer greater than one and lesser than the total number of nodes")
+        if max_distance is not None and (not isinstance(max_distance, int) or max_distance <= 1 or max_distance > graph.vcount()):
+            raise ValueError(
+                u"'max_distance' must be an integer value between 1 and the total number of nodes")
+        if parallel and ncores is None:
+            ncores = mp.cpu_count() - 1
+        elif parallel and (not isinstance(ncores, int) or ncores < 1):
+            raise TypeError(u"'ncores' must be a positive integer value")
 
-        if parallel:
-            if ncores is None:
-                ncores = mp.cpu_count() - 1
-            elif not isinstance(ncores, int) or ncores < 1:
-                raise TypeError(u"'ncores' must be a positive integer value")
+        # Generate all combinations of size k
+        allS = list(itertools.combinations(node_names, k))
+        sys.stdout.write(u"Evaluating {} possible solutions\n".format(len(allS)))
 
-            sys.stdout.write(
-                u"Brute-force search of the best kp-set of size {} using {} cores\n".format(k, ncores))
+        if parallel and len(allS) >= BruteforceSearch.MIN_FRAG_SLICE_SIZE:
+            sys.stdout.write(u"Brute-force search of the best kp-set of size {} using {} cores\n".format(k, ncores))
 
-            pool = mp.Pool(ncores)
-            for partial_result in pool.imap_unordered(
-                    partial(crunch_fragmentation_combinations, graph, metric, max_distance, cmode), allS):
-                kpset_score_pairs = {**kpset_score_pairs, **partial_result}
+            # Create chunks
+            chunklen = math.ceil(len(allS) / ncores)
+            chunks = [allS[i * chunklen:(i + 1) * chunklen] for i in range(ncores)]
 
-            pool.close()
-            pool.join()
+            with ProcessPoolExecutor(max_workers=ncores) as executor:
+                future_dict = {executor.submit(BruteforceSearch.crunch_fragmentation_combinations, graph, chunk, metric,
+                                               max_distance,cmode): chunk for chunk in chunks}
+                for future in as_completed(future_dict):
+                    chunk = future_dict[future]
+                    try:
+                        partial_result = future.result()
+                    except Exception as exc:
+                        print('%r generated an exception: %s' % (chunk, exc))
+                    else:
+                        # print('%r page is %d bytes' % (chunk, len(data)))
+                        kpset_score_pairs = {**kpset_score_pairs, **partial_result}
         else:
             sys.stdout.write(u"Brute-force search of the best kp-set of size {}\n".format(k))
 
-            for S in allS:
-                partial_result = crunch_fragmentation_combinations(graph=graph, kpp_type=metric,
-                                                                   max_distance=max_distance,
-                                                                   implementation=cmode, node_names=S)
-                kpset_score_pairs = {**kpset_score_pairs, **partial_result}
+            chunks = allS
+            partial_result = BruteforceSearch.crunch_fragmentation_combinations(graph=graph, node_names_list=chunks,
+                                                                                kpp_type=metric,
+                                                                                max_distance=max_distance,
+                                                                                cmode=cmode)
+            kpset_score_pairs = {**kpset_score_pairs, **partial_result}
 
         maxKpp = max(kpset_score_pairs.values())
         final = [list(x) for x in kpset_score_pairs.keys() if kpset_score_pairs[x] == maxKpp]
         maxKpp = round(maxKpp, 5)
         sys.stdout.write(
             u"Best group{}: {}\n Group{} size = {}\n Metric = {}\n Score = {}\n".format("s" if len(final) > 1 else "",
-                                                                                       "{" + str(final).replace("'",
-                                                                                                                "")[
-                                                                                             1:-1] + "}",
-                                                                                       "s" if len(final) > 1 else "",
-                                                                                       k,
-                                                                                       metric.name.replace("_", " "),
-                                                                                       maxKpp))
+                                                                                        "{" + str(final).replace("'",
+                                                                                                                 "")[
+                                                                                              1:-1] + "}",
+                                                                                        "s" if len(final) > 1 else "",
+                                                                                        k,
+                                                                                        metric.name.replace("_", " "),
+                                                                                        maxKpp))
         return final, maxKpp
+
+    @staticmethod
+    def crunch_fragmentation_combinations(graph: Graph, node_names_list: list, kpp_type: KpnegEnum,
+                                          max_distance: int, cmode: CmodeEnum) -> dict:
+        kppset_score_pairs_partial = {}
+
+        for node_names in node_names_list:
+            temp_graph = graph.copy()
+            temp_graph.delete_vertices(node_names)
+
+            if kpp_type == KpnegEnum.F:
+                kppset_score_pairs_partial[node_names] = KeyPlayer.F(temp_graph)
+
+            elif kpp_type == KpnegEnum.dF:
+                kppset_score_pairs_partial[node_names] = KeyPlayer.dF(graph=temp_graph, max_distance=max_distance,
+                                                                      cmode=cmode)
+            else:
+                raise KeyError(
+                    u"The parameter 'kp_type' is not valid. It must be one of the following: {}".format(
+                        list(KpnegEnum)))
+
+        return kppset_score_pairs_partial
 
     @staticmethod
     @check_graph_consistency
@@ -225,45 +192,56 @@ class BruteforceSearch:
         :raises KeyError: when a ``kp_type`` is not one listed in  :func:`~pyntacle.tools.enums.KpposEnum`
         """
 
-        if max_distance is not None and not isinstance(max_distance, int) and max_distance > 1 and max_distance <= graph.vcount():
-            raise ValueError(u"'max_distance' must be an integer greater than one and lesser than the total number of nodes")
-
-        if metric == KpposEnum.mreach and m is None:
-            raise WrongArgumentError(u"The parameter m must be specified")
-        if metric == KpposEnum.mreach and isinstance(m, int) and m <= 0:
-            raise TypeError(u"The parameter m must be a positive integer value")
-
         kpset_score_pairs = {}
         """: type: dic{(), float}"""
         node_names = graph.vs["name"]
-        allS = itertools.combinations(node_names, k)
 
-        if parallel:
-            if ncores is None:
-                ncores = mp.cpu_count() - 1
-            elif not isinstance(ncores, int) or ncores < 1:
-                raise TypeError(u"'ncores' must be a positive integer value")
+        if max_distance is not None and (not isinstance(max_distance, int) or max_distance <= 1 or max_distance > graph.vcount()):
+            raise ValueError(
+                u"'max_distance' must be an integer value between 1 and the total number of nodes")
+        if parallel and ncores is None:
+            ncores = mp.cpu_count() - 1
+        elif parallel and (not isinstance(ncores, int) or ncores < 1):
+            raise TypeError(u"'ncores' must be a positive integer value")
+        if metric == KpposEnum.mreach and m is None:
+            raise WrongArgumentError(u"The parameter 'm' must be specified")
+        if metric == KpposEnum.mreach and isinstance(m, int) and m <= 0:
+            raise TypeError(u"The parameter 'm' must be a positive integer value")
 
-            sys.stdout.write(
-                u"Brute-force search of the best kp-set of size {} using {} cores\n".format(k, ncores))
+        # Generate all combinations of size k
+        allS = list(itertools.combinations(node_names, k))
+        sys.stdout.write(u"Evaluating {} possible solutions\n".format(len(allS)))
 
-            pool = mp.Pool(ncores)
-            for partial_result in pool.imap_unordered(
-                    partial(crunch_reachability_combinations, graph, metric, m, max_distance, cmode), allS):
-                kpset_score_pairs = {**kpset_score_pairs, **partial_result}
+        if parallel and len(allS) >= BruteforceSearch.MIN_REACH_SLICE_SIZE:
+            sys.stdout.write(u"Brute-force search of the best kp-set of size {} using {} cores\n".format(k, ncores))
 
-            pool.close()
-            pool.join()
+            # Create chunks
+            chunklen = math.ceil(len(allS) / ncores)
+            chunks = [allS[i * chunklen:(i + 1) * chunklen] for i in range(ncores)]
 
+            with ProcessPoolExecutor(max_workers=ncores) as executor:
+                future_dict = {executor.submit(BruteforceSearch.crunch_reachability_combinations, graph, chunk, metric,
+                                               max_distance, m, cmode): chunk for chunk in chunks}
+                for future in as_completed(future_dict):
+                    chunk = future_dict[future]
+                    try:
+                        partial_result = future.result()
+                    except Exception as exc:
+                        print('%r generated an exception: %s' % (chunk, exc))
+                    else:
+                        kpset_score_pairs = {**kpset_score_pairs, **partial_result}
         else:
             sys.stdout.write(u"Brute-force search of the best kp-set of size {}\n".format(k))
-            for S in allS:
-                partial_result = crunch_reachability_combinations(graph=graph, kp_type=metric, m=m,
-                                                                  max_distance=max_distance,
-                                                                  implementation=cmode, allS=S)
-                kpset_score_pairs = {**kpset_score_pairs, **partial_result}
 
-        _group_score = max(kpset_score_pairs.values())  # take the maximum value
+            chunks = allS
+            partial_result = BruteforceSearch.crunch_reachability_combinations(graph=graph, node_names_list=chunks,
+                                                                               kp_type=metric,
+                                                                               max_distance=max_distance,
+                                                                               m=m,
+                                                                               cmode=cmode)
+            kpset_score_pairs = {**kpset_score_pairs, **partial_result}
+
+        _group_score = max(kpset_score_pairs.values())
         final = [list(x) for x in kpset_score_pairs.keys() if kpset_score_pairs[x] == _group_score]
         _group_score = round(_group_score, 5)
 
@@ -282,12 +260,40 @@ class BruteforceSearch:
         return final, _group_score
 
     @staticmethod
+    def crunch_reachability_combinations(graph: Graph, node_names_list: list, kp_type: KpposEnum, max_distance: int,
+                                         m: int, cmode: CmodeEnum) -> dict:
+        kppset_score_pairs = {}
+
+        for node_names in node_names_list:
+            if kp_type == KpposEnum.mreach:
+                if cmode != CmodeEnum.igraph:
+                    sp_matrix = sp.get_shortestpaths(graph=graph, cmode=cmode, nodes=None)
+                    reachability_score = KeyPlayer.mreach(graph=graph, nodes=node_names, m=m, max_distance=max_distance,
+                                                          cmode=cmode, sp_matrix=sp_matrix)
+                else:
+                    reachability_score = KeyPlayer.mreach(graph=graph, nodes=node_names, m=m, max_distance=max_distance,
+                                                          cmode=cmode)
+            elif kp_type == KpposEnum.dR:
+                if cmode != CmodeEnum.igraph:
+                    sp_matrix = sp.get_shortestpaths(graph=graph, cmode=cmode, nodes=None)
+                    reachability_score = KeyPlayer.dR(graph=graph, nodes=node_names, max_distance=max_distance,
+                                                      cmode=cmode, sp_matrix=sp_matrix)
+                else:
+                    reachability_score = KeyPlayer.dR(graph=graph, nodes=node_names, max_distance=max_distance,
+                                                      cmode=cmode)
+            else:
+                raise KeyError(
+                    u"The parameter 'kp_type' is not valid. It must be one of the following: {}".format(list(KpposEnum)))
+
+            kppset_score_pairs[node_names] = reachability_score
+        return kppset_score_pairs
+
+    @staticmethod
     @check_graph_consistency
     @bruteforce_search_initializer
-    def group_centrality(graph: Graph, k: int, metric: GroupCentralityEnum,cmode: CmodeEnum = CmodeEnum.igraph,
+    def group_centrality(graph: Graph, k: int, metric: GroupCentralityEnum, cmode: CmodeEnum = CmodeEnum.igraph,
                          distance_type: GroupDistanceEnum = GroupDistanceEnum.minimum,
-                         parallel: bool = False, ncores: int = None) -> (
-            list, float):
+                         parallel: bool = False, ncores: int = None) -> (list, float):
         r"""
         It searches and finds the sets of nodes of a predefined size that exhibit the maximum group centrality value.
         It generates all the possible sets of nodes and calculates their group centrality value. Available centrality
@@ -313,36 +319,50 @@ class BruteforceSearch:
 
         score_pairs = {}
         """: type: dic{(), float}"""
-
         node_names = graph.vs["name"]
-        allS = itertools.combinations(node_names, k)
+
+        if parallel and ncores is None:
+            ncores = mp.cpu_count() - 1
+        elif parallel and (not isinstance(ncores, int) or ncores < 1):
+            raise TypeError(u"'ncores' must be a positive integer value")
+
+        # Generate all combinations of size k
+        allS = list(itertools.combinations(node_names, k))
+        sys.stdout.write(u"Evaluating {} possible solutions\n".format(len(allS)))
+
+        # Pre-calculate all shortest paths count and shortest paths
         np_counts = sp.get_shortestpath_count(graph, nodes=None, cmode=cmode)
+        np_paths = sp.get_shortestpaths(graph, nodes=None, cmode=cmode)
 
         if parallel:
-            if ncores is None:
-                ncores = mp.cpu_count() - 1
-            elif not isinstance(ncores, int) or ncores < 1:
-                raise TypeError(u"'ncores' must be a positive integer value")
+            sys.stdout.write(u"Brute-force search of the best group of nodes of size {} using {} cores\n".format(k, ncores))
 
-            sys.stdout.write(u"Brute-force search of the best group of nodes of size {} using {} cores\n".format(
-                k, ncores))
+            # Create chunks
+            chunklen = math.ceil(len(allS) / ncores)
+            chunks = [allS[i * chunklen:(i + 1) * chunklen] for i in range(ncores)]
 
-            pool = mp.Pool(ncores)
-            for partial_result in pool.imap_unordered(
-                    partial(crunch_groupcentrality_combinations, graph, metric, distance_type, cmode, np_counts),
-                    allS):
-                score_pairs = {**score_pairs, **partial_result}
-
-            pool.close()
-            pool.join()
+            with ProcessPoolExecutor(max_workers=ncores) as executor:
+                future_dict = {executor.submit(BruteforceSearch.crunch_groupcentrality_combinations, graph, chunk,
+                                               np_counts, np_paths, metric, distance_type, cmode): chunk for chunk in chunks}
+                for future in as_completed(future_dict):
+                    chunk = future_dict[future]
+                    try:
+                        partial_result = future.result()
+                    except Exception as exc:
+                        print('%r generated an exception: %s' % (chunk, exc))
+                    else:
+                        score_pairs = {**score_pairs, **partial_result}
 
         else:
             sys.stdout.write(u"Brute-force search of the best group of nodes of size {}\n".format(k))
 
-            for node_names_iter in allS:
-                score_pair_partial = crunch_groupcentrality_combinations(graph, metric, distance_type,
-                                                                         cmode, np_counts, node_names_iter)
-                score_pairs = {**score_pairs, **score_pair_partial}
+            chunks = allS
+            partial_result = BruteforceSearch.crunch_groupcentrality_combinations(graph=graph, node_names_list=chunks,
+                                                                                  np_counts=np_counts,
+                                                                                  np_paths=np_paths,
+                                                                                  gc_enum=metric, distance_type=distance_type,
+                                                                                  cmode=cmode)
+            score_pairs = {**score_pairs, **partial_result}
 
         _group_score = max(score_pairs.values())  # take the maximum value
         final = [list(x) for x in score_pairs.keys() if score_pairs[x] == _group_score]
@@ -362,3 +382,26 @@ class BruteforceSearch:
                                                                                        _group_score))
 
         return final, _group_score
+
+    @staticmethod
+    def crunch_groupcentrality_combinations(graph: Graph, node_names_list: list, np_counts: np.ndarray,
+                                            np_paths: np.ndarray, gc_enum: GroupCentralityEnum,
+                                            distance_type: GroupDistanceEnum, cmode: CmodeEnum) -> dict:
+        score_pairs_partial = {}
+
+        for node_names in node_names_list:
+            if gc_enum == GroupCentralityEnum.group_degree:
+                score = LocalTopology.group_degree(graph, nodes=node_names)
+            elif gc_enum == GroupCentralityEnum.group_closeness:
+                if np_paths is None or np_paths.size == 0:
+                    np_paths = sp.get_shortestpaths(graph, nodes=None, cmode=cmode)
+                score = LocalTopology.group_closeness(graph, node_names, distance=distance_type, np_paths=np_paths)
+            elif gc_enum == GroupCentralityEnum.group_betweenness:
+                if np_counts is None or np_counts.size == 0:
+                    np_counts = sp.get_shortestpath_count(graph, nodes=None, cmode=cmode)
+                score = LocalTopology.group_betweenness(graph, node_names, cmode=cmode, np_counts=np_counts)
+            else:
+                raise WrongArgumentError("{} function not yet implemented.".format(gc_enum.name))
+
+            score_pairs_partial[tuple(node_names)] = score
+        return score_pairs_partial
