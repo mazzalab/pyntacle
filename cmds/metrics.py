@@ -94,15 +94,40 @@ class Metrics:
         else:
             implementation = CmodeEnum.igraph
             
+        if self.args.nodes is not None:
+
+            self.args.nodes = self.args.nodes.split(",")
+
+            try:
+                utils.nodes_in_graph(self.args.nodes)
+
+            except:
+                sys.stderr.write(
+                    "One or more of the specified nodes is not present in the graph. Please check your spelling and the presence of empty spaces in between node names. Quitting.\n")
+                sys.exit(1)
+
         if self.args.largest_component:
             try:
                 graph = utils.get_largest_component()
-                sys.stdout.write(u"Taking the largest component of the input graph as you requested ({} nodes, {} edges)\n".format(graph.vcount(), graph.ecount()))
+                sys.stdout.write(
+                    u"Taking the largest component of the input graph as you requested ({} nodes, {} edges)...\n".format(
+                        graph.vcount(), graph.ecount()))
+                # reinitialize graph utils class
                 utils.set_graph(graph)
 
             except MultipleSolutionsError:
-                sys.stderr.write(u"The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the '--largest-component' option. Quitting\n")
+                sys.stderr.write(
+                    u"The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the '--largest-component' option. Quitting.\n")
                 sys.exit(1)
+
+            if self.args.nodes is not None:
+                try:
+                    utils.nodes_in_graph(self.args.nodes)
+
+                except:
+                    sys.stderr.write(
+                        "One or more of the specified nodes is not present in the largest graph component. Select a different set or remove this option. Quitting.\n")
+                    sys.exit(1)
 
         # Check provided dimensions' format
         if self.args.plot_dim:  # define custom format
@@ -144,7 +169,7 @@ class Metrics:
                 sys.stdout.write(u"Computing local metrics for nodes ({})\n".format(', '.join(self.args.nodes)))
 
                 try:
-                    utils.nodes_in_graph(self.args.nodes.split(","))  # to check everything's in order
+                    utils.nodes_in_graph(self.args.nodes)  # to check everything's in order
 
                 except MissingAttributeError:
                     sys.stderr.write(
@@ -181,12 +206,12 @@ class Metrics:
                     weights = None
                     
             # create pyntacle_commands_utils for the selected metrics
-            if self.args.nodes is None:
+            if self.args.nodes is not None:
                 nodes_list = graph.vs()["name"]
                 report_prefix = "_".join(["pyntacle", graph["name"][0], "local_metrics", "report",
                                           self.date])
             else:
-                nodes_list = self.args.nodes.split(",")
+                nodes_list = self.args.nodes
                 report_prefix = "_".join(
                     ["pyntacle", graph["name"][0], "local_metrics_selected_nodes_report",
                      self.date])

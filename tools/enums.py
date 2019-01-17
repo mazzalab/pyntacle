@@ -170,5 +170,9 @@ class ReportEnum(enum.Enum):
     KPinfo = 3
     KP_greedy = 4
     KP_bruteforce = 5
-    Communities = 6
-    Set = 7
+    GRinfo = 6
+    GR_greedy = 7
+    GR_bruteforce = 8
+    Communities = 9
+    Set = 10
+

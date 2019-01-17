@@ -269,7 +269,7 @@ class App:
                                                                                                       max_help_position=100,
                                                                                                       width=150))
         info_case_parser.set_defaults(which='kp-info')
-        info_case_parser.add_argument("-n", "--nodes", help='(Required) Comma separated list of node names. Key player metrics of choice will be computed for selected nodes. Nodes must match the node names in the input graph, or column index in case the input file does not have a header. Will raise an error if any of the nodes is not found. ',
+        info_case_parser.add_argument("-n", "--nodes", help='(Required) Comma separated list of node names. Key player metrics of choice will be computed for selected nodes. Nodes must match the node names in the input graph, or column index in case the input file does not have a header. Will raise an error if any of the nodes is not found.',
                                        required=True)
         # Subparser for kp-finder case
         finder_case_parser = subparsers.add_parser("kp-finder",

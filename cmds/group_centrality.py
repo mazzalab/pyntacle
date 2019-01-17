@@ -28,9 +28,11 @@ __license__ = u"""
 from config import *
 import random
 import importlib
-from cmds.cmds_utils.group_search_wrapper import InfoWrapper as kpw
+from collections import OrderedDict
+from cmds.cmds_utils.group_search_wrapper import InfoWrapper as ipw
 from cmds.cmds_utils.group_search_wrapper import GOWrapper as gow
 from cmds.cmds_utils.group_search_wrapper import BFWrapper as bfw
+from tools.enums import ReportEnum, GroupDistanceEnum, GroupCentralityEnum
 
 ##REQUIRED FOR GRINFO
 from algorithms.local_topology import LocalTopology as loc
@@ -86,6 +88,20 @@ class GroupCentrality():
             sys.stdout.write(u"Cannot find {}. Is the path correct?\n".format(self.args.input_file))
             sys.exit(1)
 
+        #verify that group distances is set if group closeness is specified
+        distancedict = {"min": GroupDistanceEnum.minimum, "max":GroupDistanceEnum.maximum, "mean": GroupDistanceEnum.mean}
+        if self.args.type in ["all", "closeness"]:
+            if self.args.group_distances is None:
+                sys.stdout.write(
+                    "'--group-distances/-D parameter must be specified for group closeness. It must be one of the followings: {}'. Quitting.\n".format(
+                        ",".join(distancedict.keys())))
+                sys.exit(1)
+            if self.args.group_distances not in distancedict.keys():
+                sys.stdout.write("'--group-distances/-D parameter must be one of the followings: {}'. Quitting.\n".format(",".join(distancedict.keys())))
+                sys.exit(1)
+            else:
+                group_distances = distancedict[self.args.group_distances]
+
         # Parsing optional node list
         if hasattr(self.args, 'nodes'):
             self.args.nodes = self.args.nodes.split(',')
@@ -99,7 +115,7 @@ class GroupCentrality():
         else:
             header = True
 
-        sys.stdout.write("Reading input file...\n")
+        sys.stdout.write(u"Importing graph from file...\n")
         graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header,
                           separator=self.args.input_separator).graph_load()
 
@@ -118,7 +134,7 @@ class GroupCentrality():
 
         if self.args.largest_component:
             try:
-                graph = gu.get_largest_component()
+                graph = utils.get_largest_component()
                 sys.stdout.write(
                     u"Taking the largest component of the input graph as you requested ({} nodes, {} edges)...\n".format(
                         graph.vcount(), graph.ecount()))
@@ -140,10 +156,123 @@ class GroupCentrality():
                     sys.stderr.write("One or more of the specified nodes is not present in the largest graph component. Select a different set or remove this option. Quitting.\n")
                     sys.exit(1)
 
+        # check that output directory is properly set
+        createdir = False
+        if not os.path.isdir(self.args.directory):
+            createdir = True
 
+        # control plot dimensions
+        if self.args.plot_dim:  # define custom format
+            self.args.plot_dim = self.args.plot_dim.split(",")
+
+            for i in range(0, len(self.args.plot_dim)):
+                try:
+                    self.args.plot_dim[i] = int(self.args.plot_dim[i])
+
+                    if self.args.plot_dim[i] <= 0:
+                        raise ValueError
+
+                except ValueError:
+                    sys.stderr.write(
+                        u"Format specified must be a comma-separated list of positive integers (e.g. 1920,1080). Quitting\n")
+                    sys.exit(1)
+
+            plot_size = tuple(self.args.plot_dim)
+
+        else:
+            plot_size = (800, 600)
+
+            if graph.vcount() > 150:
+                plot_size = (1600, 1600)
+
+        # initialize reporter for later usage and plot dimension for later usage
+        r = PyntacleReporter(graph=graph)
+        initial_results = {}
+        results = OrderedDict()
+
+        if self.args.which == 'gr-finder':
+            k_size = self.args.k_size
+
+            # Greedy optimization
+            if self.args.implementation == "greedy":
+                report_type = ReportEnum.GR_greedy
+                go_runner = gow(graph=graph)
+                sys.stdout.write(u"Using greedy optimization algorithm for searching optimal set of nodes using group centrality metrics...\n")
+
+
+                if self.args.type in (["all", "closeness"]):
+                    sys.stdout.write(
+                        u"Finding optimal set of nodes of size {0} that maximizes the group closeness using the {1} distance from the node set...\n".format(
+                            self.args.k_size, group_distances.name))
+
+
+                    go_runner.run_groupcentrality(k = self.args.k_size,gr_type=GroupCentralityEnum.group_closeness, max_distance=self.args.max_distances, seed=None, cmode=self.args.implementation,distance=group_distances)
+
+                if self.args.type in (["all", "degree"]):
+                    sys.stdout.write(
+                        u"Finding optimal set of nodes of size {0} that maximizes the Group degree...\n".format(
+                            self.args.k_size))
+
+                    go_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_degree,
+                                                  max_distance=self.args.max_distances, seed=None,
+                                                  cmode=self.args.implementation)
+
+                if self.args.type in (["all", "betweenness"]):
+                    sys.stdout.write(
+                        u"Finding optimal set of nodes of size {0} that maximizes the group betweenness...\n".format(
+                            self.args.k_size))
+
+                    go_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_betweenness,
+                                                  max_distance=self.args.max_distances, seed=None,
+                                                  cmode=self.args.implementation)
+
+            elif self.args.implementation == "brute-force":
+
+                report_type = ReportEnum.KP_bruteforce.name
+                kp_runner = bfw(graph=graph)
+                sys.stdout.write(u"Using brute-force search algorithm to find the optimal key player set(s)...\n")
+
+                if self.args.type in (['F', 'neg', 'all']):
+                    sys.stdout.write(
+                        u"KP-NEG: Finding best set(s) of nodes of size {0} that hold the higher value of F among their peers...\n".format(
+                            self.args.k_size))
+                    initial_results[KpnegEnum.F.name] = kpp.F(graph)
+                    kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, threads=self.args.threads)
+
+                if self.args.type in (['dF', 'neg', 'all']):
+                    sys.stdout.write(
+                        u"KP-NEG: Finding best set(s) of nodes of size {0} that hold the higher value of dF among their peers...\n".format(
+                            self.args.k_size))
+
+                    initial_results[KpnegEnum.dF.name] = kpp.dF(graph, cmode=CmodeEnum.igraph)
+                    kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
+                                                max_distance=self.args.max_distances,
+                                                cmode=CmodeEnum.igraph, threads=self.args.threads)
+
+                if self.args.type in (['dR', 'pos', 'all']):
+                    sys.stdout.write(
+                        u"KP-POS: Finding best set(s) of nodes of size {0} that hold the higher value of dR among their peers...\n".format(
+                            self.args.k_size))
+                    kp_runner.run_reachability(self.args.k_size, KpposEnum.dR,
+                                               max_distance=self.args.max_distances,
+                                               cmode=CmodeEnum.igraph, threads=self.args.threads)
+
+                if self.args.type in (['mreach', 'pos', 'all']):
+                    sys.stdout.write(
+                        u"KP-POS: Finding the best set(s) of nodes of size {0} that maximizes the nodes reached (m-reach) at a distance {1}...".format(
+                            self.args.k_size, self.args.m_reach))
+
+                    kp_runner.run_reachability(self.args.k_size, KpposEnum.mreach, m=self.args.m_reach,
+                                               max_distance=self.args.max_distances,
+                                               cmode=CmodeEnum.igraph, threads=self.args.threads)
+
+            else:
+                sys.stdout.write(
+                    u"Critical Error. Please contact Pyntacle developers and report this issue, along with your command line. Quitting.\n")
+                sys.exit(1)
 
         #output part
-        if not os.path.isdir(self.args.directory):
+        if createdir:
             sys.stdout.write(u"Warning: output directory does not exist, will create one at {}.\n".format(
                 os.path.abspath(self.args.directory)))
             os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)

@@ -98,11 +98,12 @@ class BruteforceSearch:
         allS = list(itertools.combinations(node_names, k))
         sys.stdout.write(u"Evaluating {} possible solutions\n".format(len(allS)))
 
-        if parallel and len(allS) >= BruteforceSearch.MIN_FRAG_SLICE_SIZE:
+        if parallel:
             sys.stdout.write(u"Brute-force search of the best kp-set of size {} using {} cores\n".format(k, ncores))
 
             # Create chunks
             chunklen = math.ceil(len(allS) / ncores)
+            #todo controlla che non sia stato ottimizzato altrove
             chunks = [allS[i * chunklen:(i + 1) * chunklen] for i in range(ncores)]
 
             with ProcessPoolExecutor(max_workers=ncores) as executor:
@@ -144,6 +145,16 @@ class BruteforceSearch:
     @staticmethod
     def crunch_fragmentation_combinations(graph: Graph, node_names_list: list, kpp_type: KpnegEnum,
                                           max_distance: int, cmode: CmodeEnum) -> dict:
+        #TODO DOCUMENTA
+        """
+
+        :param graph:
+        :param node_names_list:
+        :param kpp_type:
+        :param max_distance:
+        :param cmode:
+        :return:
+        """
         kppset_score_pairs_partial = {}
 
         for node_names in node_names_list:
@@ -212,7 +223,7 @@ class BruteforceSearch:
         allS = list(itertools.combinations(node_names, k))
         sys.stdout.write(u"Evaluating {} possible solutions\n".format(len(allS)))
 
-        if parallel and len(allS) >= BruteforceSearch.MIN_REACH_SLICE_SIZE:
+        if parallel:
             sys.stdout.write(u"Brute-force search of the best kp-set of size {} using {} cores\n".format(k, ncores))
 
             # Create chunks

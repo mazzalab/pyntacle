@@ -27,7 +27,7 @@ __license__ = u"""
 from config import *
 import csv, os, xlsxwriter
 from igraph import Graph
-from tools.enums import KpnegEnum, KpposEnum, ReportEnum
+from tools.enums import KpnegEnum, KpposEnum, ReportEnum, GroupCentralityEnum, GroupDistanceEnum
 from exceptions.wrong_argument_error import WrongArgumentError
 from collections import OrderedDict
 
@@ -264,57 +264,30 @@ class PyntacleReporter():
             else:
                 self.report.append([k, ",".join(reportdict[k][0]), round(reportdict[k][1],5)])
 
-    #TODO: correct this and optimize it for group centrality
+    #todo verify this
     def __GRinfo_report(self, reportdict: OrderedDict):
         r"""
         fill the *self.__report* object with all the values conatined in the KPINFO Run
 
         :param reportdict: a dictionary with KPPOSchoices or KPNEGchoices as  `keys` and a list as `values`
         """
-        # this doesn't work for now: keys are strings and not KP choices.
-        # if not all(isinstance(x, str) for x in reportdict.keys()):
-        #     raise TypeError("one of the keys in the report dictionary is not a KPPOSchoices or KPNEGchoices")
 
-        if KpposEnum.mreach.name in reportdict.keys():
-            m = reportdict[KpposEnum.mreach.name][2]
-
-            if not isinstance(m, int) and m < 1:
-                raise ValueError(u"`m` must be a positive integer")
-            else:
-                self.report.append(["maximum mreach distance", reportdict[KpposEnum.mreach.name][2]])
-
-        if KpnegEnum.F.name in reportdict.keys():
-            init_F = reportdict[KpnegEnum.F.name][2]
-
-            if 0.0 <= init_F <= 1.0:
-                self.report.append(["initial F value (whole graph)", init_F])
-            else:
-                raise ValueError(u"Initial F must range between 0 and 1")
-
-        if KpnegEnum.dF.name in reportdict.keys():
-            init_dF = reportdict[KpnegEnum.dF.name][2]
-
-            if 0.0 <= init_dF <= 1.0:
-                self.report.append(["initial dF value (whole graph)", init_dF])
-            else:
-                raise ValueError(u"Initial dF must range between 0 and 1")
+        if GroupCentralityEnum.group_closeness.name in reportdict.keys():
+            dist = GroupDistanceEnum.name
+            self.report.append(["group closeness distance", dist])
 
         self.report.append(["\n"])
-        self.report.append(["Results: Key-Player Metrics for the input set of nodes"])
+        self.report.append(["Results: Group Centrality Metrics for the input set of nodes"])
         self.report.append(["Metric", "Nodes", "Value"])
 
         for k in reportdict.keys():
-            if (k == KpnegEnum.F.name or k == KpnegEnum.dF.name) and reportdict[k][-1] == 1.0:
-                self.report.append([k, "NA", "MAXIMUM FRAGMENTATION REACHED"])
-
-            else:
-                self.report.append([k, ",".join(reportdict[k][0]), round(reportdict[k][1], 5)])
+            self.report.append([k, ",".join(reportdict[k][0]), round(reportdict[k][1], 5)])
 
     def __greedy_report(self, reportdict: OrderedDict):
         r"""
         fill the *self.__report* object with all the values contained in the Greedy Optimization Run
 
-        :param reportdict: a dictionary with KPPOSchoices or KPNEGchoices as  `keys` and a list as `values`
+        :param dict reportdict: a dictionary  with the group distance names as  `keys` and a list as `values`
         """
 
         # if not all(isinstance(x, (KPPOSchoices, KPPOSchoices)) for x in reportdict.keys()):

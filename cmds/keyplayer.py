@@ -88,36 +88,15 @@ class KeyPlayer():
         else:
             header = True
 
-        # check that output directory is properly set
-        if not os.path.isdir(self.args.directory):
-            createdir = True
-
-        #control plot dimensions
-        if self.args.plot_dim:  # define custom format
-            self.args.plot_dim = self.args.plot_dim.split(",")
-
-            for i in range(0, len(self.args.plot_dim)):
-                try:
-                    self.args.plot_dim[i] = int(self.args.plot_dim[i])
-
-                    if self.args.plot_dim[i] <= 0:
-                        raise ValueError
-
-                except ValueError:
-                    sys.stderr.write(
-                        u"Format specified must be a comma-separated list of positive integers (e.g. 1920,1080). Quitting\n")
-                    sys.exit(1)
-
-            plot_size = tuple(self.args.plot_dim)
-
         # Load Graph
 
-        sys.stdout.write("Reading input file...\n")
+        sys.stdout.write(u"Importing graph from file...\n")
         graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header, separator=self.args.input_separator).graph_load()
-
+        # print (graph["name"])
+        # input()
         # init graph utils class
-        utils = gu(graph=graph)
 
+        utils = gu(graph=graph)
 
         if '__implementation' in graph.attributes():
             implementation = graph['__implementation']
@@ -137,7 +116,7 @@ class KeyPlayer():
 
         if self.args.largest_component:
             try:
-                graph = gu.get_largest_component()
+                graph = utils.get_largest_component()
                 sys.stdout.write(
                     u"Taking the largest component of the input graph as you requested ({} nodes, {} edges)...\n".format(
                         graph.vcount(), graph.ecount()))
@@ -149,9 +128,7 @@ class KeyPlayer():
                     u"The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the '--largest-component' option. Quitting.\n")
                 sys.exit(1)
 
-            # check that the nodes are in the largest component
-            if self.args.nodes is not None:
-
+            if hasattr(self.args, 'nodes'):
                 try:
                     utils.nodes_in_graph(self.args.nodes)
 
@@ -160,13 +137,39 @@ class KeyPlayer():
                         "One or more of the specified nodes is not present in the largest graph component. Select a different set or remove this option. Quitting.\n")
                     sys.exit(1)
 
+        # check that output directory is properly set
+        createdir = False
+        if not os.path.isdir(self.args.directory):
+            createdir = True
+
+        # control plot dimensions
+        if self.args.plot_dim:  # define custom format
+            self.args.plot_dim = self.args.plot_dim.split(",")
+
+            for i in range(0, len(self.args.plot_dim)):
+                try:
+                    self.args.plot_dim[i] = int(self.args.plot_dim[i])
+
+                    if self.args.plot_dim[i] <= 0:
+                        raise ValueError
+
+                except ValueError:
+                    sys.stderr.write(
+                        u"Format specified must be a comma-separated list of positive integers (e.g. 1920,1080). Quitting\n")
+                    sys.exit(1)
+
+            plot_size = tuple(self.args.plot_dim)
+
+        else:
+            plot_size = (800, 600)
+
+            if graph.vcount() > 150:
+                plot_size = (1600, 1600)
+
         #initialize reporter for later usage and plot dimension for later usage
         r = PyntacleReporter(graph=graph)
         initial_results = {}
         results = OrderedDict()
-
-        if graph.vcount() > 150:
-            plot_size = (1600, 1600)
 
         if self.args.which == 'kp-finder':
             k_size = self.args.k_size
@@ -181,8 +184,9 @@ class KeyPlayer():
                     sys.stdout.write(
                         u"KP-NEG: Finding optimal set of nodes of size {0} that maximizes the F index...\n".format(
                             self.args.k_size))
+
                     initial_results[KpnegEnum.F.name] = kpp.F(graph)
-                    kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, seed=self.args.seed)
+                    kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, seed=self.args.seed, cmode=implementation)
                         
                 if self.args.type in (['dF', 'neg', 'all']):
                     sys.stdout.write(

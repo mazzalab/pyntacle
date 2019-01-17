@@ -68,7 +68,6 @@ class GraphUtils:
         :param graph: a :py:class:`igraph.Graph` object
         """
         self.graph = graph
-
         self.check_graph()
 
     def check_graph(self):
@@ -82,6 +81,7 @@ class GraphUtils:
         :raise TypeError: An error occurred because node's name attribute must be of type *string*
         """
 
+
         if Graph.is_directed(self.graph):
             raise UnsupportedGraphError(u"Graph is direct")
         if not Graph.is_simple(self.graph):
@@ -92,22 +92,28 @@ class GraphUtils:
         if self.graph.ecount() < 1:
             raise UnsupportedGraphError(u"Graph must contain at least one edge")
 
-        if "name" not in self.graph.vs().attributes() and all(x == str for x in self.graph.vs()["name"]):
+        if "name" not in self.graph.vs.attributes() and all(x == str for x in self.graph.vs()["name"]):
             raise KeyError(u"Nodes must have the attribute 'name' and it must be filled with strings")
 
-        if len(set(self.graph.vs()["name"])) != len(self.graph.vs()["name"]):
+        if len(set(self.graph.vs["name"])) != len(self.graph.vs["name"]):
             raise UnsupportedGraphError(u"Node 'name' attribute  must be unique, check the \"name\" attribute in graph")
 
         if "name" not in self.graph.attributes():
             raise UnsupportedGraphError(u"Graph must have a 'name' attribute")
+
         else:
-            if not isinstance(self.graph["name"], str):
-                raise TypeError(u"Graph 'name' attribute must be a string.")
+            if not isinstance(self.graph["name"], list):
+                raise TypeError(u"Graph 'name' attribute must be a list.")
             else:
-                try:
-                    attribute_name_checker(self.graph["name"])
-                except ValueError:
-                    raise UnsupportedGraphError(u"Graph 'name' attribute contains illegal characters.")
+                if not any([isinstance(x, str) for x in self.graph["name"]]):
+                    raise TypeError(u"One of the graph 'names' is not a string")
+
+                for name in self.graph["name"]:
+
+                    try:
+                        attribute_name_checker(name)
+                    except ValueError:
+                        raise UnsupportedGraphError(u"Any of the Graph 'name' attribute values contains illegal characters.")
 
         if any(x not in self.graph.attributes() for x in ["__sif_interaction_name", "__implementation"]):
             raise UnsupportedGraphError(u"One of the Pyntacle reserved graph attribute is missing, see goo.gl/MCsnd1 for more informations and initialize the `graph_initializer` method in `tools.graph_utils` To initialize your graph.")
@@ -122,16 +128,23 @@ class GraphUtils:
         if any(x not in self.graph.vs.attributes() for x in ["__parent"]):
             raise UnsupportedGraphError(u"Pyntacle reserved vertex attribute missing, see goo.gl/MCsnd1 for more informations and initialize the `graph_initializer` method in `tools.graph_utils` To initialize your graph.")
         else:
-            if not isinstance(self.graph.vs["__parent"], (str, type(None))):
-                raise TypeError("`__parent` node attribute must be either of type ''str' or None")
+            if not isinstance(self.graph.vs["__parent"], (list, type(None))):
+                raise TypeError("`__parent` node attribute must be either a list or None")
+
+            else:
+                # print("PARENT PROBLEM")
+                # print(self.graph.vs["__parent"])
+                # input()
+                if not any([isinstance(x, (str, list)) for x in self.graph.vs["__parent"]]):
+                    raise TypeError(u"One of the graph 'parent' attribute values is not a string")
 
         if any(x not in self.graph.es.attributes() for x in ["__sif_interaction", "adjacent_nodes"]):
             raise UnsupportedGraphError(u"Pyntacle reserved edge attribute missing, see goo.gl/MCsnd1 for more informations")
 
         else:
-            if not isinstance(self.graph.es["__sif_interaction"], (str, type(None))):
+            if not any(isinstance(x, (str, type(None))) for x in self.graph.es["__sif_interaction"]):
                 raise TypeError("__sif_interaction must be either of type ''str' or None")
-            if not isinstance(self.graph.es["__adjacent_nodes"], tuple):
+            if not any(isinstance(x, tuple) for x in self.graph.es["adjacent_nodes"]):
                 raise TypeError("__adjacent_nodes must be a tuple of strings")
 
     def check_index_list(self, index_list):

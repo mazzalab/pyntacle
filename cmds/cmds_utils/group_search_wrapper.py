@@ -217,12 +217,8 @@ class GOWrapper:
 
     logger = None
 
-    def __init__(self, graph: Graph, nodes=str or list):
+    def __init__(self, graph: Graph):
         """
-        Initialize the graph and the querty nodes
-
-        :param graph:
-        :param nodes:
         """
         self.logger = log
 
@@ -230,6 +226,7 @@ class GOWrapper:
 
         # initialize graph utility class
         self.graph = graph
+
         self.logger = log
 
         self.results = {}  # dictionary that will store results
@@ -269,6 +266,7 @@ class GOWrapper:
         :param int max_distances: maximum shortest path distance allowed in the shortest path matrix
         :param int seed: a seed that can be passed in order to replicate GO results
         """
+
         if not isinstance(k, int) or k < 1:
             raise ValueError(u"\k' must be a positive integer of size 1")
 
@@ -306,7 +304,7 @@ class GOWrapper:
         self.results[kp_type.name] = [go_results[0], go_results[1]]
 
     @timeit
-    def run_groupcentrality(self, k:int, gr_type:KpposEnum, max_distance=None, seed=None, cmode=CmodeEnum.igraph, distance=GroupDistanceEnum.minimum):
+    def run_groupcentrality(self, k:int, gr_type:GroupCentralityEnum, max_distance=None, seed=None, cmode=CmodeEnum.igraph, distance=GroupDistanceEnum.minimum):
         r"""
         
         :param k: 

@@ -94,10 +94,10 @@ class Set:
         if self.args.largest_component:
             try:
                 graph1 = utils1.get_largest_component()
-                utils1.set_graph(graph1)
                 sys.stdout.write(
                     u"Taking the largest component of the input graph {0} as you requested ({1} nodes, {2} edges)\n".format(graph2["name"],
                         graph1.vcount(), graph1.ecount()))
+                utils1.set_graph(graph1)
 
             except MultipleSolutionsError:
                 sys.stderr.write(
@@ -106,10 +106,10 @@ class Set:
 
             try:
                 graph2 = utils2.get_largest_component()
-                utils2.set_graph(graph2)
                 sys.stdout.write(
                     u"Taking the largest component of the input graph {0} as you requested ({1} nodes, {2} edges)\n".format(
                         graph2["name"],graph2.vcount(), graph2.ecount()))
+                utils2.set_graph(graph2)
 
             except MultipleSolutionsError:
                 sys.stderr.write(

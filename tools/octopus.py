@@ -421,7 +421,7 @@ class Octopus:
         if nodes is None:
             nodes = graph.vs["name"]
 
-        AddAttributes.add_graph_attributes(graph, GroupCentralityEnum.group_closeness.name,
+        AddAttributes.add_graph_attributes(graph, "_".join([GroupCentralityEnum.group_closeness.name, GroupDistanceEnum.name]),
                                            LocalTopology.group_closeness(graph, nodes, distance, cmode))
 
     @staticmethod
@@ -834,12 +834,118 @@ class Octopus:
         AddAttributes.add_graph_attributes(graph,
             attr_name, {tuple(sorted(results_dict[KpposEnum.mreach.name][0])): results_dict[KpposEnum.mreach.name][1]})
 
-    # @staticmethod
-    # @check_graph_consistency
-    # def add_GO_group_degree(graph, k: int, seed: int or None=None, distance: GroupDistanceEnum or None=None, ):
-    #     metric = GroupCentralityEnum.group_degree
-    #     cmode = get_cmode(graph)
-    #     AddAttributes.add_graph_attributes(graph, GroupCentralityEnum.group_degree.name, )
+    @staticmethod
+    @check_graph_consistency
+    def add_GO_group_degree(graph, k: int, seed: int or None = None):
+        #todo sistema documentazione
+        r"""
+
+        :param graph:
+        :param k:
+        :param seed:
+        :return:
+        """
+        r"""
+        *REDO*
+        Performs a greedily-optimized search on the input graph to search the optimal *key-player* set (kp-set) of nodes of size :math:`k` for the
+        *distance-weighted reach* (*dR*) index. It does so by wrapping the :func:`~algorithms.greedy_optimization.GreedyOptimization.reachability`
+        Pyntacle method. It then stores the found node(s) in a dictionary that is embedded in the graph attribute ``dR_greedy``
+        This dictionary contains as keys tuples storing the found node names (the vertex ``name`` attribute for each node)
+        and the corresponding dR value for that group of nodes. Since greedily-optimized search can generate different
+        results for the same :math:`k`, a seed can be passed to perform the replicate the result.
+
+        We recommend visiting the ` Key Player Guide <pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html>`_ on Pyntacle official
+        website for an overview of the F index and the greedy optimization.
+        *REDO*
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param int k: the size of the node set . Must be a positive integer.
+        :param int,None seed: optional, a positive integer that can be used to replicate the greedy optimization run. If :py:class:`~None` (default), the greedy optimization may return different results at each run.
+        """
+
+        kpobj = gow(graph=graph)
+        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_degree, seed=seed)
+        results_dict = kpobj.get_results()
+        AddAttributes.add_graph_attributes(graph,
+                                           GroupCentralityEnum.group_degree.name + '_greedy',
+                                           {tuple(sorted(results_dict[GroupCentralityEnum.group_degree.name][0])):
+                                                results_dict[GroupCentralityEnum.group_degree.name][1]})
+
+    @staticmethod
+    @check_graph_consistency
+    def add_GO_group_betweeness(graph, k: int, max_distances: int or None = None, seed: int or None = None):
+        #todo sistema documentazione
+        r"""
+
+        :param graph:
+        :param k:
+        :param max_distances:
+        :param seed:
+        :return:
+        """
+        r"""
+        *DEPRECATED*
+        Performs a greedily-optimized search on the input graph to search the optimal *key-player* set (kp-set) of nodes of size :math:`k` for the
+        *distance-weighted reach* (*dR*) index. It does so by wrapping the :func:`~algorithms.greedy_optimization.GreedyOptimization.reachability`
+        Pyntacle method. It then stores the found node(s) in a dictionary that is embedded in the graph attribute ``dR_greedy``
+        This dictionary contains as keys tuples storing the found node names (the vertex ``name`` attribute for each node)
+        and the corresponding dR value for that group of nodes. Since greedily-optimized search can generate different
+        results for the same :math:`k`, a seed can be passed to perform the replicate the result.
+
+        We recommend visiting the ` Key Player Guide <pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html>`_ on Pyntacle official
+        website for an overview of the F index and the greedy optimization.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param int k: the size of the node set . Must be a positive integer.
+        :param int,None seed: optional, a positive integer that can be used to replicate the greedy optimization run. If :py:class:`~None` (default), the greedy optimization may return different results at each run.
+        """
+        cmode = get_cmode(graph)
+        kpobj = gow(graph=graph)
+        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_betweenness, seed=seed, cmode=cmode, max_distance=max_distances)
+        results_dict = kpobj.get_results()
+        AddAttributes.add_graph_attributes(graph,
+                                           GroupCentralityEnum.group_betweenness.name + '_greedy',
+                                           {tuple(sorted(results_dict[GroupCentralityEnum.group_betweenness.name][0])):
+                                                results_dict[GroupCentralityEnum.group_betweenness.name][1]})
+
+    @staticmethod
+    @check_graph_consistency
+    def add_GO_group_closeness(graph, k: int, max_distances: int or None = None, seed: int or None = None, distance:GroupDistanceEnum = GroupDistanceEnum.minimum):
+        # todo sistema documentazione
+        r"""
+
+        :param graph:
+        :param k:
+        :param max_distances:
+        :param seed:
+        :param distance:
+        :return:
+        """
+        r"""
+        *DEPRECATED*
+        Performs a greedily-optimized search on the input graph to search the optimal *key-player* set (kp-set) of nodes of size :math:`k` for the
+        *distance-weighted reach* (*dR*) index. It does so by wrapping the :func:`~algorithms.greedy_optimization.GreedyOptimization.reachability`
+        Pyntacle method. It then stores the found node(s) in a dictionary that is embedded in the graph attribute ``dR_greedy``
+        This dictionary contains as keys tuples storing the found node names (the vertex ``name`` attribute for each node)
+        and the corresponding dR value for that group of nodes. Since greedily-optimized search can generate different
+        results for the same :math:`k`, a seed can be passed to perform the replicate the result.
+
+        We recommend visiting the ` Key Player Guide <pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html>`_ on Pyntacle official
+        website for an overview of the F index and the greedy optimization.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param int k: the size of the node set . Must be a positive integer.
+        :param int,None seed: optional, a positive integer that can be used to replicate the greedy optimization run. If :py:class:`~None` (default), the greedy optimization may return different results at each run.
+        """
+        cmode = get_cmode(graph)
+        kpobj = gow(graph=graph)
+        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_betweenness, seed=seed, cmode=cmode,
+                                  max_distance=max_distances, distance=distance)
+        results_dict = kpobj.get_results()
+        AddAttributes.add_graph_attributes(graph,
+                                           GroupCentralityEnum.group_closeness.name + "_" + distance.name + '_greedy',
+                                           {tuple(sorted(results_dict[GroupCentralityEnum.group_closeness.name][0])):
+                                                results_dict[GroupCentralityEnum.group_closeness.name][1]})
 
     # Brute-force optimization
     @staticmethod
@@ -884,8 +990,9 @@ class Octopus:
         :param int k: the size of the kp-set. Must be a positive integer.
         :param int,None max_distance: The maximum shortest path length over which two nodes are considered unreachable. Default is :py:class:`None` (distances are preserved).
         """
+        cmode = get_cmode(graph)
         kpobj = bfw(graph=graph)
-        kpobj.run_fragmentation(k, KpnegEnum.dF, max_distance=max_distance)
+        kpobj.run_fragmentation(k, KpnegEnum.dF, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
         AddAttributes.add_graph_attributes(graph,
             KpnegEnum.dF.name + '_bruteforce',
@@ -908,9 +1015,9 @@ class Octopus:
         :param int k: the size of the kp-set. Must be a positive integer.
         :param int,None max_distance: The maximum shortest path length over which two nodes are considered unreachable. Default is :py:class:`None` (distances are preserved).
         """
-
+        cmode = get_cmode(graph)
         kpobj = bfw(graph=graph)
-        kpobj.run_reachability(k, KpposEnum.dR, max_distance=max_distance)
+        kpobj.run_reachability(k, KpposEnum.dR, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
         AddAttributes.add_graph_attributes(graph,
             KpposEnum.dR.name + '_bruteforce',
@@ -934,19 +1041,113 @@ class Octopus:
         :param int m: The number of steps of the m-reach algorithm.
         :param int,None max_distance: The maximum shortest path length over which two nodes are considered unreachable. Default is :py:class:`None` (distances are preserved).
         """
+        cmode = get_cmode(graph)
         kpobj = bfw(graph=graph)
-        kpobj.run_reachability(k, KpposEnum.mreach, max_distance=max_distance, m=m)
+        kpobj.run_reachability(k, KpposEnum.mreach, max_distance=max_distance, m=m, cmode=cmode)
         results_dict = kpobj.get_results()
         attr_name = KpposEnum.mreach.name + '_{}_bruteforce'.format(str(m))
         AddAttributes.add_graph_attributes(graph,
             attr_name,
             {tuple(tuple(sorted(x)) for x in results_dict[KpposEnum.mreach.name][0]): results_dict[KpposEnum.mreach.name][1]})
 
-    # todo mauro - missing octopus metrics:
+    @staticmethod
+    @check_graph_consistency
+    def add_BF_group_degree(graph, k: int):
+        #todo rifai documentazione
+        r"""
 
-    # todo add_GO_group_degree
-    # todo add_GO_group_betweenness        cmode = get_cmode(graph)
-    # todo add_GO_group_closeness         cmode = get_cmode(graph)
-    # todo add_BF_group_closeness
-    # todo add_BF_group_degree
-    # todo add_BF_group_betweenness
+        :param graph:
+        :param k:
+        :return:
+        """
+        r"""
+        Performs a brute-force search on the input graph to search the best *key player* (kp)set(s) of nodes of size :math:`k` for the
+        *distance-weighted reach* (*dR*) index. It does so by wrapping the :func:`~algorithms.bruteforce_search.BruteforceSearch.reachability`
+        Pyntacle method. It then stores the found set(s) in a dictionary that is embedded in the graph attribute ``dR_bruteforce``
+        This dictionary contains as keys tuples of tuple, each one storing the vertex ``name`` attribute of all the
+        nodes of each set that achieve the best value for dR and the corresponding dR value for the set(s).
+
+        We recommend visiting the ` Key Player Guide <pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html>`_ on Pyntacle official
+        website for an overview of the dR index and the greedy optimization.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param int k: the size of the kp-set. Must be a positive integer.
+        :param int,None max_distance: The maximum shortest path length over which two nodes are considered unreachable. Default is :py:class:`None` (distances are preserved).
+        """
+
+        kpobj = bfw(graph=graph)
+        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_degree)
+        results_dict = kpobj.get_results()
+        AddAttributes.add_graph_attributes(graph,
+                                           GroupCentralityEnum.group_degree.name + '_bruteforce',
+                                           {tuple(tuple(sorted(x)) for x in results_dict[GroupCentralityEnum.group_degree.name][0]):
+                                                results_dict[GroupCentralityEnum.group_degree.name][1]})
+
+    @staticmethod
+    @check_graph_consistency
+    def add_BF_group_betweenness(graph, k: int, max_distances: int or None = None):
+        # todo sistema documentazione
+        r"""
+
+        :param graph:
+        :param k:
+        :param max_distances:
+        :return:
+        """
+        r"""
+        Performs a brute-force search on the input graph to search the best *key player* (kp)set(s) of nodes of size :math:`k` for the
+        *distance-weighted reach* (*dR*) index. It does so by wrapping the :func:`~algorithms.bruteforce_search.BruteforceSearch.reachability`
+        Pyntacle method. It then stores the found set(s) in a dictionary that is embedded in the graph attribute ``dR_bruteforce``
+        This dictionary contains as keys tuples of tuple, each one storing the vertex ``name`` attribute of all the
+        nodes of each set that achieve the best value for dR and the corresponding dR value for the set(s).
+
+        We recommend visiting the ` Key Player Guide <pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html>`_ on Pyntacle official
+        website for an overview of the dR index and the greedy optimization.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param int k: the size of the kp-set. Must be a positive integer.
+        :param int,None max_distance: The maximum shortest path length over which two nodes are considered unreachable. Default is :py:class:`None` (distances are preserved).
+        """
+        cmode = get_cmode(graph)
+        kpobj = bfw(graph=graph)
+        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_betweenness, max_distance=max_distances, cmode=cmode)
+        results_dict = kpobj.get_results()
+        AddAttributes.add_graph_attributes(graph,
+                                           GroupCentralityEnum.group_betweenness.name + '_bruteforce',
+                                           {tuple(tuple(sorted(x)) for x in
+                                                  results_dict[GroupCentralityEnum.group_betweenness.name][0]):
+                                                results_dict[GroupCentralityEnum.group_betweenness.name][1]})
+
+    @staticmethod
+    @check_graph_consistency
+    def add_BF_group_closeness(graph, k: int, max_distances: int or None = None, distance: GroupDistanceEnum = GroupDistanceEnum.minimum):
+        #todo sistema documentazione
+        r"""
+
+        :param graph:
+        :param k:
+        :param max_distances:
+        :param distance:
+        :return:
+        """
+        r"""
+        Performs a brute-force search on the input graph to search the best *key player* (kp)set(s) of nodes of size :math:`k` for the
+        *distance-weighted reach* (*dR*) index. It does so by wrapping the :func:`~algorithms.bruteforce_search.BruteforceSearch.reachability`
+        Pyntacle method. It then stores the found set(s) in a dictionary that is embedded in the graph attribute ``dR_bruteforce``
+        This dictionary contains as keys tuples of tuple, each one storing the vertex ``name`` attribute of all the
+        nodes of each set that achieve the best value for dR and the corresponding dR value for the set(s).
+
+        We recommend visiting the ` Key Player Guide <pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html>`_ on Pyntacle official
+        website for an overview of the dR index and the greedy optimization.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param int k: the size of the kp-set. Must be a positive integer.
+        :param int,None max_distance: The maximum shortest path length over which two nodes are considered unreachable. Default is :py:class:`None` (distances are preserved).
+        """
+        cmode=get_cmode(graph)
+        kpobj = bfw(graph=graph)
+        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_closeness, max_distance=max_distances, cmode=cmode, distance=distance)
+        results_dict = kpobj.get_results()
+        AddAttributes.add_graph_attributes(graph,
+                                           GroupCentralityEnum.group_closeness.name + "_" + distance.name + '_bruteforce',
+                                           {tuple(tuple(sorted(x)) for x in results_dict[GroupCentralityEnum.group_closeness.name][0]):results_dict[GroupCentralityEnum.group_closeness.name][1]})
