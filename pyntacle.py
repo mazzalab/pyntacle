@@ -198,7 +198,7 @@ class App:
                                                                           'metric. Must be provided if m-reach'
                                                                           ' is computed.')
         
-        parser.add_argument('-M', '--max-distances', metavar='', type=int, help='(Optional) The number of steps upon which two nodes are considered disconnected. By default, no maximum distance is set.')
+        parser.add_argument('-M', '--max-distance', metavar='', type=int, help='(Optional) The number of steps upon which two nodes are considered disconnected. By default, no maximum distance is set.')
 
         parser.add_argument('-t', "--type", metavar='', choices=['pos', 'neg', 'all', 'F', 'dF', 'dR', 'mreach'], default='all',
                             help="The key player metric(s) that will be computed by Pyntacle. Choices are "
@@ -349,9 +349,6 @@ class App:
                                  '(Adjacency Matrix, Edge List, SIF file) do not contain one. By default, '
                                  'we assume a header is present.')
 
-        parser.add_argument('-M', '--max-distances', metavar='', type=int,
-                            help='(Optional) The number of steps upon which two nodes are considered disconnected. By default, no maximum distance is set.')
-
         parser.add_argument('-D', '--group-distances', metavar='', choices=['mean', 'min ', 'max'],
                             help='The criterion to use to comute the distance between the node set and the rest of the graph. '
                                  'Required for computing group closeness only.'
@@ -418,7 +415,6 @@ class App:
         subparsers = parser.add_subparsers(metavar='', help=argparse.SUPPRESS)
 
         # Subparser for the kp-info case
-        #TODO REMINDER TO ADD HERE THE DISTANCE FROM THE GROUP FOR GROUP CLOSENESS
         info_case_parser = subparsers.add_parser("gr-info",
                                                  usage='pyntacle keyplayer kp-info [-h] [-f] [-N] [-d] [-L] [-M] [-T] [--input-separator] [--save-binary] [--report-format] [--plot-format] [--plot-dim] [--no-plot] --type [TYPE] --input-file [FILE] --nodes NODES',
                                                  add_help=False, parents=[parser],

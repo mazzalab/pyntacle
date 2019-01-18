@@ -214,7 +214,7 @@ class GroupCentrality():
                             self.args.k_size))
 
                     go_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_degree,
-                                                  max_distance=self.args.max_distances, seed=None,
+                                                  seed=None,
                                                   cmode=self.args.implementation)
 
                 if self.args.type in (["all", "betweenness"]):
@@ -223,16 +223,28 @@ class GroupCentrality():
                             self.args.k_size))
 
                     go_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_betweenness,
-                                                  max_distance=self.args.max_distances, seed=None,
+                                                  seed=None,
                                                   cmode=self.args.implementation)
 
             elif self.args.implementation == "brute-force":
 
-                report_type = ReportEnum.KP_bruteforce.name
-                kp_runner = bfw(graph=graph)
-                sys.stdout.write(u"Using brute-force search algorithm to find the optimal key player set(s)...\n")
+                if self.args.thread > 1:
+                    plural = "s"
 
-                if self.args.type in (['F', 'neg', 'all']):
+                else:
+                    plural = ""
+
+                report_type = ReportEnum.GR_bruteforce.name
+                bf_runner = bfw(graph=graph)
+                sys.stdout.write(u"Using brute-force search algorithm to find the best set(s) that optimize group centrality metrics...\n")
+
+                if self.args.type in (["all", "closeness"]):
+                    sys.stdout.write(
+                        u"Finding optimal set of nodes of size {0} that maximizes the group closeness using the {1} distance from the node set and {} thread{}...\n".format(
+                            self.args.k_size, group_distances.name, self.args.threads, plural))
+
+
+                if self.args.type in (["all", "closeness"]):
                     sys.stdout.write(
                         u"KP-NEG: Finding best set(s) of nodes of size {0} that hold the higher value of F among their peers...\n".format(
                             self.args.k_size))

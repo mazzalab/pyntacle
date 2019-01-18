@@ -304,12 +304,11 @@ class GOWrapper:
         self.results[kp_type.name] = [go_results[0], go_results[1]]
 
     @timeit
-    def run_groupcentrality(self, k:int, gr_type:GroupCentralityEnum, max_distance=None, seed=None, cmode=CmodeEnum.igraph, distance=GroupDistanceEnum.minimum):
+    def run_groupcentrality(self, k:int, gr_type:GroupCentralityEnum, seed=None, cmode=CmodeEnum.igraph, distance=GroupDistanceEnum.minimum):
         r"""
         
         :param k: 
-        :param gr_type: 
-        :param max_distance: 
+        :param gr_type:
         :param seed:
         :param cmode: 
         :param distance:
@@ -324,7 +323,7 @@ class GOWrapper:
             if not isinstance(distance, GroupDistanceEnum):
                 raise TypeError(u"'distance' is not one of the GroupDistanceEnums,{} found".format(type(distance).__name__))
 
-        go_results = self.go.group_centrality(graph=self.graph, k=k, metric=gr_type, max_distance=max_distance, seed=seed, cmode=cmode)
+        go_results = self.go.group_centrality(graph=self.graph, k=k, metric=gr_type, seed=seed, cmode=cmode)
 
         self.results[gr_type.name] = [go_results[0], go_results[1]]
 
@@ -417,13 +416,12 @@ class BFWrapper:
 
         self.results[kp_type.name] = [bf_results[0], bf_results[1]]
 
-    def run_groupcentrality(self, k: int, gr_type: GroupCentralityEnum, max_distance: int or None=None, cmode: CmodeEnum=CmodeEnum.igraph, threads:int = n_cpus, distance:GroupDistanceEnum = GroupDistanceEnum.minimum):
+    def run_groupcentrality(self, k: int, gr_type: GroupCentralityEnum, cmode: CmodeEnum=CmodeEnum.igraph, threads:int = n_cpus, distance:GroupDistanceEnum = GroupDistanceEnum.minimum):
         r"""
         Wrapper around the brute-force search module that stores the results for KPPOS metrics
 
         :param int kp_size: size of the kpp-set to be found
         :param KpposEnum kp_type: on of the KPPOSchoices enumerators stored in internal.enums
-        :param int max_distance: maximum shortest path distance allowed in the shortest path matrix
         :param int m: for the "mreach" metrics, a positive integer greatrer than one representing the maximum distance for mreach
         """
         if not isinstance(k, int) or k < 1:
@@ -437,8 +435,7 @@ class BFWrapper:
                 raise TypeError(u"'distance' is not one of the GroupDistanceEnums,{} found".format(type(distance).__name__))
 
 
-        bf_results = self.bf.group_centrality(graph=self.graph, k=k, metric=gr_type,
-                                          max_distance=max_distance, cmode=cmode, ncores=threads)
+        bf_results = self.bf.group_centrality(graph=self.graph, k=k, metric=gr_type, cmode=cmode, ncores=threads)
 
         self.results[gr_type.name] = [bf_results[0], bf_results[1]]
 

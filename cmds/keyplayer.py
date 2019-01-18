@@ -217,7 +217,7 @@ class KeyPlayer():
 
                 report_type = ReportEnum.KP_bruteforce.name
                 kp_runner = bfw(graph=graph)
-                sys.stdout.write(u"Using brute-force search algorithm to find the optimal key player set(s)...\n")
+                sys.stdout.write(u"Using brute-force search algorithm to find the best key player set(s)...\n")
 
                 if self.args.type in (['F', 'neg', 'all']):
 

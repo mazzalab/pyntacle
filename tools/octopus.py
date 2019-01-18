@@ -323,6 +323,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_group_degree(graph, nodes: list):
+        # todo aggiungi documentazione
         """
 
         :param graph:
@@ -354,7 +355,8 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def add_group_betweenness(graph, nodes: list or None =None):
+    def add_group_betweenness(graph, nodes: list, max_distance: int or None = None):
+        #todo aggiungi documentazione
         """
 
         :param graph:
@@ -366,7 +368,7 @@ class Octopus:
             nodes = graph.vs["name"]
 
         AddAttributes.add_graph_attributes(graph, GroupCentralityEnum.group_betweenness.name,
-                                                 LocalTopology.group_betweenness(graph, nodes, cmode))
+                                                 LocalTopology.group_betweenness(graph=graph, nodes=nodes, cmode=cmode, max_distance = max_distance))
 
     @staticmethod
     @check_graph_consistency
@@ -408,7 +410,8 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def add_group_closeness(graph, nodes: list or None=None, distance: GroupDistanceEnum or None=None):
+    def add_group_closeness(graph, nodes, distance: GroupDistanceEnum = GroupDistanceEnum.minimum):
+        # todo aggiungi documentazione
         """
 
         :param graph:
@@ -418,8 +421,6 @@ class Octopus:
         """
 
         cmode = get_cmode(graph)
-        if nodes is None:
-            nodes = graph.vs["name"]
 
         AddAttributes.add_graph_attributes(graph, "_".join([GroupCentralityEnum.group_closeness.name, GroupDistanceEnum.name]),
                                            LocalTopology.group_closeness(graph, nodes, distance, cmode))
@@ -584,6 +585,7 @@ class Octopus:
     @staticmethod
     @check_graph_consistency
     def add_median_shortest_path_length(graph, nodes: str or list or None=None):
+        # todo aggiungi documentazione
         r"""
         Computes the median shortest path length for a node, a group of nodes or all nodes in the input :py:class:`igraph.Graph` object  by wrapping the
         :func:`~algorithms.shortest_path.ShortestPath.median_shortest_path_lengths` methods in :class:`~pyntacle.algorithms.shortest_path.ShortestPath`

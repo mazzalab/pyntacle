@@ -283,7 +283,7 @@ class PyntacleReporter():
         for k in reportdict.keys():
             self.report.append([k, ",".join(reportdict[k][0]), round(reportdict[k][1], 5)])
 
-    def __greedy_report(self, reportdict: OrderedDict):
+    def __greedy_report(self, reportdict: OrderedDict, type = "kp"):
         r"""
         fill the *self.__report* object with all the values contained in the Greedy Optimization Run
 
@@ -292,42 +292,43 @@ class PyntacleReporter():
 
         # if not all(isinstance(x, (KPPOSchoices, KPPOSchoices)) for x in reportdict.keys()):
         #     raise TypeError("one of the keys in the report dictionary is not a KPPOSchoices or KPNEGchoices")
+        if type == "kp":
 
-        if KpposEnum.mreach.name in reportdict.keys():
-            m = reportdict[KpposEnum.mreach.name][2]
+            if KpposEnum.mreach.name in reportdict.keys():
+                m = reportdict[KpposEnum.mreach.name][2]
 
-            if not isinstance(m, int) and m < 1:
-                raise ValueError(u"'m' must be a positive integer")
-            else:
-                self.report.append(["maximum mreach distance", reportdict[KpposEnum.mreach.name][2]])
+                if not isinstance(m, int) and m < 1:
+                    raise ValueError(u"'m' must be a positive integer")
+                else:
+                    self.report.append(["maximum mreach distance", reportdict[KpposEnum.mreach.name][2]])
 
-        if KpnegEnum.F.name in reportdict.keys():
-            init_F = reportdict[KpnegEnum.F.name][2]
+            if KpnegEnum.F.name in reportdict.keys():
+                init_F = reportdict[KpnegEnum.F.name][2]
 
-            if 0.0 <= init_F <= 1.0:
-                self.report.append(["initial F value (whole graph)", init_F])
-            else:
-                raise ValueError(u"Initial F must range between 0 and 1")
+                if 0.0 <= init_F <= 1.0:
+                    self.report.append(["initial F value (whole graph)", init_F])
+                else:
+                    raise ValueError(u"Initial F must range between 0 and 1")
 
-        if KpnegEnum.dF.name in reportdict.keys():
-            init_dF = reportdict[KpnegEnum.dF.name][2]
+            if KpnegEnum.dF.name in reportdict.keys():
+                init_dF = reportdict[KpnegEnum.dF.name][2]
 
-            if 0.0 <= init_dF <= 1.0:
-                self.report.append(["initial dF value (whole graph)", init_dF])
-            else:
-                raise ValueError(u"Initial dF must range between 0 and 1")
+                if 0.0 <= init_dF <= 1.0:
+                    self.report.append(["initial dF value (whole graph)", init_dF])
+                else:
+                    raise ValueError(u"Initial dF must range between 0 and 1")
 
-        self.report.append(["Results: Greedily-Optimized Search for selected KP Metrics"])
-        self.report.append(["Metric", "Nodes", "Value"])
+            self.report.append(["Results: Greedily-Optimized Search for selected KP Metrics"])
+            self.report.append(["Metric", "Nodes", "Value"])
 
-        for k in reportdict.keys():
-            if (k == KpnegEnum.F.name or k == KpnegEnum.dF.name) and reportdict[k][-1] == 1.0:
-                self.report.append([k, "NA", "MAXIMUM FRAGMENTATION REACHED"])
+            for k in reportdict.keys():
+                if (k == KpnegEnum.F.name or k == KpnegEnum.dF.name) and reportdict[k][-1] == 1.0:
+                    self.report.append([k, "NA", "MAXIMUM FRAGMENTATION REACHED"])
 
-            else:
-                self.report.append([k, ",".join(reportdict[k][0]), reportdict[k][1]])
+                else:
+                    self.report.append([k, ",".join(reportdict[k][0]), reportdict[k][1]])
 
-    def __bruteforce_report(self, reportdict: OrderedDict):
+    def __bruteforce_report(self, reportdict: OrderedDict, type: str ="kp"):
         r"""
         Fill the ``self.__report`` object with all the values contained in the brute-force search run
 
@@ -337,50 +338,54 @@ class PyntacleReporter():
         # if not all(isinstance(x, (KPPOSchoices, KPPOSchoices)) for x in reportdict.keys()):
         #     raise TypeError("one of the keys in the report dictionary is not a KPPOSchoices or KPNEGchoices")
 
-        if KpposEnum.mreach.name in reportdict.keys():
-            m = reportdict[KpposEnum.mreach.name][2]
+        if type == "kp":
+            if KpposEnum.mreach.name in reportdict.keys():
+                m = reportdict[KpposEnum.mreach.name][2]
 
-            if not isinstance(m, int) and m < 1:
-                raise ValueError(u"'m' must be a positive integer")
-            else:
-                self.report.append(["maximum mreach distance", reportdict[KpposEnum.mreach.name][2]])
-
-        if KpnegEnum.F.name in reportdict.keys():
-            init_F = reportdict[KpnegEnum.F.name][2]
-
-
-            if 0.0 <= init_F <= 1.0:
-                self.report.append(["initial F value (whole graph)", init_F])
-            else:
-                raise ValueError(u"Initial F must range between 0 and 1")
-
-        if KpnegEnum.dF.name in reportdict.keys():
-            init_dF = reportdict[KpnegEnum.dF.name][2]
-
-            if 0.0 <= init_dF <= 1.0:
-                self.report.append(["initial dF value (whole graph)", init_dF])
-            else:
-                raise ValueError(u"Initial dF must range between 0 and 1")
-
-        self.report.append(["Results: Brute-force Search"])
-        self.report.append(["Metric", "Nodes", "Value"])
-
-        for k in reportdict.keys():
-            if (k == KpnegEnum.F.name or k == KpnegEnum.dF.name) and reportdict[k][-1] == 1.0:
-                self.report.append([k, "NA", "MAXIMUM FRAGMENTATION REACHED"])
-
-            else:
-                #in this case, the report dictionary can contain more than one set of nodes
-                if len(reportdict[k][0]) > 1:
-                    count = 0
-                    for elem in reportdict[k][0]:
-                        if count == 0:
-                            self.report.append([k, ",".join(reportdict[k][0][0]), reportdict[k][1]])
-                        else:
-                            self.report.append(["", ",".join(elem), reportdict[k][1]])
-                        count += 1
+                if not isinstance(m, int) and m < 1:
+                    raise ValueError(u"'m' must be a positive integer")
                 else:
-                    self.report.append([k, ",".join(reportdict[k][0][0]), reportdict[k][1]])
+                    self.report.append(["maximum mreach distance", reportdict[KpposEnum.mreach.name][2]])
+
+            if KpnegEnum.F.name in reportdict.keys():
+                init_F = reportdict[KpnegEnum.F.name][2]
+
+
+                if 0.0 <= init_F <= 1.0:
+                    self.report.append(["initial F value (whole graph)", init_F])
+                else:
+                    raise ValueError(u"Initial F must range between 0 and 1")
+
+            if KpnegEnum.dF.name in reportdict.keys():
+                init_dF = reportdict[KpnegEnum.dF.name][2]
+
+                if 0.0 <= init_dF <= 1.0:
+                    self.report.append(["initial dF value (whole graph)", init_dF])
+                else:
+                    raise ValueError(u"Initial dF must range between 0 and 1")
+
+            self.report.append(["Results: Brute-force Search"])
+            self.report.append(["Metric", "Nodes", "Value"])
+
+            for k in reportdict.keys():
+                if (k == KpnegEnum.F.name or k == KpnegEnum.dF.name) and reportdict[k][-1] == 1.0:
+                    self.report.append([k, "NA", "MAXIMUM FRAGMENTATION REACHED"])
+
+                else:
+                    #in this case, the report dictionary can contain more than one set of nodes
+                    if len(reportdict[k][0]) > 1:
+                        count = 0
+                        for elem in reportdict[k][0]:
+                            if count == 0:
+                                self.report.append([k, ",".join(reportdict[k][0][0]), reportdict[k][1]])
+                            else:
+                                self.report.append(["", ",".join(elem), reportdict[k][1]])
+                            count += 1
+                    else:
+                        self.report.append([k, ",".join(reportdict[k][0][0]), reportdict[k][1]])
+
+        else:
+            pass
 
     def __communities_report(self, reportdict: OrderedDict):
         r"""
