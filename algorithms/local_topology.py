@@ -227,8 +227,8 @@ class LocalTopology:
     @staticmethod
     @check_graph_consistency
     @vertex_doctor
-    def group_closeness(graph: Graph, nodes: list, distance: GroupDistanceEnum=GroupDistanceEnum.minimum,
-                        np_paths: np.ndarray=None) -> float:
+    def group_closeness(graph: Graph, nodes: list, distance: GroupDistanceEnum=GroupDistanceEnum.minimum, cmode: CmodeEnum=CmodeEnum.igraph,
+                        np_paths: np.ndarray or None=None) -> float:
         r"""
         Computes the closeness centrality for a group of nodes, rather than a single-node resolution as in
         :func:`~pyntacle.algorithms.local_topology.LocalTopology.closeness`. The *group closeness* is defined as the sum
@@ -259,15 +259,28 @@ class LocalTopology:
 
         MAX_PATH_LENGHT = len(graph.vs) + 1
 
+        if not isinstance(distance, GroupDistanceEnum):
+            raise TypeError("'distance' is not one of the appropriate GroupDistanceEnum, {} found".format(type(distance).__name__))
+
+        if not isinstance(np_paths, (type(None), np.ndarray)):
+            raise TypeError("'np_paths' is not one NoneType or a numpy array")
+
         if distance == GroupDistanceEnum.maximum:
             def dist_func(x: list) -> int: return max(x)
         elif distance == GroupDistanceEnum.minimum:
             def dist_func(x: list) -> int: return min(x)
         elif distance == GroupDistanceEnum.mean:
             def dist_func(x: list): return sum(x) / len(x)
+        #todo Tommaso, we never use this piece of code, can we remove it? I commented it
         else:
             # MIN is the default choice
-            def dist_func(x: list) -> int: return min(x)
+            # def dist_func(x: list) -> int: return min(x)
+            raise ValueError(u"'distance' is not one of the appropriate GroupDistanceEnum")
+
+        #added by Daniele - recompute shortest paths
+        if np_paths is None:
+            np_paths = ShortestPath.get_shortestpaths(graph=graph, cmode=cmode)
+
 
         group_indices = gUtil(graph).get_node_indices(nodes)
         nongroup_nodes = list(set(graph.vs["name"]) - set(nodes))

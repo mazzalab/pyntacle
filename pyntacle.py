@@ -349,16 +349,16 @@ class App:
                                  '(Adjacency Matrix, Edge List, SIF file) do not contain one. By default, '
                                  'we assume a header is present.')
 
-        parser.add_argument('-D', '--group-distances', metavar='', choices=['mean', 'min ', 'max'],
-                            help='The criterion to use to comute the distance between the node set and the rest of the graph. '
-                                 'Required for computing group closeness only.'
-                                 'Choices are "mean" (averages the distances among the node set and the rest of the graph)')
-
         parser.add_argument('-t', "--type", metavar='', choices=['all', 'degree', 'closeness', 'betweenness'],
                             default='all',
                             help="Which among the group centrality indices will be computed by Pyntacle. Choices are "
                                  "'all' (all metrics), 'degree' (group degree only),"
                                  " 'closeness' (group closeness). 'betweenness' (group betweenness) Default is 'all'.")
+
+        parser.add_argument('-D', '--group-distance', metavar='', choices=["mean", "min", "max"], default="min",
+                            help='The criterion to use to comute the distance between the node set and the rest of the graph. '
+                                 'Required for computing group closeness only.'
+                                 'Choices are "mean" (averages the distances among the node set and the rest of the graph)')
 
         parser.add_argument('-L', '--largest-component', action='store_true',
                             help='Use this option only to consider the largest component of the input network'
@@ -449,13 +449,13 @@ class App:
                                         help="Specify the number of cores that will be used in brute-force. Defaults to "
                                              "the maximum number of threads available in your machine - 1")
 
-        finder_case_parser.set_defaults(which='kp-finder')
+        finder_case_parser.set_defaults(which='gr-finder')
 
         # now that we're inside a subcommand, ignore the first
         # TWO args, ie the command and subcommand
         args = parser.parse_args(sys.argv[2:])
 
-        if len(sys.argv) < 4 or (sys.argv[2] not in ('kp-finder', 'kp-info')):
+        if len(sys.argv) < 4 or (sys.argv[2] not in ('gr-finder', 'gr-info')):
             parser.print_help()
             raise Error(
                 'Usage: pyntacle groupcentrality {gr-finder, gr-info} [arguments] (use --help for command description)')
@@ -465,8 +465,6 @@ class App:
             gr.run()
         except KeyboardInterrupt:
             sys.stderr.write("\nReceived SIGKILL from Keyboard\n")
-
-
 
     def metrics(self):
 

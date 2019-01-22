@@ -79,12 +79,18 @@ class PyntacleReporter():
             self.__local_report(reportdict=report)
         elif report_type == ReportEnum.Global:
             self.__global_report(reportdict=report)
-        elif report_type == ReportEnum.KPinfo:
+        elif report_type == ReportEnum.KP_info:
             self.__KPinfo_report(reportdict=report)
+        elif report_type == ReportEnum.GR_info:
+            self.__GRinfo_report(reportdict=report)
         elif report_type == ReportEnum.KP_greedy:
-            self.__greedy_report(reportdict=report)
+            self.__greedy_report(reportdict=report, type="kp")
+        elif report_type == ReportEnum.GR_greedy:
+            self.__greedy_report(reportdict=report, type="gr")
         elif report_type == ReportEnum.KP_bruteforce:
-            self.__bruteforce_report(reportdict=report)
+            self.__bruteforce_report(reportdict=report, type="kp")
+        elif report_type == ReportEnum.GR_bruteforce:
+            self.__bruteforce_report(reportdict=report, type="gr")
         elif report_type == ReportEnum.Communities:
             self.__communities_report(reportdict=report)
         elif report_type == ReportEnum.Set:
@@ -98,7 +104,7 @@ class PyntacleReporter():
         By default, if the `report_path` function is not initialized, a generic name is created and a tab-separated file
         is generated (named *Pyntacle_report_**GRAPHNAME**_**COMMAND**_**DATE**.tsv* where:_
 
-        * **graphname** is the value stored in the graph["name"] attribute,
+        * **GRAPHNAME** is the value stored in the graph["name"] attribute,
         * **Command** is the name of the command requested by the user and
         * **Date** is the date when the Pyntacle run was completed. This file will be stored in the current directory
 
@@ -222,7 +228,7 @@ class PyntacleReporter():
 
     def __KPinfo_report(self, reportdict:OrderedDict):
         r"""
-        fill the *self.__report* object with all the values conatined in the KPINFO Run
+        fill the *self.__report* object with all the values stored in the KPINFO Run
         :param reportdict: a dictionary with KPPOSchoices or KPNEGchoices as  `keys` and a list as `values`
         """
         # this doesn't work for now: keys are strings and not KP choices.
@@ -235,7 +241,7 @@ class PyntacleReporter():
             if not isinstance(m, int) and m < 1:
                 raise ValueError(u"m must be a positive integer")
             else:
-                self.report.append(["maximum mreach distance", reportdict[KpposEnum.mreach.name][2]])
+                self.report.append(["maximum m-reach distance", reportdict[KpposEnum.mreach.name][2]])
 
         if KpnegEnum.F.name in reportdict.keys():
             init_F = reportdict[KpnegEnum.F.name][2]
@@ -255,7 +261,7 @@ class PyntacleReporter():
 
         self.report.append(["\n"])
         self.report.append(["Results: Key-Player Metrics for the input set of nodes"])
-        self.report.append(["Metric", "Nodes", "Value"])
+        self.report.append(["Index", "Node set", "Value"])
  
         for k in reportdict.keys():
             if (k == KpnegEnum.F.name or k == KpnegEnum.dF.name) and reportdict[k][-1] == 1.0:
@@ -264,24 +270,31 @@ class PyntacleReporter():
             else:
                 self.report.append([k, ",".join(reportdict[k][0]), round(reportdict[k][1],5)])
 
-    #todo verify this
     def __GRinfo_report(self, reportdict: OrderedDict):
         r"""
-        fill the *self.__report* object with all the values conatined in the KPINFO Run
+        fill the *self.__report* object with all the values stored in the GRINFO Run
 
-        :param reportdict: a dictionary with KPPOSchoices or KPNEGchoices as  `keys` and a list as `values`
+        :param reportdict: a dictionary with Group centrality indices as `keys` and a list as `values`
         """
 
-        if GroupCentralityEnum.group_closeness.name in reportdict.keys():
-            dist = GroupDistanceEnum.name
-            self.report.append(["group closeness distance", dist])
+        for key in reportdict.keys():
+            if key.startswith(GroupCentralityEnum.group_closeness.name):
+                dist = key.split("_")[-1]
+                self.report.append(["group closeness distance", dist])
+                self.report.append(["\n"])
 
+        self.report.append(["Results: group centrality metrics for the input set of nodes"])
         self.report.append(["\n"])
-        self.report.append(["Results: Group Centrality Metrics for the input set of nodes"])
         self.report.append(["Metric", "Nodes", "Value"])
 
         for k in reportdict.keys():
-            self.report.append([k, ",".join(reportdict[k][0]), round(reportdict[k][1], 5)])
+
+            if k.startswith(GroupCentralityEnum.group_closeness.name):
+                metric_correct = "group closeness"
+            else:
+                metric_correct = k.replace("_", " ")
+
+            self.report.append([metric_correct, ",".join(reportdict[k][0]), round(reportdict[k][1], 5)])
 
     def __greedy_report(self, reportdict: OrderedDict, type = "kp"):
         r"""
@@ -300,7 +313,8 @@ class PyntacleReporter():
                 if not isinstance(m, int) and m < 1:
                     raise ValueError(u"'m' must be a positive integer")
                 else:
-                    self.report.append(["maximum mreach distance", reportdict[KpposEnum.mreach.name][2]])
+                    self.report.append(["maximum m-reach distance", reportdict[KpposEnum.mreach.name][2]])
+                    self.report.append(["\n"])
 
             if KpnegEnum.F.name in reportdict.keys():
                 init_F = reportdict[KpnegEnum.F.name][2]
@@ -318,8 +332,8 @@ class PyntacleReporter():
                 else:
                     raise ValueError(u"Initial dF must range between 0 and 1")
 
-            self.report.append(["Results: Greedily-Optimized Search for selected KP Metrics"])
-            self.report.append(["Metric", "Nodes", "Value"])
+            self.report.append(["Results: greedily-optimized search for optimal key player node set"])
+            self.report.append(["Index", "Node set", "Value"])
 
             for k in reportdict.keys():
                 if (k == KpnegEnum.F.name or k == KpnegEnum.dF.name) and reportdict[k][-1] == 1.0:
@@ -327,6 +341,27 @@ class PyntacleReporter():
 
                 else:
                     self.report.append([k, ",".join(reportdict[k][0]), reportdict[k][1]])
+
+        elif type == "gr":
+            for key in reportdict.keys():
+                if key.startswith(GroupCentralityEnum.group_closeness.name):
+                    dist = key.split("_")[-1]
+                    self.report.append(["group closeness distance", dist])
+                    self.report.append(["\n"])
+
+            self.report.append(["Results: greedily-optimized search for optimal group centrality node set"])
+            self.report.append(["Index", "Node set", "Value"])
+
+            for k in reportdict.keys():
+                if k.startswith(GroupCentralityEnum.group_closeness.name):
+                    metric_correct = "group closeness"
+                else:
+                    metric_correct = k.replace("_", " ")
+
+                self.report.append([metric_correct, ",".join(reportdict[k][0]), round(reportdict[k][1], 5)])
+
+        else:
+            raise ValueError("Invalid report type (choices are: 'kp', 'gr'")
 
     def __bruteforce_report(self, reportdict: OrderedDict, type: str ="kp"):
         r"""
@@ -345,7 +380,7 @@ class PyntacleReporter():
                 if not isinstance(m, int) and m < 1:
                     raise ValueError(u"'m' must be a positive integer")
                 else:
-                    self.report.append(["maximum mreach distance", reportdict[KpposEnum.mreach.name][2]])
+                    self.report.append(["maximum m-reach distance", reportdict[KpposEnum.mreach.name][2]])
 
             if KpnegEnum.F.name in reportdict.keys():
                 init_F = reportdict[KpnegEnum.F.name][2]
@@ -364,8 +399,8 @@ class PyntacleReporter():
                 else:
                     raise ValueError(u"Initial dF must range between 0 and 1")
 
-            self.report.append(["Results: Brute-force Search"])
-            self.report.append(["Metric", "Nodes", "Value"])
+            self.report.append(["Results: Brute-force search for node set(s) that maximize key player indices"])
+            self.report.append(["Index", "Node set", "Value"])
 
             for k in reportdict.keys():
                 if (k == KpnegEnum.F.name or k == KpnegEnum.dF.name) and reportdict[k][-1] == 1.0:
@@ -384,8 +419,35 @@ class PyntacleReporter():
                     else:
                         self.report.append([k, ",".join(reportdict[k][0][0]), reportdict[k][1]])
 
+        elif type == "gr":
+            for key in reportdict.keys():
+                if key.startswith(GroupCentralityEnum.group_closeness.name):
+                    dist = key.split("_")[-1]
+                    self.report.append(["group closeness distance", dist])
+                    self.report.append(["\n"])
+
+            self.report.append(["Results: Brute-force search for node set(s) that maximize group centrality indices"])
+            self.report.append(["Index", "Node set", "Value"])
+
+            for k in reportdict.keys():
+                if k.startswith(GroupCentralityEnum.group_closeness.name):
+                    metric_correct = "group closeness"
+                else:
+                    metric_correct = k.replace("_", " ")
+
+                if len(reportdict[k][0]) > 1:
+                    count = 0
+                    for elem in reportdict[k][0]:
+                        if count == 0:
+                            self.report.append([metric_correct, ",".join(reportdict[k][0][0]), reportdict[k][1]])
+                        else:
+                            self.report.append(["", ",".join(elem), reportdict[k][1]])
+                        count += 1
+                else:
+                    self.report.append([metric_correct, ",".join(reportdict[k][0][0]), reportdict[k][1]])
+
         else:
-            pass
+            raise ValueError("Invalid report type (choices are: 'kp', 'gr'")
 
     def __communities_report(self, reportdict: OrderedDict):
         r"""
@@ -395,7 +457,7 @@ class PyntacleReporter():
 
         :param reportdict: a dictionary from pyntacle communities
         """
-        self.report.append(["Results: Community finding in input graph"])
+        self.report.append(["Results: Community finding of the input graph"])
         self.report.append(["Algorithm:", reportdict["algorithm"]])
         self.report.append(["\n"])
         self.report.append(["Module", "Nodes", "Edges", "Components"])

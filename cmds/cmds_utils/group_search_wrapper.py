@@ -52,10 +52,12 @@ class InfoWrapper:
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param nodes: either a single node or a lis of nodes (the vertex ``name`` attribute(s)) belonging to the graph
         """
-        self.logger.info(u"Initializing group search info wrapper")
+
         self.logger = log
+        self.logger.info(u"Initializing group search info wrapper")
 
         self.method = None #this will store the class that will be used to compute group centrality
+
 
         self.graph = graph
 
@@ -183,7 +185,6 @@ class InfoWrapper:
         :param GroupCentralityEnum gr_type: one of the group centralityy metrics defined in :class:`tools.enums.GroupCentralityEnum`
         :param cmode: one of the possible implementations defined in :class:`tools.enums.GroupCentralityEnum`
         :param gr_distance:
-        :return:
         """
         self.method = LocalTopology
         if not isinstance(gr_type, GroupCentralityEnum):
@@ -204,7 +205,10 @@ class InfoWrapper:
         else:
             single_result = self.method.group_betweenness(graph=self.graph, nodes=self.nodes)
 
-        self.results[gr_type.name] = [self.nodes, single_result]
+        if gr_type == GroupCentralityEnum.group_closeness:
+            self.results["_".join([gr_type.name, gr_distance.name])] = [self.nodes, single_result]
+        else:
+            self.results[gr_type.name] = [self.nodes, single_result]
         self.logger.info(u"Group centrality computation for {} completed, results are in the 'results' dictionary".format(gr_type.name))
 
 
@@ -325,7 +329,10 @@ class GOWrapper:
 
         go_results = self.go.group_centrality(graph=self.graph, k=k, metric=gr_type, seed=seed, cmode=cmode)
 
-        self.results[gr_type.name] = [go_results[0], go_results[1]]
+        if gr_type == GroupCentralityEnum.group_closeness:
+            self.results["_".join([gr_type.name, distance.name])] = [go_results[0], go_results[1]]
+        else:
+            self.results[gr_type.name] = [go_results[0], go_results[1]]
 
 class BFWrapper:
     r"""
@@ -420,10 +427,13 @@ class BFWrapper:
         r"""
         Wrapper around the brute-force search module that stores the results for KPPOS metrics
 
-        :param int kp_size: size of the kpp-set to be found
-        :param KpposEnum kp_type: on of the KPPOSchoices enumerators stored in internal.enums
-        :param int m: for the "mreach" metrics, a positive integer greatrer than one representing the maximum distance for mreach
+        :param k:
+        :param gr_type:
+        :param cmode:
+        :param threads:
+        :param distance:
         """
+
         if not isinstance(k, int) or k < 1:
             raise ValueError(u"'k' must be a positive integer equal or greater than 1")
 
@@ -434,9 +444,11 @@ class BFWrapper:
             if not isinstance(distance, GroupDistanceEnum):
                 raise TypeError(u"'distance' is not one of the GroupDistanceEnums,{} found".format(type(distance).__name__))
 
-
         bf_results = self.bf.group_centrality(graph=self.graph, k=k, metric=gr_type, cmode=cmode, ncores=threads)
 
-        self.results[gr_type.name] = [bf_results[0], bf_results[1]]
+        if gr_type == GroupCentralityEnum.group_closeness:
+            self.results["_".join([gr_type.name, distance.name])] = [bf_results[0], bf_results[1]]
+        else:
+            self.results[gr_type.name] = [bf_results[0], bf_results[1]]
 
         pass

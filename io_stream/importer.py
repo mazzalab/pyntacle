@@ -142,7 +142,7 @@ class PyntacleImporter:
             graph = Graph.Adjacency(f.values.tolist(), mode="UPPER")
 
             util = gu(graph=graph)
-            util.graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
+            util.graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0],  node_names=node_names)
 
             sys.stdout.write(u"Adjacency matrix from {} imported\n".format(file))
             return graph
@@ -413,7 +413,7 @@ class PyntacleImporter:
             graph.to_undirected()
 
         util = gu(graph=graph)
-        util.graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
+        util.graph_initializer(graph_name=graphname)
 
         for a in edge_attrs_dict:
             for k in edge_attrs_dict[a]:

@@ -167,10 +167,10 @@ class ReportEnum(enum.Enum):
     """
     Global = 1
     Local = 2
-    KPinfo = 3
+    KP_info = 3
     KP_greedy = 4
     KP_bruteforce = 5
-    GRinfo = 6
+    GR_info = 6
     GR_greedy = 7
     GR_bruteforce = 8
     Communities = 9
