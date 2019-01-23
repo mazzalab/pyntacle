@@ -25,7 +25,7 @@ __license__ = u"""
   """
 from config import *
 from warnings import simplefilter
-from graph_operations.modules_finder import CommunityFinder
+from graph_operations.communities import CommunityFinder
 from io_stream.import_attributes import ImportAttributes
 from io_stream.exporter import PyntacleExporter
 from cmds.cmds_utils.plotter import PlotGraph
@@ -357,7 +357,7 @@ class Communities():
                 sys.stdout.write(u"Plotting graph in {} format.\n".format(self.args.plot_format))
 
                 main_plot_path = os.path.join(plot_dir, ".".join(["_".join(
-                    ["pyntacle", os.path.splitext(os.path.basename(self.args.input_file))[0], "modules",
+                    [self.args.which, os.path.splitext(os.path.basename(self.args.input_file))[0], "modules",
                      self.date]), self.args.plot_format]))
 
                 # initialize general graph Drawer

@@ -413,7 +413,7 @@ class Metrics:
                 no_nodes_frames = framepal[4]
 
                 if self.args.no_nodes:
-                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", re.sub('_without_nodes', '', graph["name"][0]),"global_metrics_plot", self.date]),self.args.plot_format]))
+                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["metric", self.args.which, re.sub('_nodes_removed', '', graph["name"][0]),"global_metrics_plot", self.date]),self.args.plot_format]))
                     node_colors = [no_nodes_colour if x["name"] in nodes_list else other_nodes_colour for x
                                     in
                                     graph.vs()]
@@ -428,7 +428,7 @@ class Metrics:
                     node_colors = [other_nodes_colour] * graph.vcount()
                     node_frames = [other_frame_colour] * graph.vcount()
                     node_sizes = [other_nodes_size] * graph.vcount()
-                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", graph["name"][0],"global_metrics_plot", self.date]), self.args.plot_format]))
+                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["metric", self.args.which, graph["name"][0],"global_metrics_plot", self.date]), self.args.plot_format]))
 
                 plot_graph = PlotGraph(graph=graph)
                 plot_graph.set_node_labels(labels=graph.vs()["name"])  # assign node labels to graph

@@ -31,7 +31,7 @@ from tools.enums import GraphOperationEnum
 from tools.add_attributes import AddAttributes
 from tools.graph_utils import GraphUtils as GUtil
 
-#TODO problema attributi: vanno portati quello del grafo originale
+#TODO we don't port the attributes of one of the original graphs, fix ASAP
 
 def make_sets(graph1: Graph, graph2: Graph, operation: GraphOperationEnum):
     r"""

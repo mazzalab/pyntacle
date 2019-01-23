@@ -354,7 +354,7 @@ class Set:
 
                 # plot output graph
                 output_plot_path = os.path.join(plot_dir,
-                                                ".".join(["_".join(["pyntacle", self.args.output_file,
+                                                ".".join(["_".join([self.args.which, self.args.output_file,
                                                                     self.date]),
                                                           self.args.plot_format]))
                 output_graph_plotter = PlotGraph(graph=output_graph)  # init plotter class

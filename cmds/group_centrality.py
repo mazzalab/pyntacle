@@ -441,7 +441,7 @@ class GroupCentrality():
                 plot_graph.set_layouts(self.args.plot_layout)
 
                 plot_path = os.path.join(plot_dir, "_".join(
-                    ["keyplayer", graph["name"][0], "report", metric, self.date]) + "." + plot_format)
+                    [self.args.which, graph["name"][0], metric, self.date]) + "." + plot_format)
                 if os.path.exists(plot_path):
                     sys.stdout.write(
                         u"Warning: a plot with the name ({}) already exists, overwriting it.\n".format(
@@ -454,35 +454,28 @@ class GroupCentrality():
         if not self.args.suppress_cursor:
             cursor.stop()
 
-
-        #todo sistema questo qui e su keyplayer, fa cagare
         if self.args.save_binary:
             #reproduce octopus behaviour by adding kp information to the graph before saving it
             sys.stdout.write(u"Saving graph to a binary file (ending in .graph)...\n")
             #step 1: decidee the type of the implementation
 
-            bf = False
-            if self.args.which == "gr-info":
-                bin_type = "grinfo"
-            else:
-                bin_type = "greedy"
+            if self.args.which == "gr-finder":
                 if self.args.implementation == "brute-force":
-                    bin_type = "bruteforce"
-                    bf = True
+                    suffix = "BF"
+                else:
+                    suffix = "GO"
+            else:
+                suffix = ""
+
 
             queried_stuff = results.keys()
             print ("queried stuff")
             print(queried_stuff)
             input()
-
-            for key in queried_stuff:
+            for key in queried_stuff.keys():
                 if key in graph.attributes():
                     sys.stdout.write(u"{} already present in input graph attributes, will overwrite.\n".format(key.name))
 
-                if key == GroupCentralityEnum.group_closeness:
-                    pass
-                else:
-                    pass
             # if GroupCentralityEnum.group_degree.name in queried_stuff:
             #     if GroupCentralityEnum.group_degree.name in graph.attributes():
             #         sys.stdout.write(u"{} already present in input graph attributes, will overwrite.\n".format(KpnegEnum.F.name))

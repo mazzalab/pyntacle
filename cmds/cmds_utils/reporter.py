@@ -399,7 +399,7 @@ class PyntacleReporter():
                 else:
                     raise ValueError(u"Initial dF must range between 0 and 1")
 
-            self.report.append(["Results: Brute-force search for node set(s) that maximize key player indices"])
+            self.report.append(["Results: Brute-force search for node sets that maximize key player indices"])
             self.report.append(["Index", "Node set", "Value"])
 
             for k in reportdict.keys():
@@ -426,7 +426,7 @@ class PyntacleReporter():
                     self.report.append(["group closeness distance", dist])
                     self.report.append(["\n"])
 
-            self.report.append(["Results: Brute-force search for node set(s) that maximize group centrality indices"])
+            self.report.append(["Results: Brute-force search for node sets that maximize group centrality indices"])
             self.report.append(["Index", "Node set", "Value"])
 
             for k in reportdict.keys():

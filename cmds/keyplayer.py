@@ -617,7 +617,7 @@ class KeyPlayer():
 
                 plot_graph.set_layouts(self.args.plot_layout)
 
-                plot_path = os.path.join(plot_dir, "_".join(["keyplayer", graph["name"][0], "report", metric, self.date]) + "." + plot_format)
+                plot_path = os.path.join(plot_dir, "_".join([self.args.which, ["name"][0], metric, self.date]) + "." + plot_format)
                 if os.path.exists(plot_path):
                     sys.stdout.write(
                         u"Warning: a plot with the name ({}) already exists, overwriting it.\n".format(

@@ -43,9 +43,9 @@ class CommunityFinder:
 
     @property
     def modules(self):
-        """
-
-        :return:
+        r"""
+        Returns the modules found using community-detection algorithms.
+        :return list: a list storing a series of :py:class:`igraph.Graph` objects, each one representing the subgraphs of the original graphs
         """
         return self.modules
 

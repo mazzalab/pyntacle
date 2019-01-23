@@ -271,16 +271,11 @@ class LocalTopology:
             def dist_func(x: list) -> int: return min(x)
         elif distance == GroupDistanceEnum.mean:
             def dist_func(x: list): return sum(x) / len(x)
-        #todo Tommaso, we never use this piece of code, can we remove it? I commented it
         else:
-            # MIN is the default choice
-            # def dist_func(x: list) -> int: return min(x)
-            raise ValueError(u"'distance' is not one of the appropriate GroupDistanceEnum")
+           raise ValueError(u"'distance' is not one of the appropriate GroupDistanceEnum")
 
-        #added by Daniele - recompute shortest paths
         if np_paths is None:
             np_paths = ShortestPath.get_shortestpaths(graph=graph, cmode=cmode)
-
 
         group_indices = gUtil(graph).get_node_indices(nodes)
         nongroup_nodes = list(set(graph.vs["name"]) - set(nodes))
