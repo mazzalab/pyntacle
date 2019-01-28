@@ -330,7 +330,7 @@ class Octopus:
         :param nodes:
         :return:
         """
-        AddAttributes.add_graph_attributes(graph, GroupCentralityEnum.group_degree.name,
+        AddAttributes.add_graph_attributes(graph, "_".join([GroupCentralityEnum.group_degree.name, "info"]),
                                                   LocalTopology.group_degree(graph, nodes))
 
 
@@ -355,7 +355,7 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def add_group_betweenness(graph, nodes: list, max_distance: int or None = None):
+    def add_group_betweenness(graph, nodes: list):
         #todo aggiungi documentazione
         """
 
@@ -367,8 +367,8 @@ class Octopus:
         if nodes is None:
             nodes = graph.vs["name"]
 
-        AddAttributes.add_graph_attributes(graph, GroupCentralityEnum.group_betweenness.name,
-                                                 LocalTopology.group_betweenness(graph=graph, nodes=nodes, cmode=cmode, max_distance = max_distance))
+        AddAttributes.add_graph_attributes(graph, "_".join([GroupCentralityEnum.group_betweenness.name, "info"]),
+                                                 LocalTopology.group_betweenness(graph=graph, nodes=nodes, cmode=cmode))
 
     @staticmethod
     @check_graph_consistency
@@ -422,7 +422,7 @@ class Octopus:
 
         cmode = get_cmode(graph)
 
-        AddAttributes.add_graph_attributes(graph, "_".join([GroupCentralityEnum.group_closeness.name, GroupDistanceEnum.name]),
+        AddAttributes.add_graph_attributes(graph, "_".join([GroupCentralityEnum.group_closeness.name, distance.name, "info"]),
                                            LocalTopology.group_closeness(graph, nodes, distance, cmode))
 
     @staticmethod
@@ -649,7 +649,7 @@ class Octopus:
         kpobj.run_fragmentation(KpnegEnum.F)
         results_dict = kpobj.get_results()
         AddAttributes.add_graph_attributes(graph,
-            KpnegEnum.F.name + '_kpinfo', {tuple(sorted(results_dict[KpnegEnum.F.name][0])): results_dict[KpnegEnum.F.name][1]})
+            KpnegEnum.F.name + '_info', {tuple(sorted(results_dict[KpnegEnum.F.name][0])): results_dict[KpnegEnum.F.name][1]})
 
     @staticmethod
     @check_graph_consistency
@@ -672,7 +672,7 @@ class Octopus:
         kpobj.run_fragmentation(KpnegEnum.dF, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
         AddAttributes.add_graph_attributes(graph,
-            KpnegEnum.dF.name + '_kpinfo',
+            KpnegEnum.dF.name + '_info',
             {tuple(sorted(results_dict[KpnegEnum.dF.name][0])): results_dict[KpnegEnum.dF.name][1]})
 
     @staticmethod
@@ -698,7 +698,7 @@ class Octopus:
         kpobj.run_reachability(KpposEnum.dR, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
         AddAttributes.add_graph_attributes(graph,
-            KpposEnum.dR.name + '_kpinfo',
+            KpposEnum.dR.name + '_info',
             {tuple(sorted(results_dict[KpposEnum.dR.name][0])): results_dict[KpposEnum.dR.name][1]})
 
     @staticmethod
@@ -723,7 +723,7 @@ class Octopus:
         kpobj = kpw(graph=graph, nodes=nodes)
         kpobj.run_reachability(KpposEnum.mreach, m=m, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
-        attr_name = KpposEnum.mreach.name + '_{}_kpinfo'.format(str(m))
+        attr_name = KpposEnum.mreach.name + '_{}_info'.format(str(m))
         AddAttributes.add_graph_attributes(graph,
             attr_name, {tuple(sorted(results_dict[KpposEnum.mreach.name][0])): results_dict[KpposEnum.mreach.name][1]})
 
@@ -875,7 +875,7 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def add_GO_group_betweeness(graph, k: int, max_distances: int or None = None, seed: int or None = None):
+    def add_GO_group_betweeness(graph, k: int, seed: int or None = None):
         #todo sistema documentazione
         r"""
 
@@ -903,7 +903,7 @@ class Octopus:
         """
         cmode = get_cmode(graph)
         kpobj = gow(graph=graph)
-        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_betweenness, seed=seed, cmode=cmode, max_distance=max_distances)
+        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_betweenness, seed=seed, cmode=cmode)
         results_dict = kpobj.get_results()
         AddAttributes.add_graph_attributes(graph,
                                            GroupCentralityEnum.group_betweenness.name + '_greedy',
@@ -912,7 +912,7 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def add_GO_group_closeness(graph, k: int, max_distances: int or None = None, seed: int or None = None, distance:GroupDistanceEnum = GroupDistanceEnum.minimum):
+    def add_GO_group_closeness(graph, k: int, seed: int or None = None, distance:GroupDistanceEnum = GroupDistanceEnum.minimum):
         # todo sistema documentazione
         r"""
 
@@ -941,8 +941,7 @@ class Octopus:
         """
         cmode = get_cmode(graph)
         kpobj = gow(graph=graph)
-        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_betweenness, seed=seed, cmode=cmode,
-                                  max_distance=max_distances, distance=distance)
+        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_betweenness, seed=seed, cmode=cmode,distance=distance)
         results_dict = kpobj.get_results()
         AddAttributes.add_graph_attributes(graph,
                                            GroupCentralityEnum.group_closeness.name + "_" + distance.name + '_greedy',
@@ -1087,7 +1086,7 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def add_BF_group_betweenness(graph, k: int, max_distances: int or None = None):
+    def add_BF_group_betweenness(graph, k: int):
         # todo sistema documentazione
         r"""
 
@@ -1112,7 +1111,7 @@ class Octopus:
         """
         cmode = get_cmode(graph)
         kpobj = bfw(graph=graph)
-        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_betweenness, max_distance=max_distances, cmode=cmode)
+        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_betweenness, cmode=cmode)
         results_dict = kpobj.get_results()
         AddAttributes.add_graph_attributes(graph,
                                            GroupCentralityEnum.group_betweenness.name + '_bruteforce',
@@ -1122,33 +1121,23 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def add_BF_group_closeness(graph, k: int, max_distances: int or None = None, distance: GroupDistanceEnum = GroupDistanceEnum.minimum):
-        #todo sistema documentazione
+    def add_BF_group_closeness(graph, k: int, distance: GroupDistanceEnum = GroupDistanceEnum.minimum):
         r"""
-
-        :param graph:
-        :param k:
-        :param max_distances:
-        :param distance:
-        :return:
-        """
-        r"""
-        Performs a brute-force search on the input graph to search the best *key player* (kp)set(s) of nodes of size :math:`k` for the
-        *distance-weighted reach* (*dR*) index. It does so by wrapping the :func:`~algorithms.bruteforce_search.BruteforceSearch.reachability`
-        Pyntacle method. It then stores the found set(s) in a dictionary that is embedded in the graph attribute ``dR_bruteforce``
+        Performs a brute-force search on the input graph to search the best node (kp)set(s) of size :math:`k` for the
+        *group_closeness* index. It does so by wrapping the :func:`~algorithms.bruteforce_search.BruteforceSearch.group_centrality`
+        Pyntacle method. It then stores the found set(s) in a dictionary that is embedded in the graph attribute ``group_closeness_DISTANCE__bruteforce``,
+        where ``DISTANCE is the appropriate :class:`~tools.enums.GroupDistanceEnum` used for computing group closeness.
         This dictionary contains as keys tuples of tuple, each one storing the vertex ``name`` attribute of all the
-        nodes of each set that achieve the best value for dR and the corresponding dR value for the set(s).
+        nodes of each set that achieve the best value for group closeness and the corresponding group closeness value
+        for the set(s).
 
-        We recommend visiting the ` Key Player Guide <pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html>`_ on Pyntacle official
-        website for an overview of the dR index and the greedy optimization.
-
-        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
-        :param int k: the size of the kp-set. Must be a positive integer.
-        :param int,None max_distance: The maximum shortest path length over which two nodes are considered unreachable. Default is :py:class:`None` (distances are preserved).
+        :param graph: igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param k: the size of the node set. Must be a positive integer.
+        :param distance: one of the possible :class:`~tools.enums.GroupDistanceEnum` default is ``minimum``
         """
         cmode=get_cmode(graph)
         kpobj = bfw(graph=graph)
-        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_closeness, max_distance=max_distances, cmode=cmode, distance=distance)
+        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_closeness, cmode=cmode, distance=distance)
         results_dict = kpobj.get_results()
         AddAttributes.add_graph_attributes(graph,
                                            GroupCentralityEnum.group_closeness.name + "_" + distance.name + '_bruteforce',

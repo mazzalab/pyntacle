@@ -36,7 +36,7 @@ from exceptions.unproperly_formatted_file_error import UnproperlyFormattedFileEr
 
 class EglUtils:
     r"""
-    A series of utilities to perform severasl checks and file parsing operations on Edgelist files
+    A series of utilities to perform several checks and file parsing operations on edge list files
     """
 
     logger = None
@@ -86,7 +86,7 @@ class EglUtils:
 
     def get_edgelist(self) -> list:
         r"""
-        Returns the edgelist object as a list of lists (useful for igraph porting)
+        Returns the edge list object as a list of lists (useful for igraph porting)
 
         :return: a list containing all the values in the input graph BUT the header
         """
@@ -107,7 +107,7 @@ class EglUtils:
 
     def set_edgelist(self, edgl:list):
         r"""
-        replace the edgelist (list of list) with another one of choice. Must be a list of lists of string. Each element in the list must have length 2.
+        replace the edgelist (list of list) with another one of choice. Must be a list of lists of string.
 
         :param list edgl: a list of lists of strings. Each nested list must have length 2
         """
@@ -117,19 +117,30 @@ class EglUtils:
     def set_header(self, header:list):
         r"""replaces the header imported in the __init__ with another one (or add an header to the current input file).
 
-        :param str header: a list of strings of length 2. Must be a list of strings of length 2"""
+        :param str header: a list of strings of length 2. Must be a list of strings of length 2
+        :raise: ValueError if ``header`` is not a list of length 2 and if at least one element is not a string
+        """
+
+        if len(header) != 2:
+            raise ValueError(u"'header' must be a string with 2 elements")
+        if any(isinstance(x, str) for x in header):
+            raise ValueError(u"'header' has at least one non-string element")
+
         self.header = header
 
     def set_sep(self, sep: str):
-        r"""replaces the separator imported in the __init__ with another one. Must be a string
+        r"""replaces the separator imported in the __init__ with another one. The separator must be a string
 
         :param str sep: a separator of choice. Must be a string.
+        :raise: TypeError if ``sep`` is not a string
         """
+        if not isinstance(sep, str):
+            raise TypeError(u"'sep' must be a string")
         self.sep = sep
 
     def is_direct(self) -> bool:
         r"""
-        Method that returns a boolean if the edgelist contains at least one direct edge
+        Returns a boolean if the edge list contains at least one direct edge
 
         :return: a boolean; True if the edgelist is direct and False otherwise
         """
@@ -160,10 +171,10 @@ class EglUtils:
 
     def make_undirect(self):
         r"""
-        Converts the edgelist to undirect (add reciprocal pairs if missing). Write the edgelist to a file with header
-        (if initialized) with the "_undirected.egl" extension to the input edgelist file
+        Converts the edge list to undirect (add reciprocal pairs if missing). Write the edge list to a file with header
+        (if initialized) with the "_undirected" suffix to the output edge list file
 
-        :return str: the path to the valid output file (the name of the input edgelist + "_undirected.egl"). If the edgelist is already undirect, returns the input edgelist file
+        :return str: the path to the valid output file (the name of the input edge list + "_undirected.egl"). If the edge list is already undirect, returns the input edge list file
         """
 
         if not self.is_direct():
@@ -187,10 +198,10 @@ class EglUtils:
 
     def make_simple(self):
         r"""
-        Converts the edgelist to a simple edgeist (remove duplicated lines). Write the edgelist to a file with header
-        (if initialized) with the "_simple.egl" extension to the input edgelist file
+        Converts the edge list to a simple edge list (remove duplicated lines). Write the edge list to a file with header
+        (if initialized) appending the "_simple" extension to the output edge list file
 
-        :return str: the path to the valid output file (the name of the input edgelist + "_simple.egl"). If the edgelist is already simple, returns the input edgelist file
+        :return str: the path to the valid output file (the name of the input edge list + "_simple.egl"). If the edge list is already simple, returns the input edgelist file
         """
 
         if not self.is_multigraph():

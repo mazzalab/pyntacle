@@ -349,9 +349,41 @@ class GroupCentrality():
                 os.path.abspath(self.args.directory)))
             os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
 
+        if self.args.save_binary:
+            # reproduce octopus behaviour by adding kp information to the graph before saving it
+            sys.stdout.write(u"Saving graph to a binary file (ending in .graph) in the specified output directory...\n")
+
+            for key in results.keys():
+                if self.args.which == "gr-finder":
+                    if self.args.implementation == "brute-force":
+                        suffix = "bruteforce"
+                        attr_key = tuple(tuple(sorted(tuple(x))) for x in results[key][0])
+
+                    else:
+                        suffix = "greedy"
+                        attr_key = tuple(sorted(tuple(results[key][0])))
+
+
+                else:
+                    suffix = "info"
+                    attr_key = tuple(sorted(tuple(results[key][0])))
+
+                attr_name = "_".join([key, suffix])
+                attr_val = results[key][1]
+
+                if attr_name in graph.attributes():
+                    sys.stdout.write("Warning: attribute {} already present in graph, will overwrite...\n".format(attr_name))
+
+                    if attr_key in graph[attr_name]:
+                        sys.stdout.write("Warning: {} already present in the {} graph attribute, will overwrite...\n".format(attr_key, attr_val))
+
+                AddAttributes.add_graph_attributes(graph, attr_name, {attr_key: attr_val})
+
+            binary_prefix = "_".join([os.path.splitext(os.path.basename(self.args.input_file))[0], self.args.which, self.date])
+            binary_path = os.path.join(self.args.directory, binary_prefix + ".graph")
+            PyntacleExporter.Binary(graph, binary_path)
+
         sys.stdout.write(u"Producing report in {} format...\n".format(self.args.report_format))
-
-
 
         report_path = os.path.join(self.args.directory, ".".join([report_prefix, self.args.report_format]))
 
@@ -453,71 +485,6 @@ class GroupCentrality():
             sys.stdout.write(u"The graph has too many nodes ({}, we plot nodes with a maximum of 1000 nodes). It will not be drawn.\n".format(graph.vcount()))
         if not self.args.suppress_cursor:
             cursor.stop()
-
-        if self.args.save_binary:
-            #reproduce octopus behaviour by adding kp information to the graph before saving it
-            sys.stdout.write(u"Saving graph to a binary file (ending in .graph)...\n")
-            #step 1: decidee the type of the implementation
-
-            if self.args.which == "gr-finder":
-                if self.args.implementation == "brute-force":
-                    suffix = "BF"
-                else:
-                    suffix = "GO"
-            else:
-                suffix = ""
-
-
-            queried_stuff = results.keys()
-            print ("queried stuff")
-            print(queried_stuff)
-            input()
-            for key in queried_stuff.keys():
-                if key in graph.attributes():
-                    sys.stdout.write(u"{} already present in input graph attributes, will overwrite.\n".format(key.name))
-
-            # if GroupCentralityEnum.group_degree.name in queried_stuff:
-            #     if GroupCentralityEnum.group_degree.name in graph.attributes():
-            #         sys.stdout.write(u"{} already present in input graph attributes, will overwrite.\n".format(KpnegEnum.F.name))
-            #     graph[KpnegEnum.F.name] = results[KpnegEnum.F.name][-1] #initial F value
-            #     k = "_".join([KpnegEnum.F.name, bin_type])
-            #
-            #     if bf:
-            #         AddAttributes.add_graph_attributes(graph, k, {tuple(tuple(x) for x in results[KpnegEnum.F.name][0]): results[KpnegEnum.F.name][1]})
-            #     else:
-            #         AddAttributes.add_graph_attributes(graph, k, {tuple(results[KpnegEnum.F.name][0]): results[KpnegEnum.F.name][1]})
-            #
-            # if KpnegEnum.dF.name in queried_stuff:
-            #     graph[KpnegEnum.dF.name] = results[KpnegEnum.dF.name][-1]  #initial dF value
-            #     k = "_".join([KpnegEnum.dF.name, bin_type])
-            #
-            #     if bf:
-            #         AddAttributes.add_graph_attributes(graph, k, {tuple(tuple(x) for x in results[KpnegEnum.dF.name][0]): results[KpnegEnum.dF.name][1]})
-            #     else:
-            #         AddAttributes.add_graph_attributes(graph, k, {tuple(results[KpnegEnum.dF.name][0]):results[KpnegEnum.dF.name][1]})
-            #
-            # if KpposEnum.dR.name in queried_stuff:
-            #     k = "_".join([KpposEnum.dR.name, bin_type])
-            #     if bf:
-            #         AddAttributes.add_graph_attributes(graph, k, {
-            #             tuple(tuple(x) for x in results[KpposEnum.dR.name][0]): results[KpposEnum.dR.name][1]})
-            #     else:
-            #         AddAttributes.add_graph_attributes(graph, k, {tuple(results[KpposEnum.dR.name][0]):results[KpposEnum.dR.name][1]})
-            #
-            # if KpposEnum.mreach.name in queried_stuff:
-            #     k = "_".join([KpposEnum.mreach.name, str(results[KpposEnum.mreach.name][-1]), bin_type])
-            #
-            #     if bf:
-            #         AddAttributes.add_graph_attributes(graph, k, {
-            #             tuple(tuple(x) for x in results[KpposEnum.mreach.name][0]): results[KpposEnum.mreach.name][1]})
-            #     else:
-            #         AddAttributes.add_graph_attributes(graph, k, {
-            #             tuple(results[KpposEnum.mreach.name][0]): results[KpposEnum.mreach.name][1]})
-            # binary_prefix = "_".join(["pyntacle", graph["name"][0], "k", str(k_size),
-            #                           report_type.name, self.date])
-            # binary_path = os.path.join(self.args.directory, binary_prefix + ".graph")
-            # PyntacleExporter.Binary(graph, binary_path)
-
 
 
         sys.stdout.write(u"Pyntacle groupcentrality completed successfully. Ending.\n")

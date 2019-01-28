@@ -190,11 +190,12 @@ class KeyPlayer():
                         
                 if self.args.type in (['dF', 'neg', 'all']):
                     sys.stdout.write(
-                        u"KP-NEG: Finding optimal set of nodes of size {0} that maximizes the F index...\n".format(
+                        u"KP-NEG: Finding optimal set of nodes of size {0} that maximizes the dF index...\n".format(
                             self.args.k_size))
+
                     initial_results[KpnegEnum.dF.name] = kpp.dF(graph, cmode=implementation)
                     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
-                                                max_distance=self.args.max_distances, seed=self.args.seed,
+                                                max_distance=self.args.max_distance, seed=self.args.seed,
                                                 cmode=implementation)
 
                 if self.args.type in (['dR', 'pos', 'all']):
@@ -202,7 +203,7 @@ class KeyPlayer():
                         u"KP-POS: Finding optimal set of nodes of size {0} that maximizes the dR index...\n".format(
                             self.args.k_size))
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.dR,
-                                               max_distance=self.args.max_distances, seed=self.args.seed,
+                                               max_distance=self.args.max_distance, seed=self.args.seed,
                                                cmode=implementation)
 
                 if self.args.type in (['mreach', 'pos', 'all']):
@@ -210,9 +211,8 @@ class KeyPlayer():
                         u"KP-POS: Finding optimal set of nodes of size {0} that maximizes the nodes reached (m-reach) at a distance {1}...".format(
                             self.args.k_size, self.args.m_reach))
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.mreach, m=self.args.m_reach,
-                                               max_distance=self.args.max_distances, seed=self.args.seed,
+                                               max_distance=self.args.max_distance, seed=self.args.seed,
                                                cmode=implementation)
-
 
             elif self.args.implementation == "brute-force":
 
@@ -236,7 +236,7 @@ class KeyPlayer():
 
                     initial_results[KpnegEnum.dF.name] = kpp.dF(graph, cmode=CmodeEnum.igraph)
                     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
-                                                max_distance=self.args.max_distances,
+                                                max_distance=self.args.max_distance,
                                                 cmode=CmodeEnum.igraph, threads=self.args.threads)
 
                 if self.args.type in (['dR', 'pos', 'all']):
@@ -244,7 +244,7 @@ class KeyPlayer():
                         u"KP-POS: Finding best set(s) of nodes of size {0} that hold the higher value of dR among their peers...\n".format(
                             self.args.k_size))
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.dR,
-                                               max_distance=self.args.max_distances,
+                                               max_distance=self.args.max_distance,
                                                cmode=CmodeEnum.igraph, threads=self.args.threads)
                     
                 if self.args.type in (['mreach', 'pos', 'all']):
@@ -253,7 +253,7 @@ class KeyPlayer():
                             self.args.k_size, self.args.m_reach))
 
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.mreach, m=self.args.m_reach,
-                                               max_distance=self.args.max_distances,
+                                               max_distance=self.args.max_distance,
                                                cmode=CmodeEnum.igraph, threads=self.args.threads)
 
             else:
@@ -317,7 +317,6 @@ class KeyPlayer():
         # kpinfo: compute kpmetrics for a set of predetermined nodes
         elif self.args.which == 'kp-info':
             report_type = ReportEnum.KP_info
-            k_size = len(self.args.nodes)
             initial_results = OrderedDict()
             kp_runner = kpw(graph=graph, nodes=self.args.nodes)
             results = OrderedDict()
@@ -327,17 +326,17 @@ class KeyPlayer():
                 initial_results[KpnegEnum.F.name] = kpp.F(graph)
                 kp_runner.run_fragmentation(KpnegEnum.F)
             if self.args.type in (['dF', 'neg', 'all']):
-                initial_results[KpnegEnum.dF.name] = kpp.dF(graph, cmode=implementation)
-                kp_runner.run_fragmentation(self.args.nodes, KpnegEnum.dF, max_distance=self.args.max_distances,
+                initial_results[KpnegEnum.dF.name] = kpp.dF(graph, cmode=implementation, max_distance=self.args.max_distance)
+                kp_runner.run_fragmentation(KpnegEnum.dF, max_distance=self.args.max_distance,
                                             cmode=implementation)
 
             if self.args.type in (['dR', 'pos', 'all']):
-                kp_runner.run_reachability(KpposEnum.dR, max_distance=self.args.max_distances,
+                kp_runner.run_reachability(KpposEnum.dR, max_distance=self.args.max_distance,
                                            cmode=implementation)
 
             if self.args.type in (['mreach', 'pos', 'all']):
                 kp_runner.run_reachability(KpposEnum.mreach, m=self.args.m_reach,
-                                           max_distance=self.args.max_distances, cmode=implementation)
+                                           max_distance=self.args.max_distance, cmode=implementation)
 
             results.update(kp_runner.get_results())
             sys.stdout.write(Fore.RED + Style.BRIGHT + u"\n### RUN SUMMARY ###\n" + Style.RESET_ALL)
@@ -369,7 +368,7 @@ class KeyPlayer():
 
         else:
             log.critical(
-                u"Critical Error. Please contact Pyntacle Developers and report this problem, along with your comman line. Quitting\n.")
+                u"Critical Error. Please contact Pyntacle Developers and report this problem, along with your command line. Quitting\n.")
             sys.exit(1)
 
         # check output directory
@@ -391,6 +390,46 @@ class KeyPlayer():
         r.write_report(report_dir=self.args.directory, format=self.args.report_format)
         
         if self.args.save_binary:
+            # reproduce octopus behaviour by adding kp information to the graph before saving it
+            sys.stdout.write(u"Saving graph to a binary file (ending in .graph) in the specified output directory...\n")
+
+            for key in results.keys():
+                if key == KpposEnum.mreach.name: #replace the mreach distance
+                    new_mreach = "_".join([KpposEnum.mreach.name, str(results[KpposEnum.mreach.name][-1])])
+                    #create new key
+                    results[new_mreach] = results[KpposEnum.mreach.name][:-1] #remove the mreach distance before adding it to the binary file
+                    del results[KpposEnum.mreach.name]
+                    key = new_mreach
+
+                if self.args.which == "kp-finder":
+                    if self.args.implementation == "brute-force":
+                        suffix = "bruteforce"
+                        attr_key = tuple(tuple(sorted(tuple(x))) for x in results[key][0])
+
+                    else:
+                        suffix = "greedy"
+                        attr_key = tuple(sorted(tuple(results[key][0])))
+
+                else:
+                    suffix = "info"
+                    attr_key = tuple(sorted(tuple(results[key][0])))
+
+                attr_name = "_".join([key, suffix])
+                attr_val = results[key][1]
+
+                if attr_name in graph.attributes():
+                    sys.stdout.write("Warning: attribute {} already present in graph, will overwrite...\n".format(attr_name))
+
+                    if attr_key in graph[attr_name]:
+                        sys.stdout.write("Warning: {} already present in the {} graph attribute, will overwrite...\n".format(attr_key, attr_val))
+
+                AddAttributes.add_graph_attributes(graph, attr_name, {attr_key: attr_val})
+
+            binary_prefix = "_".join([os.path.splitext(os.path.basename(self.args.input_file))[0], self.args.which, self.date])
+            binary_path = os.path.join(self.args.directory, binary_prefix + ".graph")
+            PyntacleExporter.Binary(graph, binary_path)
+
+        if self.args.save_binary:
             #reproduce octopus behaviour by adding kp information to the graph before saving it
             sys.stdout.write(u"Saving graph to a binary file (ending in .graph)...\n")
             #step 1: decide the type of the implementation
@@ -403,55 +442,6 @@ class KeyPlayer():
                 if self.args.implementation == "brute-force":
                     bin_type = "bruteforce"
                     bf = True
-
-            queried_stuff = results.keys()
-            if KpnegEnum.F.name in queried_stuff:
-                if KpnegEnum.F.name in graph.attributes():
-                    sys.stdout.write(u"{} already present in input graph attributes, will overwrite.\n".format(KpnegEnum.F.name))
-                graph[KpnegEnum.F.name] = results[KpnegEnum.F.name][-1] #initial F value
-                k = "_".join([KpnegEnum.F.name, bin_type])
-
-                if bf:
-                    AddAttributes.add_graph_attributes(graph, k, {tuple(tuple(x) for x in results[KpnegEnum.F.name][0]): results[KpnegEnum.F.name][1]})
-                else:
-                    AddAttributes.add_graph_attributes(graph, k, {tuple(results[KpnegEnum.F.name][0]): results[KpnegEnum.F.name][1]})
-
-            if KpnegEnum.dF.name in queried_stuff:
-                if KpnegEnum.dF.name in graph.attributes():
-                    sys.stdout.write(u"{} already present in input graph attributes, will overwrite.\n".format(KpnegEnum.dF.name))
-                graph[KpnegEnum.dF.name] = results[KpnegEnum.dF.name][-1]  #initial dF value
-                k = "_".join([KpnegEnum.dF.name, bin_type])
-
-                if bf:
-                    AddAttributes.add_graph_attributes(graph, k, {tuple(tuple(x) for x in results[KpnegEnum.dF.name][0]): results[KpnegEnum.dF.name][1]})
-                else:
-                    AddAttributes.add_graph_attributes(graph, k, {tuple(results[KpnegEnum.dF.name][0]):results[KpnegEnum.dF.name][1]})
-
-            if KpposEnum.dR.name in queried_stuff:
-                k = "_".join([KpposEnum.dR.name, bin_type])
-                if KpnegEnum.dR.name in graph.attributes():
-                    sys.stdout.write(u"{} already present in input graph attributes, will overwrite.\n".format(KpnegEnum.dR.name))
-                if bf:
-                    AddAttributes.add_graph_attributes(graph, k, {
-                        tuple(tuple(x) for x in results[KpposEnum.dR.name][0]): results[KpposEnum.dR.name][1]})
-                else:
-                    AddAttributes.add_graph_attributes(graph, k, {tuple(results[KpposEnum.dR.name][0]):results[KpposEnum.dR.name][1]})
-
-            if KpposEnum.mreach.name in queried_stuff:
-                if KpnegEnum.mreach.name in graph.attributes():
-                    sys.stdout.write(u"{} already present in input graph attributes, will overwrite.\n".format(KpnegEnum.F.name))
-                k = "_".join([KpposEnum.mreach.name, str(results[KpposEnum.mreach.name][-1]), bin_type])
-
-                if bf:
-                    AddAttributes.add_graph_attributes(graph, k, {
-                        tuple(tuple(x) for x in results[KpposEnum.mreach.name][0]): results[KpposEnum.mreach.name][1]})
-                else:
-                    AddAttributes.add_graph_attributes(graph, k, {
-                        tuple(results[KpposEnum.mreach.name][0]): results[KpposEnum.mreach.name][1]})
-            binary_prefix = "_".join(["pyntacle", graph["name"][0], "k", str(k_size),
-                                      report_type.name, self.date])
-            binary_path = os.path.join(self.args.directory, binary_prefix + ".graph")
-            PyntacleExporter.Binary(graph, binary_path)
 
         # generate and output plot
         if not self.args.no_plot and graph.vcount() < 1000:
@@ -523,7 +513,6 @@ class KeyPlayer():
                     # create a list of node colors
                     node_colors = [mreach_nodes_colour if x["name"] in results[metric][0] else other_nodes_colour for x in graph.vs()]
                     node_frames = [mreach_frames_colour if x["name"] in results[metric][0] else other_frame_colour for x in graph.vs()]
-
 
                     plot_graph.set_node_colors(colors=node_colors)
 
