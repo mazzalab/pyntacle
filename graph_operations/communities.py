@@ -47,7 +47,8 @@ class CommunityFinder:
         Returns the modules found using community-detection algorithms.
         :return list: a list storing a series of :py:class:`igraph.Graph` objects, each one representing the subgraphs of the original graphs
         """
-        return self.modules
+
+        return self.mods
 
     def fast_greedy(self, weights=None, n=None):
         r"""

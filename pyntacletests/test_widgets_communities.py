@@ -30,6 +30,7 @@ current_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pa
 from pyntacletests import getmd5, getmd5_bin
 from cmds.communities import Communities as communities_command
 
+
 class DummyObj:
     pass
 
@@ -132,7 +133,7 @@ class WidgetTestCommunities(unittest.TestCase):
         files = glob.glob(os.path.join(current_dir, 'pyntacletests/test_sets/tmp/*'))
         for f in files:
             os.remove(f)
-        
+
         
 if __name__ == '__main__':
     unittest.main()

@@ -50,7 +50,7 @@ class WidgetTestKeyplayer(unittest.TestCase):
         self.Args.input_file = os.path.join(current_dir, 'pyntacletests/test_sets/input/figure_8.txt')
         self.Args.largest_component = False
         self.Args.m_reach = 2
-        self.Args.max_distances = None
+        self.Args.max_distance = None
         self.Args.no_header = False
         self.Args.no_plot = True
         self.Args.plot_dim = None
@@ -71,7 +71,7 @@ class WidgetTestKeyplayer(unittest.TestCase):
             kp.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/pyntacle_report_*_KPinfo_*"))[0]
+        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Pyntacle_Report_*_KP_info_*"))[0]
         with open(fileout, 'r') as fin:
             next(fin)
             data = fin.read()
@@ -94,7 +94,7 @@ class WidgetTestKeyplayer(unittest.TestCase):
             kp.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/pyntacle_report_*_KP_greedy_*"))[0]
+        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Pyntacle_Report_*_KP_greedy_*"))[0]
         with open(fileout, 'r') as fin:
             next(fin)
             data = fin.read()
@@ -107,7 +107,7 @@ class WidgetTestKeyplayer(unittest.TestCase):
         print(e)
         self.assertEqual(o,e,
                          'Wrong checksum for KeyPlayer, kp-finder greedy case')
-        
+
     def test_kpfinder_bf(self):
         sys.stdout.write("Testing kp-finder bruteforce\n")
         self.Args.which = 'kp-finder'
@@ -119,7 +119,7 @@ class WidgetTestKeyplayer(unittest.TestCase):
             kp.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/pyntacle_report_*_KP_bruteforce_*"))[0]
+        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Pyntacle_Report_*_KP_bruteforce_*"))[0]
         with open(fileout, 'r') as fin:
             next(fin)
             data = fin.read()
