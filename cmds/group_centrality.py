@@ -145,8 +145,8 @@ class GroupCentrality():
                     sys.stderr.write("One or more of the specified nodes is not present in the largest graph component. Select a different set or remove this option. Quitting.\n")
                     sys.exit(1)
 
-        if '__implementation' in graph.attributes():
-            implementation = graph['__implementation']
+        if 'implementation' in graph.attributes():
+            implementation = graph['implementation']
         else:
             implementation = CmodeEnum.igraph
 
@@ -363,7 +363,6 @@ class GroupCentrality():
                         suffix = "greedy"
                         attr_key = tuple(sorted(tuple(results[key][0])))
 
-
                 else:
                     suffix = "info"
                     attr_key = tuple(sorted(tuple(results[key][0])))
@@ -372,12 +371,15 @@ class GroupCentrality():
                 attr_val = results[key][1]
 
                 if attr_name in graph.attributes():
-                    sys.stdout.write("Warning: attribute {} already present in graph, will overwrite...\n".format(attr_name))
-
-                    if attr_key in graph[attr_name]:
-                        sys.stdout.write("Warning: {} already present in the {} graph attribute, will overwrite...\n".format(attr_key, attr_val))
-
-                AddAttributes.add_graph_attributes(graph, attr_name, {attr_key: attr_val})
+                    if not isinstance(graph[attr_name], dict):
+                        sys.stdout.write("Warning: attribute {} does not point to a dictionary, will overwrite.\n".format(attr_name))
+                        AddAttributes.add_graph_attributes(graph, attr_name, {attr_key: attr_val})
+                    else:
+                        if attr_key in graph[attr_name]:
+                            sys.stdout.write("Warning: {} already present in the {} graph attribute, will overwrite...\n".format(attr_key, attr_val))
+                        graph[attr_name].update({attr_key: attr_val})
+                else:
+                    AddAttributes.add_graph_attributes(graph, attr_name, {attr_key: attr_val})
 
             binary_prefix = "_".join([os.path.splitext(os.path.basename(self.args.input_file))[0], self.args.which, self.date])
             binary_path = os.path.join(self.args.directory, binary_prefix + ".graph")

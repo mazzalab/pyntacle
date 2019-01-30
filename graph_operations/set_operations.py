@@ -55,12 +55,12 @@ def make_sets(graph1: Graph, graph2: Graph, operation: GraphOperationEnum):
     for v in list(set1v | set2v):
         # Looping through the Union set of vertices NAMES
         if v in intersect_v:
-            union_v.setdefault(v, []).append(graph1.vs[graph1.vs.find(v).index]["__parent"])
-            union_v.setdefault(v, []).append(graph2.vs[graph2.vs.find(v).index]["__parent"])
+            union_v.setdefault(v, []).append(graph1.vs[graph1.vs.find(v).index]["parent"])
+            union_v.setdefault(v, []).append(graph2.vs[graph2.vs.find(v).index]["parent"])
         elif v in exclusive1_v:
-            union_v.setdefault(v, []).append(graph1.vs[graph1.vs.find(v).index]["__parent"])
+            union_v.setdefault(v, []).append(graph1.vs[graph1.vs.find(v).index]["parent"])
         else:
-            union_v.setdefault(v, []).append(graph2.vs[graph2.vs.find(v).index]["__parent"])
+            union_v.setdefault(v, []).append(graph2.vs[graph2.vs.find(v).index]["parent"])
 
     union_v = OrderedDict(sorted(union_v.items()))
     set1e = set(tuple(sorted(l)) for l in graph1.es["adjacent_nodes"])
@@ -89,7 +89,7 @@ class GraphOperations(object):
     @staticmethod
     def union(graph1: Graph, graph2: Graph, new_graph_name: str) -> Graph:
         r"""
-        Perform the union among two graph as described by  `Wolfram <http://mathworld.wolfram.com/GraphUnion.html>`_
+        Perform the union among two graphs as described by  `Wolfram <http://mathworld.wolfram.com/GraphUnion.html>`_
 
         :param igraph.Graph graph1:
         :param igraph.Graph graph2:
@@ -103,7 +103,7 @@ class GraphOperations(object):
         merged_g.add_edges(union_e)
 
         AddAttributes.add_edge_names(graph=merged_g)
-        merged_g.vs["__parent"] = list(union_v.values())
+        merged_g.vs["parent"] = list(union_v.values())
         GUtil(graph=merged_g).graph_initializer(graph_name=new_graph_name)
 
         return merged_g
@@ -111,7 +111,7 @@ class GraphOperations(object):
     @staticmethod
     def intersection(graph1: Graph, graph2: Graph, new_graph_name: str) -> Graph:
         r"""
-        Perform the intersection among two graph as described by  `Wolfram <http://mathworld.wolfram.com/GraphIntersection.html>`_
+        Perform the intersection among two graphs as described by  `Wolfram <http://mathworld.wolfram.com/GraphIntersection.html>`_
 
         :param igraph.Graph graph1:
         :param igraph.Graph graph2:
@@ -137,7 +137,7 @@ class GraphOperations(object):
         intersection_g.add_edges(intersect_e)
 
         AddAttributes.add_edge_names(graph=intersection_g)
-        intersection_g.vs["__parent"] = list(intersect_v.values())
+        intersection_g.vs["parent"] = list(intersect_v.values())
         GUtil(graph=intersection_g).graph_initializer(graph_name=new_graph_name)
 
         return intersection_g
@@ -145,7 +145,7 @@ class GraphOperations(object):
     @staticmethod
     def difference(graph1: Graph, graph2: Graph, new_graph_name: str) -> Graph:
         r"""
-        Perform the intersection among two graph as described by  `Wolfram <http://mathworld.wolfram.com/GraphDifference.html>`_
+        Perform the intersection among two graphs as described by  `Wolfram <http://mathworld.wolfram.com/GraphDifference.html>`_
 
         :param igraph.Graph graph1:
         :param igraph.Graph graph2:
@@ -173,7 +173,7 @@ class GraphOperations(object):
         exclusive_g1.add_vertices(list(exclusive1_v.keys()))
         exclusive_g1.add_edges(exclusive1_e)
         AddAttributes.add_edge_names(graph=exclusive_g1)
-        exclusive_g1.vs["__parent"] = list(exclusive1_v.values())
+        exclusive_g1.vs["parent"] = list(exclusive1_v.values())
 
         # exclusive2_v = {x: union_v[x] for x in exclusive2_v}
         #
@@ -182,7 +182,7 @@ class GraphOperations(object):
         # exclusive_g2.add_vertices(list(exclusive2_v.keys()))
         # exclusive_g2.add_edges(exclusive2_e)
         # AddAttributes(graph=exclusive_g2).add_edge_names()
-        # exclusive_g2.vs["__parent"] = list(exclusive2_v.values())
+        # exclusive_g2.vs["parent"] = list(exclusive2_v.values())
 
         # print("\n\n### RESULTS OF THE DIFFERENCE PROCESS:")
         # print(exclusive_g1)

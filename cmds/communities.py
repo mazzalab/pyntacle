@@ -305,7 +305,7 @@ class Communities():
         output_basename = os.path.join(self.args.directory, self.args.output_file)
         # output generated networks
         for elem in final_mods:
-            output_path = ".".join(["_".join([output_basename, str(elem["__module_number"]), self.date]), out_form])
+            output_path = ".".join(["_".join([output_basename, str(elem["module_number"]), self.date]), out_form])
             if out_form == "adjm":
                 sys.stdout.write(u"Writing each community to an adjacency matrix...\n")
                 PyntacleExporter.AdjacencyMatrix(elem, output_path, sep=self.args.output_separator,
@@ -407,7 +407,7 @@ class Communities():
                     plotter.set_node_sizes([30] * comm.vcount())
 
                     comm_plot_path = os.path.join(plot_dir, ".".join(
-                        ["_".join([self.args.output_file, str(comm["__module_number"]), self.date]), self.args.plot_format]))
+                        ["_".join([self.args.output_file, str(comm["module_number"]), self.date]), self.args.plot_format]))
 
                     plotter.set_layouts(self.args.plot_layout)
                     plotter.plot_graph(path=comm_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,

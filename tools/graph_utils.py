@@ -115,37 +115,37 @@ class GraphUtils:
                     except ValueError:
                         raise UnsupportedGraphError(u"Any of the Graph 'name' attribute values contains illegal characters.")
 
-        if any(x not in self.graph.attributes() for x in ["__sif_interaction_name", "__implementation"]):
+        if any(x not in self.graph.attributes() for x in ["sif_interaction_name", "implementation"]):
             raise UnsupportedGraphError(u"One of the Pyntacle reserved graph attribute is missing, see goo.gl/MCsnd1 for more informations and initialize the `graph_initializer` method in `tools.graph_utils` To initialize your graph.")
 
         else:
-            if not isinstance(self.graph["__sif_interaction_name"], (str, type(None))):
-                raise TypeError("__sif_interaction_name must be either of type ''str' or None")
+            if not isinstance(self.graph["sif_interaction_name"], (str, type(None))):
+                raise TypeError("sif_interaction_name must be either of type ''str' or None")
 
-            if not isinstance(self.graph["__implementation"], CmodeEnum):
-                raise TypeError("__implementation must be filled with one of the CmodeEnums")
+            if not isinstance(self.graph["implementation"], CmodeEnum):
+                raise TypeError("implementation must be filled with one of the CmodeEnums")
 
-        if any(x not in self.graph.vs.attributes() for x in ["__parent"]):
+        if any(x not in self.graph.vs.attributes() for x in ["parent"]):
             raise UnsupportedGraphError(u"Pyntacle reserved vertex attribute missing, see goo.gl/MCsnd1 for more informations and initialize the `graph_initializer` method in `tools.graph_utils` To initialize your graph.")
         else:
-            if not isinstance(self.graph.vs["__parent"], (list, type(None))):
-                raise TypeError("`__parent` node attribute must be either a list or None")
+            if not isinstance(self.graph.vs["parent"], (list, type(None))):
+                raise TypeError("`parent` node attribute must be either a list or None")
 
             else:
                 # print("PARENT PROBLEM")
-                # print(self.graph.vs["__parent"])
+                # print(self.graph.vs["parent"])
                 # input()
-                if not any([isinstance(x, (str, list)) for x in self.graph.vs["__parent"]]):
+                if not any([isinstance(x, (str, list)) for x in self.graph.vs["parent"]]):
                     raise TypeError(u"One of the graph 'parent' attribute values is not a string")
 
-        if any(x not in self.graph.es.attributes() for x in ["__sif_interaction", "adjacent_nodes"]):
+        if any(x not in self.graph.es.attributes() for x in ["sif_interaction", "adjacent_nodes"]):
             raise UnsupportedGraphError(u"Pyntacle reserved edge attribute missing, see goo.gl/MCsnd1 for more informations")
 
         else:
-            if not any(isinstance(x, (str, type(None))) for x in self.graph.es["__sif_interaction"]):
-                raise TypeError("__sif_interaction must be either of type ''str' or None")
+            if not any(isinstance(x, (str, type(None))) for x in self.graph.es["sif_interaction"]):
+                raise TypeError("sif_interaction must be either of type ''str' or None")
             if not any(isinstance(x, tuple) for x in self.graph.es["adjacent_nodes"]):
-                raise TypeError("__adjacent_nodes must be a tuple of strings")
+                raise TypeError("adjacent_nodes must be a tuple of strings")
 
     def check_index_list(self, index_list):
         r"""
@@ -424,8 +424,8 @@ class GraphUtils:
                 self.graph.vs["name"] = node_names
 
         # add parent name to vertices
-        if "__parent" not in self.graph.vs().attributes():
-            self.logger.info(u"Adding reserved attribute '__parent' to the vertices")
+        if "parent" not in self.graph.vs().attributes():
+            self.logger.info(u"Adding reserved attribute 'parent' to the vertices")
             AddAttributes.add_parent_name(self.graph)
 
         if "adjacent_nodes" not in self.graph.es().attributes():
@@ -434,11 +434,11 @@ class GraphUtils:
             AddAttributes.add_edge_names(self.graph)
 
         # for sif file conversion purposes
-        if not "__sif_interaction_name" in self.graph.attributes():
-            self.graph["__sif_interaction_name"] = None
+        if not "sif_interaction_name" in self.graph.attributes():
+            self.graph["sif_interaction_name"] = None
 
-        if not "__sif_interaction" in self.graph.es().attributes():
-            self.graph.es()["__sif_interaction"] = None
+        if not "sif_interaction" in self.graph.es().attributes():
+            self.graph.es()["sif_interaction"] = None
 
         # Adding implementation info for functions that require it
         sp_implementation = CmodeEnum.igraph
@@ -458,4 +458,4 @@ class GraphUtils:
                     else:
                         sp_implementation = CmodeEnum.igraph
 
-        self.graph["__implementation"] = sp_implementation
+        self.graph["implementation"] = sp_implementation

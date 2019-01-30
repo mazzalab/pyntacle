@@ -106,10 +106,10 @@ class ExportAttributes():
                             out.write("\t" + str(e.attributes()[attr]))
                     out.write("\n")
                 else:
-                    if e.attributes()["__sif_interaction"] is None:
+                    if e.attributes()["sif_interaction"] is None:
                         out.write("(interacts with) ")
                     else:
-                        for interaction in e.attributes()["__sif_interaction"]:
+                        for interaction in e.attributes()["sif_interaction"]:
                             out.write(str(e.attributes()["adjacent_nodes"][0]) + ' ')
                             out.write('(' + interaction + ") ")
                             out.write(str(e.attributes()["adjacent_nodes"][1]))

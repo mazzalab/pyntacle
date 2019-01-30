@@ -147,7 +147,7 @@ class ImportAttributes():
 
         #check if file name is properly passed
 
-        reserved_attrs = ["name", "__parent"]
+        reserved_attrs = ["name", "parent"]
         check = check_file(graph=graph, file=file, sep=sep)
         infile = check[0]
         sep = check[1]

@@ -30,7 +30,7 @@ from tools.modules_utils import *
 
 class CommunityFinder:
     r"""
-    A series of algorithms, mostly borrowed from :py:class:`igraph` toi perform community finding on a network of interest.
+    A series of algorithms, mostly borrowed from :py:class:`igraph` to perform community finding on a network of interest.
     """
     logger = None
 
@@ -47,14 +47,16 @@ class CommunityFinder:
         Returns the modules found using community-detection algorithms.
         :return list: a list storing a series of :py:class:`igraph.Graph` objects, each one representing the subgraphs of the original graphs
         """
-        return self.modules
 
-    def fast_greedy(self, weights=None, n=None):
+        return self.mods
+
+    def fast_greedy(self, weights=None, n: int or None=None):
         r"""
-        Community findings based on the greedy optimization of modularity.
+        Community findings based on the greedy optimization of modularity by wrapping the
+        `community-fastgreedy <http://igraph.org/python/doc/igraph.Graph-class.html#community_fastgreedy>`_
+        method of igraph.
         This algorithm merges individual nodes into communities in a way that greedily maximizes the modularity score
-        of the graph. This algorithm is said to run almost in linear time on sparse graphs.
-        (http://igraph.org/python/doc/igraph.Graph-class.html#community_fastgreedy)
+        of the graph and runs almost in linear time on sparse graphs.
 
         :param weights: edge attribute name or a list containing edge weights
         :param n: if specified, it represents the desired number of modules to be computed

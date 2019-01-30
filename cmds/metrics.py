@@ -89,8 +89,8 @@ class Metrics:
         utils = gu(graph=graph)
 
         # Decide implementation
-        if '__implementation' in graph.attributes():
-            implementation = graph['__implementation']
+        if 'implementation' in graph.attributes():
+            implementation = graph['implementation']
         else:
             implementation = CmodeEnum.igraph
             

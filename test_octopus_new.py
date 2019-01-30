@@ -36,15 +36,33 @@ gg = pyimp.AdjacencyMatrix("/home/local/MENDEL/d.capocefalo/Desktop/Pyntacle_ben
 print(gg.summary())
 k = 2
 Octopus.add_GO_dR(gg, k=k)
-Octopus.add_GO_group_betweeness(gg, k=k)
-
-print(gg.attributes())
-print(gg["group_betweenness_greedy"])
+print(gg.summary())
+print (gg["dR_greedy"])
+k = 3
+Octopus.add_GO_dR(gg, k=k)
+print(gg.summary())
 print(gg["dR_greedy"])
 
-Octopus.add_group_closeness(graph=gg, nodes=['PS', 'LK'])
-print (gg.attributes())
-print(gg["group_closeness_minimum"])
+Octopus.add_group_degree(gg, nodes=["LK", "MJ"])
+print(gg.summary())
+print (gg["group_degree_info"])
+
+k=2
+Octopus.add_group_degree(gg, nodes=["LK", "MJ", "ciaone"])
+print(gg.summary())
+print (gg["group_degree_info"])
+
+# Octopus.add_GO_dR(gg, k=k)
+#
+# Octopus.add_GO_group_betweeness(gg, k=k)
+#
+# print(gg.attributes())
+# print(gg["group_betweenness_greedy"])
+# print(gg["dR_greedy"])
+#
+# Octopus.add_group_closeness(graph=gg, nodes=['PS', 'LK'])
+# print (gg.attributes())
+# print(gg["group_closeness_minimum"])
 
 # Octopus.add_BF_group_degree()
 # Octopus.add_BF_group_closeness()

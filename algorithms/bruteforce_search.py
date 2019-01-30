@@ -103,7 +103,6 @@ class BruteforceSearch:
 
             # Create chunks
             chunklen = math.ceil(len(allS) / ncores)
-            #todo controlla che non sia stato ottimizzato altrove
             chunks = [allS[i * chunklen:(i + 1) * chunklen] for i in range(ncores)]
 
             with ProcessPoolExecutor(max_workers=ncores) as executor:

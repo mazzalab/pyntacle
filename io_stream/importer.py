@@ -222,11 +222,11 @@ class PyntacleImporter:
 
         .. note:: We assume that the SIF does not contain any vertex attribute. To import vertex attributes, please use the :class:`~pyntacle.io_stream.import_attributes.ImportAttributes`
 
-        .. note:: The interaction type and (if present) the header associated to the interaction will be stored in the edge attribute ``__sif_interaction`` and ``__sif_interaction_name``, respectively.
+        .. note:: The interaction type and (if present) the header associated to the interaction will be stored in the edge attribute ``sif_interaction`` and ``sif_interaction_name``, respectively.
 
         :param str file: the path to the target SIF
         :param None,int sep: The field separator inside the network file. if :py:class:`None` (default) it will be guessed. Otherwise, you can place the string representing the column separator.
-        :param bool header: Whether the header is present or not (default is ``True``) If present, the name of the interaction (2nd column) will be stored in the graph private attrovute ``__sif_interaction__name``
+        :param bool header: Whether the header is present or not (default is ``True``) If present, the name of the interaction (2nd column) will be stored in the graph private attrovute ``sif_interaction__name``
 
         :return igraph.Graph: an iGraph.Graph object compliant with Pyntacle `Minimum Requirements <http://pyntacle.css-mendel.it/requirements.html>`_
         """
@@ -238,9 +238,9 @@ class PyntacleImporter:
         
             """:type: list[str]"""
             if header:
-                graph["__sif_interaction_name"] = f.readline().rstrip('\n').split(sep)[1]
+                graph["sif_interaction_name"] = f.readline().rstrip('\n').split(sep)[1]
             else:
-                graph["__sif_interaction_name"] = None
+                graph["sif_interaction_name"] = None
                 
             nodeslist = []
             edgeslist = OrderedDict()
@@ -295,7 +295,7 @@ class PyntacleImporter:
             nodeslist = list(set(nodeslist))
             graph.add_vertices(nodeslist)
             graph.add_edges(edgeslist.keys())
-            graph.es()["__sif_interaction"] = list(edgeslist.values())
+            graph.es()["sif_interaction"] = list(edgeslist.values())
 
             # initialize graph
             util = gu(graph=graph)
@@ -329,7 +329,7 @@ class PyntacleImporter:
         """
         graph = Graph()
         graph.vs()["name"] = None
-        graph.es()["__sif_interaction"] = None
+        graph.es()["sif_interaction"] = None
 
         # initialize empty graph
 

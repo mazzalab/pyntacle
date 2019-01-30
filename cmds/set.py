@@ -186,7 +186,7 @@ class Set:
                                                                            self.args.input_file_2))
 
             output_graph = GraphOperations.union(graph1, graph2, self.args.output_file)
-            if all(len(x) <= 2 for x in output_graph.vs()["__parent"]):
+            if all(len(x) <= 2 for x in output_graph.vs()["parent"]):
                 sys.stdout.write(
                     u"There were no common nodes when performing Graph union. Will return Two disjointed graphs.\n")
 
@@ -374,24 +374,24 @@ class Set:
                     parent_g1 = graph1["name"][0]
                     parent_g2 = graph2["name"][0]
 
-                    if parent_g1 in v["__parent"] and parent_g2 in v["__parent"]:
+                    if parent_g1 in v["parent"] and parent_g2 in v["parent"]:
                         intersection_node_color_list.append(node_intersection_colour)
                         intersection_frame_color_list.append(node_intersection_frame)
                         intersection_set.append(v["name"])
                         
-                    elif parent_g1 in v["__parent"] and not parent_g2 in v["__parent"]:
+                    elif parent_g1 in v["parent"] and not parent_g2 in v["parent"]:
                         intersection_node_color_list.append(graph_1_colour)
                         intersection_frame_color_list.append(graph_1_frame)
 
-                    elif parent_g2 in v["__parent"] and not parent_g1 in v["__parent"]:
+                    elif parent_g2 in v["parent"] and not parent_g1 in v["parent"]:
                         intersection_node_color_list.append(graph_2_colour)
                         intersection_frame_color_list.append(graph_2_frame)
 
 
                 output_graph_plotter.set_node_colors(colors=intersection_node_color_list)
                 output_graph_plotter.set_node_sizes(sizes=[
-                    node_intersection_size if parent_g1 in v["__parent"] and parent_g2 in v[
-                        "__parent"] else input_graph_node_size for v in output_graph.vs()])
+                    node_intersection_size if parent_g1 in v["parent"] and parent_g2 in v[
+                        "parent"] else input_graph_node_size for v in output_graph.vs()])
 
                 output_graph_plotter.set_node_labels(labels=output_graph.vs()["name"])
                 output_graph_plotter.set_layouts(self.args.plot_layout)

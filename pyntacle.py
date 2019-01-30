@@ -981,7 +981,7 @@ class App:
         parser.add_argument("--save-binary", action="store_true",
                             help="Save a binary file (with a .graph extension) in the output directory that "
                                  "contains an igraph.Graph object. This object will contain a vertex "
-                                 "attribute called __module_number to retrace the corresponding community "
+                                 "attribute called module_number to retrace the corresponding community "
                                  "to which the node was assigned.")
 
         parser.add_argument('-L', '--largest-component', action='store_true',

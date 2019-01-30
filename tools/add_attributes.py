@@ -41,10 +41,11 @@ class AddAttributes:
     @staticmethod
     def add_graph_attributes(graph: Graph, attr_name: str, attr: object):
         r"""
-        Add an attribute to a graph object
+        Add an attribute to a graph object. if ``attr`` is a :py:class:`dict`and the input :py:class:`~igraph.Graph`
+        already points to an existing dictionary, this is updated
 
         :param igraph.Graph graph: a :py:class:`igraph.Graph` object
-        :param str attr_name: The name of the attribute being imported
+        :param str attr_name: The name of the attribute being added
         :param object attr: Any object being added as attribute
         """
         if not isinstance(graph, Graph) is not Graph:
@@ -52,15 +53,11 @@ class AddAttributes:
 
         if not isinstance(attr_name, str):
             raise TypeError(u"Attribute name is not a string")
-        else:
-            if isinstance(attr, dict):
-                if attr_name in graph.attributes():
-                    graph[attr_name].update(attr)
-                else:
-                    graph[attr_name] = attr
 
-            else:
-                graph[attr_name] = attr
+        if attr_name in graph.attributes():
+            sys.stdout.write("graph attribute {} already present, will overwrite\n")
+
+        graph[attr_name] = attr
 
     @staticmethod
     def add_node_attributes(graph: Graph, attr_name: str, attr_list: list, nodes: list):
@@ -198,7 +195,7 @@ class AddAttributes:
     @staticmethod
     def add_parent_name(graph: Graph):
         r"""
-        Add the graph ``name`` attribute to each vertex, under the ``__parent``  reserved attribute.
+        Add the graph ``name`` attribute to each vertex, under the ``parent``  reserved attribute.
 
         :param igraph.Graph graph: a :py:class:`igraph.Graph` object
         """
@@ -210,4 +207,4 @@ class AddAttributes:
 
         #sys.stdout.write(u"adding reserved attribute '__parent' to the vertices")
 
-        graph.vs["__parent"] = graph["name"]
+        graph.vs["parent"] = graph["name"]

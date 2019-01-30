@@ -164,7 +164,7 @@ class PyntacleExporter:
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param str file: a valid path to a file. If the directory is not specified, the current  working directory will be used.
         :param str sep: a string that will be used to separate the fields within the SIF. Default is ``\t`` (tabular character)
-        :param bool header: if ``True``, it searches for the reserved graph attributes ``__sif_interaction_name`` and use it to write the header of the SIF.
+        :param bool header: if ``True``, it searches for the reserved graph attributes ``sif_interaction_name`` and use it to write the header of the SIF.
 
         :return None: None
 
@@ -178,11 +178,11 @@ class PyntacleExporter:
 
             if header:
 
-                if "__sif_interaction_name" not in graph.attributes() or graph["__sif_interaction_name"] is None:
+                if "sif_interaction_name" not in graph.attributes() or graph["sif_interaction_name"] is None:
                     head = "\t".join(["Node1", "Interaction", "Node2"]) + "\n"
 
                 else:
-                    head = "\t".join(["Node1", graph["__sif_interaction_name"], "Node2"]) + "\n"
+                    head = "\t".join(["Node1", graph["sif_interaction_name"], "Node2"]) + "\n"
 
                 outfile.write(head)
 
@@ -202,13 +202,13 @@ class PyntacleExporter:
                     if target not in nodes_done_list:
                         nodes_done_list.append(target)
 
-                    if edge["__sif_interaction"] is None:
+                    if edge["sif_interaction"] is None:
 
                         outfile.write(sep.join([graph.vs(source)["name"][0], "interacts_with",
                                                 graph.vs(target)["name"][0]]) + "\n")
 
                     else:
-                        for i in edge["__sif_interaction"]:
+                        for i in edge["sif_interaction"]:
                             outfile.write(sep.join([graph.vs(source)["name"][0], i,
                                                     graph.vs(target)["name"][0]]) + "\n")
 

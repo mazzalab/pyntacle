@@ -40,7 +40,7 @@ class ModuleUtils():
 
     def __init__(self, modules: list, graph: Graph, algorithm: str):
         r"""
-        Implements all the necessary step to check a graph object and add the reserved attribute "__module_number" to
+        Implements all the necessary step to check a graph object and add the reserved attribute "module_number" to
         each submodule in order to retrace it back. If a graph attribute with that name already exists, it will be
         overwritten
 
@@ -68,12 +68,12 @@ class ModuleUtils():
 
             if elem.vcount() > graph.vcount() or elem.ecount() > graph.ecount():
                 raise ValueError(u"Module {} does not come from the input Graph".format(i))
-            if "__module_number" in graph.attributes():
+            if "module_number" in graph.attributes():
 
                 self.logger.info(
-                    u"Attribute \"__module_number\" already exist in the module {}, will overwrite".format(str(i)))
+                    u"Attribute \"module_number\" already exist in the module {}, will overwrite".format(str(i)))
 
-            elem["__module_number"] = i  # this should traceroute the module back to its original number
+            elem["module_number"] = i  # this should traceroute the module back to its original number
 
         self.modules = modules
 
