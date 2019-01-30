@@ -79,10 +79,6 @@ class AddAttributes:
             sys.stdout.write(u"Converting string nodes to list of nodes")
             nodes = [nodes]
 
-        if attr_name.startswith('__'):
-            raise KeyError(
-                u"One of the attributes being added starts with __ (double underscore)."
-                "This notation is reserved to internal variables, please avoid using it.")
         
         assert len(attr_list) == len(nodes), u"in add_node_attributes, length of attributes list cannot be " \
                                              "different from length of list of nodes."
@@ -124,12 +120,6 @@ class AddAttributes:
 
         if not isinstance(attr_name, str):
             raise TypeError("Attribute name is not a string")
-        
-        # Checking if one or more attributes' names start with '__'. Avoids malicious injection.
-        if attr_name.startswith('__'):
-            raise KeyError(
-                u"One of the attributes in your attributes/weights file starts with `__`."
-                "This notation is reserved to internal variables, please avoid using it.")
         
         assert len(attr_list) == len(edges), u"in add_edge_attributes, length of attributes list cannot be " \
                                              "different from length of list of nodes."
