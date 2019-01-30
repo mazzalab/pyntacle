@@ -60,6 +60,7 @@ class WidgetTestMetrics(unittest.TestCase):
         self.Args.save_binary = False
         self.Args.v = None
         self.Args.suppress_cursor = True
+        self.Args.nodes = None
 
     def test_global(self):
         sys.stdout.write("Testing global metrics\n")
@@ -69,7 +70,7 @@ class WidgetTestMetrics(unittest.TestCase):
             mt.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/pyntacle_report_*_Global_*"))[0]
+        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Pyntacle_Report_*_Global_*"))[0]
         with open(fileout, 'r') as fin:
             next(fin)
             data = fin.read()
@@ -78,27 +79,27 @@ class WidgetTestMetrics(unittest.TestCase):
             data_exp = exp.read()
         o = set(re.findall(r"[-+]?\d*\.\d+|\d+", data))
         e = set(re.findall(r"[-+]?\d*\.\d+|\d+", data_exp))
-        
+
         self.assertEqual(o, e,
                          'Wrong checksum for Metrics, global case')
-        
+
         # CPU, GPU, igraph coherence check
         graph = GraphLoad(self.Args.input_file, "adjm", header=True, separator=self.Args.input_separator).graph_load()
-        
+
         implementation = CmodeEnum.igraph
         igraph_result = round(ShortestPath.average_global_shortest_path_length(graph, implementation), 5)
-        
+
         implementation = CmodeEnum.cpu
         cpu_result = ShortestPath.average_global_shortest_path_length(graph, implementation)
-        
+
         self.assertEqual(igraph_result, cpu_result, 'Discrepancy between igraph and cpu result, global case')
-        
+
         if cuda_avail:
             implementation = CmodeEnum.gpu
             gpu_result = ShortestPath.average_global_shortest_path_length(graph, implementation)
             self.assertEqual(igraph_result, gpu_result,
                              'Discrepancy between igraph and gpu result, global case')
-        
+
     def test_local(self):
         sys.stdout.write("Testing local metrics\n")
         self.Args.damping_factor = 0.85
@@ -111,7 +112,7 @@ class WidgetTestMetrics(unittest.TestCase):
             mt.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/pyntacle_report_*_Local_*"))[0]
+        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Pyntacle_Report_*_Local_*"))[0]
         with open(fileout, 'r') as fin:
             next(fin)
             data = fin.read()
