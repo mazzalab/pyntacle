@@ -194,11 +194,10 @@ class PyntacleReporter():
         """
 
         nodes = reportdict.get("nodes")
-
         if nodes is None:
             nodes = self.graph.vs["name"]
         else:
-            nodes = nodes.split(',')
+            # nodes = nodes.split(',')
             del reportdict["nodes"]
 
         self.report.append(["Results - Local Metrics for each Node in input"])

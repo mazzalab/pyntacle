@@ -76,7 +76,7 @@ class AddAttributes:
             raise TypeError(u"Attribute name is not a string")
         
         if isinstance(nodes, str):
-            sys.stdout.write(u"Converting string nodes to list of nodes")
+            sys.stdout.write(u"Converting string nodes to list of nodes\n")
             nodes = [nodes]
 
         
@@ -96,13 +96,13 @@ class AddAttributes:
                 select[0][attr_name] = a
 
             else:
-                sys.stdout.write(u"Node %s has multiple name hits, please check your attribute file" % n)
+                sys.stdout.write(u"Node %s has multiple name hits, please check your attribute file\n" % n)
                 raise ValueError(u"Multiple node hits")
         
         if err_count == count:
             raise WrongArgumentError(u"All the attributes pointed to non-existing nodes.")
         else:
-            sys.stdout.write(u"Node attribute {} successfully added!".format(attr_name))
+            sys.stdout.write(u"Node attribute {} successfully added!\n".format(attr_name))
 
     @staticmethod
     def add_edge_attributes(graph: Graph, attr_name: str, attr_list: list, edges: list):
@@ -131,7 +131,7 @@ class AddAttributes:
                 select = graph.es.select(adjacent_nodes=(e[1], e[0]))
             count += 1
             if len(select) == 0:
-                sys.stdout.write(u"Edge %s not found in graph" %str(e))
+                sys.stdout.write(u"Edge %s not found in graph\n" %str(e))
                 err_count += 1
             
             elif len(select) == 1:
@@ -165,7 +165,7 @@ class AddAttributes:
                 edge_names.append((graph.vs[e[0]]["name"], graph.vs[e[1]]["name"]))
             graph.es["adjacent_nodes"] = edge_names
         else:
-            sys.stdout.write(u"attribute 'adjacent_nodes' already exist")
+            sys.stdout.write(u"attribute 'adjacent_nodes' already exists\n")
 
     @staticmethod
     def add_graph_name(graph: Graph, name: str):

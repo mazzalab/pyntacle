@@ -8,7 +8,7 @@ from pyntacletests.test_widgets_metrics import WidgetTestMetrics
 from pyntacletests.test_widgets_communities import WidgetTestCommunities
 from pyntacletests.test_widgets_generator import WidgetTestGenerator
 from pyntacletests.test_widgets_keyplayer import WidgetTestKeyplayer
-
+from pyntacletests.test_widgets_groupcentrality import WidgetTestGroupcentrality
 
 def Suite():
     suite = unittest.TestSuite()
@@ -36,6 +36,9 @@ def Suite():
     suite.addTest(WidgetTestKeyplayer('test_kpinfo'))
     suite.addTest(WidgetTestKeyplayer('test_kpfinder_greedy'))
     suite.addTest(WidgetTestKeyplayer('test_kpfinder_bf'))
+    suite.addTest(WidgetTestGroupcentrality('test_grinfo'))
+    suite.addTest(WidgetTestGroupcentrality('test_grfinder_greedy'))
+    suite.addTest(WidgetTestGroupcentrality('test_grfinder_bf'))
     return suite
 
 if __name__ == '__main__':
