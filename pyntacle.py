@@ -1020,7 +1020,7 @@ class App:
                                                "Attribute File. Default is \"default\".")
         
         fastgreedy_subparser.add_argument("--clusters", metavar="",
-                                          help="Specify the number of modules around which the fastgreedy "
+                                          help="Specify the number of get_modules around which the fastgreedy "
                                                "algorithm will optimize the search. By default, this option "
                                                "is disabled. ")
 
@@ -1056,9 +1056,9 @@ class App:
                                                        " be present. See File Format Specifications on the website for more"
                                                        " details. Only the first attribute will be used.")
         community_walktrap_subparser.add_argument("--clusters",
-                                                  help="Specify the number of modules that will be ouput by"
+                                                  help="Specify the number of get_modules that will be ouput by"
                                                        " the module decomposition algorithm. If not"
-                                                       " specified, a maximized number of modules will be"
+                                                       " specified, a maximized number of get_modules will be"
                                                        " generated")
 
         community_walktrap_subparser.add_argument("--steps",

@@ -64,19 +64,19 @@ class WidgetTestCommunities(unittest.TestCase):
         self.Args.suppress_cursor = True
 
     def test_fastgreedy(self):
-        sys.stdout.write("Testing fast_greedy community finder\n")
+        sys.stdout.write("Testing fastgreedy community finder\n")
         self.Args.which = 'fastgreedy'
-        self.Args.output_file = 'fast_greedy'
+        self.Args.output_file = 'fastgreedy'
         comm = communities_command(self.Args)
         with self.assertRaises(SystemExit) as cm:
             comm.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        files_out = sorted(glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/fast_greedy*")))
-        expected_files = sorted(glob.glob(os.path.join(current_dir, 'pyntacletests/test_sets/output/communities/fast_greedy/module*')))
+        files_out = sorted(glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/fastgreedy*")))
+        expected_files = sorted(glob.glob(os.path.join(current_dir, 'pyntacletests/test_sets/output/communities/fastgreedy/module*')))
         
         for f, e in zip(files_out, expected_files):
-            self.assertEqual(getmd5(f), getmd5(e), 'Wrong checksum for communities, fast_greedy case')
+            self.assertEqual(getmd5(f), getmd5(e), 'Wrong checksum for communities, fastgreedy case')
 
     def test_infomap(self):
         sys.stdout.write("Testing infomap community finder\n")

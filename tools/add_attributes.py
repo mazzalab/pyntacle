@@ -191,7 +191,7 @@ class AddAttributes:
         """
 
         if not isinstance(graph, Graph) is not Graph:
-            raise TypeError(u"graph argument is not a igraph.Graph")
+            raise TypeError(u"graph argument is not a 'igraph.Graph'")
 
 
 

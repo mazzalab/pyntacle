@@ -1,4 +1,4 @@
-pyntacle.tools.modules\_utils module
+pyntacle.tools.get_modules\_utils module
 ====================================
 
 .. automodule:: pyntacle.tools.modules_utils

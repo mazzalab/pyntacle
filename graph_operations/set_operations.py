@@ -35,10 +35,7 @@ from tools.graph_utils import GraphUtils as GUtil
 
 def make_sets(graph1: Graph, graph2: Graph, operation: GraphOperationEnum):
     r"""
-    :param graph1:
-    :param graph2:
-    :param operation:
-    :return igraph.Graph:
+    Internal method to deal with the set operations and the handling of the attributes. 
     """
 
     GUtil(graph=graph1).check_graph()
@@ -49,7 +46,6 @@ def make_sets(graph1: Graph, graph2: Graph, operation: GraphOperationEnum):
 
     intersect_v = sorted(list(set1v & set2v))
     exclusive1_v = sorted(list(set1v - set2v))
-    # exclusive2_v = list(set2v - set1v)
     union_v = {}
 
     for v in list(set1v | set2v):
@@ -91,10 +87,10 @@ class GraphOperations(object):
         r"""
         Perform the union among two graphs as described by  `Wolfram <http://mathworld.wolfram.com/GraphUnion.html>`_
 
-        :param igraph.Graph graph1:
-        :param igraph.Graph graph2:
-        :param str new_graph_name:
-        :return igraph.Graph:
+        :param igraph.Graph graph1: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param igraph.Graph graph2: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param str new_graph_name: a string representing the new name that will be added to the graph ``name`` attribute
+        :return igraph.Graph: the resulting :class:`igraph.Graph` object. This network will contain both the first and second noddes and edges. The origin of each node it is determined by the vertex ``parent`` attribute.
         """
         union_v, union_e = make_sets(graph1, graph2, GraphOperationEnum.Union)
         merged_g = Graph()
@@ -113,10 +109,10 @@ class GraphOperations(object):
         r"""
         Perform the intersection among two graphs as described by  `Wolfram <http://mathworld.wolfram.com/GraphIntersection.html>`_
 
-        :param igraph.Graph graph1:
-        :param igraph.Graph graph2:
-        :param str new_graph_name:
-        :return igraph.Graph:
+        :param igraph.Graph graph1: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param igraph.Graph graph2: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param str new_graph_name: a string representing the new name that will be added to the graph ``name`` attribute
+        :return igraph.Graph: the resulting :class:`igraph.Graph` object. This network will contain only common nodes and edges of the two input graphs. The origin of each node it is determined by the vertex ``parent`` attribute.
         """
 
         intersect_v, intersect_e, union_v = make_sets(graph1, graph2, GraphOperationEnum.Intersection)
@@ -147,10 +143,10 @@ class GraphOperations(object):
         r"""
         Perform the intersection among two graphs as described by  `Wolfram <http://mathworld.wolfram.com/GraphDifference.html>`_
 
-        :param igraph.Graph graph1:
-        :param igraph.Graph graph2:
-        :param str new_graph_name:
-        :return igraph.Graph:
+        :param igraph.Graph graph1: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param igraph.Graph graph2: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param str new_graph_name: a string representing the new name that will be added to the graph ``name`` attribute
+        :return igraph.Graph: the resulting :class:`igraph.Graph` object. This network will contain only nodes and edges present in the ``graph1`` network but not in the ``graph2`` argument. The origin of each node it is determined by the vertex ``parent`` attribute.
         """
         exclusive1_v, exclusive1_e, union_v = make_sets(graph1, graph2, GraphOperationEnum.Difference)
 
@@ -160,12 +156,6 @@ class GraphOperations(object):
             if e[1] not in exclusive1_v:
                 exclusive1_v.append(e[1])
 
-        # for e in exclusive2_e:
-        #     if e[0] not in exclusive2_v:
-        #         exclusive2_v.append(e[0])
-        #     if e[1] not in exclusive2_v:
-        #         exclusive2_v.append(e[1])
-
         exclusive1_v = {x: union_v[x] for x in exclusive1_v}
         exclusive1_v = OrderedDict(sorted(exclusive1_v.items()))
         exclusive_g1 = Graph()
@@ -174,24 +164,6 @@ class GraphOperations(object):
         exclusive_g1.add_edges(exclusive1_e)
         AddAttributes.add_edge_names(graph=exclusive_g1)
         exclusive_g1.vs["parent"] = list(exclusive1_v.values())
-
-        # exclusive2_v = {x: union_v[x] for x in exclusive2_v}
-        #
-        # exclusive_g2 = Graph()
-        # exclusive_g2["name"] = [self.newname]
-        # exclusive_g2.add_vertices(list(exclusive2_v.keys()))
-        # exclusive_g2.add_edges(exclusive2_e)
-        # AddAttributes(graph=exclusive_g2).add_edge_names()
-        # exclusive_g2.vs["parent"] = list(exclusive2_v.values())
-
-        # print("\n\n### RESULTS OF THE DIFFERENCE PROCESS:")
-        # print(exclusive_g1)
-        # for v in exclusive_g1.vs():
-        #     print(v)
-        #
-        # print(exclusive_g2)
-        # for v in exclusive_g2.vs():
-        #     print(v)
 
         GUtil(graph=exclusive_g1).graph_initializer(graph_name=new_graph_name)
         return exclusive_g1

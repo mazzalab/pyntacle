@@ -23,13 +23,12 @@ __license__ = u"""
   You should have received a copy of the license along with this
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
-from config import *
 from warnings import simplefilter
 from graph_operations.communities import CommunityFinder
 from io_stream.import_attributes import ImportAttributes
 from io_stream.exporter import PyntacleExporter
 from cmds.cmds_utils.plotter import PlotGraph
-from tools.modules_utils import ModuleUtils
+from cmds.cmds_utils.communities_utils import ModuleUtils
 from tools.graph_utils import *
 from internal.graph_load import GraphLoad, separator_detect
 from exceptions.generic_error import Error
@@ -148,20 +147,20 @@ class Communities():
                     sys.exit(1)
 
             sys.stdout.write(u"Running community-finding using the fastgreedy algorithm...\n")
-            communities.fast_greedy(weights=weights, n=self.args.clusters)
-            mods = communities.modules
+            communities.fastgreedy(weights=weights, n=self.args.clusters)
+            mods = communities.get_modules
             algorithm = "fastgreedy"
 
         elif self.args.which == "infomap":
             sys.stdout.write(u"Running community-finding using the infomap algorithm...\n")
             communities.infomap()
-            mods = communities.modules
+            mods = communities.get_modules
             algorithm = "infomap"
 
         elif self.args.which == "leading-eigenvector":
             sys.stdout.write(u"Running community-finding using the leading-eigenvector algorithm...\n")
             communities.leading_eigenvector()
-            mods = communities.modules
+            mods = communities.get_modules
             algorithm = "leading-eigenvector"
 
         elif self.args.which == "community-walktrap":
@@ -198,7 +197,7 @@ class Communities():
                     self.args.steps))
             communities.community_walktrap(weights=weights, n=self.args.clusters,
                                            steps=self.args.steps)
-            mods = communities.modules
+            mods = communities.get_modules
             algorithm = "community-walktrap"
 
         else:
@@ -208,14 +207,14 @@ class Communities():
 
         mods_report = []
         if not mods:
-            sys.stderr.write(u"No modules found. Quitting.")
+            sys.stderr.write(u"No get_modules found. Quitting.")
             sys.exit(1)
         for i, elem in enumerate(mods):
             mods_report.append(
                 "\t".join([str(x) for x in [i, elem.vcount(), elem.ecount(), len(elem.components())]]) + "\n")
 
         sys.stdout.write(
-            u"Pyntacle - Community finding report:\nAlgorithm:{0}\nTotal number of modules found:"
+            u"Pyntacle - Community finding report:\nAlgorithm:{0}\nTotal number of get_modules found:"
             "\t{1}\nIndex\tNodes\tEdges \tComponents\n{2}".format(
                 algorithm, len(mods), "".join(mods_report)))
 
@@ -264,14 +263,14 @@ class Communities():
                                        min_components=self.args.min_components,
                                        max_components=self.args.max_components)
             if len(mod_utils.modules) > 0:
-                sys.stdout.write(u"Filtered out {0} modules. Keeping {1} communities. Writing induced subgraph of communities to file...\n".format(
+                sys.stdout.write(u"Filtered out {0} get_modules. Keeping {1} communities. Writing induced subgraph of communities to file...\n".format(
                     (init_mods - len(mod_utils.modules)), len(mod_utils.modules)))
             else:
                 sys.stderr.write(u"According to your filtering criteria, no community found was kept. Returning no output and Quitting.\n")
                 sys.exit(0)
 
         else:
-            sys.stdout.write(u"No modules to filter.\n")
+            sys.stdout.write(u"No get_modules to filter.\n")
 
         mod_utils.label_modules_in_graph()
         final_mods = mod_utils.get_modules()
@@ -299,7 +298,7 @@ class Communities():
             # insert random name generator
             self.args.output_file = "_".join(["pyntacle", graph["name"][0], algorithm])
             sys.stdout.write(
-                u"Output modules name not specified. Basename of the output modules will be {} (default).\n".format(
+                u"Output get_modules name not specified. Basename of the output get_modules will be {} (default).\n".format(
                     self.args.output_file))
 
         output_basename = os.path.join(self.args.directory, self.args.output_file)
@@ -357,7 +356,7 @@ class Communities():
                 sys.stdout.write(u"Plotting graph in {} format.\n".format(self.args.plot_format))
 
                 main_plot_path = os.path.join(plot_dir, ".".join(["_".join(
-                    [self.args.which, os.path.splitext(os.path.basename(self.args.input_file))[0], "modules",
+                    [self.args.which, os.path.splitext(os.path.basename(self.args.input_file))[0], "get_modules",
                      self.date]), self.args.plot_format]))
 
                 # initialize general graph Drawer
@@ -392,7 +391,7 @@ class Communities():
 
             if len(final_mods) > 20:
                 self.logging.warning(
-                    u"The number of modules found ({}) is very high. The plot of the input graph will have nuanced colors.".format(
+                    u"The number of get_modules found ({}) is very high. The plot of the input graph will have nuanced colors.".format(
                         len(final_mods)))
 
             sys.stdout.write("Drawing Each Module Separately.\n")

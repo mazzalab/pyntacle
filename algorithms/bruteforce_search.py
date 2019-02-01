@@ -106,8 +106,8 @@ class BruteforceSearch:
             chunks = [allS[i * chunklen:(i + 1) * chunklen] for i in range(ncores)]
 
             with ProcessPoolExecutor(max_workers=ncores) as executor:
-                future_dict = {executor.submit(BruteforceSearch.crunch_fragmentation_combinations, graph, chunk, metric,
-                                               max_distance,cmode): chunk for chunk in chunks}
+                future_dict = {executor.submit(BruteforceSearch.__crunch_fragmentation_combinations, graph, chunk, metric,
+                                               max_distance, cmode): chunk for chunk in chunks}
                 for future in as_completed(future_dict):
                     chunk = future_dict[future]
                     try:
@@ -121,10 +121,10 @@ class BruteforceSearch:
             sys.stdout.write(u"Brute-force search of the best kp-set of size {}\n".format(k))
 
             chunks = allS
-            partial_result = BruteforceSearch.crunch_fragmentation_combinations(graph=graph, node_names_list=chunks,
-                                                                                kpp_type=metric,
-                                                                                max_distance=max_distance,
-                                                                                cmode=cmode)
+            partial_result = BruteforceSearch.__crunch_fragmentation_combinations(graph=graph, node_names_list=chunks,
+                                                                                  kpp_type=metric,
+                                                                                  max_distance=max_distance,
+                                                                                  cmode=cmode)
             kpset_score_pairs = {**kpset_score_pairs, **partial_result}
 
         maxKpp = max(kpset_score_pairs.values())
@@ -142,17 +142,10 @@ class BruteforceSearch:
         return final, maxKpp
 
     @staticmethod
-    def crunch_fragmentation_combinations(graph: Graph, node_names_list: list, kpp_type: KpnegEnum,
-                                          max_distance: int, cmode: CmodeEnum) -> dict:
-        #TODO DOCUMENTA
+    def __crunch_fragmentation_combinations(graph: Graph, node_names_list: list, kpp_type: KpnegEnum,
+                                            max_distance: int, cmode: CmodeEnum) -> dict:
         """
-
-        :param graph:
-        :param node_names_list:
-        :param kpp_type:
-        :param max_distance:
-        :param cmode:
-        :return:
+        Internal method to deal with the processing of all the node set combinations
         """
         kppset_score_pairs_partial = {}
 

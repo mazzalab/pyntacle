@@ -45,7 +45,7 @@ class ModuleUtils():
         overwritten
 
         :param modules:a list of graphs already divided by the CommunityFinder class
-        :param graph: the input graph used  to find modules
+        :param graph: the input graph used  to find get_modules
         :param str algorithm: the name of the algorithm used to perform community detection
         """
 
@@ -124,7 +124,7 @@ class ModuleUtils():
 
     def get_modules(self) -> list:
         r"""
-        Returns the list of graph modules (a list of igraph.Graph objects)
+        Returns the list of graph get_modules (a list of igraph.Graph objects)
 
         :return list: a list of :py:class:`igraph.Graps`, each one storing a module of an initial network.
         """
@@ -132,7 +132,7 @@ class ModuleUtils():
 
     def add_modules_info(self):
         r"""
-        Adds all the information regarding the modules to each subgraph found using community detection algorithms.
+        Adds all the information regarding the get_modules to each subgraph found using community detection algorithms.
         These information are, specifically:
 
         #. a hidden attribute named "__module_algorithm" that store the type of algorithm that was used to identify the community
@@ -158,9 +158,9 @@ class ModuleUtils():
     def label_modules_in_graph(self):
         r"""
         Add to each node and edge an attribute that trace it to each module (a way to distinguish each components).
-        Specifically, two reserved attributed will be filled in each of the elemenf in `modules`:
+        Specifically, two reserved attributed will be filled in each of the elemenf in `get_modules`:
 
-        #. a ``__module`` name will be assigned to the reserved ``__module`` attribute for each  subgraph, node and edge the element in the modules was found into. specifying the name of the module (usually a string representing a positive integer)
+        #. a ``__module`` name will be assigned to the reserved ``__module`` attribute for each  subgraph, node and edge the element in the get_modules was found into. specifying the name of the module (usually a string representing a positive integer)
         #. a ``__algorithm`` attribute will be assigned to each subgraph, node, and edge attributes showing the name of the algorithm that was passed to the ModuleUtils() class specifying the name of the algorithm that was used to find communities.
         """
 

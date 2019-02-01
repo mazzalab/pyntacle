@@ -94,7 +94,7 @@ class EglUtils:
 
     def get_header(self) -> list:
         r"""
-        return the header object as a list of strings, if present or None otherwise
+        Returns the header object as a list of strings, if present or None otherwise
 
         :return:a list containing the header of the input edge list
         """
@@ -107,7 +107,7 @@ class EglUtils:
 
     def set_edgelist(self, edgl:list):
         r"""
-        replace the edgelist (list of list) with another one of choice. Must be a list of lists of string.
+        Replaces the edgelist (list of list) with another one of choice. Must be a list of lists of string.
 
         :param list edgl: a list of lists of strings. Each nested list must have length 2
         """
@@ -115,7 +115,8 @@ class EglUtils:
         self.edgl = edgl
 
     def set_header(self, header:list):
-        r"""replaces the header imported in the __init__ with another one (or add an header to the current input file).
+        r"""
+        Replaces the header imported in the __init__ with another one (or add an header to the current input file).
 
         :param str header: a list of strings of length 2. Must be a list of strings of length 2
         :raise: ValueError if ``header`` is not a list of length 2 and if at least one element is not a string
@@ -129,7 +130,8 @@ class EglUtils:
         self.header = header
 
     def set_sep(self, sep: str):
-        r"""replaces the separator imported in the __init__ with another one. The separator must be a string
+        r"""
+        Replaces the separator imported in the __init__ with another one. The separator must be a string
 
         :param str sep: a separator of choice. Must be a string.
         :raise: TypeError if ``sep`` is not a string
