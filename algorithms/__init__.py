@@ -22,12 +22,11 @@ This module is organized as follows:
 * :class:`~pyntacle.algorithms.global_topology`: metrics that are used to infer graph general properties (e.g. *average degree*)
 * :class:`~pyntacle.algorithms.sparseness`: a series of indices to assess whether the graph is dense (high edge-to-node ratio) or sparse (low end-to-node ratio)
 
-
 **Other centralities submodules:**
 
 * :class:`~pyntacle.algorithms.keyplayer`: the *fragmentation* and *reachability* metrics as originally proposed by Borgatti (https://doi.org/10.1007/s10588-006-7084-x)
 
-**Group Centrality Heuristics**
+**Group Centrality Heuristics:**
 
 * :class:`~pyntacle.algorithms.bruteforce_search`: find the best set of nodes of size *k* that maximize on of the proposed group centrality metrics by exploring all the spaced of possible combinations using multi thred processing
 * :class:`~pyntacle.algorithms.greedy_optimization`: find an optimal set of nodes of size *k* through a greedy approach

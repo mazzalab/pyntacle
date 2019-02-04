@@ -24,11 +24,10 @@ __license__ = u"""
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
 from warnings import simplefilter
-from graph_operations.communities import CommunityFinder
+from graph_operations.communities import CommunityFinder, ModuleUtils
 from io_stream.import_attributes import ImportAttributes
 from io_stream.exporter import PyntacleExporter
 from cmds.cmds_utils.plotter import PlotGraph
-from cmds.cmds_utils.communities_utils import ModuleUtils
 from tools.graph_utils import *
 from internal.graph_load import GraphLoad, separator_detect
 from exceptions.generic_error import Error

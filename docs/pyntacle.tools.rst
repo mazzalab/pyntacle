@@ -16,6 +16,5 @@ Submodules
    pyntacle.tools.edgelist_utils
    pyntacle.tools.enums
    pyntacle.tools.graph_utils
-   pyntacle.tools.modules_utils
    pyntacle.tools.octopus
 

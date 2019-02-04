@@ -11,6 +11,6 @@ Submodules
 
 .. toctree::
 
-   pyntacle.graph_operations.modules_finder
+   pyntacle.graph_operations.communities
    pyntacle.graph_operations.set_operations
 
