@@ -29,7 +29,6 @@ from config import *
 from igraph import Graph
 from collections import OrderedDict
 
-from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
 from exceptions.unsupported_graph_error import UnsupportedGraphError
 # pyntacle Libraries
 from tools.add_attributes import AddAttributes
@@ -234,7 +233,7 @@ class ImportAttributes():
         :param str mode: either ``standard`` or ``cytoscape``
 
         :raise UnsupportedGraphError: if the :py:class:`igraph.Graph` has multiple edges (occurs when the graph does not respect the minimum requirements for Pyntacle)
-        :raise IllegalArgumentNumberError: if the formatting of the edge attribute file does not meet the desired requirements
+        :raise ValueError: if the formatting of the edge attribute file does not meet the desired requirements
         """
 
         check = check_file(graph=graph, file=file, sep=sep)
@@ -329,7 +328,7 @@ class ImportAttributes():
                     line_count += 1
             
             if err_count == line_count:
-                raise IllegalArgumentNumberError(u"Edge attributes not added; all lines in the attribute file were skipped.")
+                raise ValueError(u"Edge attributes not added; all lines in the attribute file were skipped.")
 
             else:
                 for attr in attrs_dict:

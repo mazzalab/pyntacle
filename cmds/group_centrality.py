@@ -114,10 +114,7 @@ class GroupCentrality():
 
         if hasattr(self.args, 'nodes'):
 
-            try:
-                utils.nodes_in_graph(self.args.nodes)
-
-            except:
+            if not utils.nodes_in_graph(self.args.nodes):
                 sys.stderr.write("One or more of the specified nodes is not present in the graph. Please check your spelling and the presence of empty spaces in between node names. Quitting.\n")
                 sys.exit(1)
 
@@ -138,10 +135,7 @@ class GroupCentrality():
             #check that the nodes are in the largest component
             if self.args.nodes is not None:
 
-                try:
-                    utils.nodes_in_graph(self.args.nodes)
-
-                except:
+                if not utils.nodes_in_graph(self.args.nodes):
                     sys.stderr.write("One or more of the specified nodes is not present in the largest graph component. Select a different set or remove this option. Quitting.\n")
                     sys.exit(1)
 

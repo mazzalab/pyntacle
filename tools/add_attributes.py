@@ -33,21 +33,23 @@ from exceptions.wrong_argument_error import WrongArgumentError
 class AddAttributes:
     r"""
     Add specific and generic properties to any of the py:class:`igraph.Graph` object layers (graph, vertices and edges)
-
-    :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
-
+    using the canonical igraph notation for attributes (a :py:class:`dict` structure, in which the attribute name is the key``
+    and any object associated to it is its ``value``.
     """
 
     @staticmethod
     def add_graph_attributes(graph: Graph, attr_name: str, attr: object):
         r"""
-        Add an attribute to a graph object. if ``attr`` is a :py:class:`dict`and the input :py:class:`~igraph.Graph`
-        already points to an existing dictionary, this is updated
+        Add an attribute to a :py:class:`~igraph.Graph` object at the graph level.
 
-        :param igraph.Graph graph: a :py:class:`igraph.Graph` object
+        .. warning:: if the graph attribute name (``attr_name``) is already initialized, it will be overwritten by this method.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param str attr_name: The name of the attribute being added
         :param object attr: Any object being added as attribute
+        :raise TypeError: if ``graph`` is not a :py:class:`~igraph.Graph` object or if ``attr_name`` is not a string
         """
+
         if not isinstance(graph, Graph) is not Graph:
             raise TypeError(u"graph argument is not a igraph.Graph")
 
@@ -62,12 +64,18 @@ class AddAttributes:
     @staticmethod
     def add_node_attributes(graph: Graph, attr_name: str, attr_list: list, nodes: list):
         r"""
-        This method takes an header file and, optionally, a separator, and add them to a graph imprted in __init
+        Add attributes at the vertex level of a :py:class:`~igraph.Graph` object. These attributes must be stored in a
+        :py:class:`list` whose elements must be sorted by ``nodes`` (a list of string storing the vertex ``name``
+        attribute).
 
-        :param igraph.Graph graph: a :py:class:`igraph.Graph` object
-        :param attr_list: the object being added as attribute
-        :param attr_name: string. The name of the attribute being imported
-        :param nodes: list. Nodes to which attributes will be applied.
+        .. warning:: if the vertex attribute name (``attr_name``) is already initialized, it will be overwritten by this method.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object.
+        :param str attr_name: The name of the attribute that will be added to the :py:class:`~igraph.Graph`
+        :param list attr_list: alist of object, sorted by the ``nodes`` parameter. Each object will be adced singularly to the corresponding node
+        :param list nodes: the vertex ``name`` attribute corresponding to the vertices to which attributes will be added..
+        :raise TypeError:
+        :raise WrongArgumentError:
         """
         if not isinstance(graph, Graph) is not Graph:
             raise TypeError(u"graph argument is not a igraph.Graph")
@@ -107,12 +115,19 @@ class AddAttributes:
     @staticmethod
     def add_edge_attributes(graph: Graph, attr_name: str, attr_list: list, edges: list):
         r"""
-        Add edge attributes to the target a :py:class:`igraph.Graph` object under the attribute name specified in ``attr_name``
+        Add edge attributes to the input :py:class:`igraph.Graph` object under the attribute name specified in ``attr_name``.
+        The attributes must be stored in a list, passed to ``attr_list`` and sorted according to the target edge list,
+        specified in ``edges``.
 
-        :param igraph.Graph graph: a :py:class:`igraph.Graph` object
-        :param attr_name: string. The name of the attribute being imported
-        :param attr_list: the object being added as attribute
-        :param edges: list. edges to which attributes will be applied.
+        .. warning:: if the vertex attribute name (``attr_name``) is already initialized, it will be overwritten by this method.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param str attr_name: string. The name of the attribute being added to the edges of the Graph.
+        :param list attr_list: a list, sorted by vertex index, storing the values that will be added to each target edge.
+        :param list edges: edges to which attributes will be applied.
+        :raise TypeError: if ``graph`` is not a :py:class:`~igraph.Graph`
+        :raise ValueError: if one of the edges IDs points to more than one edge (edge names must be univocal)
+        :raise WrongArgumentError: if all the ``edges`` does not point to existing ones
         """
 
         if not isinstance(graph, Graph) is not Graph:
@@ -146,23 +161,30 @@ class AddAttributes:
     @staticmethod
     def add_edge_names(graph: Graph, readd: bool=False):
         r"""
-        Add adjacent edge as attribute stored in a tuple to each edge
+        Initialize (or rewrite, according to the ``readd`` flag) the edge attribute ``adjacent_nodes`` that allows to
+        identify an edge by the vertices it is linking.
 
-        :param igraph.Graph graph: a :py:class:`igraph.Graph` object
-        :param bool: a :py:class:`bool` that specifies whether the edge names should be re-added or not
+        This attribute points for each edge to a tuple containing the two vertices (their graph ``name`` attributes),
+        sorted alphanumerically.
+
+        As Pyntacle does not allow multigraphs, this attribute is used to identify an edge when performing queries on edges.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param bool readd: a :py:class:`bool` that specifies whether the edge names should be re-added to the input graph or not
+        :raise TypeError: if ``graph`` is not a :py:class:`~igraph.Graph`
         """
         if not isinstance(graph, Graph) is not Graph:
             raise TypeError(u"graph argument is not a igraph.Graph")
 
         if not isinstance(readd, bool):
-            raise TypeError(u"object is not a igraph.Graph")
+            raise TypeError(u"`readd` must be a boolean {} found".format(type(readd).__name__))
 
         if readd is True or "adjacent_nodes" not in graph.es.attributes():
             # sys.stdout.write("Adding attribute 'adjacent_nodes' to each edge (will be stored as a tuple).\n")
             edge_names = []
             for e in graph.get_edgelist():
                 # print("{0}, {1}".format(self.graph.vs[e[0]]["name"], self.graph.vs[e[1]]["name"]))
-                edge_names.append((graph.vs[e[0]]["name"], graph.vs[e[1]]["name"]))
+                edge_names.append(tuple(sorted(tuple((graph.vs[e[0]]["name"], graph.vs[e[1]]["name"])))))
             graph.es["adjacent_nodes"] = edge_names
         else:
             sys.stdout.write(u"attribute 'adjacent_nodes' already exists\n")
@@ -170,10 +192,12 @@ class AddAttributes:
     @staticmethod
     def add_graph_name(graph: Graph, name: str):
         r"""
-        Initialize or replace the graph ``name`` attribute with the value stored in the ``namestring`` parameter.
+        Initialize or replace the graph ``name`` Pyntacloe reserved attribute with the value stored in the ``name``
+        parameter. This attribute is a :py:class:`list` that stores the name (or names) of the graph.
 
-        :param igraph.Graph graph: a :py:class:`igraph.Graph` object
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param str name: a string representing the name of the graph to be added.
+        :raise TypeError: if ``graph`` is not a :py:class:`~igraph.Graph`
         """
         if not isinstance(graph, Graph) is not Graph:
             raise TypeError(u"graph argument is not a igraph.Graph")
@@ -185,9 +209,12 @@ class AddAttributes:
     @staticmethod
     def add_parent_name(graph: Graph):
         r"""
-        Add the graph ``name`` attribute to each vertex, under the ``parent``  reserved attribute.
+        Add the graph ``name`` attribute to each vertex, under the ``parent`` reserved attribute. This attribute is a
+        :py:class:`list` that is updated when performing set operations by means of the :class:`~pyntacle.graph_operations.set_operations.GraphOperations`
+        module, and it is used to keep track of the graph of origin of each vertex.
 
-        :param igraph.Graph graph: a :py:class:`igraph.Graph` object
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :raise TypeError: if ``graph`` is not a :py:class:`~igraph.Graph`
         """
 
         if not isinstance(graph, Graph) is not Graph:

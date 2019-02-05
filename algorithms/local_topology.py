@@ -441,14 +441,13 @@ class LocalTopology:
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param None,str,list nodes: The input nodes on which to compute the selected index. When :py:class:`None`, it computes the degree for all nodes in the graph. Otherwise, a single node ``name`` or a list of node ``name``s can be passed to compute degree only for the subset of nodes
-        :param bool scaled: a boolean value to scale the eigenvector centrality using the reciprocal of the eigenvector (1/eigenvector). ``False` by default.
-
+        :param bool scaled: a boolean value to scale the eigenvector centrality using the reciprocal of the eigenvector :math:`(frac{1}{eigenvector})`. Default is ``False`.
         :return list: a list of floats, the length being the number of input nodes. Each float represents the eigenvector of the input node. The order of the node list in input is preserved if a subset of nodes is provided.
-
         :raise TypeError: when ``nodes`` is a list of strings matching the vertex ``name`` attribute
         :raise KeyError: when any of the node ``name`` attribute passed to the function is not present in the input graph
         :raise ValueError: if ``scaled`` is not a :py:class:`bool`
         """
+
         if not isinstance(scaled, bool):
             raise ValueError("'scaled' must be a boolean value (True or False)")
         elif nodes is None:

@@ -98,10 +98,7 @@ class Metrics:
 
             self.args.nodes = self.args.nodes.split(",")
 
-            try:
-                utils.nodes_in_graph(self.args.nodes)
-
-            except:
+            if not utils.nodes_in_graph(self.args.nodes):
                 sys.stderr.write(
                     "One or more of the specified nodes is not present in the graph. Please check your spelling and the presence of empty spaces in between node names. Quitting.\n")
                 sys.exit(1)
@@ -121,10 +118,7 @@ class Metrics:
                 sys.exit(1)
 
             if self.args.nodes is not None:
-                try:
-                    utils.nodes_in_graph(self.args.nodes)
-
-                except:
+                if not utils.nodes_in_graph(self.args.nodes):
                     sys.stderr.write(
                         "One or more of the specified nodes is not present in the largest graph component. Select a different set or remove this option. Quitting.\n")
                     sys.exit(1)
@@ -168,10 +162,7 @@ class Metrics:
             if self.args.nodes is not None:
                 sys.stdout.write(u"Computing local metrics for nodes ({})\n".format(', '.join(self.args.nodes)))
 
-                try:
-                    utils.nodes_in_graph(self.args.nodes)  # to check everything's in order
-
-                except MissingAttributeError:
+                if not utils.nodes_in_graph(self.args.nodes): # to check everything's in order
                     sys.stderr.write(
                         u"One of the nodes you specified is not in the input graph, check your node list and its formatting.Quitting.\n")
                     sys.exit(1)
@@ -348,7 +339,7 @@ class Metrics:
 
                 # this will be useful when producing the two global topology plots, one for the global graph and the other one fo all nodes
                 nodes_list = [x.replace(" ", "") for x in nodes_list]
-                index_list = utils.get_node_indices(node_names=nodes_list)
+                index_list = utils.get_node_indices(nodes=nodes_list)
 
                 # delete vertices
                 graph_nonodes = graph.copy()

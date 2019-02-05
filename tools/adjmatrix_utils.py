@@ -36,18 +36,18 @@ import sys
 
 
 class AdjmUtils:
-    r"""
-    Utilities for common adjacency matrices file checking and conversion to Pyntacle-ready Adjacencu matrices
-    """
+
     logger = None
 
     def __init__(self, file: str, header: bool, sep="\t"):
         r"""
-        Initialize the Adjacency Matrix Utils class by giving the parser all the necessary information.
+        A series of utilities to check if a given adjacency matrix file is compliant to the Pyntacle `adjacency matrix file format <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html#adjm>`_
 
-        :param str file: a valid PATH to the input adjacency matrix
-        :param bool header: a boolean specifying whether the adjacency matrix contains an header or not on both rows and columns
-        :param str sep: a string specifying the delimiter amon adjacency matrix fields. Default it "\t" (tab separated)
+        :param str file: a valid path to the input adjacency matrix
+        :param bool header: a boolean specifying whether the adjacency matrix contains an header or not (**note** the header must be present on both rows and columns)
+        :param str sep: a string specifying the field separator among adjacency matrix cells. Default it ``\t`` (a tab-separated file)
+        :raise FileNotFoundError: if the adjacency matrix path is incorrect
+        :raise TypeError: if ``sep`` is not a string.
         """
 
         self.logger = log
@@ -65,15 +65,17 @@ class AdjmUtils:
 
         self.header = header  # boolean to check if header is present
 
-        self.adjm=None
+        self.adjm = None
 
     def is_squared(self) -> bool:
         r"""
-        Utility to check if an adjaceny matrix is squared or not by checking if the number of rows and columns (must be equal)
+        Checks whether the adjacency matrix is an :math:`n x n` matrix.
 
         :return bool: ``True`` if the matrix is squared, ``False`` otherwise
         """
+
         self.logger.info(u"Checking if adjacency matrix is squared")
+
         with open(self.adjfile, "r") as file:
             firstline = file.readline()
             nrow = len(firstline.rstrip().split(self.sep))
@@ -110,13 +112,13 @@ class AdjmUtils:
         else:
             return self.adjm
 
-    def get_adjm(self, file: str, header: bool, sep="\t"):
+    def set_adjm(self, file: str, header: bool, sep="\t"):
         r"""
-        Replace the current adjacency Matrix with another one
+        Replace the adjacency matrix with another one, along with the information necessary to understand the new adjacency matrix
 
-        :param str file: valid path to the newl added input adjacency matrix
-        :param bool header: Boolean to specify whether the header is present or not
-        :param str sep: cell separator. Default is "\t"
+        :param str file: valid path to the new input adjacency matrix
+        :param bool header: whether the header is present or not
+        :param str sep: cell separator. Default is ``\t``
         """
 
         self.adjfile = file
@@ -142,10 +144,10 @@ class AdjmUtils:
         return outpath
 
     def is_weighted(self) -> bool:
-        """
-        uFunction that returns a boolean telling whether the adjacency matrix contains weights (values different from 1s and 0s)
+        r"""
+        Checks whether the adjacency matrix is weighted or not (contains other values rather than 0s and 1s)
 
-        :return  bool: ``True`` if the graph is weighted ``False`` otherwise
+        :return  bool: ``True`` if the graph is weighted,``False`` otherwise
         """
         self.__store_adjm()
         self.logger.info("checking if the matrix is weighted")
@@ -161,12 +163,11 @@ class AdjmUtils:
 
     def remove_weigths(self):
         r"""
-        Convert matrix to unweighted by setting every value different from 1 to 1 and write it to a new file. Zeroes
-        will be preserved. Will create a file in the same directory  where the input adjacency matrix is stored
-        with the "_unweighted.adjm" extension
+        Replaces any value different from ``0`` and ``1`` (removing weights from an ajacency matrix) hence making the matrix binary.
+        Writes the mirrored binary adjacency matrix to a file in the same directory with the  ``_unweighted.adjm``
+        suffix.
 
-        :return str outpath: a path to a valid file. Will be in the same directory of the input adjacencuy matrix, with
-        the "unweighted" extension.
+        :return str: the path to the unweighted adjacency matrix. This file will be stored in the same directory of the input adjacencuy matrix, with the ``unweighted.adjm`` suffix.
         """
 
         self.__store_adjm()  # store adjacency matrix into a list
@@ -203,11 +204,12 @@ class AdjmUtils:
 
     def make_undirect(self) -> str:
         r"""
-        Convert an direct Adjacency Matrix to an undirect one (so make it symmetric) and store it into a new file with
-        the *"_undirect.adjm"* extension. If the matrix is weighted, we will take the maximum value in each cell and
-        assign it to the corresponding one.
+        Makes a direct adjacency matrix to undirect, hence making the original adjacency matrix `symmetric <https://en.wikipedia.org/wiki/Symmetric_matrix>`_.
+        Writes the newly created adjacency matrix to a file with the ``_undirect.adjm`` suffix.
 
-        :return str outpath: a valid path where the new (undirected) adjacency matrix will be stored with the "_unweighted.adjm extension"
+        .. note::If the matrix is weighted, we will take the maximum value in each cell and assign it to the corresponding one.
+
+        :return str: a valid path where the new (undirected) adjacency matrix will be stored with the ``_unweighted.adjm`` extension
         """
 
         self.__store_adjm()

@@ -84,7 +84,7 @@ class ShortestPath:
                     sps = ShortestPath.shortest_path_length_cpu(adjmat=adjmat)
                 else:
                     sps = ShortestPath.shortest_path_length_cpu(adjmat=adjmat)
-                    nodes = gUtil(graph=graph).get_node_indices(node_names=nodes)
+                    nodes = gUtil(graph=graph).get_node_indices(nodes=nodes)
                     sps = sps[nodes, :]
                 return sps
 
@@ -142,7 +142,7 @@ class ShortestPath:
                 count_all = ShortestPath.shortest_path_count_cpu(adj_mat)
 
                 if nodes:
-                    nodes_idx = gUtil(graph=graph).get_node_indices(node_names=nodes)
+                    nodes_idx = gUtil(graph=graph).get_node_indices(nodes=nodes)
                     count_all = count_all[nodes_idx, :]
 
                 return count_all

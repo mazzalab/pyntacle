@@ -29,7 +29,6 @@ from warnings import simplefilter
 
 from exceptions.generic_error import Error
 from exceptions.illegal_graph_size_error import IllegalGraphSizeError
-from exceptions.illegal_argument_number_error import IllegalArgumentNumberError
 from io_stream.generator import PyntacleGenerator
 from io_stream.exporter import PyntacleExporter
 from cmds.cmds_utils.plotter import *
@@ -220,7 +219,7 @@ class Generate:
                 graph = PyntacleGenerator.SmallWorld(
                     [self.args.lattice, self.args.lattice_size, self.args.nei, self.args.probability], name="SmallWorld", seed=self.args.seed)
 
-            except(TypeError, ValueError, IllegalArgumentNumberError):
+            except(TypeError, ValueError):
                 sys.stderr.write(
                     u"The parameters you chose were invalid. Please check your command line. Quitting.\n")
 

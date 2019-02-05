@@ -220,7 +220,7 @@ class KeyPlayer:
                 if max_distance < 1:
                     raise ValueError(u"'max_distance' must be an integer value greater than one")
         else:
-            index_list = gu(graph=graph).get_node_indices(node_names=nodes)
+            index_list = gu(graph=graph).get_node_indices(nodes=nodes)
 
             if cmode == CmodeEnum.igraph:
                 shortest_path_lengths = sp.shortest_path_length_igraph(graph, nodes=nodes)
@@ -283,7 +283,7 @@ class KeyPlayer:
                 elif max_distance < 1:
                     raise ValueError(u"'max_distance' must be an integer greater than one")
         else:
-            index_list = gu(graph=graph).get_node_indices(node_names=nodes)
+            index_list = gu(graph=graph).get_node_indices(nodes=nodes)
 
             if cmode == CmodeEnum.igraph:
                 shortest_path_lengths = sp.shortest_path_length_igraph(graph=graph, nodes=nodes)

@@ -120,7 +120,6 @@ class PyntacleConverter:
     @input_file_checker
     @separator_sniffer
     def sifToEdgelist(file: str, sep=None, header: bool=False, output_file: str=None, output_sep: str="\t"):
-
         r"""
         Converts a Simple Interaction Format file (*SIF*) to an undirected edge list.
 
@@ -132,12 +131,13 @@ class PyntacleConverter:
         | A          | Interaction  |    B           |
         +------------+--------------+----------------+
 
-
-
         We refer to the `Pyntacle File Formats Guide <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html>`_
         for more information on how these network files are structured.
 
         For more info on the SIF file format specification, we refer the user to the `official Cytoscape documentation <http://manual.cytoscape.org/en/stable/Supported_Network_File_Formats.html>`_.
+
+
+        .. note :: The output file extension will be ``.egl``
 
         .. warning:: If a header is present, the cells corresponding to columns 1 and 3 will be rewritten.
 
@@ -145,8 +145,6 @@ class PyntacleConverter:
         :param str, None sep: A string that specifies the file separator of both input and output files. If py:class:'None' (default), we will attempt to guess it from the first line of the file.
         :param bool header: Whether the input file contains a header line to the output file. This header will be reported intgo the output file  Default if `'False`` (input file contains no header).
         :param str, None output_file: The path to the output file, with no extension. If :py:class:`None`, the output file will be in the current directory and will have the same basename of the input file.
-        .. note :: The output file extension will be ``.egl``
-
         :param str output_sep: The output separator of choice. By default, we assume a tabular character (*\\t*) is the one that is best suited for edge lists
 
         :return str: the path to the output file

@@ -101,10 +101,7 @@ class KeyPlayer():
         if hasattr(self.args, 'nodes'):
             self.args.nodes = self.args.nodes.split(",")
 
-            try:
-                utils.nodes_in_graph(self.args.nodes)
-
-            except:
+            if not utils.nodes_in_graph(self.args.nodes):
                 sys.stderr.write(
                     "One or more of the specified nodes is not present in the graph. Please check your spelling and the presence of empty spaces in between node names. Quitting.\n")
                 sys.exit(1)
@@ -124,10 +121,7 @@ class KeyPlayer():
                 sys.exit(1)
 
             if hasattr(self.args, 'nodes'):
-                try:
-                    utils.nodes_in_graph(self.args.nodes)
-
-                except:
+                if not utils.nodes_in_graph(self.args.nodes):
                     sys.stderr.write(
                         "One or more of the specified nodes is not present in the largest graph component. Select a different set or remove this option. Quitting.\n")
                     sys.exit(1)

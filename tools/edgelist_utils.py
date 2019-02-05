@@ -35,19 +35,21 @@ import pandas as pd
 from exceptions.unproperly_formatted_file_error import UnproperlyFormattedFileError
 
 class EglUtils:
-    r"""
-    A series of utilities to perform several checks and file parsing operations on edge list files
-    """
 
     logger = None
 
     def __init__(self, file: str, header: bool, sep="\t"):
         u"""
-        Initialize the EdgeList Utils object
+        This class contains a series of tools to assess the integrity of an edge list file and its compatibility to
+        Pyntacle `accepted edge list formats <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html#egl>`_.
+        Finally, it contains methods to make an edge list compliant to these standards.
 
-        :param str file: a file PATH to the edgelist file
-        :param bool header: specify whether the edgelist has an header or not
-        :param str sep: a string specified the separator between Edgelist cells. Default is "\t"
+        :param str file: a valid path pointing to the edge list file
+        :param bool header: specify if the edge list contains an header on the first line
+        :param str sep: the separator between cells. Defaults to ``\t``
+        :raise FileNotFoundError: if the path to the edge list is invalid
+        :raise TypeError: if ``header`` or ``sep`` are not strings
+        :raise UnproperlyFormattedFileError: if the edge list file contains more than 2 columns
         """
         self.logger = log
         if not isinstance(header, bool):
@@ -62,18 +64,18 @@ class EglUtils:
             raise FileNotFoundError(u"Input file at path {} does not exist".format(file))
 
         else: #read the edgelist and store it into a list of lists using the egl_to_list function
-
             self.edglfile = file
             if header:
                 edgl = pd.read_csv(self.edglfile, dtype = str, sep = self.sep, header = 0)
 
                 with open(file, "r") as hh:
-                    self.header = hh.readline().rstrip().split(self.sep)  # store the header and strip all trailing characters
+                    # store the header and strip all trailing characters
+                    self.header = hh.readline().rstrip().split(self.sep)
             else:
                 edgl = pd.read_csv(self.edglfile, dtype=str, sep=self.sep, header=None)
                 self.header = None
 
-            #remove all empty lines (these should be removed by default but just in case)
+            #remove all empty lines (these should be removed by default, this is only a double check.
             edgl.dropna(how="all", inplace=True)
 
             #check if there are more than 2 columns and raise error, if so)
@@ -84,19 +86,19 @@ class EglUtils:
             #create the self.edgl object, storing the rows of the pandas dataframe as list of lists:
             self.edgl = edgl.values.tolist()
 
-    def get_edgelist(self) -> list:
+    def get_edgelist_obj(self) -> list:
         r"""
-        Returns the edge list object as a list of lists (useful for igraph porting)
+        Returns the edge list as a list of lists, each sublist containing the connected node pair.
 
-        :return: a list containing all the values in the input graph BUT the header
+        :return list: The edge list as a list of lists, each sublist of size 2.
         """
         return self.edgl
 
-    def get_header(self) -> list:
+    def get_header(self) -> list or None:
         r"""
-        Returns the header object as a list of strings, if present or None otherwise
+        Returns the edge list header. if present as a list of strings. Returns :py:class:`None` if the stored edge list has no header.
 
-        :return:a list containing the header of the input edge list
+        :return list, None: either the header of the input edge list as a list of list or :py:class:`None` if the input edge list did not have any header.
         """
 
         if self.header is not None:
@@ -104,19 +106,21 @@ class EglUtils:
 
         else:
             sys.stdout.write("No header present, returning \"None\"")
+            return None
 
-    def set_edgelist(self, edgl:list):
+    def set_edgelist_obj(self, edgl: list):
         r"""
-        Replaces the edgelist (list of list) with another one of choice. Must be a list of lists of string.
+        Replaces the edge list object (a list of lists, each sublist storing the connected node pair)
+        with another one. Must be a list of lists of string.
 
         :param list edgl: a list of lists of strings. Each nested list must have length 2
         """
 
         self.edgl = edgl
 
-    def set_header(self, header:list):
+    def set_header_obj(self, header: list):
         r"""
-        Replaces the header imported in the __init__ with another one (or add an header to the current input file).
+        Replaces the header initialized in this class with another one. The header must be a list of strings of size 2.
 
         :param str header: a list of strings of length 2. Must be a list of strings of length 2
         :raise: ValueError if ``header`` is not a list of length 2 and if at least one element is not a string
@@ -131,9 +135,9 @@ class EglUtils:
 
     def set_sep(self, sep: str):
         r"""
-        Replaces the separator imported in the __init__ with another one. The separator must be a string
+        Replaces the initialized separator with another one. The separator must be a string.
 
-        :param str sep: a separator of choice. Must be a string.
+        :param str sep: a separator of choice.
         :raise: TypeError if ``sep`` is not a string
         """
         if not isinstance(sep, str):
@@ -142,9 +146,9 @@ class EglUtils:
 
     def is_direct(self) -> bool:
         r"""
-        Returns a boolean if the edge list contains at least one direct edge
+        Returns ``True`` if the edge list contains at least one direct edge, ``False`` otherwise.
 
-        :return: a boolean; True if the edgelist is direct and False otherwise
+        :return bool: ``True`` if the edge list is direct, ``False`` otherwise
         """
 
         set_direct = list(set((tuple(sorted(x)) for x in self.edgl)))
@@ -159,9 +163,10 @@ class EglUtils:
 
     def is_multigraph(self) -> bool:
         r"""
-        Check that the edge-list does not have more than one edge between each vertex pair. Multiple edges between two nodes are not accepted by Pyntacle.
+        Check that the edge list does not have more than one edge between each node pair. In other terms, it checks
+        that the edge list does not store a multigraph, a construct that is not accepted by Pyntacle.
 
-        :return bool: a boolean; `True` if the edgelist is a multigraph, `False` otherwise
+        :return bool: ``True`` if the edgelist is a multigraph, ``False`` otherwise
         """
         egl_tuple = [tuple(sorted(x)) for x in self.edgl]
 
@@ -171,12 +176,13 @@ class EglUtils:
         else:
             return False
 
-    def make_undirect(self):
+    def make_undirect(self) -> str:
         r"""
-        Converts the edge list to undirect (add reciprocal pairs if missing). Write the edge list to a file with header
-        (if initialized) with the "_undirected" suffix to the output edge list file
+        Converts an edge list with one or more direct links to undirect (add reciprocal pairs if missing).
+        Write the edge list to a file with the same name as the initial edge list and the  "_undirected.egl" suffix
+        if it was direct, otherwise returns the initial path of the edge list file.
 
-        :return str: the path to the valid output file (the name of the input edge list + "_undirected.egl"). If the edge list is already undirect, returns the input edge list file
+        :return str: The path to transformed undirect edge list (the name of the initialized edge list + "_undirected.egl") if it was direct. Otherwise, returns the starting edge list file.
         """
 
         if not self.is_direct():
@@ -198,12 +204,13 @@ class EglUtils:
 
             return outpath
 
-    def make_simple(self):
+    def make_simple(self) -> str:
         r"""
-        Converts the edge list to a simple edge list (remove duplicated lines). Write the edge list to a file with header
-        (if initialized) appending the "_simple" extension to the output edge list file
+        Converts the input edge list containing redundant node pair (a multigraph) to a simple edge list with no repetitions.
+        Write the edge list to a file ending with the ``_simple.egl`` suffix, or the original edge list file if it was
+        already simple.
 
-        :return str: the path to the valid output file (the name of the input edge list + "_simple.egl"). If the edge list is already simple, returns the input edgelist file
+        :return str: The path to the valid output file (the name of the input edge list + "_simple.egl") if the edge list stored a multigraph. Otherwise, returns the input edgelist file
         """
 
         if not self.is_multigraph():
@@ -211,7 +218,7 @@ class EglUtils:
             return self.edglfile
 
         else:
-            final= [list(x) for x in set(tuple(y) for y in self.edgl)]
+            final = [list(x) for x in set(tuple(y) for y in self.edgl)]
 
             outpath = "_".join([os.path.splitext(os.path.abspath(self.edglfile))[0], "simple.egl"])
 
@@ -219,7 +226,7 @@ class EglUtils:
 
             return outpath
 
-    def __write_edgelist(self, edgelist:list, path:str):
+    def __write_edgelist(self, edgelist: list, path: str):
         r"""
         Internal method to write an edge list into a file at a specified path
 
