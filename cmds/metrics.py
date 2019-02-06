@@ -230,7 +230,7 @@ class Metrics:
             report_path = os.path.join(self.args.directory, report_prefix + self.args.report_format)
 
             if os.path.exists(report_path):
-                sys.stdout.write(u"Warning: File {} already exists, overwriting it.\n".format(report_path))
+                sys.stdout.write(u"Warning: File {} already exists, will be overwritten.\n".format(report_path))
 
             reporter.create_report(ReportEnum.Local, local_attributes_dict)
             reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
@@ -244,7 +244,7 @@ class Metrics:
 
                 if os.path.isdir(plot_dir):
                     self.logging.warning(
-                        "A directory named 'pyntacle-plots' already exists, I may overwrite something in there.")
+                        "A directory named 'pyntacle-plots' already exists.")
 
                 else:
                     os.makedirs(plot_dir, exist_ok=True)
@@ -389,7 +389,7 @@ class Metrics:
 
                 if os.path.isdir(plot_dir):
                     self.logging.warning(
-                        u"Warning: A directory named 'pyntacle-plots' already exists, I may overwrite something in there")
+                        u"Warning: A directory named 'pyntacle-plots' already exists.")
 
                 else:
                     os.mkdir(plot_dir)

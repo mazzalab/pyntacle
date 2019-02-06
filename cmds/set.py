@@ -261,7 +261,7 @@ class Set:
             self.args.output_separator = "\t"
 
         if os.path.exists(output_path):
-            self.logging.warning(u"A file named {} already exist, I will overwrite it".format(output_path))
+            self.logging.warning(u"A file named {} already exist, will be overwritten".format(output_path))
 
         # output generated networks
         if out_form == "adjm":
@@ -294,7 +294,7 @@ class Set:
 
             if os.path.isdir(plot_dir):
                 self.logging.warning(
-                    u"A directory named 'pyntacle-plots' already exists, I may overwrite something in there.")
+                    u"A directory named 'pyntacle-plots' already exists.")
 
             else:
                 os.mkdir(plot_dir)

@@ -319,7 +319,6 @@ class GraphUtils:
             return subgraph
 
     def graph_initializer(self, graph_name: str, node_names: list or None = None):
-        #todo Tommaso: this should be refined or it is as good as it is?
         r"""
         Transform the input :py:class:`igraph.Graph` object into a network that is compliant to the
         Pyntacle `Minimum requirements <http://pyntacle.css-mendel.it/requirements.html>`_.

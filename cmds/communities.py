@@ -340,7 +340,7 @@ class Communities():
 
             if os.path.isdir(plot_dir):
                 self.logging.warning(
-                    u"A directory named \"pyntacle-plots\" already exists, I may overwrite something in there.")
+                    u"A directory named \"pyntacle-plots\" already exists.")
 
             else:
                 os.mkdir(plot_dir)

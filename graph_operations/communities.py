@@ -180,7 +180,7 @@ class ModuleUtils():
             if "module_number" in graph.attributes():
 
                 self.logger.info(
-                    u"Attribute \"module_number\" already exist in the module {}, will overwrite".format(str(i)))
+                    u"Attribute \"module_number\" already exist in the module {}, will be overwritten".format(str(i)))
 
             elem["module_number"] = i  # this should traceroute the module back to its original number
 

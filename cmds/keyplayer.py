@@ -378,7 +378,7 @@ class KeyPlayer():
 
         if os.path.exists(report_path):
             self.logging.warning(
-                u"A report with the same name ({}) already exists, overwriting it.".format
+                u"A report with the same name ({}) already exists, will be overwritten".format
                 (os.path.basename(report_path)))
         r.create_report(report_type=report_type, report = results)
         r.write_report(report_dir=self.args.directory, format=self.args.report_format)
@@ -448,7 +448,7 @@ class KeyPlayer():
 
             if os.path.isdir(plot_dir):
                 self.logging.warning(
-                    u"A directory named 'pyntacle-plots' already exists, I may overwrite something in there.")
+                    u"A directory named 'pyntacle-plots' already exists.")
 
             else:
                 os.mkdir(plot_dir)
@@ -614,6 +614,7 @@ class KeyPlayer():
 
         elif graph.vcount() >= 1000:
             sys.stdout.write(u"The graph has too many nodes ({}, we plot nodes with a maximum of 1000 nodes). It will not be drawn.\n".format(graph.vcount()))
+
         if not self.args.suppress_cursor:
             cursor.stop()
 

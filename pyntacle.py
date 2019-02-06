@@ -35,7 +35,7 @@ from numpy import random as nprandom
 from copy import deepcopy
 from exceptions.generic_error import Error
 if sys.version_info <= (3, 4):
-    sys.exit('Python < 3.4 is not supported. Please use "python3" instead or update your python version.')
+    sys.exit('Python < 3.4 is not supported. Please use "python3" instead or update your Python compiler.')
 
 from colorama import Fore, Style, init
 
@@ -82,46 +82,38 @@ class App:
         argparse.ArgumentParser._check_value = _check_value
 
         parser = argparse.ArgumentParser(
-            description="Main description",
+            description="Main Description",
             usage=Fore.RED + Style.BRIGHT + 'pyntacle' + Fore.GREEN + ' <command>' + Fore.RED
                   + ''' [<args>]
                     The available commands in Pyntacle are:\n''' + Style.RESET_ALL + 100 * '-' +
-                  Fore.GREEN + '\n  keyplayer       ' + Fore.CYAN + 'Computes key-player metrics (goo.gl/uj8jCR) for a '
+                  Fore.GREEN + '\n  keyplayer       ' + Fore.CYAN + 'Computes key player metrics (goo.gl/uj8jCR) for a '
                                                                     'specific set of nodes (kp-info) or perform the '
                                                                     'search of set of nodes that maximize key'
                                                                     ' player metrics (kp-finder).' +
                   Fore.GREEN + '\n  groupcentrality ' + Fore.CYAN + 'Computes group centrality metrics (goo.gl/82Whxu), '
                                                                     'a variation of classical node centrality indices, '
-                                                                    'such as degree, that are computed for a '
+                                                                    'that are computed for a '
                                                                     'whole set of nodes rather than at single node '
                                                                     'resolution. These metrics can be computed for '
                                                                     'a specific set of nodes (gr-info) or they can be '
                                                                     'used to find a set of node of size k that own '
-                                                                    'the optimal or  the best score (gr-finder).' +
+                                                                    'the optimal or the best score (gr-finder).' +
                   Fore.GREEN + '\n  metrics         ' + Fore.CYAN + 'Computes metrics of local and global nature for a '
                                                                     'set of nodes of a network or for the '
                                                                     'whole graph.' +
-                  Fore.GREEN + '\n  convert         ' + Fore.CYAN + 'Easily converts a network file from one '
-                                                                    'format to another. ' +
+                  Fore.GREEN + '\n  convert         ' + Fore.CYAN + 'Easily converts a network file format to another one' +
                   Fore.GREEN + '\n  set             ' + Fore.CYAN + 'Performs set operations (union, '
                                                                     'intersection, difference) between two '
-                                                                    'networks using graph logical algorithms.'
-                                                                    ' Outputs the resulting network, along '
-                                                                    'with the attributes of the graphs '
-                                                                    'of origin. ' +
-                  Fore.GREEN + '\n  generate        ' + Fore.CYAN + 'Generates networks based on '
-                                                                    'several topologies (useful to produce in silico '
-                                                                    'networks onto which compare results ' +
+                                                                    'networks using graph logical operations.' +
+                  Fore.GREEN + '\n  generate        ' + Fore.CYAN + 'Generates an in-silico network that follows'
+                                                                    'ne of the  predetermined topology' +
                   Fore.GREEN + '\n  communities     ' + Fore.CYAN + 'Finds communities within a graph using'
-                                                                    'several community-finding (or modular '
-                                                                    'decomposition)algorithms. It produces '
+                                                                    'several community-finding algorithms. It produces '
                                                                     'several network files, each containing '
-                                                                    'an induced subgraph. ' 
-                                                                    'Communities can be filtered by nodes and '
-                                                                    'component number.' +
+                                                                    'an induced subgraph.' +
                   Fore.GREEN + '\n  test            ' + Fore.CYAN + 'Performs a series of tests to check '
                                                                     'Pyntacle integrity. Useful to test if Pyntacle was '
-                                                                    'installed correctly anbd to perform debugging tasks'
+                                                                    'installed correctly and to perform debugging tasks'
                                                                     '\n' +
                   Style.RESET_ALL + 100 * '-', )
 
@@ -185,43 +177,41 @@ class App:
                                  "for binary file. See https://goo.gl/9wFRfM for more information "
                                  "and other available abbreviations. If not specified, the input format will be guessed")
 
-        parser.add_argument('--input-separator', metavar='', default=None, help="Specifies the field separator for the input file. "
+        parser.add_argument('--input-separator', metavar='', default=None, help="The field separator for the input file. "
                                                                                 "If not provided, Pyntacle tries to guess it automatically.")
                             
         parser.add_argument('-N', '--no-header', default=False, action='store_true',
-                            help='Specify this option if your input text file with an optional header '
-                                 '(Adjacency Matrix, Edge List, SIF file) does not contain one. By default, '
-                                 'we assume a header is present.')
-        parser.add_argument('-m', '--m-reach', metavar='', type=int, help='(Required for m-reach) The maximum '
+                            help="A flag that must be used if the input network file (adjacency matrix, edge list, SIF file) "
+                                 "does not contain a header. By default, we assume a header is present.")
+        parser.add_argument('-m', '--m-reach', metavar='', type=int, help='The maximum '
                                                                           'distance that will be '
-                                                                          'used when computing the m-reach '
+                                                                          'used to compute the m-reach '
                                                                           'metric. Must be provided if m-reach'
                                                                           ' is computed.')
-        
+
         parser.add_argument('-M', '--max-distance', metavar='', type=int, help='(Optional) The number of steps upon which two nodes are considered disconnected. By default, no maximum distance is set.')
 
         parser.add_argument('-t', "--type", metavar='', choices=['pos', 'neg', 'all', 'F', 'dF', 'dR', 'mreach'], default='all',
-                            help="The key player metric(s) that will be computed by Pyntacle. Choices are "
+                            help="The key player metric (or metrics) that will be computed by Pyntacle. Choices are "
                                  "'all' (all metrics), 'pos' (all reachability metrics, hence dR and m-reach),"
-                                 " 'neg' (all fragmentation metrics, both F and dF). 'dR', 'm-reach', 'F', "
+                                 " 'neg' (all fragmentation metrics, both F and dF). 'dR', 'mreach', 'F', "
                                  "'dF'. Default is 'all'.")
         
         parser.add_argument('-L', '--largest-component', action='store_true',
-                            help='Use this option only to consider the largest component of the input network'
-                                 ' and exclude any other one. Useful when the network contains small '
-                                 'components or isolates. Will raise an error if the network has two largest'
+                            help='Considers only the largest component of the input graph and excludes the smaller ones.'
+                                 'It Will raise an error if the network has two largest'
                                  ' components of the same size.')
 
         parser.add_argument('-d', "--directory", metavar='', default=os.getcwd(),
                             help="Directory that will store Pyntacle results. If the directory does not "
-                                 "exist, we will create one at the specified path. Default is the present "
+                                 "exist, we will create one at the specified path. Default is the current "
                                  "working directory.")
 
         parser.add_argument('-r', '--report-format', metavar='', default="txt", choices=["txt", "csv", "xlsx", "tsv"],
                             type=lambda s: s.lower(),
-                            help="Specifies the format that will be used to output the report produced by "
-                                 "Pyntacle. Choices are “txt” and “tsv” for tab separated value files, “csv” "
-                                 "for comma-separated value files, “xlsx” for Excel files. Default is “txt”.")
+                            help="The format that will be used to output the report produced by "
+                                 "Pyntacle. Choices are 'txt' and 'tsv' (tab-separated file), 'csv' "
+                                 "(comma-separated value file), 'xlsx' (Excel file). Default is 'txt'.")
 
         parser.add_argument('-P', '--plot-format', choices=["svg", "pdf", "png"], default="pdf",
                             type=lambda s: s.lower(), metavar='',
@@ -251,7 +241,7 @@ class App:
         
         parser.add_argument("--save-binary", action="store_true",
                             help="Save a binary file (with a .graph extension) that contains an igraph.Graph "
-                                 "object. This object is the one processed by Pyntacle. ")
+                                 "object.")
 
         parser.add_argument('--suppress-cursor', action="store_true", help="suppress Pyntacle animated cursor")
         
@@ -290,7 +280,7 @@ class App:
         finder_case_parser.add_argument("-S", "--seed", type=int, help="For greedy optimization only. Sets a seed at the beginning of the computation. Useful for getting reproducible results. Ignored when performing brute-force search. ",
                                         metavar="", default=None)
         finder_case_parser.add_argument('-T', "--threads", metavar='', default=n_cpus, type=threads_type,
-                            help="Specify the number of cores that will be used in brute-force. Defaults to "
+                            help="Specifies the number of cores that will be used in brute-force. Defaults to "
                                  "the maximum number of threads available in your machine - 1")
         
         finder_case_parser.set_defaults(which='kp-finder')
@@ -312,7 +302,7 @@ class App:
 
     def groupcentrality(self):
         parser = argparse.ArgumentParser(
-            description='Computes group centrality metrics (as described in [PLACEHOLDER DOI] for a specific set of nodes '
+            description='Computes group centrality metrics (defined in goo.gl/82Whxu) for a specific set of nodes '
                         '(gr-info) or perform the '
                         'search of set of nodes that maximize key player metrics (group-finder).\n\n'
                         'Subcommands:\n\n' + 100 * '-' + '\n' +
@@ -341,13 +331,12 @@ class App:
                                  "and other available abbreviations. If not specified, the input format will be guessed")
 
         parser.add_argument('--input-separator', metavar='', default=None,
-                            help="Specifies the field separator for the input file. "
+                            help="The field separator for the input file. "
                                  "If not provided, Pyntacle tries to guess it automatically.")
 
         parser.add_argument('-N', '--no-header', default=False, action='store_true',
-                            help='Specify this option if your input text file with an optional header '
-                                 '(Adjacency Matrix, Edge List, SIF file) do not contain one. By default, '
-                                 'we assume a header is present.')
+                            help="A flag that must be used if the input network file (adjacency matrix, edge list, SIF file) "
+                                 "does not contain a header. By default, we assume a header is present.")
 
         parser.add_argument('-t', "--type", metavar='', choices=['all', 'degree', 'closeness', 'betweenness'],
                             default='all',
@@ -356,9 +345,11 @@ class App:
                                  " 'closeness' (group closeness). 'betweenness' (group betweenness) Default is 'all'.")
 
         parser.add_argument('-D', '--group-distance', metavar='', choices=["mean", "min", "max"], default="min",
-                            help='The criterion to use to comute the distance between the node set and the rest of the graph. '
-                                 'Required for computing group closeness only.'
-                                 'Choices are "mean" (averages the distances among the node set and the rest of the graph)')
+                            help='Required for computing group closeness. The criterion to use to compute the distance between '
+                                 'the node set and the rest of the graph. '
+                                 'Choices are "mean" (averages the distances among the node set and the rest of the graph),'
+                                 '"min" (takes the minimum distance among the node set and the rest of the graph),'
+                                 '"max" (takes the maximum distance among the node set and the rest of the graph).  Defaults to "min"')
 
         parser.add_argument('-L', '--largest-component', action='store_true',
                             help='Use this option only to consider the largest component of the input network'
@@ -368,14 +359,14 @@ class App:
 
         parser.add_argument('-d', "--directory", metavar='', default=os.getcwd(),
                             help="Directory that will store Pyntacle results. If the directory do not "
-                                 "exist, we will create one at the specified path. Default is the present "
+                                 "exist, we will create one at the specified path. Default is the current "
                                  "working directory.")
 
         parser.add_argument('-r', '--report-format', metavar='', default="txt", choices=["txt", "csv", "xlsx", "tsv"],
                             type=lambda s: s.lower(),
-                            help="Specifies the format that will be used to output the report produced by "
-                                 "Pyntacle. Choices are “txt” and “tsv” for tab separated value files, “csv” "
-                                 "for comma-separated value files, “xlsx” for Excel files. Default is “txt”.")
+                            help="The format that will be used to output the report produced by "
+                                 "Pyntacle. Choices are 'txt' and 'tsv' (tab-separated file), 'csv' "
+                                 "(comma-separated value file), 'xlsx' (Excel file). Default is 'txt'.")
 
         parser.add_argument('-P', '--plot-format', choices=["svg", "pdf", "png"], default="pdf",
                             type=lambda s: s.lower(), metavar='',
@@ -405,7 +396,7 @@ class App:
 
         parser.add_argument("--save-binary", action="store_true",
                             help="Save a binary file (with a .graph extension) that contains an igraph.Graph "
-                                 "object. This object is the one processed by Pyntacle. ")
+                                 "object.")
 
         parser.add_argument('--suppress-cursor', action="store_true", help="suppress Pyntacle animated cursor")
 
@@ -446,7 +437,7 @@ class App:
                                         help="For greedy optimization only: sets a seed at the beginning of the computation. Useful for getting reproducible results. Ignored when performing brute-force search. ",
                                         metavar="", default=None)
         finder_case_parser.add_argument('-T', "--threads", metavar='', default=n_cpus, type=threads_type,
-                                        help="Specify the number of cores that will be used in brute-force. Defaults to "
+                                        help="Specifies the number of cores that will be used in brute-force. Defaults to "
                                              "the maximum number of threads available in your machine - 1")
 
         finder_case_parser.set_defaults(which='gr-finder')
@@ -496,13 +487,12 @@ class App:
                                  "for binary file. See https://goo.gl/9wFRfM for more information "
                                  "and other available abbreviations. If not specified, the input format will be guessed")
 
-        parser.add_argument('--input-separator', metavar="", default=None, help="Specifies the field separator for the input file. "
+        parser.add_argument('--input-separator', metavar="", default=None, help="The field separator for the input file. "
                                                                                 "If not provided, Pyntacle tries to guess it automatically.")
         
         parser.add_argument('-N', '--no-header', default=False, action='store_true',
-                            help='Specify this option if your input text file with an optional header '
-                                 '(Adjacency Matrix, Edge List, SIF file) does not contain one. By default, '
-                                 'we assume a header is present.')
+                            help="A flag that must be used if the input network file (adjacency matrix, edge list, SIF file) "
+                                 "does not contain a header. By default, we assume a header is present.")
 
         parser.add_argument('-d', "--directory", default=os.getcwd(), metavar="",
                             help="Directory that will store Pyntacle results. If the directory does not "
@@ -510,9 +500,9 @@ class App:
                                  "working directory. ")
 
         parser.add_argument('--report-format', '-r', metavar="", default="txt", choices=["txt", "csv", "xlsx", "tsv"],
-                            help="Specifies the format that will be used to output the report produced by "
-                                 "Pyntacle. Choices are “txt” and “tsv” for tab separated value files, “csv” "
-                                 "for comma-separated value files, “xlsx” for Excel files. Defaults to \“txt”.")
+                            help="The format that will be used to output the report produced by "
+                                 "Pyntacle. Choices are 'txt' and 'tsv' (tab-separated file), 'csv' "
+                                 "(comma-separated value file), 'xlsx' (Excel file). Default is 'txt'.")
 
         parser.add_argument('-P', '--plot-format', metavar="", choices=["svg", "pdf", "png"], default="pdf",
                             type=lambda s: s.lower(),
@@ -542,12 +532,11 @@ class App:
         
         parser.add_argument("--save-binary", action="store_true",
                             help="Save a binary file (with a .graph extension) that contains an igraph.Graph "
-                                 "object. This object is the one processed by Pyntacle.")
+                                 "object.")
 
         parser.add_argument('-L', '--largest-component', action='store_true',
-                            help='Use this option only to consider the largest component of the input '
-                                 'network and exclude any other one. Useful when the network contains small '
-                                 'components or isolates. Will raise an error if the network has two largest'
+                            help='Considers only the largest component of the input graph and excludes the smaller ones.'
+                                 'It Will raise an error if the network has two largest'
                                  ' components of the same size.')
 
         parser.add_argument('--suppress-cursor', action="store_true", help="suppress Pyntacle animated cursor")
@@ -636,22 +625,21 @@ class App:
                                  "and other available abbreviations. If not specified, the input format will be guessed")
 
         parser.add_argument('--input-separator', metavar='', default=None,
-                            help="Specifies the field separator for the input file. "
+                            help="The field separator for the input file. "
                                  "If not provided, Pyntacle tries to guess it automatically.")
         
         parser.add_argument('-N', '--no-header', default=False, action='store_true',
-                            help='Specify this option if your input text file with an optional header '
-                                 '(Adjacency Matrix, Edge List, SIF file) does not contain one. By default, '
-                                 'we assume a header is present.')
+                            help="A flag that must be used if the input network file (adjacency matrix, edge list, SIF file) "
+                                 "does not contain a header. By default, we assume a header is present.")
 
         parser.add_argument('--no-output-header', default=False, action='store_true',
-                            help='specify this option if you don’t want a header to be written on your output'
+                            help='Specify this option if you don’t want a header to be written on your output'
                                  ' network files with an optional header (Adjacency Matrix, Edge List, SIF '
                                  'files). If not specified, your output files will contain a header.')
 
         parser.add_argument('-d', "--directory", metavar='', default=os.getcwd(),
                             help="Directory that will store Pyntacle results. If the directory does not "
-                                 "exist, we will create one at the specified path. Default is the present "
+                                 "exist, we will create one at the specified path. Default is the current "
                                  "working directory.")
 
         parser.add_argument("--output-file", "-o", metavar='',
@@ -710,7 +698,7 @@ class App:
 
         parser.add_argument('-d', "--directory", metavar='', default=os.getcwd(),
                             help="Directory that will store Pyntacle results. If the directory does not "
-                                 "exist, we will create one at the specified path. Default is the present "
+                                 "exist, we will create one at the specified path. Default is the current "
                                  "working directory.")
 
         parser.add_argument("--output-file", "-o", metavar='',
@@ -900,7 +888,7 @@ class App:
                                  "and other available abbreviations. If not specified, the input format will be guessed")
 
         parser.add_argument('--input-separator', metavar='', default=None,
-                            help="Specifies the field separator for the input file. "
+                            help="The field separator for the input file. "
                                  "If not provided, Pyntacle tries to guess it automatically.")
         
         parser.add_argument("--min-nodes", "-m", help="An integer specifying the minimum number of nodes that"
@@ -923,9 +911,8 @@ class App:
                                  "filtered out.")
 
         parser.add_argument('-N', '--no-header', default=False, action='store_true',
-                            help='Specify this option if your input text file with an optional header '
-                                 '(Adjacency Matrix, Edge List, SIF file) does not contain one. By default, '
-                                 'we assume a header is present.')
+                            help="A flag that must be used if the input network file (adjacency matrix, edge list, SIF file) "
+                                 "does not contain a header. By default, we assume a header is present.")
 
         parser.add_argument("--no-output-header", action="store_true",
                             help='Specify this option if you don’t want a header to be written on your output'
@@ -934,7 +921,7 @@ class App:
 
         parser.add_argument('-d', "--directory", default=os.getcwd(), metavar='',
                             help="Directory that will store Pyntacle results. If the directory does not "
-                                 "exist, we will create one at the specified path. Default is the present "
+                                 "exist, we will create one at the specified path. Default is the current "
                                  "working directory.")
 
         parser.add_argument("--output-file", "-o", metavar='',
@@ -947,7 +934,7 @@ class App:
                                  "of the `--format` options. Default is “adjmat” (Adjacency Matrix).")
 
         parser.add_argument("--output-separator", metavar="",
-                            help="specify a desired output separator for your output files. Default is “\t”. "
+                            help="Specify a desired output separator for your output files. Default is “\t”. "
                                  "Note: the separator must be specified in quotes.")
 
         parser.add_argument('-P', '--plot-format', choices=["svg", "pdf", "png"], default="pdf",
@@ -981,14 +968,13 @@ class App:
         parser.add_argument("--save-binary", action="store_true",
                             help="Save a binary file (with a .graph extension) in the output directory that "
                                  "contains an igraph.Graph object. This object will contain a vertex "
-                                 "attribute called module_number to retrace the corresponding community "
+                                 "attribute called 'module_number' to retrace the corresponding community "
                                  "to which the node was assigned.")
 
         parser.add_argument('-L', '--largest-component', action='store_true',
-                            help='Use this option if you want Pyntacle to consider only the largest component'
-                                 ' of the input network and exclude any other one. Useful when the network'
-                                 ' contains small components or isolates. Will raise an error if the network'
-                                 ' has two largest components of the same size.')
+                            help='Considers only the largest component of the input graph and excludes the smaller ones.'
+                                 'It Will raise an error if the network has two largest'
+                                 ' components of the same size.')
 
         parser.add_argument('--suppress-cursor', action="store_true", help="suppress Pyntacle animated cursor")
 
@@ -1007,10 +993,9 @@ class App:
 
         fastgreedy_subparser.add_argument("--weights", metavar="",
                         help="An edge attribute file storing weights that will be used to compute the "
-                             "pagerank index. Must be either a Standard Edge Attribute Format or a Ctyotscape"
-                             " Edge Attribute format, and a column named 'weights' must be present. See File"
-                             " Format Specifications  on the website for more details. Only the first"
-                             " attribute will be used. ")
+                             "pagerank index. Must be either a standard edge attribute format or a Cytoscape"
+                             " edge attribute format. A column named 'weights' must be present in both cases. See File"
+                             " Format Specifications  on the website for more details.")
         
         fastgreedy_subparser.add_argument("--weights-format", choices=["standard", "cytoscape"], metavar="",
                                           default="standard",
@@ -1020,7 +1005,7 @@ class App:
                                                "Attribute File. Default is \"default\".")
         
         fastgreedy_subparser.add_argument("--clusters", metavar="",
-                                          help="Specify the number of get_modules around which the fastgreedy "
+                                          help="Specifies the number of get_modules around which the fastgreedy "
                                                "algorithm will optimize the search. By default, this option "
                                                "is disabled. ")
 
@@ -1051,18 +1036,18 @@ class App:
         community_walktrap_subparser.add_argument("--weights",
                                                   help="An edge attribute file storing weights that will be "
                                                        "used to compute the pagerank index. Must be either a"
-                                                       " Standard Edge Attribute Format or a Ctyotscape Edge"
-                                                       " Attribute format, and a column named 'weights' must"
+                                                       " standard edge attribute format or a Cytoscape edge"
+                                                       " attribute format, and a column named 'weights' must"
                                                        " be present. See File Format Specifications on the website for more"
                                                        " details. Only the first attribute will be used.")
         community_walktrap_subparser.add_argument("--clusters",
-                                                  help="Specify the number of get_modules that will be ouput by"
+                                                  help="Specifies the number of get_modules that will be ouput by"
                                                        " the module decomposition algorithm. If not"
                                                        " specified, a maximized number of get_modules will be"
                                                        " generated")
 
         community_walktrap_subparser.add_argument("--steps",
-                                                  help="Specify the maximum length for random walks that will"
+                                                  help="Specifies the maximum length for random walks that will"
                                                        " be used tio find communities. The higher this"
                                                        " number, the lesser cohesive will be the communities."
                                                        " Default is 3.", default='3')
@@ -1132,21 +1117,20 @@ class App:
                                  "'sif' for Simple Interaction format, 'dot' for DOT file, 'bin' "
                                  "for binary file. See https://goo.gl/9wFRfM for more information "
                                  "and other available abbreviations. If not specified, the input format will be guessed "
-                                 "NOTE: The two files MUSt have the same format. If not, use "
+                                 "NOTE: The two files MUST have the same format. If not, use "
                                  "pyntacle convert to convert your files to the same format")
 
         parser.add_argument('--input-separator', metavar='', default=None,
-                            help="Specifies the field separator for the input files. "
+                            help="The field separator for the input files. "
                                  "If not provided, Pyntacle tries to guess it automatically.")
         
         parser.add_argument("-N", "--no-header", "-n", action="store_true",
-                            help="Specify this option if your input text file with an optional header "
-                                 "(Adjacency Matrix, Edge List, SIF file) does not contain one. By default,"
-                                 " we assume a header is present.")
+                            help="A flag that must be used if the input network file (adjacency matrix, edge list, SIF file) "
+                                 "does not contain a header. By default, we assume a header is present.")
 
         parser.add_argument('-d', "--directory", metavar='', default=os.getcwd(),
                             help="Directory that will store Pyntacle results. If the directory does not "
-                                 "exist, we will create one at the specified path. Default is the present "
+                                 "exist, we will create one at the specified path. Default is the current "
                                  "working directory.")
 
         parser.add_argument('-P', '--plot-format', choices=["svg", "pdf", "png"], default="pdf", metavar='',
@@ -1196,16 +1180,15 @@ class App:
                                  " Note: the separator must be specified in quotes.")
 
         parser.add_argument('-L', '--largest-component', action='store_true',
-                            help='use this option if you want Pyntacle to consider only the largest component'
-                                 ' of the input network and exclude any other one. Useful when the network'
-                                 ' contains small components or isolates. Will raise an error if the network'
-                                 ' has two largest components of the same size.')
+                            help='Considers only the largest component of the input graph and excludes the smaller ones.'
+                                 'It Will raise an error if the network has two largest'
+                                 ' components of the same size.')
 
         parser.add_argument('--report-format', '-r', default="txt", choices=["txt", "csv", "xlsx", "tsv"],
                             metavar='',
-                            help="Specifies the format that will be used to output the report produced by "
-                                 "Pyntacle. Choices are “txt” and “tsv” for tab separated value files, “csv” "
-                                 "for comma-separated value files, “xlsx” for Excel files. Default is “txt”.")
+                            help="The format that will be used to output the report produced by "
+                                 "Pyntacle. Choices are 'txt' and 'tsv' (tab-separated file), 'csv' "
+                                 "(comma-separated value file), 'xlsx' (Excel file). Default is 'txt'.")
 
         parser.add_argument('--suppress-cursor', action="store_true", help="suppress Pyntacle animated cursor")
 
