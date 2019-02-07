@@ -23,7 +23,7 @@ __license__ = u"""
   You should have received a copy of the license along with this
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
-
+#todo mauro checks formatting to terminal
 # external libraries
 from config import *
 import argparse
@@ -93,7 +93,7 @@ class App:
                                                                     "node of size k that own the optimal or the best "
                                                                     "score ('kp-finder')." +
                   Fore.GREEN + "\n  groupcentrality " + Fore.CYAN + "Computes group centrality metrics (goo.gl/82Whxu), "
-                                                                    "a variation of classical node centrality indices, "
+                                                                    "a variation of classical node centrality indices. "
                                                                     "These metrics can be computed for "
                                                                     "a specific set of nodes ('gr-info') or they can be "
                                                                     "used to find a set of node of size k that own "
@@ -227,8 +227,8 @@ class App:
 
         parser.add_argument("--plot-dim", metavar="",
                             help="The dimensions (as comma-separated values) of the graphical representation of the "
-                                 "results. Default is `800,800` for graph with less than 150 nodes and `1600,1600` "
-                                 "otherwise. Overridden by the `--no-plot` flag or if the graph "
+                                 "results. Default is '800,800' for graph with less than 150 nodes and '1600,1600' "
+                                 "otherwise. Overridden by the '--no-plot' flag or if the graph "
                                  "is too big to be represented (larger than 1000 nodes).")
 
         parser.add_argument("--plot-layout", metavar="",
@@ -238,15 +238,15 @@ class App:
                             help="Specifies one of the predefined layout for the graphical representation of the network. "
                                  "Choices are: 'fruchterman_reingold', 'kamada_kawai', "
                                  "'large_graph', 'random', 'reingold_tilford'. Default is "
-                                 "'fruchterman_reingold'. Bypassed if the `--no-plot` flag if specified or if the graph "
+                                 "'fruchterman_reingold'. Bypassed if the '--no-plot' flag if specified or if the graph "
                                  "is too big to be represented (larger than 1000 nodes).")
 
         parser.add_argument("--no-plot", action="store_true",
                             help="Skips the graphical representation of the plot.")
 
         parser.add_argument("--save-binary", action="store_true",
-                            help="Saves a binary file (ending in `.graph`) that contains the network "
-                                 "and all the operations performed on it in an `igraph.Graph object`.")
+                            help="Saves a binary file (ending in '.graph') that contains the network "
+                                 "and all the operations performed on it in an 'igraph.Graph' object.")
 
         parser.add_argument("--suppress-cursor", action="store_true",
                             help="Suppresses the animated cursor during Pyntacle execution.")
@@ -265,7 +265,7 @@ class App:
                                                                                                      width=150))
         info_case_parser.set_defaults(which="kp-info")
         info_case_parser.add_argument("-n", "--nodes",
-                                      help="(REQUIRED) Comma-separated list of strings, corresponding to the node names in the input graph, or column index of the input network file if the `no-header` flag is specified.",
+                                      help="(REQUIRED) Comma-separated list of strings, corresponding to the node names in the input graph, or column index of the input network file if the 'no-header' flag is specified.",
                                       required=True)
         # Subparser for kp-finder case
         finder_case_parser = subparsers.add_parser("kp-finder",
@@ -282,15 +282,15 @@ class App:
                                         choices=["brute-force", "greedy"],
                                         help="The strategy used for the search of the node set. Choices are: 'greedy' "
                                              "(a greedy optimization algorithm aimed at finding an optimal solution) "
-                                             "and `brute-force` for a brute-force search that find the best solution "
-                                             "(or solutions). `greedy` is the default strategy.")
+                                             "and 'brute-force' for a brute-force search that find the best solution "
+                                             "(or solutions). 'greedy' is the default strategy.")
 
         finder_case_parser.add_argument("-S", "--seed", type=int, help="(GREEDY OPTIMIZATION ONLY) Sets a user-defined "
                                                                        "seed to replicate the greedy optimization search.",
                                         metavar="", default=None)
         finder_case_parser.add_argument("-T", "--threads", metavar="", default=n_cpus, type=threads_type,
                                         help="Specifies the number of cores that will be used in brute-force. Defaults to "
-                                             "the maximum number of threads available in your machine - 1")
+                                             "the maximum number of cores available in your machine - 1.")
 
         finder_case_parser.set_defaults(which="kp-finder")
 
@@ -315,7 +315,7 @@ class App:
                         "('gr-info') or perform the "
                         "search of set of nodes that maximize key player metrics ('group-finder').\n\n"
                         "Subcommands:\n\n" + 100 * "-" + "\n" +
-                        "   gr-finder\t           Finds the optimal or the best set of size `k` for a group centrality index (or indices) by means of either a "
+                        "   gr-finder\t           Finds the optimal or the best set of size 'k' for a group centrality index (or indices) by means of either a "
                         "\n\t\t\t   greedy optimization or a brute-force algorithm.\n\n"
                         "   gr-info\t           Computes all or a selected group-centrality metric for a selected subset of nodes.\n" + 100 * "-",
             formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=100,
@@ -350,14 +350,14 @@ class App:
                             default="all",
                             help="The group centrality metric (or metrics) of interest. Choices are: "
                                  "'all' (all metrics), 'degree' (group degree only),"
-                                 " 'closeness' (group closeness). 'betweenness' (group betweenness) Default is 'all'.")
+                                 " 'closeness' (group closeness), 'betweenness' (group betweenness).* Default is 'all'.")
 
         parser.add_argument("-D", "--group-distance", metavar="", choices=["mean", "min", "max"], default="min",
-                            help="Required for computing group closeness. The criterion to use to compute the distance between "
+                            help="(REQUIRED FOR GROUP CLOSENESS) The criterion to use to compute the distance between "
                                  "the node set and the rest of the graph. "
                                  "Choices are: 'mean' (averages the distances among the node set and the rest of the graph),"
                                  "'min' (takes the minimum distance among the node set and the rest of the graph),"
-                                 "'max'' (takes the maximum distance among the node set and the rest of the graph).  Defaults to 'min'")
+                                 "'max'' (takes the maximum distance among the node set and the rest of the graph).  Defaults to 'min'.")
 
         parser.add_argument("-L", "--largest-component", action="store_true",
                             help="Considers only the largest component of the input graph and excludes the smaller ones."
@@ -384,8 +384,8 @@ class App:
 
         parser.add_argument("--plot-dim", metavar="",
                             help="The dimensions (as comma-separated values) of the graphical representation of the "
-                                 "results. Default is `800,800` for graph with less than 150 nodes and `1600,1600` "
-                                 "otherwise. Overridden by the `--no-plot` flag or if the graph "
+                                 "results. Default is '800,800' for graph with less than 150 nodes and '1600,1600' "
+                                 "otherwise. Overridden by the '--no-plot' flag or if the graph "
                                  "is too big to be represented (larger than 1000 nodes).")
 
         parser.add_argument("--plot-layout", metavar="",
@@ -395,15 +395,15 @@ class App:
                             help="Specifies one of the predefined layout for the graphical representation of the network. "
                                  "Choices are: 'fruchterman_reingold', 'kamada_kawai', "
                                  "'large_graph', 'random', 'reingold_tilford'. Default is "
-                                 "'fruchterman_reingold'. Bypassed if the `--no-plot` flag if specified or if the graph "
+                                 "'fruchterman_reingold'. Bypassed if the '--no-plot' flag if specified or if the graph "
                                  "is too big to be represented (larger than 1000 nodes).")
 
         parser.add_argument("--no-plot", action="store_true",
                             help="Skips the graphical representation of the plot.")
 
         parser.add_argument("--save-binary", action="store_true",
-                            help="Saves a binary file (ending in `.graph`) that contains the network "
-                                 "and all the operations performed on it in an `igraph.Graph object`.")
+                            help="Saves a binary file (ending in '.graph') that contains the network "
+                                 "and all the operations performed on it in an 'igraph.Graph` object.")
 
         parser.add_argument("--suppress-cursor", action="store_true",
                             help="Suppresses the animated cursor during Pyntacle execution.")
@@ -422,7 +422,7 @@ class App:
                                                                                                      width=150))
         info_case_parser.set_defaults(which="gr-info")
         info_case_parser.add_argument("-n", "--nodes",
-                                      help="(REQUIRED) Comma-separated list of strings, corresponding to the node names in the input graph, or column index of the input network file if the `no-header` flag is specified.",
+                                      help="(REQUIRED) Comma-separated list of strings, corresponding to the node names in the input graph, or column index of the input network file if the 'no-header' flag is specified.",
                                       required=True)
         # Subparser for kp-finder case
         finder_case_parser = subparsers.add_parser("gr-finder",
@@ -438,14 +438,14 @@ class App:
         finder_case_parser.add_argument("-I", "--implementation", metavar="", type=str, default="greedy",
                                         choices=["brute-force", "greedy"],
                                         help="The strategy used for the search of the node set. Choices are: 'greedy' (a greedy optimization algorithm aimed at finding an optimal solution) "
-                                             "and `brute-force` for a brute-force search that find the best solution (or solutions). `greedy` is the default strategy.")
+                                             "and 'brute-force' for a brute-force search that find the best solution (or solutions). 'greedy' is the default strategy.")
 
         finder_case_parser.add_argument("-S", "--seed", type=int,
                                         help="(GREEDY OPTIMIZATION ONLY) Sets a user-defined seed to replicate the greedy optimization search.",
                                         metavar="", default=None)
         finder_case_parser.add_argument("-T", "--threads", metavar="", default=n_cpus, type=threads_type,
                                         help="(BRUTE-FORCE SEARCH ONLY) Specifies the number of cores that will be used in brute-force. Defaults to "
-                                             "the maximum number of threads available in your machine - 1")
+                                             "the maximum number of cores available in your machine - 1.")
 
         finder_case_parser.set_defaults(which="gr-finder")
 
@@ -520,8 +520,8 @@ class App:
 
         parser.add_argument("--plot-dim",
                             help="The dimensions (as comma-separated values) of the graphical representation of the "
-                                 "results. Default is `800,800` for graph with less than 150 nodes and `1600,1600` "
-                                 "otherwise. Overridden by the `--no-plot` flag or if the graph "
+                                 "results. Default is '800,800' for graph with less than 150 nodes and '1600,1600' "
+                                 "otherwise. Overridden by the '--no-plot' flag or if the graph "
                                  "is too big to be represented (larger than 1000 nodes).")
 
         parser.add_argument("--no-plot", action="store_true",
@@ -534,12 +534,12 @@ class App:
                             help="Specifies one of the predefined layout for the graphical representation of the network. "
                                  "Choices are: 'fruchterman_reingold', 'kamada_kawai', "
                                  "'large_graph', 'random', 'reingold_tilford'. Default is "
-                                 "'fruchterman_reingold'. Bypassed if the `--no-plot` flag if specified or if the graph "
+                                 "'fruchterman_reingold'. Bypassed if the '--no-plot' flag if specified or if the graph "
                                  "is too big to be represented (larger than 1000 nodes).")
 
         parser.add_argument("--save-binary", action="store_true",
-                            help="Saves a binary file (ending in `.graph`) that contains the network "
-                                 "and all the operations performed on it in an `igraph.Graph object`.")
+                            help="Saves a binary file (ending in '.graph') that contains the network "
+                                 "and all the operations performed on it in an 'igraph.Graph' object.")
 
         parser.add_argument("-L", "--largest-component", action="store_true",
                             help="Considers only the largest component of the input graph and excludes the smaller ones."
@@ -565,7 +565,7 @@ class App:
         local_subparser.add_argument("-n", "--nodes",
                                      help="(REQUIRED) Comma-separated list of strings, corresponding to the node names "
                                           "in the input graph, or column index of the input network file if the "
-                                          "`no-header` flag is specified. If not specified, local centrality indices"
+                                          "'no-header' flag is specified. If not specified, local centrality indices"
                                           "will be computed for all nodes in the input graph.")
 
         local_subparser.add_argument("--damping-factor", default=0.85, type=float,
@@ -598,7 +598,7 @@ class App:
                                                                                                      width=150))
         global_subparser.add_argument("-n", "--no-nodes", metavar="", type=str,
                                       help="Comma-separated list corresponding to vertices names or a list of indices "
-                                           "matching the column index in the node adjacency matrix if `no-header` "
+                                           "matching the column index in the node adjacency matrix if 'no-header' "
                                            "is specified. These nodes will be removed from the input graph, and global "
                                            "metrics will be computed before and after the node removal.")
 
@@ -663,7 +663,7 @@ class App:
         parser.add_argument("-u", "--output-format", metavar="", required=True,
                             choices=format_dictionary.keys(),
                             help="(REQUIRED) The output network file format. The same abbreviations used in the "
-                                 "`--format` are applied. See https://goo.gl/9wFRfM for more information on available "
+                                 "'--format' are applied. See https://goo.gl/9wFRfM for more information on available "
                                  "network file formats and the complete list of abbreviations.")
 
         parser.add_argument("--output-separator", metavar="",
@@ -723,7 +723,7 @@ class App:
         parser.add_argument("-u", "--output-format", metavar="",
                             choices=format_dictionary.keys(), default="adjmat",
                             help="Desired output format for the output in silico networks.The same abbreviations used in the "
-                                 "`--format` are applied. See https://goo.gl/9wFRfM for more information on available "
+                                 "'--format' are applied. See https://goo.gl/9wFRfM for more information on available "
                                  "network file formats and the complete list of abbreviations.")
 
         parser.add_argument("--output-separator", metavar="",
@@ -745,8 +745,8 @@ class App:
 
         parser.add_argument("--plot-dim", metavar="",
                             help="The dimensions (as comma-separated values) of the graphical representation of the "
-                                 "results. Default is `800,800` for graph with less than 150 nodes and `1600,1600` "
-                                 "otherwise. Overridden by the `--no-plot` flag or if the graph "
+                                 "results. Default is '800,800' for graph with less than 150 nodes and '1600,1600' "
+                                 "otherwise. Overridden by the '--no-plot' flag or if the graph "
                                  "is too big to be represented (larger than 1000 nodes).")
 
         parser.add_argument("--no-plot", action="store_true",
@@ -759,16 +759,16 @@ class App:
                             help="Specifies one of the predefined layout for the graphical representation of the network. "
                                  "Choices are: 'fruchterman_reingold', 'kamada_kawai', "
                                  "'large_graph', 'random', 'reingold_tilford'. Default is "
-                                 "'fruchterman_reingold'. Bypassed if the `--no-plot` flag if specified or if the graph "
+                                 "'fruchterman_reingold'. Bypassed if the '--no-plot' flag if specified or if the graph "
                                  "is too big to be represented (larger than 1000 nodes).")
 
         parser.add_argument("-S", "--seed", type=int, help="Sets a seed when creating a network, to replicate the "
-                                                           "network construction. Overridden by `--repeat`.",
+                                                           "network construction. Overridden by '--repeat'.",
                             metavar="", default=None)
 
         parser.add_argument("-R", "--repeat", metavar="", type=int, default=1,
-                            help="Repeats the graph generation for `n` times. Default is 1."
-                                 " NOTE: `--repeat` overrides `--seed`.")
+                            help="Repeats the graph generation for 'n' times. Default is 1."
+                                 " NOTE: '--repeat' overrides '--seed'.")
 
         parser.add_argument("--suppress-cursor", action="store_true",
                             help="Suppresses the animated cursor during Pyntacle execution.")
@@ -792,7 +792,7 @@ class App:
                                            "If not specified, it will be a number between 100 and 500 (chosen randomly)")
 
         random_subparser.add_argument("-p", "--probability",
-                                      help="The wiring probability to connect each node pair. Must be a float between 0 and 1. Default is 0.5. Overrides `--edges`.")
+                                      help="The wiring probability to connect each node pair. Must be a float between 0 and 1. Default is 0.5. Overrides '--edges'.")
 
         random_subparser.add_argument("-e", "--edges", type=int,
                                       help="The resulting number of edges.")
@@ -950,7 +950,7 @@ class App:
         parser.add_argument("-u", "--output-format", metavar="",
                             choices=format_dictionary.keys(), default="adjmat",
                             help="Desired output format for the output network files storing communities. The same "
-                                 "abbreviations used in the `--format` are applied. See https://goo.gl/9wFRfM for "
+                                 "abbreviations used in the '--format' are applied. See https://goo.gl/9wFRfM for "
                                  "more information on available network file formats and the complete list of abbreviations.")
 
         parser.add_argument("--output-separator", metavar="",
@@ -966,8 +966,8 @@ class App:
 
         parser.add_argument("--plot-dim",
                             help="The dimensions (as comma-separated values) of the graphical representation of the "
-                                 "results. Default is `800,800` for graph with less than 150 nodes and `1600,1600` "
-                                 "otherwise. Overridden by the `--no-plot` flag or if the graph "
+                                 "results. Default is '800,800' for graph with less than 150 nodes and '1600,1600' "
+                                 "otherwise. Overridden by the '--no-plot' flag or if the graph "
                                  "is too big to be represented (larger than 1000 nodes).")
 
         parser.add_argument("--plot-layout", metavar="",
@@ -977,15 +977,15 @@ class App:
                             help="Specifies one of the predefined layout for the graphical representation of the network. "
                                  "Choices are: 'fruchterman_reingold', 'kamada_kawai', "
                                  "'large_graph', 'random', 'reingold_tilford'. Default is "
-                                 "'fruchterman_reingold'. Bypassed if the `--no-plot` flag if specified or if the graph "
+                                 "'fruchterman_reingold'. Bypassed if the '--no-plot' flag if specified or if the graph "
                                  "is too big to be represented (larger than 1000 nodes).")
 
         parser.add_argument("--no-plot", action="store_true",
                             help="Skips the graphical representation of the plot.")
 
         parser.add_argument("--save-binary", action="store_true",
-                            help="Saves a binary file (ending in `.graph`) that contains the network "
-                                 "and all the operations performed on it in an `igraph.Graph object`")
+                            help="Saves a binary file (ending in '.graph') that contains the network "
+                                 "and all the operations performed on it in an 'igraph.Graph' object")
 
         parser.add_argument("-L", "--largest-component", action="store_true",
                             help="Considers only the largest component of the input graph and excludes the smaller ones."
@@ -1153,8 +1153,8 @@ class App:
 
         parser.add_argument("--plot-dim", metavar="",
                             help="The dimensions (as comma-separated values) of the graphical representation of the "
-                                 "results. Default is `800,800` for graph with less than 150 nodes and `1600,1600` "
-                                 "otherwise. Overridden by the `--no-plot` flag or if the graph "
+                                 "results. Default is '800,800' for graph with less than 150 nodes and '1600,1600' "
+                                 "otherwise. Overridden by the '--no-plot' flag or if the graph "
                                  "is too big to be represented (larger than 1000 nodes).")
 
         parser.add_argument("--plot-layout", metavar="",
@@ -1164,7 +1164,7 @@ class App:
                             help="Specifies one of the predefined layout for the graphical representation of the network. "
                                  "Choices are: 'fruchterman_reingold', 'kamada_kawai', "
                                  "'large_graph', 'random', 'reingold_tilford'. Default is "
-                                 "'fruchterman_reingold'. Bypassed if the `--no-plot` flag if specified or if the graph "
+                                 "'fruchterman_reingold'. Bypassed if the '--no-plot' flag if specified or if the graph "
                                  "is too big to be represented (larger than 1000 nodes).")
 
         parser.add_argument("--no-plot", action="store_true",
@@ -1173,7 +1173,7 @@ class App:
         parser.add_argument("-u", "--output-format", metavar="",
                             choices=format_dictionary.keys(), default="adjmat",
                             help="Desired output format for the resulting network file.The same abbreviations used in the "
-                                 "`--format` are applied. See https://goo.gl/9wFRfM for more information on available "
+                                 "'--format' are applied. See https://goo.gl/9wFRfM for more information on available "
                                  "network file formats and the complete list of abbreviations.")
 
         parser.add_argument("--output-file", "-o", metavar="",
