@@ -90,7 +90,7 @@ class App:
                     The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                   Fore.GREEN + "\n  keyplayer       " + Fore.CYAN + "Computes key player metrics (goo.gl/uj8jCR) for a "
                                                                     "specific set of nodes ('kp-info') or find a set of "
-                                                                    "node of size k that own the optimal or the best "
+                                                                    "nodes of size k that owns the optimal or the best "
                                                                     "score ('kp-finder')." +
                   Fore.GREEN + "\n  groupcentrality " + Fore.CYAN + "Computes group centrality metrics (goo.gl/82Whxu), "
                                                                     "a variation of classical node centrality indices. "
