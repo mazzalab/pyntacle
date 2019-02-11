@@ -1,0 +1,18 @@
+Quick Graph Overview	
+graph name	figure_8	
+components	1	
+nodes	32	
+edges	56	
+
+	
+Pyntacle Command:	GR_info	
+group closeness distance	minimum	
+
+	
+Results: group centrality metrics for the input set of nodes	
+
+	
+Metric	Nodes	Value	
+group degree	HS,HA,GM	0.31034	
+group betweenness	HS,HA,GM	0.24713	
+group closeness	HS,HA,GM	0.38667	
