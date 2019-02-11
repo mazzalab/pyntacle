@@ -87,32 +87,32 @@ class App:
             description="Main Description",
             usage=Fore.RED + Style.BRIGHT + "pyntacle" + Fore.GREEN + " <command>" + Fore.RED
                   + """ [<args>]
-                    The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
+The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                   Fore.GREEN + "\n  keyplayer       " + Fore.CYAN + "Computes key player metrics (goo.gl/uj8jCR) for a "
-                                                                    "specific set of nodes ('kp-info') or find a set of "
+                                                                    "specific set of nodes ('kp-info')\n                  or finds a set of "
                                                                     "nodes of size k that owns the optimal or the best "
                                                                     "score ('kp-finder')." +
-                  Fore.GREEN + "\n  groupcentrality " + Fore.CYAN + "Computes group centrality metrics (goo.gl/82Whxu), "
-                                                                    "a variation of classical node centrality indices. "
+                  Fore.GREEN + "\n\n  groupcentrality " + Fore.CYAN + "Computes group centrality metrics (goo.gl/82Whxu), "
+                                                                    "a variation of classical node\n                  centrality indices. "
                                                                     "These metrics can be computed for "
-                                                                    "a specific set of nodes ('gr-info') or they can be "
+                                                                    "a specific set of nodes ('gr-info')\n                  or they can be "
                                                                     "used to find a set of node of size k that own "
                                                                     "the optimal or the best score ('gr-finder')." +
-                  Fore.GREEN + "\n  metrics         " + Fore.CYAN + "Computes metrics of local and global nature for a "
+                  Fore.GREEN + "\n\n  metrics         " + Fore.CYAN + "Computes metrics of local and global nature for a "
                                                                     "set of nodes of a network or for the "
                                                                     "whole graph." +
-                  Fore.GREEN + "\n  convert         " + Fore.CYAN + "Converts a network file format to another one." +
-                  Fore.GREEN + "\n  set             " + Fore.CYAN + "Performs set operations ('union', "
+                  Fore.GREEN + "\n\n  convert         " + Fore.CYAN + "Converts a network file format to another one." +
+                  Fore.GREEN + "\n\n  set             " + Fore.CYAN + "Performs set operations ('union', "
                                                                     "'intersection', 'difference') between two "
-                                                                    "networks using graph logical operations." +
-                  Fore.GREEN + "\n  generate        " + Fore.CYAN + "Generates in-silico networks that follow"
+                                                                    "networks\n                  using graph logical operations." +
+                  Fore.GREEN + "\n\n  generate        " + Fore.CYAN + "Generates in-silico networks that follow"
                                                                     "one of the available topologies." +
-                  Fore.GREEN + "\n  communities     " + Fore.CYAN + "Finds communities within a graph using"
-                                                                    "several community-finding algorithms. Produces "
+                  Fore.GREEN + "\n\n  communities     " + Fore.CYAN + "Finds communities within a graph using"
+                                                                    "several community-finding algorithms. Produces\n                  "
                                                                     "several network files, each containing "
                                                                     "an induced subgraph." +
-                  Fore.GREEN + "\n  test            " + Fore.CYAN + "Performs a series of tests to check "
-                                                                    "the integrity of Pyntacle. Useful to test if "
+                  Fore.GREEN + "\n\n  test            " + Fore.CYAN + "Performs a series of tests to check "
+                                                                    "the integrity of Pyntacle. Useful to test if\n                  "
                                                                     "Pyntacle was installed correctly and for debugging "
                                                                     "tasks.\n" +
                   Style.RESET_ALL + 100 * "-", )
