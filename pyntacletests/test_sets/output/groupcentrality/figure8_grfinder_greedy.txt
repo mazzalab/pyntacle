@@ -1,0 +1,16 @@
+Quick Graph Overview	
+graph name	figure_8	
+components	1	
+nodes	32	
+edges	56	
+
+	
+Pyntacle Command:	GR_greedy	
+group closeness distance	minimum	
+
+	
+Results: greedily-optimized search for optimal group centrality node set	
+Index	Node set	Value	
+group degree	PH,WL	0.5	
+group betweenness	PH,WL	0.36398	
+group closeness	PH,WL	0.53571	
