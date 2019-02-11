@@ -573,7 +573,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                           "factor that will be used to compute the PageRank index. Default is 0.85.")
 
         local_subparser.add_argument("--weights", "-w", type=str, default=None,
-                                     help="$PATH to an edge attribute file storing weights that will be used to "
+                                     help="Path to an edge attribute file storing weights that will be used to "
                                           "compute the PageRank index. Must be either a standard edge "
                                           "attribute file or a Cytoscape legacy attribute file. See https://goo.gl/9wFRfM for more details on edge attribute files."
                                           "NOTE: A column named 'weights' must be present in the edge attribute file.")
@@ -1010,7 +1010,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
         fastgreedy_subparser.set_defaults(which="fastgreedy")
 
         fastgreedy_subparser.add_argument("--weights", metavar="",
-                                          help="$PATH to an edge attribute file storing weights that will be passed to the"
+                                          help="Path to an edge attribute file storing weights that will be passed to the"
                                                "fastgreedy algorithm. Must be either a standard edge attribute file or a "
                                                "Cytoscape legacy attribute file. "
                                                "See https://goo.gl/9wFRfM for more details on edge attribute files."
@@ -1054,7 +1054,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
         community_walktrap_subparser.set_defaults(which="community-walktrap")
 
         community_walktrap_subparser.add_argument("--weights",
-                                                  help="$PATH to an edge attribute file storing weights that will be "
+                                                  help="Path to an edge attribute file storing weights that will be "
                                                        "passed to the walktrap algorithm. Must be either a standard "
                                                        "edge attribute file or a Cytoscape legacy attribute file. "
                                                        "See https://goo.gl/9wFRfM for more details on edge attribute files."
