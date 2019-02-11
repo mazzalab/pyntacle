@@ -89,14 +89,14 @@ class App:
                   + """ [<args>]
                     The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                   Fore.GREEN + "\n  keyplayer       " + Fore.CYAN + "Computes key player metrics (goo.gl/uj8jCR) for a "
-                                                                    "specific set of nodes ('kp-info') or find a set of "
-                                                                    "nodes of size k that owns the optimal or the best "
+                                                                    "specific set of nodes ('kp-info') or finds a set of "
+                                                                    "nodes of size `k` that owns the optimal or the best "
                                                                     "score ('kp-finder')." +
                   Fore.GREEN + "\n  groupcentrality " + Fore.CYAN + "Computes group centrality metrics (goo.gl/82Whxu), "
                                                                     "a variation of classical node centrality indices. "
                                                                     "These metrics can be computed for "
                                                                     "a specific set of nodes ('gr-info') or they can be "
-                                                                    "used to find a set of node of size k that own "
+                                                                    "used to find a set of node of size `k` that own "
                                                                     "the optimal or the best score ('gr-finder')." +
                   Fore.GREEN + "\n  metrics         " + Fore.CYAN + "Computes metrics of local and global nature for a "
                                                                     "set of nodes of a network or for the "
@@ -190,7 +190,7 @@ class App:
                                                                           "metric. Must be provided if m-reach"
                                                                           " is computed.")
 
-        parser.add_argument("-M", "--max-distance", metavar="", type=int, help="(OPTIONAL) The number of steps after"
+        parser.add_argument("-M", "--max-distance", metavar="", type=int, help="The number of steps after"
                                                                                " which two nodes will be considered as "
                                                                                "disconnected. By default, "
                                                                                "no maximum distance is set.")
@@ -199,7 +199,7 @@ class App:
                             default="all",
                             help="The key player metric (or metrics) of interest. Choices are: "
                                  "'all' (all metrics), 'pos' (reachabiliy metrics: dR and m-reach),"
-                                 " 'neg' (fragmentation metrics: F dF). 'dR', 'mreach', 'F', "
+                                 " 'neg' (fragmentation metrics: F and dF). 'dR', 'mreach', 'F', "
                                  "'dF'. Default is 'all'.")
 
         parser.add_argument("-L", "--largest-component", action="store_true",
@@ -289,7 +289,7 @@ class App:
                                                                        "seed to replicate the greedy optimization search.",
                                         metavar="", default=None)
         finder_case_parser.add_argument("-T", "--threads", metavar="", default=n_cpus, type=threads_type,
-                                        help="Specifies the number of cores that will be used in brute-force. Defaults to "
+                                        help="(BRUTE-FORCE SEARCH ONLY) Specifies the number of cores that will be used in brute-force. Defaults to "
                                              "the maximum number of cores available in your machine - 1.")
 
         finder_case_parser.set_defaults(which="kp-finder")
@@ -956,6 +956,12 @@ class App:
         parser.add_argument("--output-separator", metavar="",
                             help="The field separator of the output network file. Default is '\t'."
                                  " NOTE: the separator must be wrapped in quotes.")
+
+        parser.add_argument("-r", "--report-format", metavar="", default="txt", choices=["txt", "csv", "xlsx", "tsv"],
+                            type=lambda s: s.lower(),
+                            help="The format of the report produced by "
+                                 "Pyntacle. Choices are: 'txt' and 'tsv' (tab-separated file), 'csv' "
+                                 "(comma-separated value file), 'xlsx' (Excel file). Default is 'txt'.")
 
         parser.add_argument("-P", "--plot-format", choices=["svg", "pdf", "png"], default="pdf",
                             type=lambda s: s.lower(),

@@ -102,14 +102,11 @@ class PyntacleReporter():
         r"""
         Create a text file containing the information created previously by the any of the *report* functions.
         By default, if the `report_path` function is not initialized, a generic name is created and a tab-separated file
-        is generated (named *Pyntacle_report_**GRAPHNAME**_**COMMAND**_**DATE**.tsv* where:_
+        is generated (named *Report_**GRAPHNAME**_**COMMAND**_**DATE**.tsv* where:_
 
         * **GRAPHNAME** is the value stored in the graph["name"] attribute,
         * **Command** is the name of the command requested by the user and
         * **Date** is the date when the Pyntacle run was completed. This file will be stored in the current directory
-
-
-        :return: the path where the report is stored
         """
 
         if not self.report:
@@ -146,9 +143,9 @@ class PyntacleReporter():
         graphname = self.graph["name"][0]
         
         if self.report_type.name == 'Set':
-            report_path = os.path.join(report_dir, "_".join(["Pyntacle_Report", self.report_type.name, self.dat])+".tsv")
+            report_path = os.path.join(report_dir, "_".join(["Report", self.report_type.name, self.dat])+".tsv")
         else:
-            report_path = os.path.join(report_dir, "_".join(["Pyntacle_Report", graphname, self.report_type.name, self.dat])+".tsv")
+            report_path = os.path.join(report_dir, "_".join(["Report", graphname, self.report_type.name, self.dat])+".tsv")
 
         extension = choices[format]
 
@@ -168,7 +165,7 @@ class PyntacleReporter():
                     writer.writerows(self.report)
 
         else:
-            self.logger.info(u"Writing Pyntacle report to a an excel-Ready file (xlsx)")
+            self.logger.info(u"Writing Pyntacle report to a an excel file (xlsx)")
             workbook = xlsxwriter.Workbook(report_path, {'constant_memory': True})
             workbook.use_zip64()
             format = workbook.add_format()
@@ -180,8 +177,6 @@ class PyntacleReporter():
                     worksheet.write(row, col, p, format)
 
             workbook.close()
-
-        return report_path
 
     def __local_report(self, reportdict:OrderedDict):
         r"""
@@ -295,7 +290,7 @@ class PyntacleReporter():
 
             self.report.append([metric_correct, ",".join(reportdict[k][0]), round(reportdict[k][1], 5)])
 
-    def __greedy_report(self, reportdict: OrderedDict, type = "kp"):
+    def __greedy_report(self, reportdict: OrderedDict, type: str ="kp"):
         r"""
         fill the *self.__report* object with all the values contained in the Greedy Optimization Run
 
@@ -451,17 +446,17 @@ class PyntacleReporter():
     def __communities_report(self, reportdict: OrderedDict):
         r"""
         Report General information regarding the communities (nodes, edges, component, algorithm)
-        stored in the reportdic. The reportdic **MUST** also contain a `algorithms` key that will be used to report the
-        type of algorithm used
+        stored in the ``reportdic``. The reportdic **MUST** also contain a `algorithms` key that will be used to report
+        the type of algorithm used
 
-        :param reportdict: a dictionary from pyntacle communities
+        :param reportdict: a dictionary from Pyntacle communities
         """
         self.report.append(["Results: Community finding of the input graph"])
         self.report.append(["Algorithm:", reportdict["algorithm"]])
         self.report.append(["\n"])
-        self.report.append(["Module", "Nodes", "Edges", "Components"])
         del reportdict["algorithm"] #delete the dictionary algorithm
-
+        self.report.append(["\n"])
+        self.report.append(["Module Label", "Nodes", "Edges", "Components"])
         for k in reportdict.keys():
             self.report.append([k, reportdict[k][0], reportdict[k][1], reportdict[k][2]])
             

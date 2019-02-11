@@ -227,10 +227,6 @@ class Metrics:
                 os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
 
             sys.stdout.write(u"Producing report in {} format...\n".format(self.args.report_format))
-            report_path = os.path.join(self.args.directory, report_prefix + self.args.report_format)
-
-            if os.path.exists(report_path):
-                sys.stdout.write(u"Warning: File {} already exists, will be overwritten.\n".format(report_path))
 
             reporter.create_report(ReportEnum.Local, local_attributes_dict)
             reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)

@@ -23,14 +23,18 @@ __license__ = u"""
   You should have received a copy of the license along with this
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
+from collections import OrderedDict
 from warnings import simplefilter
 from graph_operations.communities import CommunityFinder, ModuleUtils
 from io_stream.import_attributes import ImportAttributes
 from io_stream.exporter import PyntacleExporter
 from cmds.cmds_utils.plotter import PlotGraph
+from cmds.cmds_utils.reporter import PyntacleReporter
 from tools.graph_utils import *
+from tools.enums import ReportEnum
 from internal.graph_load import GraphLoad, separator_detect
 from exceptions.generic_error import Error
+
 
 class Communities():
     def __init__(self, args):
@@ -38,7 +42,8 @@ class Communities():
         self.args = args
         self.date = runtime_date
         if not hasattr(self.args, 'which'):
-            raise Error(u"usage: pyntacle.py communities{infomap, community-walktrap, fastgreedy, leading-eigenvector} [options]'")
+            raise Error(
+                u"usage: pyntacle.py communities{infomap, community-walktrap, fastgreedy, leading-eigenvector} [options]'")
         # Check for pycairo
         if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
             sys.stdout.write(u"Warning: It seems that the pycairo library is not installed/available. Graph plot(s)"
@@ -68,7 +73,7 @@ class Communities():
         if self.args.no_header:
             input_header = False
 
-        input_format =format_dictionary.get(self.args.format, "NA")
+        input_format = format_dictionary.get(self.args.format, "NA")
 
         sys.stdout.write(u"Importing graph from file...\n")
         graph = GraphLoad(self.args.input_file, file_format=input_format,
@@ -93,7 +98,11 @@ class Communities():
 
         # initialize module finder method
         communities = CommunityFinder(graph=graph)
-        # initialize ImportAttributes method
+        # initialize Reporter
+        r = PyntacleReporter(graph=graph)
+        report_type = ReportEnum.Communities
+        results = OrderedDict()
+        results["algorithm"] = self.args.which
 
         # define plot sizes
         if self.args.plot_dim:  # define custom format
@@ -131,12 +140,14 @@ class Communities():
                     sys.exit(1)
 
                 else:
-                    ImportAttributes.import_edge_attributes(graph, self.args.weights, sep=separator_detect(self.args.weights), mode=self.args.weights_format)
+                    ImportAttributes.import_edge_attributes(graph, self.args.weights,
+                                                            sep=separator_detect(self.args.weights),
+                                                            mode=self.args.weights_format)
                     weights = [float(x) if x != None else 1.0 for x in graph.es()["weights"]]
 
             else:
                 weights = None
-                
+
             if self.args.clusters is not None:
                 try:
                     self.args.clusters = int(self.args.clusters)
@@ -177,7 +188,9 @@ class Communities():
                     sys.exit(1)
 
                 else:
-                    ImportAttributes.import_edge_attributes(graph, self.args.weights, sep=separator_detect(self.args.weights), mode=self.args.weights_format)
+                    ImportAttributes.import_edge_attributes(graph, self.args.weights,
+                                                            sep=separator_detect(self.args.weights),
+                                                            mode=self.args.weights_format)
                     weights = [float(x) if x != None else 1.0 for x in graph.es()["weights"]]
 
             else:
@@ -201,26 +214,24 @@ class Communities():
 
         else:
             sys.stderr.write(u"This should not happen. Please contact Pyntacle developers and send your "
-                                  "command line, along with a log. Quitting.\n")
+                             "command line, along with a log. Quitting.\n")
             sys.exit(1)
 
         mods_report = []
         if not mods:
-            sys.stderr.write(u"No get_modules found. Quitting.")
+            sys.stderr.write(u"No communities found. Quitting.")
             sys.exit(1)
         for i, elem in enumerate(mods):
             mods_report.append(
                 "\t".join([str(x) for x in [i, elem.vcount(), elem.ecount(), len(elem.components())]]) + "\n")
 
         sys.stdout.write(
-            u"Pyntacle - Community finding report:\nAlgorithm:{0}\nTotal number of get_modules found:"
+            u"Pyntacle - Community finding report:\nAlgorithm:{0}\nTotal number of communities found:"
             "\t{1}\nIndex\tNodes\tEdges \tComponents\n{2}".format(
                 algorithm, len(mods), "".join(mods_report)))
 
-
         # initialize Moduleutils class
-        mod_utils = ModuleUtils(graph=graph, algorithm=algorithm, modules=mods)
-        mod_utils.add_modules_info()
+        mod_utils = ModuleUtils(modules=mods)
 
         if not all(x is None for x in [self.args.min_nodes, self.args.max_nodes, self.args.min_components,
                                        self.args.max_components]):
@@ -231,7 +242,7 @@ class Communities():
                     self.args.min_nodes = int(self.args.min_nodes)
 
                 except:
-                    sys.stderr.write(u"Argument of '--min-set' must be an integer. Quitting.\n")
+                    sys.stderr.write(u"Argument of '--min-nodes' must be an integer. Quitting.\n")
                     sys.exit(1)
 
             if self.args.max_nodes is not None:
@@ -239,14 +250,14 @@ class Communities():
                     self.args.max_nodes = int(self.args.max_nodes)
 
                 except:
-                    sys.stderr.write(u"Argument of '--max-set' must be an integer. Quitting.\n")
+                    sys.stderr.write(u"Argument of '--max-nodes' must be an integer. Quitting.\n")
                     sys.exit(1)
 
             if self.args.max_components is not None:
                 try:
                     self.args.max_components = int(self.args.max_components)
-
                 except:
+
                     sys.stderr.write(u"Argument of '--max-components' must be an integer. Quitting.\n")
                     sys.exit(1)
 
@@ -255,28 +266,34 @@ class Communities():
                     self.args.min_components = int(self.args.min_components)
 
                 except:
-                    sys.stderr.write(u"Argument of '--min_components' must be an integer. Quitting.\n")
+                    sys.stderr.write(u"Argument of '--min-components' must be an integer. Quitting.\n")
                     sys.exit(1)
 
             mod_utils.filter_subgraphs(min_nodes=self.args.min_nodes, max_nodes=self.args.max_nodes,
                                        min_components=self.args.min_components,
                                        max_components=self.args.max_components)
             if len(mod_utils.modules) > 0:
-                sys.stdout.write(u"Filtered out {0} get_modules. Keeping {1} communities. Writing induced subgraph of communities to file...\n".format(
-                    (init_mods - len(mod_utils.modules)), len(mod_utils.modules)))
+                sys.stdout.write(
+                    u"Filtered out {0} communities. Keeping {1} communities. Writing induced subgraph of communities to file...\n".format(
+                        (init_mods - len(mod_utils.modules)), len(mod_utils.modules)))
             else:
-                sys.stderr.write(u"According to your filtering criteria, no community found was kept. Returning no output and Quitting.\n")
+                sys.stderr.write(
+                    u"No community could be kept using the current filters. Quitting.\n")
                 sys.exit(0)
 
         else:
-            sys.stdout.write(u"No get_modules to filter.\n")
+            sys.stdout.write(u"No filters specified. All modules will be kept.\n")
 
-        mod_utils.label_modules_in_graph()
+        mod_utils.label_modules_in_graph(graph=graph)
         final_mods = mod_utils.get_modules()
+
+        for elem in final_mods:
+            results[elem["module"]] = [elem.vcount(), elem.ecount(), len(elem.components())]
+
 
         # producing output graph
         if self.args.no_output_header:
-            sys.stdout.write(u"Skipping header writing on output graph community files, as you requested.\n")
+            sys.stdout.write(u"Skipping header writing on output graph community files.\n")
             output_header = False
 
         else:
@@ -297,13 +314,13 @@ class Communities():
             # insert random name generator
             self.args.output_file = "_".join(["pyntacle", graph["name"][0], algorithm])
             sys.stdout.write(
-                u"Output get_modules name not specified. Basename of the output get_modules will be {} (default).\n".format(
+                u"Basename of the output modules will be {} (default).\n".format(
                     self.args.output_file))
 
         output_basename = os.path.join(self.args.directory, self.args.output_file)
         # output generated networks
         for elem in final_mods:
-            output_path = ".".join(["_".join([output_basename, str(elem["module_number"]), self.date]), out_form])
+            output_path = ".".join(["_".join([output_basename, str(elem["module"]), self.date]), out_form])
             if out_form == "adjm":
                 sys.stdout.write(u"Writing each community to an adjacency matrix...\n")
                 PyntacleExporter.AdjacencyMatrix(elem, output_path, sep=self.args.output_separator,
@@ -326,12 +343,18 @@ class Communities():
                 sys.stdout.write(u"Writing each community to a binary file (ending in .graph)...\n")
                 PyntacleExporter.Binary(elem, output_path)
 
+        # reporting and plotting part
+        sys.stdout.write(u"Producing report in {} format...\n".format(self.args.report_format))
+
+        r.create_report(report_type=report_type, report=results)
+        r.write_report(report_dir=self.args.directory, format=self.args.report_format)
+
         # save the original graph into a binary file
         if self.args.save_binary:
-            binary_name = ".".join(["pyntacle_communities", "graph"])
+            binary_name = ".".join(["_".join([os.path.splitext(os.path.basename(self.args.input_file))[0], "communities"]), "graph"])
             binary_path = os.path.join(self.args.directory, binary_name)
             sys.stdout.write(
-                u"Storing the input graph with module labels into a binary file (ending in .graph) at {} .\n".format(
+                u"Storing the input graph with module labels into a binary file in the results directory...\n".format(
                     binary_path))
 
         if not self.args.no_plot:
@@ -348,18 +371,18 @@ class Communities():
             avail_colors_fill = sns.color_palette("Spectral", n_colors=len(
                 final_mods)).as_hex()  # available colors for node fill
             avail_colors_borders = sns.color_palette("Spectral", n_colors=len(final_mods),
-                                                      desat=0.5).as_hex()
+                                                     desat=0.5).as_hex()
 
             if graph.vcount() < 1000:
 
-                sys.stdout.write(u"Plotting graph in {} format.\n".format(self.args.plot_format))
+                sys.stdout.write(u"Plotting graph in {} format...\n".format(self.args.plot_format))
 
                 main_plot_path = os.path.join(plot_dir, ".".join(["_".join(
-                    [self.args.which, os.path.splitext(os.path.basename(self.args.input_file))[0], "get_modules",
+                    [self.args.which, os.path.splitext(os.path.basename(self.args.input_file))[0], "communities",
                      self.date]), self.args.plot_format]))
 
                 # initialize general graph Drawer
-                sys.stdout.write(u"Drawing original graph highlighting communities...\n")
+                sys.stdout.write(u"Drawing original graph, highlighting communities...\n")
                 graph_plotter = PlotGraph(graph=graph)
                 graph_plotter.set_node_labels(labels=graph.vs()["name"])
                 graph_plotter.set_node_sizes([30] * graph.vcount())
@@ -369,7 +392,7 @@ class Communities():
                 col_list = []
                 bord_list = []
                 for elem in graph.vs():
-                    module = elem["__module"]
+                    module = elem["module"]
                     if module is not None:
                         col_list.append(avail_colors_fill[module])
                         bord_list.append(avail_colors_borders[module])
@@ -390,12 +413,12 @@ class Communities():
 
             if len(final_mods) > 20:
                 self.logging.warning(
-                    u"The number of get_modules found ({}) is very high. The plot of the input graph will have nuanced colors.".format(
+                    u"The number of modules found ({}) is very high. The plot of the input graph will have nuanced colors.".format(
                         len(final_mods)))
 
-            sys.stdout.write("Drawing Each Module Separately.\n")
+            sys.stdout.write("Drawing Each Module Separately...\n")
 
-            for i,comm in enumerate(final_mods):
+            for i, comm in enumerate(final_mods):
                 if comm.vcount() <= 1000:
                     plotter = PlotGraph(graph=comm)
                     plotter.set_node_labels(labels=comm.vs()["name"])
@@ -405,7 +428,8 @@ class Communities():
                     plotter.set_node_sizes([30] * comm.vcount())
 
                     comm_plot_path = os.path.join(plot_dir, ".".join(
-                        ["_".join([self.args.output_file, str(comm["module_number"]), self.date]), self.args.plot_format]))
+                        ["_".join([self.args.output_file, str(comm["module"]), self.date]),
+                         self.args.plot_format]))
 
                     plotter.set_layouts(self.args.plot_layout)
                     plotter.plot_graph(path=comm_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
@@ -414,7 +438,7 @@ class Communities():
 
                 else:
                     sys.stdout.write(
-                        u"Module {0} is above Pyntacle plotting limits ({1} nodes, we support 1000 nodes). Will skip plotting this module.\n".format(
+                        u"Module {0} is above Pyntacle plotting limits ({1} nodes, communities with at best 1000 nodes are plotted). Plotting will be skipped.\n".format(
                             i, comm.vcount()))
         if not self.args.suppress_cursor:
             cursor.stop()

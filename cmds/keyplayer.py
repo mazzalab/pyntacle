@@ -374,13 +374,7 @@ class KeyPlayer():
         # reporting and plotting part
         sys.stdout.write(u"Producing report in {} format...\n".format(self.args.report_format))
 
-        report_path = os.path.join(self.args.directory, ".".join([report_prefix, self.args.report_format]))
-
-        if os.path.exists(report_path):
-            self.logging.warning(
-                u"A report with the same name ({}) already exists, will be overwritten".format
-                (os.path.basename(report_path)))
-        r.create_report(report_type=report_type, report = results)
+        r.create_report(report_type=report_type, report=results)
         r.write_report(report_dir=self.args.directory, format=self.args.report_format)
         
         if self.args.save_binary:
@@ -425,20 +419,6 @@ class KeyPlayer():
             binary_prefix = "_".join([os.path.splitext(os.path.basename(self.args.input_file))[0], self.args.which, self.date])
             binary_path = os.path.join(self.args.directory, binary_prefix + ".graph")
             PyntacleExporter.Binary(graph, binary_path)
-
-        if self.args.save_binary:
-            #reproduce octopus behaviour by adding kp information to the graph before saving it
-            sys.stdout.write(u"Saving graph to a binary file (ending in .graph)...\n")
-            #step 1: decide the type of the implementation
-
-            bf = False
-            if self.args.which == "kp-info":
-                bin_type = "kpinfo"
-            else:
-                bin_type = "greedy"
-                if self.args.implementation == "brute-force":
-                    bin_type = "bruteforce"
-                    bf = True
 
         # generate and output plot
         if not self.args.no_plot and graph.vcount() < 1000:

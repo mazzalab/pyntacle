@@ -381,13 +381,6 @@ class GroupCentrality():
 
         sys.stdout.write(u"Producing report in {} format...\n".format(self.args.report_format))
 
-        report_path = os.path.join(self.args.directory, ".".join([report_prefix, self.args.report_format]))
-
-        if os.path.exists(report_path):
-            self.logging.warning(
-                u"A report with the same name ({}) already exists, overwriting it.".format
-                (os.path.basename(report_path)))
-
         r.create_report(report_type=report_type, report=results)
         r.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
