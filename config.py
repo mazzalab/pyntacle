@@ -40,7 +40,7 @@ logging.basicConfig(level=logging.ERROR, format="%(asctime)s - %(levelname)s - %
 format_dictionary = {"adjmat": "adjm", "edgelist": "egl", "sif": "sif", "dot": "dot", "bin": "graph", "adjm": "adjm",
                      "graph": "graph", "edgl": "egl", "egl": "egl", "binary": "bin", "adjacencymatrix": "adjm",
                      "edge_list": "egl", "adjacency_matrix": "adjm"}
-report_format = {"tsv" : "tsv", "txt": "tsv", "csv" : "csv", "xlsx" : "xlsx", "xlx": "xlsx"}
+report_format = {"tsv": "tsv", "txt": "tsv", "csv": "csv", "xlsx": "xlsx", "xlx": "xlsx"}
 
 runtime_date = datetime.datetime.now().strftime("%Y-%m-%d-%H%M%S")
 

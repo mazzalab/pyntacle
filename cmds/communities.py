@@ -23,6 +23,7 @@ __license__ = u"""
   You should have received a copy of the license along with this
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
+from config import *
 from collections import OrderedDict
 from warnings import simplefilter
 from graph_operations.communities import CommunityFinder, ModuleUtils
@@ -43,7 +44,7 @@ class Communities():
         self.date = runtime_date
         if not hasattr(self.args, 'which'):
             raise Error(
-                u"usage: pyntacle.py communities{infomap, community-walktrap, fastgreedy, leading-eigenvector} [options]'")
+                u"usage: pyntacle.py communities {infomap, community-walktrap, fastgreedy, leading-eigenvector} [options]")
         # Check for pycairo
         if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
             sys.stdout.write(u"Warning: It seems that the pycairo library is not installed/available. Graph plot(s)"
@@ -90,7 +91,6 @@ class Communities():
                         graph.vcount(), graph.ecount()))
                 utils.set_graph(graph)
 
-
             except MultipleSolutionsError:
                 sys.stderr.write(
                     u"The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the '--largest-component' option. Quitting.\n")
@@ -99,10 +99,8 @@ class Communities():
         # initialize module finder method
         communities = CommunityFinder(graph=graph)
         # initialize Reporter
-        r = PyntacleReporter(graph=graph)
-        report_type = ReportEnum.Communities
+
         results = OrderedDict()
-        results["algorithm"] = self.args.which
 
         # define plot sizes
         if self.args.plot_dim:  # define custom format
@@ -274,7 +272,7 @@ class Communities():
                                        max_components=self.args.max_components)
             if len(mod_utils.modules) > 0:
                 sys.stdout.write(
-                    u"Filtered out {0} communities. Keeping {1} communities. Writing induced subgraph of communities to file...\n".format(
+                    u"Filtered out {0} communities. Keeping {1} communities.\n".format(
                         (init_mods - len(mod_utils.modules)), len(mod_utils.modules)))
             else:
                 sys.stderr.write(
@@ -319,32 +317,37 @@ class Communities():
 
         output_basename = os.path.join(self.args.directory, self.args.output_file)
         # output generated networks
+
+        sys.stdout.write("Writing resulting communities to the specified network file format...\n")
+
         for elem in final_mods:
             output_path = ".".join(["_".join([output_basename, str(elem["module"]), self.date]), out_form])
-            if out_form == "adjm":
-                sys.stdout.write(u"Writing each community to an adjacency matrix...\n")
-                PyntacleExporter.AdjacencyMatrix(elem, output_path, sep=self.args.output_separator,
-                                                 header=output_header)
-            elif out_form == "egl":
-                sys.stdout.write(u"Writing each community to an edge list...\n")
-                PyntacleExporter.EdgeList(elem, output_path, sep=self.args.output_separator, header=output_header)
+            try:
+                if out_form == "adjm":
+                    PyntacleExporter.AdjacencyMatrix(elem, output_path, sep=self.args.output_separator,
+                                                     header=output_header)
+                elif out_form == "egl":
+                    PyntacleExporter.EdgeList(elem, output_path, sep=self.args.output_separator, header=output_header)
 
-            elif out_form == "sif":
-                sys.stdout.write(u"Writing each community to a Simple Interaction Format (SIF) file...\n")
-                PyntacleExporter.Sif(elem, output_path, sep=self.args.output_separator, header=output_header)
+                elif out_form == "sif":
+                    PyntacleExporter.Sif(elem, output_path, sep=self.args.output_separator, header=output_header)
 
-            elif out_form == "dot":
-                sys.stdout.write(u"Writing each community to a DOT file...\n")
-                # Ignore ugly RuntimeWarnings while creating a dot
-                simplefilter("ignore", RuntimeWarning)
-                PyntacleExporter.Dot(elem, output_path)
+                elif out_form == "dot":
+                    # Ignore ugly RuntimeWarnings while creating a dot
+                    simplefilter("ignore", RuntimeWarning)
+                    PyntacleExporter.Dot(elem, output_path)
 
-            elif out_form == "bin":
-                sys.stdout.write(u"Writing each community to a binary file (ending in .graph)...\n")
-                PyntacleExporter.Binary(elem, output_path)
+                elif out_form == "bin":
+                    PyntacleExporter.Binary(elem, output_path)
+
+            except UnsupportedGraphError:
+                sys.stdout.write("Module {0} was skipped because it is too small ({1} nodes, {2} edges), use the `--save-binary` flag to retrieve it.\n".format(elem["module"], elem.vcount(), elem.ecount()))
 
         # reporting and plotting part
         sys.stdout.write(u"Producing report in {} format...\n".format(self.args.report_format))
+        r = PyntacleReporter(graph=graph)
+        report_type = ReportEnum.Communities
+        results["algorithm"] = algorithm
 
         r.create_report(report_type=report_type, report=results)
         r.write_report(report_dir=self.args.directory, format=self.args.report_format)
