@@ -169,7 +169,7 @@ class GraphUtils:
 
         return None
 
-    def nodes_in_graph(self, names: list) -> bool:
+    def nodes_in_graph(self, names: list or str) -> bool:
         r"""
         Scans a list of strings and checks whether they are present in the input :py:class:`~igraph.Graph` vertex names
         (by looking at the vertex ``name`` attribute).
@@ -182,7 +182,7 @@ class GraphUtils:
         if isinstance(names, str):
             names = [names]
 
-        else:
+        elif not isinstance(names, list):
             raise ValueError(u"`names` must be a list")
 
         if len(names) < 0:

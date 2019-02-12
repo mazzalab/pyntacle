@@ -71,7 +71,7 @@ class WidgetTestConvert(unittest.TestCase):
         with open(fileout, 'r') as fin:
             next(fin)
             data = fin.read()
-            
+
         with open(expected, 'r') as exp:
             data_exp = exp.read()
         o = set(re.findall(r"name=[A-z0-9]+|[A-z0-9]+ -- [A-z0-9]+", data))
