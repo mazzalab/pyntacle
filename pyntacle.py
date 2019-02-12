@@ -1101,7 +1101,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
     def set(self):
 
         parser = argparse.ArgumentParser(
-            description="Performs set operations (union, intersection, difference) between two networks using"
+            description="Performs set operations (union, intersection, difference) between two networks using "
                         "logical graph operations.\n\n"
                         "Subcommands:\n\n" + 90 * "-" + "\n" +
                         "  intersection\t      Graph intersection. Returns only the "
