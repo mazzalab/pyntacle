@@ -46,11 +46,11 @@ def greedy_search_initializer(func):
     @wraps(func)
     def func_wrapper(graph, k, metric, seed=None, *args, **kwargs):
         if not isinstance(k, int):
-            raise TypeError("The k argument ('{}') is not an integer number".format(k))
+            raise TypeError("The 'k' argument ({}) is not an integer number".format(k))
 
         else:
             if k >= graph.vcount():
-                raise IllegalKpsetSizeError("The k must be strictly less than the graph size")
+                raise IllegalKpsetSizeError("The 'k' argument ({}) must be strictly less than the graph size ({})".format(k, graph.vcount()))
 
         if seed is not None:
             if not isinstance(seed, int):
@@ -76,11 +76,12 @@ def bruteforce_search_initializer(func):
     def func_wrapper(graph, k, metric, *args, **kwargs):
 
         if not isinstance(k, int):
-            raise TypeError("The k argument ('{}') is not an integer number".format(k))
+            raise TypeError("The 'k' argument ({}) is not an integer number".format(k))
 
         else:
             if k >= graph.vcount():
-                raise IllegalKpsetSizeError("The k must be strictly less than the graph size")
+                raise IllegalKpsetSizeError(
+                    "The 'k' argument ({}) must be strictly less than the graph size ({})".format(k, graph.vcount()))
 
         return func(graph, k, metric, *args, **kwargs)
 

@@ -140,9 +140,9 @@ class PyntacleImporter:
                 node_names = [str(x) for x in range(0, len(f.columns))]
 
             graph = Graph.Adjacency(f.values.tolist(), mode="UPPER")
-
             util = gu(graph=graph)
             util.graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0],  node_names=node_names)
+            graph = util.get_graph()
 
             sys.stdout.write(u"Adjacency matrix from {} imported\n".format(file))
             return graph
@@ -204,6 +204,7 @@ class PyntacleImporter:
         #initialize the graph by calling the graph_initializer() method
         util = gu(graph=graph)
         util.graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
+        graph = util.get_graph()
 
         sys.stdout.write(u"Edge list from {} imported\n".format(file))
         return graph
@@ -300,6 +301,7 @@ class PyntacleImporter:
             # initialize graph
             util = gu(graph=graph)
             util.graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
+            graph = util.get_graph()
     
             sys.stdout.write(u"SIF from {} imported\n".format(file))
 
@@ -414,6 +416,7 @@ class PyntacleImporter:
 
         util = gu(graph=graph)
         util.graph_initializer(graph_name=graphname)
+        graph = util.get_graph()
 
         for a in edge_attrs_dict:
             for k in edge_attrs_dict[a]:
@@ -452,7 +455,8 @@ class PyntacleImporter:
                 raise IllegalGraphSizeError(u"Graph must contain at least 2 nodes linked by one edge")
 
             else:
-                gu(graph=graph).graph_initializer(
+                utils = gu(graph=graph)
+                utils.graph_initializer(
                     graph_name=os.path.splitext(os.path.basename(file))[0])
 
                 if Graph.is_directed(graph):
@@ -460,6 +464,7 @@ class PyntacleImporter:
                     sys.stdout.write(u"Converting graph to undirect.\n")
                     graph.to_undirected()
 
-                gu(graph=graph).check_graph()
+                utils.check_graph()
+                graph = utils.get_graph()
                 sys.stdout.write(u"Binary from {} imported\n".format(file))
                 return graph

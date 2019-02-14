@@ -188,7 +188,8 @@ class Set:
             output_graph = GraphOperations.union(graph1, graph2, self.args.output_file)
             if all(len(x) <= 2 for x in output_graph.vs()["parent"]):
                 sys.stdout.write(
-                    u"There were no common nodes when performing Graph union. Will return Two disjointed graphs.\n")
+                    u"There were no common nodes when performing Graph union. Will return Two disjoint graphs.\n")
+
 
         elif self.args.which == "intersection":
             sys.stdout.write(
@@ -206,18 +207,26 @@ class Set:
         elif self.args.which == "difference":
             sys.stdout.write(
                 "Performing difference between input graph {} and  {}\n".format(self.args.input_file_1,
-                                                                                  self.args.input_file_2))
+                                                                                self.args.input_file_2))
 
             output_graph = GraphOperations.difference(graph1, graph2, self.args.output_file)
             if output_graph.vcount() == graph1.vcount() and output_graph.ecount() == graph1.ecount():
-                sys.stdout.write(u"Nothing of graph {} could be subtracted from graph {}\n".format(
+                sys.stdout.write(u"Nothing of graph {} could be subtracted from graph {}.\n".format(
                     os.path.basename(self.args.input_file_1), os.path.basename(self.args.input_file_2)))
 
-        else:
-            self.logging.critical(
-                u"Critical Error. This should not happen. Please contact pyntacle developer and send a command line, along with a log. Quitting\n")
-            sys.exit(1)
+            if output_graph.vcount() == 0 and output_graph.ecount() == 0:
+                sys.stdout.write(u"Graph difference was complete, no nodes and edges could be retrieved. No output will be produced. Quitting.\n")
+                sys.exit(0)
 
+            if output_graph.vcount() <= 1 and output_graph.ecount() < 1:
+                sys.stdout.write(u"Graph difference returned only node {} and no edge. No output will be produced. Quitting.\n".format("".join(output_graph.vs["name"])))
+                sys.exit(0)
+
+            if output_graph.vcount() > 1 and output_graph.ecount() == 0:
+                sys.stdout.write(
+                    u"Graph difference returned {} nodes, namely: {} and no edge. No output will be produced. Quitting.\n".format(
+                        output_graph.vcount(), ",\n".join(output_graph.vs()["name"])))
+                sys.exit(0)
 
         # print pyntacle_commands_utils to command line
         sys.stdout.write(u"Report of set operation: {}\n".format(self.args.which))

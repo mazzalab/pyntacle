@@ -34,6 +34,7 @@ from multiprocessing import cpu_count
 from psutil import virtual_memory
 import seaborn as sns
 import importlib
+from colorama import Fore, Style
 
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.ERROR, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -44,6 +45,9 @@ report_format = {"tsv": "tsv", "txt": "tsv", "csv": "csv", "xlsx": "xlsx", "xlx"
 
 runtime_date = datetime.datetime.now().strftime("%Y-%m-%d-%H%M%S")
 
+sep_line = Fore.LIGHTGREEN_EX + Style.BRIGHT + u"*" *100 + "\n" + Style.RESET_ALL
+summary_start = Fore.RED + Style.BRIGHT + u"\n" + "*" * 42 + "  RUN SUMMARY  " + "*" * 43 + "\n" + Style.RESET_ALL
+summary_end = Fore.RED + Style.BRIGHT + u"\n" + "*" * 41 + "  END OF SUMMARY  " + "*" * 41 + "\n" + Style.RESET_ALL
 # Add system info
 n_cpus = cpu_count()-1 # Leaving one thread out
 NUMBA_NUM_THREADS = n_cpus

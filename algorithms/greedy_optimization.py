@@ -44,7 +44,12 @@ class GreedyOptimization:
         if type_func.func == kp.F or type_func.func == kp.dF:
             temp_graph = graph.copy()
             temp_graph.delete_vertices(temp_kpp_set)
+
+            if temp_graph.ecount == 0:
+                return 1
+
             return type_func(graph=temp_graph)
+
         else:
             temp_S_names = graph.vs(temp_kpp_set)["name"]
             return type_func(graph=graph, nodes=temp_S_names)
@@ -135,6 +140,15 @@ class GreedyOptimization:
             random.shuffle(node_indices)
 
             S = node_indices[0:k]
+
+            if graph.vcount() - k == 1:  # a size that leaves only one node left, a g-k < 1 is dealt by the decorator
+                S.sort()
+                final = graph.vs(S)["name"]
+                sys.stdout.write(
+                    u"A node set of size {} leaves only one node, returning the maximum {} score (1) and a random node set {}. \n".format(
+                        k, metric.name, final))
+                return final, 1
+
             S.sort()
 
             if metric == KpnegEnum.F:

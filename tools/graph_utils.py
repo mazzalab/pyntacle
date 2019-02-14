@@ -68,7 +68,6 @@ class GraphUtils:
         self.check_graph()
 
     def check_graph(self):
-
         r"""
         Check that the input graph is compliant to the `Pyntacle minimum  graph requirements <http://pyntacle.css-mendel.it/requirements.html>`_.
         Raise an appropriate error if it is not so, otherwise return :py:class:`None`.
@@ -105,13 +104,16 @@ class GraphUtils:
                     raise TypeError(u"One of the graph 'names' is not a string")
 
                 for name in self.graph["name"]:
-
                     try:
                         attribute_name_checker(name)
                     except ValueError:
                         raise UnsupportedGraphError(u"Any of the Graph 'name' attribute values contains illegal characters.")
 
         if any(x not in self.graph.attributes() for x in ["sif_interaction_name", "implementation"]):
+            print(u"check_graph")
+            input()
+            print(self.graph.attributes())
+
             raise UnsupportedGraphError(u"One of the Pyntacle reserved graph attribute is missing, see goo.gl/MCsnd1 for more informations and initialize the `graph_initializer` method in `tools.graph_utils` To initialize your graph.")
 
         else:
@@ -128,11 +130,9 @@ class GraphUtils:
                 raise TypeError("`parent` node attribute must be either a list or None")
 
             else:
-                # print("PARENT PROBLEM")
-                # print(self.graph.vs["parent"])
-                # input()
                 if not any([isinstance(x, (str, list)) for x in self.graph.vs["parent"]]):
                     raise TypeError(u"One of the graph 'parent' attribute values is not a string")
+
 
         if any(x not in self.graph.es.attributes() for x in ["sif_interaction", "adjacent_nodes"]):
             raise UnsupportedGraphError(u"Pyntacle reserved edge attribute missing, see goo.gl/MCsnd1 for more informations")
@@ -269,7 +269,6 @@ class GraphUtils:
             index_list = []
 
             for name in names:
-                #todo this should not be here as it is a graph property.
                 select = self.graph.vs.select(name=name)
                 if len(select) > 1:
                     raise IndexError(u"name is not unique, node names must be unique, please check your graph")
@@ -318,10 +317,42 @@ class GraphUtils:
 
             return subgraph
 
+    def prune_isolates(self):
+        r"""
+        Remove any disconnected vertex (node isolate) from the :py:class:`~igraph.Graph` object, pruning  it of all the
+        isolates that contribute to the initial graph size but have no connection to any graph component of size at
+        least two. Adds a graph attribute named ``isolates``, storing the vertex``name`` attribute of each of the node
+        isolates that are removed by this method.
+
+        .. note:: This method is used by the :func:`~pyntacle.tools.graph_utils.GraphUtils.graph_initializer` when initializing the graph to remove the isolates
+        """
+
+        init_size = self.graph.vcount()
+        copy_graph = self.graph.copy() #the graph that will replace the self.graph object
+        degr_nodes = self.graph.degree()
+        isolates_ind = [i for i, x in enumerate(degr_nodes) if x == 0] #list of node indices to be removed.
+
+
+        if len(isolates_ind) >= 1:
+            removed_nodes = self.get_node_names(isolates_ind) #a list storing the vertex name attribute
+            rem_size = init_size - len(removed_nodes)
+            sys.stdout.write(u"WARNING: the following isolates will be removed from the input graph:\n{}\n"
+                             u"Leaving {} nodes out of {}.\nThe node names will be stored in the 'isolates' graph "
+                             u"attribute.\n".format(",".join(removed_nodes), rem_size, init_size))
+            copy_graph.delete_vertices(isolates_ind)
+            copy_graph["isolates"] = removed_nodes
+            self.graph = copy_graph #replace the self.graph object
+
+        else:
+            self.logger.info(u"No isolate nodes")
+            self.graph["isolates"] = None
+
     def graph_initializer(self, graph_name: str, node_names: list or None = None):
         r"""
         Transform the input :py:class:`igraph.Graph` object into a network that is compliant to the
         Pyntacle `Minimum requirements <http://pyntacle.css-mendel.it/requirements.html>`_.
+
+        .. warning:: This method will prune the graph of any node isolates, as they are not accepted by Pyntacle.
 
         :param str graph_name: The network name (will be stored in the graph ``name`` attribute). This strig must not contain illegal characters (see the Pyntacle `Minimum Requirements <http://pyntacle.css-mendel.it/requirements.html>`_ for more info on the illegal characters.
         :param str, None node_names: optional, a list of strings matching the total number of vertices of the graph. Each item in the list becomes the vertex ``name`` attribute sequentially (index-by-index correspondance). Defaults to py:class:`None` (node ``name`` attribute is filled by node indices).
@@ -363,7 +394,7 @@ class GraphUtils:
 
         if "adjacent_nodes" not in self.graph.es().attributes():
             # add edge vertices names as an attribute 'adjacent_vertices'
-            self.logger.info(u"Adding source and target names as \"adjacent_nodes\" attribute to edges")
+            self.logger.info(u"Adding source and target names as 'adjacent_nodes' attribute to edges")
             AddAttributes.add_edge_names(self.graph)
 
         # for sif file conversion purposes
@@ -373,7 +404,9 @@ class GraphUtils:
         if not "sif_interaction" in self.graph.es().attributes():
             self.graph.es()["sif_interaction"] = None
 
-        # Adding implementation info for functions that require it
+        self.prune_isolates() #remove any isolate and store them into the `isolates` graph attribute
+
+        # Adding implementation for functions that require it
         sp_implementation = CmodeEnum.igraph
 
         n_nodes = self.graph.vcount()
@@ -392,3 +425,14 @@ class GraphUtils:
                         sp_implementation = CmodeEnum.igraph
 
         self.graph["implementation"] = sp_implementation
+        # self.check_graph() #check that everything is in order
+
+    def get_graph(self) -> Graph:
+        r"""
+        Returns the igraph.Graph object.
+
+        :return igraph.Graph: A :py:class:`~igraph.Graph` object
+        """
+
+        return self.graph
+

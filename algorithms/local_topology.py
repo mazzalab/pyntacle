@@ -33,6 +33,7 @@ from igraph import Graph
 import numpy as np
 import itertools
 from math import inf, isinf
+from config import *
 
 class LocalTopology:
     r"""
@@ -251,7 +252,7 @@ class LocalTopology:
         :param cmodeEnum cmode: the implementation that will be used to compute the shortest paths required for group closeness. See :class:`~pyntacle.tools.enums.CmodeEnum`. Default is the igraph brute-force shortest path search. Will be ignored if ``np_cpunts`` is provided
         :param np.ndarray,None np_paths: a :py:class:`numpy.ndarray` of positive integers representing a :math`NxN` squared matrix storing shortest paths between any pair of nodes of the graph. Passing this argument would make the overall calculation faster. Recommended for large Graps (:math:`N>1000`)
 
-        :return float: The normalized group closeness centrality, obtained by dividing the group closeness by the number of non-group nodes.
+        :return None, float: The normalized group closeness centrality, obtained by dividing the group closeness by the number of non-group nodes. Will return :py:class:`None` if the node set contain node isolates.
 
         :raise TypeError: when ``nodes`` is a list of strings matching the vertex ``name`` attribute
         :raise KeyError: when any of the node ``name`` attribute passed to the function is not present in the input graph
@@ -289,9 +290,11 @@ class LocalTopology:
             temp_list = [elem for elem in np_path[group_indices] if elem != MAX_PATH_LENGHT]
             if temp_list:
                 group_closeness += dist_func(temp_list)
-
-        normalized_score = len(nongroup_nodes) / group_closeness
-        return round(normalized_score, 5)
+        if group_closeness != 0:
+            normalized_score = len(nongroup_nodes) / group_closeness
+            return round(normalized_score, 5)
+        else:
+            sys.stdout.error("you are attempting to compute group closeness using a set with node isolates.`")
 
     @staticmethod
     @check_graph_consistency

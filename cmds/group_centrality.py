@@ -41,7 +41,6 @@ from tools.add_attributes import AddAttributes
 from tools.graph_utils import GraphUtils as gu
 from exceptions.generic_error import Error
 from exceptions.multiple_solutions_error import MultipleSolutionsError
-from exceptions.missing_attribute_error import MissingAttributeError
 from cmds.cmds_utils.plotter import PlotGraph
 from cmds.cmds_utils.reporter import PyntacleReporter
 
@@ -133,11 +132,15 @@ class GroupCentrality():
                 sys.exit(1)
 
             #check that the nodes are in the largest component
-            if self.args.nodes is not None:
+            if hasattr(self.args, 'nodes'):
 
                 if not utils.nodes_in_graph(self.args.nodes):
                     sys.stderr.write("One or more of the specified nodes is not present in the largest graph component. Select a different set or remove this option. Quitting.\n")
                     sys.exit(1)
+
+        if hasattr(self.args, "k_size") and self.args.k_size >= graph.vcount():
+            sys.stderr.write("The 'k' argument ({}) must be strictly less than the graph size({}). Quitting.\n".format(self.args.k_size, graph.vcount()))
+            sys.exit(1)
 
         if 'implementation' in graph.attributes():
             implementation = graph['implementation']
@@ -191,7 +194,7 @@ class GroupCentrality():
 
                 if self.args.type in (["all", "degree"]):
                     sys.stdout.write(
-                        u"Finding optimal set of nodes of size {0} that maximizes the Group degree...\n".format(
+                        u"Finding optimal set of nodes of size {0} that maximizes the group degree...\n".format(
                             self.args.k_size))
 
                     go_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_degree,
@@ -252,8 +255,8 @@ class GroupCentrality():
                 results.update(bf_runner.get_results())
 
             #shell output report part
-            sys.stdout.write(Fore.RED + Style.BRIGHT + u"\n### RUN SUMMARY ###\n" + Style.RESET_ALL)
-            sys.stdout.write(u"Node set size for group centrality search: {}\n".format(str(self.args.k_size)))
+            sys.stdout.write(summary_start)
+            sys.stdout.write(u"\nNode set size for group centrality search: {}\n".format(str(self.args.k_size)))
             for kk in results.keys():
 
                 if len(results[kk][0]) > 1 and self.args.implementation == 'brute-force':
@@ -272,23 +275,21 @@ class GroupCentrality():
 
                 if kk == GroupCentralityEnum.group_degree.name:
                     sys.stdout.write(
-                        u'Node set{0} of size {1} for group degree centrality {2} ({3})\nwith value {4}\n'.format(
+                        u'Node set{0} of size {1} for group degree centrality {2}:\n{3}\nwith value {4}\n'.format(
                             plurals[0], self.args.k_size, plurals[1], ', '.join(list_of_results), results[kk][1]))
+                    sys.stdout.write(sep_line)
 
                 elif kk == GroupCentralityEnum.group_betweenness.name:
-                    sys.stdout.write(u'Node set{0} of size {1} for group betweenness centrality {2} ({3})\nwith value {4}\n'.format(
+                    sys.stdout.write(u'Node set{0} of size {1} for group betweenness centrality {2}:\n{3}\nwith value {4}\n'.format(
                         plurals[0], self.args.k_size, plurals[1], ', '.join(list_of_results), results[kk][1]))
+                    sys.stdout.write(sep_line)
 
                 elif kk.startswith(GroupCentralityEnum.group_closeness.name):
-                    sys.stdout.write(u'Node set{0} of size {1} for group closeness centrality {2} ({3})\nwith value {4}.\nThe {5} distance was considered for computing closeness.\n'.format(
+                    sys.stdout.write(u'Node set{0} of size {1} for group closeness centrality {2}:\n{3}\nwith value {4}.\nThe {5} distance was considered for computing closeness.\n'.format(
                         plurals[0], self.args.k_size, plurals[1], ',\n'.join(list_of_results), results[kk][1], group_distance.name))
+                    sys.stdout.write(sep_line)
 
-            sys.stdout.write(Fore.RED + Style.BRIGHT + u"### END OF SUMMARY ###\n" + Style.RESET_ALL)
-
-            #prepare report
-            report_prefix = "_".join(
-                ["pyntacle", self.args.which, graph["name"][0], "k", str(k_size), report_type.name, "report",
-                 self.date])
+            sys.stdout.write(summary_end)
 
         elif self.args.which == "gr-info":
             report_type = ReportEnum.GR_info
@@ -308,28 +309,28 @@ class GroupCentrality():
 
             results.update(grinfo_runner.get_results())
 
-            sys.stdout.write(Fore.RED + Style.BRIGHT + u"\n### RUN SUMMARY ###\n" + Style.RESET_ALL)
+            sys.stdout.write(summary_start)
 
             for metric in results.keys():
 
                 if metric == GroupCentralityEnum.group_degree.name:
                     sys.stdout.write("The group degree value for the input node set:\n\t({0})\nis {1}\n".format(', '.join(results[metric][0]),
                                                                  results[metric][1]))
+                    sys.stdout.write(sep_line)
 
                 if metric == GroupCentralityEnum.group_betweenness.name:
                     sys.stdout.write(
                         "The group betweenness value for the input node set:\n\t({0})\nis {1}\n".format(', '.join(results[metric][0]),
                                                                                         results[metric][1]))
+                    sys.stdout.write(sep_line)
 
                 if metric.startswith(GroupCentralityEnum.group_closeness.name):
                     sys.stdout.write(
                         "The group closeness value for the input node set:\n\t({0})\nis {1}. The measure was computed using a {2} group distance between the set and the rest of the graph.\n".format(', '.join(results[metric][0]),
                                                                                       results[metric][1], group_distance.name))
+                    sys.stdout.write(sep_line)
 
-            sys.stdout.write(Fore.RED + Style.BRIGHT + "### END OF SUMMARY ###\n" + Style.RESET_ALL)
-
-            report_prefix = "_".join(
-                ["pyntacle", self.args.which, graph["name"][0], report_type.name, "report", self.date])
+            sys.stdout.write(summary_end)
 
         else:
             sys.stdout.write(

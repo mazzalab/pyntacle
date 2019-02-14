@@ -423,6 +423,7 @@ class BFWrapper:
 
         self.results[kp_type.name] = [bf_results[0], bf_results[1]]
 
+    @timeit
     def run_groupcentrality(self, k: int, gr_type: GroupCentralityEnum, cmode: CmodeEnum=CmodeEnum.igraph, threads:int = n_cpus, distance:GroupDistanceEnum = GroupDistanceEnum.minimum):
         r"""
         Wrapper around the brute-force search module that stores the results for KPPOS metrics

@@ -27,6 +27,7 @@ __license__ = u"""
 from config import *
 import itertools
 import numpy as np
+import random
 from algorithms.keyplayer import KeyPlayer
 from algorithms.local_topology import LocalTopology
 from algorithms.shortest_path import ShortestPath as sp
@@ -94,9 +95,16 @@ class BruteforceSearch:
         elif parallel and (not isinstance(ncores, int) or ncores < 1):
             raise TypeError(u"'ncores' must be a positive integer value")
 
-        # Generate all combinations of size k
         allS = list(itertools.combinations(node_names, k))
+
+        if graph.vcount() - k == 1: #in this case, only a node isolate exists, hence the F and dF already reach their maximum value (1)
+            sys.stdout.write(u"The `k` size ({}) is such that the removal of any set always returns a node isolate. Returning all the node sets and the maximum {} value (1).\n".format(k, metric.name))
+            return allS, 1
+
+        # Generate all combinations of size k
+
         sys.stdout.write(u"Evaluating {} possible solutions\n".format(len(allS)))
+
 
         if parallel:
             sys.stdout.write(u"Brute-force search of the best kp-set of size {} using {} cores\n".format(k, ncores))
@@ -153,7 +161,11 @@ class BruteforceSearch:
             temp_graph = graph.copy()
             temp_graph.delete_vertices(node_names)
 
-            if kpp_type == KpnegEnum.F:
+            if temp_graph.ecount() == 0:
+                kppset_score_pairs_partial[node_names] = 1 #maximum fragmentation reached
+                return kppset_score_pairs_partial
+
+            elif kpp_type == KpnegEnum.F:
                 kppset_score_pairs_partial[node_names] = KeyPlayer.F(temp_graph)
 
             elif kpp_type == KpnegEnum.dF:

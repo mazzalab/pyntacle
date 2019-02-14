@@ -223,36 +223,9 @@ class Generate:
                 sys.stderr.write(
                     u"The parameters you chose were invalid. Please check your command line. Quitting.\n")
 
-        else:
-            raise Error(u"This message should not appear. Please contact Pyntacle Developer and report this bug.")
-
-        # Check provided dimensions' format
-        if self.args.plot_dim:  # define custom format
-            self.args.plot_dim = self.args.plot_dim.split(",")
-    
-            for i in range(0, len(self.args.plot_dim)):
-                try:
-                    self.args.plot_dim[i] = int(self.args.plot_dim[i])
-        
-                except ValueError:
-                    sys.stderr.write(
-                        u"Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting.\n")
-                    sys.exit(1)
-        
-                if self.args.plot_dim[i] <= 0:
-                    sys.stderr.write(
-                        u"Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting.\n")
-                    sys.exit(1)
-    
-            plot_size = tuple(self.args.plot_dim)
-
-        else:
-            # generate different formats according to graph size
-            if graph.vcount() <= 150:
-                plot_size = (800, 800)
-    
-            else:
-                plot_size = (1600, 1600)
+        if graph.vcount() < 2 and graph.ecount() < 1:
+            sys.stdout.write("Generated Graph is too small ({} nodes, {} edges). Rerun this command and tune your parameters. Quitting.\n".format(graph.ecount(), graph.ecount()))
+            sys.exit(1)
                 
         if self.args.no_output_header:
             sys.stdout.write(u"Skipping header on output graph file, as requested...\n")
@@ -308,6 +281,34 @@ class Generate:
         elif out_form == "graph":
             sys.stdout.write(u"Writing generated graph to a binary file (ending in .graph)...\n")
             PyntacleExporter.Binary(graph, output_path)
+
+        # Check provided dimensions' format
+        if self.args.plot_dim:  # define custom format
+            self.args.plot_dim = self.args.plot_dim.split(",")
+
+            for i in range(0, len(self.args.plot_dim)):
+                try:
+                    self.args.plot_dim[i] = int(self.args.plot_dim[i])
+
+                except ValueError:
+                    sys.stderr.write(
+                        u"Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting.\n")
+                    sys.exit(1)
+
+                if self.args.plot_dim[i] <= 0:
+                    sys.stderr.write(
+                        u"Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting.\n")
+                    sys.exit(1)
+
+            plot_size = tuple(self.args.plot_dim)
+
+        else:
+            # generate different formats according to graph size
+            if graph.vcount() <= 150:
+                plot_size = (800, 800)
+
+            else:
+                plot_size = (1600, 1600)
 
         if not self.args.no_plot and graph.vcount() < 1000:
             sys.stdout.write(u"Drawing generated graph...\n")
