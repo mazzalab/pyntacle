@@ -52,8 +52,7 @@ class Metrics:
 
         # Check for pycairo
         if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
-            sys.stdout.write(u"Warning: It seems that the pycairo library is not installed/available. Graph plot(s)"
-                             "will not be produced.\n")
+            sys.stdout.write(pycairo_message)
             self.args.no_plot = True
 
     def run(self):
@@ -72,7 +71,7 @@ class Metrics:
         # Checking input file
         if self.args.input_file is None:
             sys.stderr.write(
-                u"Please specify an input file using the `-i/--input-file` option. Quitting.\n")
+                u"Please specify an input file using the `-i/--input-file` option. Quitting\n")
             sys.exit(1)
 
         if not os.path.exists(self.args.input_file):
@@ -83,7 +82,7 @@ class Metrics:
         self.logging.debug(self.args)
 
         # Load Graph
-        sys.stdout.write(u"Importing graph from file...\n")
+        sys.stdout.write(u"Importing graph from file\n")
         graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header, separator=self.args.input_separator).graph_load()
         # init Utils global stuff
         utils = gu(graph=graph)
@@ -100,27 +99,27 @@ class Metrics:
 
             if not utils.nodes_in_graph(self.args.nodes):
                 sys.stderr.write(
-                    "One or more of the specified nodes is not present in the graph. Please check your spelling and the presence of empty spaces in between node names. Quitting.\n")
+                    "One or more of the specified nodes is not present in the graph. Please check your spelling and the presence of empty spaces in between node names. Quitting\n")
                 sys.exit(1)
 
         if self.args.largest_component:
             try:
                 graph = utils.get_largest_component()
                 sys.stdout.write(
-                    u"Taking the largest component of the input graph as you requested ({} nodes, {} edges)...\n".format(
+                    u"Taking the largest component of the input graph as you requested ({} nodes, {} edges)\n".format(
                         graph.vcount(), graph.ecount()))
                 # reinitialize graph utils class
                 utils.set_graph(graph)
 
             except MultipleSolutionsError:
                 sys.stderr.write(
-                    u"The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the '--largest-component' option. Quitting.\n")
+                    u"The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the '--largest-component' option. Quitting\n")
                 sys.exit(1)
 
             if self.args.nodes is not None:
                 if not utils.nodes_in_graph(self.args.nodes):
                     sys.stderr.write(
-                        "One or more of the specified nodes is not present in the largest graph component. Select a different set or remove this option. Quitting.\n")
+                        "One or more of the specified nodes is not present in the largest graph component. Select a different set or remove this option. Quitting\n")
                     sys.exit(1)
 
         # Check provided dimensions' format
@@ -129,7 +128,7 @@ class Metrics:
 
             if len(self.args.plot_dim) != 2:
                 sys.stderr.write(
-                    u"Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting.\n")
+                    u"Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting\n")
 
             for i in range(0, len(self.args.plot_dim)):
                 try:
@@ -164,14 +163,14 @@ class Metrics:
 
                 if not utils.nodes_in_graph(self.args.nodes): # to check everything's in order
                     sys.stderr.write(
-                        u"One of the nodes you specified is not in the input graph, check your node list and its formatting.Quitting.\n")
+                        u"One of the nodes you specified is not in the input graph, check your node list and its formatting.Quitting\n")
                     sys.exit(1)
 
             else:
-                sys.stdout.write(u"Computing local metrics for all nodes in the graph...\n")
+                sys.stdout.write(u"Computing local metrics for all nodes in the graph\n")
 
             if self.args.damping_factor < 0.0 or self.args.damping_factor > 1.0:
-                sys.stderr.write(u"Damping factor must be between 0 and 1. Quitting.\n")
+                sys.stderr.write(u"Damping factor must be between 0 and 1. Quitting\n")
                 sys.exit(1)
 
             else:
@@ -179,18 +178,18 @@ class Metrics:
                 if not self.args.weights is None:
                     if not os.path.exists(self.args.weights):
                         sys.stderr.write(
-                            u"Weights file {} does not exist. Quitting.\n".format(self.args.weights))
+                            u"Weights file {} does not exist. Quitting\n".format(self.args.weights))
                         sys.exit(1)
 
                     else:
                         #Needs a file that has a 'weights' column.
-                        sys.stdout.write(u"Adding edge weights from file {}...\n".format(self.args.weights))
+                        sys.stdout.write(u"Adding edge weights from file {}\n".format(self.args.weights))
                         ImportAttributes.import_edge_attributes(graph, self.args.weights, sep=separator_detect(self.args.weights), mode=self.args.weights_format)
                         try:
                             weights = [float(x) if x!=None else 1.0 for x in graph.es()["weights"]]
                         except KeyError:
                             sys.stderr.write(u"The attribute file does not contain a column named 'weights'."
-                                             "Please fix it and launch Pyntacle again.\n")
+                                             "Please fix it and launch Pyntacle again\n")
                             sys.exit(1)
 
                 else:
@@ -222,18 +221,18 @@ class Metrics:
 
             # check output directory
             if not os.path.isdir(self.args.directory):
-                sys.stdout.write(u"Warning: Output directory does not exist, will create one at {}.\n".format(
+                sys.stdout.write(u"WARNING Output directory does not exist, will create one at {}\n".format(
                     os.path.abspath(self.args.directory)))
                 os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
 
-            sys.stdout.write(u"Producing report in {} format...\n".format(self.args.report_format))
+            sys.stdout.write(u"Producing report in {} format\n".format(self.args.report_format))
 
             reporter.create_report(ReportEnum.Local, local_attributes_dict)
             reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
             if not self.args.no_plot and graph.vcount() < 1000:
     
-                sys.stdout.write(u"Generating plots in {} format...\n".format(self.args.plot_format))
+                sys.stdout.write(u"Generating plots in {} format\n".format(self.args.plot_format))
                 
                 # generates plot directory
                 plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
@@ -256,7 +255,7 @@ class Metrics:
                 other_nodes_size = 25
 
                 if self.args.nodes:  # make node selected of a different colour and bigger than the other ones, so they can be visualized
-                    sys.stdout.write(u"Highlighting nodes ({}) in plot...\n".format(', '.join(nodes_list)))
+                    sys.stdout.write(u"Highlighting nodes ({}) in plot\n".format(', '.join(nodes_list)))
                     selected_nodes_colour = pal[0]
                     selected_nodes_frames = framepal[0]
 
@@ -293,11 +292,11 @@ class Metrics:
                                       keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=node_frames)
 
             elif not self.args.no_plot and graph.vcount() >= 1000:
-                sys.stdout.write(u"The graph has too many nodes ({}). It will not be drawn.\n".format(graph.vcount()))
+                sys.stdout.write(u"The graph has too many nodes ({}). It will not be drawn\n".format(graph.vcount()))
 
         elif self.args.which == "global":
             
-            sys.stdout.write(u"Computing global metrics...\n")
+            sys.stdout.write(u"Computing global metrics\n")
 
             global_attributes_dict = OrderedDict({GlobalAttributeEnum.average_shortest_path_length.name: ShortestPath.average_global_shortest_path_length(graph=graph),
                                                   GlobalAttributeEnum.diameter.name: GlobalTopology.diameter(graph=graph),
@@ -317,7 +316,7 @@ class Metrics:
                                                   GlobalAttributeEnum.compactness.name: Sparseness.compactness(graph=graph)
                                                   })
 
-            sys.stdout.write(u"Producing global metrics report for the input graph...\n")
+            sys.stdout.write(u"Producing global metrics report for the input graph\n")
             report_prefix = "_".join(
                 ["pyntacle", graph["name"][0], "global_metrics_report",
                  self.date])
@@ -330,7 +329,7 @@ class Metrics:
                 report_prefix_nonodes = "_".join(["pyntacle", graph["name"][0], "global_metrics_nonodes", "report",
                                           self.date])
                 
-                sys.stdout.write(u"Removing nodes:\n\t{}\nfrom input graph and computing Global Metrics.\n".format(self.args.no_nodes))
+                sys.stdout.write(u"Removing nodes:\n\t{}\nfrom input graph and computing Global Metrics\n".format(self.args.no_nodes))
                 nodes_list = self.args.no_nodes.split(",")
 
                 # this will be useful when producing the two global topology plots, one for the global graph and the other one fo all nodes
@@ -366,7 +365,7 @@ class Metrics:
                     GlobalAttributeEnum.compactness.name: Sparseness.compactness(graph=graph_nonodes),
                 })
 
-                sys.stdout.write(u"Producing global metrics report for the input graph after node removal...\n")
+                sys.stdout.write(u"Producing global metrics report for the input graph after node removal\n")
                 graph_nonodes["name"][0] += '_without_nodes'
                 reporter = PyntacleReporter(graph=graph_nonodes)  # init reporter
                 reporter.create_report(ReportEnum.Global, global_attributes_dict_nonodes)
@@ -375,19 +374,15 @@ class Metrics:
             if not self.args.no_plot and graph.vcount() < 1000:
 
                 if self.args.no_nodes:
-                    sys.stdout.write(u"Generating plots of both input graph {} and the graph without nodes...\n".format(os.path.basename(self.args.input_file)))
+                    sys.stdout.write(u"Generating plots of both input graph {} and the graph without nodes\n".format(os.path.basename(self.args.input_file)))
 
                 else:
-                    sys.stdout.write(u"Generating plot of input graph {}...\n".format(os.path.basename(self.args.input_file)))
+                    sys.stdout.write(u"Generating plot of input graph {}\n".format(os.path.basename(self.args.input_file)))
 
                 # generates plot directory
                 plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
 
-                if os.path.isdir(plot_dir):
-                    self.logging.warning(
-                        u"Warning: A directory named 'pyntacle-plots' already exists.")
-
-                else:
+                if not os.path.isdir(plot_dir):
                     os.mkdir(plot_dir)
 
                 other_nodes_size = 25
@@ -454,7 +449,7 @@ class Metrics:
                                           keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=node_frames)
 
             elif not self.args.no_plot and graph.vcount() >= 1000:
-                sys.stdout.write(u"The graph has too many nodes ({}). It will not be drawn.\n".format(graph.vcount()))
+                sys.stdout.write(u"The graph has too many nodes ({}). It will not be drawn\n".format(graph.vcount()))
         else:
             self.logging.critical(
                 u"Critical error. Please contact Pyntacle developers and report this error, along with your command. Quitting\n")
@@ -477,7 +472,7 @@ class Metrics:
                 if self.args.no_nodes:
                     binary_path_nonodes = os.path.join(self.args.directory, report_prefix_nonodes.replace('_report_', '_') + ".graph")
                     sys.stdout.write(u"The --no-nodes option was selected to calculate the global metrics. A second graph without those "
-                                     "nodes and said metrics will be saved in a second Binary file.\n".format(os.path.basename(binary_path_nonodes)))
+                                     "nodes and said metrics will be saved in a second Binary file\n".format(os.path.basename(binary_path_nonodes)))
                     for key in global_attributes_dict_nonodes:
                         AddAttributes.add_graph_attributes(graph_nonodes, key, global_attributes_dict_nonodes[key])
                     
@@ -486,11 +481,11 @@ class Metrics:
                 for key in global_attributes_dict:
                     AddAttributes.add_graph_attributes(graph, key, global_attributes_dict[key])
                     
-            sys.stdout.write(u"Saving graph to a binary file (ending in .graph).\n")
+            sys.stdout.write(u"Saving graph to a binary file (ending in .graph)\n")
             PyntacleExporter.Binary(graph, binary_path)
 
         if not self.args.suppress_cursor:
             cursor.stop()
 
-        sys.stdout.write(u"Pyntacle metrics completed successfully. Ending.\n")
+        sys.stdout.write(u"Pyntacle metrics completed successfully\n")
         sys.exit(0)

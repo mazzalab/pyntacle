@@ -98,7 +98,7 @@ class BruteforceSearch:
         allS = list(itertools.combinations(node_names, k))
 
         if graph.vcount() - k == 1: #in this case, only a node isolate exists, hence the F and dF already reach their maximum value (1)
-            sys.stdout.write(u"The `k` size ({}) is such that the removal of any set always returns a node isolate. Returning all the node sets and the maximum {} value (1).\n".format(k, metric.name))
+            sys.stdout.write(u"The `k` size ({}) is such that the removal of any set always returns a node isolate. Returning all the node sets and the maximum {} value (1)\n".format(k, metric.name))
             return allS, 1
 
         # Generate all combinations of size k
@@ -235,7 +235,7 @@ class BruteforceSearch:
             chunks = [allS[i * chunklen:(i + 1) * chunklen] for i in range(ncores)]
 
             with ProcessPoolExecutor(max_workers=ncores) as executor:
-                future_dict = {executor.submit(BruteforceSearch.crunch_reachability_combinations, graph, chunk, metric,
+                future_dict = {executor.submit(BruteforceSearch.__crunch_reachability_combinations, graph, chunk, metric,
                                                max_distance, m, cmode): chunk for chunk in chunks}
                 for future in as_completed(future_dict):
                     chunk = future_dict[future]
@@ -249,11 +249,11 @@ class BruteforceSearch:
             sys.stdout.write(u"Brute-force search of the best kp-set of size {}\n".format(k))
 
             chunks = allS
-            partial_result = BruteforceSearch.crunch_reachability_combinations(graph=graph, node_names_list=chunks,
-                                                                               kp_type=metric,
-                                                                               max_distance=max_distance,
-                                                                               m=m,
-                                                                               cmode=cmode)
+            partial_result = BruteforceSearch.__crunch_reachability_combinations(graph=graph, node_names_list=chunks,
+                                                                                 kp_type=metric,
+                                                                                 max_distance=max_distance,
+                                                                                 m=m,
+                                                                                 cmode=cmode)
             kpset_score_pairs = {**kpset_score_pairs, **partial_result}
 
         _group_score = max(kpset_score_pairs.values())
@@ -275,8 +275,8 @@ class BruteforceSearch:
         return final, _group_score
 
     @staticmethod
-    def crunch_reachability_combinations(graph: Graph, node_names_list: list, kp_type: KpposEnum, max_distance: int,
-                                         m: int, cmode: CmodeEnum) -> dict:
+    def __crunch_reachability_combinations(graph: Graph, node_names_list: list, kp_type: KpposEnum, max_distance: int,
+                                           m: int, cmode: CmodeEnum) -> dict:
         kppset_score_pairs = {}
 
         for node_names in node_names_list:
@@ -357,7 +357,7 @@ class BruteforceSearch:
             chunks = [allS[i * chunklen:(i + 1) * chunklen] for i in range(ncores)]
 
             with ProcessPoolExecutor(max_workers=ncores) as executor:
-                future_dict = {executor.submit(BruteforceSearch.crunch_groupcentrality_combinations, graph, chunk,
+                future_dict = {executor.submit(BruteforceSearch.__crunch_groupcentrality_combinations, graph, chunk,
                                                np_counts, np_paths, metric, distance_type, cmode): chunk for chunk in chunks}
                 for future in as_completed(future_dict):
                     chunk = future_dict[future]
@@ -372,11 +372,11 @@ class BruteforceSearch:
             sys.stdout.write(u"Brute-force search of the best group of nodes of size {}\n".format(k))
 
             chunks = allS
-            partial_result = BruteforceSearch.crunch_groupcentrality_combinations(graph=graph, node_names_list=chunks,
-                                                                                  np_counts=np_counts,
-                                                                                  np_paths=np_paths,
-                                                                                  gc_enum=metric, distance_type=distance_type,
-                                                                                  cmode=cmode)
+            partial_result = BruteforceSearch.__crunch_groupcentrality_combinations(graph=graph, node_names_list=chunks,
+                                                                                    np_counts=np_counts,
+                                                                                    np_paths=np_paths,
+                                                                                    gc_enum=metric, distance_type=distance_type,
+                                                                                    cmode=cmode)
             score_pairs = {**score_pairs, **partial_result}
 
         _group_score = max(score_pairs.values())  # take the maximum value
@@ -399,9 +399,9 @@ class BruteforceSearch:
         return final, _group_score
 
     @staticmethod
-    def crunch_groupcentrality_combinations(graph: Graph, node_names_list: list, np_counts: np.ndarray,
-                                            np_paths: np.ndarray, gc_enum: GroupCentralityEnum,
-                                            distance_type: GroupDistanceEnum, cmode: CmodeEnum) -> dict:
+    def __crunch_groupcentrality_combinations(graph: Graph, node_names_list: list, np_counts: np.ndarray,
+                                              np_paths: np.ndarray, gc_enum: GroupCentralityEnum,
+                                              distance_type: GroupDistanceEnum, cmode: CmodeEnum) -> dict:
         score_pairs_partial = {}
 
         for node_names in node_names_list:
@@ -412,6 +412,8 @@ class BruteforceSearch:
                     np_paths = sp.get_shortestpaths(graph, nodes=None, cmode=cmode)
                 score = LocalTopology.group_closeness(graph, node_names, distance=distance_type, np_paths=np_paths)
             elif gc_enum == GroupCentralityEnum.group_betweenness:
+                # if graph.ecount() == 0:
+                #     score = 0
                 if np_counts is None or np_counts.size == 0:
                     np_counts = sp.get_shortestpath_count(graph, nodes=None, cmode=cmode)
                 score = LocalTopology.group_betweenness(graph, node_names, cmode=cmode, np_counts=np_counts)

@@ -121,6 +121,8 @@ class LocalTopology:
             #. Divide each cell in the new matrix by the corresponding cell in the first matrix
             #. Take the sum of all these ratios.
 
+        .. warning:: The group betwenness of sets made of peripheral nodes, isolates or sets whose removal disrupt the graph is 0, because these special cases have no geodesics passing through them.
+
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param np.ndarray,None np_counts: Optional: a :py:class:`numpy.ndarray` of positive integers representing a :math`NxN` squared matrix storing shortest paths between any pair of nodes of the graph. Passing this argument would make the overall calculation faster. Recommended for large Graps (:math:`N>1000`)
         :param list nodes: A list of  node ``name``s of the nodes that are used to compute group betweenness
@@ -155,8 +157,11 @@ class LocalTopology:
 
         graph_notgroup = graph.copy()
         graph_notgroup.delete_edges(del1)
-        count_notgroup = ShortestPath.get_shortestpath_count(graph_notgroup, nodes=None, cmode=cmode)
+        if graph_notgroup.ecount() == 0:
+            sys.stdout.write("Node set dis: {} \n".format(nodes))
+            return 0
 
+        count_notgroup = ShortestPath.get_shortestpath_count(graph_notgroup, nodes=None, cmode=cmode)
         # Count geodesics that do pass through the group
         count_group = ShortestPath.subtract_count_dist_matrix(count_all, count_notgroup)
 
@@ -246,13 +251,15 @@ class LocalTopology:
         group closeness by dividing the distance score into the number of non-group members, with the result
         that larger numbers indicate greater centrality.
 
+        .. warning :: The group closeness of a group of completely disconnected nodes (node isolates) is 0.
+
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param list nodes: A list of node ``name``\s (the vertex ``name`` attribute) of the nodes belonging to the group
         :param GroupDistanceEnum distance: The definition of distance between any non-group and group nodes. It can be any value of the enumerator :class:`~pyntacle.tools.enums.GroupDistanceEnum`. By default, the minimum least distance :math:`D` between the group :math:`k` and the rest of the graph :math:`N-k` is used
         :param cmodeEnum cmode: the implementation that will be used to compute the shortest paths required for group closeness. See :class:`~pyntacle.tools.enums.CmodeEnum`. Default is the igraph brute-force shortest path search. Will be ignored if ``np_cpunts`` is provided
         :param np.ndarray,None np_paths: a :py:class:`numpy.ndarray` of positive integers representing a :math`NxN` squared matrix storing shortest paths between any pair of nodes of the graph. Passing this argument would make the overall calculation faster. Recommended for large Graps (:math:`N>1000`)
 
-        :return None, float: The normalized group closeness centrality, obtained by dividing the group closeness by the number of non-group nodes. Will return :py:class:`None` if the node set contain node isolates.
+        :return float: The normalized group closeness centrality, obtained by dividing the group closeness by the number of non-group nodes..
 
         :raise TypeError: when ``nodes`` is a list of strings matching the vertex ``name`` attribute
         :raise KeyError: when any of the node ``name`` attribute passed to the function is not present in the input graph
@@ -294,7 +301,9 @@ class LocalTopology:
             normalized_score = len(nongroup_nodes) / group_closeness
             return round(normalized_score, 5)
         else:
-            sys.stdout.error("you are attempting to compute group closeness using a set with node isolates.`")
+            sys.stdout.error("Node set {} is disconnected from the rest of the graph using the {} distance. Returning 0.\n".format(nodes, distance.name))
+            return 0.0
+
 
     @staticmethod
     @check_graph_consistency

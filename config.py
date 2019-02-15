@@ -45,9 +45,19 @@ report_format = {"tsv": "tsv", "txt": "tsv", "csv": "csv", "xlsx": "xlsx", "xlx"
 
 runtime_date = datetime.datetime.now().strftime("%Y-%m-%d-%H%M%S")
 
+
+pycairo_message = u"WARNING: It seems that the pycairo library is not installed/available. Graph plot(s) will not be produced\n"
+
+#generic lines
 sep_line = Fore.LIGHTGREEN_EX + Style.BRIGHT + u"*" *100 + "\n" + Style.RESET_ALL
-summary_start = Fore.RED + Style.BRIGHT + u"\n" + "*" * 42 + "  RUN SUMMARY  " + "*" * 43 + "\n" + Style.RESET_ALL
-summary_end = Fore.RED + Style.BRIGHT + u"\n" + "*" * 41 + "  END OF SUMMARY  " + "*" * 41 + "\n" + Style.RESET_ALL
+section_end = Fore.RED + Style.BRIGHT + u"*"*100 + "\n" + Style.RESET_ALL
+
+#dedicated lines
+import_start = Fore.RED + Style.BRIGHT + u"*" * 42 + "  FILE IMPORT  " + "*" * 43 + "\n" + Style.RESET_ALL
+run_start = Fore.RED + Style.BRIGHT + u"*" * 43 + "  RUN START  " + "*" * 44 + "\n" + Style.RESET_ALL
+summary_start = Fore.RED + Style.BRIGHT + u"*" * 42 + "  RUN SUMMARY  " + "*" * 43 + "\n" + Style.RESET_ALL
+report_start = Fore.RED + Style.BRIGHT + u"*" * 45 + "  REPORT  " + "*" * 45 + "\n" + Style.RESET_ALL
+
 # Add system info
 n_cpus = cpu_count()-1 # Leaving one thread out
 NUMBA_NUM_THREADS = n_cpus
@@ -55,6 +65,8 @@ mem = virtual_memory().total
 cuda_avail = cuda.is_available()
 threadsperblock = 32
 
+
+sigkill_message = "\nReceived SIGKILL from keyboard\n"
 
 class CursorAnimation(threading.Thread):
     """

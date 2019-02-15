@@ -23,8 +23,7 @@ __license__ = u"""
   You should have received a copy of the license along with this
   work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0/.
   """
-#todo mauro checks formatting to terminal
-# external libraries
+
 from config import *
 import argparse
 import sys
@@ -101,20 +100,20 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                   Fore.GREEN + "\n\n  metrics         " + Fore.CYAN + "Computes metrics of local and global nature for a "
                                                                     "set of nodes of a network or for the "
                                                                     "whole graph." +
-                  Fore.GREEN + "\n\n  convert         " + Fore.CYAN + "Converts a network file format to another one." +
+                  Fore.GREEN + "\n\n  communities     " + Fore.CYAN + "Finds communities within a graph using"
+                                                                      "several community-finding algorithms. Produces\n                  "
+                                                                      "several network files, each containing "
+                                                                      "an induced subgraph." +
                   Fore.GREEN + "\n\n  set             " + Fore.CYAN + "Performs set operations ('union', "
-                                                                    "'intersection', 'difference') between two "
-                                                                    "networks\n                  using graph logical operations." +
+                                                                      "'intersection', 'difference') between two "
+                                                                      "networks\n                  using graph logical operations." +
+                  Fore.GREEN + "\n\n  convert         " + Fore.CYAN + "Converts a network file format to another one." +
                   Fore.GREEN + "\n\n  generate        " + Fore.CYAN + "Generates in-silico networks that follow"
                                                                     "one of the available topologies." +
-                  Fore.GREEN + "\n\n  communities     " + Fore.CYAN + "Finds communities within a graph using"
-                                                                    "several community-finding algorithms. Produces\n                  "
-                                                                    "several network files, each containing "
-                                                                    "an induced subgraph." +
                   Fore.GREEN + "\n\n  test            " + Fore.CYAN + "Performs a series of tests to check "
                                                                     "the integrity of Pyntacle. Useful to test if\n                  "
                                                                     "Pyntacle was installed correctly and for debugging "
-                                                                    "tasks.\n" +
+                                                                    "tasks\n" +
                   Style.RESET_ALL + 100 * "-", )
 
         parser.add_argument("command", help="Subcommand to run", type=lambda s: s.lower())
@@ -139,7 +138,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
         args = parser.parse_args(sys.argv[1:2])
 
         if not hasattr(self, args.command) and args.command != "test":
-            sys.stdout.write("Unrecognized command.\n")
+            sys.stdout.write("Unrecognized command\n")
             parser.print_help()
             exit(1)
         # Use dispatch pattern to invoke method with same name
@@ -151,11 +150,11 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
     def keyplayer(self):
         parser = argparse.ArgumentParser(
             description="Computes key player metrics for a specific set of nodes ('kp-info') or performs the "
-                        "search of node set that hold the optimal or the best key player index value ('kp-finder').\n\n"
+                        "search of node set that hold the optimal or the best key player index value ('kp-finder')\n\n"
                         "Subcommands:\n\n" + 100 * "-" + "\n" +
                         "   kp-finder\t           Finds the best kp set of size k using key player metrics by means of "
-                        "either a\n\t\t\t  greedy or a brute-force algorithm.\n\n"
-                        "   kp-info\t           Computes specified key player metrics for a selected subset of nodes.\n" + 100 * "-",
+                        "either a\n\t\t\t  greedy or a brute-force algorithm\n\n"
+                        "   kp-info\t           Computes specified key player metrics for a selected subset of nodes\n" + 100 * "-",
             formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=100,
                                                                               max_help_position=100),
             usage=Fore.RED + Style.BRIGHT + "pyntacle keyplayer"
@@ -184,16 +183,6 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
         parser.add_argument("-N", "--no-header", default=False, action="store_true",
                             help="A flag that must be specified if the input network file (adjacency matrix, edge list, SIF file) "
                                  "does not contain a header. By default, we assume a header is present.")
-        parser.add_argument("-m", "--m-reach", metavar="", type=int, help="The maximum "
-                                                                          "distance that will be "
-                                                                          "used to compute the m-reach "
-                                                                          "metric. Must be provided if m-reach"
-                                                                          " is computed.")
-
-        parser.add_argument("-M", "--max-distance", metavar="", type=int, help="The number of steps after"
-                                                                               " which two nodes will be considered as "
-                                                                               "disconnected. By default, "
-                                                                               "no maximum distance is set.")
 
         parser.add_argument("-t", "--type", metavar="", choices=["pos", "neg", "all", "F", "dF", "dR", "mreach"],
                             default="all",
@@ -202,10 +191,21 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                  " 'neg' (fragmentation metrics: F and dF). 'dR', 'mreach', 'F', "
                                  "'dF'. Default is 'all'.")
 
+        parser.add_argument("-m", "--m-reach", metavar="", type=int, help="The maximum "
+                                                                          "distance that will be "
+                                                                          "used to compute the m-reach "
+                                                                          "metric. Must be provided if m-reach"
+                                                                          " is computed.")
+
         parser.add_argument("-L", "--largest-component", action="store_true",
                             help="Considers only the largest component of the input graph and excludes the smaller ones."
                                  "It will raise an error if the network has two largest"
                                  " components of the same size.")
+
+        parser.add_argument("-M", "--max-distance", metavar="", type=int, help="The number of steps after"
+                                                                               " which two nodes will be considered as "
+                                                                               "disconnected. By default, "
+                                                                               "no maximum distance is set.")
 
         parser.add_argument("-d", "--directory", metavar="", default=os.getcwd(),
                             help="The directory that will store Pyntacle results. If the directory does not "
@@ -307,17 +307,17 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
         try:
             kp.run()
         except KeyboardInterrupt:
-            sys.stderr.write("\nReceived SIGKILL from Keyboard\n")
+            sys.stderr.write(sigkill_message)
 
     def groupcentrality(self):
         parser = argparse.ArgumentParser(
             description="Computes group centrality metrics (defined in goo.gl/82Whxu) for a specific set of nodes "
                         "('gr-info') or perform the "
-                        "search of set of nodes that maximize key player metrics ('group-finder').\n\n"
+                        "search of set of nodes that maximize key player metrics ('group-finder')\n\n"
                         "Subcommands:\n\n" + 100 * "-" + "\n" +
                         "   gr-finder\t           Finds the optimal or the best set of size 'k' for a group centrality index (or indices) by means of either a "
-                        "\n\t\t\t   greedy optimization or a brute-force algorithm.\n\n"
-                        "   gr-info\t           Computes all or a selected group-centrality metric for a selected subset of nodes.\n" + 100 * "-",
+                        "\n\t\t\t   greedy optimization or a brute-force algorithm\n\n"
+                        "   gr-info\t           Computes all or a selected group-centrality metric for a selected subset of nodes\n" + 100 * "-",
             formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=100,
                                                                               max_help_position=100),
             usage=Fore.RED + Style.BRIGHT + "pyntacle groupcentrality"
@@ -462,18 +462,18 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
         try:
             gr.run()
         except KeyboardInterrupt:
-            sys.stderr.write("\nReceived SIGKILL from Keyboard\n")
+            sys.stderr.write(sigkill_message)
 
     def metrics(self):
 
         parser = argparse.ArgumentParser(
-            description="Computes various types of metrics for a set of nodes of a network or for the whole graph.\n\n"
+            description="Computes various types of metrics for a set of nodes of a network or for the whole graph\n\n"
                         "Subcommands:\n\n" + 90 * "-" + "\n" +
                         "  global\tComputes global centrality measures for the whole graph. Can also be used"
                         "\n\t\tto remove nodes from the graph and computing these global centrality"
                         "\n\t\tmeasures before and after the node removal. \n\n"
                         "  local\t        Computes local centrality measures for a single node, a group of nodes "
-                        "\n\t\tor all nodes in the graph.\n"
+                        "\n\t\tor all nodes in the graph\n"
                         + 90 * "-",
 
             formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=100,
@@ -501,6 +501,11 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                             help="A flag that must be used if the input network file (adjacency matrix, edge list, SIF file) "
                                  "does not contain a header. By default, we assume a header is present.")
 
+        parser.add_argument("-L", "--largest-component", action="store_true",
+                            help="Considers only the largest component of the input graph and excludes the smaller ones."
+                                 "It will raise an error if the network has two largest"
+                                 " components of the same size.")
+
         parser.add_argument("-d", "--directory", default=os.getcwd(), metavar="",
                             help="The directory that will store Pyntacle results. If the directory does not "
                                  "exist, it will be created at the desired location. Default is the current "
@@ -524,9 +529,6 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                  "otherwise. Overridden by the '--no-plot' flag or if the graph "
                                  "is too big to be represented (larger than 1000 nodes).")
 
-        parser.add_argument("--no-plot", action="store_true",
-                            help="Skips the graphical representation of the plot.")
-
         parser.add_argument("--plot-layout", metavar="",
                             choices=["circle", "fruchterman_reingold", "fr", "kamada_kawai", "kk",
                                      "large_graph", "lgl", "random", "reingold_tilford", "rt"],
@@ -537,14 +539,12 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                  "'fruchterman_reingold'. Bypassed if the '--no-plot' flag if specified or if the graph "
                                  "is too big to be represented (larger than 1000 nodes).")
 
+        parser.add_argument("--no-plot", action="store_true",
+                            help="Skips the graphical representation of the plot.")
+
         parser.add_argument("--save-binary", action="store_true",
                             help="Saves a binary file (ending in '.graph') that contains the network "
                                  "and all the operations performed on it in an 'igraph.Graph' object.")
-
-        parser.add_argument("-L", "--largest-component", action="store_true",
-                            help="Considers only the largest component of the input graph and excludes the smaller ones."
-                                 "It will raise an error if the network has two largest"
-                                 " components of the same size.")
 
         parser.add_argument("--suppress-cursor", action="store_true",
                             help="Suppresses the animated cursor during Pyntacle execution.")
@@ -611,12 +611,12 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
         if len(sys.argv) < 4 or (sys.argv[2] not in ("global", "local")):
             raise Error("usage: pyntacle metrics {global, local} [arguments] (use --help for command description)")
 
-        sys.stdout.write("Running Pyntacle metrics...\n")
+        sys.stdout.write("Running Pyntacle metrics\n")
         mt = metrics_command(args)
         try:
             mt.run()
         except KeyboardInterrupt:
-            sys.stderr.write("\nReceived SIGKILL from Keyboard\n")
+            sys.stderr.write(sigkill_message)
 
     def convert(self):
         parser = argparse.ArgumentParser(
@@ -645,12 +645,6 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                             help="A flag that must be used if the input network file (adjacency matrix, edge list, SIF file) "
                                  "does not contain a header. By default, we assume a header is present.")
 
-        parser.add_argument("--no-output-header", default=False, action="store_true",
-                            help="Skips the creation of a header for the resulting network file if the output format is"
-                                 " an adjacency matrix, an edge list or a SIF file. See https://goo.gl/9wFRfM for more "
-                                 "details on accepted network file formats and their specifics."
-                                 "If not specified the output network files will contain a header by default.")
-
         parser.add_argument("-d", "--directory", metavar="", default=os.getcwd(),
                             help="The directory that will store Pyntacle results. If the directory does not "
                                  "exist, it will be created at the desired location. Default is the current "
@@ -670,6 +664,12 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                             help="The field separator of the output network file. Default is '\t'."
                                  " NOTE: the separator must be wrapped in quotes.")
 
+        parser.add_argument("--no-output-header", default=False, action="store_true",
+                            help="Skips the creation of a header for the resulting network file if the output format is"
+                                 " an adjacency matrix, an edge list or a SIF file. See https://goo.gl/9wFRfM for more "
+                                 "details on accepted network file formats and their specifics."
+                                 "If not specified the output network files will contain a header by default.")
+
         parser.add_argument("--suppress-cursor", action="store_true",
                             help="Suppresses the animated cursor during Pyntacle execution.")
 
@@ -683,26 +683,26 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
 
         if args.format is not None:
             if format_dictionary[args.format] == format_dictionary[args.output_format]:
-                log.error("The output format specified is the same as the input format. Quitting.\n")
+                log.error("The output format specified is the same as the input format. Quitting\n")
                 sys.exit(0)
-        sys.stdout.write("Running Pyntacle convert...\n")
+        sys.stdout.write("Running Pyntacle convert\n")
 
         cv = convert_command(args)
         try:
             cv.run()
         except KeyboardInterrupt:
-            sys.stderr.write("\nReceived SIGKILL from Keyboard\n")
+            sys.stderr.write(sigkill_message)
 
     def generate(self):
 
         parser = argparse.ArgumentParser(
-            description="Generates in silico networks based on a series of predetermined topologies.\n\n"
+            description="Generates in silico networks based on a series of predetermined topologies\n\n"
                         "Subcommands:\n\n" + 90 * "-" + "\n" +
-                        "  random\t      Random network created using the Erdos–Renyi model.\n\n"
+                        "  random\t      Random network created using the Erdos–Renyi model\n\n"
                         "  scale-free\t      The scale-free topology according to the "
-                        "\n\t\t      model proposed by Barabási and Albert.\n\n"
-                        "  tree\t              A hierarchical tree network.\n\n"
-                        "  small-world\t      The small-world topology described in the Watts-Strogatz model.\n" + 90 * "-",
+                        "\n\t\t      model proposed by Barabási and Albertn\n"
+                        "  tree\t              A hierarchical tree network\n\n"
+                        "  small-world\t      The small-world topology described in the Watts-Strogatz model\n" + 90 * "-",
             formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=140,
                                                                               max_help_position=100),
             usage=Fore.RED + Style.BRIGHT + "pyntacle generate" + Fore.GREEN + Style.BRIGHT +
@@ -710,6 +710,13 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                   " [arguments]" + Style.RESET_ALL + Style.RESET_ALL)
 
         # NOT prefixing the argument with -- means it's not optional
+        parser.add_argument("-R", "--repeat", metavar="", type=int, default=1,
+                            help="Repeats the graph generation for 'n' times. Default is 1."
+                                 " NOTE: '--repeat' overrides '--seed'.")
+
+        parser.add_argument("-S", "--seed", type=int, help="Sets a seed when creating a network, to replicate the "
+                                                           "network construction. Overridden by '--repeat'.",
+                            metavar="", default=None)
 
         parser.add_argument("-d", "--directory", metavar="", default=os.getcwd(),
                             help="The directory that will store Pyntacle results. If the directory does not "
@@ -749,9 +756,6 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                  "otherwise. Overridden by the '--no-plot' flag or if the graph "
                                  "is too big to be represented (larger than 1000 nodes).")
 
-        parser.add_argument("--no-plot", action="store_true",
-                            help="Skips the graphical representation of the plot.")
-
         parser.add_argument("--plot-layout", metavar="",
                             choices=["circle", "fruchterman_reingold", "fr", "kamada_kawai", "kk",
                                      "large_graph", "lgl", "random", "reingold_tilford", "rt"],
@@ -762,13 +766,8 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                  "'fruchterman_reingold'. Bypassed if the '--no-plot' flag if specified or if the graph "
                                  "is too big to be represented (larger than 1000 nodes).")
 
-        parser.add_argument("-S", "--seed", type=int, help="Sets a seed when creating a network, to replicate the "
-                                                           "network construction. Overridden by '--repeat'.",
-                            metavar="", default=None)
-
-        parser.add_argument("-R", "--repeat", metavar="", type=int, default=1,
-                            help="Repeats the graph generation for 'n' times. Default is 1."
-                                 " NOTE: '--repeat' overrides '--seed'.")
+        parser.add_argument("--no-plot", action="store_true",
+                            help="Skips the graphical representation of the plot.")
 
         parser.add_argument("--suppress-cursor", action="store_true",
                             help="Suppresses the animated cursor during Pyntacle execution.")
@@ -862,7 +861,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
             raise Error(
                 "usage: pyntacle generate {random, scale-free, tree, small-world} [arguments] (use --help for command description)")
 
-        sys.stdout.write("Running Pyntacle generate...\n")
+        sys.stdout.write("Running Pyntacle generate\n")
         original_args = deepcopy(args)
         for r in range(0, args.repeat):
             args = deepcopy(original_args)
@@ -872,14 +871,14 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
             elif args.seed and args.repeat != 1:
                 sys.stdout.write(
                     "WARNING: you have supplied both --repeat greater than 1, and --seed. The former overrides"
-                    "the latter, so {0} different graphs will be produced with a random seed.\n".format(
+                    "the latter, so {0} different graphs will be produced with a random seed\n".format(
                         str(args.repeat)))
                 args.seed = random.randint(1, 1000000)
             gen = generate_command(args)
             try:
                 gen.run()
             except KeyboardInterrupt:
-                sys.stderr.write("\nReceived SIGKILL from Keyboard\n")
+                sys.stderr.write(sigkill_message)
 
     def communities(self):
         parser = argparse.ArgumentParser(
@@ -889,9 +888,9 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                         "number of nodes or components \n\n"
                         "Subcommands:\n\n" + 90 * "-" + "\n" +
                         "  fastgreedy\t\t      Modular decomposition by means of the fastgreedy algorithm \n\n"
-                        "  infomap\t\t         Modular decomposition by means of the naive implementation of the infomap algorithm.\n\n"
-                        "  leading-eigenvector\t      Modular decomposition computing the leading eigenvectors for each community.\n\n"
-                        "  community-walktrap\t      Modular decomposition by means of random walks within the graph.\n" + 90 * "-",
+                        "  infomap\t\t         Modular decomposition by means of the naive implementation of the infomap algorithm\n\n"
+                        "  leading-eigenvector\t      Modular decomposition computing the leading eigenvectors for each community\n\n"
+                        "  community-walktrap\t      Modular decomposition by means of random walks within the graph\n" + 90 * "-",
             formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=140,
                                                                               max_help_position=100),
             usage=Fore.RED + Style.BRIGHT + "pyntacle communities" + Fore.GREEN + Style.BRIGHT + " {fastgreedy, "
@@ -913,6 +912,15 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                             help="The field separator for the input file. "
                                  "If not provided, Pyntacle tries to guess it automatically.")
 
+        parser.add_argument("-N", "--no-header", default=False, action="store_true",
+                            help="A flag that must be used if the input network file (adjacency matrix, edge list, SIF file) "
+                                 "does not contain a header. By default, we assume a header is present.")
+
+        parser.add_argument("-L", "--largest-component", action="store_true",
+                            help="Considers only the largest component of the input graph and excludes the smaller ones."
+                                 "It will raise an error if the network has two largest"
+                                 " components of the same size.")
+
         parser.add_argument("--min-nodes", "-m", help="Filters the resulting communities and keeps only those with a "
                                                       "number of vertices equal or greater than this treshold.")
 
@@ -927,16 +935,6 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
         parser.add_argument("--max-components", "-C",
                             help="Filters the resulting communities and keeps only those with a "
                                  "number of components equal or greater than this threshold.")
-
-        parser.add_argument("-N", "--no-header", default=False, action="store_true",
-                            help="A flag that must be used if the input network file (adjacency matrix, edge list, SIF file) "
-                                 "does not contain a header. By default, we assume a header is present.")
-
-        parser.add_argument("--no-output-header", action="store_true",
-                            help="Skips the creation of a header for the resulting network files if the output format is"
-                                 " an adjacency matrix, an edge list or a SIF file. See https://goo.gl/9wFRfM for more "
-                                 "details on accepted network file formats and their specifics."
-                                 "If not specified the output network files will contain a header by default.")
 
         parser.add_argument("-d", "--directory", default=os.getcwd(), metavar="",
                             help="The directory that will store Pyntacle results. If the directory does not "
@@ -956,6 +954,12 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
         parser.add_argument("--output-separator", metavar="",
                             help="The field separator of the output network file. Default is '\t'."
                                  " NOTE: the separator must be wrapped in quotes.")
+
+        parser.add_argument("--no-output-header", action="store_true",
+                            help="Skips the creation of a header for the resulting network files if the output format is"
+                                 " an adjacency matrix, an edge list or a SIF file. See https://goo.gl/9wFRfM for more "
+                                 "details on accepted network file formats and their specifics."
+                                 "If not specified the output network files will contain a header by default.")
 
         parser.add_argument("-r", "--report-format", metavar="", default="txt", choices=["txt", "csv", "xlsx", "tsv"],
                             type=lambda s: s.lower(),
@@ -993,11 +997,6 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                             help="Saves a binary file (ending in '.graph') that contains the network "
                                  "and all the operations performed on it in an 'igraph.Graph' object")
 
-        parser.add_argument("-L", "--largest-component", action="store_true",
-                            help="Considers only the largest component of the input graph and excludes the smaller ones."
-                                 "It will raise an error if the network has two largest"
-                                 " components of the same size.")
-
         parser.add_argument("--suppress-cursor", action="store_true",
                             help="Suppresses the animated cursor during Pyntacle execution.")
 
@@ -1015,6 +1014,10 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
 
         fastgreedy_subparser.set_defaults(which="fastgreedy")
 
+        fastgreedy_subparser.add_argument("--clusters", metavar="",
+                                          help="Specifies the number of clusters around which the modular decomposition "
+                                               "algorithm will optimize its module search.")
+
         fastgreedy_subparser.add_argument("--weights", metavar="",
                                           help="Path to an edge attribute file storing weights that will be passed to the"
                                                "fastgreedy algorithm. Must be either a standard edge attribute file or a "
@@ -1030,10 +1033,6 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                                "'cytoscape' for the Cytoscape legacy attribute file. "
                                                "See https://goo.gl/9wFRfM for more details on edge attribute files."
                                                "Default is 'standard'.")
-
-        fastgreedy_subparser.add_argument("--clusters", metavar="",
-                                          help="Specifies the number of clusters around which the modular decomposition "
-                                               "algorithm will optimize its module search.")
 
         infomap_subparser = subparsers.add_parser("infomap",
                                                   usage="pyntacle communities infomap [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [-P] [--input-separator] [--plot-dim] [--no-plot] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE]",
@@ -1059,20 +1058,21 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                                                                                                  width=150))
         community_walktrap_subparser.set_defaults(which="community-walktrap")
 
+        community_walktrap_subparser.add_argument("--steps",
+                                                  help="Specifies the maximum number of steps for the random walker. "
+                                                       "High number of steps leads to lesser cohese communities. "
+                                                       "Default is 3.", default="3")
+
+        community_walktrap_subparser.add_argument("--clusters",
+                                                  help="Specifies the number of clusters around which the modular "
+                                                       "decomposition algorithm will optimize its module search.")
+
         community_walktrap_subparser.add_argument("--weights",
                                                   help="Path to an edge attribute file storing weights that will be "
                                                        "passed to the walktrap algorithm. Must be either a standard "
                                                        "edge attribute file or a Cytoscape legacy attribute file. "
                                                        "See https://goo.gl/9wFRfM for more details on edge attribute files."
                                                        "NOTE: A column named 'weights' must be present in the edge attribute file.")
-        community_walktrap_subparser.add_argument("--clusters",
-                                                  help="Specifies the number of clusters around which the modular "
-                                                       "decomposition algorithm will optimize its module search.")
-
-        community_walktrap_subparser.add_argument("--steps",
-                                                  help="Specifies the maximum number of steps for the random walker. "
-                                                       "High number of steps leads to lesser cohese communities. "
-                                                       "Default is 3.", default="3")
 
         community_walktrap_subparser.add_argument("--weights-format", choices=["standard", "cytoscape"], metavar="",
                                                   default="standard",
@@ -1090,22 +1090,22 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
             raise Error(
                 "usage: pyntacle communities {fastgreedy, infomap, leading-eigenvector, community-walktrap} [arguments] (use --help for command description)")
 
-        sys.stdout.write("Running Pyntacle communities...\n")
+        sys.stdout.write("Running Pyntacle communities\n")
 
         comm = communities_command(args)
         try:
             comm.run()
         except KeyboardInterrupt:
-            sys.stderr.write("\nReceived SIGKILL from Keyboard\n")
+            sys.stderr.write(sigkill_message)
 
     def set(self):
 
         parser = argparse.ArgumentParser(
             description="Performs set operations (union, intersection, difference) between two networks using "
-                        "logical graph operations.\n\n"
+                        "logical graph operations\n\n"
                         "Subcommands:\n\n" + 90 * "-" + "\n" +
                         "  intersection\t      Graph intersection. Returns only the "
-                        "\n\t\t      common nodes and their connecting edges among the two graphs of interest.\n\n"
+                        "\n\t\t      common nodes and their connecting edges among the two graphs of interest\n\n"
                         "  union\t\t      Graph union. Returns a resulting merged graph of the original two networks, marking the common nodes"
                         "among them along with their common connecting edges"
                         "  difference\t      Performs the difference between the two input graphs. Returns the nodes "
@@ -1145,10 +1145,40 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                             help="A flag that must be used if the input network file (adjacency matrix, edge list, SIF file) "
                                  "does not contain a header. By default, we assume a header is present.")
 
+        parser.add_argument("-L", "--largest-component", action="store_true",
+                            help="Considers only the largest component of the input graph and excludes the smaller ones."
+                                 "It will raise an error if the network has two largest"
+                                 " components of the same size.")
+
         parser.add_argument("-d", "--directory", metavar="", default=os.getcwd(),
                             help="The directory that will store Pyntacle results. If the directory does not "
                                  "exist, it will be created at the desired location. Default is the current "
                                  "working directory.")
+
+        parser.add_argument("--output-file", "-o", metavar="",
+                            help="Basename of the output network file. If not specified, the default output basename file will ")
+
+        parser.add_argument("-u", "--output-format", metavar="",
+                            choices=format_dictionary.keys(), default="adjmat",
+                            help="Desired output format for the resulting network file.The same abbreviations used in the "
+                                 "'--format' are applied. See https://goo.gl/9wFRfM for more information on available "
+                                 "network file formats and the complete list of abbreviations.")
+
+        parser.add_argument("--output-separator", metavar="",
+                            help="The field separator of the output network file. Default is '\t'."
+                                 " NOTE: the separator must be wrapped in quotes.")
+
+        parser.add_argument("--no-output-header", action="store_true",
+                            help="Skips the creation of a header for the resulting network files if the output format is"
+                                 " an adjacency matrix, an edge list or a SIF file. See https://goo.gl/9wFRfM for more "
+                                 "details on accepted network file formats and their specifics."
+                                 "If not specified the output network file will contain a header by default.")
+
+        parser.add_argument("--report-format", "-r", default="txt", choices=["txt", "csv", "xlsx", "tsv"],
+                            metavar="",
+                            help="The format of the report produced by "
+                                 "Pyntacle. Choices are: 'txt' and 'tsv' (tab-separated file), 'csv' "
+                                 "(comma-separated value file), 'xlsx' (Excel file). Default is 'txt'.")
 
         parser.add_argument("-P", "--plot-format", choices=["svg", "pdf", "png"], default="pdf", metavar="",
                             type=lambda s: s.lower(),
@@ -1175,36 +1205,6 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
 
         parser.add_argument("--no-plot", action="store_true",
                             help="Skips the graphical representation of the plot.")
-
-        parser.add_argument("-u", "--output-format", metavar="",
-                            choices=format_dictionary.keys(), default="adjmat",
-                            help="Desired output format for the resulting network file.The same abbreviations used in the "
-                                 "'--format' are applied. See https://goo.gl/9wFRfM for more information on available "
-                                 "network file formats and the complete list of abbreviations.")
-
-        parser.add_argument("--output-file", "-o", metavar="",
-                            help="Basename of the output network file. If not specified, the default output basename file will ")
-
-        parser.add_argument("--no-output-header", action="store_true",
-                            help="Skips the creation of a header for the resulting network files if the output format is"
-                                 " an adjacency matrix, an edge list or a SIF file. See https://goo.gl/9wFRfM for more "
-                                 "details on accepted network file formats and their specifics."
-                                 "If not specified the output network file will contain a header by default.")
-
-        parser.add_argument("--output-separator", metavar="",
-                            help="The field separator of the output network file. Default is '\t'."
-                                 " NOTE: the separator must be wrapped in quotes.")
-
-        parser.add_argument("-L", "--largest-component", action="store_true",
-                            help="Considers only the largest component of the input graph and excludes the smaller ones."
-                                 "It will raise an error if the network has two largest"
-                                 " components of the same size.")
-
-        parser.add_argument("--report-format", "-r", default="txt", choices=["txt", "csv", "xlsx", "tsv"],
-                            metavar="",
-                            help="The format of the report produced by "
-                                 "Pyntacle. Choices are: 'txt' and 'tsv' (tab-separated file), 'csv' "
-                                 "(comma-separated value file), 'xlsx' (Excel file). Default is 'txt'.")
 
         parser.add_argument("--suppress-cursor", action="store_true",
                             help="Suppresses the animated cursor during Pyntacle execution.")
@@ -1244,16 +1244,20 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
             raise Error(
                 "usage: pyntacle set {union, intersection, difference} [arguments] (use --help for command description)")
 
-        sys.stdout.write("Running Pyntacle set...\n")
+        sys.stdout.write("Running Pyntacle set\n")
         set = set_command(args)
         try:
             set.run()
         except KeyboardInterrupt:
-            sys.stderr.write("\nReceived SIGKILL from Keyboard\n")
+            sys.stderr.write(sigkill_message)
 
     def pyntacle_test(self):
         runner = unittest.TextTestRunner()
-        runner.run(Suite())
+        try:
+            runner.run(Suite())
+
+        except KeyboardInterrupt:
+            sys.stderr.write(sigkill_message)
 
 
 if __name__ == "__main__":

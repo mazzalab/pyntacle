@@ -105,7 +105,7 @@ class ImportAttributes():
                     continue
                 AddAttributes.add_graph_attributes(graph, attrs[0],
                                                                  attrs[1])
-        sys.stdout.write(u"Graph attributes from {} imported.\n".format(file))
+        sys.stdout.write(u"Graph attributes from {} imported\n".format(file))
 
     @staticmethod
     @check_graph_consistency
@@ -200,7 +200,7 @@ class ImportAttributes():
         for attr in attrs_dict:
             AddAttributes.add_node_attributes(graph, attr, list(attrs_dict[attr].values()), list(attrs_dict[attr].keys()))
                 
-        sys.stdout.write(u"Node attributes from {} imported.\n".format(file))
+        sys.stdout.write(u"Node attributes from {} imported\n".format(file))
 
     @staticmethod
     @check_graph_consistency
@@ -336,4 +336,4 @@ class ImportAttributes():
                                                                     list(attrs_dict[attr].keys()))
                     sys.stdout.write("Edge attribute {} added\n".format(attr))
                     
-        sys.stdout.write(u"Edge attributes from {} imported.\n".format(file))
+        sys.stdout.write(u"Edge attributes from {} imported\n".format(file))

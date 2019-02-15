@@ -55,7 +55,7 @@ class Convert():
 
         if self.args.input_file is None:
             sys.stderr.write(
-                u"Please specify an input file using the `-i/--input-file` option. Quitting.\n")
+                u"Please specify an input file using the `-i/--input-file` option. Quitting\n")
             sys.exit(1)
 
         if not os.path.exists(self.args.input_file):
@@ -68,27 +68,27 @@ class Convert():
             #print(self.args.output_file)
 
         if self.args.input_separator is None:
-            self.logging.info(u"Trying to guess input separator...")
+            self.logging.info(u"Trying to guess input separator")
             separator = separator_detect(self.args.input_file)
 
         else:
             separator = self.args.input_separator
 
         if self.args.output_separator is None:
-            sys.stdout.write(u"Using the same separator used in the input file.\n")
+            sys.stdout.write(u"Using the same separator used in the input file\n")
             self.args.output_separator = separator
 
         if not os.path.isdir(self.args.directory):
-            sys.stdout.write(u"Warning: output directory does not exist, will create one at {}.\n".format(
+            sys.stdout.write(u"WARNING: output directory does not exist, will create one at {}\n".format(
                 os.path.abspath(self.args.directory)))
             os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
 
-        sys.stdout.write(u"Converting  input file {0} to requested output file: {1}...\n".format(self.args.input_file, self.args.output_file))
+        sys.stdout.write(u"Converting  input file {0} to requested output file: {1\n".format(self.args.input_file, self.args.output_file))
 
         out_form = format_dictionary.get(self.args.output_format, "NA")
 
         if out_form == "NA":
-            sys.stderr.write(u"Output extension specified is not supported, see  '--help' for more info. Quitting.\n")
+            sys.stderr.write(u"Output extension specified is not supported, see  '--help' for more info. Quitting\n")
             sys.exit(1)
 
         output_path = os.path.join(self.args.directory, ".".join([self.args.output_file, out_form]))
@@ -98,12 +98,12 @@ class Convert():
         #1: convert an edgelist to a sif file
         if format_dictionary.get(self.args.format, "NA") == "egl" and out_form == "sif":
 
-            sys.stdout.write(u"Converting edge list to Simple Interaction Format (SIF).\nPath to the output file:{}\n".format(output_path))
+            sys.stdout.write(u"Converting edge list to Simple Interaction Format (SIF)\nPath to the output file:{}\n".format(output_path))
             PyntacleConverter.edgelistToSif(file=self.args.input_file, sep=separator, output_sep=self.args.output_separator, header=output_header, output_file=output_path)
 
         #2: convert a sif to an edgelist file
         elif format_dictionary.get(self.args.format, "NA") == "sif" and out_form == "egl":
-            sys.stdout.write(u"Converting Simple Interaction Format (SIF) to edge list.\nPath to the output file:{}\n".format(output_path))
+            sys.stdout.write(u"Converting Simple Interaction Format (SIF) to edge list\nPath to the output file:{}\n".format(output_path))
             PyntacleConverter.sifToEdgelist(file=self.args.input_file, sep=separator, output_sep=self.args.output_separator,
                                             header=output_header, output_file=output_path)
 
@@ -113,7 +113,7 @@ class Convert():
             in_form = init_graph.get_format()
             
             if in_form == out_form:
-                sys.stderr.write(u"The output format specified is the same as the input format. Quitting.\n")
+                sys.stderr.write(u"The output format specified is the same as the input format. Quitting\n")
 
                 if not self.args.suppress_cursor:
                     cursor.stop()
@@ -121,21 +121,21 @@ class Convert():
                 sys.exit(0)
                 
             if out_form == "adjm":
-                sys.stdout.write(u"Converting input graph file {0} to adjacency matrix at path {1}...\n".format(
+                sys.stdout.write(u"Converting input graph file {0} to adjacency matrix at path {1}\n".format(
                     os.path.abspath(self.args.input_file), output_path))
                 PyntacleExporter.AdjacencyMatrix(graph, output_path, sep=self.args.output_separator,
                                          header=output_header)
 
             elif out_form == "egl":
                 sys.stdout.write(
-                    u"Converting input graph file {0} to edge list at path {1}...\n".format(
+                    u"Converting input graph file {0} to edge list at path {1}\n".format(
                         os.path.abspath(self.args.input_file),
                         output_path))
                 PyntacleExporter.EdgeList(graph, output_path, sep=self.args.output_separator, header=output_header)
 
             elif out_form == "sif":
                 sys.stdout.write(
-                    u"Converting input graph file {0} to Simple Interaction Format (SIF) file at path {1}...\n".format(
+                    u"Converting input graph file {0} to Simple Interaction Format (SIF) file at path {1}\n".format(
                         os.path.abspath(self.args.input_file), output_path))
                 PyntacleExporter.Sif(graph, output_path, sep=self.args.output_separator, header=output_header)
 
@@ -144,19 +144,19 @@ class Convert():
                 simplefilter("ignore", RuntimeWarning)
 
                 sys.stdout.write(
-                    u"Converting input graph file {0} to DOT file using igraph utilities at path {1} (output separator will be ignored)...\n".format(
+                    u"Converting input graph file {0} to DOT file using igraph utilities at path {1} (output separator will be ignored)\n".format(
                         os.path.abspath(self.args.input_file), output_path))
                 PyntacleExporter.Dot(graph, output_path)
 
 
             elif out_form == "graph":
                 sys.stdout.write(
-                    u"Converting input graph file {0} to a binary file  (ending in .graph) at path {1} (output separator will be ignored)...\n".format(
+                    u"Converting input graph file {0} to a binary file  (ending in .graph) at path {1} (output separator will be ignored)\n".format(
                         os.path.abspath(self.args.input_file), output_path))
                 PyntacleExporter.Binary(graph, output_path)
 
             if not self.args.suppress_cursor:
                 cursor.stop()
 
-            sys.stdout.write(u"Pyntacle convert completed successfully. Ending.\n".format(os.path.basename(self.args.input_file)))
+            sys.stdout.write(u"Pyntacle convert completed successfully. Ending\n".format(os.path.basename(self.args.input_file)))
             sys.exit(0)

@@ -180,7 +180,7 @@ class AddAttributes:
             raise TypeError(u"`readd` must be a boolean {} found".format(type(readd).__name__))
 
         if readd is True or "adjacent_nodes" not in graph.es.attributes():
-            # sys.stdout.write("Adding attribute 'adjacent_nodes' to each edge (will be stored as a tuple).\n")
+            # sys.stdout.write("Adding attribute 'adjacent_nodes' to each edge (will be stored as a tuple)\n")
             edge_names = []
             for e in graph.get_edgelist():
                 # print("{0}, {1}".format(self.graph.vs[e[0]]["name"], self.graph.vs[e[1]]["name"]))

@@ -461,7 +461,7 @@ class PyntacleImporter:
 
                 if Graph.is_directed(graph):
 
-                    sys.stdout.write(u"Converting graph to undirect.\n")
+                    sys.stdout.write(u"Converting graph to undirect\n")
                     graph.to_undirected()
 
                 utils.check_graph()

@@ -97,7 +97,7 @@ class ExportAttributes():
                         if not isinstance(e.attributes()[attr], (str, float, int)) and \
                                         e.attributes()[attr] is not None and warnflag == 0:
                             sys.stdout.write("WARNING: The attribute {} looks like an iterable. "
-                                                "It will be written as it is.\n".format(attr))
+                                                "It will be written as it is\n".format(attr))
                             warnflag = 1
     
                         if e.attributes()[attr] is None:
@@ -119,7 +119,7 @@ class ExportAttributes():
                                 if not isinstance(e.attributes()[attr], (str, float, int)) and \
                                                 e.attributes()[attr] is not None and warnflag == 0:
                                     sys.stdout.write(u"WARNING: The attribute {} looks like an iterable. "
-                                                        "It will be written as it is.\n".format(attr))
+                                                        "It will be written as it is\n".format(attr))
                                     warnflag = 1
             
                                 if e.attributes()[attr] is None:
@@ -127,7 +127,7 @@ class ExportAttributes():
                                 else:
                                     out.write("\t" + str(e.attributes()[attr]))
                             out.write('\n')
-        sys.stdout.write(u"Edge attributes successfully exported at path {}.\n".format(os.path.abspath(file)))
+        sys.stdout.write(u"Edge attributes successfully exported at path {}\n".format(os.path.abspath(file)))
 
     @staticmethod
     @check_graph_consistency
@@ -163,7 +163,7 @@ class ExportAttributes():
                     if not isinstance(v.attributes()[attr], (str, float, int)) and \
                                     v.attributes()[attr] is not None and warnflag == 0:
                         sys.stdout.write("WARNING: The attribute {} looks like an iterable. "
-                                            "It will be written as it is.\n".format(attr))
+                                            "It will be written as it is\n".format(attr))
                         warnflag = 1
 
                     if v.attributes()[attr] is None:
@@ -172,7 +172,7 @@ class ExportAttributes():
                         out.write("\t" + str(v.attributes()[attr]))
                 out.write("\n")
         
-        sys.stdout.write(u"Node attributes successfully exported at path {}.\n".format(os.path.abspath(file)))
+        sys.stdout.write(u"Node attributes successfully exported at path {}\n".format(os.path.abspath(file)))
 
     @staticmethod
     @check_graph_consistency
@@ -210,7 +210,7 @@ class ExportAttributes():
                 if not isinstance(graph[attr], (str, float, int)) and \
                                 graph[attr] is not None and warnflag == 0:
                     sys.stdout.write(u"WARNING: The attribute {} looks like an iterable. "
-                                        "It will be written as it is.\n".format(attr))
+                                        "It will be written as it is\n".format(attr))
                     warnflag = 1
 
                 elif graph[attr] is None:
@@ -218,4 +218,4 @@ class ExportAttributes():
                 else:
                     out.write(attr + "\t" + str(graph[attr]) + "\n")
         
-        sys.stdout.write(u"Graph attributes successfully exported at path {}.\n".format(os.path.abspath(file)))
+        sys.stdout.write(u"Graph attributes successfully exported at path {}\n".format(os.path.abspath(file)))

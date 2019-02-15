@@ -155,7 +155,7 @@ class ModuleUtils():
             if "module" in elem.attributes():
 
                 sys.stdout.write(
-                    u"Attribute 'module' already exist in the {} subgraph, will overwrite.\n".format(str(i)))
+                    u"Attribute 'module' already exist in the {} subgraph, will overwrite\n".format(str(i)))
 
             elem["module"] = i  # this should traceroute the module back to its original number
 
@@ -235,12 +235,12 @@ class ModuleUtils():
 
             if "module" in subgraph.vs.attributes():
                 sys.stdout.write(
-                    u"Module {} already have a 'module' vertex attribute name, will overwrite.\n".format(i))
+                    u"Module {} already have a 'module' vertex attribute name, will overwrite\n".format(i))
                 subgraph.vs["module"] = None
 
             if "module" in subgraph.es.attributes():
                 sys.stdout.write(
-                    u"Module {} already have a 'module' edge attribute name, will overwrite.\n".format(i))
+                    u"Module {} already have a 'module' edge attribute name, will overwrite\n".format(i))
                 subgraph.es["module"] = None
 
             node_names = subgraph.vs()["name"]

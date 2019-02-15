@@ -337,8 +337,8 @@ class GraphUtils:
             removed_nodes = self.get_node_names(isolates_ind) #a list storing the vertex name attribute
             rem_size = init_size - len(removed_nodes)
             sys.stdout.write(u"WARNING: the following isolates will be removed from the input graph:\n{}\n"
-                             u"Leaving {} nodes out of {}.\nThe node names will be stored in the 'isolates' graph "
-                             u"attribute.\n".format(",".join(removed_nodes), rem_size, init_size))
+                             u"Leaving {} nodes out of {}\nThe node names will be stored in the 'isolates' graph "
+                             u"attribute\n".format(",".join(removed_nodes), rem_size, init_size))
             copy_graph.delete_vertices(isolates_ind)
             copy_graph["isolates"] = removed_nodes
             self.graph = copy_graph #replace the self.graph object
@@ -363,7 +363,7 @@ class GraphUtils:
         try:
             attribute_name_checker(graph_name)
         except ValueError:
-            sys.stderr.write("Graph 'name' attribute contains illegal characters.\n")
+            sys.stderr.write("Graph 'name' attribute contains illegal characters\n")
             sys.exit(1)
 
         self.graph.to_undirected()  # reconvert graph to directed

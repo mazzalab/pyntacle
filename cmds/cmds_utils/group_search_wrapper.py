@@ -134,7 +134,7 @@ class InfoWrapper:
             elif not isinstance(m, int) or m <= 0 :
                 raise ValueError(u"'m' must be a positive integer")
 
-        self.logger.info(u"Computing {0} for nodes ({1})".format(kp_type.name, ", ".join(self.nodes)))
+        sys.stdout.write(u"Computing {0} for nodes ({1})\n".format(kp_type.name, ", ".join(self.nodes)))
 
         if kp_type == KpposEnum.dR:
             single_result = self.method.dR(graph=self.graph, nodes=self.nodes, max_distance=max_distance,
@@ -193,7 +193,7 @@ class InfoWrapper:
         if gr_type == GroupCentralityEnum.group_closeness and not isinstance(gr_distance, GroupDistanceEnum):
             raise TypeError("`gr_distance` must be one of the GroupDistanceEnum, {} found".format(type(gr_distance).__name__))
 
-        self.logger.info(u"Computing {0} for nodes ({1})".format(gr_type.name, ", ".join(self.nodes)))
+        sys.stdout.write(u"Computing {0} for nodes ({1})\n".format(gr_type.name.replace("_", " "), ", ".join(self.nodes)))
 
         if gr_type == GroupCentralityEnum.group_closeness:
             single_result = self.method.group_closeness(graph=self.graph, nodes=self.nodes,

@@ -102,13 +102,13 @@ class GraphLoad():
                     sys.stderr.write(
                         u"Adjacency Matrix is either direct or malformed. Please note that you specified "
                         "the header is not present, If that's not the case, remove the \"--no-header\" "
-                        "option. Quitting.\n")
+                        "option. Quitting\n")
                     sys.exit(1)
                 else:
                     sys.stderr.write(
                         u"Adjacency Matrix is either direct or malformed. Please note that you specified "
                         "the header was present. If that's not the case, use the \"--no-header\" option. "
-                        "Quitting.\n")
+                        "Quitting\n")
                     sys.exit(1)
 
         elif self.file_format == 'graph':
@@ -119,8 +119,8 @@ class GraphLoad():
 
             except IOError:
                 sys.stderr.write(
-                    u"Binary format does not contain an igraph.Graph object or the Graph passed is invalid. "
-                    "Check your binary. Quitting.\n")
+                    u"Binary format does not contain an 'igraph.Graph' object or the graph is not compliant to Pyntacle"
+                    u"minimum requirements. Quitting\n")
                 sys.exit(1)
 
 
@@ -130,9 +130,9 @@ class GraphLoad():
                 graph = PyntacleImporter.Dot(self.input_file)
             except:
                 sys.stderr.write(
-                    u"Dot file is not supporter by our parser. Or other formatting errors has occured. "
-                    "Please check our documentation in order to check out DOT file specifications. "
-                    "Quitting.\n")
+                    u"Dot file is not supporter by our parser. Or other formatting errors occurred. "
+                    "Please check our documentation in order to check out the DOT file specifications. "
+                    "Quitting\n")
                 sys.exit(1)
 
         elif self.file_format == 'sif':
@@ -141,7 +141,7 @@ class GraphLoad():
             except UnproperlyFormattedFileError:
                 sys.stderr.write(
                     u"Sif is unproperly formatted or a header is present and --no-header was declared in "
-                    "input (also check if the separator is correct). Quitting.\n")
+                    "input (also check if the separator is correct). Quitting\n")
                 sys.exit(1)
 
         else:
@@ -209,7 +209,7 @@ class GraphLoad():
 
             except:
                 sys.stderr.write(u"\nCould not load_graph data from file. Please specify --no-header if "
-                                 "necessary.\n")
+                                 "necessary\n")
                 sys.exit()
         else:
             try:
@@ -228,7 +228,7 @@ class GraphLoad():
 
         if len(f.shape) == 1 or (f.shape[1] >= 3 and (f.shape[1] != f.shape[0] or ('1' not in f or '0' not in f))):
             if len(f.shape) == 1:
-                self.logger.warning(u"Warning: the input file seems to be very small (1 edge).")
+                self.logger.warning(u"WARNING: the input file seems to be very small (1 edge).")
             self.logger.info(u"Guessed file format: Simple Interaction Format")
             return "sif", self.header, self.separator
 
