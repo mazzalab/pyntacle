@@ -78,20 +78,19 @@ class Metrics:
             self.logging.error(u"Cannot find {}. Is the path correct?".format(self.args.input_file))
             sys.exit(1)
 
+        if self.args.damping_factor < 0.0 or self.args.damping_factor > 1.0:
+            sys.stderr.write(u"Damping factor must be between 0 and 1. Quitting\n")
+            sys.exit(1)
+
         self.logging.debug(u'Running Pyntacle metrics, with arguments ')
         self.logging.debug(self.args)
 
         # Load Graph
+        sys.stdout.write(import_start)
         sys.stdout.write(u"Importing graph from file\n")
         graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header, separator=self.args.input_separator).graph_load()
         # init Utils global stuff
         utils = gu(graph=graph)
-
-        # Decide implementation
-        if 'implementation' in graph.attributes():
-            implementation = graph['implementation']
-        else:
-            implementation = CmodeEnum.igraph
             
         if self.args.nodes is not None:
 
@@ -122,8 +121,35 @@ class Metrics:
                         "One or more of the specified nodes is not present in the largest graph component. Select a different set or remove this option. Quitting\n")
                     sys.exit(1)
 
+        # Decide implementation
+        if 'implementation' in graph.attributes():
+            implementation = graph['implementation']
+        else:
+            implementation = CmodeEnum.igraph
+
+        if self.args.weights is not None:
+            sys.stdout.write(u"Adding edge weights from file {}\n".format(self.args.weights))
+            if not os.path.exists(self.args.weights):
+                sys.stderr.write(
+                    u"Weights file {} does not exist. Is the path correct?\n".format(self.args.weights))
+                sys.exit(1)
+
+            ImportAttributes.import_edge_attributes(graph, self.args.weights,
+                                                    sep=separator_detect(self.args.weights),
+                                                    mode=self.args.weights_format)
+            try:
+                weights = [float(x) if x != None else 1.0 for x in graph.es()["weights"]]
+
+            except KeyError:
+                sys.stderr.write(u"The attribute file does not contain a column named 'weights'."
+                                 "Quitting\n")
+                sys.exit(1)
+        else:
+            weights=None
+
         # Check provided dimensions' format
-        if self.args.plot_dim:  # define custom format
+        if hasattr(self.args.plot_dim, "plot_dim"):
+            # define custom format
             self.args.plot_dim = self.args.plot_dim.split(",")
 
             if len(self.args.plot_dim) != 2:
@@ -154,6 +180,9 @@ class Metrics:
             else:
                 plot_size = (1600, 1600)
 
+        sys.stdout.write(section_end) #end report
+        sys.stdout.write(run_start) #start run
+
         if self.args.which == "local":
 
             reporter = PyntacleReporter(graph=graph) #init reporter
@@ -161,39 +190,8 @@ class Metrics:
             if self.args.nodes is not None:
                 sys.stdout.write(u"Computing local metrics for nodes ({})\n".format(', '.join(self.args.nodes)))
 
-                if not utils.nodes_in_graph(self.args.nodes): # to check everything's in order
-                    sys.stderr.write(
-                        u"One of the nodes you specified is not in the input graph, check your node list and its formatting.Quitting\n")
-                    sys.exit(1)
-
             else:
                 sys.stdout.write(u"Computing local metrics for all nodes in the graph\n")
-
-            if self.args.damping_factor < 0.0 or self.args.damping_factor > 1.0:
-                sys.stderr.write(u"Damping factor must be between 0 and 1. Quitting\n")
-                sys.exit(1)
-
-            else:
-
-                if not self.args.weights is None:
-                    if not os.path.exists(self.args.weights):
-                        sys.stderr.write(
-                            u"Weights file {} does not exist. Quitting\n".format(self.args.weights))
-                        sys.exit(1)
-
-                    else:
-                        #Needs a file that has a 'weights' column.
-                        sys.stdout.write(u"Adding edge weights from file {}\n".format(self.args.weights))
-                        ImportAttributes.import_edge_attributes(graph, self.args.weights, sep=separator_detect(self.args.weights), mode=self.args.weights_format)
-                        try:
-                            weights = [float(x) if x!=None else 1.0 for x in graph.es()["weights"]]
-                        except KeyError:
-                            sys.stderr.write(u"The attribute file does not contain a column named 'weights'."
-                                             "Please fix it and launch Pyntacle again\n")
-                            sys.exit(1)
-
-                else:
-                    weights = None
                     
             # create pyntacle_commands_utils for the selected metrics
             if self.args.nodes is not None:
@@ -221,7 +219,7 @@ class Metrics:
 
             # check output directory
             if not os.path.isdir(self.args.directory):
-                sys.stdout.write(u"WARNING Output directory does not exist, will create one at {}\n".format(
+                sys.stdout.write(u"WARNING: Output directory does not exist, will create one at {}\n".format(
                     os.path.abspath(self.args.directory)))
                 os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
 
@@ -237,12 +235,9 @@ class Metrics:
                 # generates plot directory
                 plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
 
-                if os.path.isdir(plot_dir):
-                    self.logging.warning(
-                        "A directory named 'pyntacle-plots' already exists.")
-
-                else:
+                if not os.path.isdir(plot_dir):
                     os.makedirs(plot_dir, exist_ok=True)
+
 
                 plot_graph = PlotGraph(graph=graph)
                 plot_graph.set_node_labels(labels=graph.vs()["name"])  # assign node labels to graph
@@ -450,10 +445,6 @@ class Metrics:
 
             elif not self.args.no_plot and graph.vcount() >= 1000:
                 sys.stdout.write(u"The graph has too many nodes ({}). It will not be drawn\n".format(graph.vcount()))
-        else:
-            self.logging.critical(
-                u"Critical error. Please contact Pyntacle developers and report this error, along with your command. Quitting\n")
-            sys.exit(1)
 
         if self.args.save_binary:
 

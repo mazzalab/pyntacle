@@ -27,7 +27,6 @@ __license__ = u"""
 
 from config import *
 from collections import OrderedDict
-from colorama import Fore, Style
 from itertools import chain
 from igraph import Graph
 
