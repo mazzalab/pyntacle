@@ -30,7 +30,6 @@ __license__ = u"""
 from config import *
 from igraph import Graph
 import numpy as np
-from exceptions.notagraph_error import NotAGraphError
 from exceptions.unsupported_graph_error import UnsupportedGraphError
 from exceptions.wrong_argument_error import WrongArgumentError
 from exceptions.multiple_solutions_error import MultipleSolutionsError
@@ -53,7 +52,7 @@ class GraphUtils:
         self.logger = log
 
         if not isinstance(graph, Graph):
-            raise NotAGraphError(u"'graph' if not an igraph.Graph object ")
+            raise TypeError(u"'graph' if not an igraph.Graph object ")
 
         else:
             self.graph = graph
@@ -110,8 +109,6 @@ class GraphUtils:
                         raise UnsupportedGraphError(u"Any of the Graph 'name' attribute values contains illegal characters.")
 
         if any(x not in self.graph.attributes() for x in ["sif_interaction_name", "implementation"]):
-            print(u"check_graph")
-            input()
             print(self.graph.attributes())
 
             raise UnsupportedGraphError(u"One of the Pyntacle reserved graph attribute is missing, see goo.gl/MCsnd1 for more informations and initialize the `graph_initializer` method in `tools.graph_utils` To initialize your graph.")

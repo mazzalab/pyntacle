@@ -31,8 +31,6 @@ from tools.enums import GraphOperationEnum
 from tools.add_attributes import AddAttributes
 from tools.graph_utils import GraphUtils as GUtil
 
-#TODO we don't port the attributes of one of the original graphs, fix ASAP
-
 def make_sets(graph1: Graph, graph2: Graph, operation: GraphOperationEnum):
     r"""
     Internal method to deal with the set operations and the handling of the attributes. 
@@ -75,7 +73,7 @@ def make_sets(graph1: Graph, graph2: Graph, operation: GraphOperationEnum):
         return exclusive1_v, exclusive1_e, union_v
 
 
-class GraphOperations(object):
+class GraphSetOps(object):
     r"""
     Perform logical set operations (*union*, *intersection*, *difference*) among two graphs of interest.
 
@@ -124,7 +122,7 @@ class GraphOperations(object):
             if len([x for x in intersect_e if v in x]) >= 1:
                 correct_intersect.append(v)
 
-        # Now we add attributes to the remainig intersection nodes
+        # Now we add attributes to the remaining intersection nodes
         intersect_v = {x: union_v[x] for x in correct_intersect}
 
         intersection_g = Graph()

@@ -386,7 +386,7 @@ class GroupCentrality():
 
         if not self.args.no_plot and graph.vcount() < 1000:
 
-            sys.stdout.write(u"Generating plots in {} format\n".format(self.args.plot_format))
+            sys.stdout.write(u"Generating network plots in {} format\n".format(self.args.plot_format))
             plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
 
             if not os.path.isdir(plot_dir):

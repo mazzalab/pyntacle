@@ -38,6 +38,7 @@ def attribute_name_checker(name:str):
     if name.isspace():
         raise ValueError("Graph name must contain at least a non-empty character")
     if not re.match(r"^[\w\.\-\ \:\+\[\]\(\)\{\}\=]+$", name):
+        print("siamo qui")
         raise ValueError("Graph name contains illegal characters")
 
 

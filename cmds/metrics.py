@@ -37,7 +37,6 @@ from tools.graph_utils import GraphUtils as gu
 from tools.add_attributes import AddAttributes
 from tools.enums import *
 from internal.graph_load import GraphLoad,separator_detect
-from exceptions.missing_attribute_error import MissingAttributeError
 from exceptions.generic_error import Error
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 
@@ -158,7 +157,7 @@ class Metrics:
 
             if len(self.args.plot_dim) != 2:
                 sys.stderr.write(
-                    u"Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting\n")
+                    u"Format specified must be a comma-separated list of values(e.g. 1920,1080). Quitting\n")
 
             for i in range(0, len(self.args.plot_dim)):
                 try:
@@ -227,7 +226,7 @@ class Metrics:
             sys.stdout.write(report_start)
             # check output directory
             if not os.path.isdir(self.args.directory):
-                sys.stdout.write(u"WARNING: Output directory does not exist, will create one at {}\n".format(
+                sys.stdout.write(u"WARNING: Output directory does not exist {} will be created\n".format(
                     os.path.abspath(self.args.directory)))
                 os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
 
@@ -289,7 +288,7 @@ class Metrics:
                 plot_graph.set_layouts(self.args.plot_layout)
 
                 plot_path = os.path.join(plot_dir, ".".join(["_".join(
-                    ["pyntacle", graph["name"][0], "local_metrics_plot_",
+                    [graph["name"][0],
                      self.date]), self.args.plot_format]))
                 plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
                                       keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=node_frames)
@@ -319,6 +318,9 @@ class Metrics:
                                                   GlobalAttributeEnum.compactness.name: Sparseness.compactness(graph=graph)
                                                   })
 
+            sys.stdout.write(u"Global metrics computed\n")
+            sys.stdout.write(section_end)
+            sys.stdout.write(report_start)
             sys.stdout.write(u"Producing global metrics report for the input graph\n")
             report_prefix = "_".join(
                 ["pyntacle", graph["name"][0], "global_metrics_report",
@@ -377,10 +379,10 @@ class Metrics:
             if not self.args.no_plot and graph.vcount() < 1000:
 
                 if self.args.no_nodes:
-                    sys.stdout.write(u"Generating plots of both input graph {} and the graph without nodes\n".format(os.path.basename(self.args.input_file)))
+                    sys.stdout.write(u"Generating plots of both the input network and the resulting network without nodes {} in {} format\n".format(self.args.no_nodes, self.args.plot_format))
 
                 else:
-                    sys.stdout.write(u"Generating plot of input graph {}\n".format(os.path.basename(self.args.input_file)))
+                    sys.stdout.write(u"Generating network plot in {} format\n".format(self.args.plot_format))
 
                 # generates plot directory
                 plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
@@ -413,7 +415,7 @@ class Metrics:
                     node_colors = [other_nodes_colour] * graph.vcount()
                     node_frames = [other_frame_colour] * graph.vcount()
                     node_sizes = [other_nodes_size] * graph.vcount()
-                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["metric", self.args.which, graph["name"][0],"global_metrics_plot", self.date]), self.args.plot_format]))
+                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["Metric", self.args.which, graph["name"][0], self.date]), self.args.plot_format]))
 
                 plot_graph = PlotGraph(graph=graph)
                 plot_graph.set_node_labels(labels=graph.vs()["name"])  # assign node labels to graph
@@ -446,7 +448,7 @@ class Metrics:
                     # define layout
                     plot_graph.set_layouts(self.args.plot_layout)
 
-                    plot_path = os.path.join(plot_dir, ".".join(["_".join(["pyntacle", graph["name"][0], "global_metrics_plot",self.date]),self.args.plot_format]))
+                    plot_path = os.path.join(plot_dir, ".".join(["_".join([graph["name"][0], "_no_nodes", self.date]),self.args.plot_format]))
 
                     plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
                                           keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=node_frames)
@@ -455,8 +457,9 @@ class Metrics:
                 sys.stdout.write(u"The graph has too many nodes ({}). It will not be drawn\n".format(graph.vcount()))
 
         if self.args.save_binary:
-
-            binary_path = os.path.join(self.args.directory, report_prefix.replace('_report_', '_') + ".graph")
+            sys.stdout.write(u"Saving graph to a binary file (ending in .graph)\n")
+            basename_graph = os.path.splitext(os.path.basename(self.args.input_file))[0]
+            binary_path = os.path.join(self.args.directory, basename_graph + ".graph")
             # elif self.args.no_nodes:
             # nodes_list = graph_nonodes.vs()
             if self.args.which == 'local':
@@ -468,24 +471,22 @@ class Metrics:
                     AddAttributes.add_node_attributes(graph, key, local_attributes_dict[key], nodes_list)
 
             elif self.args.which == 'global':
+
+                for key in global_attributes_dict:
+                    AddAttributes.add_graph_attributes(graph, key, global_attributes_dict[key])
+                PyntacleExporter.Binary(graph, binary_path)
+
                 if self.args.no_nodes:
-                    binary_path_nonodes = os.path.join(self.args.directory, report_prefix_nonodes.replace('_report_', '_') + ".graph")
-                    sys.stdout.write(u"The --no-nodes option was selected to calculate the global metrics. A second graph without those "
-                                     "nodes and said metrics will be saved in a second Binary file\n".format(os.path.basename(binary_path_nonodes)))
+                    binary_path_nonodes = os.path.join(self.args.directory, basename_graph + "_no_nodes" + ".graph")
+                    sys.stdout.write(u"Saving a binary of the input graph without the requested nodes at path: {}\n".format(os.path.basename(binary_path_nonodes)))
                     for key in global_attributes_dict_nonodes:
                         AddAttributes.add_graph_attributes(graph_nonodes, key, global_attributes_dict_nonodes[key])
                     
                     PyntacleExporter.Binary(graph_nonodes, binary_path_nonodes)
 
-                for key in global_attributes_dict:
-                    AddAttributes.add_graph_attributes(graph, key, global_attributes_dict[key])
-                    
-            sys.stdout.write(u"Saving graph to a binary file (ending in .graph)\n")
-            PyntacleExporter.Binary(graph, binary_path)
-
         if not self.args.suppress_cursor:
             cursor.stop()
 
-        sys.stdout.write(report_start)
+        sys.stdout.write(section_end)
         sys.stdout.write(u"Pyntacle metrics completed successfully\n")
         sys.exit(0)

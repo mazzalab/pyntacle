@@ -34,7 +34,6 @@ from io_stream.exporter import PyntacleExporter
 from cmds.cmds_utils.plotter import *
 
 
-
 class Generate:
     def __init__(self, args):
         self.logging = log
@@ -58,6 +57,7 @@ class Generate:
             cursor.daemon = True
             cursor.start()
 
+        sys.stdout.write(run_start)
         if self.args.which == "random":
 
             if self.args.nodes is None:
@@ -225,16 +225,13 @@ class Generate:
         if graph.vcount() < 2 and graph.ecount() < 1:
             sys.stdout.write("Generated Graph is too small ({} nodes, {} edges). Rerun this command and tune your parameters. Quitting\n".format(graph.ecount(), graph.ecount()))
             sys.exit(1)
-                
-        if self.args.no_output_header:
-            sys.stdout.write(u"Skipping header on output graph file, as requested\n")
-            output_header = False
 
-        else:
-            output_header = True
+        sys.stdout.write(section_end)
+
+        sys.stdout.write(report_start)
 
         if not os.path.isdir(self.args.directory):
-            sys.stdout.write(u"WARNING: output directory does not exist, will create one at {}\n".format(
+            sys.stdout.write(u"WARNING: output directory does not exist {} will be created\n".format(
                 os.path.abspath(self.args.directory)))
             os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
 
@@ -242,6 +239,14 @@ class Generate:
             self.args.output_file = graph["name"][0]
 
         out_form = format_dictionary.get(self.args.output_format, "NA")
+        if self.args.no_output_header:
+            sys.stdout.write(u"Skipping header on output graph file, as requested\n")
+            output_header = False
+
+        else:
+            output_header = True
+
+
 
         if out_form == "NA":
             sys.stderr.write(u"Output extension specified is not supported. Quitting\n")
@@ -253,9 +258,6 @@ class Generate:
         if self.args.output_separator is None:
             sys.stdout.write(u"Using '\\t' as default separator for output file\n")
             self.args.output_separator = "\t"
-
-        if os.path.exists(output_path):
-            self.logging.warning(u"A file named {} already exist, I will overwrite it.".format(output_path))
 
         # output generated networks
         if out_form == "adjm":
@@ -291,12 +293,12 @@ class Generate:
 
                 except ValueError:
                     sys.stderr.write(
-                        u"Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting\n")
+                        u"Format specified must be a comma-separated list of values(e.g. 1920,1080). Quitting\n")
                     sys.exit(1)
 
                 if self.args.plot_dim[i] <= 0:
                     sys.stderr.write(
-                        u"Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting\n")
+                        u"Format specified must be a comma-separated list of values(e.g. 1920,1080). Quitting\n")
                     sys.exit(1)
 
             plot_size = tuple(self.args.plot_dim)
@@ -314,11 +316,7 @@ class Generate:
             # generates plot directory
             plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
 
-            if os.path.isdir(plot_dir):
-                self.logging.warning(
-                    u"A directory named 'pyntacle-plots' already exist.")
-
-            else:
+            if not os.path.isdir(plot_dir):
                 os.mkdir(plot_dir)
 
             plot_path = os.path.join(plot_dir, ".".join([self.args.output_file, self.args.plot_format]))
@@ -377,20 +375,17 @@ class Generate:
             sys.stdout.write(
                 u"Drawing graph in {} format at path: {}\n".format(self.args.plot_format, plot_path))
 
-            if os.path.exists(plot_path):
-                self.logging.warning(
-                    u"A path with the same name already exist. I will overwrite current drawing.")
-
             plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2, keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=frame_vertex_colour)
 
         elif not self.args.no_plot and graph.vcount() >= 1000:
             self.logging.warning(
-                u"Generated graph is above Pyntacle plotting capability ({} nodes, we plot graph with at best 1000 nodes). Graph plotting will be skipped.".format(
+                u"Graph is above Pyntacle plotting capability ({} nodes, we plot graph with at best 1000 nodes). Graph plotting will be skipped.".format(
                     graph.vcount()))
 
         if not self.args.suppress_cursor:
             cursor.stop()
 
-        sys.stdout.write(u"Pyntacle generate completed successfully. Ending\n")
+        sys.stdout.write(section_end)
+        sys.stdout.write(u"Pyntacle generate completed successfully\n")
         if self.args.repeat == 1:
             sys.exit(0)

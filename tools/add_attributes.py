@@ -210,7 +210,7 @@ class AddAttributes:
     def add_parent_name(graph: Graph):
         r"""
         Add the graph ``name`` attribute to each vertex, under the ``parent`` reserved attribute. This attribute is a
-        :py:class:`list` that is updated when performing set operations by means of the :class:`~pyntacle.graph_operations.set_operations.GraphOperations`
+        :py:class:`list` that is updated when performing set operations by means of the :class:`~pyntacle.graph_operations.set_operations.GraphSetOps`
         module, and it is used to keep track of the graph of origin of each vertex.
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.

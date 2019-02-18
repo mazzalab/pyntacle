@@ -32,7 +32,7 @@ import itertools
 from config import *
 import os
 import pandas as pd
-from exceptions.unproperly_formatted_file_error import UnproperlyFormattedFileError
+from exceptions.improperly_formatted_file_error import ImproperlyFormattedFileError
 
 class EglUtils:
 
@@ -49,7 +49,7 @@ class EglUtils:
         :param str sep: the separator between cells. Defaults to ``\t``
         :raise FileNotFoundError: if the path to the edge list is invalid
         :raise TypeError: if ``header`` or ``sep`` are not strings
-        :raise UnproperlyFormattedFileError: if the edge list file contains more than 2 columns
+        :raise ImproperlyFormattedFileError: if the edge list file contains more than 2 columns
         """
         self.logger = log
         if not isinstance(header, bool):
@@ -80,7 +80,7 @@ class EglUtils:
 
             #check if there are more than 2 columns and raise error, if so)
             if len(edgl.columns) != 2:
-                raise UnproperlyFormattedFileError(
+                raise ImproperlyFormattedFileError(
                     u"Edgelist should contain 2 columns, {0} found. found separator is \"{1}\"".format(len(edgl.columns),
                                                                                                       self.sep))
             #create the self.edgl object, storing the rows of the pandas dataframe as list of lists:

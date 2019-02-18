@@ -30,7 +30,7 @@ import numpy as np
 from internal.binarycheck import is_binary_file
 from io_stream.importer import PyntacleImporter
 from tools.graph_utils import GraphUtils
-from exceptions.unproperly_formatted_file_error import UnproperlyFormattedFileError
+from exceptions.improperly_formatted_file_error import ImproperlyFormattedFileError
 import codecs
 
 
@@ -138,7 +138,7 @@ class GraphLoad():
         elif self.file_format == 'sif':
             try:
                 graph = PyntacleImporter.Sif(file=self.input_file, sep=self.separator, header=self.header)
-            except UnproperlyFormattedFileError:
+            except ImproperlyFormattedFileError:
                 sys.stderr.write(
                     u"Sif is unproperly formatted or a header is present and --no-header was declared in "
                     "input (also check if the separator is correct). Quitting\n")

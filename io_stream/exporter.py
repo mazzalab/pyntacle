@@ -77,7 +77,7 @@ class PyntacleExporter:
             adjmatrix.to_csv(path_or_buf=file, sep=sep, header=False, index=False)
 
 
-        sys.stdout.write(u"Graph successfully exported to Adjacency Matrix at path: {}\n".format(os.path.abspath(file)))
+        sys.stdout.write(u"Graph successfully exported to adjacency matrix at path: {}\n".format(os.path.abspath(file)))
 
         return None
 
@@ -118,7 +118,7 @@ class PyntacleExporter:
                 else:
                     outfile.writelines([sep.join([graph.vs(i)["name"][0], x]) + "\n" for x in graph.vs(ver)["name"]])
                     
-        sys.stdout.write(u"Graph successfully exported to Adjacency matrix at path: {}\n".format(
+        sys.stdout.write(u"Graph successfully exported to edge list at path: {}\n".format(
             os.path.abspath(file)))
         return None
 
@@ -142,7 +142,7 @@ class PyntacleExporter:
         """
 
         pickle.dump(graph, open(file, "wb"))
-        sys.stdout.write(u"Graph successfully exported to Binary at path: {}\n".format(
+        sys.stdout.write(u"Graph successfully exported to binary at path: {}\n".format(
             os.path.abspath(file)))
 
         return None
@@ -215,7 +215,7 @@ class PyntacleExporter:
                 else:
                     # print(type(self.graph.vs(edge.target)["name"]))
                     raise ValueError(
-                        u"node 'name' attribute is unproperly formatted. Cannot interpret him. Quitting")
+                        u"node 'name' attribute is improperly formatted. Cannot interpret him. Quitting")
 
             # remove vertices from graph in order to write remaining vertices
             remaining_nodes = list(set(graph.vs().indices) - set(nodes_done_list))

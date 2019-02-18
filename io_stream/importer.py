@@ -34,7 +34,7 @@ from tools.add_attributes import AddAttributes
 from tools.adjmatrix_utils import AdjmUtils
 from tools.edgelist_utils import EglUtils
 from exceptions.illegal_graph_size_error import IllegalGraphSizeError
-from exceptions.unproperly_formatted_file_error import UnproperlyFormattedFileError
+from exceptions.improperly_formatted_file_error import ImproperlyFormattedFileError
 from exceptions.wrong_argument_error import WrongArgumentError
 from pyparsing import *
 from itertools import product
@@ -291,7 +291,7 @@ class PyntacleImporter:
                             
     
                 else:
-                    raise UnproperlyFormattedFileError("line {} is malformed".format(i))
+                    raise ImproperlyFormattedFileError("line {} is malformed".format(i))
     
             nodeslist = list(set(nodeslist))
             graph.add_vertices(nodeslist)

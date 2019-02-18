@@ -75,6 +75,7 @@ class Communities():
 
         input_format = format_dictionary.get(self.args.format, "NA")
 
+        sys.stdout.write(import_start)
         sys.stdout.write(u"Importing graph from file\n")
         graph = GraphLoad(self.args.input_file, file_format=input_format,
                           header=input_header, separator=self.args.input_separator).graph_load()
@@ -95,12 +96,6 @@ class Communities():
                     u"The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the '--largest-component' option. Quitting\n")
                 sys.exit(1)
 
-        # initialize module finder method
-        communities = CommunityFinder(graph=graph)
-        # initialize Reporter
-
-        results = OrderedDict()
-
         # define plot sizes
         if self.args.plot_dim:  # define custom format
             self.args.plot_dim = self.args.plot_dim.split(",")
@@ -111,12 +106,12 @@ class Communities():
 
                 except ValueError:
                     sys.stderr.write(
-                        u"Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting\n")
+                        u"Format specified must be a comma-separated list of values(e.g. 1920,1080). Quitting\n")
                     sys.exit(1)
 
                 if self.args.plot_dim[i] <= 0:
                     sys.stderr.write(
-                        u"Format specified must be a comma separated list of values(e.g. 1920,1080). Quitting\n")
+                        u"Format specified must be a comma-separated list of values(e.g. 1920,1080). Quitting\n")
                     sys.exit(1)
 
             plot_size = tuple(self.args.plot_dim)
@@ -129,6 +124,11 @@ class Communities():
             else:
                 plot_size = (1600, 1600)
 
+        # initialize module finder method
+        communities = CommunityFinder(graph=graph)
+        # initialize Reporter
+        results = OrderedDict()
+
         if self.args.which == "fastgreedy":
             if self.args.weights is not None:
                 # import edge attributes
@@ -140,7 +140,7 @@ class Communities():
                     ImportAttributes.import_edge_attributes(graph, self.args.weights,
                                                             sep=separator_detect(self.args.weights),
                                                             mode=self.args.weights_format)
-                    weights = [float(x) if x != None else 1.0 for x in graph.es()["weights"]]
+                    weights = [float(x) if x is not None else 1.0 for x in graph.es()["weights"]]
 
             else:
                 weights = None
@@ -153,19 +153,25 @@ class Communities():
                     sys.stderr.write(u"argument of '--clusters' must be an integer. Quitting\n")
                     sys.exit(1)
 
-            sys.stdout.write(u"Running community-finding using the fastgreedy algorithm\n")
+            sys.stdout.write(section_end)
+            sys.stdout.write(run_start)
+            sys.stdout.write(u"Finding communities using the fastgreedy algorithm\n")
             communities.fastgreedy(weights=weights, n=self.args.clusters)
             mods = communities.get_modules
             algorithm = "fastgreedy"
 
         elif self.args.which == "infomap":
-            sys.stdout.write(u"Running community-finding using the infomap algorithm\n")
+            sys.stdout.write(section_end)
+            sys.stdout.write(run_start)
+            sys.stdout.write(u"Finding communities using the infomap (naive) algorithm\n")
             communities.infomap()
             mods = communities.get_modules
             algorithm = "infomap"
 
         elif self.args.which == "leading-eigenvector":
-            sys.stdout.write(u"Running community-finding using the leading-eigenvector algorithm\n")
+            sys.stdout.write(section_end)
+            sys.stdout.write(run_start)
+            sys.stdout.write(u"Finding communities using the leading-eigenvector algorithm\n")
             communities.leading_eigenvector()
             mods = communities.get_modules
             algorithm = "leading-eigenvector"
@@ -201,18 +207,15 @@ class Communities():
                     sys.stderr.write(u"Argument of '--clusters' must be an integer. Quitting\n")
                     sys.exit(1)
 
+            sys.stdout.write(section_end)
+            sys.stdout.write(run_start)
             sys.stdout.write(
-                u"Running community-finding using the community walktrap algorithm at maximum {} steps\n".format(
+                u"Finding communities using the walktrap algorithm and a walker of {} steps\n".format(
                     self.args.steps))
             communities.community_walktrap(weights=weights, n=self.args.clusters,
                                            steps=self.args.steps)
             mods = communities.get_modules
             algorithm = "community-walktrap"
-
-        else:
-            sys.stderr.write(u"This should not happen. Please contact Pyntacle developers and send your "
-                             "command line, along with a log. Quitting\n")
-            sys.exit(1)
 
         mods_report = []
         if not mods:
@@ -222,6 +225,8 @@ class Communities():
             mods_report.append(
                 "\t".join([str(x) for x in [i, elem.vcount(), elem.ecount(), len(elem.components())]]) + "\n")
 
+        sys.stdout.write(section_end)
+        sys.stdout.write(summary_start)
         sys.stdout.write(
             u"Pyntacle - Community finding report:\nAlgorithm:{0}\nTotal number of communities found:"
             "\t{1}\nIndex\tNodes\tEdges \tComponents\n{2}".format(
@@ -280,6 +285,7 @@ class Communities():
 
         else:
             sys.stdout.write(u"No filters specified. All modules will be kept\n")
+        sys.stdout.write(section_end)
 
         mod_utils.label_modules_in_graph(graph=graph)
         final_mods = mod_utils.get_modules()
@@ -287,7 +293,7 @@ class Communities():
         for elem in final_mods:
             results[elem["module"]] = [elem.vcount(), elem.ecount(), len(elem.components())]
 
-
+        sys.stdout.write(report_start)
         # producing output graph
         if self.args.no_output_header:
             sys.stdout.write(u"Skipping header writing on output graph community files\n")
@@ -297,7 +303,7 @@ class Communities():
             output_header = True
 
         if not os.path.isdir(self.args.directory):
-            sys.stdout.write(u"WARNING: output directory does not exists, will create one at {}\n".format(
+            sys.stdout.write(u"WARNING: output directory does not exists {} will be created\n".format(
                 os.path.abspath(self.args.directory)))
             os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
 
@@ -340,7 +346,9 @@ class Communities():
                     PyntacleExporter.Binary(elem, output_path)
 
             except UnsupportedGraphError:
-                sys.stdout.write("Module {0} was skipped because it is too small ({1} nodes, {2} edges), use the `--save-binary` flag to retrieve it\n".format(elem["module"], elem.vcount(), elem.ecount()))
+                sys.stdout.write(
+                    "Module {0} was skipped because it is too small ({1} nodes, {2} edges), use the `--save-binary` flag to retrieve it\n".format(
+                        elem["module"], elem.vcount(), elem.ecount()))
 
         # reporting and plotting part
         sys.stdout.write(u"Producing report in {} format\n".format(self.args.report_format))
@@ -353,7 +361,8 @@ class Communities():
 
         # save the original graph into a binary file
         if self.args.save_binary:
-            binary_name = ".".join(["_".join([os.path.splitext(os.path.basename(self.args.input_file))[0], "communities"]), "graph"])
+            binary_name = ".".join(
+                ["_".join([os.path.splitext(os.path.basename(self.args.input_file))[0], "communities"]), "graph"])
             binary_path = os.path.join(self.args.directory, binary_name)
             sys.stdout.write(
                 u"Storing the input graph with module labels into a binary file in the results directory\n".format(
@@ -410,7 +419,7 @@ class Communities():
                                          vertex_frame_color=bord_list)
             else:
                 sys.stdout.write(
-                    u"Input graph is above Pyntacle plotting capability ({} nodes, we plot graph with at best 1000 nodes). Will skip plotting this module\n".format(
+                    u"Input graph is above Pyntacle plotting limit ({} nodes found, only graphs with at best 1000 nodes). Input graph will not be plotted\n".format(
                         graph.vcount()))
 
             if len(final_mods) > 20:
@@ -418,7 +427,7 @@ class Communities():
                     u"The number of modules found ({}) is very high. The plot of the input graph will have nuanced colors.".format(
                         len(final_mods)))
 
-            sys.stdout.write("Drawing Each Module Separately\n")
+            sys.stdout.write("Drawing each module separately\n")
 
             for i, comm in enumerate(final_mods):
                 if comm.vcount() <= 1000:
@@ -440,10 +449,11 @@ class Communities():
 
                 else:
                     sys.stdout.write(
-                        u"Module {0} is above Pyntacle plotting limits ({1} nodes, communities with at best 1000 nodes are plotted). Plotting will be skipped\n".format(
+                        u"Module {0} is above Pyntacle plotting limit ({1} nodes found, communities with at best 1000 nodes are plotted). Plotting of this module will be skipped\n".format(
                             i, comm.vcount()))
         if not self.args.suppress_cursor:
             cursor.stop()
 
-        sys.stdout.write(u"Pyntacle communities completed successfully. Ending\n")
+        sys.stdout.write(section_end)
+        sys.stdout.write(u"Pyntacle communities completed successfully\n")
         sys.exit(0)

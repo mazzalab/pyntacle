@@ -29,7 +29,7 @@ __license__ = u"""
   """
 
 
-class UnproperlyFormattedFileError(ValueError):
+class ImproperlyFormattedFileError(ValueError):
     class NotAGraphError(ValueError):
         def __init__(self, message, errors=None):
             super().__init__(message)

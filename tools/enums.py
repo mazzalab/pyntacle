@@ -111,7 +111,7 @@ class GroupDistanceEnum(enum.Enum):
 
 class GraphOperationEnum(enum.Enum):
     r"""
-    The logical operations that can be passed to :func:`~pyntacle.graph_operations.set_operations.GraphOperations.make_sets`
+    The logical operations that can be passed to :func:`~pyntacle.graph_operations.set_operations.GraphSetOps.make_sets`
     """
     Union = 1
     Intersection = 2

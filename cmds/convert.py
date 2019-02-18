@@ -62,30 +62,32 @@ class Convert():
             sys.stderr.write(u"Cannot find {}. Is the path correct?".format(self.args.input_file))
             sys.exit(1)
 
-        if self.args.output_file is None:
-            self.args.output_file = os.path.splitext(os.path.basename(self.args.input_file))[0]
-            sys.stdout.write(u"Output file name will be the basename of the input file ({})\n".format(self.args.output_file))
-            #print(self.args.output_file)
-
         if self.args.input_separator is None:
-            self.logging.info(u"Trying to guess input separator")
             separator = separator_detect(self.args.input_file)
 
         else:
             separator = self.args.input_separator
 
+        sys.stdout.write(run_start)
+        sys.stdout.write(u"Converting  input file {0} to requested output file: {1\n".format(self.args.input_file, self.args.output_file))
+
+        out_form = format_dictionary.get(self.args.output_format, "NA")
+
+        if self.args.output_file is None:
+            self.args.output_file = os.path.splitext(os.path.basename(self.args.input_file))[0]
+            sys.stdout.write(
+                u"Output file name will be the basename of the input file ({})\n".format(self.args.output_file))
+            # print(self.args.output_file)
+
         if self.args.output_separator is None:
-            sys.stdout.write(u"Using the same separator used in the input file\n")
+            sys.stdout.write(
+                u"Using the field separator used in the input network file in the converted output file, if the desired output format requires field separator\n")
             self.args.output_separator = separator
 
         if not os.path.isdir(self.args.directory):
             sys.stdout.write(u"WARNING: output directory does not exist, will create one at {}\n".format(
                 os.path.abspath(self.args.directory)))
             os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
-
-        sys.stdout.write(u"Converting  input file {0} to requested output file: {1\n".format(self.args.input_file, self.args.output_file))
-
-        out_form = format_dictionary.get(self.args.output_format, "NA")
 
         if out_form == "NA":
             sys.stderr.write(u"Output extension specified is not supported, see  '--help' for more info. Quitting\n")
@@ -114,11 +116,7 @@ class Convert():
             
             if in_form == out_form:
                 sys.stderr.write(u"The output format specified is the same as the input format. Quitting\n")
-
-                if not self.args.suppress_cursor:
-                    cursor.stop()
-
-                sys.exit(0)
+                sys.exit(1)
                 
             if out_form == "adjm":
                 sys.stdout.write(u"Converting input graph file {0} to adjacency matrix at path {1}\n".format(
@@ -158,5 +156,6 @@ class Convert():
             if not self.args.suppress_cursor:
                 cursor.stop()
 
+            sys.stdout.write(section_end)
             sys.stdout.write(u"Pyntacle convert completed successfully. Ending\n".format(os.path.basename(self.args.input_file)))
             sys.exit(0)
