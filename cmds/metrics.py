@@ -78,9 +78,11 @@ class Metrics:
             self.logging.error(u"Cannot find {}. Is the path correct?".format(self.args.input_file))
             sys.exit(1)
 
-        if self.args.damping_factor < 0.0 or self.args.damping_factor > 1.0:
-            sys.stderr.write(u"Damping factor must be between 0 and 1. Quitting\n")
-            sys.exit(1)
+        if hasattr(self.args, "damping_factor"):
+            if self.args.damping_factor is not None:
+                if self.args.damping_factor < 0.0 or self.args.damping_factor > 1.0:
+                    sys.stderr.write(u"Damping factor must be between 0 and 1. Quitting\n")
+                    sys.exit(1)
 
         self.logging.debug(u'Running Pyntacle metrics, with arguments ')
         self.logging.debug(self.args)
@@ -91,15 +93,16 @@ class Metrics:
         graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header, separator=self.args.input_separator).graph_load()
         # init Utils global stuff
         utils = gu(graph=graph)
-            
-        if self.args.nodes is not None:
 
-            self.args.nodes = self.args.nodes.split(",")
+        if hasattr(self.args, "nodes"):
+            if self.args.nodes is not None:
 
-            if not utils.nodes_in_graph(self.args.nodes):
-                sys.stderr.write(
-                    "One or more of the specified nodes is not present in the graph. Please check your spelling and the presence of empty spaces in between node names. Quitting\n")
-                sys.exit(1)
+                self.args.nodes = self.args.nodes.split(",")
+
+                if not utils.nodes_in_graph(self.args.nodes):
+                    sys.stderr.write(
+                        "One or more of the specified nodes is not present in the graph. Please check your spelling and the presence of empty spaces in between node names. Quitting\n")
+                    sys.exit(1)
 
         if self.args.largest_component:
             try:
@@ -127,25 +130,26 @@ class Metrics:
         else:
             implementation = CmodeEnum.igraph
 
-        if self.args.weights is not None:
-            sys.stdout.write(u"Adding edge weights from file {}\n".format(self.args.weights))
-            if not os.path.exists(self.args.weights):
-                sys.stderr.write(
-                    u"Weights file {} does not exist. Is the path correct?\n".format(self.args.weights))
-                sys.exit(1)
+        if hasattr(self.args, "nodes"):
+            if self.args.weights is not None:
+                sys.stdout.write(u"Adding edge weights from file {}\n".format(self.args.weights))
+                if not os.path.exists(self.args.weights):
+                    sys.stderr.write(
+                        u"Weights file {} does not exist. Is the path correct?\n".format(self.args.weights))
+                    sys.exit(1)
 
-            ImportAttributes.import_edge_attributes(graph, self.args.weights,
-                                                    sep=separator_detect(self.args.weights),
-                                                    mode=self.args.weights_format)
-            try:
-                weights = [float(x) if x != None else 1.0 for x in graph.es()["weights"]]
+                ImportAttributes.import_edge_attributes(graph, self.args.weights,
+                                                        sep=separator_detect(self.args.weights),
+                                                        mode=self.args.weights_format)
+                try:
+                    weights = [float(x) if x != None else 1.0 for x in graph.es()["weights"]]
 
-            except KeyError:
-                sys.stderr.write(u"The attribute file does not contain a column named 'weights'."
-                                 "Quitting\n")
-                sys.exit(1)
-        else:
-            weights=None
+                except KeyError:
+                    sys.stderr.write(u"The attribute file does not contain a column named 'weights'."
+                                     "Quitting\n")
+                    sys.exit(1)
+            else:
+                weights=None
 
         # Check provided dimensions' format
         if hasattr(self.args.plot_dim, "plot_dim"):
@@ -217,6 +221,10 @@ class Metrics:
             if self.args.nodes:
                 local_attributes_dict["nodes"] = self.args.nodes
 
+            sys.stdout.write("Local metrics computed\n")
+
+            sys.stdout.write(section_end)
+            sys.stdout.write(report_start)
             # check output directory
             if not os.path.isdir(self.args.directory):
                 sys.stdout.write(u"WARNING: Output directory does not exist, will create one at {}\n".format(
@@ -478,5 +486,6 @@ class Metrics:
         if not self.args.suppress_cursor:
             cursor.stop()
 
+        sys.stdout.write(report_start)
         sys.stdout.write(u"Pyntacle metrics completed successfully\n")
         sys.exit(0)
