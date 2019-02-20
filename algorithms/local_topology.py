@@ -94,7 +94,7 @@ class LocalTopology:
         over all the possible shortest paths in the graph :math:`G`. Betweenness can be computed for all nodes :math:`N` in the
         graph or for a selected subset of nodes in the graph.
 
-        .. note:: The betweenneess is returned **unnormalized**, as normalization requires to know all the betweenness values for all nodes. To normalize, you can compute betwenness for each node and then use the following formula: :math:`\frac{betwenness(i) - min(G)}{max(betweenness(G) - min(betwennness(G))}`
+        .. note:: The betweenness is returned **unnormalized**, as normalization requires to know all the betweenness values for all nodes. To normalize, you can compute betwenness for each node and then use the following formula: :math:`\frac{betwenness(i) - min(G)}{max(betweenness(G) - min(betwennness(G))}`
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param None,str,list nodes: The input nodes on which to compute the selected index. When :py:class:`None`, it computes the betweenness for all nodes in the graph. Otherwise, a single node ``name`` or a list of node ``name``s can be passed to compute betweenness only for the subset of nodes
@@ -361,12 +361,12 @@ class LocalTopology:
         rad_list = []
 
         sps = ShortestPath.get_shortestpaths(graph, nodes=nodes, cmode=cmode)
+
         inf_set = graph.vcount() + 1  # the infinite distances that will come out from sps
-        sps = sps.astype(float) #infinite value are float and numpy cannot modify the np.ndarray type
+        sps = sps.astype(float)  # infinite value are float and numpy cannot modify the np.ndarray type
         sps[sps == inf_set] = inf
 
-        for sp in sps: #Cycle through numpy rows
-
+        for sp in sps:  # Cycle through numpy rows
             partial_sum = sum(diameter_plus_one - distance for distance in sp if distance != 0)
             rad_list.append(round(float(partial_sum / num_nodes_minus_one), 5))
 
