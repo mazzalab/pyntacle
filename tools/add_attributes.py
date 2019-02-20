@@ -51,14 +51,15 @@ class AddAttributes:
         """
 
         if not isinstance(graph, Graph) is not Graph:
-            raise TypeError(u"graph argument is not a igraph.Graph")
+            raise TypeError(u"Graph argument is not a igraph.Graph")
 
         if not isinstance(attr_name, str):
             raise TypeError(u"Attribute name is not a string")
 
         if attr_name in graph.attributes():
-            sys.stdout.write("graph attribute {} already present, will overwrite\n")
+            sys.stdout.write("Graph attribute {} already present, will overwrite\n".format(attr_name))
 
+        sys.stdout.write("Graph attribute {} added\n".format(attr_name))
         graph[attr_name] = attr
 
     @staticmethod
@@ -88,7 +89,7 @@ class AddAttributes:
             nodes = [nodes]
 
         
-        assert len(attr_list) == len(nodes), u"in add_node_attributes, length of attributes list cannot be " \
+        assert len(attr_list) == len(nodes), u"In add_node_attributes, length of attributes list cannot be " \
                                              "different from length of list of nodes."
         
         count = 0
@@ -110,7 +111,7 @@ class AddAttributes:
         if err_count == count:
             raise WrongArgumentError(u"All the attributes pointed to non-existing nodes.")
         else:
-            sys.stdout.write(u"Node attribute {} successfully added!\n".format(attr_name))
+            sys.stdout.write(u"Node attribute {} added\n".format(attr_name))
 
     @staticmethod
     def add_edge_attributes(graph: Graph, attr_name: str, attr_list: list, edges: list):
@@ -157,6 +158,8 @@ class AddAttributes:
 
         if err_count == count:
             raise WrongArgumentError("All the attributes pointed to non-existing edges.")
+        else:
+            sys.stdout.write("Edge attribute {} added\n".format(attr_name))
 
     @staticmethod
     def add_edge_names(graph: Graph, readd: bool=False):

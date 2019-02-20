@@ -44,6 +44,9 @@ def input_file_checker(func):
         if not isinstance(file, str):
             raise ValueError("\"file\" must be a string, {} found".format(type(file).__name__))
 
+        file = file.rstrip()
+        file = file.lstrip()
+
         if not os.path.exists(file):
             raise FileNotFoundError("Input file does not exist")
 

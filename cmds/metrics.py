@@ -199,13 +199,11 @@ class Metrics:
             # create pyntacle_commands_utils for the selected metrics
             if self.args.nodes is not None:
                 nodes_list = graph.vs()["name"]
-                report_prefix = "_".join(["pyntacle", graph["name"][0], "local_metrics", "report",
-                                          self.date])
+
             else:
                 nodes_list = self.args.nodes
-                report_prefix = "_".join(
-                    ["pyntacle", graph["name"][0], "local_metrics_selected_nodes_report",
-                     self.date])
+
+            implementation=CmodeEnum.gpu
 
             local_attributes_dict = OrderedDict({LocalAttributeEnum.degree.name: LocalTopology.degree(graph=graph, nodes=nodes_list),
                                                  LocalAttributeEnum.clustering_coefficient.name: LocalTopology.clustering_coefficient(graph=graph, nodes=nodes_list),
@@ -216,7 +214,7 @@ class Metrics:
                                                  LocalAttributeEnum.eccentricity.name: LocalTopology.eccentricity(graph=graph, nodes=nodes_list),
                                                  LocalAttributeEnum.eigenvector_centrality.name : LocalTopology.eigenvector_centrality(graph=graph, nodes=nodes_list),
                                                  LocalAttributeEnum.pagerank.name: LocalTopology.pagerank(graph=graph, nodes=nodes_list, weights=weights, damping=self.args.damping_factor)})
-            
+
             if self.args.nodes:
                 local_attributes_dict["nodes"] = self.args.nodes
 
@@ -299,7 +297,6 @@ class Metrics:
         elif self.args.which == "global":
             
             sys.stdout.write(u"Computing global metrics\n")
-
             global_attributes_dict = OrderedDict({GlobalAttributeEnum.average_shortest_path_length.name: ShortestPath.average_global_shortest_path_length(graph=graph),
                                                   GlobalAttributeEnum.diameter.name: GlobalTopology.diameter(graph=graph),
                                                   GlobalAttributeEnum.components.name: GlobalTopology.components(graph=graph),
@@ -322,17 +319,12 @@ class Metrics:
             sys.stdout.write(section_end)
             sys.stdout.write(report_start)
             sys.stdout.write(u"Producing global metrics report for the input graph\n")
-            report_prefix = "_".join(
-                ["pyntacle", graph["name"][0], "global_metrics_report",
-                 self.date])
-            
+
             reporter = PyntacleReporter(graph=graph)  # init reporter
             reporter.create_report(ReportEnum.Global, global_attributes_dict)
             reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
             if self.args.no_nodes:  # create an additional report for the graph minus the selected nodes
-                report_prefix_nonodes = "_".join(["pyntacle", graph["name"][0], "global_metrics_nonodes", "report",
-                                          self.date])
                 
                 sys.stdout.write(u"Removing nodes:\n\t{}\nfrom input graph and computing Global Metrics\n".format(self.args.no_nodes))
                 nodes_list = self.args.no_nodes.split(",")

@@ -5,8 +5,7 @@ pyntacle.algorithms package
     :members:
     :undoc-members:
     :show-inheritance: False
-	:exclude-members: pyntacle.algorithm.shortest_path_gpu
-
+	:exclude-members:
 Submodules
 ----------
 
@@ -19,6 +18,5 @@ Submodules
    pyntacle.algorithms.local_topology
    pyntacle.algorithms.scalefree_inference
    pyntacle.algorithms.shortest_path
-   pyntacle.algorithms.shortest_path_gpu
    pyntacle.algorithms.sparseness
 

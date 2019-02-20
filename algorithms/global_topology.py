@@ -185,10 +185,12 @@ class GlobalTopology:
 
         :raise KeyError: if cmode is not one of the available cmode enumerators
         """
+        print(cmode)
         if not isinstance(cmode, CmodeEnum):
             raise KeyError(u"'cmode' not valid, must be one of the following: {}".format(list(CmodeEnum)))
+        rad =LocalTopology.radiality(graph, nodes=None, cmode=cmode)
 
-        return round(mean(LocalTopology.radiality(graph, nodes=None, cmode=cmode)), 5)
+        return round(mean(rad), 5)
 
     @staticmethod
     @check_graph_consistency

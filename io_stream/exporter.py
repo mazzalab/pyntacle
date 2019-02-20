@@ -76,10 +76,7 @@ class PyntacleExporter:
             adjmatrix = pd.DataFrame(adjmatrix)
             adjmatrix.to_csv(path_or_buf=file, sep=sep, header=False, index=False)
 
-
-        sys.stdout.write(u"Graph successfully exported to adjacency matrix at path: {}\n".format(os.path.abspath(file)))
-
-        return None
+        sys.stdout.write(u"Graph successfully exported to adjacency matrix at full path:\n{}\n".format(os.path.abspath(file)))
 
     @staticmethod
     @check_graph_consistency
@@ -106,6 +103,7 @@ class PyntacleExporter:
             raise TypeError(u"`sep` must be a string, {} found".format(type(file).__name__))
 
         adjlist = list(graph.get_adjlist())
+
         with open(file, "w") as outfile:
 
             if header:
@@ -118,9 +116,8 @@ class PyntacleExporter:
                 else:
                     outfile.writelines([sep.join([graph.vs(i)["name"][0], x]) + "\n" for x in graph.vs(ver)["name"]])
                     
-        sys.stdout.write(u"Graph successfully exported to edge list at path: {}\n".format(
+        sys.stdout.write(u"Graph successfully exported to edge list at full path:\n{}\n".format(
             os.path.abspath(file)))
-        return None
 
     @staticmethod
     @check_graph_consistency
@@ -142,10 +139,8 @@ class PyntacleExporter:
         """
 
         pickle.dump(graph, open(file, "wb"))
-        sys.stdout.write(u"Graph successfully exported to binary at path: {}\n".format(
+        sys.stdout.write(u"Graph successfully exported to binary at full path:\n{}\n".format(
             os.path.abspath(file)))
-
-        return None
 
     @staticmethod
     @check_graph_consistency
@@ -165,8 +160,6 @@ class PyntacleExporter:
         :param str file: a valid path to a file. If the directory is not specified, the current  working directory will be used.
         :param str sep: a string that will be used to separate the fields within the SIF. Default is ``\t`` (tabular character)
         :param bool header: if ``True``, it searches for the reserved graph attributes ``sif_interaction_name`` and use it to write the header of the SIF.
-
-        :return None: None
 
         :raise TypeError: if ``sep`` is not a valid string separator
         """
@@ -223,9 +216,8 @@ class PyntacleExporter:
             for i in remaining_nodes:
                 outfile.write(graph.vs(i)["name"][0] + "\n")
 
-        sys.stdout.write(u"Graph successfully exported to SIF at path: {}\n".format(
+        sys.stdout.write(u"Graph successfully exported to SIF at full path:\n{}\n".format(
             os.path.abspath(file)))
-        return None
 
     @staticmethod
     @check_graph_consistency
@@ -237,17 +229,14 @@ class PyntacleExporter:
 
         The main documentation on Dot can be found `here <https://www.graphviz.org/doc/info/lang.html>`_
 
-        .. node:: This method is a wrapper of the py:class:`~igraph.Graph.write_dot` method in igraph method of igraph
+        .. note:: This method is a wrapper of the py:class:`~igraph.Graph.write_dot` method in igraph method of igraph
 
         .. warning:: the attributes of the py:class:`igraph.Graph` object may not be exported correctly. for this reason, we recommend to export these attributes externally by means of the :class:`~pyntacle.io_stream.export_attributes.ExportAttributes` module
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param str file: a valid path to a file. If the directory is not specified, the current  working directory will be used.
 
-        :return None: None
         """
         Graph.write_dot(graph, f=file)
-        sys.stdout.write(u"Graph successfully exported to DOT at path: {}\n".format(
+        sys.stdout.write(u"Graph successfully exported to DOT at full path:\n{}\n".format(
             os.path.abspath(file)))
-
-        return None

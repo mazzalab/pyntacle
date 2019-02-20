@@ -144,7 +144,7 @@ class PyntacleImporter:
             util.graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0],  node_names=node_names)
             graph = util.get_graph()
 
-            sys.stdout.write(u"Adjacency matrix from {} imported\n".format(file))
+            sys.stdout.write(u"Adjacency matrix from {} imported\n".format(os.path.basename(file)))
             return graph
 
     @staticmethod
@@ -206,7 +206,7 @@ class PyntacleImporter:
         util.graph_initializer(graph_name=os.path.splitext(os.path.basename(file))[0])
         graph = util.get_graph()
 
-        sys.stdout.write(u"Edge list from {} imported\n".format(file))
+        sys.stdout.write(u"Edge list from {} imported\n".format(os.path.basename(file)))
         return graph
 
     @staticmethod
@@ -422,7 +422,7 @@ class PyntacleImporter:
             for k in edge_attrs_dict[a]:
                 AddAttributes.add_edge_attributes(graph, k, [edge_attrs_dict[a][k]], [a])
 
-        sys.stdout.write(u"DOT from {} imported\n".format(file))
+        sys.stdout.write(u"DOT from {} imported\n".format(os.path.basename(file)))
         return graph
 
     @staticmethod
@@ -466,5 +466,5 @@ class PyntacleImporter:
 
                 utils.check_graph()
                 graph = utils.get_graph()
-                sys.stdout.write(u"Binary from {} imported\n".format(file))
+                sys.stdout.write(u"Binary from {} imported\n".format(os.path.basename(file)))
                 return graph

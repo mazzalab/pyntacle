@@ -252,6 +252,7 @@ class Octopus:
         """
 
         cmode = get_cmode(graph)
+
         AddAttributes.add_graph_attributes(graph, GlobalAttributeEnum.average_radiality.name,
                                            GlobalTopology.average_radiality(graph, cmode))
 

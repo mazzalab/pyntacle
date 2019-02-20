@@ -127,7 +127,7 @@ class ExportAttributes():
                                 else:
                                     out.write("\t" + str(e.attributes()[attr]))
                             out.write('\n')
-        sys.stdout.write(u"Edge attributes successfully exported at path {}\n".format(os.path.abspath(file)))
+        sys.stdout.write(u"Edge attributes successfully exported at full path:\n{}\n".format(os.path.abspath(file)))
 
     @staticmethod
     @check_graph_consistency
@@ -172,7 +172,7 @@ class ExportAttributes():
                         out.write("\t" + str(v.attributes()[attr]))
                 out.write("\n")
         
-        sys.stdout.write(u"Node attributes successfully exported at path {}\n".format(os.path.abspath(file)))
+        sys.stdout.write(u"Node attributes successfully exported at full path:\n{}\n".format(os.path.abspath(file)))
 
     @staticmethod
     @check_graph_consistency
@@ -218,4 +218,4 @@ class ExportAttributes():
                 else:
                     out.write(attr + "\t" + str(graph[attr]) + "\n")
         
-        sys.stdout.write(u"Graph attributes successfully exported at path {}\n".format(os.path.abspath(file)))
+        sys.stdout.write(u"Graph attributes successfully exported at full path:\n{}\n".format(os.path.abspath(file)))

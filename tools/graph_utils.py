@@ -130,7 +130,6 @@ class GraphUtils:
                 if not any([isinstance(x, (str, list)) for x in self.graph.vs["parent"]]):
                     raise TypeError(u"One of the graph 'parent' attribute values is not a string")
 
-
         if any(x not in self.graph.es.attributes() for x in ["sif_interaction", "adjacent_nodes"]):
             raise UnsupportedGraphError(u"Pyntacle reserved edge attribute missing, see goo.gl/MCsnd1 for more informations")
 

@@ -66,14 +66,14 @@ class PyntacleReporter():
 
         self.report_type = report_type
         self.report = []
-        self.report.append([" ".join(["pyntacle Report", self.dat])])
-        self.report.append(["Quick Graph Overview"])
-        self.report.append(["graph name", ",".join(self.graph["name"])])
-        self.report.append(["components", len(self.graph.components())])
-        self.report.append(["nodes", self.graph.vcount()])
-        self.report.append(["edges", self.graph.ecount()])
+        self.report.append([" : ".join(["Pyntacle-Report-" + report_type.name, self.dat])])
         self.report.append(["\n"])
-        self.report.append(["Pyntacle Command:", report_type.name])
+        self.report.append(["Graph Overview"])
+        self.report.append(["Graph name", ",".join(self.graph["name"])])
+        self.report.append(["Components", len(self.graph.components())])
+        self.report.append(["Nodes", self.graph.vcount()])
+        self.report.append(["Edges", self.graph.ecount()])
+        self.report.append(["\n"])
 
         if report_type == ReportEnum.Local:
             self.__local_report(reportdict=report)
