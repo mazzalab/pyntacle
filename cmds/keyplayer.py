@@ -281,22 +281,22 @@ class KeyPlayer:
                     results[kp][0] = ["None"]
 
                 if self.args.implementation == 'brute-force':
-                    list_of_results = ['(' + ', '.join(x) + ')' for x in results[kp][0]]
+                    list_of_results = "\n".join(['(' + ', '.join(x) + ')' for x in results[kp][0]])
                 else:
-                    list_of_results = results[kp][0]
+                    list_of_results = "(" + ", ".join(results[kp][0]) + ")"
 
                 if kp == KpnegEnum.F.name or kp == KpnegEnum.dF.name:
                     # joining initial results with final ones
                     results[kp].append(initial_results[kp])
 
                     sys.stdout.write(
-                        u"Key player set{0} of size {1} for negative key player index {2} {3}:\n{4}\nFinal {2} value: {5}\nInitial {2} (before node set removal) was {6}\n".format(
-                            plurals[0], self.args.k_size, kp, plurals[1], '\n'.join(list_of_results), results[kp][1], results[kp][2]))
+                        u"Key player set{0} of size {1} for negative key player index {2} {3}:\n{4}\nFinal {2} value: {5}\nStarting graph {2} was {6}\n".format(
+                            plurals[0], self.args.k_size, kp, plurals[1], list_of_results, results[kp][1], results[kp][2]))
                     sys.stdout.write(sep_line)
 
                 elif kp == KpposEnum.dR.name:
                     sys.stdout.write(u"Key player set{0} of size {1} for positive key player index {2} {3}:\n{4}\nFinal {2} value: {5}\n".format(
-                        plurals[0], self.args.k_size, kp, plurals[1], '\n'.join(list_of_results), results[kp][1]))
+                        plurals[0], self.args.k_size, kp, plurals[1], list_of_results, results[kp][1]))
                     sys.stdout.write(sep_line)
 
                 elif kp == KpposEnum.mreach.name:
@@ -311,7 +311,7 @@ class KeyPlayer:
                         '{3} steps {4}:\n{5}\nwith value {6} on {8} (number of nodes reached on total number of nodes)\nThe total percentage of nodes, which '
                         'includes the kp-set, is {7}%\n'
                         .format(
-                            plurals[0], self.args.k_size, kp, self.args.m_reach,  plurals[1], '\n'.join(list_of_results),
+                            plurals[0], self.args.k_size, kp, self.args.m_reach,  plurals[1], list_of_results,
                             results[kp][1], node_perc_reached, graph.vcount()))
                     sys.stdout.write(sep_line)
             sys.stdout.write(section_end)
@@ -354,7 +354,7 @@ class KeyPlayer:
                 if metric == KpnegEnum.F.name or metric == KpnegEnum.dF.name:
                     results[metric].append(initial_results[metric])
                     sys.stdout.write(
-                        u"Removing node set \n({2})\ngives a {0} value of {3}\nInitial {0} was {1}\n".format(
+                        u"Removing node set \n({2})\ngives a {0} value of {3}\nStarting graph {0} was {1}\n".format(
                             metric, results[metric][2], ', '.join(self.args.nodes), results[metric][1]))
                     sys.stdout.write(sep_line)
 
@@ -492,7 +492,7 @@ class KeyPlayer:
                     # node_shapes = ["rectangle" if x["name"] in results[metric][1] else other_nodes_shape for x in graph.vs()]
                     # plot_graph.set_node_shapes(shapes=node_shapes)
 
-                elif metric == "mreach":
+                elif metric == "m-reach":
                     mreach_nodes_colour = pal[4]
                     mreach_frames_colour = framepal[4]
                     # create a list of node colors

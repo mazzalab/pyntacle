@@ -66,11 +66,12 @@ class PyntacleReporter():
 
         self.report_type = report_type
         self.report = []
-        self.report.append([" : ".join(["Pyntacle-Report-" + report_type.name, self.dat])])
+        self.report.append(["Pyntacle Report", report_type.name])
+        self.report.append(["Execution time", self.dat])
         self.report.append(["\n"])
-        self.report.append(["Graph Overview"])
+        self.report.append(["Network Overview"])
         self.report.append(["Graph name", ",".join(self.graph["name"])])
-        self.report.append(["Components", len(self.graph.components())])
+        self.report.append(["Number of Components", len(self.graph.components())])
         self.report.append(["Nodes", self.graph.vcount()])
         self.report.append(["Edges", self.graph.ecount()])
         self.report.append(["\n"])
@@ -229,6 +230,22 @@ class PyntacleReporter():
         # if not all(isinstance(x, str) for x in reportdict.keys()):
         #     raise TypeError("one of the keys in the report dictionary is not a KPPOSchoices or KPNEGchoices")
 
+        if KpnegEnum.F.name in reportdict.keys():
+            init_F = reportdict[KpnegEnum.F.name][2]
+
+            if 0.0 <= init_F <= 1.0:
+                self.report.append(["Starting F value", init_F])
+            else:
+                raise ValueError(u"Initial F must range between 0 and 1")
+
+        if KpnegEnum.dF.name in reportdict.keys():
+            init_dF = reportdict[KpnegEnum.dF.name][2]
+
+            if 0.0 <= init_dF <= 1.0:
+                self.report.append(["Starting dF value", init_dF])
+            else:
+                raise ValueError(u"Initial dF must range between 0 and 1")
+
         if KpposEnum.mreach.name in reportdict.keys():
             m = reportdict[KpposEnum.mreach.name][2]
 
@@ -237,24 +254,12 @@ class PyntacleReporter():
             else:
                 self.report.append(["maximum m-reach distance", reportdict[KpposEnum.mreach.name][2]])
 
-        if KpnegEnum.F.name in reportdict.keys():
-            init_F = reportdict[KpnegEnum.F.name][2]
-
-            if 0.0 <= init_F <= 1.0:
-                self.report.append(["initial F value (whole graph)", init_F])
-            else:
-                raise ValueError(u"Initial F must range between 0 and 1")
-
-        if KpnegEnum.dF.name in reportdict.keys():
-            init_dF = reportdict[KpnegEnum.dF.name][2]
-
-            if 0.0 <= init_dF <= 1.0:
-                self.report.append(["Initial dF value (whole graph)", init_dF])
-            else:
-                raise ValueError(u"Initial dF must range between 0 and 1")
+            #change the name `mreach` to `m-reach`
+            reportdict["m-reach"] = reportdict[KpposEnum.mreach.name]
+            del reportdict[KpposEnum.mreach.name]
 
         self.report.append(["\n"])
-        self.report.append(["Results: Key-Player Metrics for the input set of nodes"])
+        self.report.append(["Results: key player metrics for the requested node sets"])
         self.report.append(["Index", "Node set", "Value"])
  
         for k in reportdict.keys():
@@ -301,6 +306,22 @@ class PyntacleReporter():
         #     raise TypeError("one of the keys in the report dictionary is not a KPPOSchoices or KPNEGchoices")
         if type == "kp":
 
+            if KpnegEnum.F.name in reportdict.keys():
+                init_F = reportdict[KpnegEnum.F.name][2]
+
+                if 0.0 <= init_F <= 1.0:
+                    self.report.append(["Starting graph F value", init_F])
+                else:
+                    raise ValueError(u"Initial F must range between 0 and 1")
+
+            if KpnegEnum.dF.name in reportdict.keys():
+                init_dF = reportdict[KpnegEnum.dF.name][2]
+
+                if 0.0 <= init_dF <= 1.0:
+                    self.report.append(["Starting graph dF value", init_dF])
+                else:
+                    raise ValueError(u"Initial dF must range between 0 and 1")
+
             if KpposEnum.mreach.name in reportdict.keys():
                 m = reportdict[KpposEnum.mreach.name][2]
 
@@ -310,21 +331,8 @@ class PyntacleReporter():
                     self.report.append(["maximum m-reach distance", reportdict[KpposEnum.mreach.name][2]])
                     self.report.append(["\n"])
 
-            if KpnegEnum.F.name in reportdict.keys():
-                init_F = reportdict[KpnegEnum.F.name][2]
-
-                if 0.0 <= init_F <= 1.0:
-                    self.report.append(["initial F value (whole graph)", init_F])
-                else:
-                    raise ValueError(u"Initial F must range between 0 and 1")
-
-            if KpnegEnum.dF.name in reportdict.keys():
-                init_dF = reportdict[KpnegEnum.dF.name][2]
-
-                if 0.0 <= init_dF <= 1.0:
-                    self.report.append(["initial dF value (whole graph)", init_dF])
-                else:
-                    raise ValueError(u"Initial dF must range between 0 and 1")
+                reportdict["m-reach"] = reportdict[KpposEnum.mreach.name]
+                del reportdict[KpposEnum.mreach.name]
 
             self.report.append(["Results: greedily-optimized search for optimal key player node set"])
             self.report.append(["Index", "Node set", "Value"])
@@ -368,6 +376,24 @@ class PyntacleReporter():
         #     raise TypeError("one of the keys in the report dictionary is not a KPPOSchoices or KPNEGchoices")
 
         if type == "kp":
+
+            if KpnegEnum.F.name in reportdict.keys():
+                init_F = reportdict[KpnegEnum.F.name][2]
+
+
+                if 0.0 <= init_F <= 1.0:
+                    self.report.append(["Starting graph F", init_F])
+                else:
+                    raise ValueError(u"Initial F must range between 0 and 1")
+
+            if KpnegEnum.dF.name in reportdict.keys():
+                init_dF = reportdict[KpnegEnum.dF.name][2]
+
+                if 0.0 <= init_dF <= 1.0:
+                    self.report.append(["Starting graph dF", init_dF])
+                else:
+                    raise ValueError(u"Initial dF must range between 0 and 1")
+
             if KpposEnum.mreach.name in reportdict.keys():
                 m = reportdict[KpposEnum.mreach.name][2]
 
@@ -376,24 +402,10 @@ class PyntacleReporter():
                 else:
                     self.report.append(["maximum m-reach distance", reportdict[KpposEnum.mreach.name][2]])
 
-            if KpnegEnum.F.name in reportdict.keys():
-                init_F = reportdict[KpnegEnum.F.name][2]
+                reportdict["m-reach"] = reportdict[KpposEnum.mreach.name]
+                del reportdict[KpposEnum.mreach.name]
 
-
-                if 0.0 <= init_F <= 1.0:
-                    self.report.append(["initial F value (whole graph)", init_F])
-                else:
-                    raise ValueError(u"Initial F must range between 0 and 1")
-
-            if KpnegEnum.dF.name in reportdict.keys():
-                init_dF = reportdict[KpnegEnum.dF.name][2]
-
-                if 0.0 <= init_dF <= 1.0:
-                    self.report.append(["initial dF value (whole graph)", init_dF])
-                else:
-                    raise ValueError(u"Initial dF must range between 0 and 1")
-
-            self.report.append(["Results: Brute-force search for node sets that maximize key player indices"])
+            self.report.append(["Results: brute-force search for node sets that maximize key player indices"])
             self.report.append(["Index", "Node set", "Value"])
 
             for k in reportdict.keys():

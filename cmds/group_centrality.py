@@ -277,14 +277,14 @@ class GroupCentrality():
                     results[kk][0] = ["None"]
 
                 if self.args.implementation == 'brute-force':
-                    list_of_results = ['(' + ', '.join(x) + ')' for x in results[kk][0]]
+                    "\n".join(['(' + ', '.join(x) + ')' for x in results[kk][0]])
 
                 else:
-                    list_of_results = results[kk][0]
+                    list_of_results = "(" + ", ".join(results[kk][0]) + ")"
 
                 sys.stdout.write(
                     u'Node set{0} of size {1} for {5} centrality {2}:\n{3}\nwith value {4}\n'.format(
-                        plurals[0], self.args.k_size, plurals[1], ',\n'.join(list_of_results), results[kk][1], " ".join(kk.split("_")[:2])))
+                        plurals[0], self.args.k_size, plurals[1], list_of_results, results[kk][1], " ".join(kk.split("_")[:2])))
 
                 if kk.startswith(GroupCentralityEnum.group_closeness.name):
                     sys.stdout.write("The {} distance was considered for computing closeness\n".format(group_distance.name))

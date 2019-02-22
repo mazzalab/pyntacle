@@ -307,5 +307,5 @@ class KeyPlayer:
                 dKj = min(spl[j] for spl in shortest_path_lengths)
                 dr_num += 1 / dKj
 
-            dr = dr_num / float(graph.vcount())
+            dr = round(dr_num / float(graph.vcount()), 5)
             return dr

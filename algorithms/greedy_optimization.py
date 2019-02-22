@@ -158,7 +158,7 @@ class GreedyOptimization:
 
             final, fragmentation_score = GreedyOptimization.__optimization_loop(graph, S, type_func)
 
-            final = graph.vs(S)["name"]
+            final = graph.vs(final)["name"]
             sys.stdout.write(
                 u"Optimal group: {}\n Group size = {}\n Metric = {}\n Score = {}\n".format(
                     "{" + str(final).replace("'", "")[1:-1] + "}",
@@ -241,8 +241,8 @@ class GreedyOptimization:
                                             cmode=cmode)
 
                 final, reachability_score = GreedyOptimization.__optimization_loop(graph, S, type_func)
+                final = graph.vs(final)["name"]
 
-                final = graph.vs(S)["name"]
                 sys.stdout.write(
                     u"Optimal group: {}\n Group size = {}\n Metric = {}\n Score = {}\n".format(
                         "{" + str(final).replace("'", "")[1:-1] + "}",
