@@ -196,21 +196,21 @@ class PyntacleReporter():
             # nodes = nodes.split(',')
             del reportdict["nodes"]
 
-        self.report.append(["Results - Local Metrics for each Node in input"])
-        self.report.append(["Node Name"] + [x for x in reportdict.keys()])
+        self.report.append(["Results - Local centrality indices for the input nodes"])
+        self.report.append(["Node Name"] + [x.replace("_", " ") for x in reportdict.keys()])
         addendum = [] #list that will be added to the self.report object
 
         for i, elem in enumerate(nodes):
             temp = []
             temp.append(elem) #append the node names to the appendum
             for k in reportdict.keys():
-                temp.append(round(reportdict[k][i],5)) #append the corresponding value to the node name
+                temp.append(round(reportdict[k][i], 5)) #append the corresponding value to the node name
             addendum.append(temp)
         self.report = self.report + addendum
 
     def __global_report(self, reportdict:OrderedDict):
         r"""
-        Fill the `report` o0bject with information regarding all the global metrics stored in the reportdict object
+        Fill the `report` object with information regarding all the global metrics stored in the reportdict object
 
         :param reportdict: a dictionary like {name of the global metric: metric}
         """

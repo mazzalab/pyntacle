@@ -289,13 +289,13 @@ class GroupCentrality():
                 if kk.startswith(GroupCentralityEnum.group_closeness.name):
                     sys.stdout.write("The {} distance was considered for computing closeness\n".format(group_distance.name))
 
-                sys.stdout.write(sep_line)
+                sys.stdout.write("\n")
 
             sys.stdout.write(section_end)
 
         elif self.args.which == "gr-info":
             report_type = ReportEnum.GR_info
-            sys.stdout.write("Nodes given as input: ({})\n".format(', '.join(self.args.nodes)))
+            sys.stdout.write("Node set given as input: ({})\n".format(', '.join(self.args.nodes)))
             sys.stdout.write(sep_line)
 
             grinfo_runner = ipw(graph=graph, nodes=self.args.nodes)
@@ -318,19 +318,19 @@ class GroupCentrality():
                 if metric == GroupCentralityEnum.group_degree.name:
                     sys.stdout.write("The group degree value for the input node set:\n({0})\nis {1}\n".format(', '.join(results[metric][0]),
                                                                  results[metric][1]))
-                    sys.stdout.write(sep_line)
+                    sys.stdout.write("\n")
 
                 if metric == GroupCentralityEnum.group_betweenness.name:
                     sys.stdout.write(
                         "The group betweenness value for the input node set:\n({0})\nis {1}\n".format(', '.join(results[metric][0]),
                                                                                         results[metric][1]))
-                    sys.stdout.write(sep_line)
+                    sys.stdout.write("\n")
 
                 if metric.startswith(GroupCentralityEnum.group_closeness.name):
                     sys.stdout.write(
                         "The group closeness value for the input node set:\n({0})\nis {1}.\nThe {2} distance was considered between the set and the rest of the graph\n".format(', '.join(results[metric][0]),
                                                                                       results[metric][1], group_distance.name))
-                    sys.stdout.write(sep_line)
+                    sys.stdout.write("\n")
 
             sys.stdout.write(section_end)
 

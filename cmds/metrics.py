@@ -191,17 +191,12 @@ class Metrics:
             reporter = PyntacleReporter(graph=graph) #init reporter
 
             if self.args.nodes is not None:
-                sys.stdout.write(u"Computing local metrics for nodes ({})\n".format(', '.join(self.args.nodes)))
+                sys.stdout.write(u"Computing local metrics for nodes {}\n".format(', '.join(self.args.nodes)))
+                nodes_list = self.args.nodes
 
             else:
                 sys.stdout.write(u"Computing local metrics for all nodes in the graph\n")
-                    
-            # create pyntacle_commands_utils for the selected metrics
-            if self.args.nodes is not None:
-                nodes_list = graph.vs()["name"]
-
-            else:
-                nodes_list = self.args.nodes
+                nodes_list = None
 
             implementation=CmodeEnum.gpu
 
@@ -224,7 +219,7 @@ class Metrics:
             sys.stdout.write(report_start)
             # check output directory
             if not os.path.isdir(self.args.directory):
-                sys.stdout.write(u"WARNING: Output directory does not exist {} will be created\n".format(
+                sys.stdout.write(u"WARNING: Output directory does not exist; {} will be created\n".format(
                     os.path.abspath(self.args.directory)))
                 os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
 

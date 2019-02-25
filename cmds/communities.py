@@ -373,7 +373,7 @@ class Communities():
             plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
 
             if os.path.isdir(plot_dir):
-                self.logging.warning(
+                self.logging.info(
                     u"A directory named \"pyntacle-plots\" already exists.")
 
             else:
@@ -394,6 +394,12 @@ class Communities():
 
                 # initialize general graph Drawer
                 sys.stdout.write(u"Drawing original graph, highlighting communities\n")
+
+                if len(final_mods) > 20:
+                    sys.stdout.write(
+                        u"WARNING:The number of modules found ({}) is very high. The plot of the input graph will have nuanced colors\n".format(
+                            len(final_mods)))
+
                 graph_plotter = PlotGraph(graph=graph)
                 graph_plotter.set_node_labels(labels=graph.vs()["name"])
                 graph_plotter.set_node_sizes([30] * graph.vcount())
@@ -421,11 +427,6 @@ class Communities():
                 sys.stdout.write(
                     u"Input graph is above Pyntacle plotting limit ({} nodes found, only graphs with at best 1000 nodes). Input graph will not be plotted\n".format(
                         graph.vcount()))
-
-            if len(final_mods) > 20:
-                self.logging.warning(
-                    u"The number of modules found ({}) is very high. The plot of the input graph will have nuanced colors.".format(
-                        len(final_mods)))
 
             sys.stdout.write("Drawing each module separately\n")
 

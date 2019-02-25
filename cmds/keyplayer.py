@@ -176,7 +176,7 @@ class KeyPlayer:
                 kp_runner = gow(graph=graph)
 
                 sys.stdout.write(u"Using greedy optimization algorithm for searching optimal key player set for the requested key player metrics\n")
-                sys.stdout.write(sep_line)
+                sys.stdout.write("\n")
 
                 if self.args.type in (['F', 'neg', 'all']):
                     sys.stdout.write(
@@ -185,7 +185,7 @@ class KeyPlayer:
 
                     initial_results[KpnegEnum.F.name] = kpp.F(graph)
                     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, seed=self.args.seed, cmode=implementation)
-                    sys.stdout.write(sep_line)
+                    sys.stdout.write("\n")
                         
                 if self.args.type in (['dF', 'neg', 'all']):
                     sys.stdout.write(
@@ -196,7 +196,7 @@ class KeyPlayer:
                     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
                                                 max_distance=self.args.max_distance, seed=self.args.seed,
                                                 cmode=implementation)
-                    sys.stdout.write(sep_line)
+                    sys.stdout.write("\n")
 
                 if self.args.type in (['dR', 'pos', 'all']):
                     sys.stdout.write(
@@ -205,7 +205,7 @@ class KeyPlayer:
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.dR,
                                                max_distance=self.args.max_distance, seed=self.args.seed,
                                                cmode=implementation)
-                    sys.stdout.write(sep_line)
+                    sys.stdout.write("\n")
 
                 if self.args.type in (['mreach', 'pos', 'all']):
                     sys.stdout.write(
@@ -214,7 +214,7 @@ class KeyPlayer:
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.mreach, m=self.args.m_reach,
                                                max_distance=self.args.max_distance, seed=self.args.seed,
                                                cmode=implementation)
-                    sys.stdout.write(sep_line)
+                    sys.stdout.write("\n")
 
             elif self.args.implementation == "brute-force":
                 report_type = ReportEnum.KP_bruteforce
@@ -230,7 +230,7 @@ class KeyPlayer:
 
                     initial_results[KpnegEnum.F.name] = kpp.F(graph)
                     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, threads=self.args.threads)
-                    sys.stdout.write(sep_line)
+                    sys.stdout.write("\n")
 
 
                 if self.args.type in (['dF', 'neg', 'all']):
@@ -242,7 +242,7 @@ class KeyPlayer:
                     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
                                                 max_distance=self.args.max_distance,
                                                 cmode=CmodeEnum.igraph, threads=self.args.threads)
-                    sys.stdout.write(sep_line)
+                    sys.stdout.write("\n")
 
                 if self.args.type in (['dR', 'pos', 'all']):
                     sys.stdout.write(
@@ -261,7 +261,7 @@ class KeyPlayer:
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.mreach, m=self.args.m_reach,
                                                max_distance=self.args.max_distance,
                                                cmode=CmodeEnum.igraph, threads=self.args.threads)
-                    sys.stdout.write(sep_line)
+                    sys.stdout.write("\n")
 
             #get report results
             results.update(kp_runner.get_results())
@@ -269,7 +269,7 @@ class KeyPlayer:
             sys.stdout.write(summary_start)
             sys.stdout.write(u"Node set size for key player search: {}\n".format(str(self.args.k_size)))
 
-            sys.stdout.write(sep_line)
+            sys.stdout.write("\n")
             for kp in results.keys():
 
                 if len(results[kp][0]) > 1 and self.args.implementation == 'brute-force':
@@ -292,12 +292,12 @@ class KeyPlayer:
                     sys.stdout.write(
                         u"Key player set{0} of size {1} for negative key player index {2} {3}:\n{4}\nFinal {2} value: {5}\nStarting graph {2} was {6}\n".format(
                             plurals[0], self.args.k_size, kp, plurals[1], list_of_results, results[kp][1], results[kp][2]))
-                    sys.stdout.write(sep_line)
+                    sys.stdout.write("\n")
 
                 elif kp == KpposEnum.dR.name:
                     sys.stdout.write(u"Key player set{0} of size {1} for positive key player index {2} {3}:\n{4}\nFinal {2} value: {5}\n".format(
                         plurals[0], self.args.k_size, kp, plurals[1], list_of_results, results[kp][1]))
-                    sys.stdout.write(sep_line)
+                    sys.stdout.write("\n")
 
                 elif kp == KpposEnum.mreach.name:
                     results[kp].append(self.args.m_reach)
@@ -313,7 +313,7 @@ class KeyPlayer:
                         .format(
                             plurals[0], self.args.k_size, kp, self.args.m_reach,  plurals[1], list_of_results,
                             results[kp][1], node_perc_reached, graph.vcount()))
-                    sys.stdout.write(sep_line)
+                    sys.stdout.write("\n")
             sys.stdout.write(section_end)
 
         # kpinfo: compute kpmetrics for a set of predetermined nodes
@@ -323,28 +323,28 @@ class KeyPlayer:
             kp_runner = kpw(graph=graph, nodes=self.args.nodes)
             results = OrderedDict()
 
-            sys.stdout.write(u"Nodes given as input: ({})\n".format(', '.join(self.args.nodes)))
-            sys.stdout.write(sep_line)
+            sys.stdout.write(u"Node set given as input: ({})\n".format(', '.join(self.args.nodes)))
+            sys.stdout.write("\n")
 
             if self.args.type in (['F', 'neg', 'all']):
                 initial_results[KpnegEnum.F.name] = kpp.F(graph)
                 kp_runner.run_fragmentation(KpnegEnum.F)
-                sys.stdout.write(sep_line)
+                sys.stdout.write("\n")
             if self.args.type in (['dF', 'neg', 'all']):
                 initial_results[KpnegEnum.dF.name] = kpp.dF(graph, cmode=implementation, max_distance=self.args.max_distance)
                 kp_runner.run_fragmentation(KpnegEnum.dF, max_distance=self.args.max_distance,
                                             cmode=implementation)
-                sys.stdout.write(sep_line)
+                sys.stdout.write("\n")
 
             if self.args.type in (['dR', 'pos', 'all']):
                 kp_runner.run_reachability(KpposEnum.dR, max_distance=self.args.max_distance,
                                            cmode=implementation)
-                sys.stdout.write(sep_line)
+                sys.stdout.write("\n")
 
             if self.args.type in (['mreach', 'pos', 'all']):
                 kp_runner.run_reachability(KpposEnum.mreach, m=self.args.m_reach,
                                            max_distance=self.args.max_distance, cmode=implementation)
-                sys.stdout.write(sep_line)
+                sys.stdout.write("\n")
 
             sys.stdout.write(section_end)
             results.update(kp_runner.get_results())
@@ -356,7 +356,7 @@ class KeyPlayer:
                     sys.stdout.write(
                         u"Removing node set \n({2})\ngives a {0} value of {3}\nStarting graph {0} was {1}\n".format(
                             metric, results[metric][2], ', '.join(self.args.nodes), results[metric][1]))
-                    sys.stdout.write(sep_line)
+                    sys.stdout.write("\n")
 
                 elif metric == KpposEnum.mreach.name:
                     results[metric].append(self.args.m_reach)
@@ -366,13 +366,13 @@ class KeyPlayer:
                         u"nodes)\nThis means it can reach the {2}% of remaining nodes in the graph nodes in at most {3} steps\n".format(
                             ', '.join(results[metric][0]), results[metric][1], perc_node_reached,
                             self.args.m_reach, graph.vcount()))
-                    sys.stdout.write(sep_line)
+                    sys.stdout.write("\n")
 
                 else: #dR case
                     sys.stdout.write(
                         "The {0} value for node set:\n({1})\nis {2}\n".format(metric, ', '.join(results[metric][0]),
                                                                   results[metric][1]))
-                    sys.stdout.write(sep_line)
+                    sys.stdout.write("\n")
             sys.stdout.write(section_end)
 
         sys.stdout.write(report_start)
