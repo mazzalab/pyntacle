@@ -403,8 +403,9 @@ class Octopus:
         """
         nodes = transform_nodes(nodes)
 
-        group_attributes(graph, "_".join([GroupCentralityEnum.group_degree.name, "info"]),
+        AddAttributes.add_graph_attributes(graph, "_".join([GroupCentralityEnum.group_degree.name, "info"]),
                          {tuple(sorted(nodes)): LocalTopology.group_degree(graph, nodes)})
+
 
     @staticmethod
     @check_graph_consistency
@@ -443,7 +444,7 @@ class Octopus:
         if nodes is None:
             nodes = graph.vs["name"]
 
-        group_attributes(graph, "_".join([GroupCentralityEnum.group_betweenness.name, "info"]),
+        AddAttributes.add_graph_attributes(graph, "_".join([GroupCentralityEnum.group_betweenness.name, "info"]),
                          {tuple(sorted(nodes)): LocalTopology.group_betweenness(graph=graph, nodes=nodes, cmode=cmode)})
 
     @staticmethod
@@ -509,7 +510,7 @@ class Octopus:
 
         cmode = get_cmode(graph)
 
-        group_attributes(graph, "_".join([GroupCentralityEnum.group_closeness.name, distance.name, "info"]),
+        AddAttributes.add_graph_attributes(graph, "_".join([GroupCentralityEnum.group_closeness.name, distance.name, "info"]),
                          {tuple(sorted(nodes)): LocalTopology.group_closeness(graph, nodes, distance, cmode)})
 
     @staticmethod
@@ -745,7 +746,7 @@ class Octopus:
         kpobj = kpw(graph=graph, nodes=nodes)
         kpobj.run_fragmentation(KpnegEnum.F)
         results_dict = kpobj.get_results()
-        group_attributes(graph,
+        AddAttributes.add_graph_attributes(graph,
                          KpnegEnum.F.name + '_info',
                          {tuple(sorted(results_dict[KpnegEnum.F.name][0])): results_dict[KpnegEnum.F.name][1]})
 
@@ -775,7 +776,7 @@ class Octopus:
         kpobj = kpw(graph=graph, nodes=nodes)
         kpobj.run_fragmentation(KpnegEnum.dF, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
-        group_attributes(graph,
+        AddAttributes.add_graph_attributes(graph,
                          KpnegEnum.dF.name + '_info',
                          {tuple(sorted(results_dict[KpnegEnum.dF.name][0])): results_dict[KpnegEnum.dF.name][1]})
 
@@ -804,7 +805,7 @@ class Octopus:
         kpobj = kpw(graph=graph, nodes=nodes)
         kpobj.run_reachability(KpposEnum.dR, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
-        group_attributes(graph,
+        AddAttributes.add_graph_attributes(graph,
                          KpposEnum.dR.name + '_info',
                          {tuple(sorted(results_dict[KpposEnum.dR.name][0])): results_dict[KpposEnum.dR.name][1]})
 
@@ -833,7 +834,7 @@ class Octopus:
         kpobj.run_reachability(KpposEnum.mreach, m=m, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
         attr_name = KpposEnum.mreach.name + '_{}_info'.format(str(m))
-        group_attributes(graph,
+        AddAttributes.add_graph_attributes(graph,
                          attr_name, {
                              tuple(sorted(results_dict[KpposEnum.mreach.name][0])): results_dict[KpposEnum.mreach.name][
                                  1]})
@@ -860,7 +861,7 @@ class Octopus:
         kpobj = gow(graph=graph)
         kpobj.run_fragmentation(k, KpnegEnum.F, seed=seed)
         results_dict = kpobj.get_results()
-        group_attributes(graph,
+        AddAttributes.add_graph_attributes(graph,
                          KpnegEnum.F.name + '_greedy',
                          {tuple(sorted(results_dict[KpnegEnum.F.name][0])): results_dict[KpnegEnum.F.name][1]})
 
@@ -890,7 +891,7 @@ class Octopus:
         kpobj = gow(graph=graph)
         kpobj.run_fragmentation(k, KpnegEnum.dF, max_distance=max_distance, seed=seed, cmode=cmode)
         results_dict = kpobj.get_results()
-        group_attributes(graph,
+        AddAttributes.add_graph_attributes(graph,
                          KpnegEnum.dF.name + '_greedy',
                          {tuple(sorted(results_dict[KpnegEnum.dF.name][0])): results_dict[KpnegEnum.dF.name][1]})
 
@@ -918,8 +919,7 @@ class Octopus:
         kpobj = gow(graph=graph)
         kpobj.run_reachability(k, KpposEnum.dR, max_distance=max_distance, seed=seed, cmode=cmode)
         results_dict = kpobj.get_results()
-        group_attributes(graph,
-                         KpposEnum.dR.name + '_greedy',
+        AddAttributes.add_graph_attributes(graph, KpposEnum.dR.name + '_greedy',
                          {tuple(sorted(results_dict[KpposEnum.dR.name][0])): results_dict[KpposEnum.dR.name][1]})
 
     @staticmethod
@@ -949,8 +949,7 @@ class Octopus:
         kpobj.run_reachability(k, KpposEnum.mreach, m=m, max_distance=max_distance, seed=seed, cmode=cmode)
         results_dict = kpobj.get_results()
         attr_name = KpposEnum.mreach.name + '_{}_greedy'.format(str(m))
-        group_attributes(graph,
-                         attr_name, {
+        AddAttributes.add_graph_attributes(graph,attr_name, {
                              tuple(sorted(results_dict[KpposEnum.mreach.name][0])): results_dict[KpposEnum.mreach.name][
                                  1]})
 
@@ -974,7 +973,7 @@ class Octopus:
         kpobj = gow(graph=graph)
         kpobj.run_groupcentrality(k, GroupCentralityEnum.group_degree, seed=seed)
         results_dict = kpobj.get_results()
-        group_attributes(graph, GroupCentralityEnum.group_degree.name + '_greedy',
+        AddAttributes.add_graph_attributes(graph, GroupCentralityEnum.group_degree.name + '_greedy',
                          {tuple(sorted(results_dict[GroupCentralityEnum.group_degree.name][0])):
                               results_dict[GroupCentralityEnum.group_degree.name][1]})
 
@@ -999,7 +998,7 @@ class Octopus:
         kpobj = gow(graph=graph)
         kpobj.run_groupcentrality(k, GroupCentralityEnum.group_betweenness, seed=seed, cmode=cmode)
         results_dict = kpobj.get_results()
-        group_attributes(graph, GroupCentralityEnum.group_betweenness.name + '_greedy',
+        AddAttributes.add_graph_attributes(graph, GroupCentralityEnum.group_betweenness.name + '_greedy',
                          {tuple(sorted(results_dict[GroupCentralityEnum.group_betweenness.name][0])):
                               results_dict[GroupCentralityEnum.group_betweenness.name][1]})
 
@@ -1027,7 +1026,7 @@ class Octopus:
         kpobj = gow(graph=graph)
         kpobj.run_groupcentrality(k, GroupCentralityEnum.group_betweenness, seed=seed, cmode=cmode, distance=distance)
         results_dict = kpobj.get_results()
-        group_attributes(graph, GroupCentralityEnum.group_closeness.name + "_" + distance.name + '_greedy',
+        AddAttributes.add_graph_attributes(graph, GroupCentralityEnum.group_closeness.name + "_" + distance.name + '_greedy',
                          {tuple(sorted(results_dict[GroupCentralityEnum.group_closeness.name][0])):
                               results_dict[GroupCentralityEnum.group_closeness.name][1]})
 
@@ -1053,7 +1052,7 @@ class Octopus:
         kpobj = bfw(graph=graph)
         kpobj.run_fragmentation(k, KpnegEnum.F, max_distance=max_distance)
         results_dict = kpobj.get_results()
-        group_attributes(graph, KpnegEnum.F.name + '_bruteforce',
+        AddAttributes.add_graph_attributes(graph, KpnegEnum.F.name + '_bruteforce',
                          {tuple(tuple(sorted(x)) for x in results_dict[KpnegEnum.F.name][0]):
                               results_dict[KpnegEnum.F.name][1]})
 
@@ -1081,7 +1080,7 @@ class Octopus:
         kpobj = bfw(graph=graph)
         kpobj.run_fragmentation(k, KpnegEnum.dF, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
-        group_attributes(graph, KpnegEnum.dF.name + '_bruteforce',
+        AddAttributes.add_graph_attributes(graph, KpnegEnum.dF.name + '_bruteforce',
                          {tuple(tuple(sorted(x)) for x in results_dict[KpnegEnum.dF.name][0]):
                               results_dict[KpnegEnum.dF.name][1]})
 
@@ -1107,7 +1106,7 @@ class Octopus:
         kpobj = bfw(graph=graph)
         kpobj.run_reachability(k, KpposEnum.dR, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
-        group_attributes(graph, KpposEnum.dR.name + '_bruteforce',
+        AddAttributes.add_graph_attributes(graph, KpposEnum.dR.name + '_bruteforce',
                          {tuple(tuple(sorted(x)) for x in results_dict[KpposEnum.dR.name][0]):
                               results_dict[KpposEnum.dR.name][1]})
 
@@ -1134,7 +1133,7 @@ class Octopus:
         kpobj.run_reachability(k, KpposEnum.mreach, max_distance=max_distance, m=m, cmode=cmode)
         results_dict = kpobj.get_results()
         attr_name = KpposEnum.mreach.name + '_{}_bruteforce'.format(str(m))
-        group_attributes(graph, attr_name,
+        AddAttributes.add_graph_attributes(graph, attr_name,
                          {tuple(tuple(sorted(x)) for x in results_dict[KpposEnum.mreach.name][0]):
                               results_dict[KpposEnum.mreach.name][1]})
 
@@ -1154,7 +1153,7 @@ class Octopus:
         kpobj = bfw(graph=graph)
         kpobj.run_groupcentrality(k, GroupCentralityEnum.group_degree)
         results_dict = kpobj.get_results()
-        group_attributes(graph, GroupCentralityEnum.group_degree.name + '_bruteforce',
+        AddAttributes.add_graph_attributes(graph, GroupCentralityEnum.group_degree.name + '_bruteforce',
                          {tuple(tuple(sorted(x)) for x in results_dict[GroupCentralityEnum.group_degree.name][0]):
                               results_dict[GroupCentralityEnum.group_degree.name][1]})
 
@@ -1176,7 +1175,7 @@ class Octopus:
         kpobj = bfw(graph=graph)
         kpobj.run_groupcentrality(k, GroupCentralityEnum.group_betweenness, cmode=cmode)
         results_dict = kpobj.get_results()
-        group_attributes(graph, GroupCentralityEnum.group_betweenness.name + '_bruteforce',
+        AddAttributes.add_graph_attributes(graph, GroupCentralityEnum.group_betweenness.name + '_bruteforce',
                          {tuple(tuple(sorted(x)) for x in results_dict[GroupCentralityEnum.group_betweenness.name][0]):
                               results_dict[GroupCentralityEnum.group_betweenness.name][1]})
 
@@ -1199,6 +1198,6 @@ class Octopus:
         kpobj = bfw(graph=graph)
         kpobj.run_groupcentrality(k, GroupCentralityEnum.group_closeness, cmode=cmode, distance=distance)
         results_dict = kpobj.get_results()
-        group_attributes(graph, GroupCentralityEnum.group_closeness.name + "_" + distance.name + '_bruteforce',
+        AddAttributes.add_graph_attributes(graph, GroupCentralityEnum.group_closeness.name + "_" + distance.name + '_bruteforce',
                          {tuple(tuple(sorted(x)) for x in results_dict[GroupCentralityEnum.group_closeness.name][0]):
                               results_dict[GroupCentralityEnum.group_closeness.name][1]})
