@@ -233,7 +233,6 @@ class PyntacleImporter:
         """
 
         graph = Graph()
-        graph.vs["name"] = []
 
         with open(file, "r") as f:
         
@@ -264,9 +263,6 @@ class PyntacleImporter:
                         elif (elem[2], elem[0]) in edgeslist:
                             if elem[1] not in edgeslist[(elem[2], elem[0])]:
                                 edgeslist[(elem[2], elem[0])].append(elem[1])
-                        else:
-                            raise KeyError(u"This should not happen - SIF formatting looks weird. "
-                                           "Please contact the developers.")
 
                 elif len(elem) >= 4:
                     first = elem[0]
@@ -285,10 +281,6 @@ class PyntacleImporter:
                             elif (n, first) in edgeslist:
                                 if interaction not in edgeslist[(n, first)]:
                                     edgeslist[(n, first)].append(interaction)
-                            else:
-                                raise KeyError(u"This should not happen - SIF formatting looks weird. "
-                                                 "Please contact the developers.")
-                            
     
                 else:
                     raise ImproperlyFormattedFileError("line {} is malformed".format(i))

@@ -108,14 +108,12 @@ class GraphUtils:
                     except ValueError:
                         raise UnsupportedGraphError(u"Any of the Graph 'name' attribute values contains illegal characters.")
 
-        if any(x not in self.graph.attributes() for x in ["sif_interaction_name", "implementation"]):
-            print(self.graph.attributes())
+        if any(x not in self.graph.attributes() for x in ["implementation"]):
+            #print(self.graph.attributes())
 
             raise UnsupportedGraphError(u"One of the Pyntacle reserved graph attribute is missing, see goo.gl/MCsnd1 for more informations and initialize the `graph_initializer` method in `tools.graph_utils` To initialize your graph.")
 
         else:
-            if not isinstance(self.graph["sif_interaction_name"], (str, type(None))):
-                raise TypeError("sif_interaction_name must be either of type ''str' or None")
 
             if not isinstance(self.graph["implementation"], CmodeEnum):
                 raise TypeError("implementation must be filled with one of the CmodeEnums")
@@ -130,12 +128,10 @@ class GraphUtils:
                 if not any([isinstance(x, (str, list)) for x in self.graph.vs["parent"]]):
                     raise TypeError(u"One of the graph 'parent' attribute values is not a string")
 
-        if any(x not in self.graph.es.attributes() for x in ["sif_interaction", "adjacent_nodes"]):
+        if any(x not in self.graph.es.attributes() for x in ["adjacent_nodes"]):
             raise UnsupportedGraphError(u"Pyntacle reserved edge attribute missing, see goo.gl/MCsnd1 for more informations")
 
         else:
-            if not any(isinstance(x, (str, type(None))) for x in self.graph.es["sif_interaction"]):
-                raise TypeError("sif_interaction must be either of type ''str' or None")
             if not any(isinstance(x, tuple) for x in self.graph.es["adjacent_nodes"]):
                 raise TypeError("adjacent_nodes must be a tuple of strings")
 
@@ -356,11 +352,13 @@ class GraphUtils:
         :raise: WrongArgumentError: if ``node_names`` is not a list of strings.
         """
 
+        if not isinstance(graph_name, str):
+            raise ValueError("'graph_name' must be a string")
+
         try:
             attribute_name_checker(graph_name)
         except ValueError:
-            sys.stderr.write("Graph 'name' attribute contains illegal characters\n")
-            sys.exit(1)
+            raise ValueError("'graph_name' contains illegal characters\n")
 
         self.graph.to_undirected()  # reconvert graph to directed
         if "name" not in self.graph.attributes():
