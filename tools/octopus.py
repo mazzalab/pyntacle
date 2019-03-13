@@ -25,7 +25,7 @@ __license__ = u"""
   """
 
 import sys
-
+import random as rand
 from tools.add_attributes import AddAttributes
 from algorithms.local_topology import LocalTopology
 from algorithms.global_topology import GlobalTopology
@@ -52,9 +52,11 @@ def transform_nodes(nodes):
     r""" Turns a single node name to a list of size 1. Useful for group centrality metrics when using a single node name"""
 
     if isinstance(nodes, str):
-        return [nodes]
-    else:
-        return nodes
+        nodes = [nodes]
+
+    nodes.sort() #sort node names list lexicographically
+
+    return nodes
 
 
 def group_attributes(graph: Graph, attr_name: str, attr: dict):
@@ -383,8 +385,12 @@ class Octopus:
         :param str,list,None nodes: the vertex ``name`` attribute corresponding to node names. If :py:class:`None`, it adds the selected metric to all nodes in the graph. Otherwise, it can be either a string specifying a single node name or a list of strings, each one representing a node in the graph.
         """
 
-        if nodes is None:
+        if nodes is not None:
+            nodes = transform_nodes(nodes)
+
+        else:
             nodes = graph.vs["name"]
+
         AddAttributes.add_node_attributes(graph, LocalAttributeEnum.degree.name,
                                           LocalTopology.degree(graph, nodes), nodes)
 
@@ -420,10 +426,12 @@ class Octopus:
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param str,list,None nodes: the vertex ``name`` attribute corresponding to node names. If :py:class:`None`, it adds the selected metric to all nodes in the graph. Otherwise, it can be either a string specifying a single node name or a list of strings, each one representing a node in the graph.
         """
-        nodes = transform_nodes(nodes)
+        if nodes is not None:
+            nodes = transform_nodes(nodes)
 
-        if nodes is None:
+        else:
             nodes = graph.vs["name"]
+
         AddAttributes.add_node_attributes(graph, LocalAttributeEnum.betweenness.name,
                                           LocalTopology.betweenness(graph, nodes), nodes)
 
@@ -441,8 +449,8 @@ class Octopus:
         :param list, str nodes: a list of strings representing the node name (the vertex ``name`` attribute) matching node names in the graph, or a string representing a single node name.
         """
         cmode = get_cmode(graph)
-        if nodes is None:
-            nodes = graph.vs["name"]
+
+        nodes = transform_nodes(nodes)
 
         AddAttributes.add_graph_attributes(graph, "_".join([GroupCentralityEnum.group_betweenness.name, "info"]),
                          {tuple(sorted(nodes)): LocalTopology.group_betweenness(graph=graph, nodes=nodes, cmode=cmode)})
@@ -461,8 +469,12 @@ class Octopus:
         :param str,list,None nodes: the vertex ``name`` attribute corresponding to node names. If :py:class:`None`, it adds the selected metric to all nodes in the graph. Otherwise, it can be either a string specifying a single node name or a list of strings, each one representing a node in the graph.
         """
 
-        if nodes is None:
+        if nodes is not None:
+            nodes = transform_nodes(nodes)
+
+        else:
             nodes = graph.vs["name"]
+
         AddAttributes.add_node_attributes(graph, LocalAttributeEnum.clustering_coefficient.name,
                                           LocalTopology.clustering_coefficient(graph, nodes), nodes)
 
@@ -480,14 +492,18 @@ class Octopus:
         :param str,list,None nodes: the vertex ``name`` attribute corresponding to node names. If :py:class:`None`, it adds the selected metric to all nodes in the graph. Otherwise, it can be either a string specifying a single node name or a list of strings, each one representing a node in the graph.
         """
 
-        if nodes is None:
+        if nodes is not None:
+            nodes = transform_nodes(nodes)
+
+        else:
             nodes = graph.vs["name"]
+
         AddAttributes.add_node_attributes(graph, LocalAttributeEnum.closeness.name,
                                           LocalTopology.closeness(graph, nodes), nodes)
 
     @staticmethod
     @check_graph_consistency
-    def add_group_closeness(graph: Graph, nodes, distance: GroupDistanceEnum = GroupDistanceEnum.minimum):
+    def add_group_closeness(graph: Graph, nodes: str or list, distance: GroupDistanceEnum = GroupDistanceEnum.minimum):
         r"""
         Computes the *group closeness* by means of the :func:`~pyntacle.algorithms.local_topology.LocalTopology.group_closeness` Pyntacle method
         for a set of nodes of the input :py:class:`~igraph.Graph` object. The group closeness can be computed using three possible criterions for defining the distance from the node set to the rest of the graph:
@@ -507,7 +523,6 @@ class Octopus:
         :param distance: the criterion to use for defining the distance between the node set and the rest of the graph. Must be one of the option in :class:`~pyntacle.tools.enums.GroupDistanceEnum`. Defaults to ``GroupDistanceEnum.minimum``.
         """
         nodes = transform_nodes(nodes)
-
         cmode = get_cmode(graph)
 
         AddAttributes.add_graph_attributes(graph, "_".join([GroupCentralityEnum.group_closeness.name, distance.name, "info"]),
@@ -527,8 +542,12 @@ class Octopus:
         :param str,list,None nodes: the vertex ``name`` attribute corresponding to node names. If :py:class:`None`, it adds the selected metric to all nodes in the graph. Otherwise, it can be either a string specifying a single node name or a list of strings, each one representing a node in the graph.
         """
 
-        if nodes is None:
+        if nodes is not None:
+            nodes = transform_nodes(nodes)
+
+        else:
             nodes = graph.vs["name"]
+
         AddAttributes.add_node_attributes(graph, LocalAttributeEnum.eccentricity.name,
                                           LocalTopology.eccentricity(graph, nodes), nodes)
 
@@ -547,8 +566,12 @@ class Octopus:
         """
 
         cmode = get_cmode(graph)
-        if nodes is None:
+        if nodes is not None:
+            nodes = transform_nodes(nodes)
+
+        else:
             nodes = graph.vs["name"]
+
         AddAttributes.add_node_attributes(graph, LocalAttributeEnum.radiality.name,
                                           LocalTopology.radiality(graph, nodes, cmode),
                                           nodes)
@@ -568,8 +591,12 @@ class Octopus:
         """
 
         cmode = get_cmode(graph)
-        if nodes is None:
+        if nodes is not None:
+            nodes = transform_nodes(nodes)
+
+        else:
             nodes = graph.vs["name"]
+
         AddAttributes.add_node_attributes(graph, LocalAttributeEnum.radiality_reach.name,
                                           LocalTopology.radiality_reach(graph, nodes, cmode), nodes)
 
@@ -588,8 +615,12 @@ class Octopus:
         :param bool scaled: a boolean value to scale the eigenvector centrality using the reciprocal of the eigenvector :math:`\frac{1}{eigenvector}`. ``False` by default.
         """
 
-        if nodes is None:
+        if nodes is not None:
+            nodes = transform_nodes(nodes)
+
+        else:
             nodes = graph.vs["name"]
+
         AddAttributes.add_node_attributes(graph, LocalAttributeEnum.eigenvector_centrality.name,
                                           LocalTopology.eigenvector_centrality(graph, nodes, scaled),
                                           nodes)
@@ -611,10 +642,15 @@ class Octopus:
         :param float damping: positive float representing the probability to reset the random walk distribution at each pagerank iteration. Default is 0.85.
         """
 
-        if nodes is None:
+        if nodes is not None:
+            nodes = transform_nodes(nodes)
+
+        else:
             nodes = graph.vs["name"]
+
         if "weights" in graph.es.attributes():
             weights = graph.es["weights"]
+
         AddAttributes.add_node_attributes(graph, LocalAttributeEnum.pagerank.name,
                                           LocalTopology.pagerank(graph, nodes, weights, damping),
                                           nodes)
@@ -638,7 +674,10 @@ class Octopus:
         """
         cmode = get_cmode(graph)
 
-        if nodes is None:
+        if nodes is not None:
+            nodes = transform_nodes(nodes)
+
+        else:
             nodes = graph.vs["name"]
 
         tot_nodes = graph.vcount()
@@ -667,8 +706,11 @@ class Octopus:
         :param str,list,None nodes: the vertex ``name`` attribute corresponding to node names. If :py:class:`None`, it adds the selected metric to all nodes in the graph. Otherwise, it can be either a string specifying a single node name or a list of strings, each one representing a node in the graph.
         """
         cmode = get_cmode(graph)
-        if nodes is None:
+        if nodes is not None:
+            nodes = transform_nodes(nodes)
+        else:
             nodes = graph.vs["name"]
+
         AddAttributes.add_node_attributes(graph, LocalAttributeEnum.average_shortest_path_length.name,
                                           ShortestPath.average_shortest_path_lengths(graph, nodes, cmode),
                                           nodes)
@@ -687,8 +729,12 @@ class Octopus:
         :param str,list,None nodes: the vertex ``name`` attribute corresponding to node names. If :py:class:`None`, it adds the selected metric to all nodes in the graph. Otherwise, it can be either a string specifying a single node name or a list of strings, each one representing a node in the graph.
         """
         cmode = get_cmode(graph)
-        if nodes is None:
+
+        if nodes is not None:
+            nodes = transform_nodes(nodes)
+        else:
             nodes = graph.vs["name"]
+
         AddAttributes.add_node_attributes(graph, LocalAttributeEnum.median_shortest_path_length.name,
                                           ShortestPath.median_shortest_path_lengths(graph, nodes, cmode),
                                           nodes)
@@ -801,6 +847,7 @@ class Octopus:
         """
 
         cmode = get_cmode(graph)
+        nodes = transform_nodes(nodes)
 
         kpobj = kpw(graph=graph, nodes=nodes)
         kpobj.run_reachability(KpposEnum.dR, max_distance=max_distance, cmode=cmode)
@@ -817,7 +864,7 @@ class Octopus:
 
         The fragmentation status after node removal is then wrapped in the ``mreach_m_kpinfo`` graph attribute, where ``m`` is the maximum m-reach distance.
 
-        Thbis attribute points to a dictionary whose keys are tuple storing the vertex ``name``(s) and the corresponding value is the m-reach for the input nodes
+        This attribute points to a dictionary whose keys are tuple storing the vertex ``name``(s) and the corresponding value is the m-reach for the input nodes
 
         This method encompasses the same procedure performed by the ``pyntacle key-player kp-info`` command on Pyntacle command line.
 
@@ -829,6 +876,8 @@ class Octopus:
         :param str,list nodes: the vertex ``name`` attribute corresponding to node names. It can be either a string specifying a single node name or a list of strings, each one representing a node in the input graph.
         """
         cmode = get_cmode(graph)
+
+        nodes = transform_nodes(nodes)
 
         kpobj = kpw(graph=graph, nodes=nodes)
         kpobj.run_reachability(KpposEnum.mreach, m=m, max_distance=max_distance, cmode=cmode)
@@ -969,6 +1018,10 @@ class Octopus:
         :param int k: the size of the node set. Must be a positive integer.
         :param int,None seed: optional, a positive integer that can be used to replicate the greedy optimization run. If :py:class:`~None` (default), the greedy optimization may return different results at each run.
         """
+
+        if seed is not None:
+            rand.seed(seed)
+
 
         kpobj = gow(graph=graph)
         kpobj.run_groupcentrality(k, GroupCentralityEnum.group_degree, seed=seed)

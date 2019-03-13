@@ -308,7 +308,7 @@ class GreedyOptimization:
 
         final, group_score = GreedyOptimization.__optimization_loop(graph, S, type_func)
 
-        final = graph.vs(S)["name"]
+        final = graph.vs(final)["name"]
 
         metrics_distance_str = metric.name.replace("_", " ") \
             if metric != GroupCentralityEnum.group_closeness \

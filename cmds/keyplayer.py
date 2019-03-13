@@ -403,15 +403,15 @@ class KeyPlayer:
 
                 if self.args.which == "kp-finder":
                     if self.args.implementation == "brute-force":
-                        suffix = "bruteforce"
+                        suffix = "BF"
                         attr_key = tuple(tuple(sorted(tuple(x))) for x in results[key][0])
 
                     else:
-                        suffix = "greedy"
+                        suffix = "GO"
                         attr_key = tuple(sorted(tuple(results[key][0])))
 
                 else:
-                    suffix = "info"
+                    suffix = "group"
                     attr_key = tuple(sorted(tuple(results[key][0])))
 
                 attr_name = "_".join([key, suffix])
