@@ -136,7 +136,7 @@ class BruteforceSearch:
             kpset_score_pairs = {**kpset_score_pairs, **partial_result}
 
         maxKpp = max(kpset_score_pairs.values())
-        final = [list(x) for x in kpset_score_pairs.keys() if kpset_score_pairs[x] == maxKpp]
+        final = [sorted(list(x)) for x in kpset_score_pairs.keys() if kpset_score_pairs[x] == maxKpp]
         maxKpp = round(maxKpp, 5)
         sys.stdout.write(
             u"Best group{}: {}\n Group{} size = {}\n Metric = {}\n Score = {}\n".format("s" if len(final) > 1 else "",
@@ -257,7 +257,7 @@ class BruteforceSearch:
             kpset_score_pairs = {**kpset_score_pairs, **partial_result}
 
         _group_score = max(kpset_score_pairs.values())
-        final = [list(x) for x in kpset_score_pairs.keys() if kpset_score_pairs[x] == _group_score]
+        final = [sorted(list(x)) for x in kpset_score_pairs.keys() if kpset_score_pairs[x] == _group_score]
         _group_score = round(_group_score, 5)
 
         sys.stdout.write(
@@ -380,7 +380,8 @@ class BruteforceSearch:
             score_pairs = {**score_pairs, **partial_result}
 
         _group_score = max(score_pairs.values())  # take the maximum value
-        final = [list(x) for x in score_pairs.keys() if score_pairs[x] == _group_score]
+        final = [sorted(list(x)) for x in score_pairs.keys() if score_pairs[x] == _group_score]
+
         _group_score = round(_group_score, 5)
 
         metrics_distance_str = metric.name.replace("_", " ") \

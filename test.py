@@ -16,8 +16,8 @@ from tools.octopus import Octopus
 Octopus.add_average_degree(graph)
 Octopus.add_average_global_shortest_path_length(graph)
 
-print(graph["average_degree"])
-print(graph["average_global_shortest_path_length"])
+# print(graph["average_degree"])
+# print(graph["average_global_shortest_path_length"])
 
 ########################################################################################################################
 
@@ -25,10 +25,10 @@ print(graph["average_global_shortest_path_length"])
 Octopus.add_degree(graph)
 
 #store the result into a pd.DataFrame and then rank by degree
-import pandas as pd
+# import pandas as pd
 
-df = pd.DataFrame({"Degree":graph.vs["degree"]}, index=graph.vs["name"])
-df = df.sort_values(by=["Degree"], ascending=False)
+# df = pd.DataFrame({"Degree":graph.vs["degree"]}, index=graph.vs["name"])
+# df = df.sort_values(by=["Degree"], ascending=False)
 
 ########################################################################################################################
 
@@ -41,49 +41,54 @@ rc = ["AVAR", "AVAL", "AVBL",
       "DVA", "AVDL"]
 
 
-Octopus.add_group_degree(graph, rc)
-print("group degree:", graph["group_degree_info"], sep="\t")
+# Octopus.add_group_degree(graph, rc)
+# print("group degree:", graph["group_degree_info"], sep="\t")
+#
+# Octopus.add_group_betweenness(graph, rc)
+# print("group  betweenness:", graph["group_betweenness_info"], sep="\t")
+#
+# Octopus.add_group_closeness(graph, rc)
+# print("group  closeness:", graph["group_closeness_minimum_info"], sep="\t")
+#
+#
+# #condense all the group centralities into a pandas dataframe
+# rc_ind = " ".join(rc)
+# rc_key = tuple(rc)
+#
+# dfdict = {"group degree": graph["group_degree_info"][rc_key],
+#           "group betweenness": graph["group_betweenness_info"][rc_key],
+#           "group closeness (min)": graph["group_closeness_minimum_info"][rc_key]}
 
-Octopus.add_group_betweenness(graph, rc)
-print("group  betweenness:", graph["group_betweenness_info"], sep="\t")
+# df = pd.DataFrame(dfdict, index=[rc_ind])
 
-Octopus.add_group_closeness(graph, rc)
-print("group  closeness:", graph["group_closeness_minimum_info"], sep="\t")
-
-
-#condense all the group centralities into a pandas dataframe
-rc_ind = " ".join(rc)
-rc_key = tuple(rc)
-
-dfdict = {"group degree": graph["group_degree_info"][rc_key],
-          "group betweenness": graph["group_betweenness_info"][rc_key],
-          "group closeness (min)": graph["group_closeness_minimum_info"][rc_key]}
-
-df = pd.DataFrame(dfdict, index=[rc_ind])
-
-df.index = ["rich club core"]
-print(df)
+# df.index = ["rich club core"]
+# print(df)
 #save the dataframe to dictionary
-df.to_csv("/home/local/MENDEL/d.capocefalo/Dropbox/Research/BFX_Mendel/BFX Lab/Pyntacle/site_material/Case_Study_3/CS3_rich_club_groupcentralities.tsv", sep="\t")
+# df.to_csv("/home/local/MENDEL/d.capocefalo/Dropbox/Research/BFX_Mendel/BFX Lab/Pyntacle/site_material/Case_Study_3/CS3_rich_club_groupcentralities.tsv", sep="\t")
 
 #######################################################################################################################
 
 #Greedily-optimized search for GC
-Octopus.add_GO_group_degree(graph, 11, seed=1)
+print("#####################################################")
+seed = 5000
+import random
+random.seed(seed)
+Octopus.add_GO_group_degree(graph, 11)
 print (graph["group_degree_greedy"])
+print("#####################################################")
 
-for e in graph["group_degree_greedy"].keys():
-    for elem in e:
-        print(elem, graph.vs.select(name=elem)["degree"])
-
-
-test = ['AIAL', 'AVAR', 'AVBL', 'AVKR', 'CEPDR', 'DVA', 'PVCL', 'RIAR', 'RIBL', 'RIH', 'VC03']
-Octopus.add_group_degree(graph, test)
-print(graph["group_degree_info"])
+# for e in graph["group_degree_greedy"].keys():
+#     for elem in e:
+#         print(elem, graph.vs.select(name=elem)["degree"])
+#
+#
+# test = ['AIAL', 'AVAR', 'AVBL', 'AVKR', 'CEPDR', 'DVA', 'PVCL', 'RIAR', 'RIBL', 'RIH', 'VC03']
+# Octopus.add_group_degree(graph, test)
+# print(graph["group_degree_info"])
 
 sys.exit()
-input()
-Octopus.add_GO_group_closeness(graph, 11, seed=1)
+Octopus.add_GO_group_closenes
+s(graph, 11, seed=1)
 print (graph["group_closeness_minimum_greedy"])
 
 

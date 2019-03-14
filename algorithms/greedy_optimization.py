@@ -100,7 +100,7 @@ class GreedyOptimization:
 
     @staticmethod
     @check_graph_consistency
-    @greedy_search_initializer
+    #@greedy_search_initializer
     def fragmentation(graph, k: int, metric: KpnegEnum, seed: int or None =None, max_distance: int or None =None,
                       cmode=CmodeEnum.igraph) -> (list, float):
         r"""
@@ -137,7 +137,16 @@ class GreedyOptimization:
                 raise ValueError(u"'max_distance' must be an integer greater than one and lesser than the total number of nodes")
 
             node_indices = graph.vs.indices
+            print(seed)
+            input()
+            if seed is not None:
+
+                random.seed(seed)
+
             random.shuffle(node_indices)
+
+            print(node_indices)
+            input()
 
             S = node_indices[0:k]
 
@@ -159,6 +168,8 @@ class GreedyOptimization:
             final, fragmentation_score = GreedyOptimization.__optimization_loop(graph, S, type_func)
 
             final = graph.vs(final)["name"]
+            final.sort()
+
             sys.stdout.write(
                 u"Optimal group: {}\n Group size = {}\n Metric = {}\n Score = {}\n".format(
                     "{" + str(final).replace("'", "")[1:-1] + "}",
@@ -174,7 +185,7 @@ class GreedyOptimization:
 
     @staticmethod
     @check_graph_consistency
-    @greedy_search_initializer
+    #@greedy_search_initializer
     def reachability(graph, k: int, metric: KpposEnum, seed=None, max_distance: int=None, m=None,
                      cmode=CmodeEnum.igraph) -> (list, float):
         r"""
@@ -211,17 +222,39 @@ class GreedyOptimization:
                 raise ValueError(u"'max_distance' must be an integer greater than one and lesser than the total number of nodes")
 
             if metric == KpposEnum.mreach and m is None:
-                raise WrongArgumentError("The parameter 'm' is required for m-reach algorithm")
+                raise WrongArgumentError("The 'm' argument is required for computing m-reach")
             elif metric == KpposEnum.mreach and (not isinstance(m, int) or m <= 0):
-                raise TypeError(u"The parameter 'm' must be a positive integer value")
+                raise TypeError(u"The 'm' argument must be a positive integer value")
             else:
+
+                #print(graph.vs()["name"])
+                input()
+                print(seed)
+                input()
+
+                if seed is not None:
+                    random.seed(seed)
 
                 node_indices = graph.vs.indices
                 random.shuffle(node_indices)
 
+                print(node_indices)
+                input()
                 S = node_indices[0:k]
-                S.sort()
+                print(S)
+
+                S_names = []
+                for i in S:
+                    name = graph.vs(i)["name"]
+                    print (i, name)
+                    S_names.append(name)
+
                 S_names = graph.vs(S)["name"]
+                print(S_names)
+                print(S_names2)
+                # input()
+                sys.exit()
+                #S.sort() #non è lui
 
                 if metric == KpposEnum.mreach:
                     if cmode != CmodeEnum.igraph:
@@ -242,6 +275,7 @@ class GreedyOptimization:
 
                 final, reachability_score = GreedyOptimization.__optimization_loop(graph, S, type_func)
                 final = graph.vs(final)["name"]
+                final.sort()
 
                 sys.stdout.write(
                     u"Optimal group: {}\n Group size = {}\n Metric = {}\n Score = {}\n".format(
@@ -309,6 +343,7 @@ class GreedyOptimization:
         final, group_score = GreedyOptimization.__optimization_loop(graph, S, type_func)
 
         final = graph.vs(final)["name"]
+        final.sort()
 
         metrics_distance_str = metric.name.replace("_", " ") \
             if metric != GroupCentralityEnum.group_closeness \
