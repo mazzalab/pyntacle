@@ -1019,9 +1019,6 @@ class Octopus:
         :param int,None seed: optional, a positive integer that can be used to replicate the greedy optimization run. If :py:class:`~None` (default), the greedy optimization may return different results at each run.
         """
 
-        if seed is not None:
-            rand.seed(seed)
-
 
         kpobj = gow(graph=graph)
         kpobj.run_groupcentrality(k, GroupCentralityEnum.group_degree, seed=seed)
