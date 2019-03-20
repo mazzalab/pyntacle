@@ -76,28 +76,30 @@ class PyntacleReporter():
         self.report.append(["Edges", self.graph.ecount()])
         self.report.append(["\n"])
 
+        report_copy = copy.deepcopy(report)
+
         if report_type == ReportEnum.Local:
-            self.__local_report(reportdict=report)
+            self.__local_report(reportdict=report_copy)
         elif report_type == ReportEnum.Global:
-            self.__global_report(reportdict=report)
+            self.__global_report(reportdict=report_copy)
         elif report_type == ReportEnum.KP_info:
-            self.__KPinfo_report(reportdict=report)
+            self.__KPinfo_report(reportdict=report_copy)
         elif report_type == ReportEnum.GR_info:
-            self.__GRinfo_report(reportdict=report)
+            self.__GRinfo_report(reportdict=report_copy)
         elif report_type == ReportEnum.KP_greedy:
-            self.__greedy_report(reportdict=report, type="kp")
+            self.__greedy_report(reportdict=report_copy, type="kp")
         elif report_type == ReportEnum.GR_greedy:
-            self.__greedy_report(reportdict=report, type="gr")
+            self.__greedy_report(reportdict=report_copy, type="gr")
         elif report_type == ReportEnum.KP_bruteforce:
-            self.__bruteforce_report(reportdict=report, type="kp")
+            self.__bruteforce_report(reportdict=report_copy, type="kp")
         elif report_type == ReportEnum.GR_bruteforce:
-            self.__bruteforce_report(reportdict=report, type="gr")
+            self.__bruteforce_report(reportdict=report_copy, type="gr")
         elif report_type == ReportEnum.Communities:
-            self.__communities_report(reportdict=report)
+            self.__communities_report(reportdict=report_copy)
         elif report_type == ReportEnum.Set:
-            self.__set_report(reportdict=report)
+            self.__set_report(reportdict=report_copy)
         else:
-            raise ValueError(u"Report specified does not exists")
+            raise ValueError(u"Report specified does not exist")
 
     def write_report(self, report_dir=None, format="tsv", choices=report_format) -> str:
         r"""

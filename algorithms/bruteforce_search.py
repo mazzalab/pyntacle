@@ -211,6 +211,7 @@ class BruteforceSearch:
         """: type: dic{(), float}"""
         node_names = graph.vs["name"]
 
+
         if max_distance is not None and (not isinstance(max_distance, int) or max_distance <= 1 or max_distance > graph.vcount()):
             raise ValueError(
                 u"'max_distance' must be an integer value between 1 and the total number of nodes")

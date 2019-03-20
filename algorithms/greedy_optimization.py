@@ -25,6 +25,7 @@ import random
 import sys
 from functools import partial
 from tools.enums import KpposEnum, KpnegEnum, CmodeEnum, GroupCentralityEnum, GroupDistanceEnum
+from  tools.graph_utils import  GraphUtils as gu
 from algorithms.keyplayer import KeyPlayer as kp
 from algorithms.shortest_path import ShortestPath as sp
 from algorithms.local_topology import LocalTopology
@@ -100,7 +101,7 @@ class GreedyOptimization:
 
     @staticmethod
     @check_graph_consistency
-    #@greedy_search_initializer
+    @greedy_search_initializer
     def fragmentation(graph, k: int, metric: KpnegEnum, seed: int or None =None, max_distance: int or None =None,
                       cmode=CmodeEnum.igraph) -> (list, float):
         r"""
@@ -135,30 +136,21 @@ class GreedyOptimization:
         if metric == KpnegEnum.F or metric == KpnegEnum.dF:
             if max_distance is not None and not isinstance(max_distance, int) and max_distance > 1 and max_distance <= graph.vcount():
                 raise ValueError(u"'max_distance' must be an integer greater than one and lesser than the total number of nodes")
+            # TODO CHECK SPEED ON NODE NAME SORTING (STRING SORT) #######
+            node_names = graph.vs()["name"]
+            node_names.sort() #sort node names lexicographically
+            random.shuffle(node_names)
+            S_names = node_names[:k]
 
-            node_indices = graph.vs.indices
-            print(seed)
-            input()
-            if seed is not None:
-
-                random.seed(seed)
-
-            random.shuffle(node_indices)
-
-            print(node_indices)
-            input()
-
-            S = node_indices[0:k]
+            S = gu(graph=graph).get_node_indices(S_names)
+            S.sort()
 
             if graph.vcount() - k == 1:  # a size that leaves only one node left, a g-k < 1 is dealt by the decorator
-                S.sort()
                 final = graph.vs(S)["name"]
                 sys.stdout.write(
                     u"A node set of size {} leaves only one node, returning the maximum {} score (1) and a random node set {}. \n".format(
                         k, metric.name, final))
                 return final, 1
-
-            S.sort()
 
             if metric == KpnegEnum.F:
                 type_func = partial(kp.F)
@@ -185,7 +177,7 @@ class GreedyOptimization:
 
     @staticmethod
     @check_graph_consistency
-    #@greedy_search_initializer
+    @greedy_search_initializer
     def reachability(graph, k: int, metric: KpposEnum, seed=None, max_distance: int=None, m=None,
                      cmode=CmodeEnum.igraph) -> (list, float):
         r"""
@@ -227,34 +219,12 @@ class GreedyOptimization:
                 raise TypeError(u"The 'm' argument must be a positive integer value")
             else:
 
-                #print(graph.vs()["name"])
-                input()
-                print(seed)
-                input()
-
-                if seed is not None:
-                    random.seed(seed)
-
-                node_indices = graph.vs.indices
-                random.shuffle(node_indices)
-
-                print(node_indices)
-                input()
-                S = node_indices[0:k]
-                print(S)
-
-                S_names = []
-                for i in S:
-                    name = graph.vs(i)["name"]
-                    print (i, name)
-                    S_names.append(name)
-
-                S_names = graph.vs(S)["name"]
-                print(S_names)
-                print(S_names2)
-                # input()
-                sys.exit()
-                #S.sort() #non è lui
+                node_names = graph.vs()["name"]
+                node_names.sort()
+                random.shuffle(node_names)
+                S_names = node_names[:k]
+                S = gu(graph=graph).get_node_indices(S_names)
+                S.sort()
 
                 if metric == KpposEnum.mreach:
                     if cmode != CmodeEnum.igraph:
@@ -315,7 +285,6 @@ class GreedyOptimization:
         :param cmode: the implementation that will be used to compute the shortest paths. See :class:`~pyntacle.tools.enums.CmodeEnum`. Default is the igraph brute-force shortest path search.
         :param int,None seed: optional, a positive integer that can be used to replicate the greedy optimization run. If :py:class:`~None` (default), the greedy optimization may return different results at each run.
         :param GroupDistanceEnum distance_type: The definition of distance between any non-group and group nodes. It can be any value of the enumerator :class:`~pyntacle.tools.enums.GroupDistanceEnum`. By default, the minimum least distance :math:`D` between the group :math:`k` and the rest of the graph :math:`N-k` is used
-
         :return tuple: a tuple storing in ``[0]`` a list containing the node ``name`` attribute of the optimal *kp-set* and in ``[1]``  the optimal *kp-neg* value for the selected metric
 
         :raise KeyError: when an invalid :class:`~pyntacle.tools.enums.GroupCentralityEnum` is given
@@ -333,11 +302,13 @@ class GreedyOptimization:
             type_func = partial(LocalTopology.group_closeness, graph=graph, cmode=cmode, distance=distance_type)
         else:
             raise KeyError(
-                u"The parameter 'metric' is not valid. It must be one of the following: {}".format(list(GroupCentralityEnum)))
+                u"The argument 'metric' is not valid. It must be one of the following: {}".format(list(GroupCentralityEnum)))
 
-        node_indices = graph.vs.indices
-        random.shuffle(node_indices)
-        S = node_indices[0:k]
+        node_names = graph.vs()["name"]
+        node_names.sort()
+        random.shuffle(node_names)
+        S_names = node_names[:k]
+        S = gu(graph=graph).get_node_indices(S_names)
         S.sort()
 
         final, group_score = GreedyOptimization.__optimization_loop(graph, S, type_func)

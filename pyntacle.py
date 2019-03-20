@@ -159,7 +159,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                                                               max_help_position=100),
             usage=Fore.RED + Style.BRIGHT + "pyntacle keyplayer"
                   + Fore.GREEN + Style.BRIGHT + " {kp-finder, kp-info}"
-                  + Fore.LIGHTBLUE_EX + " --type {all | pos | neg | F | dF | dR | mreach}" + Fore.RED + " [arguments]\n" + Style.RESET_ALL)
+                  + Fore.LIGHTBLUE_EX + " --type {all | pos | neg | F | dF | dR | m-reach}" + Fore.RED + " [arguments]\n" + Style.RESET_ALL)
 
         # NOT prefixing the argument with -- means it's not optional
         parser.add_argument("-i", "--input-file", metavar="",
@@ -184,11 +184,11 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                             help="A flag that must be specified if the input network file (adjacency matrix, edge list, SIF file) "
                                  "does not contain a header. By default, we assume a header is present.")
 
-        parser.add_argument("-t", "--type", metavar="", choices=["pos", "neg", "all", "F", "dF", "dR", "mreach"],
+        parser.add_argument("-t", "--type", metavar="", choices=["pos", "neg", "all", "F", "dF", "dR", "m-reach"],
                             default="all",
                             help="The key player metric (or metrics) of interest. Choices are: "
                                  "'all' (all metrics), 'pos' (reachabiliy metrics: dR and m-reach),"
-                                 " 'neg' (fragmentation metrics: F and dF). 'dR', 'mreach', 'F', "
+                                 " 'neg' (fragmentation metrics: F and dF). 'dR', 'm-reach', 'F', "
                                  "'dF'. Default is 'all'.")
 
         parser.add_argument("-m", "--m-reach", metavar="", type=int, help="The maximum "

@@ -126,7 +126,7 @@ class PyntacleImporter:
         with open(file, "r") as adjmatrix:
             iterator = iter(adjmatrix.readline, '')
 
-            first_line = next(iterator, None).rstrip()
+            first_line = next(iterator, None).strip()
             if sep not in first_line:
                 raise WrongArgumentError(u'The specified separator "{}" is not present in the adjacency matrix file'.format(sep))
 
@@ -212,7 +212,7 @@ class PyntacleImporter:
     @staticmethod
     @input_file_checker
     @separator_sniffer
-    def Sif(file: str, sep: str or None=None, header: bool=True) -> Graph:
+    def Sif(file: str, sep: str or None = None, header: bool = True) -> Graph:
         r"""
         Imports a Simple Interaction File (SIF), a relaxed network file formats used by several visualization and analysis tools such as `Cytoscape <https://cytoscape.org/>`_
 
@@ -238,14 +238,14 @@ class PyntacleImporter:
         
             """:type: list[str]"""
             if header:
-                graph["sif_interaction_name"] = f.readline().rstrip('\n').split(sep)[1]
+                graph["sif_interaction_name"] = f.readline().strip().split(sep)[1]
             else:
                 graph["sif_interaction_name"] = None
                 
             nodeslist = []
             edgeslist = OrderedDict()
             for i, elem in enumerate(f):
-                elem = elem.rstrip('\n').split(sep)
+                elem = elem.strip().split(sep)
                 if len(elem) == 0:
                     pass  # this should be an empty line
     
@@ -288,7 +288,8 @@ class PyntacleImporter:
             nodeslist = list(set(nodeslist))
             graph.add_vertices(nodeslist)
             graph.add_edges(edgeslist.keys())
-            graph.es()["sif_interaction"] = list(edgeslist.values())
+            edgevals = [sorted(x) for x in edgeslist.values()] #sort interactions lexicographically
+            graph.es()["sif_interaction"] = edgevals
 
             # initialize graph
             util = gu(graph=graph)
@@ -379,7 +380,7 @@ class PyntacleImporter:
 
         for a in graph_attrs_dict:
             for k in graph_attrs_dict[a]:
-                AddAttributes.add_graph_attributes(graph, k, graph_attrs_dict[a][k])
+                AddAttributes.add_graph_attribute(graph, k, graph_attrs_dict[a][k])
                 if k == 'name':
                     graphname = k
 
@@ -388,7 +389,7 @@ class PyntacleImporter:
                 if a not in graph.vs()["name"]:
                     graph.add_vertex(name=a)
                 if k != 'name':
-                    AddAttributes.add_node_attributes(graph, k, [node_attrs_dict[a][k]], [a])
+                    AddAttributes.add_node_attribute(graph, k, [node_attrs_dict[a][k]], [a])
 
         for a in edge_attrs_dict:
             for n in a:
@@ -412,7 +413,7 @@ class PyntacleImporter:
 
         for a in edge_attrs_dict:
             for k in edge_attrs_dict[a]:
-                AddAttributes.add_edge_attributes(graph, k, [edge_attrs_dict[a][k]], [a])
+                AddAttributes.add_edge_attribute(graph, k, [edge_attrs_dict[a][k]], [a])
 
         sys.stdout.write(u"DOT from {} imported\n".format(os.path.basename(file)))
         return graph

@@ -455,19 +455,19 @@ class Metrics:
                 else:
                     nodes_list = graph.vs["name"]
                 for key in local_attributes_dict:
-                    AddAttributes.add_node_attributes(graph, key, local_attributes_dict[key], nodes_list)
+                    AddAttributes.add_node_attribute(graph, key, local_attributes_dict[key], nodes_list)
 
             elif self.args.which == 'global':
 
                 for key in global_attributes_dict:
-                    AddAttributes.add_graph_attributes(graph, key, global_attributes_dict[key])
+                    AddAttributes.add_graph_attribute(graph, key, global_attributes_dict[key])
                 PyntacleExporter.Binary(graph, binary_path)
 
                 if self.args.no_nodes:
                     binary_path_nonodes = os.path.join(self.args.directory, basename_graph + "_no_nodes" + ".graph")
                     sys.stdout.write(u"Saving a binary of the input graph without the requested nodes at path: {}\n".format(os.path.basename(binary_path_nonodes)))
                     for key in global_attributes_dict_nonodes:
-                        AddAttributes.add_graph_attributes(graph_nonodes, key, global_attributes_dict_nonodes[key])
+                        AddAttributes.add_graph_attribute(graph_nonodes, key, global_attributes_dict_nonodes[key])
                     
                     PyntacleExporter.Binary(graph_nonodes, binary_path_nonodes)
 

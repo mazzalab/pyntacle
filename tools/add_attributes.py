@@ -38,7 +38,7 @@ class AddAttributes:
     """
 
     @staticmethod
-    def add_graph_attributes(graph: Graph, attr_name: str, attr: object):
+    def add_graph_attribute(graph: Graph, attr_name: str, attr: object):
         r"""
         Add an attribute to a :py:class:`~igraph.Graph` object at the graph level.
 
@@ -63,7 +63,7 @@ class AddAttributes:
         graph[attr_name] = attr
 
     @staticmethod
-    def add_node_attributes(graph: Graph, attr_name: str, attr_list: list, nodes: list):
+    def add_node_attribute(graph: Graph, attr_name: str, attr_list: list, nodes: list):
         r"""
         Add attributes at the vertex level of a :py:class:`~igraph.Graph` object. These attributes must be stored in a
         :py:class:`list` whose elements must be sorted by ``nodes`` (a list of string storing the vertex ``name``
@@ -89,7 +89,7 @@ class AddAttributes:
             nodes = [nodes]
 
         
-        assert len(attr_list) == len(nodes), u"In add_node_attributes, length of attributes list cannot be " \
+        assert len(attr_list) == len(nodes), u"In add_node_attribute, length of attributes list cannot be " \
                                              "different from length of list of nodes."
         
         count = 0
@@ -114,7 +114,7 @@ class AddAttributes:
             sys.stdout.write(u"Node attribute {} added\n".format(attr_name))
 
     @staticmethod
-    def add_edge_attributes(graph: Graph, attr_name: str, attr_list: list, edges: list):
+    def add_edge_attribute(graph: Graph, attr_name: str, attr_list: list, edges: list):
         r"""
         Add edge attributes to the input :py:class:`igraph.Graph` object under the attribute name specified in ``attr_name``.
         The attributes must be stored in a list, passed to ``attr_list`` and sorted according to the target edge list,
@@ -137,7 +137,7 @@ class AddAttributes:
         if not isinstance(attr_name, str):
             raise TypeError("Attribute name is not a string")
         
-        assert len(attr_list) == len(edges), u"in add_edge_attributes, length of attributes list cannot be " \
+        assert len(attr_list) == len(edges), u"in add_edge_attribute, length of attributes list cannot be " \
                                              "different from length of list of nodes."
         count = 0
         err_count = 0

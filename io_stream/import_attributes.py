@@ -103,8 +103,8 @@ class ImportAttributes():
                     sys.stdout.write("ERROR: attributes should not start with a double underscore (\"__\") as"
                                      "this notation is reserved for private attributes. Skipping {}\n".format(attrs[0]))
                     continue
-                AddAttributes.add_graph_attributes(graph, attrs[0],
-                                                                 attrs[1])
+                AddAttributes.add_graph_attribute(graph, attrs[0],
+                                                  attrs[1])
         sys.stdout.write(u"Graph attributes from {} imported\n".format(os.path.basename(file)))
 
     @staticmethod
@@ -198,7 +198,7 @@ class ImportAttributes():
                         raise ValueError(u"multiple node hits")
                     
         for attr in attrs_dict:
-            AddAttributes.add_node_attributes(graph, attr, list(attrs_dict[attr].values()), list(attrs_dict[attr].keys()))
+            AddAttributes.add_node_attribute(graph, attr, list(attrs_dict[attr].values()), list(attrs_dict[attr].keys()))
                 
         sys.stdout.write(u"Node attributes from {} imported\n".format(os.path.basename(file)))
 
@@ -332,8 +332,8 @@ class ImportAttributes():
 
             else:
                 for attr in attrs_dict:
-                    AddAttributes.add_edge_attributes(graph, attr, list(attrs_dict[attr].values()),
-                                                                    list(attrs_dict[attr].keys()))
+                    AddAttributes.add_edge_attribute(graph, attr, list(attrs_dict[attr].values()),
+                                                     list(attrs_dict[attr].keys()))
                     sys.stdout.write("Edge attribute {} added\n".format(attr))
                     
         sys.stdout.write(u"Edge attributes from {} imported\n".format(os.path.basename(file)))

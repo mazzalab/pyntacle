@@ -73,11 +73,6 @@ class GroupCentrality():
         #verify that group distance is set if group closeness is specified
         distancedict = {"min": GroupDistanceEnum.minimum, "max":GroupDistanceEnum.maximum, "mean": GroupDistanceEnum.mean}
         if self.args.type in ["all", "closeness"]:
-            if self.args.group_distance is None:
-                sys.stdout.write(
-                    "'--group-distance/-D parameter must be specified for group closeness. It must be one of the followings: {}'. Quitting\n".format(
-                        ",".join(distancedict.keys())))
-                sys.exit(1)
             if self.args.group_distance not in distancedict.keys():
                 sys.stdout.write("'--group-distance/-D parameter must be one of the followings: {}'. Quitting\n".format(",".join(distancedict.keys())))
                 sys.exit(1)
@@ -238,7 +233,7 @@ class GroupCentrality():
                 if self.args.type in (["all", "degree"]):
                     sys.stdout.write(
                         u"Finding the best set(s) of nodes of size {0} that maximizes group degree using {1} thread{2}\n".format(
-                            self.args.k_size, group_distance.name, self.args.threads, plural))
+                            self.args.k_size, self.args.threads, plural))
                     bf_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_degree,
                                                   cmode=implementation, threads=self.args.threads)
                     sys.stdout.write(sep_line)
@@ -246,7 +241,7 @@ class GroupCentrality():
                 if self.args.type in (["all", "betweenness"]):
                     sys.stdout.write(
                         u"Finding the best set(s) of nodes of size {0} that maximizes group betweenness using {1} thread{2}\n".format(
-                            self.args.k_size, group_distance.name, self.args.threads, plural))
+                            self.args.k_size,  self.args.threads, plural))
 
                     bf_runner.run_groupcentrality(k = self.args.k_size, gr_type=GroupCentralityEnum.group_betweenness, cmode=implementation,threads=self.args.threads)
                     sys.stdout.write(sep_line)
@@ -254,7 +249,7 @@ class GroupCentrality():
                 if self.args.type in (["all", "closeness"]):
                     sys.stdout.write(
                         u"Finding the best set(s) of nodes of size {0} that maximizes group closeness using the {1} distance from the node set and {2} thread{3}\n".format(
-                            self.args.k_size, group_distance.name, self.args.threads, plural))
+                            self.args.k_size,  group_distance, self.args.threads, plural))
                     bf_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_closeness, cmode=implementation, threads=self.args.threads, distance=group_distance)
                     sys.stdout.write(sep_line)
 
@@ -277,13 +272,14 @@ class GroupCentrality():
                     results[kk][0] = ["None"]
 
                 if self.args.implementation == 'brute-force':
-                    "\n".join(['(' + ', '.join(x) + ')' for x in results[kk][0]])
+                    list_of_results = "\n".join(['(' + ', '.join(x) + ')' for x in results[kk][0]])
+
 
                 else:
                     list_of_results = "(" + ", ".join(results[kk][0]) + ")"
 
                 sys.stdout.write(
-                    u'Node set{0} of size {1} for {5} centrality {2}:\n{3}\nwith value {4}\n'.format(
+                    u'Best node set{0} of size {1} for {5} centrality {2}:\n{3}\nwith value {4}\n'.format(
                         plurals[0], self.args.k_size, plurals[1], list_of_results, results[kk][1], " ".join(kk.split("_")[:2])))
 
                 if kk.startswith(GroupCentralityEnum.group_closeness.name):
@@ -367,13 +363,13 @@ class GroupCentrality():
                 if attr_name in graph.attributes():
                     if not isinstance(graph[attr_name], dict):
                         sys.stdout.write("WARNING: attribute {} does not point to a dictionary, will overwrite".format(attr_name))
-                        AddAttributes.add_graph_attributes(graph, attr_name, {attr_key: attr_val})
+                        AddAttributes.add_graph_attribute(graph, attr_name, {attr_key: attr_val})
                     else:
                         if attr_key in graph[attr_name]:
                             sys.stdout.write("WARNING {} already present in the {} graph attribute, will overwrite\n".format(attr_key, attr_val))
                         graph[attr_name].update({attr_key: attr_val})
                 else:
-                    AddAttributes.add_graph_attributes(graph, attr_name, {attr_key: attr_val})
+                    AddAttributes.add_graph_attribute(graph, attr_name, {attr_key: attr_val})
 
             binary_prefix = "_".join([os.path.splitext(os.path.basename(self.args.input_file))[0], self.args.which, self.date])
             binary_path = os.path.join(self.args.directory, binary_prefix + ".graph")

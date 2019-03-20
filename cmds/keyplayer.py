@@ -290,12 +290,12 @@ class KeyPlayer:
                     results[kp].append(initial_results[kp])
 
                     sys.stdout.write(
-                        u"Key player set{0} of size {1} for negative key player index {2} {3}:\n{4}\nFinal {2} value: {5}\nStarting graph {2} was {6}\n".format(
+                        u"Best key player set{0} of size {1} for negative key player index {2} {3}:\n{4}\nFinal {2} value: {5}\nStarting graph {2} was {6}\n".format(
                             plurals[0], self.args.k_size, kp, plurals[1], list_of_results, results[kp][1], results[kp][2]))
                     sys.stdout.write("\n")
 
                 elif kp == KpposEnum.dR.name:
-                    sys.stdout.write(u"Key player set{0} of size {1} for positive key player index {2} {3}:\n{4}\nFinal {2} value: {5}\n".format(
+                    sys.stdout.write(u"Best key player set{0} of size {1} for positive key player index {2} {3}:\n{4}\nFinal {2} value: {5}\n".format(
                         plurals[0], self.args.k_size, kp, plurals[1], list_of_results, results[kp][1]))
                     sys.stdout.write("\n")
 
@@ -341,7 +341,7 @@ class KeyPlayer:
                                            cmode=implementation)
                 sys.stdout.write("\n")
 
-            if self.args.type in (['mreach', 'pos', 'all']):
+            if self.args.type in (['m-reach', 'pos', 'all']):
                 kp_runner.run_reachability(KpposEnum.mreach, m=self.args.m_reach,
                                            max_distance=self.args.max_distance, cmode=implementation)
                 sys.stdout.write("\n")
@@ -420,13 +420,13 @@ class KeyPlayer:
                 if attr_name in graph.attributes():
                     if not isinstance(graph[attr_name], dict):
                         sys.stdout.write("WARNING: attribute {} does not point to a dictionary, will overwrite\n".format(attr_name))
-                        AddAttributes.add_graph_attributes(graph, attr_name, {attr_key: attr_val})
+                        AddAttributes.add_graph_attribute(graph, attr_name, {attr_key: attr_val})
                     else:
                         if attr_key in graph[attr_name]:
                             sys.stdout.write("WARNING: {} already present in the {} graph attribute, will overwrite\n".format(attr_key, attr_val))
                         graph[attr_name].update({attr_key: attr_val})
                 else:
-                    AddAttributes.add_graph_attributes(graph, attr_name, {attr_key: attr_val})
+                    AddAttributes.add_graph_attribute(graph, attr_name, {attr_key: attr_val})
 
             binary_prefix = "_".join([os.path.splitext(os.path.basename(self.args.input_file))[0], self.args.which, self.date])
             binary_path = os.path.join(self.args.directory, binary_prefix + ".graph")

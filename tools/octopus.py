@@ -25,7 +25,6 @@ __license__ = u"""
   """
 
 import sys
-import random as rand
 from tools.add_attributes import AddAttributes
 from algorithms.local_topology import LocalTopology
 from algorithms.global_topology import GlobalTopology
@@ -58,23 +57,24 @@ def transform_nodes(nodes):
 
     return nodes
 
-
-def group_attributes(graph: Graph, attr_name: str, attr: dict):
+def add_gc_attributes(graph: Graph, attr_name: str, attr: dict, readd=False):
+    r"""
+    Reserved method for adding group centrality indices to the whole graph
     """
-    Internal method to deal with group centrality and key player graph attributes
-    """
 
-    if attr_name in graph.attributes():
-        if not isinstance(graph[attr_name], dict):
-            raise TypeError("{} is not a dictionary".format(attr_name))
+    if not isinstance(graph, Graph) is not Graph:
+        raise TypeError(u"`graph` argument is not a igraph.Graph")
 
-        sys.stdout.write("Appending new solution to the '{}' graph attribute\n".format(attr_name))
-        graph[attr_name].update(attr)
+    if not isinstance(attr_name, str):
+        raise TypeError(u"Attribute name is not a string")
 
-    else:
+    if not isinstance(attr, dict):
+        raise TypeError(u"`attr` is not a dict")
+    if attr_name not in graph.attributes() or graph[attr_name] is None or readd:
         sys.stdout.write("Initializing '{}' attribute \n".format(attr_name))
-        AddAttributes.add_graph_attributes(graph, attr_name, attr)
-
+        AddAttributes.add_graph_attribute(graph, attr_name, attr)
+    else:
+        graph[attr_name].update(attr)
 
 class Octopus:
     r"""
@@ -85,7 +85,7 @@ class Octopus:
     # Global properties
     @staticmethod
     @check_graph_consistency
-    def add_diameter(graph: Graph):
+    def diameter(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.diameter` method in
         :class:`~pyntacle.algorithms.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
@@ -95,12 +95,13 @@ class Octopus:
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
-
-        AddAttributes.add_graph_attributes(graph, GlobalAttributeEnum.diameter.name, GlobalTopology.diameter(graph))
+        sys.stdout.write("Computing diameter and storing in the graph {} attribute.\n".format(GlobalAttributeEnum.diameter.name))
+        AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.diameter.name, GlobalTopology.diameter(graph))
+        #sys.stdout.write("Diameter successfully added to graph.\n")
 
     @staticmethod
     @check_graph_consistency
-    def add_radius(graph: Graph):
+    def radius(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.radius` method in
         :class:`~pyntacle.algorithm.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
@@ -110,12 +111,14 @@ class Octopus:
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
-
-        AddAttributes.add_graph_attributes(graph, GlobalAttributeEnum.radius.name, GlobalTopology.radius(graph))
+        sys.stdout.write(
+            "Computing radius and storing in the graph {} attribute.\n".format(GlobalAttributeEnum.diameter.name))
+        AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.radius.name, GlobalTopology.radius(graph))
+        #sys.stdout.write("Radius successfully added to graph.\n")
 
     @staticmethod
     @check_graph_consistency
-    def add_components(graph: Graph):
+    def components(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.components` method in
         :class:`~pyntacle.algorithms.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
@@ -128,11 +131,11 @@ class Octopus:
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
 
-        AddAttributes.add_graph_attributes(graph, GlobalAttributeEnum.components.name, GlobalTopology.components(graph))
+        AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.components.name, GlobalTopology.components(graph))
 
     @staticmethod
     @check_graph_consistency
-    def add_density(graph: Graph):
+    def density(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.density` method in
         :class:`~pyntacle.algorithm.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
@@ -143,11 +146,11 @@ class Octopus:
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
 
-        AddAttributes.add_graph_attributes(graph, GlobalAttributeEnum.density.name, GlobalTopology.density(graph))
+        AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.density.name, GlobalTopology.density(graph))
 
     @staticmethod
     @check_graph_consistency
-    def add_pi(graph: Graph):
+    def pi(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.PI` method in
         :class:`~pyntacle.algorithms.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
@@ -158,11 +161,11 @@ class Octopus:
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
 
-        AddAttributes.add_graph_attributes(graph, GlobalAttributeEnum.pi.name, GlobalTopology.pi(graph))
+        AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.pi.name, GlobalTopology.pi(graph))
 
     @staticmethod
     @check_graph_consistency
-    def add_average_clustering_coefficient(graph: Graph):
+    def average_clustering_coefficient(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.average_clustering_coefficient` method in
         :class:`~pyntacle.algorithm.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
@@ -173,12 +176,12 @@ class Octopus:
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
 
-        AddAttributes.add_graph_attributes(graph, GlobalAttributeEnum.average_clustering_coefficient.name,
-                                           GlobalTopology.average_clustering_coefficient(graph))
+        AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.average_clustering_coefficient.name,
+                                          GlobalTopology.average_clustering_coefficient(graph))
 
     @staticmethod
     @check_graph_consistency
-    def add_weighted_clustering_coefficient(graph: Graph):
+    def weighted_clustering_coefficient(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.weighted_clustering_coefficient` method in
         :class:`~pyntacle.algorithms.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
@@ -189,12 +192,12 @@ class Octopus:
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
 
-        AddAttributes.add_graph_attributes(graph, GlobalAttributeEnum.weighted_clustering_coefficient.name,
-                                           GlobalTopology.weighted_clustering_coefficient(graph))
+        AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.weighted_clustering_coefficient.name,
+                                          GlobalTopology.weighted_clustering_coefficient(graph))
 
     @staticmethod
     @check_graph_consistency
-    def add_average_degree(graph: Graph):
+    def average_degree(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.average_degree` method in
         :class:`~pyntacle.algorithm.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
@@ -205,12 +208,12 @@ class Octopus:
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
 
-        AddAttributes.add_graph_attributes(graph, GlobalAttributeEnum.average_degree.name,
-                                           GlobalTopology.average_degree(graph))
+        AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.average_degree.name,
+                                          GlobalTopology.average_degree(graph))
 
     @staticmethod
     @check_graph_consistency
-    def add_average_closeness(graph: Graph):
+    def average_closeness(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.average_closeness` method in
         :class:`~pyntacle.algorithms.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
@@ -221,12 +224,12 @@ class Octopus:
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
 
-        AddAttributes.add_graph_attributes(graph, GlobalAttributeEnum.average_closeness.name,
-                                           GlobalTopology.average_closeness(graph))
+        AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.average_closeness.name,
+                                          GlobalTopology.average_closeness(graph))
 
     @staticmethod
     @check_graph_consistency
-    def add_average_eccentricity(graph: Graph):
+    def average_eccentricity(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.average_eccentricity` method in
         :class:`~pyntacle.algorithm.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
@@ -237,12 +240,12 @@ class Octopus:
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
 
-        AddAttributes.add_graph_attributes(graph, GlobalAttributeEnum.average_eccentricity.name,
-                                           GlobalTopology.average_eccentricity(graph))
+        AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.average_eccentricity.name,
+                                          GlobalTopology.average_eccentricity(graph))
 
     @staticmethod
     @check_graph_consistency
-    def add_average_radiality(graph: Graph):
+    def average_radiality(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.average_radiality` method in
         :class:`~pyntacle.algorithms.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
@@ -255,12 +258,12 @@ class Octopus:
 
         cmode = get_cmode(graph)
 
-        AddAttributes.add_graph_attributes(graph, GlobalAttributeEnum.average_radiality.name,
-                                           GlobalTopology.average_radiality(graph, cmode))
+        AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.average_radiality.name,
+                                          GlobalTopology.average_radiality(graph, cmode))
 
     @staticmethod
     @check_graph_consistency
-    def add_average_radiality_reach(graph: Graph):
+    def average_radiality_reach(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.average_radiality_reach` method in
         :class:`~pyntacle.algorithms.global_topology.GlobalTopology` and adds it to the input :py:class:`~igraph.Graph`
@@ -272,29 +275,12 @@ class Octopus:
         """
 
         cmode = get_cmode(graph)
-        AddAttributes.add_graph_attributes(graph, GlobalAttributeEnum.average_radiality_reach.name,
-                                           GlobalTopology.average_radiality_reach(graph, cmode))
+        AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.average_radiality_reach.name,
+                                          GlobalTopology.average_radiality_reach(graph, cmode))
 
     @staticmethod
     @check_graph_consistency
-    def add_average_shortest_path_length(graph: Graph):
-        r"""
-        Wraps the :func:`~pyntacle.algorithms.shortest_path.ShortestPath.average_shortest_path_length` method in
-        :class:`~pyntacle.algorithms.shortest_path.ShortestPath` and adds it to the input :py:class:`~igraph.Graph`
-        object under the graph attribute ``average_shortest_path_length``.
-
-        .. note: if the attribute already exists in  the input graph, it will be overwritten
-
-        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
-        """
-        cmode = get_cmode(graph)
-        AddAttributes.add_graph_attributes(graph, GlobalAttributeEnum.average_shortest_path_length.name,
-                                           ShortestPath.average_global_shortest_path_length(
-                                               graph, cmode))
-
-    @staticmethod
-    @check_graph_consistency
-    def add_average_global_shortest_path_length(graph: Graph):
+    def average_global_shortest_path_length(graph: Graph):
         r"""
         Adds the average among all geodesics of the input :py:class:`~igraph.Graph` object by means of the
         :func:`~pyntacle.algorithms.shortest_path.ShortestPaths.average_global_shortest_path_length`
@@ -306,12 +292,12 @@ class Octopus:
         :param graph::param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
         cmode = get_cmode(graph)
-        AddAttributes.add_graph_attributes(graph, GlobalAttributeEnum.average_global_shortest_path_length.name,
-                                           ShortestPath.average_global_shortest_path_length(graph, cmode))
+        AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.average_global_shortest_path_length.name,
+                                          ShortestPath.average_global_shortest_path_length(graph, cmode))
 
     @staticmethod
     @check_graph_consistency
-    def add_median_global_shortest_path_length(graph: Graph):
+    def median_global_shortest_path_length(graph: Graph):
         r"""
         Adds the median value of all the possible shortest path lengths in the input :py:class:'igraph.Graph' object by
         wrapping the :func:`~pyntacle.algorithms.shortest_path.ShortestPaths.median_global_shortest_path_length` method in
@@ -321,12 +307,12 @@ class Octopus:
 
         :param graph::param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
-        AddAttributes.add_graph_attributes(graph, GlobalAttributeEnum.median_global_shortest_path_length.name,
-                                           ShortestPath.median_global_shortest_path_length(graph))
+        AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.median_global_shortest_path_length.name,
+                                          ShortestPath.median_global_shortest_path_length(graph))
 
     @staticmethod
     @check_graph_consistency
-    def add_completeness_naive(graph: Graph):
+    def completeness_naive(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.sparseness.Sparseness.completeness_naive` method in
         :class:`~pyntacle.algorithms.sparseness.Sparseness` and adds it to the input :py:class:`~igraph.Graph`
@@ -336,12 +322,12 @@ class Octopus:
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
-        AddAttributes.add_graph_attributes(graph, GlobalAttributeEnum.completeness_naive.name,
-                                           Sparseness.completeness_naive(graph))
+        AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.completeness_naive.name,
+                                          Sparseness.completeness_naive(graph))
 
     @staticmethod
     @check_graph_consistency
-    def add_completeness(graph: Graph):
+    def completeness(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.sparseness.Sparseness.completeness_naive` method in
         :class:`~pyntacle.algorithms.sparseness.Sparseness` and adds it to the input :py:class:`~igraph.Graph`
@@ -351,12 +337,12 @@ class Octopus:
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
-        AddAttributes.add_graph_attributes(graph, GlobalAttributeEnum.completeness.name,
-                                           Sparseness.completeness(graph))
+        AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.completeness.name,
+                                          Sparseness.completeness(graph))
 
     @staticmethod
     @check_graph_consistency
-    def add_compactness(graph: Graph, correct: bool = False):
+    def compactness(graph: Graph, correct: bool = False):
         r"""
         Wraps the :func:`~pyntacle.algorithms.sparseness.Sparseness.compactness` method in
         :class:`~pyntacle.algorithms.sparseness.Sparseness` and adds it to the input :py:class:`~igraph.Graph`
@@ -367,13 +353,13 @@ class Octopus:
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
 
         """
-        AddAttributes.add_graph_attributes(graph, GlobalAttributeEnum.compactness.name,
-                                           Sparseness.compactness(graph, correct=correct))
+        AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.compactness.name,
+                                          Sparseness.compactness(graph, correct=correct))
 
     # Local properties
     @staticmethod
     @check_graph_consistency
-    def add_degree(graph: Graph, nodes: str or list or None = None):
+    def degree(graph: Graph, nodes: str or list or None = None):
         r"""
         Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.degree` method in
         :class:`~pyntacle.algorithms.local_topology.LocalTopology` and adds it to the input :py:class:`~igraph.Graph`
@@ -391,12 +377,12 @@ class Octopus:
         else:
             nodes = graph.vs["name"]
 
-        AddAttributes.add_node_attributes(graph, LocalAttributeEnum.degree.name,
-                                          LocalTopology.degree(graph, nodes), nodes)
+        AddAttributes.add_node_attribute(graph, LocalAttributeEnum.degree.name,
+                                         LocalTopology.degree(graph, nodes), nodes)
 
     @staticmethod
     @check_graph_consistency
-    def add_group_degree(graph: Graph, nodes: list or str):
+    def group_degree(graph: Graph, nodes: list or str):
         r"""
         Computes the *group degree* by means of the :func:`~pyntacle.algorithms.local_topology.LocalTopology.group_degree`
         for a set of nodes of the input :py:class:`~igraph.Graph` object. It adds the group degree value for the
@@ -409,13 +395,13 @@ class Octopus:
         """
         nodes = transform_nodes(nodes)
 
-        AddAttributes.add_graph_attributes(graph, "_".join([GroupCentralityEnum.group_degree.name, "info"]),
+        add_gc_attributes(graph, "_".join([GroupCentralityEnum.group_degree.name, "info"]),
                          {tuple(sorted(nodes)): LocalTopology.group_degree(graph, nodes)})
 
 
     @staticmethod
     @check_graph_consistency
-    def add_betweenness(graph: Graph, nodes: str or list or None = None):
+    def betweenness(graph: Graph, nodes: str or list or None = None):
         r"""
         Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.betweenness` method in
         :class:`~pyntacle.algorithms.local_topology.LocalTopology` and adds it to the input :py:class:`~igraph.Graph`
@@ -432,12 +418,12 @@ class Octopus:
         else:
             nodes = graph.vs["name"]
 
-        AddAttributes.add_node_attributes(graph, LocalAttributeEnum.betweenness.name,
-                                          LocalTopology.betweenness(graph, nodes), nodes)
+        AddAttributes.add_node_attribute(graph, LocalAttributeEnum.betweenness.name,
+                                         LocalTopology.betweenness(graph, nodes), nodes)
 
     @staticmethod
     @check_graph_consistency
-    def add_group_betweenness(graph: Graph, nodes: list or str):
+    def group_betweenness(graph: Graph, nodes: list or str):
         r"""
         Computes the *group betweenness* by means of the :func:`~pyntacle.algorithms.local_topology.LocalTopology.group_betweenness` Pyntacle method
         for a set of nodes of the input :py:class:`~igraph.Graph` object. It adds the group betweenness value for the
@@ -452,12 +438,12 @@ class Octopus:
 
         nodes = transform_nodes(nodes)
 
-        AddAttributes.add_graph_attributes(graph, "_".join([GroupCentralityEnum.group_betweenness.name, "info"]),
+        add_gc_attributes(graph, "_".join([GroupCentralityEnum.group_betweenness.name, "info"]),
                          {tuple(sorted(nodes)): LocalTopology.group_betweenness(graph=graph, nodes=nodes, cmode=cmode)})
 
     @staticmethod
     @check_graph_consistency
-    def add_clustering_coefficient(graph: Graph, nodes: str or list or None = None):
+    def clustering_coefficient(graph: Graph, nodes: str or list or None = None):
         r"""
         Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.clustering_coefficient` method in
         :class:`~pyntacle.algorithms.local_topology.LocalTopology` and adds it to the input :py:class:`~igraph.Graph`
@@ -475,12 +461,12 @@ class Octopus:
         else:
             nodes = graph.vs["name"]
 
-        AddAttributes.add_node_attributes(graph, LocalAttributeEnum.clustering_coefficient.name,
-                                          LocalTopology.clustering_coefficient(graph, nodes), nodes)
+        AddAttributes.add_node_attribute(graph, LocalAttributeEnum.clustering_coefficient.name,
+                                         LocalTopology.clustering_coefficient(graph, nodes), nodes)
 
     @staticmethod
     @check_graph_consistency
-    def add_closeness(graph: Graph, nodes: str or list or None = None):
+    def closeness(graph: Graph, nodes: str or list or None = None):
         r"""
         Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.closeness` method in
         :class:`~pyntacle.algorithms.local_topology.LocalTopology` and adds it to the input :py:class:`~igraph.Graph`
@@ -498,12 +484,12 @@ class Octopus:
         else:
             nodes = graph.vs["name"]
 
-        AddAttributes.add_node_attributes(graph, LocalAttributeEnum.closeness.name,
-                                          LocalTopology.closeness(graph, nodes), nodes)
+        AddAttributes.add_node_attribute(graph, LocalAttributeEnum.closeness.name,
+                                         LocalTopology.closeness(graph, nodes), nodes)
 
     @staticmethod
     @check_graph_consistency
-    def add_group_closeness(graph: Graph, nodes: str or list, distance: GroupDistanceEnum = GroupDistanceEnum.minimum):
+    def group_closeness(graph: Graph, nodes: str or list, distance: GroupDistanceEnum = GroupDistanceEnum.minimum):
         r"""
         Computes the *group closeness* by means of the :func:`~pyntacle.algorithms.local_topology.LocalTopology.group_closeness` Pyntacle method
         for a set of nodes of the input :py:class:`~igraph.Graph` object. The group closeness can be computed using three possible criterions for defining the distance from the node set to the rest of the graph:
@@ -525,12 +511,12 @@ class Octopus:
         nodes = transform_nodes(nodes)
         cmode = get_cmode(graph)
 
-        AddAttributes.add_graph_attributes(graph, "_".join([GroupCentralityEnum.group_closeness.name, distance.name, "info"]),
+        add_gc_attributes(graph, "_".join([GroupCentralityEnum.group_closeness.name, distance.name, "info"]),
                          {tuple(sorted(nodes)): LocalTopology.group_closeness(graph, nodes, distance, cmode)})
 
     @staticmethod
     @check_graph_consistency
-    def add_eccentricity(graph: Graph, nodes: str or list or None = None):
+    def eccentricity(graph: Graph, nodes: str or list or None = None):
         r"""
         Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.eccentricity` method in
         :class:`~pyntacle.algorithms.local_topology.LocalTopology` and adds it to the input :py:class:`~igraph.Graph`
@@ -548,12 +534,12 @@ class Octopus:
         else:
             nodes = graph.vs["name"]
 
-        AddAttributes.add_node_attributes(graph, LocalAttributeEnum.eccentricity.name,
-                                          LocalTopology.eccentricity(graph, nodes), nodes)
+        AddAttributes.add_node_attribute(graph, LocalAttributeEnum.eccentricity.name,
+                                         LocalTopology.eccentricity(graph, nodes), nodes)
 
     @staticmethod
     @check_graph_consistency
-    def add_radiality(graph: Graph, nodes: str or list or None = None):
+    def radiality(graph: Graph, nodes: str or list or None = None):
         r"""
         Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.radiality` method in
         :class:`~pyntacle.algorithms.local_topology.LocalTopology` and adds it to the input :py:class:`~igraph.Graph`
@@ -572,13 +558,13 @@ class Octopus:
         else:
             nodes = graph.vs["name"]
 
-        AddAttributes.add_node_attributes(graph, LocalAttributeEnum.radiality.name,
-                                          LocalTopology.radiality(graph, nodes, cmode),
-                                          nodes)
+        AddAttributes.add_node_attribute(graph, LocalAttributeEnum.radiality.name,
+                                         LocalTopology.radiality(graph, nodes, cmode),
+                                         nodes)
 
     @staticmethod
     @check_graph_consistency
-    def add_radiality_reach(graph: Graph, nodes: str or list or None = None):
+    def radiality_reach(graph: Graph, nodes: str or list or None = None):
         r"""
         Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.radiality_reach` method in
         :class:`~pyntacle.algorithms.local_topology.LocalTopology` and adds it to the input :py:class:`~igraph.Graph`
@@ -597,12 +583,12 @@ class Octopus:
         else:
             nodes = graph.vs["name"]
 
-        AddAttributes.add_node_attributes(graph, LocalAttributeEnum.radiality_reach.name,
-                                          LocalTopology.radiality_reach(graph, nodes, cmode), nodes)
+        AddAttributes.add_node_attribute(graph, LocalAttributeEnum.radiality_reach.name,
+                                         LocalTopology.radiality_reach(graph, nodes, cmode), nodes)
 
     @staticmethod
     @check_graph_consistency
-    def add_eigenvector_centrality(graph: Graph, nodes: str or list or None = None, scaled: bool = False):
+    def eigenvector_centrality(graph: Graph, nodes: str or list or None = None, scaled: bool = False):
         r"""
         Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.eigenvector_centrality` method in
         :class:`~pyntacle.algorithms.local_topology.LocalTopology` and adds it to the input :py:class:`~igraph.Graph`
@@ -621,14 +607,14 @@ class Octopus:
         else:
             nodes = graph.vs["name"]
 
-        AddAttributes.add_node_attributes(graph, LocalAttributeEnum.eigenvector_centrality.name,
-                                          LocalTopology.eigenvector_centrality(graph, nodes, scaled),
-                                          nodes)
+        AddAttributes.add_node_attribute(graph, LocalAttributeEnum.eigenvector_centrality.name,
+                                         LocalTopology.eigenvector_centrality(graph, nodes, scaled),
+                                         nodes)
 
     @staticmethod
     @check_graph_consistency
-    def add_pagerank(graph: Graph, nodes: str or list or None = None, weights: float or int or None = None,
-                     damping: float = 0.85):
+    def pagerank(graph: Graph, nodes: str or list or None = None, weights: float or int or None = None,
+                 damping: float = 0.85):
         r"""
         Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.pagerank` method in
         :class:`~pyntacle.algorithms.local_topology.LocalTopology` and adds it to the input :py:class:`~igraph.Graph`
@@ -651,13 +637,13 @@ class Octopus:
         if "weights" in graph.es.attributes():
             weights = graph.es["weights"]
 
-        AddAttributes.add_node_attributes(graph, LocalAttributeEnum.pagerank.name,
-                                          LocalTopology.pagerank(graph, nodes, weights, damping),
-                                          nodes)
+        AddAttributes.add_node_attribute(graph, LocalAttributeEnum.pagerank.name,
+                                         LocalTopology.pagerank(graph, nodes, weights, damping),
+                                         nodes)
 
     @staticmethod
     @check_graph_consistency
-    def add_shortest_paths(graph: Graph, nodes: str or list or None = None):
+    def shortest_paths(graph: Graph, nodes: str or list or None = None):
         r"""
         Computes the shortest paths for a node, a group of nodes or all nodes in the :py:class:`igraph.Graph` object by wrapping the
         :func:`~pyntacle.algorithms.shortest_path.ShortestPath.get_shortestpaths` methods in :class:`~pyntacle.algorithms.shortest_path.ShortestPath`
@@ -688,11 +674,11 @@ class Octopus:
         # cast everything not infinite to integer
         distances = [[int(x) if not isinf(x) else x for x in y] for y in distances]
 
-        AddAttributes.add_node_attributes(graph, LocalAttributeEnum.shortest_paths.name, distances, nodes)
+        AddAttributes.add_node_attribute(graph, LocalAttributeEnum.shortest_paths.name, distances, nodes)
 
     @staticmethod
     @check_graph_consistency
-    def add_average_shortest_path_length(graph: Graph, nodes: str or list or None = None):
+    def average_shortest_path_length(graph: Graph, nodes: str or list or None = None):
         r"""
         Computes the average shortest path length for a node, a group of nodes or all nodes in the input :py:class:`igraph.Graph` object  by wrapping the
         :func:`~pyntacle.algorithms.shortest_path.ShortestPath.average_shortest_path_lengths` methods in :class:`~pyntacle.algorithms.shortest_path.ShortestPath`
@@ -711,13 +697,13 @@ class Octopus:
         else:
             nodes = graph.vs["name"]
 
-        AddAttributes.add_node_attributes(graph, LocalAttributeEnum.average_shortest_path_length.name,
-                                          ShortestPath.average_shortest_path_lengths(graph, nodes, cmode),
-                                          nodes)
+        AddAttributes.add_node_attribute(graph, LocalAttributeEnum.average_shortest_path_length.name,
+                                         ShortestPath.average_shortest_path_lengths(graph, nodes, cmode),
+                                         nodes)
 
     @staticmethod
     @check_graph_consistency
-    def add_median_shortest_path_length(graph: Graph, nodes: str or list or None = None):
+    def median_shortest_path_length(graph: Graph, nodes: str or list or None = None):
         r"""
         Computes the median shortest path starting from a node, a group of nodes or all nodes in a the input :py:class:`igraph.Graph` object towards every other node in the same graph by wrapping the
         :func:`~pyntacle.algorithms.shortest_path.ShortestPath.median_shortest_path_lengths` methods in :class:`~pyntacle.algorithms.shortest_path.ShortestPath`
@@ -735,13 +721,13 @@ class Octopus:
         else:
             nodes = graph.vs["name"]
 
-        AddAttributes.add_node_attributes(graph, LocalAttributeEnum.median_shortest_path_length.name,
-                                          ShortestPath.median_shortest_path_lengths(graph, nodes, cmode),
-                                          nodes)
+        AddAttributes.add_node_attribute(graph, LocalAttributeEnum.median_shortest_path_length.name,
+                                         ShortestPath.median_shortest_path_lengths(graph, nodes, cmode),
+                                         nodes)
 
     @staticmethod
     @check_graph_consistency
-    def add_F(graph: Graph):
+    def F(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.keyplayer.KeyPlayer.F` method that quantifies the *fragmentation* status of the
         network (the input :py:class:`igraph.Graph` object) and embed it in the graph under the graph attribute ``F``. For detailed
@@ -749,11 +735,11 @@ class Octopus:
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
-        AddAttributes.add_graph_attributes(graph, KpnegEnum.F.name, KeyPlayer.F(graph))
+        AddAttributes.add_graph_attribute(graph, KpnegEnum.F.name, KeyPlayer.F(graph))
 
     @staticmethod
     @check_graph_consistency
-    def add_dF(graph: Graph, max_distance: int or None = None):
+    def dF(graph: Graph, max_distance: int or None = None):
         r"""
         Wraps the :func:`~pyntacle.algorithms.keyplayer.KeyPlayer.dF` method that quantifies the *distance-based-fragmentation* status of the
         network (the input :py:class:`igraph.Graph` object) and embed it in the graph under the graph attribute ``F``. For detailed
@@ -764,12 +750,12 @@ class Octopus:
         :param int,None max_distance: The maximum shortest path length over which two nodes are considered unreachable. Default is :py:class:`None` (distances are preserved).
         """
         cmode = get_cmode(graph)
-        AddAttributes.add_graph_attributes(graph, KpnegEnum.dF.name, KeyPlayer.dF(graph, cmode=cmode,
-                                                                                  max_distance=max_distance))
+        AddAttributes.add_graph_attribute(graph, KpnegEnum.dF.name, KeyPlayer.dF(graph, cmode=cmode,
+                                                                                 max_distance=max_distance))
 
     @staticmethod
     @check_graph_consistency
-    def add_kp_F(graph: Graph, nodes: list or str):
+    def kp_F(graph: Graph, nodes: list or str):
         r"""
         Removes a single nodes or a group of nodes, (identified by the vertex ``name`` attribute) belonging to the
         input graph and computes the resulting *fragmentation* (*F*) status of the graph by means of the
@@ -792,13 +778,13 @@ class Octopus:
         kpobj = kpw(graph=graph, nodes=nodes)
         kpobj.run_fragmentation(KpnegEnum.F)
         results_dict = kpobj.get_results()
-        AddAttributes.add_graph_attributes(graph,
+        add_gc_attributes(graph,
                          KpnegEnum.F.name + '_info',
                          {tuple(sorted(results_dict[KpnegEnum.F.name][0])): results_dict[KpnegEnum.F.name][1]})
 
     @staticmethod
     @check_graph_consistency
-    def add_kp_dF(graph: Graph, nodes: str or list, max_distance=None):
+    def kp_dF(graph: Graph, nodes: str or list, max_distance=None):
         r"""
         Removes a single nodes or a group of nodes, (identified by the vertex ``name`` attribute) belonging to the input
         graph and computes the resulting *distance-based fragmentation* (*dF*) index by means of the :func:`pyntacle.algorithms.keyplayer.KeyPlayer.dF`
@@ -822,13 +808,13 @@ class Octopus:
         kpobj = kpw(graph=graph, nodes=nodes)
         kpobj.run_fragmentation(KpnegEnum.dF, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
-        AddAttributes.add_graph_attributes(graph,
+        add_gc_attributes(graph,
                          KpnegEnum.dF.name + '_info',
                          {tuple(sorted(results_dict[KpnegEnum.dF.name][0])): results_dict[KpnegEnum.dF.name][1]})
 
     @staticmethod
     @check_graph_consistency
-    def add_kp_dR(graph: Graph, nodes: str or list, max_distance=None):
+    def kp_dR(graph: Graph, nodes: str or list, max_distance=None):
         r"""
         Computes the distance-weighted reach (*dR*) for a given *key player* set (kp-set).
         by means of the :func:`~pyntacle.algorithms.keyplayer.KeyPlayer.dR` Pyntacle  method.
@@ -852,13 +838,13 @@ class Octopus:
         kpobj = kpw(graph=graph, nodes=nodes)
         kpobj.run_reachability(KpposEnum.dR, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
-        AddAttributes.add_graph_attributes(graph,
+        add_gc_attributes(graph,
                          KpposEnum.dR.name + '_info',
                          {tuple(sorted(results_dict[KpposEnum.dR.name][0])): results_dict[KpposEnum.dR.name][1]})
 
     @staticmethod
     @check_graph_consistency
-    def add_kp_mreach(graph: Graph, nodes: str or list, m: int, max_distance: int or None = None):
+    def kp_mreach(graph: Graph, nodes: str or list, m: int, max_distance: int or None = None):
         r"""
         Computes the *m-reach* metric for a given *key player* set (kp-set). Nodes are identified by the vertex ``name`` attribute and must belong to the input graph and computes the resulting dR value of these nodes in the graph by means of the :func:`~pyntacle.algorithms.keyplayer.KeyPlayer.dR` Pyntacle  method.
 
@@ -883,7 +869,7 @@ class Octopus:
         kpobj.run_reachability(KpposEnum.mreach, m=m, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
         attr_name = KpposEnum.mreach.name + '_{}_info'.format(str(m))
-        AddAttributes.add_graph_attributes(graph,
+        add_gc_attributes(graph,
                          attr_name, {
                              tuple(sorted(results_dict[KpposEnum.mreach.name][0])): results_dict[KpposEnum.mreach.name][
                                  1]})
@@ -891,7 +877,7 @@ class Octopus:
     # Greedy optimization
     @staticmethod
     @check_graph_consistency
-    def add_GO_F(graph: Graph, k: int, seed: int or None = None):
+    def GO_F(graph: Graph, k: int, seed: int or None = None):
         r"""
         Performs a greedily-optimized search on the input graph to search the optimal *key-player* set (kp-set) of nodes of size :math:`k` for the
         *fragmentation* (*F*) index. It does so by wrapping the :func:`~algorithms.greedy_optimization.GreedyOptimization.fragmentation`
@@ -910,13 +896,13 @@ class Octopus:
         kpobj = gow(graph=graph)
         kpobj.run_fragmentation(k, KpnegEnum.F, seed=seed)
         results_dict = kpobj.get_results()
-        AddAttributes.add_graph_attributes(graph,
+        add_gc_attributes(graph,
                          KpnegEnum.F.name + '_greedy',
                          {tuple(sorted(results_dict[KpnegEnum.F.name][0])): results_dict[KpnegEnum.F.name][1]})
 
     @staticmethod
     @check_graph_consistency
-    def add_GO_dF(graph: Graph, k: int, max_distance: int or None = None, seed: int or None = None):
+    def GO_dF(graph: Graph, k: int, max_distance: int or None = None, seed: int or None = None):
         r"""
         Performs a greedily-optimized search on the input graph to search the optimal *key-player* set (kp-set) of nodes of size :math:`k` for the
         *distance-based fragmentation* (*dF*) index. It does so by wrapping the :func:`~pyntacle.algorithms.greedy_optimization.GreedyOptimization.fragmentation`
@@ -940,13 +926,13 @@ class Octopus:
         kpobj = gow(graph=graph)
         kpobj.run_fragmentation(k, KpnegEnum.dF, max_distance=max_distance, seed=seed, cmode=cmode)
         results_dict = kpobj.get_results()
-        AddAttributes.add_graph_attributes(graph,
+        add_gc_attributes(graph,
                          KpnegEnum.dF.name + '_greedy',
                          {tuple(sorted(results_dict[KpnegEnum.dF.name][0])): results_dict[KpnegEnum.dF.name][1]})
 
     @staticmethod
     @check_graph_consistency
-    def add_GO_dR(graph: Graph, k: int, max_distance: int or None = None, seed: int or None = None):
+    def GO_dR(graph: Graph, k: int, max_distance: int or None = None, seed: int or None = None):
         r"""
         Performs a greedily-optimized search on the input graph to search the optimal *key-player* set (kp-set) of nodes of size :math:`k` for the
         *distance-weighted reach* (*dR*) index. It does so by wrapping the :func:`~pyntacle.algorithms.greedy_optimization.GreedyOptimization.reachability`
@@ -968,13 +954,13 @@ class Octopus:
         kpobj = gow(graph=graph)
         kpobj.run_reachability(k, KpposEnum.dR, max_distance=max_distance, seed=seed, cmode=cmode)
         results_dict = kpobj.get_results()
-        AddAttributes.add_graph_attributes(graph, KpposEnum.dR.name + '_greedy',
+        add_gc_attributes(graph, KpposEnum.dR.name + '_greedy',
                          {tuple(sorted(results_dict[KpposEnum.dR.name][0])): results_dict[KpposEnum.dR.name][1]})
 
     @staticmethod
     @check_graph_consistency
-    def add_GO_mreach(graph: Graph, k: int, m: int or None = None, max_distance: int or None = None,
-                      seed: int or None = None):
+    def GO_mreach(graph: Graph, k: int, m: int or None = None, max_distance: int or None = None,
+                  seed: int or None = None):
         r"""
         Performs a greedily-optimized search on the input graph to search the optimal *key-player* set (kp-set) of nodes of size :math:`k` for the
         *distance-weighted reach* (*m-reach*) index. It does so by wrapping the :func:`~pyntacle.algorithms.greedy_optimization.GreedyOptimization.reachability`
@@ -998,13 +984,13 @@ class Octopus:
         kpobj.run_reachability(k, KpposEnum.mreach, m=m, max_distance=max_distance, seed=seed, cmode=cmode)
         results_dict = kpobj.get_results()
         attr_name = KpposEnum.mreach.name + '_{}_greedy'.format(str(m))
-        AddAttributes.add_graph_attributes(graph,attr_name, {
+        add_gc_attributes(graph,attr_name, {
                              tuple(sorted(results_dict[KpposEnum.mreach.name][0])): results_dict[KpposEnum.mreach.name][
                                  1]})
 
     @staticmethod
     @check_graph_consistency
-    def add_GO_group_degree(graph: Graph, k: int, seed: int or None = None):
+    def GO_group_degree(graph: Graph, k: int, seed: int or None = None):
         r"""
         Performs a greedily-optimized search on the input graph to search the optimal node set of size :math:`k` for  group
         degree. It does so by wrapping the :func:`~pyntacle.algorithms.greedy_optimization.GreedyOptimization.groupcentrality`
@@ -1023,13 +1009,13 @@ class Octopus:
         kpobj = gow(graph=graph)
         kpobj.run_groupcentrality(k, GroupCentralityEnum.group_degree, seed=seed)
         results_dict = kpobj.get_results()
-        AddAttributes.add_graph_attributes(graph, GroupCentralityEnum.group_degree.name + '_greedy',
+        add_gc_attributes(graph, GroupCentralityEnum.group_degree.name + '_greedy',
                          {tuple(sorted(results_dict[GroupCentralityEnum.group_degree.name][0])):
                               results_dict[GroupCentralityEnum.group_degree.name][1]})
 
     @staticmethod
     @check_graph_consistency
-    def add_GO_group_betweeness(graph: Graph, k: int, seed: int or None = None):
+    def GO_group_betweeness(graph: Graph, k: int, seed: int or None = None):
         r"""
         Performs a greedily-optimized search on the input graph to search the optimal node set of size :math:`k` for  group
         betweenness. It does so by wrapping the :func:`~pyntacle.algorithms.greedy_optimization.GreedyOptimization.groupcentrality`
@@ -1048,14 +1034,14 @@ class Octopus:
         kpobj = gow(graph=graph)
         kpobj.run_groupcentrality(k, GroupCentralityEnum.group_betweenness, seed=seed, cmode=cmode)
         results_dict = kpobj.get_results()
-        AddAttributes.add_graph_attributes(graph, GroupCentralityEnum.group_betweenness.name + '_greedy',
+        add_gc_attributes(graph, GroupCentralityEnum.group_betweenness.name + '_greedy',
                          {tuple(sorted(results_dict[GroupCentralityEnum.group_betweenness.name][0])):
                               results_dict[GroupCentralityEnum.group_betweenness.name][1]})
 
     @staticmethod
     @check_graph_consistency
-    def add_GO_group_closeness(graph: Graph, k: int, seed: int or None = None,
-                               distance: GroupDistanceEnum = GroupDistanceEnum.minimum):
+    def GO_group_closeness(graph: Graph, k: int, seed: int or None = None,
+                           distance: GroupDistanceEnum = GroupDistanceEnum.minimum):
         r"""
         Performs a greedily-optimized search on the input graph to search the optimal node set of size :math:`k` for  group
         closeness. It does so by wrapping the :func:`~pyntacle.algorithms.greedy_optimization.GreedyOptimization.groupcentrality`
@@ -1076,14 +1062,14 @@ class Octopus:
         kpobj = gow(graph=graph)
         kpobj.run_groupcentrality(k, GroupCentralityEnum.group_betweenness, seed=seed, cmode=cmode, distance=distance)
         results_dict = kpobj.get_results()
-        AddAttributes.add_graph_attributes(graph, GroupCentralityEnum.group_closeness.name + "_" + distance.name + '_greedy',
+        add_gc_attributes(graph, GroupCentralityEnum.group_closeness.name + "_" + distance.name + '_greedy',
                          {tuple(sorted(results_dict[GroupCentralityEnum.group_closeness.name][0])):
                               results_dict[GroupCentralityEnum.group_closeness.name][1]})
 
     # Brute-force optimization
     @staticmethod
     @check_graph_consistency
-    def add_BF_F(graph: Graph, k: int, max_distance: int or None = None):
+    def BF_F(graph: Graph, k: int, max_distance: int or None = None):
         r"""
         Performs a brute-force search on the input graph to search the best *key player* (kp) set (or sets) of nodes of size :math:`k` for the
         *fragmentation* (*F*) index. It does so by wrapping the :func:`~pyntacle.algorithms.bruteforce_search.BruteforceSearch.fragmentation`
@@ -1102,13 +1088,13 @@ class Octopus:
         kpobj = bfw(graph=graph)
         kpobj.run_fragmentation(k, KpnegEnum.F, max_distance=max_distance)
         results_dict = kpobj.get_results()
-        AddAttributes.add_graph_attributes(graph, KpnegEnum.F.name + '_bruteforce',
+        add_gc_attributes(graph, KpnegEnum.F.name + '_bruteforce',
                          {tuple(tuple(sorted(x)) for x in results_dict[KpnegEnum.F.name][0]):
                               results_dict[KpnegEnum.F.name][1]})
 
     @staticmethod
     @check_graph_consistency
-    def add_BF_dF(graph: Graph, k: int, max_distance: int or None = None):
+    def BF_dF(graph: Graph, k: int, max_distance: int or None = None):
         r"""
         Performs a brute-force search on the input graph to search the best *key player* (kp) set (or sets) of nodes of size :math:`k` for the
         *distance-based fragmentation* (*dF*) index. It does so by wrapping the :func:`~pyntacle.algorithms.bruteforce_search.BruteforceSearch.fragmentation`
@@ -1130,13 +1116,13 @@ class Octopus:
         kpobj = bfw(graph=graph)
         kpobj.run_fragmentation(k, KpnegEnum.dF, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
-        AddAttributes.add_graph_attributes(graph, KpnegEnum.dF.name + '_bruteforce',
+        add_gc_attributes(graph, KpnegEnum.dF.name + '_bruteforce',
                          {tuple(tuple(sorted(x)) for x in results_dict[KpnegEnum.dF.name][0]):
                               results_dict[KpnegEnum.dF.name][1]})
 
     @staticmethod
     @check_graph_consistency
-    def add_BF_dR(graph: Graph, k: int, max_distance: int or None = None):
+    def BF_dR(graph: Graph, k: int, max_distance: int or None = None):
         r"""
         Performs a brute-force search on the input graph to search the best *key player* (kp) set (or sets) of nodes of size :math:`k` for the
         *distance-weighted reach* (*dR*) index. It does so by wrapping the :func:`~pyntacle.algorithms.bruteforce_search.BruteforceSearch.reachability`
@@ -1156,13 +1142,13 @@ class Octopus:
         kpobj = bfw(graph=graph)
         kpobj.run_reachability(k, KpposEnum.dR, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
-        AddAttributes.add_graph_attributes(graph, KpposEnum.dR.name + '_bruteforce',
+        add_gc_attributes(graph, KpposEnum.dR.name + '_bruteforce',
                          {tuple(tuple(sorted(x)) for x in results_dict[KpposEnum.dR.name][0]):
                               results_dict[KpposEnum.dR.name][1]})
 
     @staticmethod
     @check_graph_consistency
-    def add_BF_mreach(graph: Graph, k: int, m: int or None = None, max_distance: int or None = None):
+    def BF_mreach(graph: Graph, k: int, m: int or None = None, max_distance: int or None = None):
         r"""
         Performs a brute-force search on the input graph to search the best *key player* (kp) set (or sets)  of nodes of size :math:`k` for the
         *m-reach* index. It does so by wrapping the :func:`~pyntacle.algorithms.bruteforce_search.BruteforceSearch.reachability`
@@ -1183,13 +1169,13 @@ class Octopus:
         kpobj.run_reachability(k, KpposEnum.mreach, max_distance=max_distance, m=m, cmode=cmode)
         results_dict = kpobj.get_results()
         attr_name = KpposEnum.mreach.name + '_{}_bruteforce'.format(str(m))
-        AddAttributes.add_graph_attributes(graph, attr_name,
+        add_gc_attributes(graph, attr_name,
                          {tuple(tuple(sorted(x)) for x in results_dict[KpposEnum.mreach.name][0]):
                               results_dict[KpposEnum.mreach.name][1]})
 
     @staticmethod
     @check_graph_consistency
-    def add_BF_group_degree(graph: Graph, k: int):
+    def BF_group_degree(graph: Graph, k: int):
         r"""
         Performs a brute-force search on the input graph to search the best node set (or sets) of size :math:`k` for the
         *group degree* index. It does so by wrapping the :func:`~pyntacle.algorithms.bruteforce_search.BruteforceSearch.group_centrality`
@@ -1203,13 +1189,13 @@ class Octopus:
         kpobj = bfw(graph=graph)
         kpobj.run_groupcentrality(k, GroupCentralityEnum.group_degree)
         results_dict = kpobj.get_results()
-        AddAttributes.add_graph_attributes(graph, GroupCentralityEnum.group_degree.name + '_bruteforce',
+        add_gc_attributes(graph, GroupCentralityEnum.group_degree.name + '_bruteforce',
                          {tuple(tuple(sorted(x)) for x in results_dict[GroupCentralityEnum.group_degree.name][0]):
                               results_dict[GroupCentralityEnum.group_degree.name][1]})
 
     @staticmethod
     @check_graph_consistency
-    def add_BF_group_betweenness(graph: Graph, k: int):
+    def BF_group_betweenness(graph: Graph, k: int):
         r"""
         Performs a brute-force search on the input graph to search the best node set (or sets) of size :math:`k` for the
         *group betweenness* index. It does so by wrapping the :func:`~pyntacle.algorithms.bruteforce_search.BruteforceSearch.group_centrality`
@@ -1225,13 +1211,13 @@ class Octopus:
         kpobj = bfw(graph=graph)
         kpobj.run_groupcentrality(k, GroupCentralityEnum.group_betweenness, cmode=cmode)
         results_dict = kpobj.get_results()
-        AddAttributes.add_graph_attributes(graph, GroupCentralityEnum.group_betweenness.name + '_bruteforce',
+        add_gc_attributes(graph, GroupCentralityEnum.group_betweenness.name + '_bruteforce',
                          {tuple(tuple(sorted(x)) for x in results_dict[GroupCentralityEnum.group_betweenness.name][0]):
                               results_dict[GroupCentralityEnum.group_betweenness.name][1]})
 
     @staticmethod
     @check_graph_consistency
-    def add_BF_group_closeness(graph: Graph, k: int, distance: GroupDistanceEnum = GroupDistanceEnum.minimum):
+    def BF_group_closeness(graph: Graph, k: int, distance: GroupDistanceEnum = GroupDistanceEnum.minimum):
         r"""
         Performs a brute-force search on the input graph to search the best node set (or sets) of size :math:`k` for the
         *group_closeness* index. It does so by wrapping the :func:`~pyntacle.algorithms.bruteforce_search.BruteforceSearch.group_centrality`
@@ -1248,6 +1234,6 @@ class Octopus:
         kpobj = bfw(graph=graph)
         kpobj.run_groupcentrality(k, GroupCentralityEnum.group_closeness, cmode=cmode, distance=distance)
         results_dict = kpobj.get_results()
-        AddAttributes.add_graph_attributes(graph, GroupCentralityEnum.group_closeness.name + "_" + distance.name + '_bruteforce',
+        add_gc_attributes(graph, GroupCentralityEnum.group_closeness.name + "_" + distance.name + '_bruteforce',
                          {tuple(tuple(sorted(x)) for x in results_dict[GroupCentralityEnum.group_closeness.name][0]):
                               results_dict[GroupCentralityEnum.group_closeness.name][1]})
