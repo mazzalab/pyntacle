@@ -388,13 +388,12 @@ class KeyPlayer:
 
         r.create_report(report_type=report_type, report=results)
         r.write_report(report_dir=self.args.directory, format=self.args.report_format)
-        
+
         if self.args.save_binary:
             # reproduce octopus behaviour by adding kp information to the graph before saving it
             sys.stdout.write(u"Saving graph to a binary file (ending in .graph)\n")
 
             for key in results.keys():
-                print(key)
                 if key == KpposEnum.mreach.name: #replace the mreach distance
                     new_mreach = "_".join([KpposEnum.mreach.name, str(results[KpposEnum.mreach.name][-1])])
                     #create new key

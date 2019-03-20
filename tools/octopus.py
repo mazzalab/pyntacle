@@ -76,6 +76,7 @@ def add_gc_attributes(graph: Graph, attr_name: str, attr: dict, readd=False):
     else:
         graph[attr_name].update(attr)
 
+#TODO add nice prints to Octopus
 class Octopus:
     r"""
     Octopus is a Pyntacle swiss knife tool aimed at using Pyntacle tools and metrics and import them directly into the
