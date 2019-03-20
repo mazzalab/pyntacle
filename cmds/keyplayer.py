@@ -394,6 +394,7 @@ class KeyPlayer:
             sys.stdout.write(u"Saving graph to a binary file (ending in .graph)\n")
 
             for key in results.keys():
+                print(key)
                 if key == KpposEnum.mreach.name: #replace the mreach distance
                     new_mreach = "_".join([KpposEnum.mreach.name, str(results[KpposEnum.mreach.name][-1])])
                     #create new key
@@ -403,15 +404,15 @@ class KeyPlayer:
 
                 if self.args.which == "kp-finder":
                     if self.args.implementation == "brute-force":
-                        suffix = "BF"
+                        suffix = "bruteforce"
                         attr_key = tuple(tuple(sorted(tuple(x))) for x in results[key][0])
 
                     else:
-                        suffix = "GO"
+                        suffix = "greedy"
                         attr_key = tuple(sorted(tuple(results[key][0])))
 
                 else:
-                    suffix = "group"
+                    suffix = "info"
                     attr_key = tuple(sorted(tuple(results[key][0])))
 
                 attr_name = "_".join([key, suffix])
