@@ -2,18 +2,19 @@ import sys
 
 # load the connectome with Pyntacle Importer
 #you can replace `connectome path` with the appropriate $PATH to your connectome
-connectome_path = "/home/local/MENDEL/d.capocefalo/Dropbox/Research/BFX_Mendel/BFX Lab/Pyntacle/site_material/Case_Study_3/CAEEL_Connectome.txt"
+connectome_path = "/home/m.truglio/Desktop/ciao/edgelist.txt.graph"
 
 from io_stream.importer import PyntacleImporter as pyimp
-graph = pyimp.Sif(connectome_path) #this is an `igraph.Graph` object
-graph.summary() #returns the graph summary
-
+graph = pyimp.Binary(connectome_path) #this is an `igraph.Graph` object
+print(graph.summary()) #returns the graph summary
+print(list(graph.vs())) #returns the graph summary
+input()
 ########################################################################################################################
 
 #evaluate the small-world phenomenon
 
 from tools.octopus import Octopus
-Octopus.add_average_degree(graph)
+#Octopus.add_average_degree(graph)
 Octopus.add_average_global_shortest_path_length(graph)
 
 # print(graph["average_degree"])
@@ -22,7 +23,7 @@ Octopus.add_average_global_shortest_path_length(graph)
 ########################################################################################################################
 
 #compute and rank the nodes by degree
-Octopus.add_degree(graph)
+#Octopus.add_degree(graph)
 
 #store the result into a pd.DataFrame and then rank by degree
 # import pandas as pd
@@ -35,10 +36,10 @@ Octopus.add_degree(graph)
 
 #Compute the group centralities for the rich club core
 
-rc = ["AVAR", "AVAL", "AVBL",
-      "AVBR", "AVER", "AVDR",
-      "AVEL", "PVCL", "PVCR",
-      "DVA", "AVDL"]
+# rc = ["AVAR", "AVAL", "AVBL",
+#       "AVBR", "AVER", "AVDR",
+#       "AVEL", "PVCL", "PVCR",
+#       "DVA", "AVDL"]
 
 
 # Octopus.add_group_degree(graph, rc)
@@ -70,10 +71,10 @@ rc = ["AVAR", "AVAL", "AVBL",
 
 #Greedily-optimized search for GC
 print("#####################################################")
-seed = 5000
-import random
-random.seed(seed)
-Octopus.add_GO_group_degree(graph, 11)
+#seed = 5000
+#import random
+#random.seed(seed)
+Octopus.add_GO_group_degree(graph, 11, 1983)
 print (graph["group_degree_greedy"])
 print("#####################################################")
 

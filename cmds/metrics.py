@@ -293,6 +293,7 @@ class Metrics:
             
             sys.stdout.write(u"Computing global metrics\n")
             global_attributes_dict = OrderedDict({GlobalAttributeEnum.average_shortest_path_length.name: ShortestPath.average_global_shortest_path_length(graph=graph),
+                                                  GlobalAttributeEnum.median_shortest_path_length.name: ShortestPath.median_global_shortest_path_length(graph=graph),
                                                   GlobalAttributeEnum.diameter.name: GlobalTopology.diameter(graph=graph),
                                                   GlobalAttributeEnum.components.name: GlobalTopology.components(graph=graph),
                                                   GlobalAttributeEnum.radius.name: GlobalTopology.radius(graph=graph),
@@ -335,6 +336,8 @@ class Metrics:
                 global_attributes_dict_nonodes = OrderedDict({
                     'Removed nodes': ','.join(nodes_list),
                     GlobalAttributeEnum.average_shortest_path_length.name: ShortestPath.average_global_shortest_path_length(
+                        graph=graph_nonodes),
+                    GlobalAttributeEnum.median_shortest_path_length.name: ShortestPath.median_global_shortest_path_length(
                         graph=graph_nonodes),
                     GlobalAttributeEnum.diameter.name: GlobalTopology.diameter(graph=graph_nonodes),
                     GlobalAttributeEnum.components.name: GlobalTopology.components(graph=graph_nonodes),
@@ -456,18 +459,27 @@ class Metrics:
                     nodes_list = graph.vs["name"]
                 for key in local_attributes_dict:
                     AddAttributes.add_node_attributes(graph, key, local_attributes_dict[key], nodes_list)
+                PyntacleExporter.Binary(graph, binary_path)
 
             elif self.args.which == 'global':
 
                 for key in global_attributes_dict:
-                    AddAttributes.add_graph_attributes(graph, key, global_attributes_dict[key])
+                    if (key == "average_shortest_path_length" or key == 'median_shortest_path_length'):
+                        newkey = re.sub("_shortest_path_length", "_global_shortest_path_length", key)
+                    else:
+                        newkey = key
+                    AddAttributes.add_graph_attributes(graph, newkey, global_attributes_dict[key])
                 PyntacleExporter.Binary(graph, binary_path)
 
                 if self.args.no_nodes:
                     binary_path_nonodes = os.path.join(self.args.directory, basename_graph + "_no_nodes" + ".graph")
                     sys.stdout.write(u"Saving a binary of the input graph without the requested nodes at path: {}\n".format(os.path.basename(binary_path_nonodes)))
                     for key in global_attributes_dict_nonodes:
-                        AddAttributes.add_graph_attributes(graph_nonodes, key, global_attributes_dict_nonodes[key])
+                        if (key == "average_shortest_path_length" or key == 'median_shortest_path_length'):
+                            newkey = re.sub("_shortest_path_length", "_global_shortest_path_length", key)
+                        else:
+                            newkey = key
+                        AddAttributes.add_graph_attributes(graph_nonodes, newkey, global_attributes_dict_nonodes[key])
                     
                     PyntacleExporter.Binary(graph_nonodes, binary_path_nonodes)
 

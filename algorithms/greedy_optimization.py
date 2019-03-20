@@ -137,16 +137,13 @@ class GreedyOptimization:
                 raise ValueError(u"'max_distance' must be an integer greater than one and lesser than the total number of nodes")
 
             node_indices = graph.vs.indices
-            print(seed)
-            input()
+
             if seed is not None:
 
                 random.seed(seed)
 
             random.shuffle(node_indices)
 
-            print(node_indices)
-            input()
 
             S = node_indices[0:k]
 
@@ -228,9 +225,7 @@ class GreedyOptimization:
             else:
 
                 #print(graph.vs()["name"])
-                input()
-                print(seed)
-                input()
+
 
                 if seed is not None:
                     random.seed(seed)
@@ -238,22 +233,16 @@ class GreedyOptimization:
                 node_indices = graph.vs.indices
                 random.shuffle(node_indices)
 
-                print(node_indices)
-                input()
                 S = node_indices[0:k]
-                print(S)
+
 
                 S_names = []
                 for i in S:
                     name = graph.vs(i)["name"]
-                    print (i, name)
                     S_names.append(name)
 
                 S_names = graph.vs(S)["name"]
-                print(S_names)
-                print(S_names2)
-                # input()
-                sys.exit()
+
                 #S.sort() #non è lui
 
                 if metric == KpposEnum.mreach:

@@ -133,10 +133,12 @@ class PyntacleImporter:
             if header:
                 #use pandas to parse this into
                 f = pd.read_csv(filepath_or_buffer=file, sep=sep, index_col=0)
+                f = f.reindex(sorted(f.columns), axis=1)
                 node_names = f.columns.values.tolist()
 
             else:
                 f = pd.read_csv(filepath_or_buffer=file, sep=sep, header=None)
+                f = f.reindex(sorted(f.columns), axis=1)
                 node_names = [str(x) for x in range(0, len(f.columns))]
 
             graph = Graph.Adjacency(f.values.tolist(), mode="UPPER")
@@ -196,8 +198,9 @@ class PyntacleImporter:
         adj.values.sort()
         adj = adj.drop_duplicates()
         adj.dropna(how="all", inplace=True) #remove all empty lines
-
-        graph.add_vertices(list(str(x) for x in OrderedSet(adj[0].tolist() + adj[1].tolist())))
+        nodeslist = list(str(x) for x in OrderedSet(adj[0].tolist() + adj[1].tolist()))
+        nodeslist.sort()
+        graph.add_vertices(nodeslist)
         edgs = adj.values.tolist()
 
         graph.add_edges(edgs)
@@ -284,8 +287,8 @@ class PyntacleImporter:
     
                 else:
                     raise ImproperlyFormattedFileError("line {} is malformed".format(i))
-    
-            nodeslist = list(set(nodeslist))
+            nodeslist.sort()
+            nodeslist = list(OrderedSet(nodeslist))
             graph.add_vertices(nodeslist)
             graph.add_edges(edgeslist.keys())
             graph.es()["sif_interaction"] = list(edgeslist.values())
@@ -301,7 +304,6 @@ class PyntacleImporter:
 
     @staticmethod
     @input_file_checker
-    @separator_sniffer
     def Dot(file: str, **kwargs):
         r"""
         Import a DOT file into a :py:class:`igraph.Graph` object.
@@ -343,7 +345,7 @@ class PyntacleImporter:
         graph_beginning = 'graph' + Optional(Word(alphanums))('initial_name') + Word('{')
 
         graph_element = 'graph'
-        graph_ATTR = Word(alphanums + '_"-') + Suppress('=') + Word(alphanums + '"_?-')
+        graph_ATTR = Word(alphanums + '_"-') + Suppress('=') + Word(alphanums + '"[]\'_?-')
         graph_indented_block = nestedExpr('[', '];', content=Group(graph_ATTR))
         graph_elementBlock = graph_element + Optional(graph_indented_block)
 
@@ -439,6 +441,7 @@ class PyntacleImporter:
             raise WrongArgumentError(u"file is not a binary")
 
         graph = pickle.load(open(file, "rb"))
+
         if not isinstance(graph, Graph):
             raise IOError(u"binary is not a graph object")
 

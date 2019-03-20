@@ -277,8 +277,7 @@ class GroupCentrality():
                     results[kk][0] = ["None"]
 
                 if self.args.implementation == 'brute-force':
-                    "\n".join(['(' + ', '.join(x) + ')' for x in results[kk][0]])
-
+                    list_of_results = "\n".join(['(' + ', '.join(x) + ')' for x in results[kk][0]])
                 else:
                     list_of_results = "(" + ", ".join(results[kk][0]) + ")"
 
