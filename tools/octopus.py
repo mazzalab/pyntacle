@@ -71,12 +71,12 @@ def add_gc_attributes(graph: Graph, attr_name: str, attr: dict, readd=False):
     if not isinstance(attr, dict):
         raise TypeError(u"`attr` is not a dict")
     if attr_name not in graph.attributes() or graph[attr_name] is None or readd:
-        sys.stdout.write("Initializing '{}' attribute \n".format(attr_name))
+        sys.stdout.write("Initializing '{}' attribute.\n".format(attr_name))
         AddAttributes.add_graph_attribute(graph, attr_name, attr)
     else:
+        sys.stdout.write("Updating the '{}' attribute.\n".format(attr_name))
         graph[attr_name].update(attr)
 
-#TODO add nice prints to Octopus
 class Octopus:
     r"""
     Octopus is a Pyntacle swiss knife tool aimed at using Pyntacle tools and metrics and import them directly into the
@@ -96,7 +96,7 @@ class Octopus:
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
-        sys.stdout.write("Computing diameter and storing in the graph {} attribute.\n".format(GlobalAttributeEnum.diameter.name))
+        sys.stdout.write("Calculating diameter and storing in the graph '{}' attribute.\n".format(GlobalAttributeEnum.diameter.name))
         AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.diameter.name, GlobalTopology.diameter(graph))
         #sys.stdout.write("Diameter successfully added to graph.\n")
 
@@ -113,7 +113,7 @@ class Octopus:
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
         sys.stdout.write(
-            "Computing radius and storing in the graph {} attribute.\n".format(GlobalAttributeEnum.diameter.name))
+            "Calculating radius and storing in the graph '{}' attribute.\n".format(GlobalAttributeEnum.radius.name))
         AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.radius.name, GlobalTopology.radius(graph))
         #sys.stdout.write("Radius successfully added to graph.\n")
 
@@ -131,7 +131,8 @@ class Octopus:
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
-
+        sys.stdout.write(
+            "Calculating number of components and storing in the graph '{}' attribute.\n".format(GlobalAttributeEnum.components.name))
         AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.components.name, GlobalTopology.components(graph))
 
     @staticmethod
@@ -146,7 +147,9 @@ class Octopus:
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
-
+        sys.stdout.write(
+            "Calculating density and storing in the graph '{}' attribute.\n".format(
+                GlobalAttributeEnum.density.name))
         AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.density.name, GlobalTopology.density(graph))
 
     @staticmethod
@@ -161,7 +164,9 @@ class Octopus:
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
-
+        sys.stdout.write(
+            "Calculating pi and storing in the graph '{}' attribute.\n".format(
+                GlobalAttributeEnum.pi.name))
         AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.pi.name, GlobalTopology.pi(graph))
 
     @staticmethod
@@ -176,7 +181,9 @@ class Octopus:
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
-
+        sys.stdout.write(
+            "Calculating the average clustering coefficient and storing in the graph '{}' attribute.\n".format(
+                GlobalAttributeEnum.average_clustering_coefficient.name))
         AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.average_clustering_coefficient.name,
                                           GlobalTopology.average_clustering_coefficient(graph))
 
@@ -192,7 +199,9 @@ class Octopus:
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
-
+        sys.stdout.write(
+            "Calculating the weighted clustering coefficient and storing in the graph '{}' attribute.\n".format(
+                GlobalAttributeEnum.weighted_clustering_coefficient.name))
         AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.weighted_clustering_coefficient.name,
                                           GlobalTopology.weighted_clustering_coefficient(graph))
 
@@ -208,7 +217,9 @@ class Octopus:
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
-
+        sys.stdout.write(
+            "Calculating the average degree and storing in the graph '{}' attribute.\n".format(
+                GlobalAttributeEnum.average_degree.name))
         AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.average_degree.name,
                                           GlobalTopology.average_degree(graph))
 
@@ -224,7 +235,9 @@ class Octopus:
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
-
+        sys.stdout.write(
+            "Calculating the average closeness and storing in the graph '{}' attribute.\n".format(
+                GlobalAttributeEnum.average_closeness.name))
         AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.average_closeness.name,
                                           GlobalTopology.average_closeness(graph))
 
@@ -240,7 +253,9 @@ class Octopus:
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
-
+        sys.stdout.write(
+            "Calculating the average eccentricity and storing in the graph '{}' attribute.\n".format(
+                GlobalAttributeEnum.average_eccentricity.name))
         AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.average_eccentricity.name,
                                           GlobalTopology.average_eccentricity(graph))
 
@@ -258,7 +273,9 @@ class Octopus:
         """
 
         cmode = get_cmode(graph)
-
+        sys.stdout.write(
+            "Calculating the average radiality and storing in the graph '{}' attribute.\n".format(
+                GlobalAttributeEnum.average_radiality.name))
         AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.average_radiality.name,
                                           GlobalTopology.average_radiality(graph, cmode))
 
@@ -276,6 +293,10 @@ class Octopus:
         """
 
         cmode = get_cmode(graph)
+
+        sys.stdout.write(
+            "Calculating the average radiality reach and storing in the graph '{}' attribute.\n".format(
+                GlobalAttributeEnum.average_radiality_reach.name))
         AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.average_radiality_reach.name,
                                           GlobalTopology.average_radiality_reach(graph, cmode))
 
@@ -293,6 +314,9 @@ class Octopus:
         :param graph::param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
         cmode = get_cmode(graph)
+        sys.stdout.write(
+            "Calculating the average among all graph geodesics and storing in the graph '{}' attribute.\n".format(
+                GlobalAttributeEnum.average_global_shortest_path_length.name))
         AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.average_global_shortest_path_length.name,
                                           ShortestPath.average_global_shortest_path_length(graph, cmode))
 
@@ -308,6 +332,9 @@ class Octopus:
 
         :param graph::param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
+        sys.stdout.write(
+            "Calculating the median among all graph geodesics and storing in the graph '{}' attribute.\n".format(
+                GlobalAttributeEnum.median_global_shortest_path_length.name))
         AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.median_global_shortest_path_length.name,
                                           ShortestPath.median_global_shortest_path_length(graph))
 
@@ -323,6 +350,11 @@ class Octopus:
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
+
+        sys.stdout.write(
+            "Calculating the naive version of completeness and storing in the graph '{}' attribute.\n".format(
+                GlobalAttributeEnum.completeness_naive.name))
+
         AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.completeness_naive.name,
                                           Sparseness.completeness_naive(graph))
 
@@ -338,6 +370,9 @@ class Octopus:
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
+        sys.stdout.write(
+            "Calculating the most recent version of completeness and storing in the graph '{}' attribute.\n".format(
+                GlobalAttributeEnum.completeness.name))
         AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.completeness.name,
                                           Sparseness.completeness(graph))
 
@@ -352,8 +387,10 @@ class Octopus:
         .. note: if the attribute already exists in  the input graph, it will be overwritten
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
-
         """
+        sys.stdout.write(
+            "Calculating compactness and storing in the graph '{}' attribute.\n".format(
+                GlobalAttributeEnum.compactness.name))
         AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.compactness.name,
                                           Sparseness.compactness(graph, correct=correct))
 
@@ -374,8 +411,13 @@ class Octopus:
 
         if nodes is not None:
             nodes = transform_nodes(nodes)
-
+            sys.stdout.write(
+                "Calculating degree for nodes {} and storing in the vertex '{}' attribute.\n".format
+                (",".join(nodes), LocalAttributeEnum.degree.name))
         else:
+            sys.stdout.write(
+                "Calculating degree for all nodes and storing in the vertex '{}' attribute.\n".format(
+                    LocalAttributeEnum.degree.name))
             nodes = graph.vs["name"]
 
         AddAttributes.add_node_attribute(graph, LocalAttributeEnum.degree.name,
@@ -395,8 +437,13 @@ class Octopus:
         :param list, str nodes: a list of strings representing the node name (the vertex ``name`` attribute) matching node names in the graph, or a string representing a single node name.
         """
         nodes = transform_nodes(nodes)
+        attr_name = "_".join([GroupCentralityEnum.group_degree.name, "info"])
 
-        add_gc_attributes(graph, "_".join([GroupCentralityEnum.group_degree.name, "info"]),
+        sys.stdout.write(
+            "Calculating group degree for node set {} and storing in the vertex '{}' attribute.\n".format
+            (",".join(nodes), attr_name))
+
+        add_gc_attributes(graph, attr_name,
                          {tuple(sorted(nodes)): LocalTopology.group_degree(graph, nodes)})
 
 
@@ -415,8 +462,14 @@ class Octopus:
         """
         if nodes is not None:
             nodes = transform_nodes(nodes)
+            sys.stdout.write(
+                "Calculating (un-normalized) betweenness for nodes {} and storing in the vertex '{}' attribute.\n".format
+                (",".join(nodes), LocalAttributeEnum.betweenness.name))
 
         else:
+            sys.stdout.write(
+                "Calculating (un-normalized) betweenness for all nodes and storing in the vertex '{}' attribute.\n".format(
+                    LocalAttributeEnum.betweenness.name))
             nodes = graph.vs["name"]
 
         AddAttributes.add_node_attribute(graph, LocalAttributeEnum.betweenness.name,
@@ -439,7 +492,13 @@ class Octopus:
 
         nodes = transform_nodes(nodes)
 
-        add_gc_attributes(graph, "_".join([GroupCentralityEnum.group_betweenness.name, "info"]),
+        attr_name = "_".join([GroupCentralityEnum.group_betweenness.name, "info"])
+
+        sys.stdout.write(
+            "Calculating group betweenness for node set {} and storing in the vertex '{}' attribute.\n".format
+            (",".join(nodes), attr_name))
+
+        add_gc_attributes(graph, attr_name,
                          {tuple(sorted(nodes)): LocalTopology.group_betweenness(graph=graph, nodes=nodes, cmode=cmode)})
 
     @staticmethod

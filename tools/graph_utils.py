@@ -346,7 +346,7 @@ class GraphUtils:
 
         .. warning:: This method will prune the graph of any node isolates, as they are not accepted by Pyntacle.
 
-        :param str graph_name: The network name (will be stored in the graph ``name`` attribute). This strig must not contain illegal characters (see the Pyntacle `Minimum Requirements <http://pyntacle.css-mendel.it/requirements.html>`_ for more info on the illegal characters.
+        :param str graph_name: The network name (will be stored in the graph ``name`` attribute). This string must not contain illegal characters (see the Pyntacle `Minimum Requirements <http://pyntacle.css-mendel.it/requirements.html>`_ for more info on the illegal characters.
         :param str, None node_names: optional, a list of strings matching the total number of vertices of the graph. Each item in the list becomes the vertex ``name`` attribute sequentially (index-by-index correspondance). Defaults to py:class:`None` (node ``name`` attribute is filled by node indices).
         :raise: ValueError: if the ``graph_name`` argument contains illegal characters or if ``node_names`` is not of the same size of the number of graph vertices.
         :raise: WrongArgumentError: if ``node_names`` is not a list of strings.
