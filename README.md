@@ -10,8 +10,7 @@ metrics and HPC computing.
 
 ## Installation
 
-The easiest way for the majority of users to install Pyntacle is to
-install it as part of the **Anaconda** distribution, a cross-platform
+The easiest way to install Pyntacle is to download it from **Anaconda** , a cross-platform
 distribution for data analysis and scientific computing. This is the
 recommended installation method for most users.
 
@@ -25,12 +24,12 @@ Installing Pyntacle and all its dependencies can be challenging for
 inexperienced users. There are several advantages in using Anaconda to
 install not only Pyntacle, but also Python and other packages: it is
 cross platform (Linux, MacOS X, Windows), you do not require
-administrative rights to install it (it goes in the user’s home
+administrative rights to install it (it goes in the user home
 directory), it allows you to work in virtual environments, which can be
 used as safe sandbox-like sub-systems that can be created, used,
 exported or deleted at your will.
 
-You can choose between the full [Anaconda](http://docs.continuum.io/anaconda/) and its minified version,
+You can choose between the full [Anaconda](http://docs.continuum.io/anaconda/) and its lite version,
 [Miniconda](http://conda.pydata.org/miniconda.html) . The difference between the two is that Anaconda comes with
 hundreds of packages and can be a bit heavier to install, while
 Miniconda allows you to create a minimal, self-contained Python
@@ -43,9 +42,9 @@ language agnostic (it can play a similar role to a pip and virtualenv
 combination), and you need to set it up by running either the [Anaconda
 installer](https://www.anaconda.com/download/) or the
 [Miniconda installer](https://conda.io/miniconda.html) , choosing the
-++Python 3.6++ version.
+++Python 3.X++ version.
 
-The next step is to create a new conda environment (if you are familiar
+The next step is to create a new Conda environment (if you are familiar
 with virtual environments, these are analogous to a virtualenv but they
 also allow you to specify precisely which Python version to install).
 
@@ -72,15 +71,15 @@ conda install -y -c bfxcss -c conda-forge pyntacle
 
 #### Windows
 <aside class="warning">
-<b>Warning</b>: Windows users could experience some issues when installing
-Conda or Miniconda in folders that have a whitespace in their name
-(e.g. "C:\John Appleseed\Miniconda"). This is a known bug, as reported
-here and here. If this happens, a workaround could be to create a new
-user without whitespaces (e.g. "C:\John<b>_</b>Appleseed\).
+<b>Warning</b>: Windows users could experience some issues when installing Conda or Miniconda in folders that
+whose name contains whitespaces (e.g. "%userprofile%\John Doe\Miniconda"). This is a known bug,
+as reported <a href="https://github.com/ContinuumIO/anaconda-issues/issues/1029" target="_blank">here</a> and
+<a href="https://groups.google.com/a/continuum.io/forum/#!topic/anaconda/zTQQ0NqqIvk" target="_blank">here</a>. If this occurs,
+we recommend to create a new directory with no whitespaces (e.g. "%userprofile%\John<b style="color:red">_</b>Doe\) and install Conda in there.
 </aside>
 
 
-Open a cmd terminal window or - better - an
+Open a windows prompt or (even better) an
 [Anaconda prompt](https://chrisconlan.com/wp-content/uploads/2017/05/anaconda_prompt.png)
 , and type:
 
@@ -193,9 +192,9 @@ ln -s /Users/$USER/Library/Python/3.6/bin/pyntacle /opt/local/bin
 
 ### CUDA support
 
-Independently of the OS in use, if you need CUDA support, you should
+Independently of the OS in use, if you need CUDA support, you must
 also install the CUDA toolkit by downloading and installing the Toolkit from the
-[_NVIDIA website_](https://developer.nvidia.com/cuda-toolkit).
+[_NVIDIA website_](https://developer.nvidia.com/cuda-toolkit). A
 
 ## Release history
 
@@ -229,14 +228,14 @@ Changelog for current and past releases:
 ## License
 
 This work is licensed under a <a rel="license"
-href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative
+href="https://www.gnu.org/licenses/gpl-3.0.en.html">Creative
 Commons Attribution-NonCommercial-NoDerivatives 4.0 International
 License</a>.
 
 <a rel="license"
 href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img
-alt="Creative Commons License" style="border-width:0"
-src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br
+alt="GNU General Public License v3.0" style="border-width:0"
+src="https://en.wikipedia.org/wiki/GNU_General_Public_License#/media/File:GPLv3_Logo.svg" /></a><br
 />
 
 
