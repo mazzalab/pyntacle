@@ -517,8 +517,14 @@ class Octopus:
 
         if nodes is not None:
             nodes = transform_nodes(nodes)
+            sys.stdout.write(
+                "Calculating clustering coefficient for nodes {} and storing in the vertex '{}' attribute.\n".format
+                (",".join(nodes), LocalAttributeEnum.clustering_coefficient.name))
 
         else:
+            sys.stdout.write(
+                "Calculating clustering coefficient for all nodes and storing in the vertex '{}' attribute.\n".format(
+                    LocalAttributeEnum.clustering_coefficient.name))
             nodes = graph.vs["name"]
 
         AddAttributes.add_node_attribute(graph, LocalAttributeEnum.clustering_coefficient.name,
@@ -540,8 +546,14 @@ class Octopus:
 
         if nodes is not None:
             nodes = transform_nodes(nodes)
+            sys.stdout.write(
+                "Calculating closeness for nodes {} and storing in the vertex '{}' attribute.\n".format
+                (",".join(nodes), LocalAttributeEnum.closeness.name))
 
         else:
+            sys.stdout.write(
+                "Calculating closeness for all nodes and storing in the vertex '{}' attribute.\n".format(
+                    LocalAttributeEnum.closeness.name))
             nodes = graph.vs["name"]
 
         AddAttributes.add_node_attribute(graph, LocalAttributeEnum.closeness.name,
@@ -570,8 +582,13 @@ class Octopus:
         """
         nodes = transform_nodes(nodes)
         cmode = get_cmode(graph)
+        gc_name = "_".join([GroupCentralityEnum.group_closeness.name, distance.name, "info"])
 
-        add_gc_attributes(graph, "_".join([GroupCentralityEnum.group_closeness.name, distance.name, "info"]),
+        sys.stdout.write(
+            "Calculating group closeness with a {} distance for node set {} and storing in the vertex '{}' attribute.\n"
+                .format(",".join(nodes), gc_name, distance.name))
+
+        add_gc_attributes(graph, gc_name ,
                          {tuple(sorted(nodes)): LocalTopology.group_closeness(graph, nodes, distance, cmode)})
 
     @staticmethod
@@ -590,8 +607,14 @@ class Octopus:
 
         if nodes is not None:
             nodes = transform_nodes(nodes)
+            sys.stdout.write(
+                "Calculating eccentricity for nodes {} and storing in the vertex '{}' attribute.\n".format
+                (",".join(nodes), LocalAttributeEnum.eccentricity.name))
 
         else:
+            sys.stdout.write(
+                "Calculating eccentricity for all nodes and storing in the vertex '{}' attribute.\n".format(
+                    LocalAttributeEnum.eccentricity.name))
             nodes = graph.vs["name"]
 
         AddAttributes.add_node_attribute(graph, LocalAttributeEnum.eccentricity.name,
@@ -614,8 +637,14 @@ class Octopus:
         cmode = get_cmode(graph)
         if nodes is not None:
             nodes = transform_nodes(nodes)
+            sys.stdout.write(
+                "Calculating radiality for nodes {} and storing in the vertex '{}' attribute.\n".format
+                (",".join(nodes), LocalAttributeEnum.radiality.name))
 
         else:
+            sys.stdout.write(
+                "Calculating radiality for all nodes and storing in the vertex '{}' attribute.\n".format(
+                    LocalAttributeEnum.radiality.name))
             nodes = graph.vs["name"]
 
         AddAttributes.add_node_attribute(graph, LocalAttributeEnum.radiality.name,
@@ -639,8 +668,14 @@ class Octopus:
         cmode = get_cmode(graph)
         if nodes is not None:
             nodes = transform_nodes(nodes)
+            sys.stdout.write(
+                "Calculating radiality reach for nodes {} and storing in the vertex '{}' attribute.\n".format
+                (",".join(nodes), LocalAttributeEnum.radiality_reach.name))
 
         else:
+            sys.stdout.write(
+                "Calculating radiality reach for all nodes and storing in the vertex '{}' attribute.\n".format(
+                    LocalAttributeEnum.radiality_reach.name))
             nodes = graph.vs["name"]
 
         AddAttributes.add_node_attribute(graph, LocalAttributeEnum.radiality_reach.name,
@@ -663,8 +698,14 @@ class Octopus:
 
         if nodes is not None:
             nodes = transform_nodes(nodes)
+            sys.stdout.write(
+                "Calculating eigenvector centrality for nodes {} and storing in the vertex '{}' attribute.\n".format
+                (",".join(nodes), LocalAttributeEnum.eigenvector_centrality.name))
 
         else:
+            sys.stdout.write(
+                "Calculating eigenvector centrality for all nodes and storing in the vertex '{}' attribute.\n".format(
+                    LocalAttributeEnum.eigenvector_centrality.name))
             nodes = graph.vs["name"]
 
         AddAttributes.add_node_attribute(graph, LocalAttributeEnum.eigenvector_centrality.name,
@@ -690,11 +731,18 @@ class Octopus:
 
         if nodes is not None:
             nodes = transform_nodes(nodes)
+            sys.stdout.write(
+                "Calculating pagerank index for nodes {} and storing in the vertex '{}' attribute.\n".format
+                (",".join(nodes), LocalAttributeEnum.pagerank.name))
 
         else:
+            sys.stdout.write(
+                "Calculating pagerank index for all nodes and storing in the vertex '{}' attribute.\n".format(
+                    LocalAttributeEnum.pagerank.name))
             nodes = graph.vs["name"]
 
         if "weights" in graph.es.attributes():
+            sys.stdout.write("Adding edge weights under the `weights` attribute.\n")
             weights = graph.es["weights"]
 
         AddAttributes.add_node_attribute(graph, LocalAttributeEnum.pagerank.name,
@@ -722,8 +770,14 @@ class Octopus:
 
         if nodes is not None:
             nodes = transform_nodes(nodes)
+            sys.stdout.write(
+                "Calculating geodesics stemming from nodes {} and storing in the vertex '{}' attribute.\n".format
+                (",".join(nodes), LocalAttributeEnum.shortest_paths.name))
 
         else:
+            sys.stdout.write(
+                "Calculating geodesics for all nodes  in the graph and storing in the vertex '{}' attribute.\n".format(
+                    LocalAttributeEnum.shortest_paths.name))
             nodes = graph.vs["name"]
 
         tot_nodes = graph.vcount()
@@ -754,7 +808,14 @@ class Octopus:
         cmode = get_cmode(graph)
         if nodes is not None:
             nodes = transform_nodes(nodes)
+            sys.stdout.write(
+                "Calculating the average distance among each of the nodes {} and the rest of the graph and storing in the vertex '{}' attribute.\n".format
+                (",".join(nodes), LocalAttributeEnum.average_shortest_path_length.name))
+
         else:
+            sys.stdout.write(
+                "Calculating the average distance each node and the rest of the graph and storing in the vertex '{}' attribute.\n".format
+                (LocalAttributeEnum.average_shortest_path_length.name))
             nodes = graph.vs["name"]
 
         AddAttributes.add_node_attribute(graph, LocalAttributeEnum.average_shortest_path_length.name,
@@ -778,7 +839,14 @@ class Octopus:
 
         if nodes is not None:
             nodes = transform_nodes(nodes)
+            sys.stdout.write(
+                "Calculating the median distance among each of the nodes {} and the rest of the graph and storing in the vertex '{}' attribute.\n".format
+                (",".join(nodes), LocalAttributeEnum.median_shortest_path_length.name))
+
         else:
+            sys.stdout.write(
+                "Calculating the median distance each node and the rest of the graph and storing in the vertex '{}' attribute.\n".format
+                (LocalAttributeEnum.median_shortest_path_length.name))
             nodes = graph.vs["name"]
 
         AddAttributes.add_node_attribute(graph, LocalAttributeEnum.median_shortest_path_length.name,
@@ -795,6 +863,10 @@ class Octopus:
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
+        sys.stdout.write(
+            "Calculating the Fragmentation status of the graph using the F index and storing in the graph '{}' attribute.\n".format(
+                KpnegEnum.F.name))
+
         AddAttributes.add_graph_attribute(graph, KpnegEnum.F.name, KeyPlayer.F(graph))
 
     @staticmethod
@@ -810,6 +882,10 @@ class Octopus:
         :param int,None max_distance: The maximum shortest path length over which two nodes are considered unreachable. Default is :py:class:`None` (distances are preserved).
         """
         cmode = get_cmode(graph)
+        sys.stdout.write(
+            "Calculating the Fragmentation status of the graph using the dF (distance-based fragmentation) index and storing in the graph '{}' attribute.\n".format(
+                KpnegEnum.F.name))
+
         AddAttributes.add_graph_attribute(graph, KpnegEnum.dF.name, KeyPlayer.dF(graph, cmode=cmode,
                                                                                  max_distance=max_distance))
 
@@ -834,12 +910,18 @@ class Octopus:
         """
 
         nodes = transform_nodes(nodes)
+        kp_name = KpnegEnum.F.name + '_info'
+        sys.stdout.write(
+            "Removing node set {} from the graph, measuring fragmentation using the F index and storing in the graph '{}' attribute.\n".format(
+                ",".join(nodes),
+                kp_name))
 
         kpobj = kpw(graph=graph, nodes=nodes)
         kpobj.run_fragmentation(KpnegEnum.F)
         results_dict = kpobj.get_results()
+
         add_gc_attributes(graph,
-                         KpnegEnum.F.name + '_info',
+                         kp_name,
                          {tuple(sorted(results_dict[KpnegEnum.F.name][0])): results_dict[KpnegEnum.F.name][1]})
 
     @staticmethod
@@ -864,12 +946,16 @@ class Octopus:
         """
         cmode = get_cmode(graph)
         nodes = transform_nodes(nodes)
-
+        kp_name = KpnegEnum.dF.name + '_info'
+        sys.stdout.write(
+            "Removing node set {} from the graph, measuring fragmentation using the dF index and storing in the graph '{}' attribute.\n".format(
+                ",".join(nodes),
+                kp_name))
         kpobj = kpw(graph=graph, nodes=nodes)
         kpobj.run_fragmentation(KpnegEnum.dF, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
         add_gc_attributes(graph,
-                         KpnegEnum.dF.name + '_info',
+                         kp_name,
                          {tuple(sorted(results_dict[KpnegEnum.dF.name][0])): results_dict[KpnegEnum.dF.name][1]})
 
     @staticmethod
@@ -894,12 +980,16 @@ class Octopus:
 
         cmode = get_cmode(graph)
         nodes = transform_nodes(nodes)
+        kp_name = KpposEnum.dR.name + '_info'
+
+        sys.stdout.write(
+            "Measuring reachability of the node set {} using the dR index and storing in the graph '{}' attribute.\n".format(
+                ",".join(nodes), kp_name))
 
         kpobj = kpw(graph=graph, nodes=nodes)
         kpobj.run_reachability(KpposEnum.dR, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
-        add_gc_attributes(graph,
-                         KpposEnum.dR.name + '_info',
+        add_gc_attributes(graph, kp_name,
                          {tuple(sorted(results_dict[KpposEnum.dR.name][0])): results_dict[KpposEnum.dR.name][1]})
 
     @staticmethod
@@ -928,9 +1018,14 @@ class Octopus:
         kpobj = kpw(graph=graph, nodes=nodes)
         kpobj.run_reachability(KpposEnum.mreach, m=m, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
-        attr_name = KpposEnum.mreach.name + '_{}_info'.format(str(m))
+        kp_name = KpposEnum.mreach.name + '_{}_info'.format(str(m))
+
+        sys.stdout.write(
+            "Measuring reachability of the node set {} using m-reach with a a max distance of {} and storing in the graph '{}' attribute.\n".format(
+                ",".join(nodes), m, kp_name))
+
         add_gc_attributes(graph,
-                         attr_name, {
+                         kp_name, {
                              tuple(sorted(results_dict[KpposEnum.mreach.name][0])): results_dict[KpposEnum.mreach.name][
                                  1]})
 
@@ -954,10 +1049,11 @@ class Octopus:
         :param int,None seed: optional, a positive integer that can be used to replicate the greedy optimization run. If :py:class:`~None` (default), the greedy optimization may return different results at each run.
         """
         kpobj = gow(graph=graph)
+        kp_name = KpnegEnum.F.name + '_greedy'
+        sys.stdout.write("Finding an optimal node set of size {} for the fragmentation index {} with a greedily-optimized search and storing the set and its value in the '{}' attribute.\n".format(k, KpnegEnum.F.name,kp_name))
         kpobj.run_fragmentation(k, KpnegEnum.F, seed=seed)
         results_dict = kpobj.get_results()
-        add_gc_attributes(graph,
-                         KpnegEnum.F.name + '_greedy',
+        add_gc_attributes(graph,kp_name,
                          {tuple(sorted(results_dict[KpnegEnum.F.name][0])): results_dict[KpnegEnum.F.name][1]})
 
     @staticmethod
@@ -984,10 +1080,14 @@ class Octopus:
 
         cmode = get_cmode(graph)
         kpobj = gow(graph=graph)
+        kp_name = KpnegEnum.dF.name + '_greedy'
+        sys.stdout.write(
+            "Finding an optimal node set of size {} for the fragmentation index {} with a greedily-optimized search and storing the set and its value in the '{}' attribute.\n".format(
+                k, KpnegEnum.dF.name, kp_name))
         kpobj.run_fragmentation(k, KpnegEnum.dF, max_distance=max_distance, seed=seed, cmode=cmode)
         results_dict = kpobj.get_results()
         add_gc_attributes(graph,
-                         KpnegEnum.dF.name + '_greedy',
+                         kp_name,
                          {tuple(sorted(results_dict[KpnegEnum.dF.name][0])): results_dict[KpnegEnum.dF.name][1]})
 
     @staticmethod
@@ -1012,9 +1112,13 @@ class Octopus:
 
         cmode = get_cmode(graph)
         kpobj = gow(graph=graph)
+        kp_name = KpposEnum.dR.name + '_greedy'
+        sys.stdout.write(
+            "Finding an optimal node set of size {} for the reachability index {} with a greedily-optimized search and storing the set and its value in the '{}' attribute.\n".format(
+                k, KpposEnum.dR.name, kp_name))
         kpobj.run_reachability(k, KpposEnum.dR, max_distance=max_distance, seed=seed, cmode=cmode)
         results_dict = kpobj.get_results()
-        add_gc_attributes(graph, KpposEnum.dR.name + '_greedy',
+        add_gc_attributes(graph, kp_name,
                          {tuple(sorted(results_dict[KpposEnum.dR.name][0])): results_dict[KpposEnum.dR.name][1]})
 
     @staticmethod
@@ -1041,10 +1145,13 @@ class Octopus:
         """
         cmode = get_cmode(graph)
         kpobj = gow(graph=graph)
+        kp_name = KpposEnum.mreach.name + '_{}_greedy'.format(str(m))
+        sys.stdout.write(
+            "Finding an optimal node set of size {} for reachability index m-reach with a distance of {} using a greedily-optimized search and storing the set and its value in the '{}' attribute.\n".format(
+                k, m, kp_name))
         kpobj.run_reachability(k, KpposEnum.mreach, m=m, max_distance=max_distance, seed=seed, cmode=cmode)
         results_dict = kpobj.get_results()
-        attr_name = KpposEnum.mreach.name + '_{}_greedy'.format(str(m))
-        add_gc_attributes(graph,attr_name, {
+        add_gc_attributes(graph,kp_name, {
                              tuple(sorted(results_dict[KpposEnum.mreach.name][0])): results_dict[KpposEnum.mreach.name][
                                  1]})
 
@@ -1065,11 +1172,14 @@ class Octopus:
         :param int,None seed: optional, a positive integer that can be used to replicate the greedy optimization run. If :py:class:`~None` (default), the greedy optimization may return different results at each run.
         """
 
-
         kpobj = gow(graph=graph)
         kpobj.run_groupcentrality(k, GroupCentralityEnum.group_degree, seed=seed)
+        gc_name = GroupCentralityEnum.group_degree.name + '_greedy'
+        sys.stdout.write(
+            "Finding an optimal node set of size {} for the group degree index using a greedily-optimized search and storing the set and its value in the '{}' attribute.\n".format(
+                k, gc_name))
         results_dict = kpobj.get_results()
-        add_gc_attributes(graph, GroupCentralityEnum.group_degree.name + '_greedy',
+        add_gc_attributes(graph, gc_name  ,
                          {tuple(sorted(results_dict[GroupCentralityEnum.group_degree.name][0])):
                               results_dict[GroupCentralityEnum.group_degree.name][1]})
 
@@ -1092,9 +1202,13 @@ class Octopus:
 
         cmode = get_cmode(graph)
         kpobj = gow(graph=graph)
+        gc_name = GroupCentralityEnum.group_betweenness.name + '_greedy'
+        sys.stdout.write(
+            "Finding an optimal node set of size {} for the group betweenness index using a greedily-optimized search and storing the set and its value in the '{}' attribute.\n".format(
+                k, gc_name))
         kpobj.run_groupcentrality(k, GroupCentralityEnum.group_betweenness, seed=seed, cmode=cmode)
         results_dict = kpobj.get_results()
-        add_gc_attributes(graph, GroupCentralityEnum.group_betweenness.name + '_greedy',
+        add_gc_attributes(graph, gc_name,
                          {tuple(sorted(results_dict[GroupCentralityEnum.group_betweenness.name][0])):
                               results_dict[GroupCentralityEnum.group_betweenness.name][1]})
 
@@ -1120,9 +1234,13 @@ class Octopus:
 
         cmode = get_cmode(graph)
         kpobj = gow(graph=graph)
+        gc_name = GroupCentralityEnum.group_closeness.name + "_" + distance.name + '_greedy'
+        sys.stdout.write(
+            "Finding an optimal node set of size {} for the group closensss index calculated with a {} distance using a greedily-optimized search and storing the set and its value in the '{}' attribute.\n".format(
+                k, distance.name, gc_name))
         kpobj.run_groupcentrality(k, GroupCentralityEnum.group_betweenness, seed=seed, cmode=cmode, distance=distance)
         results_dict = kpobj.get_results()
-        add_gc_attributes(graph, GroupCentralityEnum.group_closeness.name + "_" + distance.name + '_greedy',
+        add_gc_attributes(graph, gc_name,
                          {tuple(sorted(results_dict[GroupCentralityEnum.group_closeness.name][0])):
                               results_dict[GroupCentralityEnum.group_closeness.name][1]})
 
@@ -1147,6 +1265,10 @@ class Octopus:
 
         kpobj = bfw(graph=graph)
         kpobj.run_fragmentation(k, KpnegEnum.F, max_distance=max_distance)
+        kp_name = KpnegEnum.F.name + '_bruteforce'
+        sys.stdout.write(
+            "Finding the best node set(s) of size {} for fragmentation index {} using a brute-force search and storing the set(s) and its value in the '{}' attribute.\n".format(
+                k, KpnegEnum.F.name, kp_name))
         results_dict = kpobj.get_results()
         add_gc_attributes(graph, KpnegEnum.F.name + '_bruteforce',
                          {tuple(tuple(sorted(x)) for x in results_dict[KpnegEnum.F.name][0]):
@@ -1174,9 +1296,13 @@ class Octopus:
 
         cmode = get_cmode(graph)
         kpobj = bfw(graph=graph)
+        kp_name = KpnegEnum.dF.name + '_bruteforce'
+        sys.stdout.write(
+            "Finding the best node set(s) of size {} for fragmentation index {} using a brute-force search and storing the set(s) and its value in the '{}' attribute.\n".format(
+                k, KpnegEnum.dF.name, kp_name))
         kpobj.run_fragmentation(k, KpnegEnum.dF, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
-        add_gc_attributes(graph, KpnegEnum.dF.name + '_bruteforce',
+        add_gc_attributes(graph, kp_name,
                          {tuple(tuple(sorted(x)) for x in results_dict[KpnegEnum.dF.name][0]):
                               results_dict[KpnegEnum.dF.name][1]})
 
@@ -1200,9 +1326,13 @@ class Octopus:
         """
         cmode = get_cmode(graph)
         kpobj = bfw(graph=graph)
+        kp_name = KpnegEnum.dR.name + '_bruteforce'
+        sys.stdout.write(
+            "Finding the best node set(s) of size {} for reachability index {} using a brute-force search and storing the set(s) and its value in the '{}' attribute.\n".format(
+                k, KpnegEnum.dR.name, kp_name))
         kpobj.run_reachability(k, KpposEnum.dR, max_distance=max_distance, cmode=cmode)
         results_dict = kpobj.get_results()
-        add_gc_attributes(graph, KpposEnum.dR.name + '_bruteforce',
+        add_gc_attributes(graph, kp_name,
                          {tuple(tuple(sorted(x)) for x in results_dict[KpposEnum.dR.name][0]):
                               results_dict[KpposEnum.dR.name][1]})
 
@@ -1226,10 +1356,13 @@ class Octopus:
         """
         cmode = get_cmode(graph)
         kpobj = bfw(graph=graph)
+        kp_name = KpposEnum.mreach.name + '_{}_bruteforce'.format(str(m))
+        sys.stdout.write(
+            "Finding the best node set(s) of size {} for reachability index m-reach with a maximum distance of {} using a brute-force search and storing the set(s) and its value in the '{}' attribute.\n".format(
+                k, m, kp_name))
         kpobj.run_reachability(k, KpposEnum.mreach, max_distance=max_distance, m=m, cmode=cmode)
         results_dict = kpobj.get_results()
-        attr_name = KpposEnum.mreach.name + '_{}_bruteforce'.format(str(m))
-        add_gc_attributes(graph, attr_name,
+        add_gc_attributes(graph, kp_name,
                          {tuple(tuple(sorted(x)) for x in results_dict[KpposEnum.mreach.name][0]):
                               results_dict[KpposEnum.mreach.name][1]})
 
@@ -1247,9 +1380,13 @@ class Octopus:
         :param k: the size of the node set. Must be a positive integer."""
 
         kpobj = bfw(graph=graph)
+        gc_name = GroupCentralityEnum.group_degree.name + '_bruteforce'
+        sys.stdout.write(
+            "Finding the best node set(s) of size {} for group degree using a brute-force search and storing the set(s) and its value in the '{}' attribute.\n".format(
+                k, gc_name))
         kpobj.run_groupcentrality(k, GroupCentralityEnum.group_degree)
         results_dict = kpobj.get_results()
-        add_gc_attributes(graph, GroupCentralityEnum.group_degree.name + '_bruteforce',
+        add_gc_attributes(graph, gc_name,
                          {tuple(tuple(sorted(x)) for x in results_dict[GroupCentralityEnum.group_degree.name][0]):
                               results_dict[GroupCentralityEnum.group_degree.name][1]})
 
@@ -1269,6 +1406,10 @@ class Octopus:
 
         cmode = get_cmode(graph)
         kpobj = bfw(graph=graph)
+        gc_name = GroupCentralityEnum.group_betweenness.name + '_bruteforce'
+        sys.stdout.write(
+            "Finding the best node set(s) of size {} for group betweenness using a brute-force search and storing the set(s) and its value in the '{}' attribute.\n".format(
+                k, gc_name))
         kpobj.run_groupcentrality(k, GroupCentralityEnum.group_betweenness, cmode=cmode)
         results_dict = kpobj.get_results()
         add_gc_attributes(graph, GroupCentralityEnum.group_betweenness.name + '_bruteforce',
@@ -1292,8 +1433,12 @@ class Octopus:
         """
         cmode = get_cmode(graph)
         kpobj = bfw(graph=graph)
+        gc_name = GroupCentralityEnum.group_closeness.name + "_" + distance.name + '_bruteforce'
+        sys.stdout.write(
+            "Finding the best node set(s) of size {} for group closeness with a {} distance using a brute-force search and storing the set(s) and its value in the '{}' attribute.\n".format(
+                k, distance.name, gc_name))
         kpobj.run_groupcentrality(k, GroupCentralityEnum.group_closeness, cmode=cmode, distance=distance)
         results_dict = kpobj.get_results()
-        add_gc_attributes(graph, GroupCentralityEnum.group_closeness.name + "_" + distance.name + '_bruteforce',
+        add_gc_attributes(graph, gc_name,
                          {tuple(tuple(sorted(x)) for x in results_dict[GroupCentralityEnum.group_closeness.name][0]):
                               results_dict[GroupCentralityEnum.group_closeness.name][1]})
