@@ -194,11 +194,22 @@ ln -s /Users/$USER/Library/Python/3.6/bin/pyntacle /opt/local/bin
 
 Independently of the OS in use, if you need CUDA support, you must
 also install the CUDA toolkit by downloading and installing the Toolkit from the
-[_NVIDIA website_](https://developer.nvidia.com/cuda-toolkit). A
+[_NVIDIA website_](https://developer.nvidia.com/cuda-toolkit).
 
 ## Release history
 
 Changelog for current and past releases:
+
+### 1.0:
+
+Major update of Pyntacle, including:
+- New major feature: Group centralities. A redesign of single-node centralities that accounts for the centrality of groups have been added to Pyntacle and a new command, groupcentrality has now been added to the Pyntacle command line. Its behavior is similar to the keyplayer command. Users can compute group centrality indices for predetermined sets of nodes or perform group centrality-based searches for sets of nodes that optimize predetermined group centrality scores
+- Octopus redesign
+- All graphs imported from either the command line or through the `io_stream` methods now have the same id-->node name pairing, with the exceptions of pickled igraphs (binary)
+- Node isolates are now removed from graphs when imported through any Pyntacle import istance
+- GPU-based computation of the shortest paths using the Floyd-Warshall algorithm is now an experimental feature and is disabvled in the Pyntacle command line. Users can choose to override this behavior in the Pyntacle library by using the correct Cmode enumerator
+- Added exceptions and specific behaviors to unusual group-based search calculations that caused exceptions before
+- Minor bugfixes 
 
 ### 0.2:
 
@@ -228,12 +239,10 @@ Changelog for current and past releases:
 ## License
 
 This work is licensed under a <a rel="license"
-href="https://www.gnu.org/licenses/gpl-3.0.en.html">Creative
-Commons Attribution-NonCommercial-NoDerivatives 4.0 International
-License</a>.
+href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU General Public License v3.0</a>.
 
 <a rel="license"
-href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img
+href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img
 alt="GNU General Public License v3.0" style="border-width:0"
 src="https://en.wikipedia.org/wiki/GNU_General_Public_License#/media/File:GPLv3_Logo.svg" /></a><br
 />
