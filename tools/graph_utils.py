@@ -410,16 +410,22 @@ class GraphUtils:
             if density < 0.5 and n_nodes <= 500:
                 sp_implementation = CmodeEnum.igraph
             else:
-                if cuda_avail:
-                    sp_implementation = CmodeEnum.gpu
+                if n_cpus >= 2:
+                    sp_implementation = CmodeEnum.cpu
                 else:
-                    if n_cpus >= 2:
-                        sp_implementation = CmodeEnum.cpu
-                    else:
-                        sp_implementation = CmodeEnum.igraph
+                    sp_implementation = CmodeEnum.igraph
+
+                #UNCOMMENT THIS PART FOR WHEN THE GPU MODULE WILL BE AVAILABLE
+                # if cuda_avail:
+                #     sp_implementation = CmodeEnum.gpu
+                # else:
+                #     if n_cpus >= 2:
+                #         sp_implementation = CmodeEnum.cpu
+                #     else:
+                #         sp_implementation = CmodeEnum.igraph
 
         self.graph["implementation"] = sp_implementation
-        # self.check_graph() #check that everything is in order
+        self.check_graph() #check that everything is in order
 
     def get_graph(self) -> Graph:
         r"""
