@@ -24,12 +24,17 @@ __license__ = u"""
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
   """
 
-from numba import cuda
+from numba import cuda, int32, uint16
 import numpy as np
+from config import threadsperblock
 
 
-@cuda.jit('void(uint16[:, :])')
-def shortest_path_gpu(adjmat: np.ndarray):
+@cuda.jit(device=True)
+def cuda_min(a: int32, b: int32):
+    return a if a < b else b
+
+@cuda.jit('void(uint16[:, :], int32, int32)')
+def shortest_path_gpu(adjmat: np.ndarray, k:np.int32, N:int32):
     r"""
     Calculate all the shortest paths of a graph, represented as adjacency matrix, using the `Floyd-Warshall <https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm>`_ algorithm.
     The overall calculation is delegated to the GPU, if available, through the NUMBA python package.
@@ -37,19 +42,17 @@ def shortest_path_gpu(adjmat: np.ndarray):
     :param np.ndarray adjmat: a numpy.ndarray containing the adjacency matrix of the graph . Infinite distance is represented as the length of the longest possible path within the graph +1. The diagonal of the matrix holds zero values.
     """
 
-    i = cuda.grid(1)
-    graph_size = adjmat.shape[0]
-    if i < graph_size:  # Check array boundaries
-        for k in range(0, graph_size):
-            for j in range(0, graph_size):
-                posIJ = adjmat[i, j]
-                if posIJ <= 2:
-                    continue
-
-                posIK = adjmat[i, k]
-                posKY = adjmat[k, j]
-                if posIJ > posIK + posKY:
-                    adjmat[i, j] = posIK + posKY
+    i = cuda.threadIdx.x + cuda.blockIdx.x * cuda.blockDim.x
+    j = cuda.threadIdx.y + cuda.blockIdx.y * cuda.blockDim.y
+    if i < N and j < N:
+        posIK = adjmat[i, k]
+        posKJ = adjmat[k, j]
+        if posIK != N + 1 and posKJ != N + 1:
+            posIJ = adjmat[i, j]
+            if posIJ == N + 1:
+                adjmat[i, j] = posIK + posKJ
+            else:
+                adjmat[i, j] = cuda_min(posIK + posKJ, posIJ)
 
 
 @cuda.jit('void(uint16[:, :], uint16[:, :])')

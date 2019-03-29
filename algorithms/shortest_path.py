@@ -46,6 +46,13 @@ class ShortestPath:
     node
     """
 
+    @staticmethod
+    @jit(nopython=True, parallel=True)
+    def __chunks(l: list, n: int):
+        # chunks = [l[x:x + 100] for x in range(0, len(l), n)]
+        for i in range(0, len(l), n):
+            yield l[i:i + n]
+
     # @profile #uncomment to time the shortest path search when changes are made
     @staticmethod
     def get_shortestpaths(graph: Graph, nodes: int or list or None =None, cmode: CmodeEnum = CmodeEnum.igraph) -> np.ndarray:
@@ -67,17 +74,18 @@ class ShortestPath:
         if cmode == CmodeEnum.igraph:
             sps = ShortestPath.shortest_path_length_igraph(graph=graph, nodes=nodes)
             sps = [[graph.vcount() + 1 if isinf(x) else x for x in y] for y in sps]
-            sps = np.array(sps)
+            sps = np.array(sps) #convert to a numpy array
             return sps
+
         elif cmode == CmodeEnum.cpu or cmode == CmodeEnum.gpu:
             if virtual_memory().free < (graph.vcount() ** 2) * 2:  # the rightmost "2" is int16/8
-                sys.stdout.write(u"WARNING: Memory seems to be low; loading the graph given as input could fail.")
+                sys.stdout.write(u"WARNING: Memory seems to be low; loading the graph given as input could fail.\n")
 
             graph_size = graph.vcount() + 1
             # np.set_printoptions(linewidth=graph_size * 10)
             adjmat = np.array(graph.get_adjacency().data, dtype=np.uint16, copy=True)
-            adjmat[adjmat == 0] = np.uint16(graph_size)
-            np.fill_diagonal(adjmat, 0)
+            adjmat[adjmat == 0] = np.uint16(graph_size) #replace infinite distances with vcount +1
+            np.fill_diagonal(adjmat, 0) ##replace the diagonal with 0s
 
             if cmode == CmodeEnum.cpu:
                 if nodes is None:
@@ -91,7 +99,7 @@ class ShortestPath:
             elif cmode == CmodeEnum.gpu:
                 if cmode == CmodeEnum.gpu and cuda.current_context().get_memory_info().free < (graph.vcount() ** 2) * 2:
                     sys.stdout.write(
-                        u"WARNING: GPU Memory seems to be low; loading the graph given as input could fail.")
+                        u"WARNING: GPU Memory seems to be low; loading the graph given as input could fail.\n")
 
                 if nodes is None:
                     nodes = list(range(0, graph.vcount()))
@@ -101,16 +109,26 @@ class ShortestPath:
                 if "shortest_path_gpu" not in sys.modules:
                     from algorithms.shortest_path_gpu import shortest_path_gpu
 
-                    sps = np.array(adjmat, copy=True, dtype=np.uint16)
-                    blockspergrid = ceil(adjmat.shape[0] / threadsperblock)
-                    shortest_path_gpu[blockspergrid, threadsperblock](sps)
+                N = adjmat.shape[0]
+                threadsperblock = (32, 32)
+                blockspergrid_x = math.ceil(N / threadsperblock[0])
+                blockspergrid_y = math.ceil(N / threadsperblock[1])
+                blockspergrid = (blockspergrid_x, blockspergrid_y)
 
-                    if len(nodes) < graph.vcount():
-                        sps = sps[nodes, :]
+                sps = np.array(adjmat, copy=True, dtype=np.uint16)
+                # copy sps from host to device
+                d_sps = cuda.to_device(sps)
 
-                    return sps
-        else:
-            raise ValueError(u"The specified 'computing mode' is invalid. Choose from: {}".format(list(CmodeEnum)))
+                for k in range(0, N):
+                    shortest_path_gpu[blockspergrid, threadsperblock](d_sps, k, N)
+
+                # copy sps back from device to host
+                d_sps.copy_to_host(sps)
+
+                if len(nodes) < graph.vcount():
+                    sps = sps[nodes, :]
+
+                return sps
 
     @staticmethod
     def get_shortestpath_count(graph: Graph, nodes: str or list or None, cmode: CmodeEnum) -> np.ndarray:
