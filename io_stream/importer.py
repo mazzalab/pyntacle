@@ -133,13 +133,13 @@ class PyntacleImporter:
             if header:
                 #use pandas to parse this into
                 f = pd.read_csv(filepath_or_buffer=file, sep=sep, index_col=0)
-                f = f.reindex(sorted(f.columns), axis=1)
+                f = f.reindex(sorted(f.columns), axis=1)  # sort columns alphabetically
+                f = f.reindex(sorted(f.index), axis=0)  # sort indices alphabetically
                 node_names = f.columns.values.tolist()
 
             else:
                 f = pd.read_csv(filepath_or_buffer=file, sep=sep, header=None)
-                f = f.reindex(sorted(f.columns), axis=1)
-                node_names = [str(x) for x in range(0, len(f.columns))]
+                node_names = list(map(str, f.index))
 
             graph = Graph.Adjacency(f.values.tolist(), mode="UPPER")
             util = gu(graph=graph)
