@@ -1,0 +1,305 @@
+/* Created by igraph 0.7.1 */
+graph {
+  graph [
+    name="['figure_8']"
+    sif_interaction_name=0
+    isolates=0
+  ];
+  0 [
+    name=BM
+    parent=figure_8
+  ];
+  1 [
+    name=BR
+    parent=figure_8
+  ];
+  2 [
+    name=BS
+    parent=figure_8
+  ];
+  3 [
+    name=BS2
+    parent=figure_8
+  ];
+  4 [
+    name=BS3
+    parent=figure_8
+  ];
+  5 [
+    name=BW
+    parent=figure_8
+  ];
+  6 [
+    name=CD
+    parent=figure_8
+  ];
+  7 [
+    name=CR
+    parent=figure_8
+  ];
+  8 [
+    name=DB
+    parent=figure_8
+  ];
+  9 [
+    name=DI
+    parent=figure_8
+  ];
+  10 [
+    name=EE
+    parent=figure_8
+  ];
+  11 [
+    name=GM
+    parent=figure_8
+  ];
+  12 [
+    name=GS
+    parent=figure_8
+  ];
+  13 [
+    name=HA
+    parent=figure_8
+  ];
+  14 [
+    name=HB
+    parent=figure_8
+  ];
+  15 [
+    name=HS
+    parent=figure_8
+  ];
+  16 [
+    name=JE
+    parent=figure_8
+  ];
+  17 [
+    name=KA
+    parent=figure_8
+  ];
+  18 [
+    name=KR
+    parent=figure_8
+  ];
+  19 [
+    name=LK
+    parent=figure_8
+  ];
+  20 [
+    name=LR
+    parent=figure_8
+  ];
+  21 [
+    name=MG
+    parent=figure_8
+  ];
+  22 [
+    name=MJ
+    parent=figure_8
+  ];
+  23 [
+    name=NP
+    parent=figure_8
+  ];
+  24 [
+    name=PH
+    parent=figure_8
+  ];
+  25 [
+    name=PS
+    parent=figure_8
+  ];
+  26 [
+    name=SF
+    parent=figure_8
+  ];
+  27 [
+    name=SR
+    parent=figure_8
+  ];
+  28 [
+    name=TO
+    parent=figure_8
+  ];
+  29 [
+    name=WD
+    parent=figure_8
+  ];
+  30 [
+    name=WL
+    parent=figure_8
+  ];
+  31 [
+    name=WS
+    parent=figure_8
+  ];
+
+  5 -- 0 [
+    sif_interaction=0
+  ];
+  7 -- 0 [
+    sif_interaction=0
+  ];
+  13 -- 0 [
+    sif_interaction=0
+  ];
+  19 -- 0 [
+    sif_interaction=0
+  ];
+  24 -- 0 [
+    sif_interaction=0
+  ];
+  27 -- 0 [
+    sif_interaction=0
+  ];
+  4 -- 1 [
+    sif_interaction=0
+  ];
+  11 -- 1 [
+    sif_interaction=0
+  ];
+  18 -- 1 [
+    sif_interaction=0
+  ];
+  29 -- 1 [
+    sif_interaction=0
+  ];
+  6 -- 2 [
+    sif_interaction=0
+  ];
+  22 -- 2 [
+    sif_interaction=0
+  ];
+  23 -- 2 [
+    sif_interaction=0
+  ];
+  28 -- 2 [
+    sif_interaction=0
+  ];
+  21 -- 3 [
+    sif_interaction=0
+  ];
+  23 -- 3 [
+    sif_interaction=0
+  ];
+  11 -- 4 [
+    sif_interaction=0
+  ];
+  16 -- 4 [
+    sif_interaction=0
+  ];
+  18 -- 4 [
+    sif_interaction=0
+  ];
+  20 -- 4 [
+    sif_interaction=0
+  ];
+  25 -- 4 [
+    sif_interaction=0
+  ];
+  26 -- 4 [
+    sif_interaction=0
+  ];
+  29 -- 4 [
+    sif_interaction=0
+  ];
+  31 -- 4 [
+    sif_interaction=0
+  ];
+  8 -- 5 [
+    sif_interaction=0
+  ];
+  24 -- 5 [
+    sif_interaction=0
+  ];
+  14 -- 6 [
+    sif_interaction=0
+  ];
+  23 -- 6 [
+    sif_interaction=0
+  ];
+  30 -- 6 [
+    sif_interaction=0
+  ];
+  12 -- 9 [
+    sif_interaction=0
+  ];
+  13 -- 9 [
+    sif_interaction=0
+  ];
+  17 -- 9 [
+    sif_interaction=0
+  ];
+  14 -- 10 [
+    sif_interaction=0
+  ];
+  18 -- 11 [
+    sif_interaction=0
+  ];
+  25 -- 11 [
+    sif_interaction=0
+  ];
+  26 -- 11 [
+    sif_interaction=0
+  ];
+  29 -- 11 [
+    sif_interaction=0
+  ];
+  31 -- 11 [
+    sif_interaction=0
+  ];
+  29 -- 13 [
+    sif_interaction=0
+  ];
+  23 -- 14 [
+    sif_interaction=0
+  ];
+  27 -- 14 [
+    sif_interaction=0
+  ];
+  28 -- 14 [
+    sif_interaction=0
+  ];
+  18 -- 15 [
+    sif_interaction=0
+  ];
+  25 -- 15 [
+    sif_interaction=0
+  ];
+  18 -- 16 [
+    sif_interaction=0
+  ];
+  24 -- 17 [
+    sif_interaction=0
+  ];
+  25 -- 18 [
+    sif_interaction=0
+  ];
+  26 -- 18 [
+    sif_interaction=0
+  ];
+  29 -- 18 [
+    sif_interaction=0
+  ];
+  31 -- 18 [
+    sif_interaction=0
+  ];
+  28 -- 22 [
+    sif_interaction=0
+  ];
+  28 -- 23 [
+    sif_interaction=0
+  ];
+  27 -- 24 [
+    sif_interaction=0
+  ];
+  29 -- 25 [
+    sif_interaction=0
+  ];
+  31 -- 25 [
+    sif_interaction=0
+  ];
+  29 -- 26 [
+    sif_interaction=0
+  ];
+}

@@ -19,6 +19,7 @@ def Suite():
     suite.addTest(WidgetTestConvert('test_convert_adjm'))
     suite.addTest(WidgetTestConvert('test_egl_to_sif'))
     suite.addTest(WidgetTestConvert('test_sif_to_egl'))
+    suite.addTest(WidgetTestConvert('test_dot_to_adjm'))
 
     suite.addTest(WidgetTestLogicOps('test_union'))
     suite.addTest(WidgetTestLogicOps('test_intersect'))

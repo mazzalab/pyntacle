@@ -72,8 +72,9 @@ class WidgetTestMetrics(unittest.TestCase):
             mt.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Pyntacle_Report_*_Global_*"))[0]
+        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Report_*_Global_*"))[0]
         with open(fileout, 'r') as fin:
+            next(fin)
             next(fin)
             data = fin.read()
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/metrics/figure8_global.txt')
@@ -113,8 +114,9 @@ class WidgetTestMetrics(unittest.TestCase):
             mt.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Pyntacle_Report_*_Local_*"))[0]
+        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Report_*_Local_*"))[0]
         with open(fileout, 'r') as fin:
+            next(fin)
             next(fin)
             data = fin.read()
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/metrics/figure8_local.txt')

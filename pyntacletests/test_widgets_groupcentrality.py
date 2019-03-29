@@ -73,8 +73,9 @@ class WidgetTestGroupcentrality(unittest.TestCase):
             gr.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Pyntacle_Report_*_GR_info_*"))[0]
+        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Report_*_GR_info_*"))[0]
         with open(fileout, 'r') as fin:
+            next(fin)
             next(fin)
             data = fin.read()
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/groupcentrality/figure8_grinfo.txt')
@@ -95,8 +96,9 @@ class WidgetTestGroupcentrality(unittest.TestCase):
             gr.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Pyntacle_Report_*_GR_greedy_*"))[0]
+        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Report_*_GR_greedy_*"))[0]
         with open(fileout, 'r') as fin:
+            next(fin)
             next(fin)
             data = fin.read()
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/groupcentrality/figure8_grfinder_greedy.txt')
@@ -119,8 +121,9 @@ class WidgetTestGroupcentrality(unittest.TestCase):
             gr.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Pyntacle_Report_*_GR_bruteforce_*"))[0]
+        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Report_*_GR_bruteforce_*"))[0]
         with open(fileout, 'r') as fin:
+            next(fin)
             next(fin)
             data = fin.read()
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/groupcentrality/figure8_grfinder_bruteforce.txt')
@@ -136,8 +139,8 @@ class WidgetTestGroupcentrality(unittest.TestCase):
 
     def cleanup(self):
         files = glob.glob(os.path.join(current_dir, 'pyntacletests/test_sets/tmp/*'))
-        for f in files:
-            os.remove(f)
+        # for f in files:
+        #     os.remove(f)
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,11 +1,12 @@
-Quick Graph Overview	
-graph name	figure_8	
-components	1	
-nodes	32	
-edges	56	
 
 	
-Pyntacle Command:	GR_info	
+Network Overview	
+Graph name	figure_8	
+Number of Components	1	
+Nodes	32	
+Edges	56	
+
+	
 group closeness distance	minimum	
 
 	

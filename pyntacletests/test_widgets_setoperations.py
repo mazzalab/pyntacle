@@ -74,8 +74,8 @@ class WidgetTestLogicOps(unittest.TestCase):
 
     def cleanup(self):
         files = glob.glob(os.path.join(current_dir, 'pyntacletests/test_sets/tmp/*'))
-        for f in files:
-            os.remove(f)
+        # for f in files:
+        #     os.remove(f)
 
 
 if __name__ == '__main__':

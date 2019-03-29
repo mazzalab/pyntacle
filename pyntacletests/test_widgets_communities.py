@@ -62,6 +62,7 @@ class WidgetTestCommunities(unittest.TestCase):
         self.Args.weights_name = None
         self.Args.v = None
         self.Args.suppress_cursor = True
+        self.Args.report_format = 'txt'
 
     def test_fastgreedy(self):
         sys.stdout.write("Testing fastgreedy community finder\n")
@@ -73,7 +74,7 @@ class WidgetTestCommunities(unittest.TestCase):
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
         files_out = sorted(glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/fastgreedy*")))
-        expected_files = sorted(glob.glob(os.path.join(current_dir, 'pyntacletests/test_sets/output/communities/fastgreedy/module*')))
+        expected_files = sorted(glob.glob(os.path.join(current_dir, 'pyntacletests/test_sets/output/communities/fastgreedy/fastgreedy*')))
         
         for f, e in zip(files_out, expected_files):
             self.assertEqual(getmd5(f), getmd5(e), 'Wrong checksum for communities, fastgreedy case')
@@ -88,7 +89,7 @@ class WidgetTestCommunities(unittest.TestCase):
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
         files_out = sorted(glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/infomap*")))
-        expected_files = sorted(glob.glob(os.path.join(current_dir, 'pyntacletests/test_sets/output/communities/infomap/module*')))
+        expected_files = sorted(glob.glob(os.path.join(current_dir, 'pyntacletests/test_sets/output/communities/infomap/infomap*')))
 
         for f, e in zip(files_out, expected_files):
             self.assertEqual(getmd5(f), getmd5(e), 'Wrong checksum for communities, infomap case')
@@ -103,7 +104,7 @@ class WidgetTestCommunities(unittest.TestCase):
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
         files_out = sorted(glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/leading-eigenvector*")))
-        expected_files = sorted(glob.glob(os.path.join(current_dir, 'pyntacletests/test_sets/output/communities/leading-eigenvector/module*')))
+        expected_files = sorted(glob.glob(os.path.join(current_dir, 'pyntacletests/test_sets/output/communities/leading-eigenvector/leading-*')))
 
         for f, e in zip(files_out, expected_files):
             self.assertEqual(getmd5(f), getmd5(e), 'Wrong checksum for communities, leading-eigenvector case')
@@ -120,7 +121,7 @@ class WidgetTestCommunities(unittest.TestCase):
         self.assertEqual(the_exception.code, 0)
         files_out = sorted(glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/community-walktrap*")))
         expected_files = sorted(
-            glob.glob(os.path.join(current_dir, 'pyntacletests/test_sets/output/communities/community-walktrap/module*')))
+            glob.glob(os.path.join(current_dir, 'pyntacletests/test_sets/output/communities/community-walktrap/community-walktrap*')))
 
         for f, e in zip(files_out, expected_files):
             self.assertEqual(getmd5(f), getmd5(e),

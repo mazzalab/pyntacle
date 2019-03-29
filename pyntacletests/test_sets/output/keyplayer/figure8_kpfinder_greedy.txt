@@ -1,17 +1,20 @@
-Quick Graph Overview	
-graph name	figure_8	
-components	1	
-nodes	32	
-edges	56	
 
 	
-Pyntacle Command:	KP_greedy	
-maximum mreach distance	2	
-initial F value (whole graph)	0	
-initial dF value (whole graph)	0.64755	
-Results: Greedily-Optimized Search for selected KP Metrics	
-Metric	Nodes	Value	
-F	PH,WL	0.62989	
-dF	PH,WL	0.78904	
-dR	PH,WL	0.64063	
-mreach	PH,WL	25	
+Network Overview	
+Graph name	figure_8	
+Number of Components	1	
+Nodes	32	
+Edges	56	
+
+	
+Starting graph F value	0	
+Starting graph dF value	0.64755	
+maximum m-reach distance	2	
+
+	
+Results: greedily-optimized search for optimal key player node set	
+Index	Node set	Value	
+F	HA,HB	0.70575	
+dF	HB,WD	0.81506	
+dR	BS3,HB	0.64062	
+m-reach	HA,NP	25	

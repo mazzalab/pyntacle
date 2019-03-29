@@ -72,8 +72,9 @@ class WidgetTestKeyplayer(unittest.TestCase):
             kp.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Pyntacle_Report_*_KP_info_*"))[0]
+        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Report_*_KP_info_*"))[0]
         with open(fileout, 'r') as fin:
+            next(fin)
             next(fin)
             data = fin.read()
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/keyplayer/figure8_kpinfo.txt')
@@ -95,8 +96,9 @@ class WidgetTestKeyplayer(unittest.TestCase):
             kp.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Pyntacle_Report_*_KP_greedy_*"))[0]
+        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Report_*_KP_greedy_*"))[0]
         with open(fileout, 'r') as fin:
+            next(fin)
             next(fin)
             data = fin.read()
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/keyplayer/figure8_kpfinder_greedy.txt')
@@ -120,8 +122,9 @@ class WidgetTestKeyplayer(unittest.TestCase):
             kp.run()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
-        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Pyntacle_Report_*_KP_bruteforce_*"))[0]
+        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Report_*_KP_bruteforce_*"))[0]
         with open(fileout, 'r') as fin:
+            next(fin)
             next(fin)
             data = fin.read()
         expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/keyplayer/figure8_kpfinder_bruteforce.txt')
