@@ -379,12 +379,12 @@ class PyntacleImporter:
             graphname = tokens.initial_name
         else:
             graphname = os.path.splitext(os.path.basename(file))[0]
-
         for a in graph_attrs_dict:
             for k in graph_attrs_dict[a]:
-                AddAttributes.add_graph_attribute(graph, k, graph_attrs_dict[a][k])
+                clean_k = re.search("[\[\'\"]*([\w\.\-\ \:\+\(\)\{\}\=]*)[\]\'\"]*", graph_attrs_dict[a][k]).group(1)
+                AddAttributes.add_graph_attribute(graph, clean_k, graph_attrs_dict[a][k])
                 if k == 'name':
-                    graphname = k
+                    graphname = clean_k
 
         for a in node_attrs_dict:
             for k in node_attrs_dict[a]:

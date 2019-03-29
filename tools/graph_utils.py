@@ -362,7 +362,7 @@ class GraphUtils:
 
         self.graph.to_undirected()  # reconvert graph to directed
         if "name" not in self.graph.attributes():
-            self.logger.info(u"adding file name to graph name")
+            self.logger.info(u"Adding file name to graph name")
             AddAttributes.add_graph_name(self.graph, graph_name)
 
         # add vertex names

@@ -61,6 +61,8 @@ class WidgetTestMetrics(unittest.TestCase):
         self.Args.v = None
         self.Args.suppress_cursor = True
         self.Args.nodes = None
+        self.Args.weights = None
+
 
     def test_global(self):
         sys.stdout.write("Testing global metrics\n")
@@ -105,7 +107,6 @@ class WidgetTestMetrics(unittest.TestCase):
         self.Args.damping_factor = 0.85
         self.Args.which = 'local'
         self.Args.nodes = 'HS,BR,WD,PS,WS'
-        self.Args.weights = None
 
         mt = metrics_command(self.Args)
         with self.assertRaises(SystemExit) as cm:
