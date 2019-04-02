@@ -859,7 +859,7 @@ class Octopus:
         r"""
         Wraps the :func:`~pyntacle.algorithms.keyplayer.KeyPlayer.F` method that quantifies the *fragmentation* status of the
         network (the input :py:class:`igraph.Graph` object) and embed it in the graph under the graph attribute ``F``. For detailed
-        information on the nature of the F index, please refer to the `Key Player Metrics Guide <http://pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html#2.1.1>`_on Pyntacle official website.
+        information on the nature of the F index, please refer to the `group centrality guide <http://pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html#2.1.1>`_on Pyntacle official website.
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         """
@@ -875,7 +875,7 @@ class Octopus:
         r"""
         Wraps the :func:`~pyntacle.algorithms.keyplayer.KeyPlayer.dF` method that quantifies the *distance-based-fragmentation* status of the
         network (the input :py:class:`igraph.Graph` object) and embed it in the graph under the graph attribute ``F``. For detailed
-        information on the nature of the dF index, please refer to the `Key Player Metrics Guide <http://pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html#2.1.2>`_
+        information on the nature of the dF index, please refer to the `group centrality guide <http://pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html#2.1.2>`_
         on Pyntacle official website.
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
@@ -903,7 +903,7 @@ class Octopus:
 
         This method encompasses the same procedure performed by the ``pyntacle key-player kp-info`` command on Pyntacle command line.
 
-        For detailed information on the nature of the dF index, please refer to the `Key Player Metrics Guide <http://pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html#2.1.1>`_
+        For detailed information on the nature of the dF index, please refer to the `group centrality guide <http://pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html#2.1.1>`_
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param str,list nodes: the vertex ``name`` attribute corresponding to node names. It can be either a string specifying a single node name or a list of strings, each one representing a node in the input graph.
@@ -938,7 +938,7 @@ class Octopus:
 
         This method encompasses the same procedure performed by the ``pyntacle key-player kp-info`` command on Pyntacle command line.
 
-        For detailed information on the nature of the dF index, please refer to the `Key Player Metrics Guide <http://pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html#2.1.2>`_
+        For detailed information on the nature of the dF index, please refer to the `group centrality guide <http://pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html#2.1.2>`_
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param str,list nodes: the vertex ``name`` attribute corresponding to node names. It can be either a string specifying a single node name or a list of strings, each one representing a node in the input graph.
@@ -971,7 +971,7 @@ class Octopus:
 
         This method encompasses the same procedure performed by the ``pyntacle key-player kp-info`` command on Pyntacle command line.
 
-        For detailed information on the nature of the dF index, please refer to the `Key Player Metrics Guide <http://pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html#2.3.2>`_
+        For detailed information on the nature of the dF index, please refer to the `group centrality guide <http://pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html#2.3.2>`_
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param str,list nodes: the vertex ``name`` attribute corresponding to node names. It can be either a string specifying a single node name or a list of strings, each one representing a node in the input graph.each one representing a node in the graph.
@@ -1004,7 +1004,7 @@ class Octopus:
 
         This method encompasses the same procedure performed by the ``pyntacle key-player kp-info`` command on Pyntacle command line.
 
-        For detailed information on the nature of the dF index, please refer to the `Key Player Metrics Guide <http://pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html#2.3.2>`_
+        For detailed information on the nature of the dF index, please refer to the `group centrality guide <http://pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html#2.3.2>`_
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param int,None max_distance: The maximum shortest path length over which two nodes are considered unreachable. Default is :py:class:`None` (distances are preserved).
