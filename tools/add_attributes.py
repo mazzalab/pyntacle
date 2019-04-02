@@ -75,8 +75,8 @@ class AddAttributes:
         :param str attr_name: The name of the attribute that will be added to the :py:class:`~igraph.Graph`
         :param list attr_list: alist of object, sorted by the ``nodes`` parameter. Each object will be adced singularly to the corresponding node
         :param list nodes: the vertex ``name`` attribute corresponding to the vertices to which attributes will be added..
-        :raise TypeError:
-        :raise WrongArgumentError:
+        :raise TypeError: if any of the arguments is not of the expected type
+        :raise WrongArgumentError: If all the attributes pointed to non-existing nodes.
         """
         if not isinstance(graph, Graph) is not Graph:
             raise TypeError(u"graph argument is not a igraph.Graph")
@@ -88,7 +88,6 @@ class AddAttributes:
             sys.stdout.write(u"Converting string nodes to list of nodes\n")
             nodes = [nodes]
 
-        
         assert len(attr_list) == len(nodes), u"In add_node_attribute, length of attributes list cannot be " \
                                              "different from length of list of nodes."
         
@@ -154,7 +153,7 @@ class AddAttributes:
                 select[0][attr_name] = a
                 
             else:
-                raise ValueError(u"Edge %s has multiple name hits, edge names must be univocal")
+                raise ValueError(u"Edge %s has multiple name hits, edge `adjacent_nodes` must be univocal")
 
         if err_count == count:
             raise WrongArgumentError("All the attributes pointed to non-existing edges.")

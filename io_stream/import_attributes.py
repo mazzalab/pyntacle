@@ -28,12 +28,11 @@ __license__ = u"""
 from config import *
 from igraph import Graph
 from collections import OrderedDict
-
+import pandas as pd
+import numpy as np
 from exceptions.unsupported_graph_error import UnsupportedGraphError
-# pyntacle Libraries
 from tools.add_attributes import AddAttributes
 from internal.graph_routines import check_graph_consistency
-
 
 def check_file(graph: Graph, file: str, sep: str):
     if not os.path.exists(file):
@@ -86,11 +85,12 @@ class ImportAttributes():
 
         .. note:: each value is imported as a :py:class:`str`, be sure to turn it into your type of interest if needed.
 
+        ..warning: any of the `Pyntacle Reserved graph Attributes <http://pyntacle.css-mendel.it/requirements.html>`_ with the exception of ``name`` and ``sif_interaction_name`` will be dropped
 
         :param str file: the path to the attribute file
         :param str,None sep: field separator between columns. If :py:class:`None` it will be guessed
         """
-        
+        reserved_graph_attributes = ["isolates", "implementation"]
         check = check_file(graph=graph, file=file, sep=sep)
         infile = check[0]
         sep = check[1]
@@ -99,12 +99,23 @@ class ImportAttributes():
             next(attrfile)
             for line in attrfile:
                 attrs = line.strip().split(str(sep))
-                if attrs[0].startswith('__'):
-                    sys.stdout.write("ERROR: attributes should not start with a double underscore (\"__\") as"
-                                     "this notation is reserved for private attributes. Skipping {}\n".format(attrs[0]))
-                    continue
-                AddAttributes.add_graph_attribute(graph, attrs[0],
-                                                  attrs[1])
+
+                if attrs[0] == "name":
+                    sys.stdout.write("Replacing graph 'name' attribute with the current one.\n")
+                    AddAttributes.add_graph_name(graph, attrs[0])
+
+                if attrs[0] == "sif_interaction_name":
+                    sys.stdout.write("Replacing graph 'sif_interaction_name' attribute with the current one.\n")
+                    AddAttributes.add_graph_attribute(graph, "sif_interaction_name", attrs[0])
+
+                #exception for Pyntacle reserved Attributes
+                elif attrs[0] in reserved_graph_attributes:
+                    sys.stdout.write("WARNING: attempting to import Pyntacle reserved graph attribute '{}', will skip.\n".format(attrs[0]))
+
+                else:
+                    sys.stdout.write("Adding {} attribute to graph (as a string).\n".format(attrs[0]))
+                    AddAttributes.add_graph_attribute(graph, attrs[0],
+                                                      attrs[1])
         sys.stdout.write(u"Graph attributes from {} imported\n".format(os.path.basename(file)))
 
     @staticmethod
@@ -126,9 +137,13 @@ class ImportAttributes():
 
         .. note:: the attribute file **must** have an header, that is used to specify the attribute name. The first cell of the header is skipped
 
-        .. note:: to represent an empty value for the selected nodes, one can use ``NA``, ``?`` or ``NONE``. This will return an attribute value of type :py:class:`None` for the attribute of the selected vertex
+        .. note:: to represent an empty value for the selected nodes, one can use ``NA``, ``?``, ``NaN``, ``NONE``, ``none``, ``None``. This will return an attribute value of type :py:class:`None` for the attribute of the selected vertex
 
-        .. warning:: the attribute name cannot start with `__`, as this is usually reserved for private attributes
+        .. warning:: attribute names that matches with `Pyntacle reserved attributes <http://pyntacle.css-mendel.it/requirements.html>`_ will be dropped
+
+        .. warning: if the same node is declared in multiple lines, only the last occurrence of the node will be kept
+
+        .. warning: if two (or more) columns have the same header, they will al be imported and the corresponding duplicated attributes will contain a ``.X`` attribute, where ``X`` is a number starting from 1
 
 
         We refer the user to the `graph attribute <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html#na>`_
@@ -145,61 +160,45 @@ class ImportAttributes():
             u"WARNING: Attributes will be added as strings, so remember to convert them to proper types\n")
 
         #check if file name is properly passed
-
-        reserved_attrs = ["name", "parent"]
         check = check_file(graph=graph, file=file, sep=sep)
         infile = check[0]
-        sep = check[1]
-        attrs_dict = {}
-        with open(infile, "r") as attrfile:
-            last_pos = attrfile.tell()
-            # Checking if one or more attributes' names start with '__'. Avoids malicious injection.
-            if any(i in reserved_attrs for i in attrfile.readline().rstrip().split(sep)):
-                raise KeyError(
-                    u"One of the attributes in your attributes/weights file starts with `__`."
-                    "This notation is reserved to internal variables, please avoid using it.")
-            attrfile.seek(last_pos)
-        
-            # read the first line as header and store the attribute names
-            attrnames = [x for x in attrfile.readline().rstrip().split(sep)[1:]]
-        
-            names_list = set()
-            for line in attrfile:
-            
-                if line in ['\n', '\r\n']:
-                    sys.stdout.write(u"WARNING: Skipping empty line\n")
-            
-                else:
-                    tmp = line.rstrip().split(sep)
-                    name = tmp[0]
-                    attrs = tmp[1:]
-                    if any(x.upper() in ["NA", "NONE", "?"] for x in attrs):
-                        sys.stdout.write(u"WARNING: NAs found for node {}, replacing it with None\n")
-                        attrs = [None if x in ["NA", "NONE", "?"] else x for x in attrs]
-                    # select node with attribute name matching the node attribute "name"
-                    select = graph.vs.select(name=name)
-                
-                    if name not in names_list:
-                        names_list.add(name)
-                    else:
-                        sys.stdout.write(
-                            u"WARNING: Node {} has already been assigned an attribute, will be overwritten\n".format(
-                                name))
-                
-                    if len(select) == 0:
-                        sys.stdout.write(u"WARNING: node %s not found in graph\n" % name)
-                
-                    elif len(select) == 1:
-                        for i, obj in enumerate(attrs):
-                            if attrnames[i] not in attrs_dict:
-                                attrs_dict[attrnames[i]] = OrderedDict()
-                            attrs_dict[attrnames[i]][select[0]["name"]] = obj
-                    else:
-                        raise ValueError(u"multiple node hits")
-                    
-        for attr in attrs_dict:
-            AddAttributes.add_node_attribute(graph, attr, list(attrs_dict[attr].values()), list(attrs_dict[attr].keys()))
-                
+        if sep is None:
+            sep = check[1]
+
+        reserved_vertex_attrs = ["name", "parent", "module"] #list that will be used  will skip the importing of reserved attributes
+        node_names = graph.vs["name"] #will be used to matche the  node names
+
+        #import attribute file as pandas dataframe
+        df = pd.read_csv(infile, index_col=0, sep=sep)
+
+        not_in_graph = list(set(df.index) - set(node_names))
+        not_in_graph.sort()
+
+        if len(not_in_graph) > 0:
+            sys.stdout.write(u"WARNING: Nodes {} are not present in graph. They will be dropped.\n".format(",".join(not_in_graph)))
+            df.drop(not_in_graph, inplace=True)
+
+            if df.empty:
+                raise ValueError(u"No node is present in the graph. Is this file correct?")
+
+        if len(df.index[df.index.duplicated()].unique()) > 0: #remove multiple nnodes and keep only the first occurrence
+            sys.stdout.write(u"WARNING: Duplicated node names in the vertex column. Only the first occurrence of the node will be kept.\n")
+            df = df[~df.index.duplicated(keep='last')] #remove all occurrences of multiple node hits
+
+        if any(x in df.columns for x in reserved_vertex_attrs):
+            sys.stdout.write(u"WARNING: some of the columns are labeled as Pyntacle reserved vertex attributes, these columns will be dropped.\n")
+
+            for elem in reserved_vertex_attrs:
+                cols = [c for c in df.columns if not c.startswith(elem)]
+                df = df[cols]
+
+        df = df.replace(to_replace=["?", "None", "NaN", "none", "NA", "NONE"], value=np.nan) #Set all NA values to NaN
+        df.where((pd.notnull(df)), None) #replace all NaNs with None
+
+        #add attributes to graph
+        for elem in df.columns:
+            AddAttributes.add_node_attribute(graph, elem, attr_list=df[elem].tolist(), nodes=df.index.tolist())
+
         sys.stdout.write(u"Node attributes from {} imported\n".format(os.path.basename(file)))
 
     @staticmethod
@@ -225,6 +224,8 @@ class ImportAttributes():
 
         .. note:: to represent an empty value for the selected nodes, one can use ``NA``, ``?`` or ``NONE``. This will return an attribute value of type :py:class:`None` for the attribute of the selected edge
 
+        .. warning: any edge attributes named as one of the `Pyntacle reserved edge attributes <http://pyntacle.css-mendel.it/requirements.html>`_, with the exception of ``weights`` and ``sif_interaction``, will be dropped
+
         We refer the user to the `graph attribute <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html#na>`_
         file specification guide in the Pyntacle official page for further details on attribute files.
 
@@ -238,9 +239,13 @@ class ImportAttributes():
 
         check = check_file(graph=graph, file=file, sep=sep)
         infile = check[0]
-        sep = check[1]
+        if sep is None:
+            sep = check[1]
         edges_list = set()
         attrs_dict = {}
+
+        reserved_edge_attributes = ["adjacent_nodes", "module"]
+
         with open(infile, "r") as attrfile:
             if mode == "standard":
                 attrnames = [x for x in attrfile.readline().rstrip().split(sep)[2:]]
@@ -294,26 +299,20 @@ class ImportAttributes():
 
                         for i, obj in enumerate(attrs):
 
-                            if attrnames[i].startswith('__'):
-                                sys.stdout.write(
-                                    "ERROR: attributes should not start with a double underscore (\"__\") as"
-                                    "this notation is reserved for private attributes. Skipping {}\n".format(attrnames[i]))
+                            if attrnames[i] not in attrs_dict:
+                                attrs_dict[attrnames[i]] = OrderedDict()
+
+                            if obj.upper() in ["NONE", "NA", "?", "NAN"]:
+                                attrs_dict[attrnames[i]][select[0]["adjacent_nodes"][0]] = None
+                                # select[0][attrnames[i]] = None
+
                             else:
-
-                                if attrnames[i] not in attrs_dict:
-                                    attrs_dict[attrnames[i]] = OrderedDict()
-
-                                if obj.upper() in ["NONE", "NA", "?"]:
-                                    attrs_dict[attrnames[i]][select[0]["adjacent_nodes"][0]] = None
-                                    # select[0][attrnames[i]] = None
-
-                                else:
-                                    attrs_dict[attrnames[i]][select[0]["adjacent_nodes"][0]] = obj
-                                    # select[0][attrnames[i]] = obj
+                                attrs_dict[attrnames[i]][select[0]["adjacent_nodes"][0]] = obj
+                                # select[0][attrnames[i]] = obj
                     
                     elif len(select) > 1:
                         raise UnsupportedGraphError(
-                            u"More than one edge with the same name is present in the graph. Probably a Multigraph")
+                            u"More than one edge with the same name is present in the graph. ")
                         # OVERWRITTEN AND REPLACED BY AN ERROR
                         # This happens if the graph has duplicate edges. Should not happen.
                         # self.logger.info(
@@ -332,8 +331,22 @@ class ImportAttributes():
 
             else:
                 for attr in attrs_dict:
-                    AddAttributes.add_edge_attribute(graph, attr, list(attrs_dict[attr].values()),
-                                                     list(attrs_dict[attr].keys()))
-                    sys.stdout.write("Edge attribute {} added\n".format(attr))
+                    if attr in reserved_edge_attributes:
+                        sys.stdout.write("WARNING: attribute '{}' is a Pyntacle reserved edge attribute, will be dropped.\n".format(attr))
+
+                    elif attr == "sif_interaction":
+                        for e in attrs_dict[attr].keys():
+                            print(e)
+                            input()
+                            select = graph.es.select(adjacent_nodes=e)
+                            if select[0]["sif_interaction"] is None:
+                                select[0]["sif_interaction"] = [attrs_dict[attr][e]]
+                            else:
+                                select[0]["sif_interaction"].append(attrs_dict[attr][e])
+                                select[0]["sif_interaction"].sort() #resort sif_interaction alphanumerically
+                    else:
+                        AddAttributes.add_edge_attribute(graph, attr, list(attrs_dict[attr].values()),
+                                                         list(attrs_dict[attr].keys()))
+                        sys.stdout.write("Edge attribute {} added\n".format(attr))
                     
         sys.stdout.write(u"Edge attributes from {} imported\n".format(os.path.basename(file)))
