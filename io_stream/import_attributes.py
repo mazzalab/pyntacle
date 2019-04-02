@@ -85,7 +85,7 @@ class ImportAttributes():
 
         .. note:: each value is imported as a :py:class:`str`, be sure to turn it into your type of interest if needed.
 
-        ..warning: any of the `Pyntacle Reserved graph Attributes <http://pyntacle.css-mendel.it/requirements.html>`_ with the exception of ``name`` and ``sif_interaction_name`` will be dropped
+        ..warning: any of the `Pyntacle Reserved graph Attributes <http://pyntacle.css-mendel.it/requirements.html>`_ with the exception of ``name`` and ``sif_interaction_name`` will be dropped. If one of these two attributes is passed, the graph ``name`` will be updated by appending the value in the corresponding graph attribute file, while the ``sif_interaction_name`` will be overwritten.
 
         :param str file: the path to the attribute file
         :param str,None sep: field separator between columns. If :py:class:`None` it will be guessed
@@ -144,7 +144,6 @@ class ImportAttributes():
         .. warning: if the same node is declared in multiple lines, only the last occurrence of the node will be kept
 
         .. warning: if two (or more) columns have the same header, they will al be imported and the corresponding duplicated attributes will contain a ``.X`` attribute, where ``X`` is a number starting from 1
-
 
         We refer the user to the `graph attribute <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html#na>`_
         file specification guide in the Pyntacle official page for further details on attribute files.
@@ -224,9 +223,9 @@ class ImportAttributes():
 
         .. note:: to represent an empty value for the selected nodes, one can use ``NA``, ``?`` or ``NONE``. This will return an attribute value of type :py:class:`None` for the attribute of the selected edge
 
-        .. warning: any edge attributes named as one of the `Pyntacle reserved edge attributes <http://pyntacle.css-mendel.it/requirements.html>`_, with the exception of ``weights`` and ``sif_interaction``, will be dropped
+        .. warning: any edge attributes named as one of the `Pyntacle reserved edge attributes <http://pyntacle.css-mendel.it/requirements.html>`_, with the exception of ``weights`` and ``sif_interaction``, will be dropped. If  the ``sif_interaction`` attribute has been initialized, the string in the column will be appended
 
-        We refer the user to the `graph attribute <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html#na>`_
+        We refer the user to the s`graph attribute <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html#na>`_
         file specification guide in the Pyntacle official page for further details on attribute files.
 
         :param str file: the path to the attribute file
