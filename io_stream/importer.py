@@ -51,7 +51,7 @@ def dot_attrlist_to_dict(mylist):
             mydict[key] = {}
         for v in values:
             mydict[key][v[0]] = v[1]
-
+    print(mydict)
     return mydict
 
 def dot_edgeattrlist_to_dict(mylist):
@@ -381,29 +381,29 @@ class PyntacleImporter:
             graphname = os.path.splitext(os.path.basename(file))[0]
         for a in graph_attrs_dict:
             for k in graph_attrs_dict[a]:
-                clean_k = re.search("[\[\'\"]*([\w\.\-\ \:\+\(\)\{\}\=]*)[\]\'\"]*", graph_attrs_dict[a][k]).group(1)
-                AddAttributes.add_graph_attribute(graph, clean_k, graph_attrs_dict[a][k])
-                if k == 'name':
-                    graphname = clean_k
+                clean_attr_name = re.search("[\[\'\"]*([\w\.\-\ \:\+\(\)\{\}\=]*)[\]\'\"]*", graph_attrs_dict[a][k]).group(1)
+                if k == "name":
+                    graphname = clean_attr_name
+                else:
+                    AddAttributes.add_graph_attribute(graph, k, clean_attr_name)
 
+        ids_to_names = {}
         for a in node_attrs_dict:
             for k in node_attrs_dict[a]:
-                if a not in graph.vs()["name"]:
-                    graph.add_vertex(name=a)
+                if node_attrs_dict[a][k] not in graph.vs()["name"] and k=='name':
+                    nodename = node_attrs_dict[a][k]
+                    graph.add_vertex(name=nodename)
+                    ids_to_names[a] = nodename
                 if k != 'name':
-                    AddAttributes.add_node_attribute(graph, k, [node_attrs_dict[a][k]], [a])
+                    AddAttributes.add_node_attribute(graph, k, [node_attrs_dict[a][k]], [nodename])
 
         for a in edge_attrs_dict:
-            for n in a:
-                if n not in graph.vs()["name"]:
-                        graph.add_vertex(name=n)
-
-            if graph.are_connected(a[0], a[1]):
+            if graph.are_connected(ids_to_names[a[0]], ids_to_names[a[1]]):
                 sys.stdout.write(u"An edge already exists between node %s and node %s,"
                                  "skipping this edge (we recommend to check again your file\n" % (
                                      a[0], a[1]))
             else:
-                graph.add_edge(source=a[0], target=a[1])
+                graph.add_edge(source=ids_to_names[a[0]], target=ids_to_names[a[1]])
 
         if Graph.is_directed(graph):
             sys.stdout.write(u"Converting graph to undirect\n")
@@ -415,7 +415,7 @@ class PyntacleImporter:
 
         for a in edge_attrs_dict:
             for k in edge_attrs_dict[a]:
-                AddAttributes.add_edge_attribute(graph, k, [edge_attrs_dict[a][k]], [a])
+                AddAttributes.add_edge_attribute(graph, k, [edge_attrs_dict[a][k]], [(ids_to_names[a[0]],ids_to_names[a[1]])])
 
         sys.stdout.write(u"DOT from {} imported\n".format(os.path.basename(file)))
         return graph

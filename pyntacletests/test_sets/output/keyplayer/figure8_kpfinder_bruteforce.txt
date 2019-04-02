@@ -1,19 +1,20 @@
-Quick Graph Overview	
-graph name	figure_8	
-components	1	
-nodes	32	
-edges	56	
 
 	
-Pyntacle Command:	KP_bruteforce	
-maximum mreach distance	2	
-initial F value (whole graph)	0	
-initial dF value (whole graph)	0.64755	
-Results: Brute-force Search	
-Metric	Nodes	Value	
-F	WD,HB	0.70575	
-	HA,HB	0.70575	
-dF	WD,HB	0.81506	
-dR	KR,HB	0.64063	
-	BS3,HB	0.64063	
-mreach	HA,NP	25	
+Network Overview	
+Graph name	figure_8	
+Number of Components	1	
+Nodes	32	
+Edges	56	
+
+	
+Starting graph F	0	
+Starting graph dF	0.64755	
+maximum m-reach distance	2	
+Results: brute-force search for node sets that maximize key player indices	
+Index	Node set	Value	
+F	HA,HB	0.70575	
+	HB,WD	0.70575	
+dF	HB,WD	0.81506	
+dR	BS3,HB	0.64062	
+	HB,KR	0.64062	
+m-reach	HA,NP	25	

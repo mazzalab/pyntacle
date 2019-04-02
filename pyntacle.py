@@ -24,10 +24,11 @@ __license__ = u"""
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
   """
 
-from config import *
 import argparse
 import sys
 import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+from config import *
 import unittest
 import random
 from numpy import random as nprandom

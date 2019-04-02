@@ -198,8 +198,6 @@ class Metrics:
                 sys.stdout.write(u"Computing local metrics for all nodes in the graph\n")
                 nodes_list = None
 
-            implementation=CmodeEnum.gpu
-
             local_attributes_dict = OrderedDict({LocalAttributeEnum.degree.name: LocalTopology.degree(graph=graph, nodes=nodes_list),
                                                  LocalAttributeEnum.clustering_coefficient.name: LocalTopology.clustering_coefficient(graph=graph, nodes=nodes_list),
                                                  LocalAttributeEnum.betweenness.name: LocalTopology.betweenness(graph=graph, nodes=nodes_list),

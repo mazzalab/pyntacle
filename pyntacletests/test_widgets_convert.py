@@ -44,21 +44,21 @@ class WidgetTestConvert(unittest.TestCase):
     def test_convert_sif(self):
         sys.stdout.write("Testing sif conversion\n")
         fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/test.sif')
-        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/convert/figure8.sif')
+        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/convert/test.sif')
         PyntacleExporter.Sif(graph=self.graph, file=fileout, sep='\t', header=True)
         self.assertEqual(getmd5(fileout), getmd5(expected), 'Wrong checksum for Convert, sif case')
 
     def test_convert_egl(self):
         sys.stdout.write("Testing egl conversion\n")
         fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/test.egl')
-        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/convert/figure8.egl')
+        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/convert/test.egl')
         PyntacleExporter.EdgeList(graph=self.graph, file=fileout, sep='\t', header=True)
         self.assertEqual(getmd5(fileout), getmd5(expected), 'Wrong checksum for Convert, edgelist case')
 
     def test_convert_bin(self):
         sys.stdout.write("Testing bin conversion\n")
         fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/test.graph')
-        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/convert/figure8.graph')
+        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/convert/test.graph')
         PyntacleExporter.Binary(graph=self.graph, file=fileout)
         if sys.version_info >= (3, 6):
             self.assertEqual(getmd5_bin(fileout), getmd5_bin(expected), 'Wrong checksum for Convert, binary case')
@@ -66,7 +66,7 @@ class WidgetTestConvert(unittest.TestCase):
     def test_convert_dot(self):
         sys.stdout.write("Testing dot conversion\n")
         fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/test.dot')
-        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/convert/figure8.dot')
+        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/convert/test.dot')
         PyntacleExporter.Dot(graph=self.graph, file=fileout)
         with open(fileout, 'r') as fin:
             next(fin)
@@ -82,7 +82,7 @@ class WidgetTestConvert(unittest.TestCase):
     def test_convert_adjm(self):
         sys.stdout.write("Testing adjm conversion\n")
         fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/test.adjm')
-        expected = os.path.join(current_dir, 'pyntacletests/test_sets/input/figure_8.txt')
+        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/convert/test.adjm')
         PyntacleExporter.AdjacencyMatrix(graph=self.graph, file=fileout, sep='\t', header=True)
         self.assertEqual(getmd5(fileout), getmd5(expected),
                          'Wrong checksum for Convert, adjm case')
@@ -91,7 +91,7 @@ class WidgetTestConvert(unittest.TestCase):
         sys.stdout.write("Testing egl to sif conversion\n")
         filein = os.path.join(current_dir, 'pyntacletests/test_sets/input/figure_8.egl')
         fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/test_egltosif.sif')
-        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/convert/figure8_egltosif.sif')
+        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/convert/test_egltosif.sif')
         PyntacleConverter.edgelistToSif(file=filein, sep='\t',
                                         header=True, output_file=fileout)
         self.assertEqual(getmd5(fileout), getmd5(expected),
@@ -101,11 +101,21 @@ class WidgetTestConvert(unittest.TestCase):
         sys.stdout.write("Testing sif to egl conversion\n")
         filein = os.path.join(current_dir, 'pyntacletests/test_sets/input/figure_8.sif')
         fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/test_siftoegl.egl')
-        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/convert/figure8_siftoegl.egl')
+        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/convert/test_siftoegl.egl')
         PyntacleConverter.sifToEdgelist(file=filein, sep='\t',
                                         header=True, output_file=fileout)
         self.assertEqual(getmd5(fileout), getmd5(expected),
                          'Wrong checksum for Convert, sif to egl case')
+
+    def test_dot_to_adjm(self):
+        sys.stdout.write("Testing dot to adjm conversion\n")
+        filein = os.path.join(current_dir, 'pyntacletests/test_sets/input/figure_8.dot')
+        self.graph = PyntacleImporter.Dot(file=os.path.join(current_dir, filein))
+        fileout = os.path.join(current_dir, 'pyntacletests/test_sets/tmp/test_dottoeadjm.adjm')
+        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/convert/test_dottoeadjm.adjm')
+        PyntacleExporter.AdjacencyMatrix(graph=self.graph, file=fileout, sep='\t', header=True)
+        self.assertEqual(getmd5(fileout), getmd5(expected),
+                         'Wrong checksum for Convert, dot to adjm case')
     
     def tearDown(self):
         self.cleanup()

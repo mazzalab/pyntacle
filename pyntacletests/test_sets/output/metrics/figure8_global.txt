@@ -1,14 +1,16 @@
-Quick Graph Overview	
-graph name	figure_8	
-components	1	
-nodes	32	
-edges	56	
 
 	
-Pyntacle Command:	Global	
+Network Overview	
+Graph name	figure_8	
+Number of Components	1	
+Nodes	32	
+Edges	56	
+
+	
 Results - Global Metrics of the input graph	
 Metric	Value	
 average_shortest_path_length	4.08266	
+median_shortest_path_length	4.0	
 diameter	9	
 components	1	
 radius	5	
