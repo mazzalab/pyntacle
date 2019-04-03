@@ -291,7 +291,7 @@ class GroupCentrality():
 
         elif self.args.which == "gr-info":
             report_type = ReportEnum.GR_info
-            sys.stdout.write("Node set given as input: ({})\n".format(', '.join(self.args.nodes)))
+            sys.stdout.write("Input node set: ({})\n".format(', '.join(self.args.nodes)))
             sys.stdout.write(sep_line)
 
             grinfo_runner = ipw(graph=graph, nodes=self.args.nodes)

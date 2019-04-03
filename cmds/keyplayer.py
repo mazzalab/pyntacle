@@ -323,7 +323,7 @@ class KeyPlayer:
             kp_runner = kpw(graph=graph, nodes=self.args.nodes)
             results = OrderedDict()
 
-            sys.stdout.write(u"Node set given as input: ({})\n".format(', '.join(self.args.nodes)))
+            sys.stdout.write(u"Input node set: ({})\n".format(', '.join(self.args.nodes)))
             sys.stdout.write("\n")
 
             if self.args.type in (['F', 'neg', 'all']):
@@ -354,7 +354,7 @@ class KeyPlayer:
                 if metric == KpnegEnum.F.name or metric == KpnegEnum.dF.name:
                     results[metric].append(initial_results[metric])
                     sys.stdout.write(
-                        u"Removing node set \n({2})\ngives a {0} value of {3}\nStarting graph {0} was {1}\n".format(
+                        u"Removing node set \n({2})\ngives a {0} value of {3}\nStarting graph {0}: {1}\n".format(
                             metric, results[metric][2], ', '.join(self.args.nodes), results[metric][1]))
                     sys.stdout.write("\n")
 
