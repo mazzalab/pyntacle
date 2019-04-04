@@ -101,8 +101,8 @@ class ImportAttributes():
                 attrs = line.strip().split(str(sep))
 
                 if attrs[0] == "name":
-                    sys.stdout.write("Replacing graph 'name' attribute with the current one.\n")
-                    AddAttributes.add_graph_name(graph, attrs[0])
+                    sys.stdout.write("Appending the 'name' attribute with the current one.\n")
+                    graph["name"].append(attrs[1])
 
                 if attrs[0] == "sif_interaction_name":
                     sys.stdout.write("Replacing graph 'sif_interaction_name' attribute with the current one.\n")
