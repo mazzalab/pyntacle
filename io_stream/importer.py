@@ -133,6 +133,7 @@ class PyntacleImporter:
             if header:
                 #use pandas to parse this into
                 f = pd.read_csv(filepath_or_buffer=file, sep=sep, index_col=0)
+                f.index = f.index.map(str) #force index to string, in case is not identified properly
                 f = f.reindex(sorted(f.columns), axis=1)  # sort columns alphabetically
                 f = f.reindex(sorted(f.index), axis=0)  # sort indices alphabetically
                 node_names = f.columns.values.tolist()
