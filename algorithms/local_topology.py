@@ -267,9 +267,6 @@ class LocalTopology:
 
         MAX_PATH_LENGHT = len(graph.vs) + 1
 
-        if not isinstance(distance, GroupDistanceEnum):
-            raise TypeError("'distance' is not one of the appropriate GroupDistanceEnum, {} found".format(type(distance).__name__))
-
         if not isinstance(np_paths, (type(None), np.ndarray)):
             raise TypeError("'np_paths' is not one NoneType or a numpy array")
 

@@ -28,11 +28,10 @@ __license__ = u"""
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
   """
 
-
 import enum
 
 
-class GraphTypeEnum(enum.Enum):
+class GraphTypeEnum(enum.IntEnum):
     """
     An enumerator that specifies the nature of the graph
     """
@@ -42,7 +41,7 @@ class GraphTypeEnum(enum.Enum):
     direct_weighted = 4
 
 
-class CmodeEnum(enum.Enum):
+class CmodeEnum(enum.IntEnum):
     r"""
     An enumerator that is used to use different heuristics for the computation of the shortest paths among all nodes in the graph
     In detail, the avilable enumerators are:
@@ -60,7 +59,7 @@ class CmodeEnum(enum.Enum):
     auto = 4
 
 
-class KpnegEnum(enum.Enum):
+class KpnegEnum(enum.IntEnum):
     r"""
     A series of enumerators that stores the possible negative *key player* measures to compute *fragmentation*.
     See the `What are Key Players guide <http://pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html>`_
@@ -76,7 +75,7 @@ class KpnegEnum(enum.Enum):
     dF = 2
 
 
-class KpposEnum(enum.Enum):
+class KpposEnum(enum.IntEnum):
     r"""
     A series of enumerators that stores the possible positive *key player* measures to compute *reachability*.
     See the `What are Key Players guide <http://pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html>`_
@@ -91,7 +90,7 @@ class KpposEnum(enum.Enum):
     dR = 2
 
 
-class GroupCentralityEnum(enum.Enum):
+class GroupCentralityEnum(enum.IntEnum):
     r"""
     The available group centrality metrics that can be found either by :class:`~pyntacle.algorithms.bruteforce_search.BruteforceSearch` or by :class:`~pyntacle.algorithms.greedy_optimization.GreedyOptimization`
     """
@@ -100,7 +99,7 @@ class GroupCentralityEnum(enum.Enum):
     group_closeness = 3
 
 
-class GroupDistanceEnum(enum.Enum):
+class GroupDistanceEnum(enum.IntEnum):
     r"""
     Enumerators for considering distances between a group of nodes and the rest of the graph.
     """
@@ -109,7 +108,7 @@ class GroupDistanceEnum(enum.Enum):
     mean = 3
 
 
-class GraphOperationEnum(enum.Enum):
+class GraphOperationEnum(enum.IntEnum):
     r"""
     The logical operations that can be passed to :func:`~pyntacle.graph_operations.set_operations.GraphSetOps.make_sets`
     """
@@ -118,7 +117,7 @@ class GraphOperationEnum(enum.Enum):
     Difference = 3
 
 
-class LocalAttributeEnum(enum.Enum):
+class LocalAttributeEnum(enum.IntEnum):
     r"""
     A series of internal attributes for local centrality measures
     """
@@ -136,7 +135,7 @@ class LocalAttributeEnum(enum.Enum):
     median_shortest_path_length = 12
 
 
-class GlobalAttributeEnum(enum.Enum):
+class GlobalAttributeEnum(enum.IntEnum):
     r"""
     A series of internal attributes for global centrality measures
     """
@@ -161,7 +160,7 @@ class GlobalAttributeEnum(enum.Enum):
     median_global_shortest_path_length = 19
 
 
-class ReportEnum(enum.Enum):
+class ReportEnum(enum.IntEnum):
     r"""
     Internal enumerators for choosing the type of report that will be outputted by Pyntacle command line utility
     """

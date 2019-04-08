@@ -56,8 +56,6 @@ class KeyPlayer:
 
         :return float: The F status of the input graph
         """
-
-
         if len(graph.components()) == 1: #graph is complete
             f = 0
 
@@ -70,8 +68,6 @@ class KeyPlayer:
             f_num = sum(len(sk) * (len(sk) - 1) for sk in components)
 
             f = 1 - (f_num / f_denum)
-
-
 
         return round(f, 5)
 
@@ -105,16 +101,15 @@ class KeyPlayer:
 
         if num_edges == (num_nodes * (num_nodes - 1))/2: #graph is complete, dF is 0
             return 0.0
+
         else:
-            if not isinstance(cmode, CmodeEnum):
-                raise KeyError("'cmode' not valid, must be one of the following: {}".format(list(CmodeEnum)))
-            elif max_distance:
+            if max_distance is not None:
                 if not isinstance(max_distance, int):
-                    raise TypeError("'max_distance' must be an integer")
+                    raise TypeError("'max_distance', if provided, must be an integer")
                 elif max_distance < 1:
-                    raise ValueError("'max_distance' must be at least one")
+                    raise ValueError("'max_distance' must be >= 1 ")
                 elif max_distance > graph.vcount():
-                    raise ValueError("'max_distance' must be less or equal than the number of nodes in the graph")
+                    raise ValueError("'max_distance' must be <= the size of the graph")
 
             if cmode == CmodeEnum.igraph:
                 return KeyPlayer.__dF_Borgatti(graph=graph, max_distance=max_distance)
@@ -211,9 +206,6 @@ class KeyPlayer:
         elif m < 1 or m >= graph.vcount() + 1:
             raise ValueError(u"'m' must be greater than zero and less or equal than the total number of vertices")
 
-        if not isinstance(cmode, CmodeEnum):
-            raise KeyError(u"'cmode' not valid. It must be one of the following: {}".format(list(CmodeEnum)))
-
         if max_distance:
                 if not isinstance(max_distance, int):
                     raise TypeError(u"'max_distance' must be an integer value greater than one")
@@ -275,9 +267,7 @@ class KeyPlayer:
         :raise ValueError: when any of the node ``name`` attribute passed to the function is not present in the input graph or if a provided ``sp_matrix`` is not :py:class:`None` or a :py:class:`numpy.ndarray` storing integers
         """
 
-        if not isinstance(cmode, CmodeEnum):
-            raise KeyError(u"'cmode' not valid. It must be one of the following: {}".format(list(CmodeEnum)))
-        elif max_distance:
+        if max_distance:
                 if not isinstance(max_distance, int):
                     raise TypeError(u"'max_distance' must be an integer value greater than one")
                 elif max_distance < 1:
