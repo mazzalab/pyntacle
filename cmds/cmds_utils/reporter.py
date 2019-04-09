@@ -144,16 +144,15 @@ class PyntacleReporter():
             self.logger.warning(u"Using the first 'name' attribute of graph name since more than one is specified")
         
         graphname = self.graph["name"][0]
-        
-        if self.report_type.name == 'Set':
-            report_path = os.path.join(report_dir, "_".join(["Report", self.report_type.name, self.dat])+".tsv")
-        else:
-            report_path = os.path.join(report_dir, "_".join(["Report", graphname, self.report_type.name, self.dat])+".tsv")
 
         extension = choices[format]
+        
+        if self.report_type.name == 'Set':
+            report_path = os.path.join(report_dir, "_".join(["Report", self.report_type.name, self.dat]) + "." + extension)
+        else:
+            report_path = os.path.join(report_dir, "_".join(["Report", graphname, self.report_type.name, self.dat]) + "." + extension)
 
         if extension != "xlsx":
-
             with open(report_path, "w") as out:
 
                 if extension == "tsv":

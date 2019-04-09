@@ -396,6 +396,7 @@ class KeyPlayer:
         sys.stdout.write(u"Producing report in {} format\n".format(self.args.report_format))
 
         r.create_report(report_type=report_type, report=results)
+
         r.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
         if self.args.save_binary:
