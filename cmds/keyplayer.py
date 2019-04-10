@@ -222,11 +222,6 @@ class KeyPlayer:
                 sys.stdout.write(u"Using brute-force search algorithm to find the best key player set(s)\n")
                 sys.stdout.write(sep_line)
 
-                if self.args.threads > 1:
-                    parallel = True
-                else:
-                    parallel = False
-
                 if self.args.type in (['F', 'neg', 'all']):
 
                     sys.stdout.write(
@@ -235,7 +230,7 @@ class KeyPlayer:
 
 
                     initial_results[KpnegEnum.F.name] = kpp.F(graph)
-                    kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, threads=self.args.threads, parallel=parallel)
+                    kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, threads=self.args.threads)
                     sys.stdout.write("\n")
 
 
@@ -247,7 +242,7 @@ class KeyPlayer:
                     initial_results[KpnegEnum.dF.name] = kpp.dF(graph, cmode=CmodeEnum.igraph)
                     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
                                                 max_distance=self.args.max_distance,
-                                                cmode=CmodeEnum.igraph, threads=self.args.threads, parallel=parallel)
+                                                cmode=CmodeEnum.igraph, threads=self.args.threads)
 
                     sys.stdout.write("\n")
 
@@ -257,7 +252,7 @@ class KeyPlayer:
                             self.args.k_size))
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.dR,
                                                max_distance=self.args.max_distance,
-                                               cmode=CmodeEnum.igraph, threads=self.args.threads, parallel=parallel)
+                                               cmode=CmodeEnum.igraph, threads=self.args.threads)
 
                     sys.stdout.write(sep_line)
                     
@@ -268,7 +263,7 @@ class KeyPlayer:
 
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.mreach, m=self.args.m_reach,
                                                max_distance=self.args.max_distance,
-                                               cmode=CmodeEnum.igraph, threads=self.args.threads, parallel=parallel) # TODO: placeholder for replacing with the `parallel` option
+                                               cmode=CmodeEnum.igraph, threads=self.args.threads)
 
                     sys.stdout.write("\n")
 

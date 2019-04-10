@@ -222,10 +222,8 @@ class GroupCentrality():
 
                 if self.args.threads > 1:
                     plural = "s"
-                    parallel = True
                 else:
                     plural = ""
-                    parallel = False
 
                 report_type = ReportEnum.GR_bruteforce
                 bf_runner = bfw(graph=graph)
@@ -237,7 +235,7 @@ class GroupCentrality():
                         u"Finding the best set(s) of nodes of size {0} that maximizes group degree using {1} thread{2}\n".format(
                             self.args.k_size, self.args.threads, plural))
                     bf_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_degree,
-                                                  cmode=implementation, threads=self.args.threads, parallel=parallel)
+                                                  cmode=implementation, threads=self.args.threads)
 
                     sys.stdout.write(sep_line)
 
@@ -246,14 +244,14 @@ class GroupCentrality():
                         u"Finding the best set(s) of nodes of size {0} that maximizes group betweenness using {1} thread{2}\n".format(
                             self.args.k_size,  self.args.threads, plural))
                     bf_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_betweenness,
-                                                  cmode=implementation, threads=self.args.threads, parallel=parallel)
+                                                  cmode=implementation, threads=self.args.threads)
                     sys.stdout.write(sep_line)
 
                 if self.args.type in (["all", "closeness"]):
                     sys.stdout.write(
                         u"Finding the best set(s) of nodes of size {0} that maximizes group closeness using the {1} distance from the node set and {2} thread{3}\n".format(
                             self.args.k_size,  group_distance, self.args.threads, plural))
-                    bf_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_closeness, cmode=implementation, threads=self.args.threads, distance=group_distance, parallel=parallel)
+                    bf_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_closeness, cmode=implementation, threads=self.args.threads, distance=group_distance)
                     sys.stdout.write(sep_line)
 
                 results.update(bf_runner.get_results())

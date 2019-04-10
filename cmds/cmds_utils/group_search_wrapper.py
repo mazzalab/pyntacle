@@ -392,8 +392,12 @@ class BFWrapper:
         if not isinstance(kp_type, KpnegEnum):
             raise TypeError(u"'kp_type' must be one of the KPPNEGchoices options available")
 
-        bf_results = self.bf.fragmentation(graph=self.graph, k=k, metric=kp_type,
-                                           max_distance=max_distance, cmode=cmode, ncores=threads)
+        if threads > 1:
+            bf_results = self.bf.fragmentation(graph=self.graph, k=k, metric=kp_type,
+                                           max_distance=max_distance, cmode=cmode, ncores=threads, parallel=True)
+        else:
+            bf_results = self.bf.fragmentation(graph=self.graph, k=k, metric=kp_type,
+                                               max_distance=max_distance, cmode=cmode, ncores=threads, parallel=False)
         self.results[kp_type.name] = [bf_results[0], bf_results[1]]
 
     @timeit
@@ -418,15 +422,21 @@ class BFWrapper:
             elif not isinstance(m, int) or m <= 0 :
                 raise ValueError(u"'m' must be a positive integer equal or greater than one ")
 
-        bf_results = self.bf.reachability(graph=self.graph, k=k, metric=kp_type,
-                                          max_distance=max_distance, m=m, cmode=cmode, ncores=threads)
+
+        if threads > 1:
+            bf_results = self.bf.reachability(graph=self.graph, k=k, metric=kp_type,
+                                          max_distance=max_distance, m=m, cmode=cmode, ncores=threads, parallel=True)
+        else:
+            bf_results = self.bf.reachability(graph=self.graph, k=k, metric=kp_type,
+                                              max_distance=max_distance, m=m, cmode=cmode, ncores=threads,
+                                              parallel=False)
 
         self.results[kp_type.name] = [bf_results[0], bf_results[1]]
 
     @timeit
     def run_groupcentrality(self, k: int, gr_type: GroupCentralityEnum, cmode: CmodeEnum=CmodeEnum.igraph, threads:int = n_cpus, distance:GroupDistanceEnum = GroupDistanceEnum.minimum):
         r"""
-        Wrapper around the brute-force search module that stores the results for KPPOS metrics
+        Wrapper around the brute-force search module that stores the results for GroupCentrality metrics
 
         :param k:
         :param gr_type:
@@ -445,11 +455,12 @@ class BFWrapper:
             if not isinstance(distance, GroupDistanceEnum):
                 raise TypeError(u"'distance' is not one of the GroupDistanceEnums,{} found".format(type(distance).__name__))
 
-        bf_results = self.bf.group_centrality(graph=self.graph, k=k, metric=gr_type, cmode=cmode, ncores=threads)
+        if threads > 1:
+            bf_results = self.bf.group_centrality(graph=self.graph, k=k, metric=gr_type, cmode=cmode, ncores=threads, parallel = True)
+        else:
+            bf_results = self.bf.group_centrality(graph=self.graph, k=k, metric=gr_type, cmode=cmode, ncores=threads, parallel = False)
 
         if gr_type == GroupCentralityEnum.group_closeness:
             self.results["_".join([gr_type.name, distance.name])] = [bf_results[0], bf_results[1]]
         else:
             self.results[gr_type.name] = [bf_results[0], bf_results[1]]
-
-        pass
