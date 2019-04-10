@@ -66,7 +66,7 @@ def crunch_fragmentation_combinations(graph: Graph, node_names_list: list, kpp_t
                 u"The parameter 'kp_type' is not valid. It must be one of the following: {}".format(
                     list(KpnegEnum)))
 
-        return kppset_score_pairs_partial
+    return kppset_score_pairs_partial
 
 def crunch_reachability_combinations(graph: Graph, node_names_list: list, kp_type: KpposEnum, max_distance: int,
                                        m: int, cmode: CmodeEnum) -> dict:
@@ -118,6 +118,7 @@ def crunch_groupcentrality_combinations(graph: Graph, node_names_list: list, np_
             raise WrongArgumentError("{} function not yet implemented.".format(gc_enum.name))
 
         score_pairs_partial[tuple(node_names)] = score
+
     return score_pairs_partial
 
 class BruteforceSearch:
@@ -211,6 +212,7 @@ class BruteforceSearch:
                                                                                   kpp_type=metric,
                                                                                   max_distance=max_distance,
                                                                                   cmode=cmode)
+
             kpset_score_pairs = {**kpset_score_pairs, **partial_result}
 
         maxKpp = max(kpset_score_pairs.values())
