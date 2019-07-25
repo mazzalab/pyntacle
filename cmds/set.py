@@ -31,7 +31,6 @@ from warnings import simplefilter
 
 from graph_operations.set_operations import GraphSetOps
 from io_stream.exporter import PyntacleExporter
-from cmds.cmds_utils.plotter import PlotGraph
 from cmds.cmds_utils.reporter import PyntacleReporter
 from tools.enums import ReportEnum
 from tools.graph_utils import GraphUtils

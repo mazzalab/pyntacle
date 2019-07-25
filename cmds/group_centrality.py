@@ -41,7 +41,6 @@ from tools.add_attributes import AddAttributes
 from tools.graph_utils import GraphUtils as gu
 from exceptions.generic_error import Error
 from exceptions.multiple_solutions_error import MultipleSolutionsError
-from cmds.cmds_utils.plotter import PlotGraph
 from cmds.cmds_utils.reporter import PyntacleReporter
 
 class GroupCentrality():

@@ -31,8 +31,6 @@ from exceptions.generic_error import Error
 from exceptions.illegal_graph_size_error import IllegalGraphSizeError
 from io_stream.generator import PyntacleGenerator
 from io_stream.exporter import PyntacleExporter
-from cmds.cmds_utils.plotter import *
-
 
 class Generate:
     def __init__(self, args):

@@ -31,7 +31,6 @@ from algorithms.local_topology import LocalTopology
 from algorithms.sparseness import *
 from io_stream.exporter import PyntacleExporter
 from io_stream.import_attributes import ImportAttributes
-from cmds.cmds_utils.plotter import PlotGraph
 from cmds.cmds_utils.reporter import PyntacleReporter
 from tools.graph_utils import GraphUtils as gu
 from tools.add_attributes import AddAttributes

@@ -219,29 +219,6 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                  "Pyntacle. Choices are: 'txt' and 'tsv' (tab-separated file), 'csv' "
                                  "(comma-separated value file), 'xlsx' (Excel file). Default is 'txt'.")
 
-        parser.add_argument("-P", "--plot-format", choices=["svg", "pdf", "png"], default="pdf",
-                            type=lambda s: s.lower(), metavar="",
-                            help="The format for the network representation produced by "
-                                 "Pyntacle. Choices are: 'pdf', 'png' and 'svg'. Defaults to 'pdf'. "
-                                 "Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-dim", metavar="",
-                            help="The dimensions (as comma-separated values) of the graphical representation of the "
-                                 "results. Default is '800,800' for graph with less than 150 nodes and '1600,1600' "
-                                 "otherwise. Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-layout", metavar="",
-                            choices=["circle", "fruchterman_reingold", "fr", "kamada_kawai", "kk",
-                                     "large_graph", "lgl", "random", "reingold_tilford", "rt"],
-                            default="fr",
-                            help="Specifies one of the predefined layout for the graphical representation of the network. "
-                                 "Choices are: 'fruchterman_reingold', 'kamada_kawai', "
-                                 "'large_graph', 'random', 'reingold_tilford'. Default is "
-                                 "'fruchterman_reingold'. Bypassed if the '--no-plot' flag if specified or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
         parser.add_argument("--no-plot", action="store_true",
                             help="Skips the graphical representation of the plot.")
 
@@ -376,29 +353,6 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                  "Pyntacle. Choices are: 'txt' and 'tsv' (tab-separated file), 'csv' "
                                  "(comma-separated value file), 'xlsx' (Excel file). Default is 'txt'.")
 
-        parser.add_argument("-P", "--plot-format", choices=["svg", "pdf", "png"], default="pdf",
-                            type=lambda s: s.lower(), metavar="",
-                            help="The format for the network representation produced by "
-                                 "Pyntacle. Choices are: 'pdf', 'png' and 'svg'. Defaults to 'pdf'. "
-                                 "Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-dim", metavar="",
-                            help="The dimensions (as comma-separated values) of the graphical representation of the "
-                                 "results. Default is '800,800' for graph with less than 150 nodes and '1600,1600' "
-                                 "otherwise. Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-layout", metavar="",
-                            choices=["circle", "fruchterman_reingold", "fr", "kamada_kawai", "kk",
-                                     "large_graph", "lgl", "random", "reingold_tilford", "rt"],
-                            default="fr",
-                            help="Specifies one of the predefined layout for the graphical representation of the network. "
-                                 "Choices are: 'fruchterman_reingold', 'kamada_kawai', "
-                                 "'large_graph', 'random', 'reingold_tilford'. Default is "
-                                 "'fruchterman_reingold'. Bypassed if the '--no-plot' flag if specified or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
         parser.add_argument("--no-plot", action="store_true",
                             help="Skips the graphical representation of the plot.")
 
@@ -516,29 +470,6 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                             help="The format of the report produced by "
                                  "Pyntacle. Choices are: 'txt' and 'tsv' (tab-separated file), 'csv' "
                                  "(comma-separated value file), 'xlsx' (Excel file). Default is 'txt'.")
-
-        parser.add_argument("-P", "--plot-format", metavar="", choices=["svg", "pdf", "png"], default="pdf",
-                            type=lambda s: s.lower(),
-                            help="The format for the network representation produced by "
-                                 "Pyntacle. Choices are: 'pdf', 'png' and 'svg'. Defaults to 'pdf'. "
-                                 "Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-dim",
-                            help="The dimensions (as comma-separated values) of the graphical representation of the "
-                                 "results. Default is '800,800' for graph with less than 150 nodes and '1600,1600' "
-                                 "otherwise. Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-layout", metavar="",
-                            choices=["circle", "fruchterman_reingold", "fr", "kamada_kawai", "kk",
-                                     "large_graph", "lgl", "random", "reingold_tilford", "rt"],
-                            default="fr",
-                            help="Specifies one of the predefined layout for the graphical representation of the network. "
-                                 "Choices are: 'fruchterman_reingold', 'kamada_kawai', "
-                                 "'large_graph', 'random', 'reingold_tilford'. Default is "
-                                 "'fruchterman_reingold'. Bypassed if the '--no-plot' flag if specified or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
 
         parser.add_argument("--no-plot", action="store_true",
                             help="Skips the graphical representation of the plot.")
@@ -744,29 +675,6 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                  "details on accepted network file formats and their specifics."
                                  "If not specified the output network file will contain a header by default.")
 
-        parser.add_argument("-P", "--plot-format", choices=["svg", "pdf", "png"], metavar="", default="pdf",
-                            type=lambda s: s.lower(),
-                            help="The format for the network representation produced by "
-                                 "Pyntacle. Choices are: 'pdf', 'png' and 'svg'. Defaults to 'pdf'. "
-                                 "Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-dim", metavar="",
-                            help="The dimensions (as comma-separated values) of the graphical representation of the "
-                                 "results. Default is '800,800' for graph with less than 150 nodes and '1600,1600' "
-                                 "otherwise. Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-layout", metavar="",
-                            choices=["circle", "fruchterman_reingold", "fr", "kamada_kawai", "kk",
-                                     "large_graph", "lgl", "random", "reingold_tilford", "rt"],
-                            default="fr",
-                            help="Specifies one of the predefined layout for the graphical representation of the network. "
-                                 "Choices are: 'fruchterman_reingold', 'kamada_kawai', "
-                                 "'large_graph', 'random', 'reingold_tilford'. Default is "
-                                 "'fruchterman_reingold'. Bypassed if the '--no-plot' flag if specified or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
         parser.add_argument("--no-plot", action="store_true",
                             help="Skips the graphical representation of the plot.")
 
@@ -968,29 +876,6 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                  "Pyntacle. Choices are: 'txt' and 'tsv' (tab-separated file), 'csv' "
                                  "(comma-separated value file), 'xlsx' (Excel file). Default is 'txt'.")
 
-        parser.add_argument("-P", "--plot-format", choices=["svg", "pdf", "png"], default="pdf",
-                            type=lambda s: s.lower(),
-                            help="The format for the network representation produced by "
-                                 "Pyntacle. Choices are: 'pdf', 'png' and 'svg'. Defaults to 'pdf'. "
-                                 "Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-dim",
-                            help="The dimensions (as comma-separated values) of the graphical representation of the "
-                                 "results. Default is '800,800' for graph with less than 150 nodes and '1600,1600' "
-                                 "otherwise. Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-layout", metavar="",
-                            choices=["circle", "fruchterman_reingold", "fr", "kamada_kawai", "kk",
-                                     "large_graph", "lgl", "random", "reingold_tilford", "rt"],
-                            default="fr",
-                            help="Specifies one of the predefined layout for the graphical representation of the network. "
-                                 "Choices are: 'fruchterman_reingold', 'kamada_kawai', "
-                                 "'large_graph', 'random', 'reingold_tilford'. Default is "
-                                 "'fruchterman_reingold'. Bypassed if the '--no-plot' flag if specified or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
         parser.add_argument("--no-plot", action="store_true",
                             help="Skips the graphical representation of the plot.")
 
@@ -1180,29 +1065,6 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                             help="The format of the report produced by "
                                  "Pyntacle. Choices are: 'txt' and 'tsv' (tab-separated file), 'csv' "
                                  "(comma-separated value file), 'xlsx' (Excel file). Default is 'txt'.")
-
-        parser.add_argument("-P", "--plot-format", choices=["svg", "pdf", "png"], default="pdf", metavar="",
-                            type=lambda s: s.lower(),
-                            help="The format for the network representation produced by "
-                                 "Pyntacle. Choices are: 'pdf', 'png' and 'svg'. Defaults to 'pdf'. "
-                                 "Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-dim", metavar="",
-                            help="The dimensions (as comma-separated values) of the graphical representation of the "
-                                 "results. Default is '800,800' for graph with less than 150 nodes and '1600,1600' "
-                                 "otherwise. Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-layout", metavar="",
-                            choices=["circle", "fruchterman_reingold", "fr", "kamada_kawai", "kk",
-                                     "large_graph", "lgl", "random", "reingold_tilford", "rt"],
-                            default="fr",
-                            help="Specifies one of the predefined layout for the graphical representation of the network. "
-                                 "Choices are: 'fruchterman_reingold', 'kamada_kawai', "
-                                 "'large_graph', 'random', 'reingold_tilford'. Default is "
-                                 "'fruchterman_reingold'. Bypassed if the '--no-plot' flag if specified or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
 
         parser.add_argument("--no-plot", action="store_true",
                             help="Skips the graphical representation of the plot.")

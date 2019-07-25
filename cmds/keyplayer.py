@@ -37,7 +37,6 @@ from algorithms.keyplayer import KeyPlayer as kpp
 
 
 from io_stream.exporter import PyntacleExporter
-from cmds.cmds_utils.plotter import PlotGraph
 from cmds.cmds_utils.reporter import PyntacleReporter
 from tools.graph_utils import GraphUtils as gu
 from tools.enums import ReportEnum, CmodeEnum, KpnegEnum, KpposEnum

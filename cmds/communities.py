@@ -29,7 +29,6 @@ from warnings import simplefilter
 from graph_operations.communities import CommunityFinder, ModuleUtils
 from io_stream.import_attributes import ImportAttributes
 from io_stream.exporter import PyntacleExporter
-from cmds.cmds_utils.plotter import PlotGraph
 from cmds.cmds_utils.reporter import PyntacleReporter
 from tools.graph_utils import *
 from tools.enums import ReportEnum
