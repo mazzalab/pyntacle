@@ -24,13 +24,12 @@ __license__ = u"""
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
   """
 
-
 from config import *
 import random
 import importlib
-from colorama import Fore, Style
+# from colorama import Fore, Style
 from collections import OrderedDict
-from itertools import chain
+# from itertools import chain
 from internal.graph_load import GraphLoad
 from io_stream.exporter import PyntacleExporter
 from cmds.cmds_utils.group_search_wrapper import InfoWrapper as ipw
@@ -42,6 +41,7 @@ from tools.graph_utils import GraphUtils as gu
 from exceptions.generic_error import Error
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 from cmds.cmds_utils.reporter import PyntacleReporter
+
 
 class GroupCentrality():
     def __init__(self, args):
@@ -69,11 +69,13 @@ class GroupCentrality():
             sys.stdout.write(u"Cannot find {}. Is the path correct?\n".format(self.args.input_file))
             sys.exit(1)
 
-        #verify that group distance is set if group closeness is specified
-        distancedict = {"min": GroupDistanceEnum.minimum, "max":GroupDistanceEnum.maximum, "mean": GroupDistanceEnum.mean}
+        # verify that group distance is set if group closeness is specified
+        distancedict = {"min": GroupDistanceEnum.minimum, "max": GroupDistanceEnum.maximum,
+                        "mean": GroupDistanceEnum.mean}
         if self.args.type in ["all", "closeness"]:
             if self.args.group_distance not in distancedict.keys():
-                sys.stdout.write("'--group-distance/-D parameter must be one of the followings: {}'. Quitting\n".format(",".join(distancedict.keys())))
+                sys.stdout.write("'--group-distance/-D parameter must be one of the followings: {}'. Quitting\n".format(
+                    ",".join(distancedict.keys())))
                 sys.exit(1)
             else:
                 group_distance = distancedict[self.args.group_distance]
@@ -102,7 +104,8 @@ class GroupCentrality():
         if hasattr(self.args, 'nodes'):
 
             if not utils.nodes_in_graph(self.args.nodes):
-                sys.stderr.write("One or more of the specified nodes is not present in the graph. Please check your spelling and the presence of empty spaces in between node names. Quitting\n")
+                sys.stderr.write(
+                    "One or more of the specified nodes is not present in the graph. Please check your spelling and the presence of empty spaces in between node names. Quitting\n")
                 sys.exit(1)
 
         if self.args.largest_component:
@@ -111,7 +114,7 @@ class GroupCentrality():
                 sys.stdout.write(
                     u"Taking the largest component of the input graph as you requested ({} nodes, {} edges)\n".format(
                         graph.vcount(), graph.ecount()))
-                #reinitialize graph utils class
+                # reinitialize graph utils class
                 utils.set_graph(graph)
 
             except MultipleSolutionsError:
@@ -119,15 +122,17 @@ class GroupCentrality():
                     u"The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the '--largest-component' option. Quitting\n")
                 sys.exit(1)
 
-            #check that the nodes are in the largest component
+            # check that the nodes are in the largest component
             if hasattr(self.args, 'nodes'):
 
                 if not utils.nodes_in_graph(self.args.nodes):
-                    sys.stderr.write("One or more of the specified nodes is not present in the largest graph component. Select a different set or remove this option. Quitting\n")
+                    sys.stderr.write(
+                        "One or more of the specified nodes is not present in the largest graph component. Select a different set or remove this option. Quitting\n")
                     sys.exit(1)
 
         if hasattr(self.args, "k_size") and self.args.k_size >= graph.vcount():
-            sys.stderr.write("The 'k' argument ({}) must be strictly less than the graph size({}). Quitting\n".format(self.args.k_size, graph.vcount()))
+            sys.stderr.write("The 'k' argument ({}) must be strictly less than the graph size({}). Quitting\n".format(
+                self.args.k_size, graph.vcount()))
             sys.exit(1)
 
         if 'implementation' in graph.attributes():
@@ -140,29 +145,30 @@ class GroupCentrality():
         if not os.path.isdir(self.args.directory):
             createdir = True
 
+        #
         # control plot dimensions
-        if self.args.plot_dim:  # define custom format
-            self.args.plot_dim = self.args.plot_dim.split(",")
-
-            for i in range(0, len(self.args.plot_dim)):
-                try:
-                    self.args.plot_dim[i] = int(self.args.plot_dim[i])
-
-                    if self.args.plot_dim[i] <= 0:
-                        raise ValueError
-
-                except ValueError:
-                    sys.stderr.write(
-                        u"Format specified must be a comma-separated list of positive integers (e.g. 1920,1080). Quitting\n")
-                    sys.exit(1)
-
-            plot_size = tuple(self.args.plot_dim)
-
-        else:
-            plot_size = (800, 600)
-
-            if graph.vcount() > 150:
-                plot_size = (1600, 1600)
+        # if self.args.plot_dim:  # define custom format
+        #     self.args.plot_dim = self.args.plot_dim.split(",")
+        #
+        #     for i in range(0, len(self.args.plot_dim)):
+        #         try:
+        #             self.args.plot_dim[i] = int(self.args.plot_dim[i])
+        #
+        #             if self.args.plot_dim[i] <= 0:
+        #                 raise ValueError
+        #
+        #         except ValueError:
+        #             sys.stderr.write(
+        #                 u"Format specified must be a comma-separated list of positive integers (e.g. 1920,1080). Quitting\n")
+        #             sys.exit(1)
+        #
+        #     plot_size = tuple(self.args.plot_dim)
+        #
+        # else:
+        #     plot_size = (800, 600)
+        #
+        #     if graph.vcount() > 150:
+        #         plot_size = (1600, 1600)
 
         # initialize reporter for later usage and plot dimension for later usage
         r = PyntacleReporter(graph=graph)
@@ -180,7 +186,8 @@ class GroupCentrality():
 
                 report_type = ReportEnum.GR_greedy
                 go_runner = gow(graph=graph)
-                sys.stdout.write(u"Using greedy optimization algorithm for searching optimal set of nodes using group centrality metrics\n")
+                sys.stdout.write(
+                    u"Using greedy optimization algorithm for searching optimal set of nodes using group centrality metrics\n")
                 sys.stdout.write(sep_line)
 
                 if self.args.type in (["all", "degree"]):
@@ -192,7 +199,6 @@ class GroupCentrality():
                                                   seed=self.args.seed,
                                                   cmode=implementation)
                     sys.stdout.write(sep_line)
-
 
                 if self.args.type in (["all", "betweenness"]):
                     sys.stdout.write(
@@ -209,14 +215,14 @@ class GroupCentrality():
                         u"Finding a set of nodes of size {0} that optimizes group closeness using the {1} distance from the node set\n".format(
                             self.args.k_size, group_distance.name))
 
-
-                    go_runner.run_groupcentrality(k = self.args.k_size,gr_type=GroupCentralityEnum.group_closeness, seed=self.args.seed, cmode=implementation ,distance=group_distance)
+                    go_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_closeness,
+                                                  seed=self.args.seed, cmode=implementation, distance=group_distance)
                     sys.stdout.write(sep_line)
 
                 sys.stdout.write(sep_line)
                 results.update(go_runner.get_results())
 
-            #bruteforce implementation
+            # bruteforce implementation
             elif self.args.implementation == "brute-force":
 
                 if self.args.threads > 1:
@@ -226,7 +232,8 @@ class GroupCentrality():
 
                 report_type = ReportEnum.GR_bruteforce
                 bf_runner = bfw(graph=graph)
-                sys.stdout.write(u"Using brute-force search algorithm to find the best set(s) that optimize group centrality metrics\n")
+                sys.stdout.write(
+                    u"Using brute-force search algorithm to find the best set(s) that optimize group centrality metrics\n")
                 sys.stdout.write(sep_line)
 
                 if self.args.type in (["all", "degree"]):
@@ -241,7 +248,7 @@ class GroupCentrality():
                 if self.args.type in (["all", "betweenness"]):
                     sys.stdout.write(
                         u"Finding the best set(s) of nodes of size {0} that maximizes group betweenness using {1} thread{2}\n".format(
-                            self.args.k_size,  self.args.threads, plural))
+                            self.args.k_size, self.args.threads, plural))
                     bf_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_betweenness,
                                                   cmode=implementation, threads=self.args.threads)
                     sys.stdout.write(sep_line)
@@ -249,13 +256,15 @@ class GroupCentrality():
                 if self.args.type in (["all", "closeness"]):
                     sys.stdout.write(
                         u"Finding the best set(s) of nodes of size {0} that maximizes group closeness using the {1} distance from the node set and {2} thread{3}\n".format(
-                            self.args.k_size,  group_distance, self.args.threads, plural))
-                    bf_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_closeness, cmode=implementation, threads=self.args.threads, distance=group_distance)
+                            self.args.k_size, group_distance, self.args.threads, plural))
+                    bf_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_closeness,
+                                                  cmode=implementation, threads=self.args.threads,
+                                                  distance=group_distance)
                     sys.stdout.write(sep_line)
 
                 results.update(bf_runner.get_results())
 
-            #shell output report part
+            # shell output report part
             sys.stdout.write(section_end)
             sys.stdout.write(summary_start)
             sys.stdout.write(u"Node set size for group centrality search: {}\n".format(str(self.args.k_size)))
@@ -274,16 +283,17 @@ class GroupCentrality():
                 if self.args.implementation == 'brute-force':
                     list_of_results = "\n".join(['(' + ', '.join(x) + ')' for x in results[kk][0]])
 
-
                 else:
                     list_of_results = "(" + ", ".join(results[kk][0]) + ")"
 
                 sys.stdout.write(
                     u'Best node set{0} of size {1} for {5} centrality {2}:\n{3}\nwith value {4}\n'.format(
-                        plurals[0], self.args.k_size, plurals[1], list_of_results, results[kk][1], " ".join(kk.split("_")[:2])))
+                        plurals[0], self.args.k_size, plurals[1], list_of_results, results[kk][1],
+                        " ".join(kk.split("_")[:2])))
 
                 if kk.startswith(GroupCentralityEnum.group_closeness.name):
-                    sys.stdout.write("The {} distance was considered for computing closeness\n".format(group_distance.name))
+                    sys.stdout.write(
+                        "The {} distance was considered for computing closeness\n".format(group_distance.name))
 
                 sys.stdout.write("\n")
 
@@ -303,7 +313,8 @@ class GroupCentrality():
                 grinfo_runner.run_groupcentrality(gr_type=GroupCentralityEnum.group_betweenness, cmode=implementation)
 
             if self.args.type in (["closeness", "all"]):
-                grinfo_runner.run_groupcentrality(gr_type=GroupCentralityEnum.group_closeness, cmode=implementation, gr_distance=group_distance)
+                grinfo_runner.run_groupcentrality(gr_type=GroupCentralityEnum.group_closeness, cmode=implementation,
+                                                  gr_distance=group_distance)
 
             results.update(grinfo_runner.get_results())
 
@@ -312,25 +323,28 @@ class GroupCentrality():
             for metric in results.keys():
 
                 if metric == GroupCentralityEnum.group_degree.name:
-                    sys.stdout.write("The group degree value for the input node set:\n({0})\nis {1}\n".format(', '.join(results[metric][0]),
-                                                                 results[metric][1]))
+                    sys.stdout.write("The group degree value for the input node set:\n({0})\nis {1}\n".format(
+                        ', '.join(results[metric][0]),
+                        results[metric][1]))
                     sys.stdout.write("\n")
 
                 if metric == GroupCentralityEnum.group_betweenness.name:
                     sys.stdout.write(
-                        "The group betweenness value for the input node set:\n({0})\nis {1}\n".format(', '.join(results[metric][0]),
-                                                                                        results[metric][1]))
+                        "The group betweenness value for the input node set:\n({0})\nis {1}\n".format(
+                            ', '.join(results[metric][0]),
+                            results[metric][1]))
                     sys.stdout.write("\n")
 
                 if metric.startswith(GroupCentralityEnum.group_closeness.name):
                     sys.stdout.write(
-                        "The group closeness value for the input node set:\n({0})\nis {1}.\nThe {2} distance was considered between the set and the rest of the graph\n".format(', '.join(results[metric][0]),
-                                                                                      results[metric][1], group_distance.name))
+                        "The group closeness value for the input node set:\n({0})\nis {1}.\nThe {2} distance was considered between the set and the rest of the graph\n".format(
+                            ', '.join(results[metric][0]),
+                            results[metric][1], group_distance.name))
                     sys.stdout.write("\n")
 
             sys.stdout.write(section_end)
 
-        #output part#####
+        # output part
         sys.stdout.write(report_start)
         sys.stdout.write("Writing Results\n")
 
@@ -338,6 +352,108 @@ class GroupCentrality():
             sys.stdout.write(u"WARNING: output directory does not exist, {} will be created".format(
                 os.path.abspath(self.args.directory)))
             os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
+
+        sys.stdout.write(u"Writing report in {} format\n".format(self.args.report_format))
+
+        r.create_report(report_type=report_type, report=results)
+        r.write_report(report_dir=self.args.directory, format=self.args.report_format)
+
+        #pyntacle ink part
+        if not self.args.no_plot and graph.vcount() < 5000:
+            suffix = "_".join(graph["name"])
+            sys.stdout.write(u"Plotting network and run results in {} directory through PyntacleInk\n".format(self.args.directory))
+            r.pyntacleink_report(report_dir=self.args.directory, report_dict=results, suffix=suffix)
+
+        elif graph.vcount() >= 5000:
+            sys.stdout.write(
+                u"The graph has too many nodes ({}). PyntacleInk allows plotting for network with N < 5000. No visual representation will be produced\n".format(
+                    graph.vcount()))
+
+        # if not self.args.no_plot and graph.vcount() < 1000:
+        #
+        #     sys.stdout.write(u"Generating network plots in {} format\n".format(self.args.plot_format))
+        #     plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
+        #
+        #     if not os.path.isdir(plot_dir):
+        #         os.mkdir(plot_dir)
+        #
+        #     # plot_graph = PlotGraph(graph=graph)
+        #     plot_format = self.args.plot_format
+        #     plot_graph.set_node_labels(labels=graph.vs()["name"])  # assign node labels to graph
+        #     pal = sns.color_palette("Accent", 8).as_hex()
+        #     framepal = sns.color_palette("Accent", 8, desat=0.5).as_hex()
+        #
+        #     other_nodes_colour = pal[2]
+        #     other_frame_colour = framepal[2]
+        #
+        #     other_nodes_size = 25
+        #     # other_nodes_shape = "circle"
+        #     other_edge_width = 1
+        #
+        #     for metric in results:
+        #         if self.args.which == 'gr-finder' and self.args.implementation == "brute-force":
+        #             results[metric][0] = list(set(list(chain(*results[metric][0]))))
+        #
+        #         if metric.startswith(GroupCentralityEnum.group_closeness.name):
+        #             cl_nodes_colour = pal[5]
+        #             cl_frames_colour = framepal[5]
+        #             # create a list of node colors
+        #             node_colors = [cl_nodes_colour if x["name"] in results[metric][0] else other_nodes_colour
+        #                            for x in graph.vs()]
+        #             node_frames = [cl_frames_colour if x["name"] in results[metric][0] else other_frame_colour
+        #                            for x in
+        #                            graph.vs()]
+        #
+        #             plot_graph.set_node_colors(colors=node_colors)
+        #
+        #         elif metric == GroupCentralityEnum.group_degree:
+        #             dg_nodes_colour = pal[4]
+        #             dg_frames_colour = framepal[4]
+        #
+        #             # create a list of node colors
+        #             node_colors = [dg_nodes_colour if x["name"] in results[metric][0] else other_nodes_colour
+        #                             for x in
+        #                             graph.vs()]
+        #             node_frames = [dg_frames_colour if x["name"] in results[metric][0] else other_frame_colour
+        #                            for x in
+        #                            graph.vs()]
+        #
+        #             plot_graph.set_node_colors(colors=node_colors)
+        #
+        #         else: #group betweenness
+        #             bt_nodes_colour = pal[6]
+        #             bt_frames_colour = framepal[6]
+        #
+        #             # create a list of node colors
+        #             node_colors = [bt_nodes_colour if x["name"] in results[metric][0] else other_nodes_colour
+        #                             for x in
+        #                             graph.vs()]
+        #             node_frames = [bt_frames_colour if x["name"] in results[metric][0] else other_frame_colour
+        #                            for x in
+        #                            graph.vs()]
+        #
+        #             plot_graph.set_node_colors(colors=node_colors)
+        #
+        #         node_sizes = [35 if x["name"] in results[metric][0] else other_nodes_size for x in graph.vs()]
+        #         plot_graph.set_node_sizes(sizes=node_sizes)
+        #
+        #         edge_widths = [5 if any(y in results[metric][0] for y in x["adjacent_nodes"]) else other_edge_width for
+        #                        x in graph.es()]
+        #
+        #         plot_graph.set_edge_widths(edge_widths)
+        #         plot_graph.set_layouts(self.args.plot_layout)
+        #
+        #         plot_path = os.path.join(plot_dir, "_".join(
+        #             [self.args.which, graph["name"][0], metric, self.date]) + "." + plot_format)
+        #         if os.path.exists(plot_path):
+        #             sys.stdout.write(
+        #                 u"WARNING: a plot with the name ({}) already exists, overwriting it\n".format(
+        #                     os.path.basename(plot_path)))
+        #
+        #         plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
+        #                               keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=node_frames)
+        # elif graph.vcount() >= 1000:
+        #     sys.stdout.write(u"The graph has too many nodes ({}, we plot nodes with a maximum of 1000 nodes). It will not be drawn\n".format(graph.vcount()))
 
         if self.args.save_binary:
             # reproduce octopus behaviour by adding kp information to the graph before saving it
@@ -362,109 +478,22 @@ class GroupCentrality():
 
                 if attr_name in graph.attributes():
                     if not isinstance(graph[attr_name], dict):
-                        sys.stdout.write("WARNING: attribute {} does not point to a dictionary, will overwrite".format(attr_name))
+                        sys.stdout.write(
+                            "WARNING: attribute {} does not point to a dictionary, will overwrite".format(attr_name))
                         AddAttributes.add_graph_attribute(graph, attr_name, {attr_key: attr_val})
                     else:
                         if attr_key in graph[attr_name]:
-                            sys.stdout.write("WARNING {} already present in the {} graph attribute, will overwrite\n".format(attr_key, attr_val))
+                            sys.stdout.write(
+                                "WARNING: {} already present in the {} graph attribute, will overwrite\n".format(
+                                    attr_key, attr_val))
                         graph[attr_name].update({attr_key: attr_val})
                 else:
                     AddAttributes.add_graph_attribute(graph, attr_name, {attr_key: attr_val})
 
-            binary_prefix = "_".join([os.path.splitext(os.path.basename(self.args.input_file))[0], self.args.which, self.date])
+            binary_prefix = "_".join(
+                [os.path.splitext(os.path.basename(self.args.input_file))[0], self.args.which, self.date])
             binary_path = os.path.join(self.args.directory, binary_prefix + ".graph")
             PyntacleExporter.Binary(graph, binary_path)
-
-        sys.stdout.write(u"Producing report in {} format\n".format(self.args.report_format))
-
-        r.create_report(report_type=report_type, report=results)
-        r.write_report(report_dir=self.args.directory, format=self.args.report_format)
-
-        if not self.args.no_plot and graph.vcount() < 1000:
-
-            sys.stdout.write(u"Generating network plots in {} format\n".format(self.args.plot_format))
-            plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
-
-            if not os.path.isdir(plot_dir):
-                os.mkdir(plot_dir)
-
-            plot_graph = PlotGraph(graph=graph)
-            plot_format = self.args.plot_format
-            plot_graph.set_node_labels(labels=graph.vs()["name"])  # assign node labels to graph
-            pal = sns.color_palette("Accent", 8).as_hex()
-            framepal = sns.color_palette("Accent", 8, desat=0.5).as_hex()
-
-            other_nodes_colour = pal[2]
-            other_frame_colour = framepal[2]
-
-            other_nodes_size = 25
-            # other_nodes_shape = "circle"
-            other_edge_width = 1
-
-            for metric in results:
-                if self.args.which == 'gr-finder' and self.args.implementation == "brute-force":
-                    results[metric][0] = list(set(list(chain(*results[metric][0]))))
-
-                if metric.startswith(GroupCentralityEnum.group_closeness.name):
-                    cl_nodes_colour = pal[5]
-                    cl_frames_colour = framepal[5]
-                    # create a list of node colors
-                    node_colors = [cl_nodes_colour if x["name"] in results[metric][0] else other_nodes_colour
-                                   for x in graph.vs()]
-                    node_frames = [cl_frames_colour if x["name"] in results[metric][0] else other_frame_colour
-                                   for x in
-                                   graph.vs()]
-
-                    plot_graph.set_node_colors(colors=node_colors)
-
-                elif metric == GroupCentralityEnum.group_degree:
-                    dg_nodes_colour = pal[4]
-                    dg_frames_colour = framepal[4]
-
-                    # create a list of node colors
-                    node_colors = [dg_nodes_colour if x["name"] in results[metric][0] else other_nodes_colour
-                                    for x in
-                                    graph.vs()]
-                    node_frames = [dg_frames_colour if x["name"] in results[metric][0] else other_frame_colour
-                                   for x in
-                                   graph.vs()]
-
-                    plot_graph.set_node_colors(colors=node_colors)
-
-                else: #group betweenness
-                    bt_nodes_colour = pal[6]
-                    bt_frames_colour = framepal[6]
-
-                    # create a list of node colors
-                    node_colors = [bt_nodes_colour if x["name"] in results[metric][0] else other_nodes_colour
-                                    for x in
-                                    graph.vs()]
-                    node_frames = [bt_frames_colour if x["name"] in results[metric][0] else other_frame_colour
-                                   for x in
-                                   graph.vs()]
-
-                    plot_graph.set_node_colors(colors=node_colors)
-
-                node_sizes = [35 if x["name"] in results[metric][0] else other_nodes_size for x in graph.vs()]
-                plot_graph.set_node_sizes(sizes=node_sizes)
-
-                edge_widths = [5 if any(y in results[metric][0] for y in x["adjacent_nodes"]) else other_edge_width for
-                               x in graph.es()]
-
-                plot_graph.set_edge_widths(edge_widths)
-                plot_graph.set_layouts(self.args.plot_layout)
-
-                plot_path = os.path.join(plot_dir, "_".join(
-                    [self.args.which, graph["name"][0], metric, self.date]) + "." + plot_format)
-                if os.path.exists(plot_path):
-                    sys.stdout.write(
-                        u"WARNING: a plot with the name ({}) already exists, overwriting it\n".format(
-                            os.path.basename(plot_path)))
-
-                plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
-                                      keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=node_frames)
-        elif graph.vcount() >= 1000:
-            sys.stdout.write(u"The graph has too many nodes ({}, we plot nodes with a maximum of 1000 nodes). It will not be drawn\n".format(graph.vcount()))
 
         if not self.args.suppress_cursor:
             cursor.stop()

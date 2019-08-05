@@ -264,30 +264,36 @@ class PyntacleExporter:
         colorsdict = {}
         palette = sns.color_palette("Dark2", 10).as_hex()
 
-        print(palette)
         col_count = 0
         for v in graph.vs:
             v_id = str(v.index)
-            print(v_id, v['name'])
+            # print(v_id, v['name'])
             v_attributes = v.attributes()
+
             if 'parent' in v_attributes:
                 v_attributes['parent'] = ', '.join(v_attributes['parent'])
-            print("ATTRIBUTI IN EXPORT")
-            print(v_attributes)
-            parent = ','.join(v_attributes['parent'])
+            # print("ATTRIBUTI IN EXPORT")
+            # print(v_attributes)
+            parent = ','.join(v_attributes['parent']) #TODO possible weakness in caso che i nomi dei parenti siano compositi
+
             if parent not in colorsdict:
                 colorsdict[parent] = palette[col_count]
                 col_count += 1
             v_color = colorsdict[parent]
             v_label = v_attributes["name"]
-            if not v_label:
-                v_label = v_id
 
+            # if not v_label:
+            #     v_label = v_id
+
+            #reminder: v.attributes is a dictionary, unlike vs.attributes() that is a list of attribute names
             v_size = v_attributes.pop('size', None)
-            if v_size:
+
+            if v_size is not None:
                 v_size = float(v_size)
+
             else:
                 v_size = 1
+
             v_x = 0
             v_y = 0
             node = dict(id=v_id, color=v_color, label=v_label, size=v_size, x=v_x, y=v_y, attributes=v_attributes)
@@ -300,13 +306,15 @@ class PyntacleExporter:
             e_target = str(e.target)
             e_attributes = e.attributes()
             e_size = e_attributes.pop('size', None)
-            if e_size:
+            if e_size is not None:
                 e_size = float(e_size)
             edge = dict(id=e_id, source=e_source, target=e_target, size=e_size, attributes=e_attributes)
             edges.append(edge)
 
-        print(nodes)
-        print(edges)
+        #reminder nodes e edges are json-like dictionaries
+        # print(nodes)
+        # print(edges)
+
         data = dict(nodes=nodes, edges=edges)
         if file != None:
             with open(file, 'w') as f:
@@ -314,8 +322,9 @@ class PyntacleExporter:
                     f.write(prefix)
                 json.dump(data, f, ensure_ascii=False)
 
-            sys.stdout.write("Graph successfully exported to JSON at path: {}\n".format(
-                os.path.abspath(file)))
+            # sys.stdout.write("Graph successfully exported to JSON at path:\n{}\n".format(
+            #     os.path.abspath(file)))
             return None
+
         else:
             return json.dumps(data)

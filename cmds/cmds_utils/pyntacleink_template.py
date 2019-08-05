@@ -36,7 +36,7 @@ html_template = u"""
   <meta name="author" content="SitePoint">
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
   <link rel="stylesheet" href="http://pyntacle.css-mendel.it/css/viewer/lobipanel.css">
-  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href=".pyntacleink_FRANCESCOTOTTIBIASCICA/index.css">
 
 
 <script src="http://pyntacle.css-mendel.it/js/sigma/stopExecutionOnTimeout.js"></script>
@@ -120,8 +120,8 @@ html_template = u"""
 <script src="http://pyntacle.css-mendel.it/js/viewer/palette.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
 <script src="http://pyntacle.css-mendel.it/js/viewer/pyntacle_ink.js"></script>
-<script src="graph.js"></script>
-<script src="report.js"></script>
+<script src=".pyntacleink_FRANCESCOTOTTIBIASCICA/graph.js"></script>
+<script src=".pyntacleink_FRANCESCOTOTTIBIASCICA/report.js"></script>
 
 </head>
 
