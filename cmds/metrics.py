@@ -48,10 +48,10 @@ class Metrics:
         if not hasattr(self.args, 'which'):
             raise Error(u"usage: pyntacle.py metrics {local, global} [options]'")
 
-        # Check for pycairo
-        if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
-            sys.stdout.write(pycairo_message)
-            self.args.no_plot = True
+        # - DEPRECATED- Check for pycairo
+        # if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
+        #     sys.stdout.write(pycairo_message)
+        #     self.args.no_plot = True
 
     def run(self):
         if not self.args.suppress_cursor:
@@ -227,27 +227,48 @@ class Metrics:
             r.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
             if not self.args.no_plot and graph.vcount() < 5000:
+                #todo mauro: ci sono due degree: ho rinominato il degree che calcoliamo noi come "Degree (Pyntacle). Vedi tu se ti piace o no
+                #todo mauro la closeness è ancora buggata, ma i valori ci sono tutti!
+                local_attributes_dict_pyink = OrderedDict()
+
+                #replaces "_" with " " in local attributes_dict and capitalize the first letter
+                for elem in local_attributes_dict:
+
+                    if elem == "nodes":
+                        local_attributes_dict_pyink[elem] = local_attributes_dict[elem]
+
+                    elif elem == "degree":
+                        local_attributes_dict_pyink["Degree (Pyntacle)"] = local_attributes_dict[elem]
+
+                    else: #don't change the "nodes" key (this is unnecessary as nodes is not used as an attribute
+                        newelem = elem.replace("_", " ")
+                        newelem = newelem.capitalize()
+                        local_attributes_dict_pyink[newelem] = local_attributes_dict[elem]
+
                 suffix = "_".join(graph_copy["name"])
                 sys.stdout.write(u"Plotting network in {} directory\n".format(self.args.directory))
 
                 #add the metrics to the graph_copy so they are added shown in the filters subfield
-                sys.stdout.write("Adding local indices to the graph to view them in PyntacleInk. (in the \"Filters\" subpane\n")
+                sys.stdout.write("Adding local indices to the graph to view them in PyntacleInk. (in the \"Filters\" subpanel)\n")
+
                 if self.args.nodes:
-                    nodes_info = local_attributes_dict.get("nodes")
+                    nodes_info = local_attributes_dict_pyink.get("nodes")
                 else:
                     nodes_info = graph.vs()["name"]
 
-                for attr in local_attributes_dict:
-                    if attr != "nodes": #available only if self.args.nodes is checked
+                for attr in local_attributes_dict_pyink:
+                    if attr != "nodes": #available only if self.args.nodes is present in cmd args
+                        AddAttributes.add_node_attribute(graph_copy, attr_name=attr, attr_list=local_attributes_dict_pyink[attr], nodes=nodes_info)
 
-                        AddAttributes.add_node_attribute(graph_copy, attr_name=attr, attr_list=local_attributes_dict[attr], nodes=nodes_info)
-
-                r.pyntacleink_report(report_dir=self.args.directory, report_dict=local_attributes_dict, suffix=suffix) #add it to the report
+                r.pyntacleink_report(report_dir=self.args.directory, report_dict=None, suffix=suffix) #add it to the report
 
             elif graph.vcount() >= 5000:
                 sys.stdout.write(
                     u"The graph has too many nodes ({}). Pyntacle allows plotting for network with N < 5000. No visual representation will be produced\n".format(
                         graph.vcount()))
+
+            else:
+                sys.stdout.write(pyntacleink_skip_msg)
 
             # - LEGACY - OLD PLOTTER -
             # if not self.args.no_plot and graph.vcount() < 1000:
@@ -402,17 +423,37 @@ class Metrics:
                 suffix = "_".join(graph["name"])
 
                 if self.args.no_nodes: #produce an additional report without nodes (i know, i know)
-                    r_nonodes.pyntacleink_report(report_dir=self.args.directory, report_dict=global_attributes_dict_nonodes, suffix=suffix) #report without nodes
+
+                    #replace "_" with " " for a clearer comprehension
+                    global_attributes_dict_nonodes_pyink = OrderedDict()
+
+                    for elem in global_attributes_dict_nonodes:
+                        newelem = elem.replace("_", " ")
+                        global_attributes_dict_nonodes_pyink[newelem] = global_attributes_dict_nonodes[elem]
+
+                    #todo mauro: il dizionario viene parsato correttamente e STA nell'html e nel json, ma il visualizzatore non fa vedere le righe: perchè?
+                    r_nonodes.pyntacleink_report(report_dir=self.args.directory, report_dict=global_attributes_dict_nonodes_pyink, suffix=suffix) #report without nodes
                     suffix = suffix.replace("_no_nodes", "") #create new suffix for the "normal"_report
 
                 #produce graphical report of the original file
-                sys.stdout.write(u"Plotting network and run results in {} directory\n".format(self.args.directory))
-                r.pyntacleink_report(report_dir=self.args.directory, report_dict=global_attributes_dict,
+                global_attributes_dict_pyink = OrderedDict()
+                for elem in global_attributes_dict:
+                    newelem = elem.replace("_", " ")
+                    global_attributes_dict_pyink[newelem] = global_attributes_dict[elem]
+
+                #todo prova che le chiavi ci sono
+                # print(global_attributes_dict_nonodes_pyink)
+                # input()
+
+                r.pyntacleink_report(report_dir=self.args.directory, report_dict=global_attributes_dict_pyink,
                                          suffix=suffix)
 
             elif not self.args.no_plot and graph.vcount() >= 5000:
                 u"The graph has too many nodes ({}). PyntacleInk allows plotting for network with N < 5000. No visual representation will be produced\n".format(
                     graph.vcount())
+
+            else:
+                sys.stdout.write(pyntacleink_skip_msg)
 
             # - LEGACY - OLD PLOTTER -
             # if not self.args.no_plot and graph.vcount() < 1000:
