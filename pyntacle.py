@@ -713,10 +713,10 @@ class App:
                                                                                                          width=150))
         smallworld_subparser.set_defaults(which="small-world")
 
-        smallworld_subparser.add_argument("-l", "--lattice", default=2,
-                                          help="The dimension of a starting network lattice upon which the"
+        smallworld_subparser.add_argument("-l", "--lattice", default=4,
+                                          help="The dimension of a starting graph lattice upon which the"
                                                "Watts-Strogatz model will be applied to generate the small-world. "
-                                               "Default is 2. NOTE: It is highly recommended to use small values, "
+                                               "Default is 4. NOTE: It is highly recommended to use small values, "
                                                "as lattices spread across multiple dimensions may create critical "
                                                "memory issues.")
 
@@ -725,9 +725,9 @@ class App:
                                                "NOTE: It is highly recommended to use small values, as lattices "
                                                "spread across multiple dimensions may create critical memory issues.")
 
-        smallworld_subparser.add_argument("--nei", default=None,
+        smallworld_subparser.add_argument("--nei", default=2,
                                           help="The maximum distance in which two nodes will be connected. Default is a"
-                                               "random integer between 2 and 5.")
+                                               " default is 2")
 
         smallworld_subparser.add_argument("-p", "--probability", default=0.5,
                                           help="Rewiring probability. Default is 0.5")

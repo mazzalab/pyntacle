@@ -47,6 +47,7 @@ report_format = {"tsv": "tsv", "txt": "tsv", "csv": "csv", "xlsx": "xlsx", "xlx"
 
 runtime_date = datetime.datetime.now().strftime("%Y-%m-%d-%H%M%S")
 
+pyntacleink_skip_msg = "Skipping PyntacleInk report.\n"
 
 pycairo_message = u"WARNING: It seems that the pycairo library is not installed/available. Graph plot(s) will not be produced\n"
 

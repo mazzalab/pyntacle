@@ -49,10 +49,10 @@ class Set:
         if not hasattr(self.args, 'which'):
             raise Error(u"usage: pyntacle.py set {union, intersection, difference} [options]'")
 
-        # Check for pycairo
-        if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
-            sys.stdout.write(pycairo_message)
-            self.args.no_plot = True
+        # - DEPRECATED - Check for pycairo
+        # if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
+        #     sys.stdout.write(pycairo_message)
+        #     self.args.no_plot = True
 
     def run(self):
 
@@ -173,14 +173,13 @@ class Set:
         sys.stdout.write(run_start)
         if self.args.which == "union":
             sys.stdout.write(
-                u" Performing union between input graph {} and {}\n".format(self.args.input_file_1,
+                u"Performing union between input graph {} and {}\n".format(self.args.input_file_1,
                                                                            self.args.input_file_2))
 
             output_graph = GraphSetOps.union(graph1, graph2, self.args.output_file)
             if all(len(x) <= 2 for x in output_graph.vs()["parent"]):
                 sys.stdout.write(
                     u"There were no common nodes when performing Graph union. Will return two disjoint graphs\n")
-
 
         elif self.args.which == "intersection":
             sys.stdout.write(
@@ -242,7 +241,6 @@ class Set:
                                                                                output_graph.ecount(),
                                                                                len(output_graph.components())))
 
-
         sys.stdout.write(section_end)
         sys.stdout.write(report_start)
         if not os.path.isdir(self.args.directory):
@@ -294,6 +292,49 @@ class Set:
         elif out_form == "graph":
             sys.stdout.write("Writing resulting graph into a  binary file (ending in .graph)\n")
             PyntacleExporter.Binary(output_graph, output_path)
+
+
+        intersection_set = []
+        for v in output_graph.vs():
+            parent_g1 = "_".join(graph1["name"])
+            parent_g2 = "_".join(graph2["name"])
+
+            if parent_g1 in v["parent"] and parent_g2 in v["parent"]:
+                intersection_set.append(v["name"])
+            elif parent_g1 in v["parent"] and not parent_g2 in v["parent"]:
+                intersection_set.append(v["name"])
+            elif parent_g2 in v["parent"] and not parent_g1 in v["parent"]:
+                pass
+
+        reporter1 = PyntacleReporter(graph=graph1)  # init reporter1
+        reporter2 = PyntacleReporter(graph=graph2)  # init reporter2
+        reporter_final = PyntacleReporter(graph=output_graph)
+        
+        set1_attr_dict = OrderedDict()
+        set2_attr_dict = OrderedDict()
+        setF_attr_dict = OrderedDict()
+
+        if self.args.which == 'intersection':
+            setF_attr_dict['\nCommon Nodes'] = 'Node names'#(len(intersection_set), ','.join(intersection_set))
+            setF_attr_dict[len(intersection_set)] = ','.join(intersection_set)
+        reporter1.create_report(ReportEnum.Set, set1_attr_dict)
+        reporter2.create_report(ReportEnum.Set, set2_attr_dict)
+        reporter_final.create_report(ReportEnum.Set, setF_attr_dict)
+
+        reporter1.report[1] = ['\n--- Graph 1 ---']
+        reporter2.report[1] = ['--- Graph 2 ---']
+        del(reporter1.report[-1])
+        del(reporter2.report[-1])
+        del(reporter2.report[0])
+        del(reporter_final.report[0])
+        for e in reporter_final.report:
+            if e[0] == 'Pyntacle Command:':
+                e[1] = e[1] + ' ' + self.args.which
+        
+        reporter_final.report[0] = ['\n--- Resulting Graph ---']
+        reporter1.report.extend(reporter2.report)
+        reporter1.report.extend(reporter_final.report)
+        reporter1.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
         # - OLD PLOTTER - LEGACY -
         # producing plots
@@ -414,39 +455,34 @@ class Set:
         # elif not self.args.no_plot and (graph1.vcount() >= 1000 or graph2.vcount() >= 1000):
         #     sys.stdout.write(
         #         u"One of the two input graphs exceeds Pyntacle limits for plotting (maximum 1000 nodes). Will not draw graph\n")
-        
-        
+
         # Report
 
-        reporter1 = PyntacleReporter(graph=graph1)  # init reporter1
-        reporter2 = PyntacleReporter(graph=graph2)  # init reporter2
-        reporter_final = PyntacleReporter(graph=output_graph)
-        
-        set1_attr_dict = OrderedDict()
-        set2_attr_dict = OrderedDict()
-        setF_attr_dict = OrderedDict()
+        # todo arrivato qua: perchè non funge?
 
-        if self.args.which == 'intersection':
-            setF_attr_dict['\nCommon Nodes'] = 'Node names'#(len(intersection_set), ','.join(intersection_set))
-            setF_attr_dict[len(intersection_set)] = ','.join(intersection_set)
-        reporter1.create_report(ReportEnum.Set, set1_attr_dict)
-        reporter2.create_report(ReportEnum.Set, set2_attr_dict)
-        reporter_final.create_report(ReportEnum.Set, setF_attr_dict)
-        
-        reporter1.report[1] = ['\n--- Graph 1 ---']
-        reporter2.report[1] = ['--- Graph 2 ---']
-        del(reporter1.report[-1])
-        del(reporter2.report[-1])
-        del(reporter2.report[0])
-        del(reporter_final.report[0])
-        for e in reporter_final.report:
-            if e[0] == 'Pyntacle Command:':
-                e[1] = e[1] + ' ' + self.args.which
-        
-        reporter_final.report[0] = ['\n--- Resulting Graph ---']
-        reporter1.report.extend(reporter2.report)
-        reporter1.report.extend(reporter_final.report)
-        reporter1.write_report(report_dir=self.args.directory, format=self.args.report_format)
+        total_nodes = len(list(set(graph1.vs["name"]).union(set(graph2.vs["name"]))))
+
+        if not self.args.no_plot and total_nodes < 5000:
+            both_graphs = GraphSetOps.union(graph1, graph2, 'Both')
+            report_dict = OrderedDict()
+            report_dict['algorithm'] = self.args.which
+            report_dict[0] = {'nodes': ','.join(output_graph.vs["name"]), 'edges': output_graph.es["adjacent_nodes"]}
+
+            #create custom instance of reporter to be passed to pyntacleink and storing appropriate values
+            reporter_both_graphs = PyntacleReporter(graph=both_graphs)
+            reporter_both_graphs.report_type = ReportEnum.Set
+
+            suffix = "_".join(["_".join(graph1["name"]), "Set", "_".join(graph2["name"])])
+
+            sys.stdout.write(u"Plotting {} among the two graph in {} directory with PyntacleInk\n".format(self.args.which, self.args.directory))
+            reporter_both_graphs.pyntacleink_report(report_dir=self.args.directory, report_dict=report_dict, suffix=suffix)
+
+        elif total_nodes >= 5000:
+            sys.stdout.write(
+                u"The total sum of the two graph nodes ({}). PyntacleInk allows plotting for network with N < 5000. No visual representation will be produced\n".format(
+                    total_nodes))
+        else:
+            sys.stdout.write(pyntacleink_skip_msg)
 
         if not self.args.suppress_cursor:
             cursor.stop()

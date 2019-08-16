@@ -45,15 +45,17 @@ from internal.graph_load import GraphLoad
 from exceptions.generic_error import Error
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 
+
 class KeyPlayer:
     def __init__(self, args):
         self.logging = log
         self.args = args
         self.date = runtime_date
-        # Check for pycairo
-        if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
-            sys.stdout.write(pycairo_message)
-            self.args.no_plot = True
+
+        # - DEPRECATED - Check for pycairo
+        # if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
+        #     sys.stdout.write(pycairo_message)
+        #     self.args.no_plot = True
 
     def run(self):
         if not hasattr(self.args, 'which'):
@@ -392,13 +394,15 @@ class KeyPlayer:
 
         if not self.args.no_plot and graph.vcount() < 5000:
             suffix = "_".join(graph["name"])
-            sys.stdout.write(u"Plotting network and run results in {} directory through PyntacleInk\n".format(self.args.directory))
+            sys.stdout.write(u"Plotting network and run results in {} directory with PyntacleInk\n".format(self.args.directory))
             r.pyntacleink_report(report_dir=self.args.directory, report_dict=results, suffix=suffix)
 
         elif graph.vcount() >= 5000:
             sys.stdout.write(
                 u"The graph has too many nodes ({}). PyntacleInk allows plotting for network with N < 5000. No visual representation will be produced\n".format(
                     graph.vcount()))
+        else:
+            sys.stdout.write(pyntacleink_skip_msg)
 
         if self.args.save_binary:
             # reproduce octopus behaviour by adding kp information to the graph before saving it

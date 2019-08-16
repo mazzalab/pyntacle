@@ -50,9 +50,10 @@ class GroupCentrality():
         self.args = args
         self.date = runtime_date
 
-        if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
-            sys.stdout.write(pycairo_message)
-            self.args.no_plot = True
+        # - DEPRECATED - cHECK FOR Pycairo
+        # if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
+        #     sys.stdout.write(pycairo_message)
+        #     self.args.no_plot = True
 
     def run(self):
         if not self.args.suppress_cursor:
@@ -171,7 +172,7 @@ class GroupCentrality():
         #         plot_size = (1600, 1600)
 
         # initialize reporter for later usage and plot dimension for later usage
-        r = PyntacleReporter(graph=graph)
+        reporter = PyntacleReporter(graph=graph)
         results = OrderedDict()
 
         sys.stdout.write(section_end)
@@ -355,19 +356,21 @@ class GroupCentrality():
 
         sys.stdout.write(u"Writing report in {} format\n".format(self.args.report_format))
 
-        r.create_report(report_type=report_type, report=results)
-        r.write_report(report_dir=self.args.directory, format=self.args.report_format)
+        reporter.create_report(report_type=report_type, report=results)
+        reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
         #pyntacle ink part
         if not self.args.no_plot and graph.vcount() < 5000:
             suffix = "_".join(graph["name"])
-            sys.stdout.write(u"Plotting network and run results in {} directory through PyntacleInk\n".format(self.args.directory))
-            r.pyntacleink_report(report_dir=self.args.directory, report_dict=results, suffix=suffix)
+            sys.stdout.write(u"Plotting network and run results in {} directory with PyntacleInk\n".format(self.args.directory))
+            reporter.pyntacleink_report(report_dir=self.args.directory, report_dict=results, suffix=suffix)
 
         elif graph.vcount() >= 5000:
             sys.stdout.write(
                 u"The graph has too many nodes ({}). PyntacleInk allows plotting for network with N < 5000. No visual representation will be produced\n".format(
                     graph.vcount()))
+        else:
+            sys.stdout.write(pyntacleink_skip_msg)
 
         # if not self.args.no_plot and graph.vcount() < 1000:
         #

@@ -36,7 +36,8 @@ from internal.graph_load import GraphLoad, separator_detect
 from exceptions.generic_error import Error
 
 
-class Communities():
+class Communities:
+
     def __init__(self, args):
         self.logging = log
         self.args = args
@@ -44,13 +45,13 @@ class Communities():
         if not hasattr(self.args, 'which'):
             raise Error(
                 u"usage: pyntacle.py communities {infomap, community-walktrap, fastgreedy, leading-eigenvector} [options]")
-        # Check for pycairo
-        if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
-            sys.stdout.write(pycairo_message)
-            self.args.no_plot = True
-
-        if not self.args.output_separator:
-            self.args.output_separator = '\t'
+        # - DEPRECATED - Check for pycairo
+        # if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
+        #     sys.stdout.write(pycairo_message)
+        #     self.args.no_plot = True
+        #
+        # if not self.args.output_separator:
+        #     self.args.output_separator = '\t'
 
     def run(self):
 
@@ -367,14 +368,15 @@ class Communities():
         if not self.args.no_plot and graph.vcount() < 5000:
             suffix = "_".join(graph["name"])
 
-            sys.stdout.write(u"Plotting network and its embedded communities in {} directory through PyntacleInk\n".format(self.args.directory))
+            sys.stdout.write(u"Plotting network and its embedded communities in {} directory with PyntacleInk\n".format(self.args.directory))
             r.pyntacleink_report(report_dir=self.args.directory, report_dict=results, suffix=suffix)
 
         elif graph.vcount() >= 5000:
             sys.stdout.write(
                 u"The graph has too many nodes ({}). PyntacleInk allows plotting for network with N < 5000. No visual representation will be produced\n".format(
                     graph.vcount()))
-
+        else:
+            sys.stdout.write(pyntacleink_skip_msg)
         # OLD PLOTTER  LEGACY
         # if not self.args.no_plot:
         #

@@ -61,9 +61,10 @@ def output_file_checker(func):
         if not isinstance(file, str):
             raise ValueError("\"file \" must be a string, {} found".format(type(file).__name__))
 
+        #removed as PyntacleInk appends and not overwrites
         else:
-            if os.path.exists(os.path.abspath(file)):
-                sys.stdout.write("{} alread, will overwrite\n".format(file))
+            # if os.path.exists(os.path.abspath(file)):
+            #     sys.stdout.write("{} already exists, will overwrite\n".format(file))
 
             return func(graph,file, *args, **kwargs)
 

@@ -100,7 +100,7 @@ class PyntacleReporter():
         elif report_type == ReportEnum.Set:
             self.__set_text_report__(reportdict=report_copy)
         else:
-            raise ValueError(u"Report specified does not exist")
+            raise ValueError(u"Specified report type does not exist")
 
     def write_report(self, report_dir=None, format="tsv", choices=report_format) -> str:
         r"""
@@ -475,10 +475,11 @@ class PyntacleReporter():
             self.report.append([k, reportdict[k][0], reportdict[k][1], reportdict[k][2]])
             
     def __set_text_report__(self, reportdict: OrderedDict):
+
         for k in reportdict.keys():
             self.report.append([k, reportdict[k]])
 
-    def pyntacleink_report(self, report_dir :str, report_dict: OrderedDict, suffix :str):
+    def pyntacleink_report(self, report_dir :str, report_dict: OrderedDict or None, suffix :str):
         """
         Create a JSON version of the report, possibly appending data to already existing results.
         :return:
@@ -489,7 +490,8 @@ class PyntacleReporter():
         try:
             os.makedirs(inner_dir)
         except OSError:
-            log.warning("Internal directory for storing JSON files already exists")
+            pass
+            # log.warning("Internal directory for storing JSON files already exists")
 
         index_path = os.path.join(report_dir, "_".join(["pyntacleink", suffix]) + ".html")
 
@@ -512,7 +514,8 @@ class PyntacleReporter():
         # print(type(report_dict))
         # print(self.report_type)
         # print(self.dat)
-        # todo mauro manca il kp-info e il gr-info
+
+        # todo mauro manca il kp-info e il gr-info; rinominerei "algorithm" per groupcentrality e keyplayer a "strategy (così possiamo mettere tutto in un unico panel)
         if self.report_type == ReportEnum.KP_bruteforce or self.report_type == ReportEnum.KP_greedy:
             json_data.setdefault("Key-player", {})
             json_data["Key-player"].setdefault(str(self.report_type).split('.')[1], {})
@@ -559,19 +562,24 @@ class PyntacleReporter():
             json_data["Communities"].setdefault(report_dict["algorithm"], {})
             json_data["Communities"][report_dict["algorithm"]].setdefault(self.dat, {})
 
-            for i, k in enumerate(report_dict["communities"]): #TODO STA CHIAVE NON ESISTE NEL DIZIONARIO
+            for i, k in enumerate(report_dict["communities"]):
                 json_data["Communities"][report_dict["algorithm"]][self.dat][i] = [report_dict["communities"][i][1]]
 
         if self.report_type == ReportEnum.Set:
+
             json_data.setdefault("Set", {})
             json_data["Set"].setdefault(report_dict["algorithm"], {})
             json_data["Set"][report_dict["algorithm"]].setdefault(self.dat, {})
+
             for k in report_dict.keys():
+
                 if k == 'algorithm':
                     continue
                 json_data["Set"][report_dict["algorithm"]][self.dat][k] = [report_dict[k]['nodes'], ';'.join(
                     ['-'.join(e) for e in report_dict[k]['edges']])]
-                # edges=[', '.join(e) for e in report_dict[k]['edges']]
+
+                #for testing purposes only
+                # edges = [', '.join(e) for e in report_dict[k]['edges']]
                 # for edge in report_dict[k]['edges']:
                 #     print(edge)
             # print(edges)
@@ -584,8 +592,8 @@ class PyntacleReporter():
         json_data["Info"]['components'] = len(self.graph.components())
 
         # Adding global metrics to the basic info, if available
-        #TODO manca globl --no-nodes. Idealmente, dovrebbe essere una parte della tabella ACCANTO alle metriche globali senza aver rimosso i nodi
-        #todo per il momento, vengono prodottidue report (file cmds/metrics.py, linea ~385)
+        #TODO manca global --no-nodes. Idealmente, dovrebbe essere una parte della tabella ACCANTO alle metriche globali senza aver rimosso i nodi
+        #todo per il momento, vengono prodotti due report (file cmds/metrics.py, linea ~385)
         if self.report_type == ReportEnum.Global:
 
             for i in report_dict.keys():

@@ -27,12 +27,14 @@ __license__ = u"""
 from config import *
 from warnings import simplefilter
 
-from exceptions.generic_error import Error
 from exceptions.illegal_graph_size_error import IllegalGraphSizeError
 from io_stream.generator import PyntacleGenerator
 from io_stream.exporter import PyntacleExporter
+from cmds.cmds_utils.reporter import PyntacleReporter
+
 
 class Generate:
+
     def __init__(self, args):
         self.logging = log
         self.args = None
@@ -43,11 +45,11 @@ class Generate:
         self.date = runtime_date
         if not self.args.output_separator:
             self.args.output_separator = '\t'
-        # Check for pycairo
 
-        if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
-            sys.stdout.write(pycairo_message)
-            self.args.no_plot = True
+        # - DEPRECATED-Check for pycairo
+        # if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
+        #     sys.stdout.write(pycairo_message)
+        #     self.args.no_plot = True
 
     def run(self):
         if not self.args.suppress_cursor:
@@ -179,11 +181,11 @@ class Generate:
         elif self.args.which == "small-world":
             
             #This does not happen anymore, as default is 2.
-            if not self.args.lattice_size:
-                self.args.lattice_size = random.randint(2, 5)
-                
-            if not self.args.nei:
-                self.args.nei = random.randint(1, 5)
+            # if not self.args.lattice_size:
+            #     self.args.lattice_size = 10
+            #
+            # if not self.args.nei:
+            #     self.args.nei = random.randint(1, 5)
 
             if isinstance(self.args.lattice, str):
                 try:
@@ -221,7 +223,7 @@ class Generate:
                     u"The parameters you chose were invalid. Please check your command line. Quitting\n")
 
         if graph.vcount() < 2 and graph.ecount() < 1:
-            sys.stdout.write("Generated Graph is too small ({} nodes, {} edges). Rerun this command and tune your parameters. Quitting\n".format(graph.ecount(), graph.ecount()))
+            sys.stdout.write("Generated Graph is too small ({} nodes, {} edges). Re-run this command and tune your parameters. Quitting\n".format(graph.ecount(), graph.ecount()))
             sys.exit(1)
 
         sys.stdout.write(section_end)
@@ -238,7 +240,7 @@ class Generate:
 
         out_form = format_dictionary.get(self.args.output_format, "NA")
         if self.args.no_output_header:
-            sys.stdout.write(u"Skipping header on output graph file, as requested\n")
+            sys.stdout.write(u"Skipping header on output graph file\n")
             output_header = False
 
         else:
@@ -278,6 +280,22 @@ class Generate:
         elif out_form == "graph":
             sys.stdout.write(u"Writing generated graph to a binary file (ending in .graph)\n")
             PyntacleExporter.Binary(graph, output_path)
+
+        if not self.args.no_plot and graph.vcount() < 5000:
+            suffix = "_".join(graph["name"])
+            sys.stdout.write(u"Plotting generated network in {} directory with PyntacleInk\n".format(self.args.directory))
+            reporter = PyntacleReporter(graph=graph)
+            reporter.pyntacleink_report(report_dir=self.args.directory, report_dict=None, suffix=suffix)
+
+        elif graph.vcount() >= 5000:
+            sys.stdout.write(
+                u"The graph has too many nodes ({}). PyntacleInk allows plotting for network with N < 5000. No visual representation will be produced\n".format(
+                    graph.vcount()))
+        else:
+            sys.stdout.write(pyntacleink_skip_msg)
+
+        #todo arrivato qui
+        #new plotting part (replaces old generator plot)
 
         # Check provided dimensions' format
         # if self.args.plot_dim:  # define custom format
