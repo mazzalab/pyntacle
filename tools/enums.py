@@ -5,7 +5,7 @@ A set of enumerators whose values are used as reserved keywords in Pyntacle's fu
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = u"Copyright 2018, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = "0.0.5"
+__version__ = u"1.1"
 __maintainer__ = u"Daniele Capocefalo"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"

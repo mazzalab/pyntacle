@@ -1,7 +1,7 @@
 __author__ = u"Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = u"Copyright 2018, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.0.0"
+__version__ = u"1.1"
 __maintainer__ = u"Daniele Capocefalo"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
@@ -27,14 +27,14 @@ __license__ = u"""
 from config import *
 from warnings import simplefilter
 
-from exceptions.generic_error import Error
 from exceptions.illegal_graph_size_error import IllegalGraphSizeError
 from io_stream.generator import PyntacleGenerator
 from io_stream.exporter import PyntacleExporter
-from cmds.cmds_utils.plotter import *
+from cmds.cmds_utils.reporter import PyntacleReporter
 
 
 class Generate:
+
     def __init__(self, args):
         self.logging = log
         self.args = None
@@ -45,11 +45,7 @@ class Generate:
         self.date = runtime_date
         if not self.args.output_separator:
             self.args.output_separator = '\t'
-        # Check for pycairo
 
-        if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
-            sys.stdout.write(pycairo_message)
-            self.args.no_plot = True
 
     def run(self):
         if not self.args.suppress_cursor:
@@ -58,6 +54,7 @@ class Generate:
             cursor.start()
 
         sys.stdout.write(run_start)
+
         if self.args.which == "random":
 
             if self.args.nodes is None:
@@ -181,11 +178,11 @@ class Generate:
         elif self.args.which == "small-world":
             
             #This does not happen anymore, as default is 2.
-            if not self.args.lattice_size:
-                self.args.lattice_size = random.randint(2, 5)
-                
-            if not self.args.nei:
-                self.args.nei = random.randint(1, 5)
+            # if not self.args.lattice_size:
+            #     self.args.lattice_size = 10
+            #
+            # if not self.args.nei:
+            #     self.args.nei = random.randint(1, 5)
 
             if isinstance(self.args.lattice, str):
                 try:
@@ -223,7 +220,7 @@ class Generate:
                     u"The parameters you chose were invalid. Please check your command line. Quitting\n")
 
         if graph.vcount() < 2 and graph.ecount() < 1:
-            sys.stdout.write("Generated Graph is too small ({} nodes, {} edges). Rerun this command and tune your parameters. Quitting\n".format(graph.ecount(), graph.ecount()))
+            sys.stdout.write("Generated Graph is too small ({} nodes, {} edges). Re-run this command and tune your parameters. Quitting\n".format(graph.ecount(), graph.ecount()))
             sys.exit(1)
 
         sys.stdout.write(section_end)
@@ -240,13 +237,11 @@ class Generate:
 
         out_form = format_dictionary.get(self.args.output_format, "NA")
         if self.args.no_output_header:
-            sys.stdout.write(u"Skipping header on output graph file, as requested\n")
+            sys.stdout.write(u"Skipping header on output graph file\n")
             output_header = False
 
         else:
             output_header = True
-
-
 
         if out_form == "NA":
             sys.stderr.write(u"Output extension specified is not supported. Quitting\n")
@@ -283,104 +278,120 @@ class Generate:
             sys.stdout.write(u"Writing generated graph to a binary file (ending in .graph)\n")
             PyntacleExporter.Binary(graph, output_path)
 
-        # Check provided dimensions' format
-        if self.args.plot_dim:  # define custom format
-            self.args.plot_dim = self.args.plot_dim.split(",")
+        if not self.args.no_plot and graph.vcount() < 5000:
+            suffix = "_".join(graph["name"])
+            sys.stdout.write(u"Plotting generated network in {} directory with PyntacleInk\n".format(self.args.directory))
+            reporter = PyntacleReporter(graph=graph)
+            reporter.pyntacleink_report(report_dir=self.args.directory, report_dict=None, suffix=suffix)
 
-            for i in range(0, len(self.args.plot_dim)):
-                try:
-                    self.args.plot_dim[i] = int(self.args.plot_dim[i])
-
-                except ValueError:
-                    sys.stderr.write(
-                        u"Format specified must be a comma-separated list of values(e.g. 1920,1080). Quitting\n")
-                    sys.exit(1)
-
-                if self.args.plot_dim[i] <= 0:
-                    sys.stderr.write(
-                        u"Format specified must be a comma-separated list of values(e.g. 1920,1080). Quitting\n")
-                    sys.exit(1)
-
-            plot_size = tuple(self.args.plot_dim)
-
-        else:
-            # generate different formats according to graph size
-            if graph.vcount() <= 150:
-                plot_size = (800, 800)
-
-            else:
-                plot_size = (1600, 1600)
-
-        if not self.args.no_plot and graph.vcount() < 1000:
-            sys.stdout.write(u"Drawing generated graph\n")
-            # generates plot directory
-            plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
-
-            if not os.path.isdir(plot_dir):
-                os.mkdir(plot_dir)
-
-            plot_path = os.path.join(plot_dir, ".".join([self.args.output_file, self.args.plot_format]))
-
-            pal = sns.color_palette("Spectral", 10).as_hex()
-            pal2 = sns.color_palette("RdYlGn", 10).as_hex()
-            framepal = sns.color_palette("Spectral", 10, desat=0.5).as_hex()
-            framepal2 = sns.color_palette("RdYlGn", 10, desat=0.5).as_hex()
-
-            other_nodes_size = 18
-
-
-            # deep sky blue
-            plot_graph = PlotGraph(graph=graph)
-
-            # define layout according to the toplogy of the graph
-            if self.args.which == "random":
-                if self.args.plot_layout != "random":
-                    plot_graph.set_layouts(self.args.plot_layout)
-                else:
-                    plot_graph.set_layouts(layout="random")
-                other_nodes_colour = pal[-3]
-                frame_vertex_colour = framepal[-3]
-
-            elif self.args.which == "scale-free":
-                if self.args.plot_layout != "fr" and self.args.plot_layout != "fruchterman_reingold":
-                    plot_graph.set_layouts(self.args.plot_layout)
-                else:
-                    plot_graph.set_layouts(layout="fr")
-                other_nodes_colour = pal[3]
-                frame_vertex_colour = framepal[3]
-
-            elif self.args.which == "tree":
-                if self.args.plot_layout != "rt" and self.args.plot_layout != "reingold_tilford":
-                    plot_graph.set_layouts(self.args.plot_layout)
-                else:
-                    plot_graph.set_layouts(layout="reingold_tilford")
-                other_nodes_colour = pal2[-2]
-                frame_vertex_colour = framepal2[-2]
-
-            else:
-                if self.args.plot_layout != "circle":
-                    plot_graph.set_layouts(self.args.plot_layout)
-                else:
-                    plot_graph.set_layouts(layout="circle")
-                other_nodes_colour = pal[0]
-                frame_vertex_colour = framepal[0]
-
-            node_colors = [other_nodes_colour] * graph.vcount()
-            plot_graph.set_node_colors(colors=node_colors)
-            plot_graph.set_node_labels(labels=graph.vs()["name"])  # assign node labels to graph
-            node_sizes = [other_nodes_size] * graph.vcount()
-            plot_graph.set_node_sizes(sizes=node_sizes)
-            frame_vertex_colour = [frame_vertex_colour]*graph.vcount()
-
+        elif graph.vcount() >= 5000:
             sys.stdout.write(
-                u"Drawing graph in {} format at path: {}\n".format(self.args.plot_format, plot_path))
-
-            plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2, keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=frame_vertex_colour)
-
-        elif not self.args.no_plot and graph.vcount() >= 1000:
-            self.logging.warning(
-                u"Graph is above Pyntacle plotting capability ({} nodes, we plot graph with at best 1000 nodes). Graph plotting will be skipped.".format(
+                u"The graph has too many nodes ({}). PyntacleInk allows plotting for network with N < 5000. No visual representation will be produced\n".format(
                     graph.vcount()))
+        else:
+            sys.stdout.write(pyntacleink_skip_msg)
+
+        #todo arrivato qui
+        #new plotting part (replaces old generator plot)
+
+        # Check provided dimensions' format
+        # if self.args.plot_dim:  # define custom format
+        #     self.args.plot_dim = self.args.plot_dim.split(",")
+        #
+        #     for i in range(0, len(self.args.plot_dim)):
+        #         try:
+        #             self.args.plot_dim[i] = int(self.args.plot_dim[i])
+        #
+        #         except ValueError:
+        #             sys.stderr.write(
+        #                 u"Format specified must be a comma-separated list of values(e.g. 1920,1080). Quitting\n")
+        #             sys.exit(1)
+        #
+        #         if self.args.plot_dim[i] <= 0:
+        #             sys.stderr.write(
+        #                 u"Format specified must be a comma-separated list of values(e.g. 1920,1080). Quitting\n")
+        #             sys.exit(1)
+        #
+        #     plot_size = tuple(self.args.plot_dim)
+        #
+        # else:
+        #     # generate different formats according to graph size
+        #     if graph.vcount() <= 150:
+        #         plot_size = (800, 800)
+        #
+        #     else:
+        #         plot_size = (1600, 1600)
+        #
+        # if not self.args.no_plot and graph.vcount() < 1000:
+        #     sys.stdout.write(u"Drawing generated graph\n")
+        #     # generates plot directory
+        #     plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
+        #
+        #     if not os.path.isdir(plot_dir):
+        #         os.mkdir(plot_dir)
+        #
+        #     plot_path = os.path.join(plot_dir, ".".join([self.args.output_file, self.args.plot_format]))
+        #
+        #     pal = sns.color_palette("Spectral", 10).as_hex()
+        #     pal2 = sns.color_palette("RdYlGn", 10).as_hex()
+        #     framepal = sns.color_palette("Spectral", 10, desat=0.5).as_hex()
+        #     framepal2 = sns.color_palette("RdYlGn", 10, desat=0.5).as_hex()
+        #
+        #     other_nodes_size = 18
+        #
+        #
+        #     # deep sky blue
+        #     plot_graph = PlotGraph(graph=graph)
+        #
+        #     # define layout according to the toplogy of the graph
+        #     if self.args.which == "random":
+        #         if self.args.plot_layout != "random":
+        #             plot_graph.set_layouts(self.args.plot_layout)
+        #         else:
+        #             plot_graph.set_layouts(layout="random")
+        #         other_nodes_colour = pal[-3]
+        #         frame_vertex_colour = framepal[-3]
+        #
+        #     elif self.args.which == "scale-free":
+        #         if self.args.plot_layout != "fr" and self.args.plot_layout != "fruchterman_reingold":
+        #             plot_graph.set_layouts(self.args.plot_layout)
+        #         else:
+        #             plot_graph.set_layouts(layout="fr")
+        #         other_nodes_colour = pal[3]
+        #         frame_vertex_colour = framepal[3]
+        #
+        #     elif self.args.which == "tree":
+        #         if self.args.plot_layout != "rt" and self.args.plot_layout != "reingold_tilford":
+        #             plot_graph.set_layouts(self.args.plot_layout)
+        #         else:
+        #             plot_graph.set_layouts(layout="reingold_tilford")
+        #         other_nodes_colour = pal2[-2]
+        #         frame_vertex_colour = framepal2[-2]
+        #
+        #     else:
+        #         if self.args.plot_layout != "circle":
+        #             plot_graph.set_layouts(self.args.plot_layout)
+        #         else:
+        #             plot_graph.set_layouts(layout="circle")
+        #         other_nodes_colour = pal[0]
+        #         frame_vertex_colour = framepal[0]
+        #
+        #     node_colors = [other_nodes_colour] * graph.vcount()
+        #     plot_graph.set_node_colors(colors=node_colors)
+        #     plot_graph.set_node_labels(labels=graph.vs()["name"])  # assign node labels to graph
+        #     node_sizes = [other_nodes_size] * graph.vcount()
+        #     plot_graph.set_node_sizes(sizes=node_sizes)
+        #     frame_vertex_colour = [frame_vertex_colour]*graph.vcount()
+        #
+        #     sys.stdout.write(
+        #         u"Drawing graph in {} format at path: {}\n".format(self.args.plot_format, plot_path))
+        #
+        #     plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2, keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=frame_vertex_colour)
+        #
+        # elif not self.args.no_plot and graph.vcount() >= 1000:
+        #     self.logging.warning(
+        #         u"Graph is above Pyntacle plotting capability ({} nodes, we plot graph with at best 1000 nodes). Graph plotting will be skipped.".format(
+        #             graph.vcount()))
 
         if not self.args.suppress_cursor:
             cursor.stop()

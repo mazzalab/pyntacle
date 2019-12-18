@@ -1,7 +1,7 @@
 __author__ = u"Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = u"Copyright 2018, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.0.0"
+__version__ = u"1.1"
 __maintainer__ = u"Daniele Capocefalo"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
@@ -29,7 +29,6 @@ from warnings import simplefilter
 from graph_operations.communities import CommunityFinder, ModuleUtils
 from io_stream.import_attributes import ImportAttributes
 from io_stream.exporter import PyntacleExporter
-from cmds.cmds_utils.plotter import PlotGraph
 from cmds.cmds_utils.reporter import PyntacleReporter
 from tools.graph_utils import *
 from tools.enums import ReportEnum
@@ -37,7 +36,8 @@ from internal.graph_load import GraphLoad, separator_detect
 from exceptions.generic_error import Error
 
 
-class Communities():
+class Communities:
+
     def __init__(self, args):
         self.logging = log
         self.args = args
@@ -45,13 +45,13 @@ class Communities():
         if not hasattr(self.args, 'which'):
             raise Error(
                 u"usage: pyntacle.py communities {infomap, community-walktrap, fastgreedy, leading-eigenvector} [options]")
-        # Check for pycairo
-        if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
-            sys.stdout.write(pycairo_message)
-            self.args.no_plot = True
-
-        if not self.args.output_separator:
-            self.args.output_separator = '\t'
+        # - DEPRECATED - Check for pycairo
+        # if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
+        #     sys.stdout.write(pycairo_message)
+        #     self.args.no_plot = True
+        #
+        # if not self.args.output_separator:
+        #     self.args.output_separator = '\t'
 
     def run(self):
 
@@ -96,33 +96,34 @@ class Communities():
                     u"The graph has two largest components of the same size. Cannot choose one. Please parse your file or remove the '--largest-component' option. Quitting\n")
                 sys.exit(1)
 
-        # define plot sizes
-        if self.args.plot_dim:  # define custom format
-            self.args.plot_dim = self.args.plot_dim.split(",")
-
-            for i in range(0, len(self.args.plot_dim)):
-                try:
-                    self.args.plot_dim[i] = int(self.args.plot_dim[i])
-
-                except ValueError:
-                    sys.stderr.write(
-                        u"Format specified must be a comma-separated list of values(e.g. 1920,1080). Quitting\n")
-                    sys.exit(1)
-
-                if self.args.plot_dim[i] <= 0:
-                    sys.stderr.write(
-                        u"Format specified must be a comma-separated list of values(e.g. 1920,1080). Quitting\n")
-                    sys.exit(1)
-
-            plot_size = tuple(self.args.plot_dim)
-
-        else:
-            # generate different formats according to graph size
-            if graph.vcount() <= 150:
-                plot_size = (800, 800)
-
-            else:
-                plot_size = (1600, 1600)
+        # - OLD PLOTTER - LEGACY -
+        # # define plot sizes
+        # if self.args.plot_dim:  # define custom format
+        #     self.args.plot_dim = self.args.plot_dim.split(",")
+        #
+        #     for i in range(0, len(self.args.plot_dim)):
+        #         try:
+        #             self.args.plot_dim[i] = int(self.args.plot_dim[i])
+        #
+        #         except ValueError:
+        #             sys.stderr.write(
+        #                 u"Format specified must be a comma-separated list of values(e.g. 1920,1080). Quitting\n")
+        #             sys.exit(1)
+        #
+        #         if self.args.plot_dim[i] <= 0:
+        #             sys.stderr.write(
+        #                 u"Format specified must be a comma-separated list of values(e.g. 1920,1080). Quitting\n")
+        #             sys.exit(1)
+        #
+        #     plot_size = tuple(self.args.plot_dim)
+        #
+        # else:
+        #     # generate different formats according to graph size
+        #     if graph.vcount() <= 150:
+        #         plot_size = (800, 800)
+        #
+        #     else:
+        #         plot_size = (1600, 1600)
 
         # initialize module finder method
         communities = CommunityFinder(graph=graph)
@@ -351,15 +352,119 @@ class Communities():
                         elem["module"], elem.vcount(), elem.ecount()))
 
         # reporting and plotting part
-        sys.stdout.write(u"Producing report in {} format\n".format(self.args.report_format))
+        sys.stdout.write(u"Writing report in {} format\n".format(self.args.report_format))
         r = PyntacleReporter(graph=graph)
         report_type = ReportEnum.Communities
         results["algorithm"] = algorithm
+        mods_list = []
+        for i, elem in enumerate(mods):
+            mods_list.append([str(i), ','.join(elem.vs["name"])])
+
+        results['communities'] = mods_list
 
         r.create_report(report_type=report_type, report=results)
         r.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
+        if not self.args.no_plot and graph.vcount() < 5000:
+            suffix = "_".join(graph["name"])
+
+            sys.stdout.write(u"Plotting network and its embedded communities in {} directory with PyntacleInk\n".format(self.args.directory))
+            r.pyntacleink_report(report_dir=self.args.directory, report_dict=results, suffix=suffix)
+
+        elif graph.vcount() >= 5000:
+            sys.stdout.write(
+                u"The graph has too many nodes ({}). PyntacleInk allows plotting for network with N < 5000. No visual representation will be produced\n".format(
+                    graph.vcount()))
+        else:
+            sys.stdout.write(pyntacleink_skip_msg)
+        # OLD PLOTTER  LEGACY
+        # if not self.args.no_plot:
+        #
+        #     plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
+        #
+        #     if os.path.isdir(plot_dir):
+        #         self.logging.info(
+        #             u"A directory named \"pyntacle-plots\" already exists.")
+        #
+        #     else:
+        #         os.mkdir(plot_dir)
+        #
+        #     avail_colors_fill = sns.color_palette("Spectral", n_colors=len(
+        #         final_mods)).as_hex()  # available colors for node fill
+        #     avail_colors_borders = sns.color_palette("Spectral", n_colors=len(final_mods),
+        #                                              desat=0.5).as_hex()
+        #
+        #     if graph.vcount() < 1000:
+        #
+        #         sys.stdout.write(u"Plotting graph in {} format\n".format(self.args.plot_format))
+        #
+        #         main_plot_path = os.path.join(plot_dir, ".".join(["_".join(
+        #             [self.args.which, os.path.splitext(os.path.basename(self.args.input_file))[0], "communities",
+        #              self.date]), self.args.plot_format]))
+        #
+        #         # initialize general graph Drawer
+        #         sys.stdout.write(u"Drawing original graph, highlighting communities\n")
+        #
+        #         if len(final_mods) > 20:
+        #             sys.stdout.write(
+        #                 u"WARNING:The number of modules found ({}) is very high. The plot of the input graph will have nuanced colors\n".format(
+        #                     len(final_mods)))
+        #
+        #         graph_plotter = PlotGraph(graph=graph)
+        #         graph_plotter.set_node_labels(labels=graph.vs()["name"])
+        #         graph_plotter.set_node_sizes([30] * graph.vcount())
+        #
+        #         # define different colors for each module
+        #         not_in_module_colors = "#A9A9A9"
+        #         col_list = []
+        #         bord_list = []
+        #         for elem in graph.vs():
+        #             module = elem["module"]
+        #             if module is not None:
+        #                 col_list.append(avail_colors_fill[module])
+        #                 bord_list.append(avail_colors_borders[module])
+        #
+        #             else:
+        #                 col_list.append(not_in_module_colors)
+        #                 bord_list.append(not_in_module_colors)
+        #
+        #         graph_plotter.set_node_colors(col_list)
+        #         graph_plotter.set_layouts(self.args.plot_layout)
+        #         graph_plotter.plot_graph(path=main_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
+        #                                  keep_aspect_ratio=True, vertex_label_size=6,
+        #                                  vertex_frame_color=bord_list)
+        #     else:
+        #         sys.stdout.write(
+        #             u"Input graph is above Pyntacle plotting limit ({} nodes found, only graphs with at best 1000 nodes). Input graph will not be plotted\n".format(
+        #                 graph.vcount()))
+        #
+        #     sys.stdout.write("Drawing each module separately\n")
+        #
+        #     for i, comm in enumerate(final_mods):
+        #         if comm.vcount() <= 1000:
+        #             plotter = PlotGraph(graph=comm)
+        #             plotter.set_node_labels(labels=comm.vs()["name"])
+        #
+        #             plotter.set_node_colors([avail_colors_fill[i]] * comm.vcount())
+        #
+        #             plotter.set_node_sizes([30] * comm.vcount())
+        #
+        #             comm_plot_path = os.path.join(plot_dir, ".".join(
+        #                 ["_".join([self.args.output_file, str(comm["module"]), self.date]),
+        #                  self.args.plot_format]))
+        #
+        #             plotter.set_layouts(self.args.plot_layout)
+        #             plotter.plot_graph(path=comm_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
+        #                                keep_aspect_ratio=True, vertex_label_size=6,
+        #                                vertex_frame_color=[avail_colors_borders[i]] * comm.vcount())
+        #
+        #         else:
+        #             sys.stdout.write(
+        #                 u"Module {0} is above Pyntacle plotting limit ({1} nodes found, communities with at best 1000 nodes are plotted). Plotting of this module will be skipped\n".format(
+        #                     i, comm.vcount()))
+
         # save the original graph into a binary file
+
         if self.args.save_binary:
             binary_name = ".".join(
                 ["_".join([os.path.splitext(os.path.basename(self.args.input_file))[0], "communities"]), "graph"])
@@ -368,90 +473,6 @@ class Communities():
                 u"Storing the input graph with module labels into a binary file in the results directory\n".format(
                     binary_path))
 
-        if not self.args.no_plot:
-
-            plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
-
-            if os.path.isdir(plot_dir):
-                self.logging.info(
-                    u"A directory named \"pyntacle-plots\" already exists.")
-
-            else:
-                os.mkdir(plot_dir)
-
-            avail_colors_fill = sns.color_palette("Spectral", n_colors=len(
-                final_mods)).as_hex()  # available colors for node fill
-            avail_colors_borders = sns.color_palette("Spectral", n_colors=len(final_mods),
-                                                     desat=0.5).as_hex()
-
-            if graph.vcount() < 1000:
-
-                sys.stdout.write(u"Plotting graph in {} format\n".format(self.args.plot_format))
-
-                main_plot_path = os.path.join(plot_dir, ".".join(["_".join(
-                    [self.args.which, os.path.splitext(os.path.basename(self.args.input_file))[0], "communities",
-                     self.date]), self.args.plot_format]))
-
-                # initialize general graph Drawer
-                sys.stdout.write(u"Drawing original graph, highlighting communities\n")
-
-                if len(final_mods) > 20:
-                    sys.stdout.write(
-                        u"WARNING:The number of modules found ({}) is very high. The plot of the input graph will have nuanced colors\n".format(
-                            len(final_mods)))
-
-                graph_plotter = PlotGraph(graph=graph)
-                graph_plotter.set_node_labels(labels=graph.vs()["name"])
-                graph_plotter.set_node_sizes([30] * graph.vcount())
-
-                # define different colors for each module
-                not_in_module_colors = "#A9A9A9"
-                col_list = []
-                bord_list = []
-                for elem in graph.vs():
-                    module = elem["module"]
-                    if module is not None:
-                        col_list.append(avail_colors_fill[module])
-                        bord_list.append(avail_colors_borders[module])
-
-                    else:
-                        col_list.append(not_in_module_colors)
-                        bord_list.append(not_in_module_colors)
-
-                graph_plotter.set_node_colors(col_list)
-                graph_plotter.set_layouts(self.args.plot_layout)
-                graph_plotter.plot_graph(path=main_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
-                                         keep_aspect_ratio=True, vertex_label_size=6,
-                                         vertex_frame_color=bord_list)
-            else:
-                sys.stdout.write(
-                    u"Input graph is above Pyntacle plotting limit ({} nodes found, only graphs with at best 1000 nodes). Input graph will not be plotted\n".format(
-                        graph.vcount()))
-
-            sys.stdout.write("Drawing each module separately\n")
-
-            for i, comm in enumerate(final_mods):
-                if comm.vcount() <= 1000:
-                    plotter = PlotGraph(graph=comm)
-                    plotter.set_node_labels(labels=comm.vs()["name"])
-
-                    plotter.set_node_colors([avail_colors_fill[i]] * comm.vcount())
-
-                    plotter.set_node_sizes([30] * comm.vcount())
-
-                    comm_plot_path = os.path.join(plot_dir, ".".join(
-                        ["_".join([self.args.output_file, str(comm["module"]), self.date]),
-                         self.args.plot_format]))
-
-                    plotter.set_layouts(self.args.plot_layout)
-                    plotter.plot_graph(path=comm_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
-                                       keep_aspect_ratio=True, vertex_label_size=6,
-                                       vertex_frame_color=[avail_colors_borders[i]] * comm.vcount())
-
-                else:
-                    sys.stdout.write(
-                        u"Module {0} is above Pyntacle plotting limit ({1} nodes found, communities with at best 1000 nodes are plotted). Plotting of this module will be skipped\n".format(
-                            i, comm.vcount()))
         if not self.args.suppress_cursor:
             cursor.stop()
 

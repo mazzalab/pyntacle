@@ -5,7 +5,7 @@ Exception raised when a file is not properly formatted (e.g., when mandatory fie
 __author__ = u"Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = u"Copyright 2018, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.0.0"
+__version__ = u"1.1"
 __maintainer__ = u"Daniele Capocefalo"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"

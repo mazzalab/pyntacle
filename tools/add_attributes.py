@@ -1,7 +1,7 @@
 __author__ = u"Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = u"Copyright 2018, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.0.0"
+__version__ = u"1.1"
 __maintainer__ = u"Daniele Capocefalo"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
@@ -37,8 +37,10 @@ class AddAttributes:
     and any object associated to it is its ``value``.
     """
 
+    # todo l'output è piuttosto verboso, specie se usato nella command line, ho aggiunto una flag "verbose == False" che viene setta a "True" se serve
+
     @staticmethod
-    def add_graph_attribute(graph: Graph, attr_name: str, attr: object):
+    def add_graph_attribute(graph: Graph, attr_name: str, attr: object, verbose: bool = False):
         r"""
         Add an attribute to a :py:class:`~igraph.Graph` object at the graph level.
 
@@ -47,6 +49,7 @@ class AddAttributes:
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param str attr_name: The name of the attribute being added
         :param object attr: Any object being added as attribute
+        :param bool verbose: Return informative messages to stdout. Useful for debugging purposes.Defaults to :py:class:`False`
         :raise TypeError: if ``graph`` is not a :py:class:`~igraph.Graph` object or if ``attr_name`` is not a string
         """
 
@@ -57,13 +60,15 @@ class AddAttributes:
             raise TypeError(u"Attribute name is not a string")
 
         if attr_name in graph.attributes():
-            sys.stdout.write("Graph attribute {} already present, will overwrite\n".format(attr_name))
+            if verbose:
+                sys.stdout.write("Graph attribute {} already present, will overwrite\n".format(attr_name))
 
-        sys.stdout.write("Graph attribute {} added\n".format(attr_name))
+        if verbose:
+            sys.stdout.write("Graph attribute {} added\n".format(attr_name))
         graph[attr_name] = attr
 
     @staticmethod
-    def add_node_attribute(graph: Graph, attr_name: str, attr_list: list, nodes: list):
+    def add_node_attribute(graph: Graph, attr_name: str, attr_list: list, nodes: list, verbose=False):
         r"""
         Add attributes at the vertex level of a :py:class:`~igraph.Graph` object. These attributes must be stored in a
         :py:class:`list` whose elements must be sorted by ``nodes`` (a list of string storing the vertex ``name``
@@ -75,6 +80,7 @@ class AddAttributes:
         :param str attr_name: The name of the attribute that will be added to the :py:class:`~igraph.Graph`
         :param list attr_list: alist of object, sorted by the ``nodes`` parameter. Each object will be adced singularly to the corresponding node
         :param list nodes: the vertex ``name`` attribute corresponding to the vertices to which attributes will be added..
+        :param bool verbose: Return informative messages to stdout. Useful for debugging purposes.Defaults to :py:class:`False`
         :raise TypeError: if any of the arguments is not of the expected type
         :raise WrongArgumentError: If all the attributes pointed to non-existing nodes.
         """
@@ -85,7 +91,8 @@ class AddAttributes:
             raise TypeError(u"Attribute name is not a string")
         
         if isinstance(nodes, str):
-            sys.stdout.write(u"Converting string nodes to list of nodes\n")
+            if verbose:
+                sys.stdout.write(u"Converting string \"nodes\" to list of nodes\n")
             nodes = [nodes]
 
         assert len(attr_list) == len(nodes), u"In add_node_attribute, length of attributes list cannot be " \
@@ -104,16 +111,18 @@ class AddAttributes:
                 select[0][attr_name] = a
 
             else:
-                sys.stdout.write(u"Node %s has multiple name hits, please check your attribute file\n" % n)
+                if verbose:
+                    sys.stdout.write(u"Node %s has multiple name hits, please check your attribute file\n" % n)
                 raise ValueError(u"Multiple node hits")
         
         if err_count == count:
             raise WrongArgumentError(u"All the attributes pointed to non-existing nodes.")
         else:
-            sys.stdout.write(u"Node attribute {} added\n".format(attr_name))
+            if verbose:
+                sys.stdout.write(u"Node attribute {} added\n".format(attr_name))
 
     @staticmethod
-    def add_edge_attribute(graph: Graph, attr_name: str, attr_list: list, edges: list):
+    def add_edge_attribute(graph: Graph, attr_name: str, attr_list: list, edges: list, verbose : bool = False):
         r"""
         Add edge attributes to the input :py:class:`igraph.Graph` object under the attribute name specified in ``attr_name``.
         The attributes must be stored in a list, passed to ``attr_list`` and sorted according to the target edge list,
@@ -125,6 +134,7 @@ class AddAttributes:
         :param str attr_name: string. The name of the attribute being added to the edges of the Graph.
         :param list attr_list: a list, sorted by vertex index, storing the values that will be added to each target edge.
         :param list edges: edges to which attributes will be applied.
+        :param bool verbose: Return informative messages to stdout. Useful for debugging purposes.Defaults to :py:class:`False`
         :raise TypeError: if ``graph`` is not a :py:class:`~igraph.Graph`
         :raise ValueError: if one of the edges IDs points to more than one edge (edge names must be univocal)
         :raise WrongArgumentError: if all the ``edges`` does not point to existing ones
@@ -146,7 +156,8 @@ class AddAttributes:
                 select = graph.es.select(adjacent_nodes=(e[1], e[0]))
             count += 1
             if len(select) == 0:
-                sys.stdout.write(u"Edge %s not found in graph\n" %str(e))
+                if verbose:
+                    sys.stdout.write(u"Edge %s not found in graph\n" %str(e))
                 err_count += 1
             
             elif len(select) == 1:
@@ -158,10 +169,11 @@ class AddAttributes:
         if err_count == count:
             raise WrongArgumentError("All the attributes pointed to non-existing edges.")
         else:
-            sys.stdout.write("Edge attribute {} added\n".format(attr_name))
+            if verbose:
+                sys.stdout.write("Edge attribute {} added\n".format(attr_name))
 
     @staticmethod
-    def add_edge_names(graph: Graph, readd: bool=False):
+    def add_edge_names(graph: Graph, readd: bool = False):
         r"""
         Initialize (or rewrite, according to the ``readd`` flag) the edge attribute ``adjacent_nodes`` that allows to
         identify an edge by the vertices it is linking.
@@ -221,9 +233,5 @@ class AddAttributes:
 
         if not isinstance(graph, Graph) is not Graph:
             raise TypeError(u"graph argument is not a 'igraph.Graph'")
-
-
-
-        #sys.stdout.write(u"adding reserved attribute '__parent' to the vertices")
 
         graph.vs["parent"] = graph["name"]

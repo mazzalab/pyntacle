@@ -1,7 +1,7 @@
 __author__ = u"Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = u"Copyright 2018, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.0.0"
+__version__ = u"1.1"
 __maintainer__ = u"Daniele Capocefalo"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
@@ -25,12 +25,13 @@ __license__ = u"""
   """
 
 from config import *
-import csv, os, xlsxwriter
+import csv, os, xlsxwriter,json
 from igraph import Graph
 from tools.enums import KpnegEnum, KpposEnum, ReportEnum, GroupCentralityEnum, GroupDistanceEnum
+from cmds.cmds_utils.pyntacleink_template import html_template, css_template
 from exceptions.wrong_argument_error import WrongArgumentError
 from collections import OrderedDict
-
+from io_stream.exporter import PyntacleExporter
 
 class PyntacleReporter():
     r"""
@@ -67,7 +68,7 @@ class PyntacleReporter():
         self.report_type = report_type
         self.report = []
         self.report.append(["Pyntacle Report", report_type.name])
-        self.report.append(["Execution time", self.dat])
+        self.report.append(["Run Date", self.dat])
         self.report.append(["\n"])
         self.report.append(["Network Overview"])
         self.report.append(["Graph name", ",".join(self.graph["name"])])
@@ -79,27 +80,27 @@ class PyntacleReporter():
         report_copy = copy.deepcopy(report)
 
         if report_type == ReportEnum.Local:
-            self.__local_report(reportdict=report_copy)
+            self.__local_report__(reportdict=report_copy)
         elif report_type == ReportEnum.Global:
-            self.__global_report(reportdict=report_copy)
+            self.__global_report__(reportdict=report_copy)
         elif report_type == ReportEnum.KP_info:
-            self.__KPinfo_report(reportdict=report_copy)
+            self.__KPinfo_report__(reportdict=report_copy)
         elif report_type == ReportEnum.GR_info:
-            self.__GRinfo_report(reportdict=report_copy)
+            self.__GRinfo_report__(reportdict=report_copy)
         elif report_type == ReportEnum.KP_greedy:
-            self.__greedy_report(reportdict=report_copy, type="kp")
+            self.__greedy_report__(reportdict=report_copy, type="kp")
         elif report_type == ReportEnum.GR_greedy:
-            self.__greedy_report(reportdict=report_copy, type="gr")
+            self.__greedy_report__(reportdict=report_copy, type="gr")
         elif report_type == ReportEnum.KP_bruteforce:
-            self.__bruteforce_report(reportdict=report_copy, type="kp")
+            self.__bruteforce_report__(reportdict=report_copy, type="kp")
         elif report_type == ReportEnum.GR_bruteforce:
-            self.__bruteforce_report(reportdict=report_copy, type="gr")
+            self.__bruteforce_report__(reportdict=report_copy, type="gr")
         elif report_type == ReportEnum.Communities:
-            self.__communities_report(reportdict=report_copy)
+            self.__communities_report__(reportdict=report_copy)
         elif report_type == ReportEnum.Set:
-            self.__set_report(reportdict=report_copy)
+            self.__set_text_report__(reportdict=report_copy)
         else:
-            raise ValueError(u"Report specified does not exist")
+            raise ValueError(u"Specified report type does not exist")
 
     def write_report(self, report_dir=None, format="tsv", choices=report_format) -> str:
         r"""
@@ -180,7 +181,7 @@ class PyntacleReporter():
 
             workbook.close()
 
-    def __local_report(self, reportdict:OrderedDict):
+    def __local_report__(self, reportdict:OrderedDict):
         r"""
         Fill the `report` object  with information regarding the metrics for each node (nodes must be specified in
         the reportdic `nodes' key. if that kjey is not specified, it will assume that the local metrics are
@@ -209,7 +210,7 @@ class PyntacleReporter():
             addendum.append(temp)
         self.report = self.report + addendum
 
-    def __global_report(self, reportdict:OrderedDict):
+    def __global_report__(self, reportdict:OrderedDict):
         r"""
         Fill the `report` object with information regarding all the global metrics stored in the reportdict object
 
@@ -222,7 +223,7 @@ class PyntacleReporter():
             self.report.append([k, reportdict[k]])
         
 
-    def __KPinfo_report(self, reportdict:OrderedDict):
+    def __KPinfo_report__(self, reportdict:OrderedDict):
         r"""
         fill the *self.__report* object with all the values stored in the KPINFO Run
         :param reportdict: a dictionary with KPPOSchoices or KPNEGchoices as  `keys` and a list as `values`
@@ -260,8 +261,8 @@ class PyntacleReporter():
             del reportdict[KpposEnum.mreach.name]
 
         self.report.append(["\n"])
-        self.report.append(["Results: key player metrics for the requested node sets"])
-        self.report.append(["Index", "Node set", "Value"])
+        self.report.append(["Results: key player metrics for the requested node set"])
+        self.report.append(["Index", "Nodes", "Key Player value"])
  
         for k in reportdict.keys():
             if (k == KpnegEnum.F.name or k == KpnegEnum.dF.name) and reportdict[k][-1] == 1.0:
@@ -270,9 +271,9 @@ class PyntacleReporter():
             else:
                 self.report.append([k, ",".join(reportdict[k][0]), round(reportdict[k][1],5)])
 
-    def __GRinfo_report(self, reportdict: OrderedDict):
+    def __GRinfo_report__(self, reportdict: OrderedDict):
         r"""
-        fill the *self.__report* object with all the values stored in the GRINFO Run
+        fill the *self.report* object with all the values stored in the GRINFO Run
 
         :param reportdict: a dictionary with Group centrality indices as `keys` and a list as `values`
         """
@@ -296,7 +297,7 @@ class PyntacleReporter():
 
             self.report.append([metric_correct, ",".join(reportdict[k][0]), round(reportdict[k][1], 5)])
 
-    def __greedy_report(self, reportdict: OrderedDict, type: str ="kp"):
+    def __greedy_report__(self, reportdict: OrderedDict, type: str = "kp"):
         r"""
         fill the *self.__report* object with all the values contained in the Greedy Optimization Run
 
@@ -366,7 +367,7 @@ class PyntacleReporter():
         else:
             raise ValueError("Invalid report type (choices are: 'kp', 'gr'")
 
-    def __bruteforce_report(self, reportdict: OrderedDict, type: str ="kp"):
+    def __bruteforce_report__(self, reportdict: OrderedDict, type: str = "kp"):
         r"""
         Fill the ``self.__report`` object with all the values contained in the brute-force search run
 
@@ -456,7 +457,7 @@ class PyntacleReporter():
         else:
             raise ValueError("Invalid report type (choices are: 'kp', 'gr'")
 
-    def __communities_report(self, reportdict: OrderedDict):
+    def __communities_report__(self, reportdict: OrderedDict):
         r"""
         Report General information regarding the communities (nodes, edges, component, algorithm)
         stored in the ``reportdic``. The reportdic **MUST** also contain a `algorithms` key that will be used to report
@@ -473,6 +474,138 @@ class PyntacleReporter():
         for k in reportdict.keys():
             self.report.append([k, reportdict[k][0], reportdict[k][1], reportdict[k][2]])
             
-    def __set_report(self, reportdict: OrderedDict):
+    def __set_text_report__(self, reportdict: OrderedDict):
+
         for k in reportdict.keys():
             self.report.append([k, reportdict[k]])
+
+    def pyntacleink_report(self, report_dir :str, report_dict: OrderedDict or None, suffix :str):
+        """
+        Create a JSON version of the report, possibly appending data to already existing results.
+        :return:
+        """
+
+        inner_dir = os.path.join(report_dir, "_".join([".pyntacleink", suffix]))
+
+        try:
+            os.makedirs(inner_dir)
+        except OSError:
+            pass
+            # log.warning("Internal directory for storing JSON files already exists")
+
+        index_path = os.path.join(report_dir, "_".join(["pyntacleink", suffix]) + ".html")
+
+        index_css_path = os.path.join(inner_dir, 'index.css')
+        json_report = os.path.join(inner_dir, 'report.js')
+        json_graph = os.path.join(inner_dir, 'graph.js')
+
+        if os.path.exists(json_report):
+            json_line = open(json_report).readlines()[0].split(' = ')[1]
+            # print("LINEA", json_line)
+
+            with open(json_report, 'r') as f:
+                json_data = json.loads(json_line)
+        else:
+            json_data = {}
+
+        # todo mauro manca il kp-info e il gr-info; rinominerei "algorithm" per groupcentrality e keyplayer a "strategy (così possiamo mettere tutto in un unico panel)
+        if self.report_type == ReportEnum.KP_bruteforce or self.report_type == ReportEnum.KP_greedy:
+            json_data.setdefault("Key-player", {})
+            json_data["Key-player"].setdefault(str(self.report_type).split('.')[1], {})
+            json_data["Key-player"][str(self.report_type).split('.')[1]].setdefault(self.dat, {})
+
+            # multiple_sol
+            for k in report_dict:
+
+                if self.report_type == ReportEnum.KP_greedy:
+                    json_data["Key-player"][str(self.report_type).split('.')[1]][self.dat][k] = [
+                        ','.join(report_dict[k][0])]
+
+                elif self.report_type == ReportEnum.KP_bruteforce:
+                    json_data["Key-player"][str(self.report_type).split('.')[1]][self.dat][k] = [
+                        ';'.join(list(','.join(sol) for sol in report_dict[k][0]))]
+
+                # Adding numerical values of solutions
+                json_data["Key-player"][str(self.report_type).split('.')[1]][self.dat][k].extend(report_dict[k][1:])
+
+        if self.report_type == ReportEnum.GR_bruteforce or self.report_type == ReportEnum.GR_greedy:
+            json_data.setdefault("Group-centrality", {})
+            json_data["Group-centrality"].setdefault(str(self.report_type).split('.')[1], {})
+            json_data["Group-centrality"][str(self.report_type).split('.')[1]].setdefault(self.dat, {})
+
+            # multiple_solutions
+            for k in report_dict:
+                #Mauro's print for testing purposes
+                # print(report_dict[k][0])
+
+                if self.report_type == ReportEnum.GR_greedy:
+                    json_data["Group-centrality"][str(self.report_type).split('.')[1]][self.dat][k] = [
+                        ','.join(report_dict[k][0])]
+
+                elif self.report_type == ReportEnum.GR_bruteforce:
+                    json_data["Group-centrality"][str(self.report_type).split('.')[1]][self.dat][k] = [
+                        ';'.join(list(','.join(sol) for sol in report_dict[k][0]))]
+
+                # Adding numerical values of solutions
+                json_data["Group-centrality"][str(self.report_type).split('.')[1]][self.dat][k].extend(
+                    report_dict[k][1:])
+
+        if self.report_type == ReportEnum.Communities:
+            json_data.setdefault("Communities", {})
+            json_data["Communities"].setdefault(report_dict["algorithm"], {})
+            json_data["Communities"][report_dict["algorithm"]].setdefault(self.dat, {})
+
+            for i, k in enumerate(report_dict["communities"]):
+                json_data["Communities"][report_dict["algorithm"]][self.dat][i] = [report_dict["communities"][i][1]]
+
+        if self.report_type == ReportEnum.Set:
+
+            json_data.setdefault("Set", {})
+            json_data["Set"].setdefault(report_dict["algorithm"], {})
+            json_data["Set"][report_dict["algorithm"]].setdefault(self.dat, {})
+
+            for k in report_dict.keys():
+
+                if k == 'algorithm':
+                    continue
+                json_data["Set"][report_dict["algorithm"]][self.dat][k] = [report_dict[k]['nodes'], ';'.join(
+                    ['-'.join(e) for e in report_dict[k]['edges']])]
+
+                #for testing purposes only
+                # edges = [', '.join(e) for e in report_dict[k]['edges']]
+                # for edge in report_dict[k]['edges']:
+                #     print(edge)
+            # print(edges)
+
+        # Adding minimal graph info
+        json_data.setdefault("Info", {})
+        json_data["Info"]['graph name'] = self.graph["name"][0]
+        json_data["Info"]['nodes'] = len(self.graph.vs())
+        json_data["Info"]['edges'] = len(self.graph.es())
+        json_data["Info"]['components'] = len(self.graph.components())
+
+        # Adding global metrics to the basic info, if available
+        #TODO manca global --no-nodes. Idealmente, dovrebbe essere una parte della tabella ACCANTO alle metriche globali senza aver rimosso i nodi
+        #todo per il momento, vengono prodotti due report (file cmds/metrics.py, linea ~385)
+        if self.report_type == ReportEnum.Global:
+
+            for i in report_dict.keys():
+                json_data["Info"][i] = report_dict[i]
+
+        # todo metrics LOCAL È STATO MESSO COME "FILTRI" SUI NODI (vedi cmds.metrics, line ~229)
+        # exporting results in json format
+        with open(json_report, 'w') as f:
+            f.write("var reportData = ")
+            json.dump(json_data, f, ensure_ascii=False)
+
+        # exporting graph in json format
+        PyntacleExporter.JSON(self.graph, json_graph, prefix="var graphData = ")
+
+        #modify html template to point it at the correct hidden directory
+        html_template_correct = html_template.replace("PLACEHOLDER", suffix)
+
+        # print html_file
+        with open(index_path, 'w') as f:
+            f.write(html_template_correct)
+        with open(index_css_path, 'w') as f:
+            f.write(css_template)

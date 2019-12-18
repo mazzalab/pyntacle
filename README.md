@@ -10,8 +10,8 @@ metrics and HPC computing.
 
 ## Installation
 
-The easiest way to install Pyntacle is to download it from **Anaconda** , a cross-platform
-distribution for data analysis and scientific computing. This is the
+The easiest way to install Pyntacle is to download it from [**Anaconda**](http://docs.continuum.io/anaconda/), 
+a cross-platform distribution for data analysis and scientific computing. This is the
 recommended installation method for most users.
 
 Instructions for installing from source on various Linux distributions
@@ -109,14 +109,19 @@ The source code can be downloaded from our GitHub
 .tar.gz file. Before trying to install Pyntacle, there are system
 requirements that need to be satisfied on each platform.
 
+
+**NOTE** Starting from this version (1.1), we introduced a new JavaScript-based graph visualizer, PyntacleInk. Installation
+of cairo and the pycairo python bindings is hence not required. We however recommend installing cairo if you seek to 
+perform plotting with igraph library (visit the [pycairo page](https://cairographics.org/download/) for operative-system
+specific instructions.)
+
 #### Debian, Ubuntu
 
 As a user with admin rights, run:
 
 ```bash
-apt-get install -y build-essential linux-headers-$(uname -r) libgl1-mesa-glx libigraph0v5 libigraph0-dev libcairo2-dev libffi-dev libjpeg-dev libgif-dev libblas-dev liblapack-dev git python3-pip python3-tk
+apt-get install -y build-essential linux-headers-$(uname -r) libgl1-mesa-glx libigraph0v5 libigraph0-dev libffi-dev libjpeg-dev libgif-dev libblas-dev liblapack-dev git python3-pip python3-tk
 ```
-
 
 > #### Ubuntu/Debian version <= 16.04
 > For Ubuntu/Debian 16.04 and older, you also have to install two dependencies from the PyPi repository, by running:
@@ -143,8 +148,7 @@ python3 setup.py install
 As an admin, you need to run:
 
 ```bash
-yum groupinstall -y development kernel-headers-`uname -r` kernel-devel-`uname -r` gcc gcc-c++ yum-utils; yum install -y https://centos7.iuscommunity.org/ius-release.rpm; yum install -y wget python36u-devel.x86_64 igraph-devel.x86_64 cairo-devel.x86_64 atlas-devel.x86_64 libffi-devel.x86_64 python36u-pip python36u-tkinter.x86_64
-wget https://github.com/pygobject/pycairo/releases/download/v1.14.1/pycairo-1.14.1.tar.gz ; tar -xf pycairo-1.14.1.tar.gz; cd pycairo-1.14.1; python3.6 setup.py build ; sudo python3.6 setup.py install; cd ..; rm -rf pycairo-1.14.1*
+yum groupinstall -y development kernel-headers-`uname -r` kernel-devel-`uname -r` gcc gcc-c++ yum-utils; yum install -y https://centos7.iuscommunity.org/ius-release.rpm; yum install -y wget python36u-devel.x86_64 igraph-devel.x86_64 atlas-devel.x86_64 libffi-devel.x86_64 python36u-pip python36u-tkinter.x86_64
 ```
 
 Finally, extract the Pyntacle [_source tar.gz_](https://github.com/mazzalab/pyntacle/releases) file, navigate into the
@@ -175,7 +179,7 @@ easily fetch them using the package manager
 Once Mac Ports is installed, getting the dependencies is easy:
 
 ```bash
-port install py36-cairo py36-setuptools py36-pandas py36-seaborn py36-colorama py36-xlsxwriter py36-igraph py36-numba py36-psutil
+port install py36-setuptools py36-pandas py36-seaborn py36-colorama py36-xlsxwriter py36-igraph py36-numba py36-psutil
 ```
 
 Finally, extract the Pyntacle [_source tar.gz_](https://github.com/mazzalab/pyntacle/releases) file, navigate into it and run:
@@ -199,6 +203,15 @@ also install the CUDA toolkit by downloading and installing the Toolkit from the
 ## Release history
 
 Changelog for current and past releases:
+
+
+### 1.1:
+New Graph Plotting tool: PyntacleInk
+- PyntacleInk is a web-based, javascript-based visualizer based on the [sigmajs](http://sigmajs.org/) library. It is 
+designed to integrate with Pyntacle command-line library and replaces the igraph-based plotter. 
+- Graphical plots will be now be produced in a html file within the pyntacle results directory, containing detailed 
+summarization of each Pyntacle run performed on the input file. This file is updated at each run, making graphical
+expolration of results more intuitive.
 
 ### 1.0:
 

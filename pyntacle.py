@@ -1,7 +1,7 @@
 __author__ = u"Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = u"Copyright 2018, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.0.0"
+__version__ = u"1.1"
 __maintainer__ = u"Daniele Capocefalo"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
@@ -87,7 +87,7 @@ class App:
             description="Main Description",
             usage=Fore.RED + Style.BRIGHT + "pyntacle" + Fore.GREEN + " <command>" + Fore.RED
                   + """ [<args>]
-The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
+    The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                   Fore.GREEN + "\n  keyplayer       " + Fore.CYAN + "Computes key player metrics (goo.gl/uj8jCR) for a "
                                                                     "specific set of nodes ('kp-info') or finds a set of "
                                                                     "nodes of size `k` that owns the optimal or the best "
@@ -120,7 +120,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
         parser.add_argument("command", help="Subcommand to run", type=lambda s: s.lower())
         parser.add_argument("-v", action="count", help="Verbosity level of the internal Pyntacle logger. "
                                                        "-vvv is the highest level (for debugging purposes).")
-        parser.add_argument("-V", "--version", action="version", version="Pyntacle v1.0.0",
+        parser.add_argument("-V", "--version", action="version", version="Pyntacle v1.1",
                             help="Shows program version number and quits.")
 
         # Detect verbosity
@@ -185,7 +185,8 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                             help="A flag that must be specified if the input network file (adjacency matrix, edge list, SIF file) "
                                  "does not contain a header. By default, we assume a header is present.")
 
-        parser.add_argument("-t", "--type", metavar="", choices=["pos", "neg", "all", "F", "dF", "dR", "m-reach"],
+        parser.add_argument("-t", "--type", metavar="", choices=["pos", "neg", "all", "F", "dF", "dR", ""
+                                                                                                       "'"],
                             default="all",
                             help="The key player metric (or metrics) of interest. Choices are: "
                                  "'all' (all metrics), 'pos' (reachabiliy metrics: dR and m-reach),"
@@ -219,31 +220,8 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                  "Pyntacle. Choices are: 'txt' and 'tsv' (tab-separated file), 'csv' "
                                  "(comma-separated value file), 'xlsx' (Excel file). Default is 'txt'.")
 
-        parser.add_argument("-P", "--plot-format", choices=["svg", "pdf", "png"], default="pdf",
-                            type=lambda s: s.lower(), metavar="",
-                            help="The format for the network representation produced by "
-                                 "Pyntacle. Choices are: 'pdf', 'png' and 'svg'. Defaults to 'pdf'. "
-                                 "Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-dim", metavar="",
-                            help="The dimensions (as comma-separated values) of the graphical representation of the "
-                                 "results. Default is '800,800' for graph with less than 150 nodes and '1600,1600' "
-                                 "otherwise. Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-layout", metavar="",
-                            choices=["circle", "fruchterman_reingold", "fr", "kamada_kawai", "kk",
-                                     "large_graph", "lgl", "random", "reingold_tilford", "rt"],
-                            default="fr",
-                            help="Specifies one of the predefined layout for the graphical representation of the network. "
-                                 "Choices are: 'fruchterman_reingold', 'kamada_kawai', "
-                                 "'large_graph', 'random', 'reingold_tilford'. Default is "
-                                 "'fruchterman_reingold'. Bypassed if the '--no-plot' flag if specified or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
         parser.add_argument("--no-plot", action="store_true",
-                            help="Skips the graphical representation of the plot.")
+                            help="Skips graph drawing with PyntacleInk.")
 
         parser.add_argument("--save-binary", action="store_true",
                             help="Saves a binary file (ending in '.graph') that contains the network "
@@ -259,7 +237,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
 
         # Subparser for the kp-info case
         info_case_parser = subparsers.add_parser("kp-info",
-                                                 usage="pyntacle keyplayer kp-info [-h] [-m] [-f] [-N] [-d] [-L] [-M] [-T] [--input-separator] [--save-binary] [--report-format] [--plot-format] [--plot-dim] [--no-plot] --type [TYPE] --input-file [FILE] --nodes NODES",
+                                                 usage="pyntacle keyplayer kp-info [-h] [-m] [-f] [-N] [-d] [-L] [-M] [-T] [--input-separator] [--save-binary] [--report-format] [--no-plot] --type [TYPE] --input-file [FILE] --nodes NODES",
                                                  add_help=False, parents=[parser],
                                                  formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                      max_help_position=100,
@@ -270,7 +248,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                       required=True)
         # Subparser for kp-finder case
         finder_case_parser = subparsers.add_parser("kp-finder",
-                                                   usage="pyntacle keyplayer kp-finder [-h] [-m] [-f] [--input-separator] [-N] [-d] [-L] [-M] [-T] [-I] [-S] [--save-binary] [--report-format] [--plot-format] [--plot-dim] [--no-plot] --type [TYPE] --input-file [FILE] -k [K]",
+                                                   usage="pyntacle keyplayer kp-finder [-h] [-m] [-f] [--input-separator] [-N] [-d] [-L] [-M] [-T] [-I] [-S] [--save-binary] [--report-format] [--no-plot] --type [TYPE] --input-file [FILE] -k [K]",
                                                    add_help=False, parents=[parser],
                                                    formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                        max_help_position=100,
@@ -376,31 +354,8 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                  "Pyntacle. Choices are: 'txt' and 'tsv' (tab-separated file), 'csv' "
                                  "(comma-separated value file), 'xlsx' (Excel file). Default is 'txt'.")
 
-        parser.add_argument("-P", "--plot-format", choices=["svg", "pdf", "png"], default="pdf",
-                            type=lambda s: s.lower(), metavar="",
-                            help="The format for the network representation produced by "
-                                 "Pyntacle. Choices are: 'pdf', 'png' and 'svg'. Defaults to 'pdf'. "
-                                 "Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-dim", metavar="",
-                            help="The dimensions (as comma-separated values) of the graphical representation of the "
-                                 "results. Default is '800,800' for graph with less than 150 nodes and '1600,1600' "
-                                 "otherwise. Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-layout", metavar="",
-                            choices=["circle", "fruchterman_reingold", "fr", "kamada_kawai", "kk",
-                                     "large_graph", "lgl", "random", "reingold_tilford", "rt"],
-                            default="fr",
-                            help="Specifies one of the predefined layout for the graphical representation of the network. "
-                                 "Choices are: 'fruchterman_reingold', 'kamada_kawai', "
-                                 "'large_graph', 'random', 'reingold_tilford'. Default is "
-                                 "'fruchterman_reingold'. Bypassed if the '--no-plot' flag if specified or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
         parser.add_argument("--no-plot", action="store_true",
-                            help="Skips the graphical representation of the plot.")
+                            help="Skips graph drawing with PyntacleInk.")
 
         parser.add_argument("--save-binary", action="store_true",
                             help="Saves a binary file (ending in '.graph') that contains the network "
@@ -416,7 +371,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
 
         # Subparser for the kp-info case
         info_case_parser = subparsers.add_parser("gr-info",
-                                                 usage="pyntacle keyplayer kp-info [-h] [-f] [-N] [-d] [-L] [-M] [-T] [--input-separator] [--save-binary] [--report-format] [--plot-format] [--plot-dim] [--no-plot] --type [TYPE] --input-file [FILE] --nodes NODES",
+                                                 usage="pyntacle keyplayer kp-info [-h] [-f] [-N] [-d] [-L] [-M] [-T] [--input-separator] [--save-binary] [--report-format] [--no-plot] --type [TYPE] --input-file [FILE] --nodes NODES",
                                                  add_help=False, parents=[parser],
                                                  formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                      max_help_position=100,
@@ -427,7 +382,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                       required=True)
         # Subparser for kp-finder case
         finder_case_parser = subparsers.add_parser("gr-finder",
-                                                   usage="pyntacle keyplayer kp-finder [-h] [-f] [--input-separator] [-N] [-d] [-L] [-M] [-T] [-I] [-S] [--save-binary] [--report-format] [--plot-format] [--plot-dim] [--no-plot] --type [TYPE] --input-file [FILE] -k [K]",
+                                                   usage="pyntacle keyplayer kp-finder [-h] [-f] [--input-separator] [-N] [-d] [-L] [-M] [-T] [-I] [-S] [--save-binary] [--report-format] [--no-plot] --type [TYPE] --input-file [FILE] -k [K]",
                                                    add_help=False, parents=[parser],
                                                    formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                        max_help_position=100,
@@ -517,31 +472,8 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                  "Pyntacle. Choices are: 'txt' and 'tsv' (tab-separated file), 'csv' "
                                  "(comma-separated value file), 'xlsx' (Excel file). Default is 'txt'.")
 
-        parser.add_argument("-P", "--plot-format", metavar="", choices=["svg", "pdf", "png"], default="pdf",
-                            type=lambda s: s.lower(),
-                            help="The format for the network representation produced by "
-                                 "Pyntacle. Choices are: 'pdf', 'png' and 'svg'. Defaults to 'pdf'. "
-                                 "Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-dim",
-                            help="The dimensions (as comma-separated values) of the graphical representation of the "
-                                 "results. Default is '800,800' for graph with less than 150 nodes and '1600,1600' "
-                                 "otherwise. Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-layout", metavar="",
-                            choices=["circle", "fruchterman_reingold", "fr", "kamada_kawai", "kk",
-                                     "large_graph", "lgl", "random", "reingold_tilford", "rt"],
-                            default="fr",
-                            help="Specifies one of the predefined layout for the graphical representation of the network. "
-                                 "Choices are: 'fruchterman_reingold', 'kamada_kawai', "
-                                 "'large_graph', 'random', 'reingold_tilford'. Default is "
-                                 "'fruchterman_reingold'. Bypassed if the '--no-plot' flag if specified or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
         parser.add_argument("--no-plot", action="store_true",
-                            help="Skips the graphical representation of the plot.")
+                            help="Skips graph drawing with PyntacleInk.")
 
         parser.add_argument("--save-binary", action="store_true",
                             help="Saves a binary file (ending in '.graph') that contains the network "
@@ -558,7 +490,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
 
         # Subparser for the nodes case
         local_subparser = subparsers.add_parser("local",
-                                                usage="pyntacle metrics local [-h] [-f] [-N] [-L] [--input-separator] [--save-binary] [--plot-format] [--plot-dim] [--no-plot] --input-file [FILE] --nodes NODES",
+                                                usage="pyntacle metrics local [-h] [-f] [-N] [-L] [--input-separator] [--save-binary] [--no-plot] --input-file [FILE] --nodes NODES",
                                                 add_help=False, parents=[parser],
                                                 formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                     max_help_position=100,
@@ -592,7 +524,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
 
         # Subparser for global case
         global_subparser = subparsers.add_parser("global",
-                                                 usage="pyntacle metrics global [-h] [-f] [-N] [-L] [--input-separator] [--save-binary] [--plot-format] [--plot-dim] [--no-plot] --input-file [FILE] -n/--no-nodes",
+                                                 usage="pyntacle metrics global [-h] [-f] [-N] [-L] [--input-separator] [--save-binary] [--no-plot] --input-file [FILE] -n/--no-nodes",
                                                  add_help=False, parents=[parser],
                                                  formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                      max_help_position=100,
@@ -744,31 +676,8 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                  "details on accepted network file formats and their specifics."
                                  "If not specified the output network file will contain a header by default.")
 
-        parser.add_argument("-P", "--plot-format", choices=["svg", "pdf", "png"], metavar="", default="pdf",
-                            type=lambda s: s.lower(),
-                            help="The format for the network representation produced by "
-                                 "Pyntacle. Choices are: 'pdf', 'png' and 'svg'. Defaults to 'pdf'. "
-                                 "Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-dim", metavar="",
-                            help="The dimensions (as comma-separated values) of the graphical representation of the "
-                                 "results. Default is '800,800' for graph with less than 150 nodes and '1600,1600' "
-                                 "otherwise. Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-layout", metavar="",
-                            choices=["circle", "fruchterman_reingold", "fr", "kamada_kawai", "kk",
-                                     "large_graph", "lgl", "random", "reingold_tilford", "rt"],
-                            default="fr",
-                            help="Specifies one of the predefined layout for the graphical representation of the network. "
-                                 "Choices are: 'fruchterman_reingold', 'kamada_kawai', "
-                                 "'large_graph', 'random', 'reingold_tilford'. Default is "
-                                 "'fruchterman_reingold'. Bypassed if the '--no-plot' flag if specified or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
         parser.add_argument("--no-plot", action="store_true",
-                            help="Skips the graphical representation of the plot.")
+                            help="Skips graph drawing with PyntacleInk.")
 
         parser.add_argument("--suppress-cursor", action="store_true",
                             help="Suppresses the animated cursor during Pyntacle execution.")
@@ -780,7 +689,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
         # Subparser for the nodes case
 
         random_subparser = subparsers.add_parser("random",
-                                                 usage="pyntacle generate random [-h] [-o] [-d] [-u] [--no-output-header] [--output-separator] [--plot-format] [--plot-dim] [--no-plot] [-S INT] [-R INT] [-n INT] [-p FLOAT] [-e INT]",
+                                                 usage="pyntacle generate random [-h] [-o] [-d] [-u] [--no-output-header] [--output-separator] [--no-plot] [-S INT] [-R INT] [-n INT] [-p FLOAT] [-e INT]",
                                                  add_help=False, parents=[parser],
                                                  formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                      max_help_position=100,
@@ -798,17 +707,17 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                       help="The resulting number of edges.")
 
         smallworld_subparser = subparsers.add_parser("small-world",
-                                                     usage="pyntacle generate small-world [-h] [-o] [-d] [-u] [--no-output-header] [--output-separator] [--plot-format] [--plot-dim] [--no-plot] [-S INT] [-R INT] [-l INT] [-s INT] [--nei INT] [-p FLOAT]",
+                                                     usage="pyntacle generate small-world [-h] [-o] [-d] [-u] [--no-output-header] [--output-separator] [--no-plot] [-S INT] [-R INT] [-l INT] [-s INT] [--nei INT] [-p FLOAT]",
                                                      add_help=False, parents=[parser],
                                                      formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                          max_help_position=100,
                                                                                                          width=150))
         smallworld_subparser.set_defaults(which="small-world")
 
-        smallworld_subparser.add_argument("-l", "--lattice", default=2,
-                                          help="The dimension of a starting network lattice upon which the"
+        smallworld_subparser.add_argument("-l", "--lattice", default=4,
+                                          help="The dimension of a starting graph lattice upon which the"
                                                "Watts-Strogatz model will be applied to generate the small-world. "
-                                               "Default is 2. NOTE: It is highly recommended to use small values, "
+                                               "Default is 4. NOTE: It is highly recommended to use small values, "
                                                "as lattices spread across multiple dimensions may create critical "
                                                "memory issues.")
 
@@ -817,15 +726,15 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                                "NOTE: It is highly recommended to use small values, as lattices "
                                                "spread across multiple dimensions may create critical memory issues.")
 
-        smallworld_subparser.add_argument("--nei", default=None,
+        smallworld_subparser.add_argument("--nei", default=2,
                                           help="The maximum distance in which two nodes will be connected. Default is a"
-                                               "random integer between 2 and 5.")
+                                               " default is 2")
 
         smallworld_subparser.add_argument("-p", "--probability", default=0.5,
                                           help="Rewiring probability. Default is 0.5")
 
         scalefree_subparser = subparsers.add_parser("scale-free",
-                                                    usage="pyntacle generate scale-free [-h] [-o] [-d] [-u] [--no-output-header] [--output-separator] [--plot-format] [--plot-dim] [--no-plot] [-S INT] [-R INT] [-n INT] [-a INT]",
+                                                    usage="pyntacle generate scale-free [-h] [-o] [-d] [-u] [--no-output-header] [--output-separator] [--no-plot] [-S INT] [-R INT] [-n INT] [-a INT]",
                                                     add_help=False, parents=[parser],
                                                     formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                         max_help_position=100,
@@ -842,7 +751,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                               "10 and 100 (chosen randomly).")
 
         tree_subparser = subparsers.add_parser("tree",
-                                               usage="pyntacle generate tree [-h] [-o] [-d] [-u] [--no-output-header] [--output-separator] [--plot-format] [--plot-dim] [--no-plot] [-S INT] [-R INT] [-n INT] [-c INT]",
+                                               usage="pyntacle generate tree [-h] [-o] [-d] [-u] [--no-output-header] [--output-separator] [--no-plot] [-S INT] [-R INT] [-n INT] [-c INT]",
                                                add_help=False, parents=[parser],
                                                formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                    max_help_position=100,
@@ -952,7 +861,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                  "abbreviations used in the '--format' are applied. See https://goo.gl/9wFRfM for "
                                  "more information on available network file formats and the complete list of abbreviations.")
 
-        parser.add_argument("--output-separator", metavar="",
+        parser.add_argument("--output-separator", metavar="", default="\t",
                             help="The field separator of the output network file. Default is '\t'."
                                  " NOTE: the separator must be wrapped in quotes.")
 
@@ -968,31 +877,8 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                  "Pyntacle. Choices are: 'txt' and 'tsv' (tab-separated file), 'csv' "
                                  "(comma-separated value file), 'xlsx' (Excel file). Default is 'txt'.")
 
-        parser.add_argument("-P", "--plot-format", choices=["svg", "pdf", "png"], default="pdf",
-                            type=lambda s: s.lower(),
-                            help="The format for the network representation produced by "
-                                 "Pyntacle. Choices are: 'pdf', 'png' and 'svg'. Defaults to 'pdf'. "
-                                 "Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-dim",
-                            help="The dimensions (as comma-separated values) of the graphical representation of the "
-                                 "results. Default is '800,800' for graph with less than 150 nodes and '1600,1600' "
-                                 "otherwise. Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-layout", metavar="",
-                            choices=["circle", "fruchterman_reingold", "fr", "kamada_kawai", "kk",
-                                     "large_graph", "lgl", "random", "reingold_tilford", "rt"],
-                            default="fr",
-                            help="Specifies one of the predefined layout for the graphical representation of the network. "
-                                 "Choices are: 'fruchterman_reingold', 'kamada_kawai', "
-                                 "'large_graph', 'random', 'reingold_tilford'. Default is "
-                                 "'fruchterman_reingold'. Bypassed if the '--no-plot' flag if specified or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
         parser.add_argument("--no-plot", action="store_true",
-                            help="Skips the graphical representation of the plot.")
+                            help="Skips graph drawing with PyntacleInk.")
 
         parser.add_argument("--save-binary", action="store_true",
                             help="Saves a binary file (ending in '.graph') that contains the network "
@@ -1007,7 +893,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
         subparsers = parser.add_subparsers(metavar="", help=argparse.SUPPRESS)
 
         fastgreedy_subparser = subparsers.add_parser("fastgreedy",
-                                                     usage="pyntacle communities fastgreedy [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [-P] [--input-separator] [--plot-dim] [--no-plot] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE] [--weights FILE] [--weights-format] [--clusters]",
+                                                     usage="pyntacle communities fastgreedy [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [-P] [--input-separator] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE] [--weights FILE] [--weights-format] [--clusters]",
                                                      add_help=False, parents=[parser],
                                                      formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                          max_help_position=100,
@@ -1036,7 +922,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                                "Default is 'standard'.")
 
         infomap_subparser = subparsers.add_parser("infomap",
-                                                  usage="pyntacle communities infomap [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [-P] [--input-separator] [--plot-dim] [--no-plot] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE]",
+                                                  usage="pyntacle communities infomap [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [-P] [--input-separator] [--no-plot] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE]",
                                                   add_help=False, parents=[parser],
                                                   formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                       max_help_position=100,
@@ -1044,7 +930,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
         infomap_subparser.set_defaults(which="infomap")
 
         leading_eigenvector_subparser = subparsers.add_parser("leading-eigenvector",
-                                                              usage="pyntacle communities leading-eigenvector [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [-P] [--input-separator] [--plot-dim] [--no-plot] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE]",
+                                                              usage="pyntacle communities leading-eigenvector [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [-P] [--input-separator] [--no-plot] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE]",
                                                               add_help=False, parents=[parser],
                                                               formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                                   max_help_position=100,
@@ -1052,7 +938,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
         leading_eigenvector_subparser.set_defaults(which="leading-eigenvector")
 
         community_walktrap_subparser = subparsers.add_parser("community-walktrap",
-                                                             usage="pyntacle communities community-walktrap [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [-P] [--input-separator] [--plot-dim] [--no-plot] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE] [--clusters] [--steps] [--weights] [--weights-format]",
+                                                             usage="pyntacle communities community-walktrap [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [-P] [--input-separator] [--no-plot] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE] [--clusters] [--steps] [--weights] [--weights-format]",
                                                              add_help=False, parents=[parser],
                                                              formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                                  max_help_position=100,
@@ -1157,7 +1043,8 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                  "working directory.")
 
         parser.add_argument("--output-file", "-o", metavar="",
-                            help="Basename of the output network file. If not specified, the default output basename file will ")
+                            help="Basename of the output network file. If not specified, the default output basename file will a standard name will be "
+                                 "generated.")
 
         parser.add_argument("-u", "--output-format", metavar="",
                             choices=format_dictionary.keys(), default="adjmat",
@@ -1181,31 +1068,8 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
                                  "Pyntacle. Choices are: 'txt' and 'tsv' (tab-separated file), 'csv' "
                                  "(comma-separated value file), 'xlsx' (Excel file). Default is 'txt'.")
 
-        parser.add_argument("-P", "--plot-format", choices=["svg", "pdf", "png"], default="pdf", metavar="",
-                            type=lambda s: s.lower(),
-                            help="The format for the network representation produced by "
-                                 "Pyntacle. Choices are: 'pdf', 'png' and 'svg'. Defaults to 'pdf'. "
-                                 "Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-dim", metavar="",
-                            help="The dimensions (as comma-separated values) of the graphical representation of the "
-                                 "results. Default is '800,800' for graph with less than 150 nodes and '1600,1600' "
-                                 "otherwise. Overridden by the '--no-plot' flag or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
-        parser.add_argument("--plot-layout", metavar="",
-                            choices=["circle", "fruchterman_reingold", "fr", "kamada_kawai", "kk",
-                                     "large_graph", "lgl", "random", "reingold_tilford", "rt"],
-                            default="fr",
-                            help="Specifies one of the predefined layout for the graphical representation of the network. "
-                                 "Choices are: 'fruchterman_reingold', 'kamada_kawai', "
-                                 "'large_graph', 'random', 'reingold_tilford'. Default is "
-                                 "'fruchterman_reingold'. Bypassed if the '--no-plot' flag if specified or if the graph "
-                                 "is too big to be represented (larger than 1000 nodes).")
-
         parser.add_argument("--no-plot", action="store_true",
-                            help="Skips the graphical representation of the plot.")
+                            help="Skips graph drawing with PyntacleInk.")
 
         parser.add_argument("--suppress-cursor", action="store_true",
                             help="Suppresses the animated cursor during Pyntacle execution.")
@@ -1216,7 +1080,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
         subparsers = parser.add_subparsers(metavar="", help=argparse.SUPPRESS)
 
         unite_subparser = subparsers.add_parser("union",
-                                                usage="pyntacle set union [-h] [-1] [-2] [-f] [-N] [-d] [-L] [--input-separator] [--report-format] [-P] [--plot-dim] [--no-plot] [-o] [-u] [--output-format STR] [--output-separator] [--no-output-header]",
+                                                usage="pyntacle set union [-h] [-1] [-2] [-f] [-N] [-d] [-L] [--input-separator] [--report-format] [-P] [--no-plot] [-o] [-u] [--output-format STR] [--output-separator] [--no-output-header]",
                                                 add_help=False, parents=[parser],
                                                 formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                     max_help_position=100,
@@ -1224,7 +1088,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
         unite_subparser.set_defaults(which="union")
 
         intersection_subparser = subparsers.add_parser("intersection",
-                                                       usage="pyntacle set intersection [-h] [-1] [-2] [-f] [-N] [-d] [-L] [--input-separator] [--report-format] [-P] [--plot-dim] [--no-plot] [-o] [-u] [--output-format STR] [--output-separator] [--no-output-header]",
+                                                       usage="pyntacle set intersection [-h] [-1] [-2] [-f] [-N] [-d] [-L] [--input-separator] [--report-format] [-P] [--no-plot] [-o] [-u] [--output-format STR] [--output-separator] [--no-output-header]",
                                                        add_help=False, parents=[parser],
                                                        formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                            max_help_position=100,
@@ -1232,7 +1096,7 @@ The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
         intersection_subparser.set_defaults(which="intersection")
 
         difference_subparser = subparsers.add_parser("difference",
-                                                     usage="pyntacle set difference [-h] [-1] [-2] [-f] [-N] [-d] [-L] [--input-separator] [--report-format] [-P] [--plot-dim] [--no-plot] [-o] [-u] [--output-format STR] [--output-separator] [--no-output-header] ",
+                                                     usage="pyntacle set difference [-h] [-1] [-2] [-f] [-N] [-d] [-L] [--input-separator] [--report-format] [-P] [--no-plot] [-o] [-u] [--output-format STR] [--output-separator] [--no-output-header] ",
                                                      add_help=False, parents=[parser],
                                                      formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                          max_help_position=100,

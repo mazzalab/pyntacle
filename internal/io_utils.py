@@ -1,7 +1,7 @@
 __author__ = u"Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = u"Copyright 2018, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.0.0"
+__version__ = u"1.1"
 __maintainer__ = u"Daniele Capocefalo"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
@@ -61,9 +61,10 @@ def output_file_checker(func):
         if not isinstance(file, str):
             raise ValueError("\"file \" must be a string, {} found".format(type(file).__name__))
 
+        #removed as PyntacleInk appends and not overwrites
         else:
-            if os.path.exists(os.path.abspath(file)):
-                sys.stdout.write("A file with the same name exists at {}, will overwrite\n".format(file))
+            # if os.path.exists(os.path.abspath(file)):
+            #     sys.stdout.write("{} already exists, will overwrite\n".format(file))
 
             return func(graph,file, *args, **kwargs)
 

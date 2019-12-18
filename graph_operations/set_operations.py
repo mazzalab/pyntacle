@@ -1,7 +1,7 @@
 __author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = u"Copyright 2018, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.0.0"
+__version__ = u"1.1"
 __maintainer__ = u"Daniele Capocefalo"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
@@ -126,7 +126,9 @@ class GraphSetOps(object):
         intersect_v = {x: union_v[x] for x in correct_intersect}
 
         intersection_g = Graph()
+
         intersection_g["name"] = [new_graph_name]
+
         intersection_g.add_vertices(list(intersect_v.keys()))
         intersection_g.add_edges(intersect_e)
 
@@ -139,7 +141,7 @@ class GraphSetOps(object):
     @staticmethod
     def difference(graph1: Graph, graph2: Graph, new_graph_name: str) -> Graph:
         r"""
-        Perform the intersection among two graphs as described by  `Wolfram <http://mathworld.wolfram.com/GraphDifference.html>`_
+        Perform the difference among two graphs as described by  `Wolfram <http://mathworld.wolfram.com/GraphDifference.html>`_
 
         :param igraph.Graph graph1: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param igraph.Graph graph2: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.

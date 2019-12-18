@@ -1,7 +1,7 @@
 __author__ = u"Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = u"Copyright 2018, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.0.0"
+__version__ = u"1.1"
 __maintainer__ = u"Daniele Capocefalo"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
@@ -31,7 +31,6 @@ from warnings import simplefilter
 
 from graph_operations.set_operations import GraphSetOps
 from io_stream.exporter import PyntacleExporter
-from cmds.cmds_utils.plotter import PlotGraph
 from cmds.cmds_utils.reporter import PyntacleReporter
 from tools.enums import ReportEnum
 from tools.graph_utils import GraphUtils
@@ -50,10 +49,10 @@ class Set:
         if not hasattr(self.args, 'which'):
             raise Error(u"usage: pyntacle.py set {union, intersection, difference} [options]'")
 
-        # Check for pycairo
-        if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
-            sys.stdout.write(pycairo_message)
-            self.args.no_plot = True
+        # - DEPRECATED - Check for pycairo
+        # if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
+        #     sys.stdout.write(pycairo_message)
+        #     self.args.no_plot = True
 
     def run(self):
 
@@ -135,35 +134,36 @@ class Set:
                         graph2["name"]))
                 sys.exit(1)
 
-        # Check provided dimensions' format
-        if self.args.plot_dim:  # define custom format
-            self.args.plot_dim = self.args.plot_dim.split(",")
+        # - OLD PLOTTER - LEGACY -
+        # # Check provided dimensions' format
+        # if self.args.plot_dim:  # define custom format
+        #     self.args.plot_dim = self.args.plot_dim.split(",")
+        #
+        #     for i in range(0, len(self.args.plot_dim)):
+        #         try:
+        #             self.args.plot_dim[i] = int(self.args.plot_dim[i])
+        #
+        #         except ValueError:
+        #             sys.stderr.write(
+        #                 u"Format specified must be a comma-separated list of values(e.g. 1920,1080). Quitting\n")
+        #             sys.exit(1)
+        #
+        #         if self.args.plot_dim[i] <= 0:
+        #             sys.stderr.write(
+        #                 u"Format specified must be a comma-separated list of values(e.g. 1920,1080). Quitting\n")
+        #             sys.exit(1)
+        #
+        #     plot_size = tuple(self.args.plot_dim)
+        #
+        # else:
+        #     # generate different formats according to graph size
+        #     if graph1.vcount() <= 150 and graph2.vcount() <= 150:
+        #         plot_size = (800, 800)
+        #
+        #     else:
+        #         plot_size = (1600, 1600)
 
-            for i in range(0, len(self.args.plot_dim)):
-                try:
-                    self.args.plot_dim[i] = int(self.args.plot_dim[i])
-
-                except ValueError:
-                    sys.stderr.write(
-                        u"Format specified must be a comma-separated list of values(e.g. 1920,1080). Quitting\n")
-                    sys.exit(1)
-
-                if self.args.plot_dim[i] <= 0:
-                    sys.stderr.write(
-                        u"Format specified must be a comma-separated list of values(e.g. 1920,1080). Quitting\n")
-                    sys.exit(1)
-
-            plot_size = tuple(self.args.plot_dim)
-
-        else:
-            # generate different formats according to graph size
-            if graph1.vcount() <= 150 and graph2.vcount() <= 150:
-                plot_size = (800, 800)
-
-            else:
-                plot_size = (1600, 1600)
-
-        if self.args.format == "sif" or all(x is None for x in graph1.es()["sif_interaction"]) or all(
+        if self.args.format == "sif" or not all(x is None for x in graph1.es()["sif_interaction"]) or not all(
                         x is None for x in graph2.es()["sif_interaction"]):
             sys.stdout.write(u"WARNING: Interaction stored in SIF files will be removed\n")
 
@@ -173,7 +173,7 @@ class Set:
         sys.stdout.write(run_start)
         if self.args.which == "union":
             sys.stdout.write(
-                u" Performing union between input graph {} and {}\n".format(self.args.input_file_1,
+                u"Performing union between input graph {} and {}\n".format(self.args.input_file_1,
                                                                            self.args.input_file_2))
 
             output_graph = GraphSetOps.union(graph1, graph2, self.args.output_file)
@@ -181,13 +181,13 @@ class Set:
                 sys.stdout.write(
                     u"There were no common nodes when performing Graph union. Will return two disjoint graphs\n")
 
-
         elif self.args.which == "intersection":
             sys.stdout.write(
                 u"Performing intersection between input graph {} and {}\n".format(self.args.input_file_1,
                                                                                   self.args.input_file_2))
 
             output_graph = GraphSetOps.intersection(graph1, graph2, self.args.output_file)
+
             if output_graph.ecount() == 0:
                 sys.stdout.write(
                     u"No intersection was possible for the two input graphs. No output will be generated\n")
@@ -242,7 +242,6 @@ class Set:
                                                                                output_graph.ecount(),
                                                                                len(output_graph.components())))
 
-
         sys.stdout.write(section_end)
         sys.stdout.write(report_start)
         if not os.path.isdir(self.args.directory):
@@ -263,8 +262,6 @@ class Set:
 
         else:
             output_header = True
-
-
 
         if self.args.output_separator is None:
             sys.stdout.write(u"Using '\\t' as default separator for output file\n")
@@ -297,127 +294,19 @@ class Set:
             sys.stdout.write("Writing resulting graph into a  binary file (ending in .graph)\n")
             PyntacleExporter.Binary(output_graph, output_path)
 
-        # producing plots
-        if not self.args.no_plot:
-            # generates plot directory
-            plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
 
-            if os.path.isdir(plot_dir):
-                self.logging.warning(
-                    u"A directory named 'pyntacle-plots' already exists.")
+        intersection_set = []
+        for v in output_graph.vs():
+            parent_g1 = "_".join(graph1["name"])
+            parent_g2 = "_".join(graph2["name"])
 
-            else:
-                os.mkdir(plot_dir)
-            sys.stdout.write(u"Generating plots in {} format\n".format(self.args.plot_format))
-            sys.stdout.write(u"Drawing starting graphs\n")
+            if parent_g1 in v["parent"] and parent_g2 in v["parent"]:
+                intersection_set.append(v["name"])
+            elif parent_g1 in v["parent"] and not parent_g2 in v["parent"]:
+                intersection_set.append(v["name"])
+            elif parent_g2 in v["parent"] and not parent_g1 in v["parent"]:
+                pass
 
-            graph1_plot_path = os.path.join(plot_dir, ".".join(
-                ["_".join([os.path.splitext(os.path.basename(self.args.input_file_1))[0],
-                           self.date]), self.args.plot_format]))
-            graph2_plot_path = os.path.join(plot_dir, ".".join(
-                ["_".join([os.path.splitext(os.path.basename(self.args.input_file_2))[0],
-                           self.date]), self.args.plot_format]))
-
-            graph1_plotter = PlotGraph(graph=graph1)
-            graph2_plotter = PlotGraph(graph=graph2)
-
-            # first create two plots of the input graph
-            input_graph_node_size = 25
-
-            pal = sns.color_palette("hls", 10).as_hex()
-            framepal = sns.color_palette("hls", 10, desat=0.5).as_hex()
-
-            graph_1_colour = pal[0]
-            graph_1_frame = framepal[0]
-            graph_2_colour = pal[3]
-            graph_2_frame = framepal[3]
-
-            # set input graph node labels
-            graph1_plotter.set_node_labels(labels=graph1.vs()["name"])
-            graph2_plotter.set_node_labels(labels=graph2.vs()["name"])
-
-            # set input graph node colors
-            graph1_plotter.set_node_colors(colors=[graph_1_colour] * graph1.vcount())
-            graph2_plotter.set_node_colors(colors=[graph_2_colour] * graph2.vcount())
-
-            # set input graphs node sizes
-            graph1_plotter.set_node_sizes(sizes=[input_graph_node_size] * graph1.vcount())
-            graph2_plotter.set_node_sizes(sizes=[input_graph_node_size] * graph2.vcount())
-
-            # set input graph vertex colors
-            graph_1_frame_colors = [graph_1_frame] * graph1.vcount()
-            graph_2_frame_colors = [graph_2_frame] * graph1.vcount()
-
-            # define layouts
-            graph1_plotter.set_layouts(self.args.plot_layout)
-            graph2_plotter.set_layouts(self.args.plot_layout)
-
-            # plot input graphs
-            graph1_plotter.plot_graph(path=graph1_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
-                                      keep_aspect_ratio=True, vertex_label_size=6,
-                                      vertex_frame_color=graph_1_frame_colors)
-            graph2_plotter.plot_graph(path=graph2_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
-                                      keep_aspect_ratio=True, vertex_label_size=6,
-                                      vertex_frame_color=graph_2_frame_colors)
-
-            if output_graph.vcount() > 0:
-
-                # plot output graph
-                output_plot_path = os.path.join(plot_dir,
-                                                ".".join(["_".join([self.args.which, self.args.output_file,
-                                                                    self.date]),
-                                                          self.args.plot_format]))
-                output_graph_plotter = PlotGraph(graph=output_graph)  # init plotter class
-
-                # for the merge part
-                sys.stdout.write(u"Drawing resulting graphs\n")
-                node_intersection_colour = pal[1]
-                node_intersection_frame = framepal[1]
-
-                node_intersection_size = 45
-
-                intersection_node_color_list = []
-                intersection_frame_color_list = []
-
-                intersection_set = []
-                for v in output_graph.vs():
-                    parent_g1 = graph1["name"][0]
-                    parent_g2 = graph2["name"][0]
-
-                    if parent_g1 in v["parent"] and parent_g2 in v["parent"]:
-                        intersection_node_color_list.append(node_intersection_colour)
-                        intersection_frame_color_list.append(node_intersection_frame)
-                        intersection_set.append(v["name"])
-                        
-                    elif parent_g1 in v["parent"] and not parent_g2 in v["parent"]:
-                        intersection_node_color_list.append(graph_1_colour)
-                        intersection_frame_color_list.append(graph_1_frame)
-
-                    elif parent_g2 in v["parent"] and not parent_g1 in v["parent"]:
-                        intersection_node_color_list.append(graph_2_colour)
-                        intersection_frame_color_list.append(graph_2_frame)
-
-
-                output_graph_plotter.set_node_colors(colors=intersection_node_color_list)
-                output_graph_plotter.set_node_sizes(sizes=[
-                    node_intersection_size if parent_g1 in v["parent"] and parent_g2 in v[
-                        "parent"] else input_graph_node_size for v in output_graph.vs()])
-
-                output_graph_plotter.set_node_labels(labels=output_graph.vs()["name"])
-                output_graph_plotter.set_layouts(self.args.plot_layout)
-                output_graph_plotter.plot_graph(path=output_plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
-                                                keep_aspect_ratio=True, vertex_label_size=6,
-                                                vertex_frame_color=intersection_frame_color_list)
-
-            else:
-                sys.stdout.write(u"The output graph does not contain vertices. Can't draw graph\n")
-
-        elif not self.args.no_plot and (graph1.vcount() >= 1000 or graph2.vcount() >= 1000):
-            sys.stdout.write(
-                u"One of the two input graphs exceeds Pyntacle limits for plotting (maximum 1000 nodes). Will not draw graph\n")
-        
-        
-        # Report
         reporter1 = PyntacleReporter(graph=graph1)  # init reporter1
         reporter2 = PyntacleReporter(graph=graph2)  # init reporter2
         reporter_final = PyntacleReporter(graph=output_graph)
@@ -432,7 +321,7 @@ class Set:
         reporter1.create_report(ReportEnum.Set, set1_attr_dict)
         reporter2.create_report(ReportEnum.Set, set2_attr_dict)
         reporter_final.create_report(ReportEnum.Set, setF_attr_dict)
-        
+
         reporter1.report[1] = ['\n--- Graph 1 ---']
         reporter2.report[1] = ['--- Graph 2 ---']
         del(reporter1.report[-1])
@@ -447,6 +336,30 @@ class Set:
         reporter1.report.extend(reporter2.report)
         reporter1.report.extend(reporter_final.report)
         reporter1.write_report(report_dir=self.args.directory, format=self.args.report_format)
+
+        total_nodes = len(list(set(graph1.vs["name"]).union(set(graph2.vs["name"]))))
+
+        if not self.args.no_plot and total_nodes < 5000:
+            both_graphs = GraphSetOps.union(graph1, graph2, 'Both')
+            report_dict = OrderedDict()
+            report_dict['algorithm'] = self.args.which
+            report_dict[0] = {'nodes': ','.join(output_graph.vs["name"]), 'edges': output_graph.es["adjacent_nodes"]}
+
+            #create custom instance of reporter to be passed to pyntacleink and storing appropriate values
+            reporter_both_graphs = PyntacleReporter(graph=both_graphs)
+            reporter_both_graphs.report_type = ReportEnum.Set
+
+            suffix = "_".join(["_".join(graph1["name"]), "Set", "_".join(graph2["name"])])
+
+            sys.stdout.write(u"Plotting {} among the two graph in {} directory with PyntacleInk\n".format(self.args.which, self.args.directory))
+            reporter_both_graphs.pyntacleink_report(report_dir=self.args.directory, report_dict=report_dict, suffix=suffix)
+
+        elif total_nodes >= 5000:
+            sys.stdout.write(
+                u"The total sum of the two graph nodes ({}). PyntacleInk allows plotting for network with N < 5000. No visual representation will be produced\n".format(
+                    total_nodes))
+        else:
+            sys.stdout.write(pyntacleink_skip_msg)
 
         if not self.args.suppress_cursor:
             cursor.stop()

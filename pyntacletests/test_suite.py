@@ -39,7 +39,7 @@ def Suite():
     suite.addTest(WidgetTestKeyplayer('test_kpfinder_bf'))
     suite.addTest(WidgetTestGroupcentrality('test_grinfo'))
     suite.addTest(WidgetTestGroupcentrality('test_grfinder_greedy'))
-    suite.addTest(WidgetTestGroupcentrality('test_grfinder_bf'))
+    # suite.addTest(WidgetTestGroupcentrality('test_grfinder_bf'))
     return suite
 
 if __name__ == '__main__':

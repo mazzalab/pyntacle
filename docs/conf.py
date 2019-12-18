@@ -24,7 +24,7 @@ copyright = '2018, The Pyntacle Project'
 author = 'Daniele Capocefalo, Mauro Truglio, Tommaso Mazza'
 
 # The short X.Y version
-version = '1.0'
+version = '1.1'
 # The full version, including alspha/beta/rc tags
 release = '2018.11'
 

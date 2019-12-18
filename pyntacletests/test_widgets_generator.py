@@ -1,7 +1,7 @@
 __author__ = u"Daniele Capocefalo, Mauro Truglio, Tommaso Mazza"
 __copyright__ = u"Copyright 2018, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.0.0"
+__version__ = u"1.1"
 __maintainer__ = u"Daniele Capocefalo"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
@@ -91,7 +91,7 @@ class WidgetTestGenerator(unittest.TestCase):
         self.Args.output_file = 'tree'
         self.Args.nodes = None
         self.Args.children = None
-        
+
         gen = generate_command(self.Args)
         with self.assertRaises(SystemExit) as cm:
             gen.run()
@@ -107,9 +107,9 @@ class WidgetTestGenerator(unittest.TestCase):
         self.Args.which = 'small-world'
         self.Args.output_file = 'smallworld'
         self.Args.nodes = None
-        self.Args.lattice = 2
-        self.Args.lattice_size = None
-        self.Args.nei = None
+        self.Args.lattice = 4
+        self.Args.lattice_size = 2
+        self.Args.nei = 2
         self.Args.probability = 0.5
 
         gen = generate_command(self.Args)
