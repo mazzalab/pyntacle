@@ -356,6 +356,7 @@ html_template = u"""
           minNodeSize: 2,
           maxNodeSize: 9,
           maxEdgeSize: 3,
+          minEdgeSize: 1,
           edgeColor: 'default',
           defaultEdgeColor: '#ababab',
           defaultNodeColor:	default_Node_color,
