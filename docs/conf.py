@@ -14,14 +14,13 @@
 #
 # import os
 # import sys
-# sys.path.insert(0, '/home/local/MENDEL/d.capocefalo/Programming/Pyntacle')
 
 
 # -- Project information -----------------------------------------------------
 
 project = 'Pyntacle'
 copyright = '2018, The Pyntacle Project'
-author = 'Daniele Capocefalo, Mauro Truglio, Tommaso Mazza'
+author = 'Mauro Truglio, Tommaso Mazza'
 
 # The short X.Y version
 version = '1.1'
@@ -75,8 +74,8 @@ toctree = {'collapse': True,
 
 # General information about the project.
 project = u'Pyntacle'
-copyright = u'2018, Daniele Capocefalo, Mauro Truglio, Tommaso Mazza'
-author = u'Daniele Capocefalo, Mauro Truglio, Tommaso Mazza'
+copyright = u'2018, Mauro Truglio, Tommaso Mazza'
+author = u'Mauro Truglio, Tommaso Mazza'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -166,7 +165,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'Pyntacle.tex', 'Pyntacle Documentation',
-     'Daniele Capocefalo, Mauro Truglio, Tommaso Mazza', 'manual'),
+     'Mauro Truglio, Tommaso Mazza', 'manual'),
 ]
 
 

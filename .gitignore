@@ -108,7 +108,7 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-#added by Daniele
+#added by Tommaso Mazza
 .idea/*
 .idea/pyntacle.iml
 pyntacle_tests.py

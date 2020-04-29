@@ -1,15 +1,15 @@
 """ Utility methods to edit the shortest paths matrix"""
 
-__author__ = ["Daniele Capocefalo", "Mauro Truglio", "Tommaso Mazza"]
+__author__ = ["Mauro Truglio", "Tommaso Mazza"]
 __copyright__ = u"Copyright 2018, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
 __version__ = u"1.1"
-__maintainer__ = u"Daniele Capocefalo"
+__maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
 __date__ = u"26/11/2018"
 __license__ = u"""
-  Copyright (C) 2016-2019  Tommaso Mazza <t.mazza@css-mendel.it>
+  Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
 
   This program is free software: you can redistribute it and/or modify
