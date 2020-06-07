@@ -1,11 +1,11 @@
-__author__ = ["Mauro Truglio", "Tommaso Mazza"]
-__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__author__ = ["Tommaso Mazza"]
+__copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.2"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"07/06/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -30,8 +30,8 @@ from algorithms.keyplayer import KeyPlayer as kp
 from algorithms.shortest_path import ShortestPath as sp
 from algorithms.local_topology import LocalTopology
 from exceptions.wrong_argument_error import WrongArgumentError
-from internal.graph_routines import check_graph_consistency
 from internal.group_search_utils import greedy_search_initializer
+
 
 class GreedyOptimization:
     r"""
@@ -100,7 +100,6 @@ class GreedyOptimization:
         return S, optimization_score
 
     @staticmethod
-    @check_graph_consistency
     @greedy_search_initializer
     def fragmentation(graph, k: int, metric: KpnegEnum, seed: int or None =None, max_distance: int or None =None,
                       cmode=CmodeEnum.igraph) -> (list, float):
@@ -176,7 +175,6 @@ class GreedyOptimization:
                 u"The parameter 'metric' is not valid. It must be one of the following: {}".format(list(KpnegEnum)))
 
     @staticmethod
-    @check_graph_consistency
     @greedy_search_initializer
     def reachability(graph, k: int, metric: KpposEnum, seed=None, max_distance: int=None, m=None,
                      cmode=CmodeEnum.igraph) -> (list, float):
@@ -260,7 +258,6 @@ class GreedyOptimization:
                 u"The parameter 'metric' is not valid. It must be one of the following: {}".format(list(KpposEnum)))
 
     @staticmethod
-    @check_graph_consistency
     @greedy_search_initializer
     def group_centrality(graph, k: int, metric: GroupCentralityEnum, seed: int or None =None,
                          distance_type: GroupDistanceEnum = GroupDistanceEnum.minimum,

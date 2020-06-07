@@ -1,11 +1,11 @@
-__author__ = u"Mauro Truglio, Tommaso Mazza"
-__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__author__ = ["Tommaso Mazza"]
+__copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.2"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"07/06/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -26,7 +26,6 @@ __license__ = u"""
 
 
 import math
-from internal.graph_routines import check_graph_consistency
 
 class Sparseness:
     r"""
@@ -38,7 +37,6 @@ class Sparseness:
     """
 
     @staticmethod
-    @check_graph_consistency
     def completeness_naive(graph) -> float:
         r"""
         Compute the first, naive version of the *completeness* index as conceived by
@@ -73,7 +71,6 @@ class Sparseness:
             return round(completeness, 5)
 
     @staticmethod
-    @check_graph_consistency
     def completeness(graph) -> float:
         r"""
         A rigorous refinement of the *completeness* index published in `Mazza et al. <https://doi.org/10.1093/bib/bbp060>`_.
@@ -110,7 +107,6 @@ class Sparseness:
             return round(completeness, 5)
 
     @staticmethod
-    @check_graph_consistency
     def compactness(graph, correct: bool = False) -> float:
         r"""
         It computes the *compactness* index described by `Randić and DeAlba <https://pubs.acs.org/doi/abs/10.1021/ci970241z?journalCode=jcics1>`_

@@ -3,7 +3,7 @@ __copyright__ = u"Copyright 2018, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
 __version__ = u"1.1"
 __maintainer__ = u"Tommaso Mazza"
-__email__ = "o@css-mendel.it"
+__email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
 __date__ = u"26/11/2018"
 __license__ = u"""
@@ -35,7 +35,9 @@ from tools.enums import *
 import re
 from pyntacletests import getmd5
 from multiprocessing import cpu_count
-n_cpus = cpu_count()-1
+
+n_cpus = cpu_count() - 1
+
 
 class DummyObj:
     pass
@@ -62,7 +64,7 @@ class WidgetTestKeyplayer(unittest.TestCase):
         self.Args.type = 'all'
         self.Args.v = None
         self.Args.suppress_cursor = True
-        
+
     def test_kpinfo(self):
         sys.stdout.write("Testing kp-info\n")
         self.Args.which = 'kp-info'
@@ -82,7 +84,7 @@ class WidgetTestKeyplayer(unittest.TestCase):
             data_exp = exp.read()
         o = set(re.findall(r"[-+]?\d*\.\d+|\d+", data))
         e = set(re.findall(r"[-+]?\d*\.\d+|\d+", data_exp))
-        self.assertEqual(o,e,
+        self.assertEqual(o, e,
                          'Wrong checksum for KeyPlayer, kp-info case')
 
     def test_kpfinder_greedy(self):
@@ -108,7 +110,7 @@ class WidgetTestKeyplayer(unittest.TestCase):
         e = set(re.findall(r"[^A-z:\t][0-9]*\.\d+|[^A-z:\t][ 0-9]+", data_exp))
         print(o)
         print(e)
-        self.assertEqual(o,e,
+        self.assertEqual(o, e,
                          'Wrong checksum for KeyPlayer, kp-finder greedy case')
 
     def test_kpfinder_bf(self):
@@ -132,7 +134,7 @@ class WidgetTestKeyplayer(unittest.TestCase):
             data_exp = exp.read()
         o = set(re.findall(r"[-+]?\d*\.\d+|\d+", data))
         e = set(re.findall(r"[-+]?\d*\.\d+|\d+", data_exp))
-        self.assertEqual(o,e,
+        self.assertEqual(o, e,
                          'Wrong checksum for KeyPlayer, kp-finder bruteforce case')
 
     def tearDown(self):
@@ -142,6 +144,7 @@ class WidgetTestKeyplayer(unittest.TestCase):
         files = glob.glob(os.path.join(current_dir, 'pyntacletests/test_sets/tmp/*'))
         for f in files:
             os.remove(f)
+
 
 if __name__ == '__main__':
     unittest.main()

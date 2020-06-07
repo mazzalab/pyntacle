@@ -1,13 +1,11 @@
-"""Compute several global topology metrics for a given graph"""
-
-__author__ = ["Mauro Truglio", "Tommaso Mazza"]
-__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__author__ = ["Tommaso Mazza"]
+__copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.2"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"07/06/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t,mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -27,7 +25,6 @@ __license__ = u"""
   """
 
 from algorithms.local_topology import LocalTopology
-from internal.graph_routines import check_graph_consistency
 from statistics import mean
 from igraph import Graph
 from tools.enums import CmodeEnum
@@ -39,7 +36,6 @@ class GlobalTopology:
     """
 
     @staticmethod
-    @check_graph_consistency
     def diameter(graph: Graph) -> int:
         r"""
         Returns the *diameter* of a graph.
@@ -53,7 +49,6 @@ class GlobalTopology:
         return graph.diameter()
 
     @staticmethod
-    @check_graph_consistency
     def radius(graph: Graph) -> int:
         r"""
         Returns the *radius* of a graph.
@@ -69,7 +64,6 @@ class GlobalTopology:
         return int(graph.radius())
 
     @staticmethod
-    @check_graph_consistency
     def components(graph: Graph) -> int:
         r"""
         Returns the number of *components* in a graph.
@@ -81,7 +75,6 @@ class GlobalTopology:
         return len(graph.components())
 
     @staticmethod
-    @check_graph_consistency
     def density(graph: Graph) -> float:
         r"""
         Computes the *density* of a graph. The density of a graph is defined as the ratio between the actual number of edges :math:`E` and the number of possible
@@ -95,7 +88,6 @@ class GlobalTopology:
         return round(graph.density(), 5)
 
     @staticmethod
-    @check_graph_consistency
     def pi(graph: Graph) -> float:
         r"""
         Returns *Pi*, the ratio between the total number of edges and the diameter.
@@ -107,7 +99,6 @@ class GlobalTopology:
         return round(graph.ecount()/graph.diameter(), 5)
 
     @staticmethod
-    @check_graph_consistency
     def average_clustering_coefficient(graph: Graph) -> float:
         r"""
         Computes the *average clustering coefficient* among all nodes in a graph.
@@ -119,7 +110,6 @@ class GlobalTopology:
         return round(graph.transitivity_avglocal_undirected(), 5)
 
     @staticmethod
-    @check_graph_consistency
     def weighted_clustering_coefficient(graph: Graph) -> float:
         u"""
         Computes the *weighted clustering coefficient* among all nodes in a graph, defined as the average of each node's clustering coefficient weighted by their degree values.
@@ -131,7 +121,6 @@ class GlobalTopology:
         return round(graph.transitivity_undirected(), 5)
 
     @staticmethod
-    @check_graph_consistency
     def average_degree(graph: Graph) -> float:
         r"""
         Returns the *average degree* of the input graph.
@@ -144,7 +133,6 @@ class GlobalTopology:
         return round(mean(graph.degree()), 5)
 
     @staticmethod
-    @check_graph_consistency
     def average_closeness(graph: Graph) -> float:
         u"""
         Returns the *average closeness* of the input graph. This is computed as the mean of each node's closeness.
@@ -157,7 +145,6 @@ class GlobalTopology:
         return round(mean(LocalTopology.closeness(graph=graph)), 5)
 
     @staticmethod
-    @check_graph_consistency
     def average_eccentricity(graph: Graph) -> float:
         u"""
         Returns the *average eccentricity* of the input graph.
@@ -171,7 +158,6 @@ class GlobalTopology:
         return round(mean(LocalTopology.eccentricity(graph=graph)), 5)
 
     @staticmethod
-    @check_graph_consistency
     def average_radiality(graph: Graph, cmode=CmodeEnum.igraph) -> float:
         r"""
         Computes the *average radiality*, the mean of all node radiality values. See :func:`~pyntacle.algorithms.local_topology.LocalTopology.radiality`
@@ -193,7 +179,6 @@ class GlobalTopology:
         return round(mean(rad), 5)
 
     @staticmethod
-    @check_graph_consistency
     def average_radiality_reach(graph: Graph, cmode=CmodeEnum.igraph) -> float:
         r"""
         Computes the *average radiality reach*, the mean for all the radiality reach values for each node in the graph. See :func:`~pyntacle.algorithms.local_topology.LocalTopology.radiality_reach`.

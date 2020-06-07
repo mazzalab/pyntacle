@@ -36,7 +36,6 @@ class ExportAttributes():
     """
 
     @staticmethod
-    @check_graph_consistency
     def export_edge_attributes(graph: Graph, file: str, mode: str='standard'):
         r"""
         Export attributes related to the  *edges* of a network stored into an :py:class:`igraph.Graph` object to a text
@@ -130,7 +129,6 @@ class ExportAttributes():
         sys.stdout.write(u"Edge attributes successfully exported at full path:\n{}\n".format(os.path.abspath(file)))
 
     @staticmethod
-    @check_graph_consistency
     def export_node_attributes(graph: Graph, file :str):
         r"""
         Export attributes belonging to *vertices* of the :py:class:`igraph.Graph` object into a tab-delimited format that
@@ -175,7 +173,6 @@ class ExportAttributes():
         sys.stdout.write(u"Node attributes successfully exported at full path:\n{}\n".format(os.path.abspath(file)))
 
     @staticmethod
-    @check_graph_consistency
     def export_graph_attributes(graph: Graph, file):
         """
         Exports *network* attributes to a tab-separated file. These graph attributes are a property of the :py:class:`igraph.Graph` input object

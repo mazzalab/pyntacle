@@ -1,11 +1,11 @@
-__author__ = ["Mauro Truglio", "Tommaso Mazza"]
+__author__ = ["Tommaso Mazza"]
 __copyright__ = u"Copyright 2018, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.2"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"07/06/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -34,11 +34,11 @@ from algorithms.keyplayer import KeyPlayer
 from tools.enums import *
 from math import isinf
 from igraph import Graph
-from internal.graph_routines import check_graph_consistency
 from cmds.cmds_utils.group_search_wrapper import InfoWrapper as kpw
 from cmds.cmds_utils.group_search_wrapper import GOWrapper as gow
 from cmds.cmds_utils.group_search_wrapper import BFWrapper as bfw
 from config import  n_cpus
+
 
 def get_cmode(graph):
     if 'implementation' in graph.attributes():
@@ -85,7 +85,6 @@ class Octopus:
 
     # Global properties
     @staticmethod
-    @check_graph_consistency
     def diameter(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.diameter` method in
@@ -101,7 +100,6 @@ class Octopus:
         #sys.stdout.write("Diameter successfully added to graph.\n")
 
     @staticmethod
-    @check_graph_consistency
     def radius(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.radius` method in
@@ -118,7 +116,6 @@ class Octopus:
         #sys.stdout.write("Radius successfully added to graph.\n")
 
     @staticmethod
-    @check_graph_consistency
     def components(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.components` method in
@@ -136,7 +133,6 @@ class Octopus:
         AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.components.name, GlobalTopology.components(graph))
 
     @staticmethod
-    @check_graph_consistency
     def density(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.density` method in
@@ -153,7 +149,6 @@ class Octopus:
         AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.density.name, GlobalTopology.density(graph))
 
     @staticmethod
-    @check_graph_consistency
     def pi(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.PI` method in
@@ -170,7 +165,6 @@ class Octopus:
         AddAttributes.add_graph_attribute(graph, GlobalAttributeEnum.pi.name, GlobalTopology.pi(graph))
 
     @staticmethod
-    @check_graph_consistency
     def average_clustering_coefficient(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.average_clustering_coefficient` method in
@@ -188,7 +182,6 @@ class Octopus:
                                           GlobalTopology.average_clustering_coefficient(graph))
 
     @staticmethod
-    @check_graph_consistency
     def weighted_clustering_coefficient(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.weighted_clustering_coefficient` method in
@@ -206,7 +199,6 @@ class Octopus:
                                           GlobalTopology.weighted_clustering_coefficient(graph))
 
     @staticmethod
-    @check_graph_consistency
     def average_degree(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.average_degree` method in
@@ -224,7 +216,6 @@ class Octopus:
                                           GlobalTopology.average_degree(graph))
 
     @staticmethod
-    @check_graph_consistency
     def average_closeness(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.average_closeness` method in
@@ -242,7 +233,6 @@ class Octopus:
                                           GlobalTopology.average_closeness(graph))
 
     @staticmethod
-    @check_graph_consistency
     def average_eccentricity(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.average_eccentricity` method in
@@ -260,7 +250,6 @@ class Octopus:
                                           GlobalTopology.average_eccentricity(graph))
 
     @staticmethod
-    @check_graph_consistency
     def average_radiality(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.average_radiality` method in
@@ -280,7 +269,6 @@ class Octopus:
                                           GlobalTopology.average_radiality(graph, cmode))
 
     @staticmethod
-    @check_graph_consistency
     def average_radiality_reach(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.global_topology.GlobalTopology.average_radiality_reach` method in
@@ -301,7 +289,6 @@ class Octopus:
                                           GlobalTopology.average_radiality_reach(graph, cmode))
 
     @staticmethod
-    @check_graph_consistency
     def average_global_shortest_path_length(graph: Graph):
         r"""
         Adds the average among all geodesics of the input :py:class:`~igraph.Graph` object by means of the
@@ -321,7 +308,6 @@ class Octopus:
                                           ShortestPath.average_global_shortest_path_length(graph, cmode))
 
     @staticmethod
-    @check_graph_consistency
     def median_global_shortest_path_length(graph: Graph):
         r"""
         Adds the median value of all the possible shortest path lengths in the input :py:class:'igraph.Graph' object by
@@ -339,7 +325,6 @@ class Octopus:
                                           ShortestPath.median_global_shortest_path_length(graph))
 
     @staticmethod
-    @check_graph_consistency
     def completeness_naive(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.sparseness.Sparseness.completeness_naive` method in
@@ -359,7 +344,6 @@ class Octopus:
                                           Sparseness.completeness_naive(graph))
 
     @staticmethod
-    @check_graph_consistency
     def completeness(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.sparseness.Sparseness.completeness_naive` method in
@@ -377,7 +361,6 @@ class Octopus:
                                           Sparseness.completeness(graph))
 
     @staticmethod
-    @check_graph_consistency
     def compactness(graph: Graph, correct: bool = False):
         r"""
         Wraps the :func:`~pyntacle.algorithms.sparseness.Sparseness.compactness` method in
@@ -396,7 +379,6 @@ class Octopus:
 
     # Local properties
     @staticmethod
-    @check_graph_consistency
     def degree(graph: Graph, nodes: str or list or None = None):
         r"""
         Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.degree` method in
@@ -424,7 +406,6 @@ class Octopus:
                                          LocalTopology.degree(graph, nodes), nodes)
 
     @staticmethod
-    @check_graph_consistency
     def group_degree(graph: Graph, nodes: list or str):
         r"""
         Computes the *group degree* by means of the :func:`~pyntacle.algorithms.local_topology.LocalTopology.group_degree`
@@ -448,7 +429,6 @@ class Octopus:
 
 
     @staticmethod
-    @check_graph_consistency
     def betweenness(graph: Graph, nodes: str or list or None = None):
         r"""
         Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.betweenness` method in
@@ -476,7 +456,6 @@ class Octopus:
                                          LocalTopology.betweenness(graph, nodes), nodes)
 
     @staticmethod
-    @check_graph_consistency
     def group_betweenness(graph: Graph, nodes: list or str):
         r"""
         Computes the *group betweenness* by means of the :func:`~pyntacle.algorithms.local_topology.LocalTopology.group_betweenness` Pyntacle method
@@ -502,7 +481,6 @@ class Octopus:
                          {tuple(sorted(nodes)): LocalTopology.group_betweenness(graph=graph, nodes=nodes, cmode=cmode)})
 
     @staticmethod
-    @check_graph_consistency
     def clustering_coefficient(graph: Graph, nodes: str or list or None = None):
         r"""
         Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.clustering_coefficient` method in
@@ -531,7 +509,6 @@ class Octopus:
                                          LocalTopology.clustering_coefficient(graph, nodes), nodes)
 
     @staticmethod
-    @check_graph_consistency
     def closeness(graph: Graph, nodes: str or list or None = None):
         r"""
         Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.closeness` method in
@@ -560,7 +537,6 @@ class Octopus:
                                          LocalTopology.closeness(graph, nodes), nodes)
 
     @staticmethod
-    @check_graph_consistency
     def group_closeness(graph: Graph, nodes: str or list, distance: GroupDistanceEnum = GroupDistanceEnum.minimum):
         r"""
         Computes the *group closeness* by means of the :func:`~pyntacle.algorithms.local_topology.LocalTopology.group_closeness` Pyntacle method
@@ -592,7 +568,6 @@ class Octopus:
                          {tuple(sorted(nodes)): LocalTopology.group_closeness(graph, nodes, distance, cmode)})
 
     @staticmethod
-    @check_graph_consistency
     def eccentricity(graph: Graph, nodes: str or list or None = None):
         r"""
         Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.eccentricity` method in
@@ -621,7 +596,6 @@ class Octopus:
                                          LocalTopology.eccentricity(graph, nodes), nodes)
 
     @staticmethod
-    @check_graph_consistency
     def radiality(graph: Graph, nodes: str or list or None = None):
         r"""
         Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.radiality` method in
@@ -652,7 +626,6 @@ class Octopus:
                                          nodes)
 
     @staticmethod
-    @check_graph_consistency
     def radiality_reach(graph: Graph, nodes: str or list or None = None):
         r"""
         Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.radiality_reach` method in
@@ -682,7 +655,6 @@ class Octopus:
                                          LocalTopology.radiality_reach(graph, nodes, cmode), nodes)
 
     @staticmethod
-    @check_graph_consistency
     def eigenvector_centrality(graph: Graph, nodes: str or list or None = None, scaled: bool = False):
         r"""
         Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.eigenvector_centrality` method in
@@ -713,7 +685,6 @@ class Octopus:
                                          nodes)
 
     @staticmethod
-    @check_graph_consistency
     def pagerank(graph: Graph, nodes: str or list or None = None, weights: float or int or None = None,
                  damping: float = 0.85):
         r"""
@@ -750,7 +721,6 @@ class Octopus:
                                          nodes)
 
     @staticmethod
-    @check_graph_consistency
     def shortest_paths(graph: Graph, nodes: str or list or None = None):
         r"""
         Computes the shortest paths for a node, a group of nodes or all nodes in the :py:class:`igraph.Graph` object by wrapping the
@@ -791,7 +761,6 @@ class Octopus:
         AddAttributes.add_node_attribute(graph, LocalAttributeEnum.shortest_paths.name, distances, nodes)
 
     @staticmethod
-    @check_graph_consistency
     def average_shortest_path_length(graph: Graph, nodes: str or list or None = None):
         r"""
         Computes the average shortest path length for a node, a group of nodes or all nodes in the input :py:class:`igraph.Graph` object  by wrapping the
@@ -823,7 +792,6 @@ class Octopus:
                                          nodes)
 
     @staticmethod
-    @check_graph_consistency
     def median_shortest_path_length(graph: Graph, nodes: str or list or None = None):
         r"""
         Computes the median shortest path starting from a node, a group of nodes or all nodes in a the input :py:class:`igraph.Graph` object towards every other node in the same graph by wrapping the
@@ -854,7 +822,6 @@ class Octopus:
                                          nodes)
 
     @staticmethod
-    @check_graph_consistency
     def F(graph: Graph):
         r"""
         Wraps the :func:`~pyntacle.algorithms.keyplayer.KeyPlayer.F` method that quantifies the *fragmentation* status of the
@@ -870,7 +837,6 @@ class Octopus:
         AddAttributes.add_graph_attribute(graph, KpnegEnum.F.name, KeyPlayer.F(graph))
 
     @staticmethod
-    @check_graph_consistency
     def dF(graph: Graph, max_distance: int or None = None):
         r"""
         Wraps the :func:`~pyntacle.algorithms.keyplayer.KeyPlayer.dF` method that quantifies the *distance-based-fragmentation* status of the
@@ -890,7 +856,6 @@ class Octopus:
                                                                                  max_distance=max_distance))
 
     @staticmethod
-    @check_graph_consistency
     def kp_F(graph: Graph, nodes: list or str):
         r"""
         Removes a single nodes or a group of nodes, (identified by the vertex ``name`` attribute) belonging to the
@@ -925,7 +890,6 @@ class Octopus:
                          {tuple(sorted(results_dict[KpnegEnum.F.name][0])): results_dict[KpnegEnum.F.name][1]})
 
     @staticmethod
-    @check_graph_consistency
     def kp_dF(graph: Graph, nodes: str or list, max_distance=None):
         r"""
         Removes a single nodes or a group of nodes, (identified by the vertex ``name`` attribute) belonging to the input
@@ -959,7 +923,6 @@ class Octopus:
                          {tuple(sorted(results_dict[KpnegEnum.dF.name][0])): results_dict[KpnegEnum.dF.name][1]})
 
     @staticmethod
-    @check_graph_consistency
     def kp_dR(graph: Graph, nodes: str or list, max_distance=None):
         r"""
         Computes the distance-weighted reach (*dR*) for a given *key player* set (kp-set).
@@ -993,7 +956,6 @@ class Octopus:
                          {tuple(sorted(results_dict[KpposEnum.dR.name][0])): results_dict[KpposEnum.dR.name][1]})
 
     @staticmethod
-    @check_graph_consistency
     def kp_mreach(graph: Graph, nodes: str or list, m: int, max_distance: int or None = None):
         r"""
         Computes the *m-reach* metric for a given *key player* set (kp-set). Nodes are identified by the vertex ``name`` attribute and must belong to the input graph and computes the resulting dR value of these nodes in the graph by means of the :func:`~pyntacle.algorithms.keyplayer.KeyPlayer.dR` Pyntacle  method.
@@ -1031,7 +993,6 @@ class Octopus:
 
     # Greedy optimization
     @staticmethod
-    @check_graph_consistency
     def GO_F(graph: Graph, k: int, seed: int or None = None):
         r"""
         Performs a greedily-optimized search on the input graph to search the optimal *key-player* set (kp-set) of nodes of size :math:`k` for the
@@ -1057,7 +1018,6 @@ class Octopus:
                          {tuple(sorted(results_dict[KpnegEnum.F.name][0])): results_dict[KpnegEnum.F.name][1]})
 
     @staticmethod
-    @check_graph_consistency
     def GO_dF(graph: Graph, k: int, max_distance: int or None = None, seed: int or None = None):
         r"""
         Performs a greedily-optimized search on the input graph to search the optimal *key-player* set (kp-set) of nodes of size :math:`k` for the
@@ -1091,7 +1051,6 @@ class Octopus:
                          {tuple(sorted(results_dict[KpnegEnum.dF.name][0])): results_dict[KpnegEnum.dF.name][1]})
 
     @staticmethod
-    @check_graph_consistency
     def GO_dR(graph: Graph, k: int, max_distance: int or None = None, seed: int or None = None):
         r"""
         Performs a greedily-optimized search on the input graph to search the optimal *key-player* set (kp-set) of nodes of size :math:`k` for the
@@ -1122,7 +1081,6 @@ class Octopus:
                          {tuple(sorted(results_dict[KpposEnum.dR.name][0])): results_dict[KpposEnum.dR.name][1]})
 
     @staticmethod
-    @check_graph_consistency
     def GO_mreach(graph: Graph, k: int, m: int or None = None, max_distance: int or None = None,
                   seed: int or None = None):
         r"""
@@ -1156,7 +1114,6 @@ class Octopus:
                                  1]})
 
     @staticmethod
-    @check_graph_consistency
     def GO_group_degree(graph: Graph, k: int, seed: int or None = None):
         r"""
         Performs a greedily-optimized search on the input graph to search the optimal node set of size :math:`k` for  group
@@ -1184,7 +1141,6 @@ class Octopus:
                               results_dict[GroupCentralityEnum.group_degree.name][1]})
 
     @staticmethod
-    @check_graph_consistency
     def GO_group_betweeness(graph: Graph, k: int, seed: int or None = None):
         r"""
         Performs a greedily-optimized search on the input graph to search the optimal node set of size :math:`k` for  group

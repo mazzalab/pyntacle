@@ -24,6 +24,8 @@ __license__ = u"""
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
   """
 
+import os
+import sys
 from igraph import Graph
 import pandas as pd
 import pickle
@@ -40,6 +42,7 @@ from pyparsing import *
 from itertools import product
 from collections import OrderedDict
 from ordered_set import OrderedSet
+
 
 def dot_attrlist_to_dict(mylist):
     mydict = {}

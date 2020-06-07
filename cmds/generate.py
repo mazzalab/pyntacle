@@ -26,6 +26,7 @@ __license__ = u"""
 
 from config import *
 from warnings import simplefilter
+import random
 
 from exceptions.illegal_graph_size_error import IllegalGraphSizeError
 from io_stream.generator import PyntacleGenerator

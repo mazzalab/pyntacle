@@ -253,11 +253,11 @@ class GraphUtils:
         """
 
         if not isinstance(nodes, list):
-            names = [nodes]
+            names = list(nodes)
         else:
             names = nodes
 
-        if self.nodes_in_graph(nodes):
+        if self.nodes_in_graph(names):
             index_list = []
 
             for name in names:

@@ -1,5 +1,5 @@
 __author__ = u"Mauro Truglio, Tommaso Mazza"
-__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
 __version__ = u"1.1"
 __maintainer__ = u"Tommaso Mazza"
@@ -24,21 +24,21 @@ __license__ = u"""
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
   """
 
-import argparse
-import sys
 import os
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+import argparse
+import random
 from config import *
 import unittest
-import random
 from numpy import random as nprandom
 from copy import deepcopy
 from exceptions.generic_error import Error
+from colorama import Fore, Style, init
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 
 if sys.version_info <= (3, 4):
     sys.exit("Python < 3.4 is not supported. Please use 'python3' instead or update your Python compiler.")
-
-from colorama import Fore, Style, init
 
 if os.name == "nt":
     init(convert=True)

@@ -1,11 +1,11 @@
-__author__ = u"Mauro Truglio, Tommaso Mazza"
-__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__author__ = ["Tommaso Mazza"]
+__copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.2"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"07/06/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -24,14 +24,13 @@ __license__ = u"""
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
   """
 
-
 from config import *
 import pandas as pd
 import pickle
 from igraph import Graph
-from internal.graph_routines import check_graph_consistency
 from internal.io_utils import output_file_checker
 import json
+
 
 class PyntacleExporter:
     r""" A series of static methods to export a :py:class:`igraph.Graph` object to one of the Pyntacle `supported file formats <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html>`_:
@@ -44,9 +43,8 @@ class PyntacleExporter:
     """
 
     @staticmethod
-    @check_graph_consistency
     @output_file_checker
-    def AdjacencyMatrix(graph: Graph, file: str, sep: str ="\t", header: bool=True) -> None:
+    def AdjacencyMatrix(graph: Graph, file: str, sep: str = "\t", header: bool = True) -> None:
         r"""
         Exports a py:class`igraph.Graph` object to an Adjacency Matrix. A valid path to a file must be provided and the
         directory that will store the file must be writeable. If the directory tree does not exist, it will be created.
@@ -77,12 +75,12 @@ class PyntacleExporter:
             adjmatrix = pd.DataFrame(adjmatrix)
             adjmatrix.to_csv(path_or_buf=file, sep=sep, header=False, index=False)
 
-        sys.stdout.write(u"Graph successfully exported to adjacency matrix at full path:\n{}\n".format(os.path.abspath(file)))
+        sys.stdout.write(
+            u"Graph successfully exported to adjacency matrix at full path:\n{}\n".format(os.path.abspath(file)))
 
     @staticmethod
-    @check_graph_consistency
     @output_file_checker
-    def EdgeList(graph: Graph, file, sep: str="\t", header: bool=False) -> None:
+    def EdgeList(graph: Graph, file, sep: str = "\t", header: bool = False) -> None:
         r"""
         Exports a py:class:`igraph.Graph` object to an undirect  edge list. We refer the user to the
         `File Formats Guide <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html#egl>`_
@@ -112,16 +110,15 @@ class PyntacleExporter:
 
             for i, ver in enumerate(adjlist):
                 if not header:
-                    #outfile.writelines([str(i) + sep + str(x) + "\n" for x in adjlist[i]])
-                    outfile.writelines([sep.join([str(i),str(x)]) + "\n" for x in adjlist[i]])
+                    # outfile.writelines([str(i) + sep + str(x) + "\n" for x in adjlist[i]])
+                    outfile.writelines([sep.join([str(i), str(x)]) + "\n" for x in adjlist[i]])
                 else:
                     outfile.writelines([sep.join([graph.vs(i)["name"][0], x]) + "\n" for x in graph.vs(ver)["name"]])
-                    
+
         sys.stdout.write(u"Graph successfully exported to edge list at full path:\n{}\n".format(
             os.path.abspath(file)))
 
     @staticmethod
-    @check_graph_consistency
     @output_file_checker
     def Binary(graph: Graph, file: str) -> None:
         r"""
@@ -144,9 +141,8 @@ class PyntacleExporter:
             os.path.abspath(file)))
 
     @staticmethod
-    @check_graph_consistency
     @output_file_checker
-    def Sif(graph: Graph, file: str, sep: str="\t", header: bool=False) -> None:
+    def Sif(graph: Graph, file: str, sep: str = "\t", header: bool = False) -> None:
         r"""
         Writes a :py:class:`igraph.Graph` object to a Simple Interaction File (SIF), a flexible network file format used
         by many other network analysis and visualization tools, such as `Cytoscape <https://cytoscape.org>`_.
@@ -221,7 +217,6 @@ class PyntacleExporter:
             os.path.abspath(file)))
 
     @staticmethod
-    @check_graph_consistency
     @output_file_checker
     def Dot(graph: Graph, file: str) -> None:
         r"""
@@ -243,7 +238,6 @@ class PyntacleExporter:
             os.path.abspath(file)))
 
     @staticmethod
-    @check_graph_consistency
     @output_file_checker
     def JSON(graph, file=None, prefix=None):
         """
@@ -274,7 +268,8 @@ class PyntacleExporter:
                 v_attributes['parent'] = ', '.join(v_attributes['parent'])
             # print("ATTRIBUTI IN EXPORT")
             # print(v_attributes)
-            parent = ','.join(v_attributes['parent']) #TODO possible weakness in caso che i nomi dei parenti siano compositi
+            parent = ','.join(
+                v_attributes['parent'])  # TODO possible weakness in caso che i nomi dei parenti siano compositi
 
             if parent not in colorsdict:
                 colorsdict[parent] = palette[col_count]
@@ -285,7 +280,7 @@ class PyntacleExporter:
             # if not v_label:
             #     v_label = v_id
 
-            #reminder: v.attributes is a dictionary, unlike vs.attributes() that is a list of attribute names
+            # reminder: v.attributes is a dictionary, unlike vs.attributes() that is a list of attribute names
             v_size = v_attributes.pop('size', None)
 
             if v_size is not None:
@@ -311,7 +306,7 @@ class PyntacleExporter:
             edge = dict(id=e_id, source=e_source, target=e_target, size=e_size, attributes=e_attributes)
             edges.append(edge)
 
-        #reminder nodes e edges are json-like dictionaries
+        # reminder nodes e edges are json-like dictionaries
         # print(nodes)
         # print(edges)
 

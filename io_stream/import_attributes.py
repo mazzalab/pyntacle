@@ -32,7 +32,7 @@ import pandas as pd
 import numpy as np
 from exceptions.unsupported_graph_error import UnsupportedGraphError
 from tools.add_attributes import AddAttributes
-from internal.graph_routines import check_graph_consistency
+
 
 def check_file(graph: Graph, file: str, sep: str):
     if not os.path.exists(file):
@@ -66,7 +66,6 @@ class ImportAttributes():
     """
 
     @staticmethod
-    @check_graph_consistency
     def import_graph_attributes(graph: Graph, file: str, sep: str or None=None):
         r"""
         Adds attributes at the ``graph`` level of a :py:class:`igraph.Graph` object. this file is usually a tabular
@@ -119,7 +118,6 @@ class ImportAttributes():
         sys.stdout.write(u"Graph attributes from {} imported\n".format(os.path.basename(file)))
 
     @staticmethod
-    @check_graph_consistency
     def import_node_attributes(graph: Graph, file: str, sep: str or None=None):
         r"""
         This method takes an attribute node file and add each attribute to the the :py:class:`igraph.Graph` object.
@@ -203,7 +201,6 @@ class ImportAttributes():
         sys.stdout.write(u"Node attributes from {} imported\n".format(os.path.basename(file)))
 
     @staticmethod
-    @check_graph_consistency
     def import_edge_attributes(graph: Graph, file: str, sep: str or None=None, mode: str='standard'):
         r"""
         This method imports attributes at the edge level of a :py:class:`igraph.Graph` object.

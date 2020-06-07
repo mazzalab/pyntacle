@@ -1,11 +1,11 @@
-__author__ = ["Mauro Truglio", "Tommaso Mazza"]
-__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__author__ = ["Tommaso Mazza"]
+__copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
-__maintainer__ = "Tommaso Mazza"
+__version__ = u"1.2"
+__maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
-__status__ = ["Release", "Stable"]
-__date__ = u"26/11/2018"
+__status__ = u"Development"
+__date__ = u"07/06/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -35,7 +35,6 @@ from numba import jit, prange, cuda
 from psutil import virtual_memory
 from tools.enums import CmodeEnum
 from tools.graph_utils import GraphUtils as gUtil
-from internal.graph_routines import check_graph_consistency, vertex_doctor
 from exceptions.wrong_argument_error import WrongArgumentError
 
 
@@ -190,8 +189,6 @@ class ShortestPath:
                 raise ValueError(u"The specified 'computing mode' is invalid. Choose from: {}".format(list(CmodeEnum)))
 
     @staticmethod
-    @check_graph_consistency
-    @vertex_doctor
     def shortest_path_length_igraph(graph: Graph, nodes=None) -> list:
         r"""
         Compute the *shortest paths*  between any pairs of nodes of an undirected graph. The shortest path is
@@ -213,8 +210,6 @@ class ShortestPath:
         return graph.shortest_paths(source=nodes) if nodes else graph.shortest_paths()
 
     @staticmethod
-    @check_graph_consistency
-    @vertex_doctor
     def shortest_path_count_igraph(graph: Graph, nodes=None or str or list) -> np.ndarray:
         r"""
         Compute the *shortest paths* from any pairs of nodes of an undirected graph using the and returns a matrix
@@ -339,7 +334,6 @@ class ShortestPath:
             raise WrongArgumentError(u"Parameter error", "The function parameters do not have the same shape")
 
     @staticmethod
-    @check_graph_consistency
     def average_global_shortest_path_length(graph: Graph, cmode=CmodeEnum.igraph) -> float:
         r"""
         Compute the global *average shortest path length* as defined in https://en.wikipedia.org/wiki/Average_path_length
@@ -377,8 +371,6 @@ class ShortestPath:
                 return round(sum / len(comps), 5)
 
     @staticmethod
-    @check_graph_consistency
-    @vertex_doctor
     def average_shortest_path_lengths(graph: Graph, nodes=None, cmode=CmodeEnum.igraph) -> list:
         r"""
         Compute the average shortest paths issuing from each node in input or of all nodes in the graph if None provided.
@@ -413,7 +405,6 @@ class ShortestPath:
         return avg_sps
 
     @staticmethod
-    @check_graph_consistency
     def median_global_shortest_path_length(graph: Graph) -> float:
         r"""
         Compute the median shortest path length across all shortest paths of all node in the graph.
@@ -429,8 +420,6 @@ class ShortestPath:
         return float(np.median(sps[sps != 0]))
 
     @staticmethod
-    @check_graph_consistency
-    @vertex_doctor
     def median_shortest_path_lengths(graph: Graph, nodes=None, cmode=CmodeEnum.igraph) -> list:
         r"""
         Compute the median among all the possible shortest paths for a single node, a lists of nodes or all nodes in the graph.

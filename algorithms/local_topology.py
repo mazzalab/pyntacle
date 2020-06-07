@@ -1,11 +1,11 @@
-__author__ = ["Mauro Truglio", "Tommaso Mazza"]
-__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__author__ = ["Tommaso Mazza"]
+__copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.2"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"07/06/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -28,7 +28,6 @@ __license__ = u"""
 from tools.enums import CmodeEnum, GroupDistanceEnum
 from tools.graph_utils import GraphUtils as gUtil
 from algorithms.shortest_path import ShortestPath
-from internal.graph_routines import check_graph_consistency, vertex_doctor
 from igraph import Graph
 import numpy as np
 import itertools
@@ -41,8 +40,6 @@ class LocalTopology:
     """
 
     @staticmethod
-    @check_graph_consistency
-    @vertex_doctor
     def degree(graph: Graph, nodes: str or list or None=None) -> list:
         r"""
         Computes the *degree*, the number of of incident edges to a node, for all nodes :math:`N` in the graph or for a selected subset of nodes in the graph.
@@ -59,8 +56,6 @@ class LocalTopology:
         return graph.degree(nodes) if nodes else graph.degree()
 
     @staticmethod
-    @check_graph_consistency
-    @vertex_doctor
     def group_degree(graph: Graph, nodes: list) -> float:
         r"""
         Computes the *group degree* for a subset of nodes in the input graph. This measure is an extension of the degree
@@ -86,8 +81,6 @@ class LocalTopology:
         return round(normalized_score, 5)
 
     @staticmethod
-    @check_graph_consistency
-    @vertex_doctor
     def betweenness(graph: Graph, nodes=None) -> list:
         r"""
         Computes the *betweenness*, the ratio of the number of shortest paths that pass through a  node :math:`i`
@@ -108,8 +101,6 @@ class LocalTopology:
         return graph.betweenness(nodes, directed=False) if nodes else graph.betweenness(directed=False)
 
     @staticmethod
-    @check_graph_consistency
-    @vertex_doctor
     def group_betweenness(graph: Graph, nodes: list, cmode: CmodeEnum=CmodeEnum.igraph, np_counts: np.ndarray=None) -> float:
         r"""
         Computes the betweenness centrality of a group of nodes :math:`k`.
@@ -185,8 +176,6 @@ class LocalTopology:
         return round(group_btw, 5)
 
     @staticmethod
-    @check_graph_consistency
-    @vertex_doctor
     def clustering_coefficient(graph: Graph, nodes: list or str or None=None) -> list:
         r"""
         Returns the *clustering coefficient* of a single node, a list of nodes or for all nodes of he input graph.
@@ -211,8 +200,6 @@ class LocalTopology:
             else graph.transitivity_local_undirected(mode="zero")
 
     @staticmethod
-    @check_graph_consistency
-    @vertex_doctor
     def closeness(graph: Graph, nodes: list or str or None=None) -> list:
         r"""
         The *closeness* of a single node, a list of nodes or for all nodes of the input graph.
@@ -231,8 +218,6 @@ class LocalTopology:
         return graph.closeness(vertices=nodes) if nodes else graph.closeness()
 
     @staticmethod
-    @check_graph_consistency
-    @vertex_doctor
     def group_closeness(graph: Graph, nodes: list, distance: GroupDistanceEnum=GroupDistanceEnum.minimum, cmode: CmodeEnum=CmodeEnum.igraph,
                         np_paths: np.ndarray or None=None) -> float:
         r"""
@@ -303,8 +288,6 @@ class LocalTopology:
 
 
     @staticmethod
-    @check_graph_consistency
-    @vertex_doctor
     def eccentricity(graph: Graph, nodes: list or str or None=None) -> list:
         r"""
         Computes the *eccentricity*, the maximum of all the distances (shortest paths) between the input node
@@ -324,8 +307,6 @@ class LocalTopology:
         return list(map(int, graph.eccentricity(vertices=nodes))) if nodes else list(map(int, graph.eccentricity()))
 
     @staticmethod
-    @check_graph_consistency
-    @vertex_doctor
     def radiality(graph: Graph, nodes: list or str or None=None, cmode: CmodeEnum=CmodeEnum.igraph) -> list:
         r"""
         Compute the *radiality* index of a node, a list of nodes or all nodes of an undirected graph.
@@ -370,8 +351,6 @@ class LocalTopology:
         return rad_list
 
     @staticmethod
-    @check_graph_consistency
-    @vertex_doctor
     def radiality_reach(graph: Graph, nodes: list or str or None =None, cmode: CmodeEnum=CmodeEnum.igraph) -> list:
         r"""
         Compute the *radiality-reach* of a node or of a list of nodes of an undirected graph.
@@ -439,8 +418,6 @@ class LocalTopology:
                 return result
 
     @staticmethod
-    @check_graph_consistency
-    @vertex_doctor
     def eigenvector_centrality(graph: Graph, nodes: list, scaled: bool=False):
         r"""
         Calculate the *eigenvector centrality* for a single node, a list of nodes or all nodes in the input graph.
@@ -469,8 +446,6 @@ class LocalTopology:
             return evcent_values
 
     @staticmethod
-    @check_graph_consistency
-    @vertex_doctor
     def pagerank(graph: Graph, nodes: list or str or None =None, weights:list =None, damping: float=0.85) -> list:
         r"""
         The notorious `Google PageRank <http://infolab.stanford.edu/~backrub/google.html>`_ algorithm that can be calculated for

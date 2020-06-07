@@ -23,20 +23,18 @@ __license__ = u"""
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
   """
-import copy
-import os, sys
-import logging
+
 import datetime
+import logging
+import os
 import threading
 import time
-from numba import cuda
-from numba.config import *
 from multiprocessing import cpu_count
-from psutil import virtual_memory
-import seaborn as sns
-import importlib
+
 from colorama import Fore, Style
-import random
+from numba import cuda
+from numba.core.config import *
+from psutil import virtual_memory
 
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.ERROR, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -49,32 +47,31 @@ runtime_date = datetime.datetime.now().strftime("%Y-%m-%d-%H%M%S")
 
 pyntacleink_skip_msg = "Skipping PyntacleInk report.\n"
 
-#pycairo_message = u"WARNING: It seems that the pycairo library is not installed/available. Graph plot(s) will not be produced\n"
+# generic lines
+sep_line = Fore.LIGHTGREEN_EX + Style.BRIGHT + u"*" * 100 + "\n" + Style.RESET_ALL
+section_end = Fore.RED + Style.BRIGHT + u"*" * 100 + "\n" + Style.RESET_ALL
 
-#generic lines
-sep_line = Fore.LIGHTGREEN_EX + Style.BRIGHT + u"*" *100 + "\n" + Style.RESET_ALL
-section_end = Fore.RED + Style.BRIGHT + u"*"*100 + "\n" + Style.RESET_ALL
-
-#dedicated lines
+# dedicated lines
 import_start = Fore.RED + Style.BRIGHT + u"*" * 42 + "  FILE IMPORT  " + "*" * 43 + "\n" + Style.RESET_ALL
 run_start = Fore.RED + Style.BRIGHT + u"*" * 43 + "  RUN START  " + "*" * 44 + "\n" + Style.RESET_ALL
 summary_start = Fore.RED + Style.BRIGHT + u"*" * 42 + "  RUN SUMMARY  " + "*" * 43 + "\n" + Style.RESET_ALL
 report_start = Fore.RED + Style.BRIGHT + u"*" * 45 + "  REPORT  " + "*" * 45 + "\n" + Style.RESET_ALL
 
 # Add system info
-n_cpus = cpu_count()-1 # Leaving one thread out
+n_cpus = cpu_count() - 1  # Leaving one thread out
 NUMBA_NUM_THREADS = n_cpus
 mem = virtual_memory().total
 cuda_avail = cuda.is_available()
 threadsperblock = 32
 
-
 sigkill_message = "\nReceived SIGKILL from keyboard\n"
+
 
 class CursorAnimation(threading.Thread):
     """
     Just a waiting animation, common to several commands.
     """
+
     def __init__(self):
         self.flag = True
 

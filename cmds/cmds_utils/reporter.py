@@ -1,11 +1,11 @@
 __author__ = u"Mauro Truglio, Tommaso Mazza"
-__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.2"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"07/06/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t,mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -25,7 +25,8 @@ __license__ = u"""
   """
 
 from config import *
-import csv, os, xlsxwriter,json
+import copy
+import csv, os, xlsxwriter, json
 from igraph import Graph
 from tools.enums import KpnegEnum, KpposEnum, ReportEnum, GroupCentralityEnum, GroupDistanceEnum
 from cmds.cmds_utils.pyntacleink_template import html_template, css_template
@@ -33,7 +34,8 @@ from exceptions.wrong_argument_error import WrongArgumentError
 from collections import OrderedDict
 from io_stream.exporter import PyntacleExporter
 
-class PyntacleReporter():
+
+class PyntacleReporter:
     r"""
     This method creates a report according to the type of analysis run by Pyntacle
     """
@@ -46,10 +48,10 @@ class PyntacleReporter():
         # store first graph
         self.graph = graph
 
-        self.report_type = None #this will be instanced in create_report
-        self.report = [] #this will be used in create_report
+        self.report_type = None  # this will be instanced in create_report
+        self.report = []  # this will be used in create_report
         self.dat = runtime_date
-        
+
     def create_report(self, report_type: ReportEnum, report: OrderedDict):
         r"""
         initialize the report object by writing generic information on the input graph and calling the internal report
@@ -60,7 +62,8 @@ class PyntacleReporter():
         """
 
         if not isinstance(report_type, ReportEnum):
-            raise TypeError(u"'report_type' must be on of the 'ReportEnum' enumerators, {} found".format(type(report_type).__name__))
+            raise TypeError(u"'report_type' must be on of the 'ReportEnum' enumerators, {} found".format(
+                type(report_type).__name__))
 
         if not isinstance(report, OrderedDict):
             raise ValueError(u"'report' must be an ordered Dictionary")
@@ -118,12 +121,12 @@ class PyntacleReporter():
                 u"A report must be created first using the 'create_report()' function")
 
         else:
-            #cast every element of the list of lists to string, just in case:
+            # cast every element of the list of lists to string, just in case:
             for x in self.report:
                 list(map(str, x))
 
-            self.report = [list(map(str,x)) for x in self.report]
-            #replace all the underscores with spaces
+            self.report = [list(map(str, x)) for x in self.report]
+            # replace all the underscores with spaces
             self.report[0] = [x.replace("_", " ") for x in self.report[0]]
 
         if format not in choices.keys():
@@ -143,15 +146,17 @@ class PyntacleReporter():
 
         if len(self.graph["name"]) > 1:
             self.logger.warning(u"Using the first 'name' attribute of graph name since more than one is specified")
-        
+
         graphname = self.graph["name"][0]
 
         extension = choices[format]
-        
+
         if self.report_type.name == 'Set':
-            report_path = os.path.join(report_dir, "_".join(["Report", self.report_type.name, self.dat]) + "." + extension)
+            report_path = os.path.join(report_dir,
+                                       "_".join(["Report", self.report_type.name, self.dat]) + "." + extension)
         else:
-            report_path = os.path.join(report_dir, "_".join(["Report", graphname, self.report_type.name, self.dat]) + "." + extension)
+            report_path = os.path.join(report_dir, "_".join(
+                ["Report", graphname, self.report_type.name, self.dat]) + "." + extension)
 
         if extension != "xlsx":
             with open(report_path, "w") as out:
@@ -161,7 +166,7 @@ class PyntacleReporter():
                     for elem in self.report:
                         elem.append("\n")
                     out.writelines(["\t".join(x) for x in self.report])
-                    
+
                 elif extension == "csv":
                     self.logger.info(u"Writing Pyntacle report to a comma-separated value file (csv)")
                     writer = csv.writer(out)
@@ -181,7 +186,7 @@ class PyntacleReporter():
 
             workbook.close()
 
-    def __local_report__(self, reportdict:OrderedDict):
+    def __local_report__(self, reportdict: OrderedDict):
         r"""
         Fill the `report` object  with information regarding the metrics for each node (nodes must be specified in
         the reportdic `nodes' key. if that kjey is not specified, it will assume that the local metrics are
@@ -200,17 +205,17 @@ class PyntacleReporter():
 
         self.report.append(["Results - Local centrality indices for the input nodes"])
         self.report.append(["Node Name"] + [x.replace("_", " ") for x in reportdict.keys()])
-        addendum = [] #list that will be added to the self.report object
+        addendum = []  # list that will be added to the self.report object
 
         for i, elem in enumerate(nodes):
             temp = []
-            temp.append(elem) #append the node names to the appendum
+            temp.append(elem)  # append the node names to the appendum
             for k in reportdict.keys():
-                temp.append(round(reportdict[k][i], 5)) #append the corresponding value to the node name
+                temp.append(round(reportdict[k][i], 5))  # append the corresponding value to the node name
             addendum.append(temp)
         self.report = self.report + addendum
 
-    def __global_report__(self, reportdict:OrderedDict):
+    def __global_report__(self, reportdict: OrderedDict):
         r"""
         Fill the `report` object with information regarding all the global metrics stored in the reportdict object
 
@@ -221,9 +226,8 @@ class PyntacleReporter():
         self.report.append(["Metric", "Value"])
         for k in reportdict.keys():
             self.report.append([k, reportdict[k]])
-        
 
-    def __KPinfo_report__(self, reportdict:OrderedDict):
+    def __KPinfo_report__(self, reportdict: OrderedDict):
         r"""
         fill the *self.__report* object with all the values stored in the KPINFO Run
         :param reportdict: a dictionary with KPPOSchoices or KPNEGchoices as  `keys` and a list as `values`
@@ -256,20 +260,20 @@ class PyntacleReporter():
             else:
                 self.report.append(["maximum m-reach distance", reportdict[KpposEnum.mreach.name][2]])
 
-            #change the name `mreach` to `m-reach`
+            # change the name `mreach` to `m-reach`
             reportdict["m-reach"] = reportdict[KpposEnum.mreach.name]
             del reportdict[KpposEnum.mreach.name]
 
         self.report.append(["\n"])
         self.report.append(["Results: key player metrics for the requested node set"])
         self.report.append(["Index", "Nodes", "Key Player value"])
- 
+
         for k in reportdict.keys():
             if (k == KpnegEnum.F.name or k == KpnegEnum.dF.name) and reportdict[k][-1] == 1.0:
                 self.report.append([k, "NA", "MAXIMUM FRAGMENTATION REACHED"])
 
             else:
-                self.report.append([k, ",".join(reportdict[k][0]), round(reportdict[k][1],5)])
+                self.report.append([k, ",".join(reportdict[k][0]), round(reportdict[k][1], 5)])
 
     def __GRinfo_report__(self, reportdict: OrderedDict):
         r"""
@@ -382,7 +386,6 @@ class PyntacleReporter():
             if KpnegEnum.F.name in reportdict.keys():
                 init_F = reportdict[KpnegEnum.F.name][2]
 
-
                 if 0.0 <= init_F <= 1.0:
                     self.report.append(["Starting graph F", init_F])
                 else:
@@ -415,7 +418,7 @@ class PyntacleReporter():
                     self.report.append([k, "NA", "MAXIMUM FRAGMENTATION REACHED"])
 
                 else:
-                    #in this case, the report dictionary can contain more than one set of nodes
+                    # in this case, the report dictionary can contain more than one set of nodes
                     if len(reportdict[k][0]) > 1:
                         count = 0
                         for elem in reportdict[k][0]:
@@ -468,18 +471,18 @@ class PyntacleReporter():
         self.report.append(["Results: Community finding of the input graph"])
         self.report.append(["Algorithm:", reportdict["algorithm"]])
         self.report.append(["\n"])
-        del reportdict["algorithm"] #delete the dictionary algorithm
+        del reportdict["algorithm"]  # delete the dictionary algorithm
         self.report.append(["\n"])
         self.report.append(["Module Label", "Nodes", "Edges", "Components"])
         for k in reportdict.keys():
             self.report.append([k, reportdict[k][0], reportdict[k][1], reportdict[k][2]])
-            
+
     def __set_text_report__(self, reportdict: OrderedDict):
 
         for k in reportdict.keys():
             self.report.append([k, reportdict[k]])
 
-    def pyntacleink_report(self, report_dir :str, report_dict: OrderedDict or None, suffix :str):
+    def pyntacleink_report(self, report_dir: str, report_dict: OrderedDict or None, suffix: str):
         """
         Create a JSON version of the report, possibly appending data to already existing results.
         :return:
@@ -535,7 +538,7 @@ class PyntacleReporter():
 
             # multiple_solutions
             for k in report_dict:
-                #Mauro's print for testing purposes
+                # Mauro's print for testing purposes
                 # print(report_dict[k][0])
 
                 if self.report_type == ReportEnum.GR_greedy:
@@ -571,7 +574,7 @@ class PyntacleReporter():
                 json_data["Set"][report_dict["algorithm"]][self.dat][k] = [report_dict[k]['nodes'], ';'.join(
                     ['-'.join(e) for e in report_dict[k]['edges']])]
 
-                #for testing purposes only
+                # for testing purposes only
                 # edges = [', '.join(e) for e in report_dict[k]['edges']]
                 # for edge in report_dict[k]['edges']:
                 #     print(edge)
@@ -585,8 +588,8 @@ class PyntacleReporter():
         json_data["Info"]['components'] = len(self.graph.components())
 
         # Adding global metrics to the basic info, if available
-        #TODO manca global --no-nodes. Idealmente, dovrebbe essere una parte della tabella ACCANTO alle metriche globali senza aver rimosso i nodi
-        #todo per il momento, vengono prodotti due report (file cmds/metrics.py, linea ~385)
+        # TODO manca global --no-nodes. Idealmente, dovrebbe essere una parte della tabella ACCANTO alle metriche globali senza aver rimosso i nodi
+        # todo per il momento, vengono prodotti due report (file cmds/metrics.py, linea ~385)
         if self.report_type == ReportEnum.Global:
 
             for i in report_dict.keys():
@@ -601,7 +604,7 @@ class PyntacleReporter():
         # exporting graph in json format
         PyntacleExporter.JSON(self.graph, json_graph, prefix="var graphData = ")
 
-        #modify html template to point it at the correct hidden directory
+        # modify html template to point it at the correct hidden directory
         html_template_correct = html_template.replace("PLACEHOLDER", suffix)
 
         # print html_file

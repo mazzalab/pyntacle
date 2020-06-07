@@ -1,11 +1,11 @@
-__author__ = u"Mauro Truglio, Tommaso Mazza"
-__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__author__ = ["Tommaso Mazza"]
+__copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.2"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"07/06/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -25,13 +25,12 @@ __license__ = u"""
   """
 
 from igraph import statistics as st
-from internal.graph_routines import check_graph_consistency
+
 
 class FitPowerLaw:
     r""" This module uses igraph' s builtin function to determine whether the power law fit for an ``igraph.Graph`` object"""
 
     @staticmethod
-    @check_graph_consistency
     def alpha(graph, xmin=None) -> float:
 
         r"""

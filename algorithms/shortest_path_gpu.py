@@ -1,4 +1,4 @@
-__author__ = u"Mauro Truglio, Tommaso Mazza"
+__author__ = u"Tommaso Mazza"
 __copyright__ = u"Copyright 2018, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
 __version__ = u"1.1"

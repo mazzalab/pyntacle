@@ -1,11 +1,11 @@
-__author__ = ["Mauro Truglio", "Tommaso Mazza"]
-__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__author__ = ["Tommaso Mazza"]
+__copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.2"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"07/06/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -30,7 +30,6 @@ import igraph
 from tools.enums import CmodeEnum
 from tools.graph_utils import GraphUtils as gu
 from algorithms.shortest_path import ShortestPath as sp
-from internal.graph_routines import check_graph_consistency, vertex_doctor
 from internal.shortest_path_modifications import ShortestPathModifier
 from exceptions.wrong_argument_error import WrongArgumentError
 
@@ -40,7 +39,6 @@ class KeyPlayer:
     `Borgatti, S.P. Comput Math Organiz Theor (2006) 12: 21. <https://doi.org/10.1007/s10588-006-7084-x>`_"""
 
     @staticmethod
-    @check_graph_consistency
     def F(graph: igraph.Graph) -> float:
         r"""
         Calculate the *F*  (*fragmentation*) index, a negative key player (*kp-neg*) measure, as described by the equation 4 in
@@ -72,7 +70,6 @@ class KeyPlayer:
         return round(f, 5)
 
     @staticmethod
-    @check_graph_consistency
     def dF(graph:igraph.Graph, cmode:CmodeEnum =CmodeEnum.igraph, max_distance=None) -> float:
         r"""
         Calculate the *dF* (*distance-based fragmentation*), a negative *key player* measure described by the
@@ -177,8 +174,6 @@ class KeyPlayer:
         return round(df, 5)
 
     @staticmethod
-    @check_graph_consistency
-    @vertex_doctor
     def mreach(graph: igraph.Graph, nodes: list or str or None, m: int, max_distance: int or None =None, cmode:CmodeEnum =CmodeEnum.igraph, sp_matrix: np.ndarray =None) -> int:
 
         r"""
@@ -242,8 +237,6 @@ class KeyPlayer:
         return mreach
 
     @staticmethod
-    @check_graph_consistency
-    @vertex_doctor
     def dR(graph: igraph.Graph, nodes: list, max_distance: int or None =None, cmode: CmodeEnum=CmodeEnum.igraph, sp_matrix: np.ndarray or None =None) -> float:
         r"""
         Calculates the *dR* (*distance-weighted reach*) (described by the

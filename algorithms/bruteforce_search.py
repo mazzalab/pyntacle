@@ -1,11 +1,11 @@
-__author__ = ["Mauro Truglio", "Tommaso Mazza"]
-__copyright__ = u"Copyright 2019, The Pyntacle Project"
+__author__ = ["Tommaso Mazza"]
+__copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.2"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"11/01/2019"
+__date__ = u"07/06/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -27,13 +27,11 @@ __license__ = u"""
 from config import *
 import itertools
 import numpy as np
-import random
 from algorithms.keyplayer import KeyPlayer
 from algorithms.local_topology import LocalTopology
 from algorithms.shortest_path import ShortestPath as sp
 from exceptions.wrong_argument_error import WrongArgumentError
 from tools.enums import KpposEnum, KpnegEnum, CmodeEnum, GroupCentralityEnum, GroupDistanceEnum
-from internal.graph_routines import check_graph_consistency
 from internal.group_search_utils import bruteforce_search_initializer
 from igraph import Graph
 import multiprocessing as mp
@@ -121,6 +119,7 @@ def crunch_groupcentrality_combinations(graph: Graph, node_names_list: list, np_
 
     return score_pairs_partial
 
+
 class BruteforceSearch:
     r"""
     Brute-force search optimization algorithms for the best set of nodes, according to a number of metrics.
@@ -131,7 +130,6 @@ class BruteforceSearch:
     """
 
     @staticmethod
-    @check_graph_consistency
     @bruteforce_search_initializer
     def fragmentation(graph: Graph, k: int, metric: KpnegEnum, max_distance: int = None,
                       cmode: CmodeEnum = CmodeEnum.igraph, parallel: bool = False, ncores: int = None) -> (
@@ -230,7 +228,6 @@ class BruteforceSearch:
         return final, maxKpp
 
     @staticmethod
-    @check_graph_consistency
     @bruteforce_search_initializer
     def reachability(graph, k, metric: KpposEnum, max_distance=None, m=None, cmode=CmodeEnum.igraph,
                      parallel=False, ncores=None) -> (list, float):
@@ -327,7 +324,6 @@ class BruteforceSearch:
         return final, _group_score
 
     @staticmethod
-    @check_graph_consistency
     @bruteforce_search_initializer
     def group_centrality(graph: Graph, k: int, metric: GroupCentralityEnum, cmode: CmodeEnum = CmodeEnum.igraph,
                          distance_type: GroupDistanceEnum = GroupDistanceEnum.minimum,

@@ -1,11 +1,11 @@
-__author__ = u"Mauro Truglio, Tommaso Mazza"
-__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__author__ = u"Tommaso Mazza"
+__copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.2"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"07/06/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t,mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -24,10 +24,8 @@ __license__ = u"""
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
   """
 
-from config import *
 from functools import wraps
 from exceptions.illegal_kpset_size_error import IllegalKpsetSizeError
-from tools.enums import KpposEnum, KpnegEnum
 import random
 
 """Utilities for checking the consistency of the parameters passed in greedy or bruteforce optimization"""
@@ -50,7 +48,8 @@ def greedy_search_initializer(func):
 
         else:
             if k >= graph.vcount():
-                raise IllegalKpsetSizeError("The 'k' argument ({}) must be strictly less than the graph size ({})".format(k, graph.vcount()))
+                raise IllegalKpsetSizeError(
+                    "The 'k' argument ({}) must be strictly less than the graph size ({})".format(k, graph.vcount()))
 
         if seed is not None:
             if not isinstance(seed, int):
@@ -61,6 +60,7 @@ def greedy_search_initializer(func):
         return func(graph, k, metric, seed, *args, **kwargs)
 
     return func_wrapper
+
 
 def bruteforce_search_initializer(func):
     """
