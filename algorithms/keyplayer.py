@@ -212,7 +212,7 @@ class KeyPlayer:
             if cmode == CmodeEnum.igraph:
                 shortest_path_lengths = sp.shortest_path_length_igraph(graph, nodes=nodes)
             else:
-                if not sp_matrix:
+                if sp_matrix is None:
                     shortest_path_lengths = sp.get_shortestpaths(graph=graph, cmode=cmode, nodes=nodes)
                 else:
                     if not isinstance(sp_matrix, np.ndarray):
