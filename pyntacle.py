@@ -24,7 +24,6 @@ __license__ = u"""
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
   """
 
-import os
 import argparse
 import random
 from config import *
@@ -32,7 +31,7 @@ import unittest
 from numpy import random as nprandom
 from copy import deepcopy
 from exceptions.generic_error import Error
-from colorama import Fore, Style, init
+from colorama import init
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 

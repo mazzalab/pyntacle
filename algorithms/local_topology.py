@@ -31,8 +31,9 @@ from algorithms.shortest_path import ShortestPath
 from igraph import Graph
 import numpy as np
 import itertools
-from math import inf, isinf
+from math import inf
 from config import *
+
 
 class LocalTopology:
     r"""
@@ -418,7 +419,7 @@ class LocalTopology:
                 return result
 
     @staticmethod
-    def eigenvector_centrality(graph: Graph, nodes: list, scaled: bool=False):
+    def eigenvector(graph: Graph, nodes: list, scaled: bool=False):
         r"""
         Calculate the *eigenvector centrality* for a single node, a list of nodes or all nodes in the input graph.
         The eigenvector centrality is a measure of the influence of a node in a network with respect to its neighbours.
@@ -450,7 +451,7 @@ class LocalTopology:
         r"""
         The notorious `Google PageRank <http://infolab.stanford.edu/~backrub/google.html>`_ algorithm that can be calculated for
         a single node, a list of nodes or for all nodes of the input graph.
-        The PageRank algorithm is a modified version of the :func:`~pyntacle.algorithms.local_topology.LocalTopology.eigenvector_centrality`.
+        The PageRank algorithm is a modified version of the :func:`~pyntacle.algorithms.local_topology.LocalTopology.eigenvector`.
         The importance of a node is here a function of the number of issuing edges and the importance of the neighbour nodes.
         A likelihood distribution is computed to check what is the chance that a random walk passes through the
         selected node(s). The higher is the centrality  value of the node, the higher is the probability of passing through it.

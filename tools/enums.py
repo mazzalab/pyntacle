@@ -128,7 +128,7 @@ class LocalAttributeEnum(enum.IntEnum):
     eccentricity = 5
     pagerank = 6
     shortest_paths = 7
-    eigenvector_centrality = 8
+    eigenvector = 8
     closeness = 9
     clustering_coefficient = 10
     average_shortest_path_length = 11

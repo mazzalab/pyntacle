@@ -655,13 +655,13 @@ class Octopus:
                                          LocalTopology.radiality_reach(graph, nodes, cmode), nodes)
 
     @staticmethod
-    def eigenvector_centrality(graph: Graph, nodes: str or list or None = None, scaled: bool = False):
+    def eigenvector(graph: Graph, nodes: str or list or None = None, scaled: bool = False):
         r"""
-        Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.eigenvector_centrality` method in
+        Wraps the :func:`~pyntacle.algorithms.local_topology.LocalTopology.eigenvector` method in
         :class:`~pyntacle.algorithms.local_topology.LocalTopology` and adds it to the input :py:class:`~igraph.Graph`
-        object vertices, under the attribute name ``eigenvector_centrality``.
+        object vertices, under the attribute name ``eigenvector``.
 
-        .. note:: The metric can be added either to all nodes on the graph or to a subset of nodes. In the latter, nodes with no radiality reach assigned will still hold a ``eigenvector_centrality`` attribute, but it will be empty.
+        .. note:: The metric can be added either to all nodes on the graph or to a subset of nodes. In the latter, nodes with no radiality reach assigned will still hold a ``eigenvector`` attribute, but it will be empty.
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param str,list,None nodes: the vertex ``name`` attribute corresponding to node names. If :py:class:`None`, it adds the selected metric to all nodes in the graph. Otherwise, it can be either a string specifying a single node name or a list of strings, each one representing a node in the graph.
@@ -672,16 +672,16 @@ class Octopus:
             nodes = transform_nodes(nodes)
             sys.stdout.write(
                 "Calculating eigenvector centrality for nodes {} and storing in the vertex '{}' attribute.\n".format
-                (",".join(nodes), LocalAttributeEnum.eigenvector_centrality.name))
+                (",".join(nodes), LocalAttributeEnum.eigenvector.name))
 
         else:
             sys.stdout.write(
                 "Calculating eigenvector centrality for all nodes and storing in the vertex '{}' attribute.\n".format(
-                    LocalAttributeEnum.eigenvector_centrality.name))
+                    LocalAttributeEnum.eigenvector.name))
             nodes = graph.vs["name"]
 
-        AddAttributes.add_node_attribute(graph, LocalAttributeEnum.eigenvector_centrality.name,
-                                         LocalTopology.eigenvector_centrality(graph, nodes, scaled),
+        AddAttributes.add_node_attribute(graph, LocalAttributeEnum.eigenvector.name,
+                                         LocalTopology.eigenvector(graph, nodes, scaled),
                                          nodes)
 
     @staticmethod
@@ -692,7 +692,7 @@ class Octopus:
         :class:`~pyntacle.algorithms.local_topology.LocalTopology` and adds it to the input :py:class:`~igraph.Graph`
         object vertices, under the attribute name ``pagerank``.
 
-        .. note:: The metric can be added either to all nodes on the graph or to a subset of nodes. In the latter, nodes with no radiality reach assigned will still hold a ``eigenvector_centrality`` attribute, but it will be empty.
+        .. note:: The metric can be added either to all nodes on the graph or to a subset of nodes. In the latter, nodes with no radiality reach assigned will still hold a ``eigenvector`` attribute, but it will be empty.
 
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param str,list,None nodes: the vertex ``name`` attribute corresponding to node names. If :py:class:`None`, it adds the selected metric to all nodes in the graph. Otherwise, it can be either a string specifying a single node name or a list of strings, each one representing a node in the graph.

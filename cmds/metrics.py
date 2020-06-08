@@ -203,7 +203,7 @@ class Metrics:
                                                  LocalAttributeEnum.radiality.name: LocalTopology.radiality(graph=graph, nodes=nodes_list, cmode=implementation),
                                                  LocalAttributeEnum.radiality_reach.name: LocalTopology.radiality_reach(graph=graph, nodes=nodes_list, cmode=implementation),
                                                  LocalAttributeEnum.eccentricity.name: LocalTopology.eccentricity(graph=graph, nodes=nodes_list),
-                                                 LocalAttributeEnum.eigenvector_centrality.name : LocalTopology.eigenvector_centrality(graph=graph, nodes=nodes_list),
+                                                 LocalAttributeEnum.eigenvector.name : LocalTopology.eigenvector(graph=graph, nodes=nodes_list),
                                                  LocalAttributeEnum.pagerank.name: LocalTopology.pagerank(graph=graph, nodes=nodes_list, weights=weights, damping=self.args.damping_factor)})
 
             if self.args.nodes:

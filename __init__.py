@@ -9,4 +9,3 @@ from .config import *
 
 if cuda_avail:
     pass
-
