@@ -291,11 +291,11 @@ class App:
         parser = argparse.ArgumentParser(
             description="Computes group centrality metrics (defined in goo.gl/82Whxu) for a specific set of nodes "
                         "('gr-info') or perform the "
-                        "search of set of nodes that maximize key player metrics ('group-finder')\n\n"
+                        "search of set of nodes that maximize the key player metrics ('group-finder')\n\n"
                         "Subcommands:\n\n" + 100 * "-" + "\n" +
-                        "   gr-finder\t           Finds the optimal or the best set of size 'k' for a group centrality index (or indices) by means of either a "
-                        "\n\t\t\t   greedy optimization or a brute-force algorithm\n\n"
-                        "   gr-info\t           Computes all or a selected group-centrality metric for a selected subset of nodes\n" + 100 * "-",
+                        "   gr-finder\t           Finds the optimal or the best set of size 'k' for a given group centrality index by means of a "
+                        "\n\t\t\t   search algorithm\n\n"
+                        "   gr-info\t           Computes all or a selected group-centrality metric for a selected set of nodes\n" + 100 * "-",
             formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=100,
                                                                               max_help_position=100),
             usage=Fore.RED + Style.BRIGHT + "pyntacle groupcentrality"

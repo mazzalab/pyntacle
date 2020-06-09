@@ -1,11 +1,11 @@
 __author__ = u"Mauro Truglio, Tommaso Mazza"
-__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.2"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"09/06/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -27,8 +27,6 @@ __license__ = u"""
 
 from config import *
 from collections import OrderedDict
-from itertools import chain
-from igraph import Graph
 
 from cmds.cmds_utils.group_search_wrapper import InfoWrapper as kpw
 from cmds.cmds_utils.group_search_wrapper import GOWrapper as gow
@@ -37,7 +35,6 @@ from algorithms.keyplayer import KeyPlayer as kpp
 
 from io_stream.exporter import PyntacleExporter
 from cmds.cmds_utils.reporter import PyntacleReporter
-# from cmds.cmds_utils.plotter import PyntacleInkWrapper
 from tools.graph_utils import GraphUtils as gu
 from tools.enums import ReportEnum, CmodeEnum, KpnegEnum, KpposEnum
 from tools.add_attributes import AddAttributes
@@ -66,7 +63,7 @@ class KeyPlayer:
             cursor.daemon = True
             cursor.start()
 
-        if self.args.m_reach == None and self.args.type in ["pos", "all"]:
+        if self.args.m_reach is None and self.args.type in ["pos", "all"]:
             sys.stderr.write(u"m-reach distance must be provided for computing m-reach. Quitting\n")
             sys.exit(1)
 
@@ -98,7 +95,7 @@ class KeyPlayer:
 
             if not utils.nodes_in_graph(self.args.nodes):
                 sys.stderr.write(
-                    "One or more of the specified nodes {} is not present in the graph. Please check your spelling and the presence of empty spaces between node names. Quitting\n".format(self.args.nodes))
+                    "One or more of the specified nodes {} is not present in the graph. Please check the spelling and the presence of empty spaces within node names. Quitting\n".format(self.args.nodes))
                 sys.exit(1)
 
         if self.args.largest_component:
@@ -175,7 +172,7 @@ class KeyPlayer:
                 report_type = ReportEnum.KP_greedy
                 kp_runner = gow(graph=graph)
 
-                sys.stdout.write(u"Using greedy optimization algorithm for searching optimal key player set for the requested key player metrics\n")
+                sys.stdout.write(u"Using greedy optimization algorithm for searching the optimal key player set for the requested key player metrics\n")
                 sys.stdout.write("\n")
 
                 if self.args.type in (['F', 'neg', 'all']):
@@ -227,7 +224,6 @@ class KeyPlayer:
                     sys.stdout.write(
                         u"KP-NEG: Finding best set (or sets) of nodes of size {0} that holds the maximum F\n".format(
                             self.args.k_size))
-
 
                     initial_results[KpnegEnum.F.name] = kpp.F(graph)
                     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, threads=self.args.threads)

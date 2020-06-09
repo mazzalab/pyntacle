@@ -1,11 +1,11 @@
 __author__ = u"Mauro Truglio, Tommaso Mazza"
-__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.2"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"09/06/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t,mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -28,13 +28,11 @@ from config import *
 from tools.enums import CmodeEnum
 from algorithms.greedy_optimization import GreedyOptimization
 from algorithms.bruteforce_search import BruteforceSearch
-from tools.graph_utils import GraphUtils as gu
 from internal.timeit import timeit
 from tools.enums import KpposEnum, KpnegEnum, GroupCentralityEnum, GroupDistanceEnum
 from algorithms.keyplayer import KeyPlayer
-from algorithms.local_topology import LocalTopology #for group centrality info
+from algorithms.local_topology import LocalTopology
 from igraph import Graph
-
 
 
 class InfoWrapper:
@@ -212,7 +210,6 @@ class InfoWrapper:
         self.logger.info(u"Group centrality computation for {} completed, results are in the 'results' dictionary".format(gr_type.name))
 
 
-
 class GOWrapper:
     r"""
     Wrapper for the greedy optimization, to pass properly formatted data structures to the Pyntacle Command Line
@@ -224,15 +221,10 @@ class GOWrapper:
     def __init__(self, graph: Graph):
         """
         """
-        self.logger = log
-
         self.go = GreedyOptimization  #initialize an empty GreedyOptimization class
-
         # initialize graph utility class
         self.graph = graph
-
         self.logger = log
-
         self.results = {}  # dictionary that will store results
 
     def set_graph(self, graph: Graph):
@@ -278,7 +270,7 @@ class GOWrapper:
             raise TypeError(u"'kp_type' must be one of the KPPNEGchoices options available")
 
         go_results = self.go.fragmentation(graph=self.graph, k=k, metric=kp_type, max_distance=max_distance, seed=seed, cmode=cmode)
-        self.results[kp_type.name] = [go_results[0], go_results[1]]
+        self.results[kp_type.name] = [go_results[0][0], go_results[1]]
 
     @timeit
     def run_reachability(self, k:int, kp_type:KpposEnum, m=None, max_distance=None, seed=None, cmode=CmodeEnum.igraph):
@@ -305,7 +297,7 @@ class GOWrapper:
 
         go_results = self.go.reachability(graph=self.graph, k=k, metric=kp_type, max_distance=max_distance, seed=seed, m=m, cmode=cmode)
 
-        self.results[kp_type.name] = [go_results[0], go_results[1]]
+        self.results[kp_type.name] = [go_results[0][0], go_results[1]]
 
     @timeit
     def run_groupcentrality(self, k:int, gr_type:GroupCentralityEnum, seed=None, cmode=CmodeEnum.igraph, distance=GroupDistanceEnum.minimum):
@@ -330,9 +322,10 @@ class GOWrapper:
         go_results = self.go.group_centrality(graph=self.graph, k=k, metric=gr_type, seed=seed, cmode=cmode)
 
         if gr_type == GroupCentralityEnum.group_closeness:
-            self.results["_".join([gr_type.name, distance.name])] = [go_results[0], go_results[1]]
+            self.results["_".join([gr_type.name, distance.name])] = [go_results[0][0], go_results[1]]
         else:
-            self.results[gr_type.name] = [go_results[0], go_results[1]]
+            self.results[gr_type.name] = [go_results[0][0], go_results[1]]
+
 
 class BFWrapper:
     r"""
