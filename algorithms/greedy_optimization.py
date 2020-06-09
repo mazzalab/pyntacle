@@ -5,7 +5,7 @@ __version__ = u"1.2"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"07/06/2020"
+__date__ = u"08/06/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -135,9 +135,7 @@ class GreedyOptimization:
         if metric == KpnegEnum.F or metric == KpnegEnum.dF:
             if max_distance is not None and not isinstance(max_distance, int) and max_distance > 1 and max_distance <= graph.vcount():
                 raise ValueError(u"'max_distance' must be an integer greater than one and lesser than the total number of nodes")
-            # TODO CHECK SPEED ON NODE NAME SORTING (STRING SORT) #######
             node_names = graph.vs()["name"]
-            node_names.sort() #sort node names lexicographically
             random.shuffle(node_names)
             S_names = node_names[:k]
 
@@ -168,7 +166,7 @@ class GreedyOptimization:
                     metric.name.replace("_", " "),
                     fragmentation_score))
 
-            return final, round(fragmentation_score, 5)
+            return [final], round(fragmentation_score, 5)
 
         else:
             raise KeyError(
@@ -218,7 +216,6 @@ class GreedyOptimization:
             else:
 
                 node_names = graph.vs()["name"]
-                node_names.sort()
                 random.shuffle(node_names)
                 S_names = node_names[:k]
                 S = gu(graph=graph).get_node_indices(S_names)
@@ -252,7 +249,7 @@ class GreedyOptimization:
                         metric.name.replace("_", " "),
                         reachability_score))
 
-                return final, round(reachability_score, 5)
+                return [final], round(reachability_score, 5)
         else:
             raise KeyError(
                 u"The parameter 'metric' is not valid. It must be one of the following: {}".format(list(KpposEnum)))
@@ -302,7 +299,6 @@ class GreedyOptimization:
                 u"The argument 'metric' is not valid. It must be one of the following: {}".format(list(GroupCentralityEnum)))
 
         node_names = graph.vs()["name"]
-        node_names.sort()
         random.shuffle(node_names)
         S_names = node_names[:k]
         S = gu(graph=graph).get_node_indices(S_names)
@@ -323,4 +319,4 @@ class GreedyOptimization:
                 metrics_distance_str,
                 group_score))
 
-        return final, round(group_score, 5)
+        return [final], round(group_score, 5)

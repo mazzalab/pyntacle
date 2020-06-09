@@ -416,5 +416,5 @@ class GroupCentrality():
             cursor.stop()
 
         sys.stdout.write(section_end)
-        sys.stdout.write(u"Pyntacle groupcentrality completed successfully\n")
+        sys.stdout.write(u"Pyntacle group-centrality completed successfully\n")
         sys.exit(0)

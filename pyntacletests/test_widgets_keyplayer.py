@@ -24,16 +24,16 @@ __license__ = u"""
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
   """
 
+import glob
+import os
+import sys
 import unittest
-import os, sys, glob
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 current_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 
 from cmds.keyplayer import KeyPlayer as keyplayer_command
-from tools.enums import *
 import re
-from pyntacletests import getmd5
 from multiprocessing import cpu_count
 
 n_cpus = cpu_count() - 1
