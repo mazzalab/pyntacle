@@ -36,7 +36,7 @@ html_template = u"""
   <meta name="author" content="SitePoint">
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
   <link rel="stylesheet" href="http://pyntacle.css-mendel.it/css/viewer/lobipanel.css">
-  <link rel="stylesheet" href=".pyntacleink_PLACEHOLDER/index.css">
+  <link rel="stylesheet" href=".Pyntacle-Ink_PLACEHOLDER/index.css">
 
 
 <script src="http://pyntacle.css-mendel.it/js/sigma/stopExecutionOnTimeout.js"></script>

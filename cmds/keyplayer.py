@@ -226,7 +226,7 @@ class KeyPlayer:
                             self.args.k_size))
 
                     initial_results[KpnegEnum.F.name] = kpp.F(graph)
-                    kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, threads=self.args.threads)
+                    kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, nprocs=self.args.nprocs)
                     sys.stdout.write("\n")
 
                 if self.args.type in (['dF', 'neg', 'all']):
@@ -237,7 +237,7 @@ class KeyPlayer:
                     initial_results[KpnegEnum.dF.name] = kpp.dF(graph, cmode=CmodeEnum.igraph)
                     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
                                                 max_distance=self.args.max_distance,
-                                                cmode=CmodeEnum.igraph, threads=self.args.threads)
+                                                cmode=CmodeEnum.igraph, nprocs=self.args.nprocs)
 
                     sys.stdout.write("\n")
 
@@ -247,7 +247,7 @@ class KeyPlayer:
                             self.args.k_size))
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.dR,
                                                max_distance=self.args.max_distance,
-                                               cmode=CmodeEnum.igraph, threads=self.args.threads)
+                                               cmode=CmodeEnum.igraph, nprocs=self.args.nprocs)
 
                     sys.stdout.write(sep_line)
                     
@@ -258,7 +258,7 @@ class KeyPlayer:
 
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.mreach, m=self.args.m_reach,
                                                max_distance=self.args.max_distance,
-                                               cmode=CmodeEnum.igraph, threads=self.args.threads)
+                                               cmode=CmodeEnum.igraph, nprocs=self.args.nprocs)
 
                     sys.stdout.write("\n")
 
@@ -390,12 +390,12 @@ class KeyPlayer:
 
         if not self.args.no_plot and graph.vcount() < 5000:
             suffix = "_".join(graph["name"])
-            sys.stdout.write(u"Plotting network and run results in {} directory with PyntacleInk\n".format(self.args.directory))
+            sys.stdout.write(u"Plotting network and run results in {} directory with Pyntacle-Ink\n".format(self.args.directory))
             r.pyntacleink_report(report_dir=self.args.directory, report_dict=results, suffix=suffix)
 
         elif graph.vcount() >= 5000:
             sys.stdout.write(
-                u"The graph has too many nodes ({}). PyntacleInk allows plotting for network with N < 5000. No visual representation will be produced\n".format(
+                u"The graph has too many nodes ({}). Pyntacle-Ink allows plotting for network with N < 5000. No visual representation will be produced\n".format(
                     graph.vcount()))
         else:
             sys.stdout.write(pyntacleink_skip_msg)

@@ -351,12 +351,12 @@ class Set:
 
             suffix = "_".join(["_".join(graph1["name"]), "Set", "_".join(graph2["name"])])
 
-            sys.stdout.write(u"Plotting {} among the two graph in {} directory with PyntacleInk\n".format(self.args.which, self.args.directory))
+            sys.stdout.write(u"Plotting {} among the two graph in {} directory with Pyntacle-Ink\n".format(self.args.which, self.args.directory))
             reporter_both_graphs.pyntacleink_report(report_dir=self.args.directory, report_dict=report_dict, suffix=suffix)
 
         elif total_nodes >= 5000:
             sys.stdout.write(
-                u"The total sum of the two graph nodes ({}). PyntacleInk allows plotting for network with N < 5000. No visual representation will be produced\n".format(
+                u"The total sum of the two graph nodes ({}). Pyntacle-Ink allows plotting for network with N < 5000. No visual representation will be produced\n".format(
                     total_nodes))
         else:
             sys.stdout.write(pyntacleink_skip_msg)

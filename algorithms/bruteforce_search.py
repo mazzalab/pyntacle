@@ -38,8 +38,9 @@ import multiprocessing as mp
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import math
 
+
 def crunch_fragmentation_combinations(graph: Graph, node_names_list: list, kpp_type: KpnegEnum,
-                                        max_distance: int, cmode: CmodeEnum) -> dict:
+                                      max_distance: int, cmode: CmodeEnum) -> dict:
     """
     Internal method to deal with the processing of all the node set combinations
     """
@@ -50,7 +51,7 @@ def crunch_fragmentation_combinations(graph: Graph, node_names_list: list, kpp_t
         temp_graph.delete_vertices(node_names)
 
         if temp_graph.ecount() == 0:
-            kppset_score_pairs_partial[node_names] = 1 #maximum fragmentation reached
+            kppset_score_pairs_partial[node_names] = 1  # maximum fragmentation reached
             return kppset_score_pairs_partial
 
         elif kpp_type == KpnegEnum.F:
@@ -66,8 +67,9 @@ def crunch_fragmentation_combinations(graph: Graph, node_names_list: list, kpp_t
 
     return kppset_score_pairs_partial
 
+
 def crunch_reachability_combinations(graph: Graph, node_names_list: list, kp_type: KpposEnum, max_distance: int,
-                                       m: int, cmode: CmodeEnum) -> dict:
+                                     m: int, cmode: CmodeEnum) -> dict:
     kppset_score_pairs = {}
 
     for node_names in node_names_list:
@@ -94,9 +96,10 @@ def crunch_reachability_combinations(graph: Graph, node_names_list: list, kp_typ
         kppset_score_pairs[node_names] = reachability_score
     return kppset_score_pairs
 
+
 def crunch_groupcentrality_combinations(graph: Graph, node_names_list: list, np_counts: np.ndarray,
-                                          np_paths: np.ndarray, gc_enum: GroupCentralityEnum,
-                                          distance_type: GroupDistanceEnum, cmode: CmodeEnum) -> dict:
+                                        np_paths: np.ndarray, gc_enum: GroupCentralityEnum,
+                                        distance_type: GroupDistanceEnum, cmode: CmodeEnum) -> dict:
     score_pairs_partial = {}
 
     for node_names in node_names_list:
@@ -132,8 +135,7 @@ class BruteforceSearch:
     @staticmethod
     @bruteforce_search_initializer
     def fragmentation(graph: Graph, k: int, metric: KpnegEnum, max_distance: int = None,
-                      cmode: CmodeEnum = CmodeEnum.igraph, parallel: bool = False, ncores: int = None) -> (
-            list, float):
+                      cmode: CmodeEnum = CmodeEnum.igraph, nprocs: int = None) -> (list, float):
         r"""
         It searches and finds the *key player* (*kp*) set, or sets, of a predefined size that maximally disrupts the graph.
         It generates all the possible kp-sets and calculates the fragmentation score of the residual graph, after
@@ -152,12 +154,11 @@ class BruteforceSearch:
         :param KpnegEnum kp_type: any available option of the enumerators :class:`~pyntacle.tools.enums.KpnegEnum`
         :param int,None max_distance: optional, define a maximum shortest path after which two nodes will be considered disconnected. Default is  :py:class:`~None` (no maximum distance is set)
         :param cmodeEnum cmode: the implementation that will be used to compute the shortest paths. See :class:`~stools.enums.CmodeEnum`. Default is the igraph brute-force shortest path search.
-        :param bool parallel: whether to use multicore processors to run the algorithm iterations in parallel
-        :param int ncores: Positive integer specifying the number of cores used to perform parallel computation. If :type:`None` (default) the number of cores will be set to the maximum number of available cores -1.
+        :param int nprocs: Positive integer specifying the number of cores used to perform parallel computation. If :type:`None` (default) the number of cores will be set to the maximum number of available cores -1.
 
         :return tuple: a tuple of two elements containing in the first position a list of all kp-sets with maximum fragmentation, and the maximum achieved score in the second element.
 
-        :raises TypeError: if ``ncores`` is not a positive integer greater than one
+        :raises TypeError: if ``nprocs`` is not a positive integer greater than 1
         :raises KeyError: when a ``kp_type`` is not one listed in  :func:`~pyntacle.tools.enums.KpnegEnum`
         """
 
@@ -165,32 +166,35 @@ class BruteforceSearch:
         """: type: dic{(), float}"""
         node_names = graph.vs["name"]
 
-        if max_distance is not None and (not isinstance(max_distance, int) or max_distance <= 1 or max_distance > graph.vcount()):
+        if max_distance is not None and (
+                not isinstance(max_distance, int) or max_distance <= 1 or max_distance > graph.vcount()):
             raise ValueError(
                 u"'max_distance' must be an integer value between 1 and the total number of nodes")
-        if parallel and ncores is None:
-            ncores = mp.cpu_count() - 1
-        elif parallel and (not isinstance(ncores, int) or ncores < 1):
-            raise TypeError(u"'ncores' must be a positive integer value")
+        if not nprocs:
+            nprocs = mp.cpu_count() - 1
+        elif not isinstance(nprocs, int) or nprocs < 1:
+            raise TypeError(u"'nprocs' must be a positive integer value")
 
         allS = list(itertools.combinations(node_names, k))
 
-        if graph.vcount() - k == 1: #in this case, only a node isolate exists, hence the F and dF already reach their maximum value (1)
-            sys.stdout.write(u"The `k` size ({}) is such that the removal of any set always returns a node isolate. Returning all the node sets and the maximum {} value (1)\n".format(k, metric.name))
+        if graph.vcount() - k == 1:  # in this case, only a node isolate exists, hence the F and dF already reach their maximum value (1)
+            sys.stdout.write(
+                u"The `k` size ({}) is such that the removal of any set always returns a node isolate. Returning all the node sets and the maximum {} value (1)\n".format(
+                    k, metric.name))
             return allS, 1
 
         # Generate all combinations of size k
 
         sys.stdout.write(u"Evaluating {} possible solutions\n".format(len(allS)))
 
-        if parallel:
-            sys.stdout.write(u"Brute-force search of the best kp-set of size {} using {} cores\n".format(k, ncores))
+        if nprocs > 1:
+            sys.stdout.write(u"Brute-force search of the best kp-set of size {} using {} cores\n".format(k, nprocs))
 
             # Create chunks
-            chunklen = math.ceil(len(allS) / ncores)
-            chunks = [allS[i * chunklen:(i + 1) * chunklen] for i in range(ncores)]
+            chunklen = math.ceil(len(allS) / nprocs)
+            chunks = [allS[i * chunklen:(i + 1) * chunklen] for i in range(nprocs)]
 
-            with ProcessPoolExecutor(max_workers=ncores) as executor:
+            with ProcessPoolExecutor(max_workers=nprocs) as executor:
                 future_dict = {executor.submit(crunch_fragmentation_combinations, graph, chunk, metric,
                                                max_distance, cmode): chunk for chunk in chunks}
                 for future in as_completed(future_dict):
@@ -203,13 +207,14 @@ class BruteforceSearch:
                         # print('%r page is %d bytes' % (chunk, len(data)))
                         kpset_score_pairs = {**kpset_score_pairs, **partial_result}
         else:
+            # Do not paralellize iterations through the use of multi-processes
             sys.stdout.write(u"Brute-force search of the best kp-set of size {}\n".format(k))
 
             chunks = allS
             partial_result = crunch_fragmentation_combinations(graph=graph, node_names_list=chunks,
-                                                                                  kpp_type=metric,
-                                                                                  max_distance=max_distance,
-                                                                                  cmode=cmode)
+                                                               kpp_type=metric,
+                                                               max_distance=max_distance,
+                                                               cmode=cmode)
 
             kpset_score_pairs = {**kpset_score_pairs, **partial_result}
 
@@ -229,8 +234,8 @@ class BruteforceSearch:
 
     @staticmethod
     @bruteforce_search_initializer
-    def reachability(graph, k, metric: KpposEnum, max_distance=None, m=None, cmode=CmodeEnum.igraph,
-                     parallel=False, ncores=None) -> (list, float):
+    def reachability(graph, k, metric: KpposEnum, max_distance=None, m=None, cmode=CmodeEnum.igraph, nprocs=None) -> (
+    list, float):
         r"""
         It searches and finds the *key player* (*kp*) set, or sets, of a predefined size that best reaches all other nodes in the graph.
         It generates all the possible kp-sets and calculates their reachability scores.
@@ -246,12 +251,11 @@ class BruteforceSearch:
         :param int,None max_distance: optional, define a maximum shortest path after which two nodes will be considered disconnected. Default is  :py:class:`~None` (no maximum distance is set)
         :param int m: The number of steps of the m-reach algorithm. Required if the the required metrics is the :func:`~tools.enums.KPPosEnum.mreach`
         :param cmodeEnum cmode: the implementation that will be used to compute the shortest paths. See :class:`~pyntacle.tools.enums.CmodeEnum`. Default is the igraph brute-force shortest path search.
-        :param bool parallel: whether to use multicore processors to run the algorithm iterations in parallel.
-        :param int ncores: Positive integer specifying the number of cores used to perform parallel computation. If :type:`None` (default) the number of cores will be set to the maximum number of available cores -1.
+        :param int nprocs: Positive integer specifying the number of processes to be spawned. If :type:`None` (default) the number of cores will be set to the maximum number of available cores -1.
 
         :return tuple: a tuple of two elements containing in the first position a list of all kp-sets with maximum reachability score, and the maximum achieved score for reschability in the second element.
 
-        :raises TypeError: if ``ncores`` is not a positive integer greater than one
+        :raises TypeError: if ``nprocs`` is not a positive integer greater than one
         :raises KeyError: when a ``kp_type`` is not one listed in  :func:`~pyntacle.tools.enums.KpposEnum`
         """
 
@@ -259,14 +263,14 @@ class BruteforceSearch:
         """: type: dic{(), float}"""
         node_names = graph.vs["name"]
 
-
-        if max_distance is not None and (not isinstance(max_distance, int) or max_distance <= 1 or max_distance > graph.vcount()):
+        if max_distance is not None and (
+                not isinstance(max_distance, int) or max_distance <= 1 or max_distance > graph.vcount()):
             raise ValueError(
                 u"'max_distance' must be an integer value between 1 and the total number of nodes")
-        if parallel and ncores is None:
-            ncores = mp.cpu_count() - 1
-        elif parallel and (not isinstance(ncores, int) or ncores < 1):
-            raise TypeError(u"'ncores' must be a positive integer value")
+        if not nprocs:
+            nprocs = mp.cpu_count() - 1
+        elif not isinstance(nprocs, int) or nprocs < 1:
+            raise TypeError(u"'nprocs' must be a positive integer value")
         if metric == KpposEnum.mreach and m is None:
             raise WrongArgumentError(u"The parameter 'm' must be specified")
         if metric == KpposEnum.mreach and isinstance(m, int) and m <= 0:
@@ -276,14 +280,14 @@ class BruteforceSearch:
         allS = list(itertools.combinations(node_names, k))
         sys.stdout.write(u"Evaluating {} possible solutions\n".format(len(allS)))
 
-        if parallel:
-            sys.stdout.write(u"Brute-force search of the best kp-set of size {} using {} cores\n".format(k, ncores))
+        if nprocs > 1:
+            sys.stdout.write(u"Brute-force search of the best kp-set of size {} using {} cores\n".format(k, nprocs))
 
             # Create chunks
-            chunklen = math.ceil(len(allS) / ncores)
-            chunks = [allS[i * chunklen:(i + 1) * chunklen] for i in range(ncores)]
+            chunklen = math.ceil(len(allS) / nprocs)
+            chunks = [allS[i * chunklen:(i + 1) * chunklen] for i in range(nprocs)]
 
-            with ProcessPoolExecutor(max_workers=ncores) as executor:
+            with ProcessPoolExecutor(max_workers=nprocs) as executor:
                 future_dict = {executor.submit(crunch_reachability_combinations, graph, chunk, metric,
                                                max_distance, m, cmode): chunk for chunk in chunks}
                 for future in as_completed(future_dict):
@@ -295,14 +299,15 @@ class BruteforceSearch:
                     else:
                         kpset_score_pairs = {**kpset_score_pairs, **partial_result}
         else:
+            # Do not paralellize iterations through the use of multi-processes
             sys.stdout.write(u"Brute-force search of the best kp-set of size {}\n".format(k))
 
             chunks = allS
             partial_result = crunch_reachability_combinations(graph=graph, node_names_list=chunks,
-                                                                                 kp_type=metric,
-                                                                                 max_distance=max_distance,
-                                                                                 m=m,
-                                                                                 cmode=cmode)
+                                                              kp_type=metric,
+                                                              max_distance=max_distance,
+                                                              m=m,
+                                                              cmode=cmode)
             kpset_score_pairs = {**kpset_score_pairs, **partial_result}
 
         _group_score = max(kpset_score_pairs.values())
@@ -311,23 +316,23 @@ class BruteforceSearch:
 
         sys.stdout.write(
             u"Best group{}: {}\n Group{} size = {}\n Metric = {}{}\n Score = {}\n".format("s" if len(final) > 1 else "",
-                                                                                         "{" + str(final).replace("'",
-                                                                                                                  "")[
-                                                                                               1:-1] + "}",
-                                                                                         "s" if len(final) > 1 else "",
-                                                                                         k,
-                                                                                         metric.name.replace("_",
-                                                                                                               " "),
-                                                                                         ", m=" + str(
-                                                                                             m) if metric == KpposEnum.mreach else "",
-                                                                                         _group_score))
+                                                                                          "{" + str(final).replace("'",
+                                                                                                                   "")[
+                                                                                                1:-1] + "}",
+                                                                                          "s" if len(final) > 1 else "",
+                                                                                          k,
+                                                                                          metric.name.replace("_",
+                                                                                                              " "),
+                                                                                          ", m=" + str(
+                                                                                              m) if metric == KpposEnum.mreach else "",
+                                                                                          _group_score))
         return final, _group_score
 
     @staticmethod
     @bruteforce_search_initializer
     def group_centrality(graph: Graph, k: int, metric: GroupCentralityEnum, cmode: CmodeEnum = CmodeEnum.igraph,
-                         distance_type: GroupDistanceEnum = GroupDistanceEnum.minimum,
-                         parallel: bool = False, ncores: int = None) -> (list, float):
+                         distance_type: GroupDistanceEnum = GroupDistanceEnum.minimum, nprocs: int = None) -> (
+    list, float):
         r"""
         It searches and finds the sets of nodes of a predefined size that exhibit the maximum group centrality value.
         It generates all the possible sets of nodes and calculates their group centrality value. Available centrality
@@ -343,22 +348,21 @@ class BruteforceSearch:
         :param GroupCentralityEnum metric: The centrality algorithm to be computed. It can be any value of the enumerator :class:`~pyntacle.tools.enums.GroupCentralityEnum`
         :param GroupDistanceEnum distance_type: The definition of distance between any non-group and group nodes. It can be any value of the enumerator :class:`~pyntacle.tools.enums.GroupDistanceEnum`. By default, the minimum least distance :math:`D` between the group :math:`k` and the rest of the graph :math:`N-k` is used
         :param cmodeEnum cmode: the implementation that will be used to compute the shortest paths. See :class:`~pyntacle.tools.enums.CmodeEnum`. Default is the igraph brute-force shortest path search.
-        :param bool parallel: whether to use multicore processors to run the algorithm iterations in parallel
-        :param int ncores: Positive integer specifying the number of cores used to perform parallel computation. If :type:`None` (default) the number of cores will be set to the maximum number of available cores -1.
+        :param int nprocs: Positive integer specifying the number of cores used to perform parallel computation. If :type:`None` (default) the number of cores will be set to the maximum number of available cores -1.
 
         :return tuple: a tuple of two elements containing in the first position a list of node set(s) with maximum group centrality score, and the maximum achieved score for reschability in the second element.
 
-        :raise TypeError: if ``ncores`` is not a positive integer greater than one
+        :raise TypeError: if ``nprocs`` is not a positive integer greater than one
         """
 
         score_pairs = {}
         """: type: dic{(), float}"""
         node_names = graph.vs["name"]
 
-        if parallel and ncores is None:
-            ncores = mp.cpu_count() - 1
-        elif parallel and (not isinstance(ncores, int) or ncores < 1):
-            raise TypeError(u"'ncores' must be a positive integer value")
+        if not nprocs:
+            nprocs = mp.cpu_count() - 1
+        elif not isinstance(nprocs, int) or nprocs < 1:
+            raise TypeError(u"'nprocs' must be a positive integer value")
 
         # Generate all combinations of size k
         allS = list(itertools.combinations(node_names, k))
@@ -368,16 +372,18 @@ class BruteforceSearch:
         np_counts = sp.get_shortestpath_count(graph, nodes=None, cmode=cmode)
         np_paths = sp.get_shortestpaths(graph, nodes=None, cmode=cmode)
 
-        if parallel:
-            sys.stdout.write(u"Brute-force search of the best group of nodes of size {} using {} cores\n".format(k, ncores))
+        if nprocs > 1:
+            sys.stdout.write(
+                u"Brute-force search of the best group of nodes of size {} using {} cores\n".format(k, nprocs))
 
             # Create chunks
-            chunklen = math.ceil(len(allS) / ncores)
-            chunks = [allS[i * chunklen:(i + 1) * chunklen] for i in range(ncores)]
+            chunklen = math.ceil(len(allS) / nprocs)
+            chunks = [allS[i * chunklen:(i + 1) * chunklen] for i in range(nprocs)]
 
-            with ProcessPoolExecutor(max_workers=ncores) as executor:
+            with ProcessPoolExecutor(max_workers=nprocs) as executor:
                 future_dict = {executor.submit(crunch_groupcentrality_combinations, graph, chunk,
-                                               np_counts, np_paths, metric, distance_type, cmode): chunk for chunk in chunks}
+                                               np_counts, np_paths, metric, distance_type, cmode): chunk for chunk in
+                               chunks}
                 for future in as_completed(future_dict):
                     chunk = future_dict[future]
                     try:
@@ -388,14 +394,15 @@ class BruteforceSearch:
                         score_pairs = {**score_pairs, **partial_result}
 
         else:
+            # Do not paralellize iterations through the use of multi-processes
             sys.stdout.write(u"Brute-force search of the best group of nodes of size {}\n".format(k))
 
             chunks = allS
             partial_result = crunch_groupcentrality_combinations(graph=graph, node_names_list=chunks,
-                                                                                    np_counts=np_counts,
-                                                                                    np_paths=np_paths,
-                                                                                    gc_enum=metric, distance_type=distance_type,
-                                                                                    cmode=cmode)
+                                                                 np_counts=np_counts,
+                                                                 np_paths=np_paths,
+                                                                 gc_enum=metric, distance_type=distance_type,
+                                                                 cmode=cmode)
             score_pairs = {**score_pairs, **partial_result}
 
         _group_score = max(score_pairs.values())  # take the maximum value
@@ -408,11 +415,11 @@ class BruteforceSearch:
             else metric.name.replace("_", " ") + " - Distance function = " + distance_type.name
         sys.stdout.write(
             u"Best group{}: {}\n Group{} size = {}\n Metric = {}\n Score = {}\n".format("s" if len(final) > 1 else "",
-                                                                                       "{" + str(final).replace("'",
-                                                                                                                "")[
-                                                                                             1:-1] + "}",
-                                                                                       "s" if len(final) > 1 else "",
-                                                                                       k,
-                                                                                       metrics_distance_str,
-                                                                                       _group_score))
+                                                                                        "{" + str(final).replace("'",
+                                                                                                                 "")[
+                                                                                              1:-1] + "}",
+                                                                                        "s" if len(final) > 1 else "",
+                                                                                        k,
+                                                                                        metrics_distance_str,
+                                                                                        _group_score))
         return final, _group_score

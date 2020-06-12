@@ -1203,7 +1203,7 @@ class Octopus:
     # Brute-force optimization
     @staticmethod
     @check_graph_consistency
-    def BF_F(graph: Graph, k: int, max_distance: int or None = None, threads: int or None = None):
+    def BF_F(graph: Graph, k: int, max_distance: int or None = None, nprocs: int or None = None):
         r"""
         Performs a brute-force search on the input graph to search the best *key player* (kp) set (or sets) of nodes of size :math:`k` for the
         *fragmentation* (*F*) index. It does so by wrapping the :func:`~pyntacle.algorithms.bruteforce_search.BruteforceSearch.fragmentation`
@@ -1221,10 +1221,10 @@ class Octopus:
 
         kpobj = bfw(graph=graph)
 
-        if threads is None:
-            threads = n_cpus
+        if not nprocs:
+            nprocs = n_cpus
 
-        kpobj.run_fragmentation(k, KpnegEnum.F, max_distance=max_distance, threads=threads)
+        kpobj.run_fragmentation(k, KpnegEnum.F, max_distance=max_distance, nprocs=nprocs)
 
         kp_name = KpnegEnum.F.name + '_bruteforce'
         sys.stdout.write(
@@ -1237,7 +1237,7 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def BF_dF(graph: Graph, k: int, max_distance: int or None = None, threads: int or None = None):
+    def BF_dF(graph: Graph, k: int, max_distance: int or None = None, nprocs: int or None = None):
         r"""
         Performs a brute-force search on the input graph to search the best *key player* (kp) set (or sets) of nodes of size :math:`k` for the
         *distance-based fragmentation* (*dF*) index. It does so by wrapping the :func:`~pyntacle.algorithms.bruteforce_search.BruteforceSearch.fragmentation`
@@ -1253,21 +1253,21 @@ class Octopus:
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param int k: the size of the kp-set. Must be a positive integer.
         :param int,None max_distance: The maximum shortest path length over which two nodes are considered unreachable. Default is :py:class:`None` (distances are preserved).
-        :param int, None threads: the number of threads that will be used to parallel the brute-force search. If :py:class:`None` (default) the maximum number of cores -1 of the machine will be used. Set this argument to ``1`` to disable multi threading
+        :param int, None nprocs: the number of processes that will be used to execute the brute-force search in parallel. If :py:class:`None` (default) the maximum number of cores -1 of the machine will be used. Set this argument to ``1`` to disable multi threading
         """
 
         cmode = get_cmode(graph)
         kpobj = bfw(graph=graph)
 
-        if threads is None:
-            threads = n_cpus
+        if not nprocs:
+            nprocs = n_cpus
 
         kp_name = KpnegEnum.dF.name + '_bruteforce'
         sys.stdout.write(
             "Finding the best node set(s) of size {} for fragmentation index {} using a brute-force search and storing the set(s) and its value in the '{}' attribute.\n".format(
                 k, KpnegEnum.dF.name, kp_name))
 
-        kpobj.run_fragmentation(k, KpnegEnum.dF, max_distance=max_distance, cmode=cmode, threads=threads)
+        kpobj.run_fragmentation(k, KpnegEnum.dF, max_distance=max_distance, cmode=cmode, nprocs=nprocs)
 
         results_dict = kpobj.get_results()
         add_gc_attributes(graph, kp_name,
@@ -1276,7 +1276,7 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def BF_dR(graph: Graph, k: int, max_distance: int or None = None,  threads: int or None = None):
+    def BF_dR(graph: Graph, k: int, max_distance: int or None = None,  nprocs: int or None = None):
         r"""
         Performs a brute-force search on the input graph to search the best *key player* (kp) set (or sets) of nodes of size :math:`k` for the
         *distance-weighted reach* (*dR*) index. It does so by wrapping the :func:`~pyntacle.algorithms.bruteforce_search.BruteforceSearch.reachability`
@@ -1291,20 +1291,20 @@ class Octopus:
         :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param int k: the size of the kp-set. Must be a positive integer.
         :param int,None max_distance: The maximum shortest path length over which two nodes are considered unreachable. Default is :py:class:`None` (distances are preserved).
-        :param int, None threads: the number of threads that will be used to parallel the brute-force search. If :py:class:`None` (default) the maximum number of cores -1 of the machine will be used. Set this argument to ``1`` to disable multi threading
+        :param int, None nprocs: the number of processes that will be used to execute the brute-force search in parallel. If :py:class:`None` (default) the maximum number of cores -1 of the machine will be used. Set this argument to ``1`` to disable multi threading
         """
         cmode = get_cmode(graph)
         kpobj = bfw(graph=graph)
 
-        if threads is None:
-            threads = n_cpus
+        if not nprocs:
+            nprocs = n_cpus
 
         kp_name = KpposEnum.dR.name + '_bruteforce'
         sys.stdout.write(
             "Finding the best node set(s) of size {} for reachability index {} using a brute-force search and storing the set(s) and its value in the '{}' attribute.\n".format(
                 k, KpposEnum.dR.name, kp_name))
 
-        kpobj.run_reachability(k, KpposEnum.dR, max_distance=max_distance, cmode=cmode, threads=threads)
+        kpobj.run_reachability(k, KpposEnum.dR, max_distance=max_distance, cmode=cmode, nprocs=nprocs)
         results_dict = kpobj.get_results()
         add_gc_attributes(graph, kp_name,
                          {tuple(tuple(sorted(x)) for x in results_dict[KpposEnum.dR.name][0]):
@@ -1312,7 +1312,7 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def BF_mreach(graph: Graph, k: int, m: int or None = None, max_distance: int or None = None, threads: int or None = None):
+    def BF_mreach(graph: Graph, k: int, m: int or None = None, max_distance: int or None = None, nprocs: int or None = None):
         r"""
         Performs a brute-force search on the input graph to search the best *key player* (kp) set (or sets)  of nodes of size :math:`k` for the
         *m-reach* index. It does so by wrapping the :func:`~pyntacle.algorithms.bruteforce_search.BruteforceSearch.reachability`
@@ -1327,19 +1327,19 @@ class Octopus:
         :param int k: the size of the kp-set. Must be a positive integer.
         :param int m: The number of steps of the m-reach algorithm.
         :param int,None max_distance: The maximum shortest path length over which two nodes are considered unreachable. Default is :py:class:`None` (distances are preserved).
-        :param int, None threads: the number of threads that will be used to parallel the brute-force search. If :py:class:`None` (default) the maximum number of cores -1 of the machine will be used. Set this argument to ``1`` to disable multi threading
+        :param int, None nprocs: the number of processes that will be used to execute the brute-force search in parallel. If :py:class:`None` (default) the maximum number of cores -1 of the machine will be used. Set this argument to ``1`` to disable multi threading
         """
         cmode = get_cmode(graph)
         kpobj = bfw(graph=graph)
 
-        if threads is None:
-            threads = n_cpus
+        if not nprocs:
+            nprocs = n_cpus
 
         kp_name = KpposEnum.mreach.name + '_{}_bruteforce'.format(str(m))
         sys.stdout.write(
             "Finding the best node set(s) of size {} for reachability index m-reach with a maximum distance of {} using a brute-force search and storing the set(s) and its value in the '{}' attribute.\n".format(
                 k, m, kp_name))
-        kpobj.run_reachability(k, KpposEnum.mreach, max_distance=max_distance, m=m, cmode=cmode, threads=threads)
+        kpobj.run_reachability(k, KpposEnum.mreach, max_distance=max_distance, m=m, cmode=cmode, nprocs=nprocs)
         results_dict = kpobj.get_results()
         add_gc_attributes(graph, kp_name,
                          {tuple(tuple(sorted(x)) for x in results_dict[KpposEnum.mreach.name][0]):
@@ -1347,7 +1347,7 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def BF_group_degree(graph: Graph, k: int, threads: int or None = None):
+    def BF_group_degree(graph: Graph, k: int, nprocs: int or None = None):
         r"""
         Performs a brute-force search on the input graph to search the best node set (or sets) of size :math:`k` for the
         *group degree* index. It does so by wrapping the :func:`~pyntacle.algorithms.bruteforce_search.BruteforceSearch.group_centrality`
@@ -1357,19 +1357,19 @@ class Octopus:
 
         :param graph: igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param k: the size of the node set. Must be a positive integer.
-        :param int, None threads: the number of threads that will be used to parallel the brute-force search. If :py:class:`None` (default) the maximum number of cores -1 of the machine will be used. Set this argument to ``1`` to disable multi threading
+        :param int, None nprocs: the number of processes that will be used to execute the brute-force search in parallel. If :py:class:`None` (default) the maximum number of cores -1 of the machine will be used. Set this argument to ``1`` to disable multi threading
         """
 
         kpobj = bfw(graph=graph)
 
-        if threads is None:
-            threads = n_cpus
+        if nprocs is None:
+            nprocs = n_cpus
 
         gc_name = GroupCentralityEnum.group_degree.name + '_bruteforce'
         sys.stdout.write(
             "Finding the best node set(s) of size {} for group degree using a brute-force search and storing the set(s) and its value in the '{}' attribute.\n".format(
                 k, gc_name))
-        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_degree, threads=threads)
+        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_degree, nprocs=nprocs)
         results_dict = kpobj.get_results()
         add_gc_attributes(graph, gc_name,
                          {tuple(tuple(sorted(x)) for x in results_dict[GroupCentralityEnum.group_degree.name][0]):
@@ -1377,7 +1377,7 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def BF_group_betweenness(graph: Graph, k: int, threads: int or None = None):
+    def BF_group_betweenness(graph: Graph, k: int, nprocs: int or None = None):
         r"""
         Performs a brute-force search on the input graph to search the best node set (or sets) of size :math:`k` for the
         *group betweenness* index. It does so by wrapping the :func:`~pyntacle.algorithms.bruteforce_search.BruteforceSearch.group_centrality`
@@ -1387,20 +1387,20 @@ class Octopus:
 
         :param graph: igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param k: the size of the node set. Must be a positive integer.
-        :param int, None threads: the number of threads that will be used to parallel the brute-force search. If :py:class:`None` (default) the maximum number of cores -1 of the machine will be used. Set this argument to ``1`` to disable multi threading
+        :param int, None nprocs: the number of processes that will be used to execute the brute-force search in parallel. If :py:class:`None` (default) the maximum number of cores -1 of the machine will be used. Set this argument to ``1`` to disable multi threading
         """
 
         cmode = get_cmode(graph)
         kpobj = bfw(graph=graph)
 
-        if threads is None:
-            threads = n_cpus
+        if nprocs is None:
+            nprocs = n_cpus
 
         gc_name = GroupCentralityEnum.group_betweenness.name + '_bruteforce'
         sys.stdout.write(
             "Finding the best node set(s) of size {} for group betweenness using a brute-force search and storing the set(s) and its value in the '{}' attribute.\n".format(
                 k, gc_name))
-        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_betweenness, cmode=cmode, threads=threads)
+        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_betweenness, cmode=cmode, nprocs=nprocs)
         results_dict = kpobj.get_results()
         add_gc_attributes(graph, gc_name,
                          {tuple(tuple(sorted(x)) for x in results_dict[GroupCentralityEnum.group_betweenness.name][0]):
@@ -1408,7 +1408,7 @@ class Octopus:
 
     @staticmethod
     @check_graph_consistency
-    def BF_group_closeness(graph: Graph, k: int, distance: GroupDistanceEnum = GroupDistanceEnum.minimum, threads: int or None = None):
+    def BF_group_closeness(graph: Graph, k: int, distance: GroupDistanceEnum = GroupDistanceEnum.minimum, nprocs: int or None = None):
         r"""
         Performs a brute-force search on the input graph to search the best node set (or sets) of size :math:`k` for the
         *group_closeness* index. It does so by wrapping the :func:`~pyntacle.algorithms.bruteforce_search.BruteforceSearch.group_centrality`
@@ -1420,19 +1420,19 @@ class Octopus:
         :param graph: igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param k: the size of the node set. Must be a positive integer.
         :param distance: the criterion to use for defining the distance between the node set and the rest of the graph. Must be one of the option in :class:`~pyntacle.tools.enums.GroupDistanceEnum`. Defaults to ``GroupDistanceEnum.minimum``.
-        :param int, None threads: the number of threads that will be used to parallel the brute-force search. If :py:class:`None` (default) the maximum number of cores -1 of the machine will be used. Set this argument to ``1`` to disable multi threading
+        :param int, None nprocs: the number of processes that will be used to execute the brute-force search in parallel. If :py:class:`None` (default) the maximum number of cores -1 of the machine will be used. Set this argument to ``1`` to disable multi threading
         """
         cmode = get_cmode(graph)
         kpobj = bfw(graph=graph)
 
-        if threads is None:
-            threads = n_cpus
+        if not nprocs:
+            nprocs = n_cpus
 
         gc_name = GroupCentralityEnum.group_closeness.name + "_" + distance.name + '_bruteforce'
         sys.stdout.write(
             "Finding the best node set(s) of size {} for group closeness with a {} distance using a brute-force search and storing the set(s) and its value in the '{}' attribute.\n".format(
                 k, distance.name, gc_name))
-        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_closeness, cmode=cmode, distance=distance, threads=threads)
+        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_closeness, cmode=cmode, distance=distance, nprocs=nprocs)
         results_dict = kpobj.get_results()
 
         kk = "_".join([GroupCentralityEnum.group_closeness.name, distance.name])

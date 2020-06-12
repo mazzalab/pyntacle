@@ -226,7 +226,7 @@ class GroupCentrality():
             # bruteforce implementation
             elif self.args.implementation == "brute-force":
 
-                if self.args.threads > 1:
+                if self.args.nprocs > 1:
                     plural = "s"
                 else:
                     plural = ""
@@ -240,26 +240,26 @@ class GroupCentrality():
                 if self.args.type in (["all", "degree"]):
                     sys.stdout.write(
                         u"Finding the best set(s) of nodes of size {0} that maximizes group degree using {1} thread{2}\n".format(
-                            self.args.k_size, self.args.threads, plural))
+                            self.args.k_size, self.args.nprocs, plural))
                     bf_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_degree,
-                                                  cmode=implementation, threads=self.args.threads)
+                                                  cmode=implementation, nprocs=self.args.nprocs)
 
                     sys.stdout.write(sep_line)
 
                 if self.args.type in (["all", "betweenness"]):
                     sys.stdout.write(
                         u"Finding the best set(s) of nodes of size {0} that maximizes group betweenness using {1} thread{2}\n".format(
-                            self.args.k_size, self.args.threads, plural))
+                            self.args.k_size, self.args.nprocs, plural))
                     bf_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_betweenness,
-                                                  cmode=implementation, threads=self.args.threads)
+                                                  cmode=implementation, nprocs=self.args.nprocs)
                     sys.stdout.write(sep_line)
 
                 if self.args.type in (["all", "closeness"]):
                     sys.stdout.write(
                         u"Finding the best set(s) of nodes of size {0} that maximizes group closeness using the {1} distance from the node set and {2} thread{3}\n".format(
-                            self.args.k_size, group_distance, self.args.threads, plural))
+                            self.args.k_size, group_distance, self.args.nprocs, plural))
                     bf_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_closeness,
-                                                  cmode=implementation, threads=self.args.threads,
+                                                  cmode=implementation, nprocs=self.args.nprocs,
                                                   distance=group_distance)
                     sys.stdout.write(sep_line)
 
@@ -362,12 +362,12 @@ class GroupCentrality():
         #pyntacle ink part
         if not self.args.no_plot and graph.vcount() < 5000:
             suffix = "_".join(graph["name"])
-            sys.stdout.write(u"Plotting network and run results in {} directory with PyntacleInk\n".format(self.args.directory))
+            sys.stdout.write(u"Plotting network and run results in {} directory with Pyntacle-Ink\n".format(self.args.directory))
             reporter.pyntacleink_report(report_dir=self.args.directory, report_dict=results, suffix=suffix)
 
         elif graph.vcount() >= 5000:
             sys.stdout.write(
-                u"The graph has too many nodes ({}). PyntacleInk allows plotting for network with N < 5000. No visual representation will be produced\n".format(
+                u"The graph has too many nodes ({}). Pyntacle-Ink allows plotting for network with N < 5000. No visual representation will be produced\n".format(
                     graph.vcount()))
         else:
             sys.stdout.write(pyntacleink_skip_msg)

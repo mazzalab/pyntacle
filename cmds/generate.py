@@ -281,13 +281,13 @@ class Generate:
 
         if not self.args.no_plot and graph.vcount() < 5000:
             suffix = "_".join(graph["name"])
-            sys.stdout.write(u"Plotting generated network in {} directory with PyntacleInk\n".format(self.args.directory))
+            sys.stdout.write(u"Plotting generated network in {} directory with Pyntacle-Ink\n".format(self.args.directory))
             reporter = PyntacleReporter(graph=graph)
             reporter.pyntacleink_report(report_dir=self.args.directory, report_dict=None, suffix=suffix)
 
         elif graph.vcount() >= 5000:
             sys.stdout.write(
-                u"The graph has too many nodes ({}). PyntacleInk allows plotting for network with N < 5000. No visual representation will be produced\n".format(
+                u"The graph has too many nodes ({}). Pyntacle-Ink allows plotting for network with N < 5000. No visual representation will be produced\n".format(
                     graph.vcount()))
         else:
             sys.stdout.write(pyntacleink_skip_msg)

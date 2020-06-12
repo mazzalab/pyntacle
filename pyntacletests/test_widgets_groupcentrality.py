@@ -59,7 +59,7 @@ class WidgetTestGroupcentrality(unittest.TestCase):
         self.plot_layout = 'fr'
         self.Args.report_format = 'txt'
         self.Args.save_binary = False
-        self.Args.threads = n_cpus
+        self.Args.nprocs = n_cpus
         self.Args.type = 'all'
         self.Args.v = None
         self.Args.suppress_cursor = True
