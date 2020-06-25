@@ -27,9 +27,9 @@ __license__ = u"""
 from config import *
 import os
 from igraph import Graph
-from internal.graph_routines import check_graph_consistency
 
-class ExportAttributes():
+
+class ExportAttributes:
     r"""
     Export Attributes stored into the ``igraph.Graph`` object as text files. These attributes can belong to the whole
     graph, nodes or edges that belong to the input network.

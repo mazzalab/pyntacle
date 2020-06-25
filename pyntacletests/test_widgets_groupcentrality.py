@@ -31,11 +31,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.
 current_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 
 from cmds.group_centrality import GroupCentrality as groupcentrality_command
-from tools.enums import *
 import re
-from pyntacletests import getmd5
 from multiprocessing import cpu_count
 n_cpus = cpu_count()-1
+
 
 class DummyObj:
     pass
@@ -59,7 +58,7 @@ class WidgetTestGroupcentrality(unittest.TestCase):
         self.plot_layout = 'fr'
         self.Args.report_format = 'txt'
         self.Args.save_binary = False
-        self.Args.threads = n_cpus
+        self.Args.nprocs = n_cpus
         self.Args.type = 'all'
         self.Args.v = None
         self.Args.suppress_cursor = True
@@ -90,7 +89,6 @@ class WidgetTestGroupcentrality(unittest.TestCase):
         self.Args.which = 'gr-finder'
         self.Args.implementation = 'greedy'
         self.Args.k_size = 2
-        self.Args.seed = 2
         gr = groupcentrality_command(self.Args)
         with self.assertRaises(SystemExit) as cm:
             gr.run()
@@ -115,7 +113,6 @@ class WidgetTestGroupcentrality(unittest.TestCase):
         self.Args.which = 'gr-finder'
         self.Args.implementation = 'brute-force'
         self.Args.k_size = 2
-        self.Args.seed = 2
         gr = groupcentrality_command(self.Args)
         with self.assertRaises(SystemExit) as cm:
             gr.run()

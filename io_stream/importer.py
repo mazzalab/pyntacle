@@ -1,11 +1,11 @@
 __author__ = u"Mauro Truglio, Tommaso Mazza"
 __copyright__ = u"Copyright 2018, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.2"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"11/06/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -26,6 +26,7 @@ __license__ = u"""
 
 import os
 import sys
+import re
 from igraph import Graph
 import pandas as pd
 import pickle
@@ -102,7 +103,7 @@ class PyntacleImporter:
     @staticmethod
     @input_file_checker
     @separator_sniffer
-    def AdjacencyMatrix(file: str, sep: str or None=None, header: bool=True) -> Graph:
+    def AdjacencyMatrix(file: str, sep: str or None = None, header: bool = True) -> Graph:
         r"""
         Imports an adjacency matrix file to a :py:class:`igraph.Graph` object ready to be used by Pyntacle.
 

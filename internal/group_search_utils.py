@@ -37,12 +37,11 @@ def greedy_search_initializer(func):
     are correct according to the parameters that are given as argument
 
     :param func: the kp-function passed
-
     :return: the function checked for integrity to the KP-SEARCH function
     """
 
     @wraps(func)
-    def func_wrapper(graph, k, metric, seed=None, *args, **kwargs):
+    def func_wrapper(graph, k, metric, *args, **kwargs):
         if not isinstance(k, int):
             raise TypeError("The 'k' argument ({}) is not an integer number".format(k))
 
@@ -51,13 +50,7 @@ def greedy_search_initializer(func):
                 raise IllegalKpsetSizeError(
                     "The 'k' argument ({}) must be strictly less than the graph size ({})".format(k, graph.vcount()))
 
-        if seed is not None:
-            if not isinstance(seed, int):
-                raise ValueError("seed must be an integer")
-            else:
-                random.seed(seed)
-
-        return func(graph, k, metric, seed, *args, **kwargs)
+        return func(graph, k, metric, *args, **kwargs)
 
     return func_wrapper
 

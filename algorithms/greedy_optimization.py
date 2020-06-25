@@ -101,8 +101,7 @@ class GreedyOptimization:
 
     @staticmethod
     @greedy_search_initializer
-    def fragmentation(graph, k: int, metric: KpnegEnum, seed: int or None =None, max_distance: int or None =None,
-                      cmode=CmodeEnum.igraph) -> (list, float):
+    def fragmentation(graph, k: int, metric: KpnegEnum, cmode=CmodeEnum.igraph) -> (list, float):
         r"""
         It searches for the best *key player* (*kp*) set of a predefined size :math:`k`, removes it and measures the residual
         fragmentation score for a specified negative *key player* (*kp-neg*) set. For a quick view of key player indices,
@@ -120,21 +119,15 @@ class GreedyOptimization:
         :param igraph.Graph graph: a :py:class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param int k: the size of the kp-set. Must be a positive integer.
         :param KpnegEnum metric: on of the available :class:`~pyntacle.tools.enums.KpnegEnum`
-        :param int,None seed: optional, a positive integer that can be used to replicate the greedy optimization run. If :py:class:`~None` (default), the greedy optimization may return different results at each run.
-        :param int,None max_distance: optional, define a maximum shortest path after which two nodes will be considered disconnected. Default is  :py:class:`~None` (no maximum distance is set)
         :param cmodeEnum cmode: the implementation that will be used to compute the shortest paths. See :class:`~pyntacle.tools.enums.CmodeEnum`. Default is the igraph brute-force shortest path search.
-
         :return tuple: a tuple storing in ``[0]`` a list containing the node ``name`` attribute of the optimal *kp-set* and in ``[1]``  the optimal *kp-neg* value for the selected metric
 
         :raise KeyError: when an invalid :class:`~pyntacle.tools.enums.KpnegEnum` is given
         :raise TypeError: if ``k`` is not a positive integer
-        :raise ValueError: if ``seed`` is not a positive integer or if ``max_distance`` is not  :py:class:`None` or a positive integer
         :raise IllegalKpsetSizeError: if ``k`` is equal or greater to the graph size
         """
 
         if metric == KpnegEnum.F or metric == KpnegEnum.dF:
-            if max_distance is not None and not isinstance(max_distance, int) and max_distance > 1 and max_distance <= graph.vcount():
-                raise ValueError(u"'max_distance' must be an integer greater than one and lesser than the total number of nodes")
             node_names = graph.vs()["name"]
             random.shuffle(node_names)
             S_names = node_names[:k]
@@ -152,7 +145,7 @@ class GreedyOptimization:
             if metric == KpnegEnum.F:
                 type_func = partial(kp.F)
             else:
-                type_func = partial(kp.dF, max_distance=max_distance, cmode=cmode)
+                type_func = partial(kp.dF, cmode=cmode)
 
             final, fragmentation_score = GreedyOptimization.__optimization_loop(graph, S, type_func)
 
@@ -174,8 +167,7 @@ class GreedyOptimization:
 
     @staticmethod
     @greedy_search_initializer
-    def reachability(graph, k: int, metric: KpposEnum, seed=None, max_distance: int=None, m=None,
-                     cmode=CmodeEnum.igraph) -> (list, float):
+    def reachability(graph, k: int, metric: KpposEnum, m=None,cmode=CmodeEnum.igraph) -> (list, float):
         r"""
         It searches for the best *key player* (*kp*) set of a predefined size :math:`k`, also defined as positive key
         players (*kp-pos*) using reachability indices, described in Pyntacle
@@ -191,8 +183,6 @@ class GreedyOptimization:
         :param igraph.Graph graph: a :py:class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param int k: the size of the kp-set. Must be a positive integer.
         :param KpposEnum metric: on of the available :class:`~pyntacle.tools.enums.KpposEnum`
-        :param int,None seed: optional, a positive integer that can be used to replicate the greedy optimization run. If :py:class:`~None` (default), the greedy optimization may return different results at each run.
-        :param int,None max_distance: optional, define a maximum shortest path after which two nodes will be considered disconnected. Default is  :py:class:`~None` (no maximum distance is set)
         :param int m: The number of steps of the m-reach algorithm. Required if the the required metrics is the :func:`~tools.enums.KPPosEnum.mreach`
         :param cmodeEnum cmode: the implementation that will be used to compute the shortest paths. See :class:`~pyntacle.tools.enums.CmodeEnum`. Default is the igraph brute-force shortest path search.
 
@@ -200,15 +190,10 @@ class GreedyOptimization:
 
         :raise KeyError: when an invalid :class:`~pyntacle.tools.enums.KpposEnum` is given
         :raise TypeError: if ``k`` is not a positive integer
-        :raise ValueError: if ``seed`` is not a positive integer or if ``max_distance`` is not  :py:class:`None` or a positive integer lesser than the total number of nodes minus one
         :raise IllegalKpsetSizeError: if ``k`` is equal or greater to the graph size
         """
 
         if metric == KpposEnum.mreach or metric == KpposEnum.dR:
-
-            if max_distance is not None and not isinstance(max_distance, int) and max_distance > 1 and max_distance <= graph.vcount():
-                raise ValueError(u"'max_distance' must be an integer greater than one and lesser than the total number of nodes")
-
             if metric == KpposEnum.mreach and m is None:
                 raise WrongArgumentError("The 'm' argument is required for computing m-reach")
             elif metric == KpposEnum.mreach and (not isinstance(m, int) or m <= 0):
@@ -224,18 +209,18 @@ class GreedyOptimization:
                 if metric == KpposEnum.mreach:
                     if cmode != CmodeEnum.igraph:
                         sps = sp.get_shortestpaths(graph=graph, cmode=cmode, nodes=None)
-                        type_func = partial(kp.mreach, nodes=S_names, m=m, max_distance=max_distance,
+                        type_func = partial(kp.mreach, nodes=S_names, m=m,
                                             cmode=cmode, sp_matrix=sps)
                     else:
-                        type_func = partial(kp.mreach, nodes=S_names, m=m, max_distance=max_distance,
+                        type_func = partial(kp.mreach, nodes=S_names, m=m,
                                             cmode=cmode)
                 else:
                     if cmode != CmodeEnum.igraph:
                         sps = sp.get_shortestpaths(graph=graph, cmode=cmode, nodes=None)
-                        type_func = partial(kp.dR, nodes=S_names, max_distance=max_distance,
+                        type_func = partial(kp.dR, nodes=S_names,
                                             cmode=cmode, sp_matrix=sps)
                     else:
-                        type_func = partial(kp.dR, nodes=S_names, max_distance=max_distance,
+                        type_func = partial(kp.dR, nodes=S_names,
                                             cmode=cmode)
 
                 final, reachability_score = GreedyOptimization.__optimization_loop(graph, S, type_func)
@@ -256,7 +241,7 @@ class GreedyOptimization:
 
     @staticmethod
     @greedy_search_initializer
-    def group_centrality(graph, k: int, metric: GroupCentralityEnum, seed: int or None =None,
+    def group_centrality(graph, k: int, metric: GroupCentralityEnum,
                          distance_type: GroupDistanceEnum = GroupDistanceEnum.minimum,
                          cmode=CmodeEnum.igraph,) -> (list, float):
         r"""
@@ -277,13 +262,11 @@ class GreedyOptimization:
         :param int k: a positive integer, the size of the group of nodes to be found
         :param GroupCentralityEnum metric: The centrality algorithm to be computed. It can be any of the :class:`~pyntacle.tools.enums.GroupCentralityEnum`
         :param cmode: the implementation that will be used to compute the shortest paths. See :class:`~pyntacle.tools.enums.CmodeEnum`. Default is the igraph brute-force shortest path search.
-        :param int,None seed: optional, a positive integer that can be used to replicate the greedy optimization run. If :py:class:`~None` (default), the greedy optimization may return different results at each run.
         :param GroupDistanceEnum distance_type: The definition of distance between any non-group and group nodes. It can be any value of the enumerator :class:`~pyntacle.tools.enums.GroupDistanceEnum`. By default, the minimum least distance :math:`D` between the group :math:`k` and the rest of the graph :math:`N-k` is used
         :return tuple: a tuple storing in ``[0]`` a list containing the node ``name`` attribute of the optimal *kp-set* and in ``[1]``  the optimal *kp-neg* value for the selected metric
 
         :raise KeyError: when an invalid :class:`~pyntacle.tools.enums.GroupCentralityEnum` is given
         :raise TypeError: if ``k`` is not a positive integer
-        :raise ValueError: if ``seed`` is not a positive integer or if ``max_distance`` is not  :py:class:`None` or a positive integer lesser than the total number of nodes minus one
         :raise IllegalKpsetSizeError: if ``k`` is equal or greater to the graph size
         """
 

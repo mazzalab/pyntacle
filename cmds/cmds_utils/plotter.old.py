@@ -47,29 +47,17 @@ class PlotGraph():
 
     logger = None
 
-    def __init__(self, graph: Graph, seed=None):
+    def __init__(self, graph: Graph):
         r"""
-        Initialize the plotter function by importing the graph and (optionally) defining a seed for custom graph
-        reproducibility. Will not touch the input :py:class:`igraph.Graph`, that will  therefore be copied.
+        Initialize the plotter function by importing the graph.
+        Will not modify the input :py:class:`igraph.Graph`, that will therefore be copied.
 
         :param Graph graph: the input :py:class:`igraph.Graph` object. Will be copied into this method in order to preserve the integrity of the input graph
-        :param int seed: optional: define a custom seed to reproduce the graph. plot. By default, a seed (1987) is stored
         """
 
         self.logger = log
-
         self.graph = graph.copy()  # creates a copy of the graph to work on
-
-        if seed is not None:
-            if not isinstance(seed, int):
-                raise TypeError(u"Seed must be an integer")
-
-            else:
-                self.seed = seed  # initialize seed
-        else:
-            self.seed = 1987  # use a special seed if it is not initialized
-
-        self.layout = None #will be replaced by the layout function
+        self.layout = None  # will be replaced by the layout function
 
     def set_node_labels(self, labels: list):
         r"""
@@ -307,12 +295,10 @@ class PlotGraph():
         :param kwargs: a list of parameters that can be passed to each of the layout method
         """
         try:
-            seed = random.seed(self.seed)
-
             layout_dic = {"auto": Graph.layout_auto(self.graph, **kwargs), "circle": Graph.layout_circle(self.graph, **kwargs),
-                          "fruchterman_reingold": Graph.layout_fruchterman_reingold(self.graph, seed=seed, **kwargs),
+                          "fruchterman_reingold": Graph.layout_fruchterman_reingold(self.graph, **kwargs),
                           "fr": Graph.layout_fruchterman_reingold(self.graph, **kwargs),
-                          "kamada_kawai": Graph.layout_kamada_kawai(self.graph, seed = seed,**kwargs),
+                          "kamada_kawai": Graph.layout_kamada_kawai(self.graph, **kwargs),
                           "kk": Graph.layout_kamada_kawai(self.graph, **kwargs),
                           "large_graph": Graph.layout_lgl(self.graph, **kwargs),
                           "lgl": Graph.layout_lgl(self.graph, **kwargs),

@@ -449,7 +449,7 @@ class Metrics:
                                          suffix=suffix)
 
             elif not self.args.no_plot and graph.vcount() >= 5000:
-                u"The graph has too many nodes ({}). PyntacleInk allows plotting for network with N < 5000. No visual representation will be produced\n".format(
+                u"The graph has too many nodes ({}). PyntacleInk can plot networks with N < 5000. This graph will not be plotted\n".format(
                     graph.vcount())
 
             else:

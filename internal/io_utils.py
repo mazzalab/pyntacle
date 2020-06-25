@@ -96,7 +96,7 @@ def separator_sniffer(func):
             if not isinstance(sep, str):
                 raise ValueError("\"sep\" must be a string {} found".format(type(sep).__name__))
 
-        return func(file,sep,*args, **kwargs)
+        return func(file, sep, *args, **kwargs)
 
     return func_wrapper
 

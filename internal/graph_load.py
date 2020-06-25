@@ -95,20 +95,19 @@ class GraphLoad():
 
         elif self.file_format == 'adjm':
             try:
-                graph = PyntacleImporter.AdjacencyMatrix(file=self.input_file, sep=self.separator,
-                                                              header=self.header)
+                graph = PyntacleImporter.AdjacencyMatrix(file=self.input_file, sep=self.separator, header=self.header)
             except (ValueError):
                 if not self.header: #in case header has been specified
                     sys.stderr.write(
-                        u"Adjacency Matrix is either direct or malformed. Please note that you specified "
-                        "the header is not present, If that's not the case, remove the \"--no-header\" "
-                        "option. Quitting\n")
+                        u"The adjacency matrix is either malformed or represents a directed graph. "
+                        "Please note that you specified that the header is not present, If this is not the case, "
+                        "remove the \"--no-header\" option\n")
                     sys.exit(1)
                 else:
                     sys.stderr.write(
-                        u"Adjacency Matrix is either direct or malformed. Please note that you specified "
-                        "the header was present. If that's not the case, use the \"--no-header\" option. "
-                        "Quitting\n")
+                        u"The adjacency matrix is either malformed or represents a directed graph. "
+                        "Please note that you specified that the header is present, If this is not the case,"
+                        " use the \"--no-header\" option")
                     sys.exit(1)
 
         elif self.file_format == 'graph':

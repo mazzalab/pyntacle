@@ -64,13 +64,12 @@ class KeyPlayer:
             cursor.start()
 
         if self.args.m_reach is None and self.args.type in ["pos", "all"]:
-            sys.stderr.write(u"m-reach distance must be provided for computing m-reach. Quitting\n")
+            sys.stderr.write(u"m-reach distance must be provided for computing m-reach\n")
             sys.exit(1)
 
-        # Checking input file
         if self.args.input_file is None:
             sys.stderr.write(
-                u"Please specify an input file using the `-i/--input-file` option. Quitting\n")
+                u"Please specify the input file using the `-i/--input-file` option\n")
             sys.exit(1)
 
         if not os.path.exists(self.args.input_file):
@@ -86,10 +85,19 @@ class KeyPlayer:
         sys.stdout.write(import_start)
         sys.stdout.write(u"Importing graph from file\n")
         graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header, separator=self.args.input_separator).graph_load()
-        # init graph utils class
+
+        # auto-select the implementation type
+        if self.args.nprocs > 1:
+            graph["implementation"] = CmodeEnum.igraph
+            implementation = CmodeEnum.igraph
+        elif graph.vcount() < 250:
+            graph["implementation"] = CmodeEnum.igraph
+            implementation = CmodeEnum.igraph
+        else:
+            graph["implementation"] = CmodeEnum.cpu
+            implementation = CmodeEnum.cpu
 
         utils = gu(graph=graph)
-
         if hasattr(self.args, "nodes"):
             self.args.nodes = self.args.nodes.split(",")
 
@@ -121,11 +129,6 @@ class KeyPlayer:
         if hasattr(self.args, "k_size") and self.args.k_size >= graph.vcount():
             sys.stderr.write("The 'k' argument ({}) must be strictly less than the graph size({}). Quitting\n".format(self.args.k_size, graph.vcount()))
             sys.exit(1)
-
-        if 'implementation' in graph.attributes():
-            implementation = graph['implementation']
-        else:
-            implementation = CmodeEnum.igraph
 
         # check that output directory is properly set
         createdir = False
@@ -181,7 +184,7 @@ class KeyPlayer:
                             self.args.k_size))
 
                     initial_results[KpnegEnum.F.name] = kpp.F(graph)
-                    kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, seed=self.args.seed, cmode=implementation)
+                    kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, cmode=implementation)
                     sys.stdout.write("\n")
                         
                 if self.args.type in (['dF', 'neg', 'all']):
@@ -190,18 +193,14 @@ class KeyPlayer:
                             self.args.k_size))
 
                     initial_results[KpnegEnum.dF.name] = kpp.dF(graph, cmode=implementation)
-                    kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
-                                                max_distance=self.args.max_distance, seed=self.args.seed,
-                                                cmode=implementation)
+                    kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF, cmode=implementation)
                     sys.stdout.write("\n")
 
                 if self.args.type in (['dR', 'pos', 'all']):
                     sys.stdout.write(
                         u"KP-POS: Finding optimal set of nodes of size {0} that maximizes dR\n".format(
                             self.args.k_size))
-                    kp_runner.run_reachability(self.args.k_size, KpposEnum.dR,
-                                               max_distance=self.args.max_distance, seed=self.args.seed,
-                                               cmode=implementation)
+                    kp_runner.run_reachability(self.args.k_size, KpposEnum.dR, cmode=implementation)
                     sys.stdout.write("\n")
 
                 if self.args.type in (['m-reach', 'pos', 'all']):
@@ -209,7 +208,6 @@ class KeyPlayer:
                         u"KP-POS: Finding optimal set of nodes of size {0} that maximizes the m-reach at distance {1}\n".format(
                             self.args.k_size, self.args.m_reach))
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.mreach, m=self.args.m_reach,
-                                               max_distance=self.args.max_distance, seed=self.args.seed,
                                                cmode=implementation)
                     sys.stdout.write("\n")
 
@@ -220,13 +218,13 @@ class KeyPlayer:
                 sys.stdout.write(sep_line)
 
                 if self.args.type in (['F', 'neg', 'all']):
-
                     sys.stdout.write(
                         u"KP-NEG: Finding best set (or sets) of nodes of size {0} that holds the maximum F\n".format(
                             self.args.k_size))
 
                     initial_results[KpnegEnum.F.name] = kpp.F(graph)
-                    kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, threads=self.args.threads)
+                    kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.F, nprocs=self.args.nprocs,
+                                                cmode=implementation)
                     sys.stdout.write("\n")
 
                 if self.args.type in (['dF', 'neg', 'all']):
@@ -234,10 +232,9 @@ class KeyPlayer:
                         u"KP-NEG: Finding best set(s) of nodes of size {0} that holds the maximum dF\n".format(
                             self.args.k_size))
 
-                    initial_results[KpnegEnum.dF.name] = kpp.dF(graph, cmode=CmodeEnum.igraph)
+                    initial_results[KpnegEnum.dF.name] = kpp.dF(graph, cmode=implementation)
                     kp_runner.run_fragmentation(self.args.k_size, KpnegEnum.dF,
-                                                max_distance=self.args.max_distance,
-                                                cmode=CmodeEnum.igraph, threads=self.args.threads)
+                                                cmode=implementation, nprocs=self.args.nprocs)
 
                     sys.stdout.write("\n")
 
@@ -246,8 +243,7 @@ class KeyPlayer:
                         u"KP-POS: Finding best set(s) of nodes of size {0} that hold the maximum dR\n".format(
                             self.args.k_size))
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.dR,
-                                               max_distance=self.args.max_distance,
-                                               cmode=CmodeEnum.igraph, threads=self.args.threads)
+                                               cmode=implementation, nprocs=self.args.nprocs)
 
                     sys.stdout.write(sep_line)
                     
@@ -257,8 +253,7 @@ class KeyPlayer:
                             self.args.k_size, self.args.m_reach))
 
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.mreach, m=self.args.m_reach,
-                                               max_distance=self.args.max_distance,
-                                               cmode=CmodeEnum.igraph, threads=self.args.threads)
+                                               cmode=implementation, nprocs=self.args.nprocs)
 
                     sys.stdout.write("\n")
 
@@ -330,19 +325,16 @@ class KeyPlayer:
                 kp_runner.run_fragmentation(KpnegEnum.F)
                 sys.stdout.write("\n")
             if self.args.type in (['dF', 'neg', 'all']):
-                initial_results[KpnegEnum.dF.name] = kpp.dF(graph, cmode=implementation, max_distance=self.args.max_distance)
-                kp_runner.run_fragmentation(KpnegEnum.dF, max_distance=self.args.max_distance,
-                                            cmode=implementation)
+                initial_results[KpnegEnum.dF.name] = kpp.dF(graph, cmode=implementation)
+                kp_runner.run_fragmentation(KpnegEnum.dF, cmode=implementation)
                 sys.stdout.write("\n")
 
             if self.args.type in (['dR', 'pos', 'all']):
-                kp_runner.run_reachability(KpposEnum.dR, max_distance=self.args.max_distance,
-                                           cmode=implementation)
+                kp_runner.run_reachability(KpposEnum.dR, cmode=implementation)
                 sys.stdout.write("\n")
 
             if self.args.type in (['m-reach', 'pos', 'all']):
-                kp_runner.run_reachability(KpposEnum.mreach, m=self.args.m_reach,
-                                           max_distance=self.args.max_distance, cmode=implementation)
+                kp_runner.run_reachability(KpposEnum.mreach, m=self.args.m_reach, cmode=implementation)
                 sys.stdout.write("\n")
 
             sys.stdout.write(section_end)
@@ -395,7 +387,7 @@ class KeyPlayer:
 
         elif graph.vcount() >= 5000:
             sys.stdout.write(
-                u"The graph has too many nodes ({}). PyntacleInk allows plotting for network with N < 5000. No visual representation will be produced\n".format(
+                u"The graph has too many nodes ({}). PyntacleInk can plot networks with N < 5000. This graph will not be plotted\n".format(
                     graph.vcount()))
         else:
             sys.stdout.write(pyntacleink_skip_msg)

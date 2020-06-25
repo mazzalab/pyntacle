@@ -53,10 +53,7 @@ class InfoWrapper:
 
         self.logger = log
         self.logger.info(u"Initializing group search info wrapper")
-
-        self.method = None #this will store the class that will be used to compute group centrality
-
-
+        self.method = None  # this will store the class that will be used to compute group centrality
         self.graph = graph
 
         if isinstance(nodes, str):
@@ -110,62 +107,61 @@ class InfoWrapper:
         """
         return self.results
 
-
     @timeit
-    def run_reachability(self, kp_type: KpposEnum, m=None, max_distance=None, cmode=CmodeEnum.igraph):
+    def run_reachability(self, kp_type: KpposEnum, m=None, cmode=CmodeEnum.igraph):
         r"""
         Run a single positive key player metric on a single node or a set of nodes, adds everything to an ordered dictionary.
 
-
         :param KpposEnum kp_type: one of the positive key player indices of interest defined in :class:`tools.enums.KpposEnum`
         :param int m: if ``kp_type`` is the m-reach, specifies the maximum distance that will be used to compute mreach. Must be a positive integer.
-        :param int max_distance: maximum shortest path distance allowed (must be a positive integer greater than 0)
         """
         self.method = KeyPlayer
 
         if not isinstance(kp_type, KpposEnum):
-            raise TypeError(u"Metric must be ones of the Kppos enums in `tools.enums`, {} found".format(type(kp_type).__name__))
+            raise TypeError(
+                u"Metric must be ones of the Kppos enums in `tools.enums`, {} found".format(type(kp_type).__name__))
 
         if kp_type == KpposEnum.mreach:
             if not m:
                 raise ValueError(u"'m' must be specified for m-reach")
-            elif not isinstance(m, int) or m <= 0 :
+            elif not isinstance(m, int) or m <= 0:
                 raise ValueError(u"'m' must be a positive integer")
 
         sys.stdout.write(u"Computing {0} for nodes ({1})\n".format(kp_type.name, ", ".join(self.nodes)))
 
         if kp_type == KpposEnum.dR:
-            single_result = self.method.dR(graph=self.graph, nodes=self.nodes, max_distance=max_distance,
-                                           cmode=cmode)
+            single_result = self.method.dR(graph=self.graph, nodes=self.nodes, cmode=cmode)
 
         else:
-            single_result = self.method.mreach(graph=self.graph, nodes=self.nodes, max_distance=max_distance, m=m, cmode=cmode)
+            single_result = self.method.mreach(graph=self.graph, nodes=self.nodes, m=m, cmode=cmode)
 
         self.results[kp_type.name] = [self.nodes, single_result]
-        self.logger.info(u"Positive key player computation for {} completed, results are in the 'results' dictionary".format(kp_type.name))
+        self.logger.info(
+            u"Positive key player computation for {} completed, results are in the 'results' dictionary".format(
+                kp_type.name))
 
     @timeit
-    def run_fragmentation(self, kp_type:KpnegEnum, max_distance=None, cmode = CmodeEnum.igraph):
+    def run_fragmentation(self, kp_type: KpnegEnum, cmode=CmodeEnum.igraph):
         r"""
         Run a single negative key player metrics for a given  node or a set of nodes and store them into a dictionary
         that is then passed to the Pyntacle command line utilities
 
         :param KpnegEnum kp_type: one of the KPPNEGchoices defined in :class:`tools.enums.KpnegEnum`
-        :param int max_distance: maximum shortest path distance allowed (must be a positive integer greater than 0.
         """
         self.method = KeyPlayer
 
         if not isinstance(kp_type, KpnegEnum):
-            raise TypeError("'kp_type' must be ones of the 'KPNEGchoices' metrics, {} found".format(type(kp_type).__name__))
+            raise TypeError(
+                "'kp_type' must be ones of the 'KPNEGchoices' metrics, {} found".format(type(kp_type).__name__))
 
         copy = self.graph.copy()
         copy.delete_vertices(self.nodes)
-            
+
         sys.stdout.write(
             u"Computing {0} for nodes ({1})\n".format(kp_type.name, ", ".join(self.nodes)))
 
         if kp_type == KpnegEnum.dF:
-            single_result = self.method.dF(graph=copy, max_distance=max_distance, cmode=cmode)
+            single_result = self.method.dF(graph=copy, cmode=cmode)
 
         else:
             single_result = self.method.F(graph=copy)
@@ -174,7 +170,8 @@ class InfoWrapper:
         self.logger.info(u"Kp pos search completed, results are in the 'results' dictionary")
 
     @timeit
-    def run_groupcentrality(self, gr_type: GroupCentralityEnum, cmode: CmodeEnum= CmodeEnum.igraph, gr_distance: GroupDistanceEnum = GroupDistanceEnum.minimum):
+    def run_groupcentrality(self, gr_type: GroupCentralityEnum, cmode: CmodeEnum = CmodeEnum.igraph,
+                            gr_distance: GroupDistanceEnum = GroupDistanceEnum.minimum):
         r"""
         Wraps the group centrality methods in :class:`algorithms.local_topology.LocalTopology`, runs them and store the
         result for a subset of nodes into a dictionary, to be reused by the groupcentrality command line for Pyntacle
@@ -186,12 +183,15 @@ class InfoWrapper:
         """
         self.method = LocalTopology
         if not isinstance(gr_type, GroupCentralityEnum):
-            raise TypeError(u"'gr_type' must be ones of the GroupCentrality enums in `tools.enums`, {} found".format(type(gr_type).__name__))
+            raise TypeError(u"'gr_type' must be ones of the GroupCentrality enums in `tools.enums`, {} found".format(
+                type(gr_type).__name__))
 
         if gr_type == GroupCentralityEnum.group_closeness and not isinstance(gr_distance, GroupDistanceEnum):
-            raise TypeError("`gr_distance` must be one of the GroupDistanceEnum, {} found".format(type(gr_distance).__name__))
+            raise TypeError(
+                "`gr_distance` must be one of the GroupDistanceEnum, {} found".format(type(gr_distance).__name__))
 
-        sys.stdout.write(u"Computing {0} for nodes ({1})\n".format(gr_type.name.replace("_", " "), ", ".join(self.nodes)))
+        sys.stdout.write(
+            u"Computing {0} for nodes ({1})\n".format(gr_type.name.replace("_", " "), ", ".join(self.nodes)))
 
         if gr_type == GroupCentralityEnum.group_closeness:
             single_result = self.method.group_closeness(graph=self.graph, nodes=self.nodes,
@@ -207,7 +207,9 @@ class InfoWrapper:
             self.results["_".join([gr_type.name, gr_distance.name])] = [self.nodes, single_result]
         else:
             self.results[gr_type.name] = [self.nodes, single_result]
-        self.logger.info(u"Group centrality computation for {} completed, results are in the 'results' dictionary".format(gr_type.name))
+        self.logger.info(
+            u"Group centrality computation for {} completed, results are in the 'results' dictionary".format(
+                gr_type.name))
 
 
 class GOWrapper:
@@ -221,7 +223,7 @@ class GOWrapper:
     def __init__(self, graph: Graph):
         """
         """
-        self.go = GreedyOptimization  #initialize an empty GreedyOptimization class
+        self.go = GreedyOptimization  # initialize an empty GreedyOptimization class
         # initialize graph utility class
         self.graph = graph
         self.logger = log
@@ -252,15 +254,13 @@ class GOWrapper:
         return self.results
 
     @timeit
-    def run_fragmentation(self, k:int, kp_type:KpnegEnum, max_distance=None, seed=None, cmode=CmodeEnum.igraph):
+    def run_fragmentation(self, k: int, kp_type: KpnegEnum, cmode=CmodeEnum.igraph):
         r"""
         Wrapper around the Greedy Optimization Module that stores the greedy optimization results for KPPOS metrics in
         the "results" dictionary.
 
         :param int k: size of the kpp-set to be found
         :param KpnegEnum kp_type: on of the KPNEGchoices enumerators stored in internal.enums
-        :param int max_distances: maximum shortest path distance allowed in the shortest path matrix
-        :param int seed: a seed that can be passed in order to replicate GO results
         """
 
         if not isinstance(k, int) or k < 1:
@@ -269,18 +269,16 @@ class GOWrapper:
         if not isinstance(kp_type, KpnegEnum):
             raise TypeError(u"'kp_type' must be one of the KPPNEGchoices options available")
 
-        go_results = self.go.fragmentation(graph=self.graph, k=k, metric=kp_type, max_distance=max_distance, seed=seed, cmode=cmode)
+        go_results = self.go.fragmentation(graph=self.graph, k=k, metric=kp_type, cmode=cmode)
         self.results[kp_type.name] = [go_results[0][0], go_results[1]]
 
     @timeit
-    def run_reachability(self, k:int, kp_type:KpposEnum, m=None, max_distance=None, seed=None, cmode=CmodeEnum.igraph):
+    def run_reachability(self, k: int, kp_type: KpposEnum, m=None, cmode=CmodeEnum.igraph):
         r"""
         Wrapper around the Greedy Optimization Module that stores the greedy optimization results for KPPOS metrics
 
         :param int k: size of the kpp-set to be found
         :param KpposEnum kp_type: on of the KPPOSchoices enumerators stored in internal.enums
-        :param int max_distances: maximum shortest path distance allowed in the shortest path matrix
-        :param int seed: a seed that can be passed in order to replicate GO results
         :param int m: for the "mreach" metrics, a positive integer greatrer than one representing the maximum distance for mreach
         """
         if not isinstance(k, int) or k < 1:
@@ -292,21 +290,21 @@ class GOWrapper:
         if kp_type == KpposEnum.mreach:
             if not m:
                 raise ValueError(u"'m' must be a specified for computing m-reach")
-            elif not isinstance(m, int) or m <= 0 :
+            elif not isinstance(m, int) or m <= 0:
                 raise ValueError(u"'m' must be a positive integer")
 
-        go_results = self.go.reachability(graph=self.graph, k=k, metric=kp_type, max_distance=max_distance, seed=seed, m=m, cmode=cmode)
+        go_results = self.go.reachability(graph=self.graph, k=k, metric=kp_type, m=m, cmode=cmode)
 
         self.results[kp_type.name] = [go_results[0][0], go_results[1]]
 
     @timeit
-    def run_groupcentrality(self, k:int, gr_type:GroupCentralityEnum, seed=None, cmode=CmodeEnum.igraph, distance=GroupDistanceEnum.minimum):
+    def run_groupcentrality(self, k: int, gr_type: GroupCentralityEnum, cmode=CmodeEnum.igraph,
+                            distance=GroupDistanceEnum.minimum):
         r"""
         
         :param k: 
         :param gr_type:
-        :param seed:
-        :param cmode: 
+        :param cmode:
         :param distance:
         """
         if not isinstance(k, int) or k < 1:
@@ -317,9 +315,10 @@ class GOWrapper:
 
         if gr_type == GroupCentralityEnum.group_closeness:
             if not isinstance(distance, GroupDistanceEnum):
-                raise TypeError(u"'distance' is not one of the GroupDistanceEnums,{} found".format(type(distance).__name__))
+                raise TypeError(
+                    u"'distance' is not one of the GroupDistanceEnums,{} found".format(type(distance).__name__))
 
-        go_results = self.go.group_centrality(graph=self.graph, k=k, metric=gr_type, seed=seed, cmode=cmode)
+        go_results = self.go.group_centrality(graph=self.graph, k=k, metric=gr_type, cmode=cmode)
 
         if gr_type == GroupCentralityEnum.group_closeness:
             self.results["_".join([gr_type.name, distance.name])] = [go_results[0][0], go_results[1]]
@@ -340,10 +339,7 @@ class BFWrapper:
         """
         self.logger = log
         self.bf = BruteforceSearch
-
-
         self.graph = graph
-        # initialize graph utility class
         self.results = {}  # dictionary that will store results
 
     def set_graph(self, graph: Graph):
@@ -370,39 +366,38 @@ class BFWrapper:
         return self.results
 
     @timeit
-    def run_fragmentation(self, k:int, kp_type:KpnegEnum, max_distance=None, cmode=CmodeEnum.igraph, threads=n_cpus):
+    def run_fragmentation(self, k: int, kp_type: KpnegEnum, cmode=CmodeEnum.igraph, nprocs=1):
         r"""
-        Wrapper around the brute-force search that stores the results for KPNEG metrics in
+        Wrapper around the brute-force search that stores the results for the KP-Neg metrics in
         the "results" dictionary
 
+        :param cmode:
+        :param nprocs: number of processors to be spawn
         :param int k: size of the kpp-set to be found
         :param KpnegEnum kp_type: on of the KPNEGchoices enumerators stored in internal.enums
-        :param int max_distances: maximum shortest path distance allowed in the shortest path matrix
         """
+        if not nprocs:
+            nprocs = 1
         if not isinstance(k, int) or k < 1:
             raise ValueError(u"'k' must be a positive integer of size 1")
 
         if not isinstance(kp_type, KpnegEnum):
             raise TypeError(u"'kp_type' must be one of the KPPNEGchoices options available")
 
-        if threads > 1:
-            bf_results = self.bf.fragmentation(graph=self.graph, k=k, metric=kp_type,
-                                           max_distance=max_distance, cmode=cmode, ncores=threads, parallel=True)
-        else:
-            bf_results = self.bf.fragmentation(graph=self.graph, k=k, metric=kp_type,
-                                               max_distance=max_distance, cmode=cmode, ncores=threads, parallel=False)
+        bf_results = self.bf.fragmentation(graph=self.graph, k=k, metric=kp_type, cmode=cmode, nprocs=nprocs)
         self.results[kp_type.name] = [bf_results[0], bf_results[1]]
 
     @timeit
-    def run_reachability(self, k: int, kp_type: KpposEnum, m=None, max_distance=None, cmode=CmodeEnum.igraph, threads=n_cpus):
+    def run_reachability(self, k: int, kp_type: KpposEnum, m=None, cmode=CmodeEnum.igraph, nprocs=1):
         r"""
         Wrapper around the brute-force search module that stores the results for KPPOS metrics
 
         :param int k: size of the kpp-set to be found
         :param KpposEnum kp_type: on of the KPPOSchoices enumerators stored in internal.enums
-        :param int max_distance: maximum shortest path distance allowed in the shortest path matrix
-        :param int m: for the "mreach" metrics, a positive integer greatrer than one representing the maximum distance for mreach
+        :param int m: for the "mreach" metrics, a positive integer greater than one representing the maximum distance for mreach
         """
+        if not nprocs:
+            nprocs = 1
         if not isinstance(k, int) or k < 1:
             raise ValueError(u"'kpp_size' must be a positive integer of size 1")
 
@@ -412,32 +407,26 @@ class BFWrapper:
         if kp_type == KpposEnum.mreach:
             if not m:
                 raise ValueError(u"'m' must be a specified for m-reach ")
-            elif not isinstance(m, int) or m <= 0 :
+            elif not isinstance(m, int) or m <= 0:
                 raise ValueError(u"'m' must be a positive integer equal or greater than one ")
 
-
-        if threads > 1:
-            bf_results = self.bf.reachability(graph=self.graph, k=k, metric=kp_type,
-                                          max_distance=max_distance, m=m, cmode=cmode, ncores=threads, parallel=True)
-        else:
-            bf_results = self.bf.reachability(graph=self.graph, k=k, metric=kp_type,
-                                              max_distance=max_distance, m=m, cmode=cmode, ncores=threads,
-                                              parallel=False)
-
+        bf_results = self.bf.reachability(graph=self.graph, k=k, metric=kp_type, m=m, cmode=cmode, nprocs=nprocs)
         self.results[kp_type.name] = [bf_results[0], bf_results[1]]
 
     @timeit
-    def run_groupcentrality(self, k: int, gr_type: GroupCentralityEnum, cmode: CmodeEnum=CmodeEnum.igraph, threads:int = n_cpus, distance:GroupDistanceEnum = GroupDistanceEnum.minimum):
+    def run_groupcentrality(self, k: int, gr_type: GroupCentralityEnum, cmode: CmodeEnum = CmodeEnum.igraph,
+                            nprocs: int = 1, distance: GroupDistanceEnum = GroupDistanceEnum.minimum):
         r"""
         Wrapper around the brute-force search module that stores the results for GroupCentrality metrics
 
         :param k:
         :param gr_type:
         :param cmode:
-        :param threads:
+        :param nprocs:
         :param distance:
         """
-
+        if not nprocs:
+            nprocs = 1
         if not isinstance(k, int) or k < 1:
             raise ValueError(u"'k' must be a positive integer equal or greater than 1")
 
@@ -446,12 +435,10 @@ class BFWrapper:
 
         if gr_type == GroupCentralityEnum.group_closeness:
             if not isinstance(distance, GroupDistanceEnum):
-                raise TypeError(u"'distance' is not one of the GroupDistanceEnums,{} found".format(type(distance).__name__))
+                raise TypeError(
+                    u"'distance' is not one of the GroupDistanceEnums,{} found".format(type(distance).__name__))
 
-        if threads > 1:
-            bf_results = self.bf.group_centrality(graph=self.graph, k=k, metric=gr_type, cmode=cmode, ncores=threads, parallel = True)
-        else:
-            bf_results = self.bf.group_centrality(graph=self.graph, k=k, metric=gr_type, cmode=cmode, ncores=threads, parallel = False)
+        bf_results = self.bf.group_centrality(graph=self.graph, k=k, metric=gr_type, cmode=cmode, nprocs=nprocs)
 
         if gr_type == GroupCentralityEnum.group_closeness:
             self.results["_".join([gr_type.name, distance.name])] = [bf_results[0], bf_results[1]]

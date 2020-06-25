@@ -39,6 +39,7 @@ from exceptions.multiple_solutions_error import MultipleSolutionsError
 from exceptions.unsupported_graph_error import UnsupportedGraphError
 from exceptions.generic_error import Error
 
+
 class Set:
 
     def __init__(self, args):
@@ -356,7 +357,7 @@ class Set:
 
         elif total_nodes >= 5000:
             sys.stdout.write(
-                u"The total sum of the two graph nodes ({}). PyntacleInk allows plotting for network with N < 5000. No visual representation will be produced\n".format(
+                u"The total sum of the two graph nodes ({}). PyntacleInk can plot networks with N < 5000. This graph will not be plotted\n".format(
                     total_nodes))
         else:
             sys.stdout.write(pyntacleink_skip_msg)

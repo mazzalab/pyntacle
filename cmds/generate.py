@@ -1,11 +1,11 @@
 __author__ = u"Mauro Truglio, Tommaso Mazza"
-__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__copyright__ = u"Copyright 2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.2"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"23/06/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -35,18 +35,13 @@ from cmds.cmds_utils.reporter import PyntacleReporter
 
 
 class Generate:
-
     def __init__(self, args):
         self.logging = log
         self.args = None
         self.args = args
-        if self.args.seed:
-            random.seed(self.args.seed)
-
         self.date = runtime_date
         if not self.args.output_separator:
             self.args.output_separator = '\t'
-
 
     def run(self):
         if not self.args.suppress_cursor:
@@ -75,8 +70,7 @@ class Generate:
                     u"Generating graph with random topology\nParameters:\nNumber of nodes: {0}\nNumber of edges: {1}\n".format(
                         self.args.nodes, self.args.edges)
                     
-                    graph = PyntacleGenerator.Random([self.args.nodes, self.args.edges], name="Random", seed=self.args.seed)
-
+                    graph = PyntacleGenerator.Random([self.args.nodes, self.args.edges], name="Random")
                 except (ValueError, TypeError, IllegalGraphSizeError):
                     sys.stderr.write(
                         u"Number of nodes must be a positive integer greater than 2 and number of edges must be a positive integer greater than zero. Quitting\n")
@@ -100,7 +94,7 @@ class Generate:
                     sys.stdout.write(
                         "uGenerating graph with random topology\nParameters:\nNumber of nodes: {0}\nProbability of wiring: {1}\n".format(
                             self.args.nodes, self.args.probability))
-                    graph = PyntacleGenerator.Random([self.args.nodes, self.args.probability], name="Random", seed=self.args.seed)
+                    graph = PyntacleGenerator.Random([self.args.nodes, self.args.probability], name="Random")
 
                 except (ValueError, TypeError, IllegalGraphSizeError):
                     sys.stderr.write(
@@ -134,7 +128,7 @@ class Generate:
                 sys.stdout.write(
                     u"Generating graph with scale-free topology\nParameters:\nNumber of Nodes: {0}\nNumber of Outgoing edges: {1}\n".format(
                         self.args.nodes, self.args.avg_edges))
-                graph = PyntacleGenerator.ScaleFree([self.args.nodes, self.args.avg_edges], name="ScaleFree", seed=self.args.seed)
+                graph = PyntacleGenerator.ScaleFree([self.args.nodes, self.args.avg_edges], name="ScaleFree")
 
             except (ValueError, TypeError, IllegalGraphSizeError):
                 sys.stderr.write(
@@ -169,7 +163,7 @@ class Generate:
                 sys.stdout.write(
                     u"Generating Graph with tree topology\nParameters:\nNumber of nodes: {0}\nChildren per node: {1}\n".format(
                         self.args.nodes, self.args.children))
-                graph = PyntacleGenerator.Tree([self.args.nodes, self.args.children], name="Tree", seed=self.args.seed)
+                graph = PyntacleGenerator.Tree([self.args.nodes, self.args.children], name="Tree")
 
             except (ValueError, TypeError, IllegalGraphSizeError):
                 sys.stderr.write(
@@ -214,7 +208,7 @@ class Generate:
                     u"Generating Graph with small-world topology\nParameters:\nInitial lattice dimensions: {0}\nLattice size: {1}\nNei (number of edges that connect each graph): {2}\nRewiring probability: {3}\n".format(
                         self.args.lattice, self.args.lattice_size, self.args.nei, self.args.probability))
                 graph = PyntacleGenerator.SmallWorld(
-                    [self.args.lattice, self.args.lattice_size, self.args.nei, self.args.probability], name="SmallWorld", seed=self.args.seed)
+                    [self.args.lattice, self.args.lattice_size, self.args.nei, self.args.probability], name="SmallWorld")
 
             except(TypeError, ValueError):
                 sys.stderr.write(
