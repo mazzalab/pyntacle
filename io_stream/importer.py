@@ -103,7 +103,7 @@ class PyntacleImporter:
     @staticmethod
     @input_file_checker
     @separator_sniffer
-    def AdjacencyMatrix(file: str, sep: str or None=None, header: bool=True) -> Graph:
+    def AdjacencyMatrix(file: str, sep: str or None = None, header: bool = True) -> Graph:
         r"""
         Imports an adjacency matrix file to a :py:class:`igraph.Graph` object ready to be used by Pyntacle.
 

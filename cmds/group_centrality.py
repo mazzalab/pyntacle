@@ -1,11 +1,11 @@
 __author__ = u"Mauro Truglio, Tommaso Mazza"
-__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.2"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"23/06/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -25,11 +25,7 @@ __license__ = u"""
   """
 
 from config import *
-import random
-import importlib
-# from colorama import Fore, Style
 from collections import OrderedDict
-# from itertools import chain
 from internal.graph_load import GraphLoad
 from io_stream.exporter import PyntacleExporter
 from cmds.cmds_utils.group_search_wrapper import InfoWrapper as ipw
@@ -43,7 +39,7 @@ from exceptions.multiple_solutions_error import MultipleSolutionsError
 from cmds.cmds_utils.reporter import PyntacleReporter
 
 
-class GroupCentrality():
+class GroupCentrality:
     def __init__(self, args):
         self.logging = log
         self.args = None
@@ -99,9 +95,19 @@ class GroupCentrality():
         graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header,
                           separator=self.args.input_separator).graph_load()
 
+        # auto-select the implementation type
+        if self.args.nprocs > 1:
+            graph["implementation"] = CmodeEnum.igraph
+            implementation = CmodeEnum.igraph
+        elif graph.vcount() < 250:
+            graph["implementation"] = CmodeEnum.igraph
+            implementation = CmodeEnum.igraph
+        else:
+            graph["implementation"] = CmodeEnum.cpu
+            implementation = CmodeEnum.cpu
+
         # init graph utils class
         utils = gu(graph=graph)
-
         if hasattr(self.args, 'nodes'):
 
             if not utils.nodes_in_graph(self.args.nodes):
@@ -135,11 +141,6 @@ class GroupCentrality():
             sys.stderr.write("The 'k' argument ({}) must be strictly less than the graph size({}). Quitting\n".format(
                 self.args.k_size, graph.vcount()))
             sys.exit(1)
-
-        if 'implementation' in graph.attributes():
-            implementation = graph['implementation']
-        else:
-            implementation = CmodeEnum.igraph
 
         # check that output directory is properly set
         createdir = False
@@ -182,42 +183,37 @@ class GroupCentrality():
 
             # Greedy optimization
             if self.args.implementation == "greedy":
-                if self.args.seed:
-                    random.seed(self.args.seed)
-
                 report_type = ReportEnum.GR_greedy
                 go_runner = gow(graph=graph)
                 sys.stdout.write(
-                    u"Using greedy optimization algorithm for searching optimal set of nodes using group centrality metrics\n")
+                    u"Using greedy optimization algorithm to search the optimal set of nodes using group-centrality metrics\n")
                 sys.stdout.write(sep_line)
 
                 if self.args.type in (["all", "degree"]):
                     sys.stdout.write(
-                        u"Finding a set of nodes of size {0} that optimizes group degree\n".format(
+                        u"Searching a set of nodes of size {0} that optimizes the group-degree\n".format(
                             self.args.k_size))
 
                     go_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_degree,
-                                                  seed=self.args.seed,
                                                   cmode=implementation)
                     sys.stdout.write(sep_line)
 
                 if self.args.type in (["all", "betweenness"]):
                     sys.stdout.write(
-                        u"Finding a set of nodes of size {0} that optimizes group betweenness\n".format(
+                        u"Searching a set of nodes of size {0} that optimizes the group-betweenness\n".format(
                             self.args.k_size))
 
                     go_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_betweenness,
-                                                  seed=self.args.seed,
                                                   cmode=implementation)
                     sys.stdout.write(sep_line)
 
                 if self.args.type in (["all", "closeness"]):
                     sys.stdout.write(
-                        u"Finding a set of nodes of size {0} that optimizes group closeness using the {1} distance from the node set\n".format(
+                        u"Searching a set of nodes of size {0} that optimizes the group-closeness using the {1} distance from the node set\n".format(
                             self.args.k_size, group_distance.name))
 
                     go_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_closeness,
-                                                  seed=self.args.seed, cmode=implementation, distance=group_distance)
+                                                  cmode=implementation, distance=group_distance)
                     sys.stdout.write(sep_line)
 
                 sys.stdout.write(sep_line)
@@ -234,12 +230,12 @@ class GroupCentrality():
                 report_type = ReportEnum.GR_bruteforce
                 bf_runner = bfw(graph=graph)
                 sys.stdout.write(
-                    u"Using brute-force search algorithm to find the best set(s) that optimize group centrality metrics\n")
+                    u"Using brute-force search algorithm to find the best set(s) that optimize group-centrality metrics\n")
                 sys.stdout.write(sep_line)
 
                 if self.args.type in (["all", "degree"]):
                     sys.stdout.write(
-                        u"Finding the best set(s) of nodes of size {0} that maximizes group degree using {1} thread{2}\n".format(
+                        u"Searching the best set(s) of nodes of size {0} that maximizes the group-degree using {1} process{2}\n".format(
                             self.args.k_size, self.args.nprocs, plural))
                     bf_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_degree,
                                                   cmode=implementation, nprocs=self.args.nprocs)
@@ -248,7 +244,7 @@ class GroupCentrality():
 
                 if self.args.type in (["all", "betweenness"]):
                     sys.stdout.write(
-                        u"Finding the best set(s) of nodes of size {0} that maximizes group betweenness using {1} thread{2}\n".format(
+                        u"Searching the best set(s) of nodes of size {0} that maximizes the group-betweenness using {1} process{2}\n".format(
                             self.args.k_size, self.args.nprocs, plural))
                     bf_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_betweenness,
                                                   cmode=implementation, nprocs=self.args.nprocs)
@@ -256,7 +252,7 @@ class GroupCentrality():
 
                 if self.args.type in (["all", "closeness"]):
                     sys.stdout.write(
-                        u"Finding the best set(s) of nodes of size {0} that maximizes group closeness using the {1} distance from the node set and {2} thread{3}\n".format(
+                        u"Searching the best set(s) of nodes of size {0} that maximizes the group-closeness using the {1} distance from the node set and {2} process{3}\n".format(
                             self.args.k_size, group_distance, self.args.nprocs, plural))
                     bf_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_closeness,
                                                   cmode=implementation, nprocs=self.args.nprocs,
@@ -268,7 +264,7 @@ class GroupCentrality():
             # shell output report part
             sys.stdout.write(section_end)
             sys.stdout.write(summary_start)
-            sys.stdout.write(u"Node set size for group centrality search: {}\n".format(str(self.args.k_size)))
+            sys.stdout.write(u"Set size for group centrality search: {}\n".format(str(self.args.k_size)))
             sys.stdout.write(sep_line)
 
             for kk in results.keys():
@@ -288,13 +284,13 @@ class GroupCentrality():
                     list_of_results = "(" + ", ".join(results[kk][0]) + ")"
 
                 sys.stdout.write(
-                    u'Best node set{0} of size {1} for {5} centrality {2}:\n{3}\nwith value {4}\n'.format(
+                    u'Best set{0} of size {1} for {5} centrality {2}:\n{3}\nwith value {4}\n'.format(
                         plurals[0], self.args.k_size, plurals[1], list_of_results, results[kk][1],
                         " ".join(kk.split("_")[:2])))
 
                 if kk.startswith(GroupCentralityEnum.group_closeness.name):
                     sys.stdout.write(
-                        "The {} distance was considered for computing closeness\n".format(group_distance.name))
+                        "The {} distance was considered for computing the group-closeness\n".format(group_distance.name))
 
                 sys.stdout.write("\n")
 
@@ -322,23 +318,22 @@ class GroupCentrality():
             sys.stdout.write(summary_start)
 
             for metric in results.keys():
-
                 if metric == GroupCentralityEnum.group_degree.name:
-                    sys.stdout.write("The group degree value for the input node set:\n({0})\nis {1}\n".format(
+                    sys.stdout.write("The group-degree value for the input node set:\n({0})\nis {1}\n".format(
                         ', '.join(results[metric][0]),
                         results[metric][1]))
                     sys.stdout.write("\n")
 
                 if metric == GroupCentralityEnum.group_betweenness.name:
                     sys.stdout.write(
-                        "The group betweenness value for the input node set:\n({0})\nis {1}\n".format(
+                        "The group-betweenness value for the input node set:\n({0})\nis {1}\n".format(
                             ', '.join(results[metric][0]),
                             results[metric][1]))
                     sys.stdout.write("\n")
 
                 if metric.startswith(GroupCentralityEnum.group_closeness.name):
                     sys.stdout.write(
-                        "The group closeness value for the input node set:\n({0})\nis {1}.\nThe {2} distance was considered between the set and the rest of the graph\n".format(
+                        "The group-closeness value for the input node set:\n({0})\nis {1}.\nThe {2} distance was considered between the set and the rest of the graph\n".format(
                             ', '.join(results[metric][0]),
                             results[metric][1], group_distance.name))
                     sys.stdout.write("\n")
@@ -362,12 +357,12 @@ class GroupCentrality():
         #pyntacle ink part
         if not self.args.no_plot and graph.vcount() < 5000:
             suffix = "_".join(graph["name"])
-            sys.stdout.write(u"Plotting network and run results in {} directory with Pyntacle-Ink\n".format(self.args.directory))
+            sys.stdout.write(u"Plotting network and run results in {} directory with PyntacleInk\n".format(self.args.directory))
             reporter.pyntacleink_report(report_dir=self.args.directory, report_dict=results, suffix=suffix)
 
         elif graph.vcount() >= 5000:
             sys.stdout.write(
-                u"The graph has too many nodes ({}). Pyntacle-Ink allows plotting for network with N < 5000. No visual representation will be produced\n".format(
+                u"The graph has too many nodes ({}). PyntacleInk allows plotting for network with N < 5000. No visual representation will be produced\n".format(
                     graph.vcount()))
         else:
             sys.stdout.write(pyntacleink_skip_msg)

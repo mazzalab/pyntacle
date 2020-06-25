@@ -53,7 +53,6 @@ class WidgetTestKeyplayer(unittest.TestCase):
         self.Args.input_file = os.path.join(current_dir, 'pyntacletests/test_sets/input/figure_8.txt')
         self.Args.largest_component = False
         self.Args.m_reach = 2
-        self.Args.max_distance = None
         self.Args.no_header = False
         self.Args.no_plot = True
         self.Args.plot_dim = None
@@ -92,7 +91,6 @@ class WidgetTestKeyplayer(unittest.TestCase):
         self.Args.which = 'kp-finder'
         self.Args.implementation = 'greedy'
         self.Args.k_size = 2
-        self.Args.seed = 2
         kp = keyplayer_command(self.Args)
         with self.assertRaises(SystemExit) as cm:
             kp.run()
@@ -118,7 +116,6 @@ class WidgetTestKeyplayer(unittest.TestCase):
         self.Args.which = 'kp-finder'
         self.Args.implementation = 'brute-force'
         self.Args.k_size = 2
-        self.Args.seed = 2
         kp = keyplayer_command(self.Args)
         with self.assertRaises(SystemExit) as cm:
             kp.run()

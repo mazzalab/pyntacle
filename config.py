@@ -30,7 +30,7 @@ import os
 import threading
 import time
 from multiprocessing import cpu_count
-
+import seaborn as sns
 from colorama import Fore, Style
 from numba import cuda
 from numba.core.config import *
@@ -45,7 +45,7 @@ report_format = {"tsv": "tsv", "txt": "tsv", "csv": "csv", "xlsx": "xlsx", "xlx"
 
 runtime_date = datetime.datetime.now().strftime("%Y-%m-%d-%H%M%S")
 
-pyntacleink_skip_msg = "Skipping Pyntacle-Ink report.\n"
+pyntacleink_skip_msg = "Skipping PyntacleInk report\n"
 
 # generic lines
 sep_line = Fore.LIGHTGREEN_EX + Style.BRIGHT + u"*" * 100 + "\n" + Style.RESET_ALL

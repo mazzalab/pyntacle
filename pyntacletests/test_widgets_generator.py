@@ -1,11 +1,11 @@
 __author__ = u"Mauro Truglio, Tommaso Mazza"
 __copyright__ = u"Copyright 2018, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.2"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"23/06/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t,mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -28,8 +28,9 @@ import unittest
 import os, sys, glob
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 current_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
-from pyntacletests import getmd5, getmd5_bin
+from pyntacletests import getmd5
 from cmds.generate import Generate as generate_command
+import random
 
 
 class DummyObj:
@@ -38,6 +39,8 @@ class DummyObj:
 
 class WidgetTestGenerator(unittest.TestCase):
     def setUp(self):
+        random.seed(1)
+
         self.cleanup()
         self.Args = DummyObj()
         self.Args.directory = os.path.join(current_dir, 'pyntacletests/test_sets/tmp')
@@ -48,7 +51,6 @@ class WidgetTestGenerator(unittest.TestCase):
         self.Args.output_separator = None
         self.Args.plot_dim = None
         self.Args.plot_format = 'pdf'
-        self.Args.seed = 1
         self.Args.repeat = 1
         self.Args.v = None
         self.Args.suppress_cursor = True

@@ -1,11 +1,11 @@
 __author__ = u"Mauro Truglio, Tommaso Mazza"
 __copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.2"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"24/06/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -25,25 +25,20 @@ __license__ = u"""
   """
 
 import argparse
-import random
 from config import *
 import unittest
-from numpy import random as nprandom
 from copy import deepcopy
 from exceptions.generic_error import Error
 from colorama import init
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
-
 if sys.version_info <= (3, 4):
-    sys.exit("Python < 3.4 is not supported. Please use 'python3' instead or update your Python compiler.")
+    sys.exit("Python < 3.4 is not supported. Please update your Python distribution")
 
 if os.name == "nt":
     init(convert=True)
 
 from cmds.cmds_utils.reporter import *
-# Main commands wrappers
 from cmds.keyplayer import KeyPlayer as kp_command
 from cmds.group_centrality import GroupCentrality as gr_command
 from cmds.metrics import Metrics as metrics_command
@@ -54,13 +49,13 @@ from cmds.communities import Communities as communities_command
 from pyntacletests.test_suite import Suite
 
 
-def _check_value(self, action, value):
-    # converted value must be one of the choices (if specified)
-    if action.choices is not None and value not in action.choices:
-        args = {"value": value,
-                "choices": ", ".join(map(repr, action.choices))}
-        msg = "invalid choice: %(value)r"
-        raise argparse.ArgumentError(action, msg % args)
+# def _check_value(action, value):
+#     # converted value must be one of the choices (if specified)
+#     if action.choices is not None and value not in action.choices:
+#         args = {"value": value,
+#                 "choices": ", ".join(map(repr, action.choices))}
+#         msg = "invalid choice: %(value)r"
+#         raise argparse.ArgumentError(action, msg % args)
 
 
 def procs_type(x):
@@ -69,7 +64,6 @@ def procs_type(x):
         raise argparse.ArgumentTypeError("The minimum settable number is 1")
     if x > cpu_count():
         raise argparse.ArgumentTypeError("The maximum number of available CPUs is {}".format(cpu_count()))
-
     return x
 
 
@@ -79,11 +73,11 @@ class App:
         sys.tracebacklimit = 0
         verbosity = 0
 
-        # Overriding argparse's mischievous and buggy error message
-        argparse.ArgumentParser._check_value = _check_value
+        # Overriding argparse's odd error message
+        # argparse.ArgumentParser._check_value = _check_value
 
         parser = argparse.ArgumentParser(
-            description="Main Description",
+            description="Main description",
             usage=Fore.RED + Style.BRIGHT + "pyntacle" + Fore.GREEN + " <command>" + Fore.RED
                   + """ [<args>]
     The available commands in Pyntacle are:\n""" + Style.RESET_ALL + 100 * "-" +
@@ -92,14 +86,14 @@ class App:
                                                                     "nodes of size `k` that owns the optimal or the best "
                                                                     "score ('kp-finder')." +
                   Fore.GREEN + "\n\n  groupcentrality " + Fore.CYAN + "Computes group centrality metrics (goo.gl/82Whxu), "
-                                                                    "a variation of classical node\n                  centrality indices. "
-                                                                    "These metrics can be computed for "
-                                                                    "a specific set of nodes ('gr-info') or they can be "
-                                                                    "used to find a set of node of size `k` that own "
-                                                                    "the optimal or the best score ('gr-finder')." +
+                                                                      "a variation of classical node\n                  centrality indices. "
+                                                                      "These metrics can be computed for "
+                                                                      "a specific set of nodes ('gr-info') or they can be "
+                                                                      "used to find a set of node of size `k` that own "
+                                                                      "the optimal or the best score ('gr-finder')." +
                   Fore.GREEN + "\n\n  metrics         " + Fore.CYAN + "Computes metrics of local and global nature for a "
-                                                                    "set of nodes of a network or for the "
-                                                                    "whole graph." +
+                                                                      "set of nodes of a network or for the "
+                                                                      "whole graph." +
                   Fore.GREEN + "\n\n  communities     " + Fore.CYAN + "Finds communities within a graph using"
                                                                       "several community-finding algorithms. Produces\n                  "
                                                                       "several network files, each containing "
@@ -109,18 +103,18 @@ class App:
                                                                       "networks\n                  using graph logical operations." +
                   Fore.GREEN + "\n\n  convert         " + Fore.CYAN + "Converts a network file format to another one." +
                   Fore.GREEN + "\n\n  generate        " + Fore.CYAN + "Generates in-silico networks that follow"
-                                                                    "one of the available topologies." +
+                                                                      "one of the available topologies." +
                   Fore.GREEN + "\n\n  test            " + Fore.CYAN + "Performs a series of tests to check "
-                                                                    "the integrity of Pyntacle. Useful to test if\n                  "
-                                                                    "Pyntacle was installed correctly and for debugging "
-                                                                    "tasks\n" +
+                                                                      "the integrity of Pyntacle. Useful to test if\n                  "
+                                                                      "Pyntacle was installed correctly and for debugging "
+                                                                      "tasks\n" +
                   Style.RESET_ALL + 100 * "-", )
 
         parser.add_argument("command", help="Subcommand to run", type=lambda s: s.lower())
         parser.add_argument("-v", action="count", help="Verbosity level of the internal Pyntacle logger. "
                                                        "-vvv is the highest level (for debugging purposes).")
         parser.add_argument("-V", "--version", action="version", version="Pyntacle v1.1",
-                            help="Shows program version number and quits.")
+                            help="Show version number and quit")
 
         # Detect verbosity
         for arg in sys.argv:
@@ -135,7 +129,7 @@ class App:
             log.setLevel(logging.WARN)
 
         # Continue parsing of the first two arguments
-        args = parser.parse_args(sys.argv[1:2])
+        args = parser.parse_args(sys.argv[2:3])  # TODO: FIX this with 1:2
 
         if not hasattr(self, args.command) and args.command != "test":
             sys.stdout.write("Unrecognized command\n")
@@ -219,7 +213,7 @@ class App:
                                  "(comma-separated value), 'xlsx' (Excel). Default is 'txt'")
 
         parser.add_argument("--no-plot", action="store_true",
-                            help="Skip Pyntacle-Ink report")
+                            help="Skip PyntacleInk report")
 
         parser.add_argument("--save-binary", action="store_true",
                             help="Save a binary file (ending in '.graph') that contains the network "
@@ -260,24 +254,22 @@ class App:
                                         help="The strategy used to search for the best kp-set. Choices are: 'greedy' "
                                              "(a greedy optimizationsearch algorithm) and "
                                              "'brute-force'. 'greedy' is default")
-
-        finder_case_parser.add_argument("-S", "--seed", type=int, help="(GREEDY OPTIMIZATION ONLY) Set a user-defined "
-                                                                       "seed to replicate the greedy optimization search",
-                                        metavar="", default=None)
-        finder_case_parser.add_argument("-O", "--procs", metavar="", default=n_cpus, type=procs_type,
+        finder_case_parser.add_argument("-O", "--nprocs", metavar="", default=1, type=procs_type,
                                         help="(BRUTE-FORCE SEARCH ONLY) Specify the maximum number of processes that will be used by the brute-force search algorithm. Default to "
                                              "the maximum number of available CPUs - 1")
 
         finder_case_parser.set_defaults(which="kp-finder")
 
-        # now that we're inside a subcommand, ignore the first
-        # TWO args, ie the command and subcommand
-        args = parser.parse_args(sys.argv[2:])
-
-        if len(sys.argv) < 4 or (sys.argv[2] not in ("kp-finder", "kp-info")):
+        # if len(sys.argv) < 4 or (sys.argv[3] not in ("kp-finder", "kp-info")):
+        if len(sys.argv) < 4 or (sys.argv[2] not in ("kp-finder", "kp-info")):  # TODO: enable this line
             parser.print_help()
             raise Error(
                 "Usage: pyntacle keyplayer {kp-finder, kp-info} [arguments] (use --help for command description)")
+
+        # now that we're inside a subcommand, ignore the first
+        # TWO args, ie the command and subcommand
+        # args = parser.parse_args(sys.argv[3:])
+        args = parser.parse_args(sys.argv[2:])
 
         kp = kp_command(args)
         try:
@@ -351,7 +343,7 @@ class App:
                                  "(comma-separated value), 'xlsx' (Excel). Default is 'txt'.")
 
         parser.add_argument("--no-plot", action="store_true",
-                            help="Skip Pyntacle-Ink report")
+                            help="Skip PyntacleInk report")
 
         parser.add_argument("--save-binary", action="store_true",
                             help="Save a binary file (with '.graph' file extension) that contains the network "
@@ -391,25 +383,22 @@ class App:
                                         choices=["brute-force", "greedy"],
                                         help="The strategy used for the search of the node set. Choices are: 'greedy' (a greedy optimization algorithm aimed at finding an optimal solution) "
                                              "and 'brute-force' for a brute-force search that find the best solution (or solutions). 'greedy' is the default strategy.")
-
-        finder_case_parser.add_argument("-S", "--seed", type=int,
-                                        help="(GREEDY OPTIMIZATION SEARCH ONLY) Set a user-defined seed to replicate the greedy optimization search",
-                                        metavar="", default=None)
-        finder_case_parser.add_argument("-O", "--procs", metavar="", default=n_cpus, type=procs_type,
+        finder_case_parser.add_argument("-O", "--nprocs", metavar="", default=1, type=procs_type,
                                         help="(BRUTE-FORCE SEARCH ONLY) Specify the maximum number of processes that will be used by the brute-force search algorithm. Defaults to "
                                              "the maximum number of available CPUs - 1.")
 
         finder_case_parser.set_defaults(which="gr-finder")
 
-        # now that we're inside a subcommand, ignore the first
-        # TWO args, ie the command and subcommand
-        args = parser.parse_args(sys.argv[2:])
-
+        # if len(sys.argv) < 4 or (sys.argv[3] not in ("gr-finder", "gr-info")):
         if len(sys.argv) < 4 or (sys.argv[2] not in ("gr-finder", "gr-info")):
             parser.print_help()
             raise Error(
                 "Usage: pyntacle groupcentrality {gr-finder, gr-info} [arguments] (use --help for command description)")
 
+        # now that we're inside a subcommand, ignore the first
+        # TWO args, ie the command and subcommand
+        args = parser.parse_args(sys.argv[2:])
+        # args = parser.parse_args(sys.argv[3:])
         gr = gr_command(args)
         try:
             gr.run()
@@ -466,7 +455,7 @@ class App:
                                  "(comma-separated value file), 'xlsx' (Excel file). Default is 'txt'.")
 
         parser.add_argument("--no-plot", action="store_true",
-                            help="Skip Pyntacle-Ink report")
+                            help="Skip PyntacleInk report")
 
         parser.add_argument("--save-binary", action="store_true",
                             help="Save a binary file (with '.graph' file extension) that contains the network "
@@ -637,12 +626,7 @@ class App:
 
         # NOT prefixing the argument with -- means it's not optional
         parser.add_argument("-R", "--repeat", metavar="", type=int, default=1,
-                            help="Repeat 'n' times the graph generation process. Default is 1"
-                                 " NOTE: '--repeat' overrides '--seed'")
-
-        parser.add_argument("-S", "--seed", type=int, help="Set a seed when creating a network, to replicate the "
-                                                           "network construction. Overridden by '--repeat'.",
-                            metavar="", default=None)
+                            help="Repeat 'n' times the graph generation process. Default is 1")
 
         parser.add_argument("-d", "--directory", metavar="", default=os.getcwd(),
                             help="The directory that will store results. If the directory does not "
@@ -670,7 +654,7 @@ class App:
                                  "If not specified, the output network file will contain a header by default")
 
         parser.add_argument("--no-plot", action="store_true",
-                            help="Skip Pyntacle-Ink report")
+                            help="Skip PyntacleInk report")
 
         parser.add_argument("--suppress-cursor", action="store_true",
                             help="Suppress the animated cursor during Pyntacle execution.")
@@ -768,15 +752,6 @@ class App:
         original_args = deepcopy(args)
         for r in range(0, args.repeat):
             args = deepcopy(original_args)
-            if not args.seed:
-                print("generating new seed")
-                args.seed = nprandom.randint(1, 1000000)
-            elif args.seed and args.repeat != 1:
-                sys.stdout.write(
-                    "WARNING: you have supplied both --repeat greater than 1 and --seed. The former overrides"
-                    "the latter, so {0} different graphs will be produced with a random seed\n".format(
-                        str(args.repeat)))
-                args.seed = random.randint(1, 1000000)
             gen = generate_command(args)
             try:
                 gen.run()
@@ -785,9 +760,9 @@ class App:
 
     def communities(self):
         parser = argparse.ArgumentParser(
-            description="Detect communities of tightly connected nodes within a graph by means of different modular "
-                        "decomposition algorithms. Produce several network files, each containing an"
-                        " induced subgraph of every community found. The resulting communities can be filtered by the"
+            description="Detect communities of connected nodes by means of different decomposition algorithms."
+                        " Produce several network files, each containing an"
+                        " induced subgraph of every found community. The resulting communities can be filtered by the"
                         "number of nodes or components \n\n"
                         "Subcommands:\n" + 100 * "-" + "\n" +
                         "  fastgreedy\t\t      Modular decomposition (fastgreedy) \n"
@@ -801,87 +776,86 @@ class App:
 
         parser.add_argument("-i", "--input-file", metavar="",
                             help="(REQUIRED) Path to the input network file. It can be an adjacency matrix, an "
-                                 "edge list, a Simple Interaction (SIF) file, a DOT file or a binary "
-                                 "storing an igraph.Graph object. See goo.gl/A2Q1H4 for more details.")
+                                 "edge list, a Simple Interaction (SIF) file, a DOT file or a binary file "
+                                 "storing an igraph.Graph object. See goo.gl/A2Q1H4 for more details")
         # These are options instead
         parser.add_argument("-f", "--format", metavar="",
                             choices=format_dictionary.keys(),
                             help="Input network file format: 'adjmat' for adjacency matrix, 'edgelist' for edge list, "
-                                 "'sif' for Simple Interaction format, 'dot' for DOT file, 'bin' "
+                                 "'sif' for Simple Interaction (SIF) format, 'dot' for DOT file, 'bin' "
                                  "for binary file. See https://goo.gl/9wFRfM for more information "
-                                 "and other available abbreviations. If not specified, the input format will be guessed.")
+                                 "and other available abbreviations. If not specified, the input format will be guessed")
 
         parser.add_argument("--input-separator", metavar="", default=None,
                             help="The field separator for the input file. "
-                                 "If not provided, Pyntacle tries to guess it automatically.")
+                                 "If not provided, Pyntacle tries to guess it automatically")
 
         parser.add_argument("-N", "--no-header", default=False, action="store_true",
-                            help="A flag that must be used if the input network file (adjacency matrix, edge list, SIF file) "
-                                 "does not contain a header. By default, we assume a header is present.")
+                            help="This flag specifies that the input network file (adjacency matrix, edge list, SIF) "
+                                 "will contain a header line. The header is not present by default")
 
         parser.add_argument("-L", "--largest-component", action="store_true",
-                            help="Considers only the largest component of the input graph and excludes the smaller ones."
+                            help="Consider only the largest component of the input graph and exclude the smaller ones"
                                  "It will raise an error if the network has two largest"
-                                 " components of the same size.")
+                                 " components with same size")
 
-        parser.add_argument("--min-nodes", "-m", help="Filters the resulting communities and keeps only those with a "
-                                                      "number of vertices equal or greater than this treshold.")
+        parser.add_argument("--min-nodes", "-m", help="Filter the resulting communities and keep only those with a "
+                                                      "number of vertices equal or greater than this threshold value")
 
         parser.add_argument("--max-nodes", "-M",
-                            help="Filters the resulting communities and keeps only those with a "
-                                 "number of vertices equal or lesser than this threshold.")
+                            help="Filter the resulting communities and keep only those with a "
+                                 "number of vertices equal or lesser than this threshold")
 
         parser.add_argument("--min-components", "-c",
-                            help="Filters the resulting communities and keeps only those with a "
-                                 "number of components equal or greater than this threshold.")
+                            help="Filter the resulting communities and keep only those with a "
+                                 "number of components equal or greater than this threshold")
 
         parser.add_argument("--max-components", "-C",
-                            help="Filters the resulting communities and keeps only those with a "
-                                 "number of components equal or greater than this threshold.")
+                            help="Filter the resulting communities and keep only those with a "
+                                 "number of components equal or greater than this threshold")
 
         parser.add_argument("-d", "--directory", default=os.getcwd(), metavar="",
-                            help="The directory that will store Pyntacle results. If the directory does not "
-                                 "exist, it will be created at the desired location. Default is the current "
-                                 "working directory.")
+                            help="The directory that will store the results. If the directory does not "
+                                 "exist, it will be created. Default is the current working directory")
 
         parser.add_argument("--output-file", "-o", metavar="",
                             help="Basename of the output network files. If not specified, a standard name will be "
-                                 "generated.")
+                                 "generated")
 
         parser.add_argument("-u", "--output-format", metavar="",
                             choices=format_dictionary.keys(), default="adjmat",
-                            help="Desired output format for the output network files storing communities. The same "
+                            help="Desired format for the output network files storing the communities. The same "
                                  "abbreviations used in the '--format' are applied. See https://goo.gl/9wFRfM for "
-                                 "more information on available network file formats and the complete list of abbreviations.")
+                                 "more information on available network file formats and the complete list of abbreviations")
 
         parser.add_argument("--output-separator", metavar="", default="\t",
                             help="The field separator of the output network file. Default is '\t'."
-                                 " NOTE: the separator must be wrapped in quotes.")
+                                 " NOTE: the separator must be wrapped in quotes")
 
         parser.add_argument("--no-output-header", action="store_true",
-                            help="Skips the creation of a header for the resulting network files if the output format is"
+                            help="Skip the creation of a header for the resulting network files if the output format is"
                                  " an adjacency matrix, an edge list or a SIF file. See https://goo.gl/9wFRfM for more "
-                                 "details on accepted network file formats and their specifics."
-                                 "If not specified the output network files will contain a header by default.")
+                                 "details on accepted network file formats and their specifications."
+                                 "If not specified the output network files will contain a header by default")
 
         parser.add_argument("-r", "--report-format", metavar="", default="txt", choices=["txt", "csv", "xlsx", "tsv"],
                             type=lambda s: s.lower(),
                             help="The format of the report produced by "
                                  "Pyntacle. Choices are: 'txt' and 'tsv' (tab-separated file), 'csv' "
-                                 "(comma-separated value file), 'xlsx' (Excel file). Default is 'txt'.")
+                                 "(comma-separated value file), 'xlsx' (Excel file). Default is 'txt'")
 
         parser.add_argument("--no-plot", action="store_true",
-                            help="Skips graph drawing with Pyntacle-Ink.")
+                            help="Skip graph drawing with PyntacleInk.")
 
         parser.add_argument("--save-binary", action="store_true",
-                            help="Saves a binary file (ending in '.graph') that contains the network "
+                            help="Save a binary file (ending in '.graph') that contains the network "
                                  "and all the operations performed on it in an 'igraph.Graph' object")
 
         parser.add_argument("--suppress-cursor", action="store_true",
-                            help="Suppresses the animated cursor during Pyntacle execution.")
+                            help="Suppress the animated cursor during execution")
 
         parser.add_argument("-v", action="count", help="Verbosity level of the internal Pyntacle logger. "
-                                                       "-vvv is the highest level (for debugging purposes).")
+                                                       "-vvv is the highest level (for debugging purposes)")
 
         subparsers = parser.add_subparsers(metavar="", help=argparse.SUPPRESS)
 
@@ -895,15 +869,15 @@ class App:
         fastgreedy_subparser.set_defaults(which="fastgreedy")
 
         fastgreedy_subparser.add_argument("--clusters", metavar="",
-                                          help="Specifies the number of clusters around which the modular decomposition "
-                                               "algorithm will optimize its module search.")
+                                          help="Specify the number of clusters around which the modular decomposition "
+                                               "algorithm will optimize its module search")
 
         fastgreedy_subparser.add_argument("--weights", metavar="",
-                                          help="Path to an edge attribute file storing weights that will be passed to the"
-                                               "fastgreedy algorithm. Must be either a standard edge attribute file or a "
+                                          help="Path to an edge attribute file storing the weights that will be passed to the"
+                                               "fastgreedy algorithm. It must be either a standard edge attribute file or a "
                                                "Cytoscape legacy attribute file. "
                                                "See https://goo.gl/9wFRfM for more details on edge attribute files."
-                                               "NOTE: A column named 'weights' must be present in the edge attribute file.")
+                                               "NOTE: A column named 'weights' must be present in the edge attribute file")
 
         fastgreedy_subparser.add_argument("--weights-format", choices=["standard", "cytoscape"], metavar="",
                                           default="standard",
@@ -939,20 +913,20 @@ class App:
         community_walktrap_subparser.set_defaults(which="community-walktrap")
 
         community_walktrap_subparser.add_argument("--steps",
-                                                  help="Specifies the maximum number of steps for the random walker. "
-                                                       "High number of steps leads to lesser cohese communities. "
-                                                       "Default is 3.", default="3")
+                                                  help="Specify the maximum number of steps for the random walker. "
+                                                       "A high number of steps leads to less cohesive communities. "
+                                                       "Default is 3", default="3")
 
         community_walktrap_subparser.add_argument("--clusters",
-                                                  help="Specifies the number of clusters around which the modular "
-                                                       "decomposition algorithm will optimize its module search.")
+                                                  help="Specify the number of clusters around which the modular "
+                                                       "decomposition algorithm will optimize its module search")
 
         community_walktrap_subparser.add_argument("--weights",
                                                   help="Path to an edge attribute file storing weights that will be "
                                                        "passed to the walktrap algorithm. Must be either a standard "
                                                        "edge attribute file or a Cytoscape legacy attribute file. "
                                                        "See https://goo.gl/9wFRfM for more details on edge attribute files."
-                                                       "NOTE: A column named 'weights' must be present in the edge attribute file.")
+                                                       "NOTE: A column named 'weights' must be present in the edge attribute file")
 
         community_walktrap_subparser.add_argument("--weights-format", choices=["standard", "cytoscape"], metavar="",
                                                   default="standard",
@@ -961,7 +935,7 @@ class App:
                                                        " a standard edge attributes file  or "
                                                        "'cytoscape' for the Cytoscape legacy attribute file. "
                                                        "See https://goo.gl/9wFRfM for more details on edge attribute files."
-                                                       "Default is 'standard'.")
+                                                       "Default is 'standard'")
 
         args = parser.parse_args(sys.argv[2:])
 
@@ -981,15 +955,15 @@ class App:
     def set(self):
 
         parser = argparse.ArgumentParser(
-            description="Performs set operations (union, intersection, difference) between two networks using "
+            description="Perform set operations (union, intersection, difference) between two networks using "
                         "logical graph operations\n\n"
                         "Subcommands:\n\n" + 90 * "-" + "\n" +
-                        "  intersection\t      Graph intersection. Returns only the "
+                        "  intersection\t      Graph intersection. Return only the "
                         "\n\t\t      common nodes and their connecting edges among the two graphs of interest\n\n"
-                        "  union\t\t      Graph union. Returns a resulting merged graph of the original two networks, marking the common nodes"
+                        "  union\t\t      Graph union. Return a resulting merged graph of the original two networks, marking the common nodes"
                         "among them along with their common connecting edges"
-                        "  difference\t      Performs the difference between the two input graphs. Returns the nodes "
-                        "\n\t\t      and edges belonging only to the first input graph. NOTE: the difference among graph is not reciprocal"
+                        "  difference\t      Perform the difference between the two input graphs. Return the nodes "
+                        "\n\t\t      and edges belonging only to the first input graph. NOTE: the difference among graphs is not reciprocal"
                         + 90 * "-",
             formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=140,
                                                                               max_help_position=100),
@@ -999,73 +973,72 @@ class App:
         parser.add_argument("-1", "--input-file-1", metavar="",
                             help="(REQUIRED) Path to the first input network file. It can be an adjacency matrix, an "
                                  "edge list, a Simple Interaction (SIF) file, a DOT file or a binary "
-                                 "storing an igraph.Graph object. See goo.gl/A2Q1H4 for more details.")
+                                 "storing an igraph.Graph object. See goo.gl/A2Q1H4 for more details")
 
         parser.add_argument("-2", "--input-file-2", metavar="",
                             help="(REQUIRED) Path to the first input network file. It can be an adjacency matrix, an "
                                  "edge list, a Simple Interaction (SIF) file, a DOT file or a binary "
-                                 "storing an igraph.Graph object. See goo.gl/A2Q1H4 for more details.")
+                                 "storing an igraph.Graph object. See goo.gl/A2Q1H4 for more details")
 
         parser.add_argument("-f", "--format", metavar="",
                             choices=format_dictionary.keys(),
-                            help="Specifies the format of the input files passed using the -1/--input-file-1 "
+                            help="Specify the format of the input files passed using the -1/--input-file-1 "
                                  "and the -2/--input-file-2 command. Different file formats can be specified "
                                  "using different keywords e.g. 'adjmat' for adjacency matrix, 'edgelist' for edge list, "
-                                 "'sif' for Simple Interaction format, 'dot' for DOT file, 'bin' "
+                                 "'sif' for Simple Interaction (SIF) format, 'dot' for DOT file, 'bin' "
                                  "for binary file. See https://goo.gl/9wFRfM for more information"
                                  "and other available abbreviations. If not specified, the input format will be guessed."
                                  "NOTE: The two network files MUST have the same format. If not, use "
-                                 "'pyntacle convert' to convert them to a common accepted network file format.")
+                                 "'pyntacle convert' to convert them to a common accepted network file format")
 
         parser.add_argument("--input-separator", metavar="", default=None,
                             help="The field separator for the input files. "
-                                 "If not provided, Pyntacle tries to guess it automatically.")
+                                 "If not provided, Pyntacle tries to guess it automatically")
 
         parser.add_argument("-N", "--no-header", "-n", action="store_true",
-                            help="A flag that must be used if the input network file (adjacency matrix, edge list, SIF file) "
-                                 "does not contain a header. By default, we assume a header is present.")
+                            help="This flag specifies that the input network file (adjacency matrix, edge list, SIF file) "
+                                 "does not contain a header line. By default, a header is assumed to be present")
 
         parser.add_argument("-L", "--largest-component", action="store_true",
-                            help="Considers only the largest component of the input graph and excludes the smaller ones."
+                            help="Consider only the largest component of the input graph and excludes the smaller ones."
                                  "It will raise an error if the network has two largest"
-                                 " components of the same size.")
+                                 " components of the same size")
 
         parser.add_argument("-d", "--directory", metavar="", default=os.getcwd(),
-                            help="The directory that will store Pyntacle results. If the directory does not "
-                                 "exist, it will be created at the desired location. Default is the current "
-                                 "working directory.")
+                            help="The directory that will store the results. If the directory does not "
+                                 "exist, it will be created. Default is the current working directory")
 
         parser.add_argument("--output-file", "-o", metavar="",
-                            help="Basename of the output network file. If not specified, the default output basename file will a standard name will be "
-                                 "generated.")
+                            help="Basename of the output network file. If not specified, a standard name will be "
+                                 "generated")
 
         parser.add_argument("-u", "--output-format", metavar="",
                             choices=format_dictionary.keys(), default="adjmat",
-                            help="Desired output format for the resulting network file.The same abbreviations used in the "
+                            help="Desired output format for the resulting network file. The same abbreviations used in the "
                                  "'--format' are applied. See https://goo.gl/9wFRfM for more information on available "
-                                 "network file formats and the complete list of abbreviations.")
+                                 "network file formats and the complete list of abbreviations")
 
         parser.add_argument("--output-separator", metavar="",
                             help="The field separator of the output network file. Default is '\t'."
-                                 " NOTE: the separator must be wrapped in quotes.")
+                                 " NOTE: the separator must be wrapped in quotes")
 
         parser.add_argument("--no-output-header", action="store_true",
-                            help="Skips the creation of a header for the resulting network files if the output format is"
+                            help="Skip the creation of a header for the resulting network files if the output format is"
                                  " an adjacency matrix, an edge list or a SIF file. See https://goo.gl/9wFRfM for more "
-                                 "details on accepted network file formats and their specifics."
-                                 "If not specified the output network file will contain a header by default.")
+                                 "details on accepted network file formats and their specifics. "
+                                 "If not specified the output network file will contain a header by default")
 
         parser.add_argument("--report-format", "-r", default="txt", choices=["txt", "csv", "xlsx", "tsv"],
                             metavar="",
                             help="The format of the report produced by "
                                  "Pyntacle. Choices are: 'txt' and 'tsv' (tab-separated file), 'csv' "
-                                 "(comma-separated value file), 'xlsx' (Excel file). Default is 'txt'.")
+                                 "(comma-separated value file), 'xlsx' (Excel file). Default is 'txt'")
 
         parser.add_argument("--no-plot", action="store_true",
-                            help="Skips graph drawing with Pyntacle-Ink.")
+                            help="Skip graph drawing with PyntacleInk")
 
         parser.add_argument("--suppress-cursor", action="store_true",
-                            help="Suppresses the animated cursor during Pyntacle execution.")
+                            help="Suppress the animated cursor during execution.")
 
         parser.add_argument("-v", action="count", help="Verbosity level of the internal Pyntacle logger. "
                                                        "-vvv is the highest level (for debugging purposes).")

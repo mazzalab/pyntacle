@@ -110,7 +110,7 @@ The source code can be downloaded from our GitHub
 requirements that need to be satisfied on each platform.
 
 
-**NOTE** Starting from this version (1.1), we introduced a new JavaScript-based graph visualizer, Pyntacle-Ink. Installation
+**NOTE** Starting from this version (1.1), we introduced a new JavaScript-based graph visualizer, PyntacleInk. Installation
 of cairo and the pycairo python bindings is hence not required. We however recommend installing cairo if you seek to 
 perform plotting with igraph library (visit the [pycairo page](https://cairographics.org/download/) for operative-system
 specific instructions.)
@@ -206,8 +206,8 @@ Changelog for current and past releases:
 
 
 ### 1.1:
-New Graph Plotting tool: Pyntacle-Ink
-- Pyntacle-Ink is a web-based, javascript-based visualizer based on the [sigmajs](http://sigmajs.org/) library. It is 
+New Graph Plotting tool: PyntacleInk
+- PyntacleInk is a web-based, javascript-based visualizer based on the [sigmajs](http://sigmajs.org/) library. It is 
 designed to integrate with Pyntacle command-line library and replaces the igraph-based plotter. 
 - Graphical plots will be now be produced in a html file within the pyntacle results directory, containing detailed 
 summarization of each Pyntacle run performed on the input file. This file is updated at each run, making graphical

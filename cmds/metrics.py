@@ -249,7 +249,7 @@ class Metrics:
                 sys.stdout.write(u"Plotting network in {} directory\n".format(self.args.directory))
 
                 #add the metrics to the graph_copy so they are added shown in the filters subfield
-                sys.stdout.write("Adding local indices to the graph to view them in Pyntacle-Ink. (in the \"Filters\" subpanel)\n")
+                sys.stdout.write("Adding local indices to the graph to view them in PyntacleInk. (in the \"Filters\" subpanel)\n")
 
                 if self.args.nodes:
                     nodes_info = local_attributes_dict_pyink.get("nodes")
@@ -449,7 +449,7 @@ class Metrics:
                                          suffix=suffix)
 
             elif not self.args.no_plot and graph.vcount() >= 5000:
-                u"The graph has too many nodes ({}). Pyntacle-Ink allows plotting for network with N < 5000. No visual representation will be produced\n".format(
+                u"The graph has too many nodes ({}). PyntacleInk can plot networks with N < 5000. This graph will not be plotted\n".format(
                     graph.vcount())
 
             else:

@@ -37,8 +37,8 @@ from tools.enums import CmodeEnum
 from tools.add_attributes import AddAttributes
 from internal.name_checker import attribute_name_checker
 
-class GraphUtils:
 
+class GraphUtils:
     logger = None
 
     def __init__(self, graph: Graph):
@@ -107,16 +107,6 @@ class GraphUtils:
                         attribute_name_checker(name)
                     except ValueError:
                         raise UnsupportedGraphError(u"Any of the Graph 'name' attribute values contains illegal characters.")
-
-        if any(x not in self.graph.attributes() for x in ["implementation"]):
-            #print(self.graph.attributes())
-
-            raise UnsupportedGraphError(u"One of the Pyntacle reserved graph attribute is missing, see goo.gl/MCsnd1 for more informations and initialize the `graph_initializer` method in `tools.graph_utils` To initialize your graph.")
-
-        else:
-
-            if not isinstance(self.graph["implementation"], CmodeEnum):
-                raise TypeError("implementation must be filled with one of the CmodeEnums")
 
         if any(x not in self.graph.vs.attributes() for x in ["parent"]):
             raise UnsupportedGraphError(u"Pyntacle reserved vertex attribute missing, see goo.gl/MCsnd1 for more informations and initialize the `graph_initializer` method in `tools.graph_utils` To initialize your graph.")
@@ -344,7 +334,7 @@ class GraphUtils:
         Transform the input :py:class:`igraph.Graph` object into a network that is compliant to the
         Pyntacle `Minimum requirements <http://pyntacle.css-mendel.it/requirements.html>`_.
 
-        .. warning:: This method will prune the graph of any node isolates, as they are not accepted by Pyntacle.
+        .. warning:: This method will prune the graph of any isolates, as they are not handled by Pyntacle.
 
         :param str graph_name: The network name (will be stored in the graph ``name`` attribute). This string must not contain illegal characters (see the Pyntacle `Minimum Requirements <http://pyntacle.css-mendel.it/requirements.html>`_ for more info on the illegal characters.
         :param str, None node_names: optional, a list of strings matching the total number of vertices of the graph. Each item in the list becomes the vertex ``name`` attribute sequentially (index-by-index correspondance). Defaults to py:class:`None` (node ``name`` attribute is filled by node indices).
@@ -398,34 +388,8 @@ class GraphUtils:
         if not "sif_interaction" in self.graph.es().attributes():
             self.graph.es()["sif_interaction"] = None
 
-        self.prune_isolates() #remove any isolate and store them into the `isolates` graph attribute
-
-        # Adding implementation for functions that require it
-        sp_implementation = CmodeEnum.igraph
-
-        n_nodes = self.graph.vcount()
-
-        if n_nodes > 100:
-            density = (2 * (self.graph.ecount())) / (n_nodes * (n_nodes - 1))
-            if density < 0.5 and n_nodes <= 500:
-                sp_implementation = CmodeEnum.igraph
-            else:
-                if n_cpus >= 2:
-                    sp_implementation = CmodeEnum.cpu
-                else:
-                    sp_implementation = CmodeEnum.igraph
-
-                #UNCOMMENT THIS PART FOR WHEN THE GPU MODULE WILL BE AVAILABLE
-                # if cuda_avail:
-                #     sp_implementation = CmodeEnum.gpu
-                # else:
-                #     if n_cpus >= 2:
-                #         sp_implementation = CmodeEnum.cpu
-                #     else:
-                #         sp_implementation = CmodeEnum.igraph
-
-        self.graph["implementation"] = sp_implementation
-        self.check_graph() #check that everything is in order
+        self.prune_isolates()
+        self.check_graph()
 
     def get_graph(self) -> Graph:
         r"""

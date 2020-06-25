@@ -36,7 +36,7 @@ class PyntacleGenerator:
 
     @staticmethod
     @generatorscanner
-    def Random(params: list, name: str="Random", seed: int or None=None) -> Graph:
+    def Random(params: list, name: str="Random") -> Graph:
         r"""
         Generates a `random <https://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model>`_ network by wrapping
         the igraph  `random <https://igraph.org/python/doc/igraph.GraphBase-class.html#Erdos_Renyi>`_
@@ -56,20 +56,11 @@ class PyntacleGenerator:
             #. either a :py:class:`float` betweeen 0 and 1 or a :py:class`int`. In the first case, it will be considered as rewiring probability. Otherwise, it will be considered the number of edges in the resulting :py:class:`igraph.Graph`.
 
         :param name: optional, the value that will be assigned to the graph ``name`` attribute. Default is **"Random"**
-        :param int, None seed: optional: provide a seed to the random generator
-
         :return igraph.Graph: a py:class:`igraph.Graph` object arranged randomly, initialized for Pyntacle usage
 
         :raise TypeError: if one of the elements in ``params`` is not one of the allowed types
         :raise ValueError: if ``params`` is not a list of size 4 and if any of its vlaues its outside their domain
         """
-
-        if seed is not None:
-            if not isinstance(seed, int):
-                raise TypeError(u"'Seed must be an integer, {} found".format(type(seed).__name__))
-
-        else:
-            random.seed(seed)
 
         if not (len(params) == 2):
             raise ValueError(u'Wrong number of parameters for Erdos-Renyi graph generation')
@@ -93,7 +84,7 @@ class PyntacleGenerator:
 
     @staticmethod
     @generatorscanner
-    def ScaleFree(params: list, name: str="Scale_Free", seed:int or None=None) -> Graph:
+    def ScaleFree(params: list, name: str="Scale_Free") -> Graph:
         r"""
         Generates a scale-free network according to the `Barabasi-Albert model  <https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model>`_
         by wrapping the igraph `scale-free generator <https://igraph.org/python/doc/igraph.GraphBase-class.html#Barabasi>`_
@@ -112,19 +103,11 @@ class PyntacleGenerator:
             #. the average number of edges per node
 
         :param name: optional, the value that will be assigned to the graph ``name`` attribute. Default is **"Scale_Free"**
-        :param int, None seed: optional: provide a seed to the network generator in order to reproduce the same network over time. Defaults to :py:class:`None` (no seed is set).
-
         :return igraph.Graph: a py:class:`igraph,Graph` object that follow a scale-free topology, initialized for Pyntacle usage.
 
         :raise TypeError: if one of the elements in ``params`` is not one of the allowed types
         :raise ValueError: if ``params`` is not a list of size 4 and if any of its vlaues its outside their domain
         """
-
-        if seed is not None:
-            if not isinstance(seed, int):
-                raise TypeError(u"'seed must be an integer, {} found".format(type(seed).__name__))
-        else:
-            random.seed(seed)
 
         if params[0] <= 1:
             raise ValueError(u"The number of nodes ('params[0]') must be greater than 1")
@@ -147,7 +130,7 @@ class PyntacleGenerator:
 
     @staticmethod
     @generatorscanner
-    def SmallWorld(params: list, name:str ="SmallWorld", seed: int or None=None) -> Graph:
+    def SmallWorld(params: list, name:str ="SmallWorld") -> Graph:
         r"""
         Generates a small-world network by wrapping the igraph `Watts_Strogatz <https://igraph.org/python/doc/igraph.GraphBase-class.html#Watts_Strogatz>`_method.
         In brief, a :math:`n \cdot m` `lattice <https://en.wikipedia.org/wiki/Lattice_graph>` where :math:`n` is the dimension of the lattice and :math:`m` is the size of the lattice among all dimensions.
@@ -164,24 +147,11 @@ class PyntacleGenerator:
             #. the node rewiring probability :math:`p` (a py:class:`float` between 0 and 1).
 
         :param str name: optional, if you want to assign a name to the `name` graph attribute. Default is **"Small_World"**
-        :param int, None seed: optional: provide a seed to the network generator in order to reproduce the same network over time. Defaults to :py:class:`None` (no seed is set).
-
         :return igraph.Graph: a py:class:`igraph,Graph` object that follow a small-world topology, initialized for Pyntacle usage
 
         :raise TypeError: if one of the elements in ``params`` is not one of the allowed types
         :raise ValueError: if ``params`` is not a list of size 4 and if any of its vlaues its outside their domain
         """
-
-        if seed is not None:
-            # print("THIS IS THE SEED", seed)
-    
-            if not isinstance(seed, int):
-                raise TypeError("'seed' must be an integer, {} found".format(type(seed).__name__))
-
-        else:
-            # print("THIS IS THE SEED (ELSE)", seed)
-    
-            random.seed(seed)
 
         if not (len(params) == 4):
             raise ValueError(u'Wrong number of parameters for Small-world graph generation (4 params needed)')
@@ -204,7 +174,7 @@ class PyntacleGenerator:
 
     @staticmethod
     @generatorscanner
-    def Tree(params: list, name: str="Tree", seed: int or None=None) -> Graph:
+    def Tree(params: list, name: str="Tree") -> Graph:
         r"""
         Generates a Network that Follows a `Tree <https://en.wikipedia.org/wiki/Tree_(graph_theory)>`_ topology, as
         described in the `Wolfram Alpha documentation <http://mathworld.wolfram.com/Tree.html>`_.
@@ -219,19 +189,11 @@ class PyntacleGenerator:
             #. the number of *children* each *parent* node will have
 
         :param str name: optional, if you want to assign a name to the ``name`` graph attribute. Default is *Tree*.
-        :param int, None seed: optional: provide a seed to the network generator in order to reproduce the same network over time. Defaults to :py:class:`None` (no seed is set).
-
         :return igraph.Graph: a py:class:`igraph,Graph` object that follow a Tree hierarchy, initialized for Pyntacle usage
 
         :raise TypeError: if one of the elements in ``params`` is not one of the allowed types
         :raise ValueError: if ``params`` is not a list of size 4 and if any of its vlaues its outside their domain
         """
-
-        if seed is not None:
-            if not isinstance(seed, int):
-                raise TypeError(u"'seed' must be an integer, {} found".format(type(seed).__name__))
-        else:
-            random.seed(seed)
 
         if not (len(params) == 2):
             raise ValueError(u'Wrong number of parameters for Tree generation')

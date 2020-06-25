@@ -78,7 +78,7 @@ class ShortestPath:
 
         elif cmode == CmodeEnum.cpu or cmode == CmodeEnum.gpu:
             if virtual_memory().free < (graph.vcount() ** 2) * 2:  # the rightmost "2" is int16/8
-                sys.stdout.write(u"WARNING: Memory seems to be low; loading the graph given as input could fail.\n")
+                sys.stdout.write(u"WARNING: Memory seems to be low; loading this graph could fail.\n")
 
             graph_size = graph.vcount() + 1
             # np.set_printoptions(linewidth=graph_size * 10)
