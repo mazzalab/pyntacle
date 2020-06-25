@@ -1,9 +1,9 @@
 # Pyntacle
 
-A python command line tool for network analysis based on non canonical
+A python command-line tool for network analysis based on non canonical
 metrics and HPC computing.
 
-- **Compatibility**: Python 3.5+
+- **Compatibility**: Python 3.6+
 - **Contributions**: bioinformatics@css-mendel.it
 - **Website**: http://pyntacle.css-mendel.it
 - **Bug report**: https://github.com/mazzalab/pyntacle/issues
@@ -194,7 +194,7 @@ For your convenience, you can make the newly installed binary available system-w
 ln -s /Users/$USER/Library/Python/3.6/bin/pyntacle /opt/local/bin
 ```
 
-### CUDA support
+### CUDA support (experimental)
 
 Independently of the OS in use, if you need CUDA support, you must
 also install the CUDA toolkit by downloading and installing the Toolkit from the
