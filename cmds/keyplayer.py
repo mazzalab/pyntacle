@@ -257,7 +257,7 @@ class KeyPlayer:
 
                     sys.stdout.write("\n")
 
-            #get report results
+            #  get report results
             results.update(kp_runner.get_results())
             sys.stdout.write(section_end)
             sys.stdout.write(summary_start)

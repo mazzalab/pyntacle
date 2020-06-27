@@ -30,11 +30,11 @@ import os
 import threading
 import time
 from multiprocessing import cpu_count
-import seaborn as sns
 from colorama import Fore, Style
 from numba import cuda
 from numba.core.config import *
 from psutil import virtual_memory
+import seaborn as sns
 
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.ERROR, format="%(asctime)s - %(levelname)s - %(message)s")

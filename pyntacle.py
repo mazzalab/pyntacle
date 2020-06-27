@@ -25,13 +25,16 @@ __license__ = u"""
   """
 
 import argparse
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from config import *
 import unittest
 from copy import deepcopy
 from exceptions.generic_error import Error
 from colorama import init
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 if sys.version_info <= (3, 4):
     sys.exit("Python < 3.4 is not supported. Please update your Python distribution")
 
@@ -129,7 +132,8 @@ class App:
             log.setLevel(logging.WARN)
 
         # Continue parsing of the first two arguments
-        args = parser.parse_args(sys.argv[2:3])  # TODO: FIX this with 1:2
+        # args = parser.parse_args(sys.argv[2:3])
+        args = parser.parse_args(sys.argv[1:2])
 
         if not hasattr(self, args.command) and args.command != "test":
             sys.stdout.write("Unrecognized command\n")
@@ -261,7 +265,7 @@ class App:
         finder_case_parser.set_defaults(which="kp-finder")
 
         # if len(sys.argv) < 4 or (sys.argv[3] not in ("kp-finder", "kp-info")):
-        if len(sys.argv) < 4 or (sys.argv[2] not in ("kp-finder", "kp-info")):  # TODO: enable this line
+        if len(sys.argv) < 4 or (sys.argv[2] not in ("kp-finder", "kp-info")):
             parser.print_help()
             raise Error(
                 "Usage: pyntacle keyplayer {kp-finder, kp-info} [arguments] (use --help for command description)")

@@ -27,6 +27,8 @@ __license__ = u"""
 import unittest
 import sys
 import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+
 from pyntacletests.test_widgets_convert import WidgetTestConvert
 from pyntacletests.test_widgets_setoperations import WidgetTestLogicOps
 from pyntacletests.test_widgets_metrics import WidgetTestMetrics
@@ -35,7 +37,6 @@ from pyntacletests.test_widgets_generator import WidgetTestGenerator
 from pyntacletests.test_widgets_keyplayer import WidgetTestKeyplayer
 from pyntacletests.test_widgets_groupcentrality import WidgetTestGroupcentrality
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 
 
 def Suite():
