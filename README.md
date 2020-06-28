@@ -7,6 +7,7 @@ metrics and HPC computing.
 - **Contributions**: bioinformatics@css-mendel.it
 - **Website**: http://pyntacle.css-mendel.it
 - **Bug report**: https://github.com/mazzalab/pyntacle/issues
+- [![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/platforms.svg)](https://anaconda.org/bfxcss/pyntacle)
 
 ## Installation
 
@@ -19,6 +20,8 @@ and MacOS X are also provided.
 
 
 ### Installing Pyntacle using Anaconda or Miniconda
+[![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/installer/conda.svg)](https://conda.anaconda.org/bfxcss)
+[![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/downloads.svg)](https://anaconda.org/bfxcss/pyntacle)
 
 Installing Pyntacle and all its dependencies can be challenging for
 inexperienced users. There are several advantages in using Anaconda to
