@@ -1,4 +1,4 @@
-# Pyntacle
+# Pyntacle [![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/downloads.svg)](https://anaconda.org/bfxcss/pyntacle)
 
 A python command-line tool for network analysis based on non canonical
 metrics and HPC computing.
@@ -21,7 +21,6 @@ and MacOS X are also provided.
 
 ### Installing Pyntacle using Anaconda or Miniconda
 [![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/installer/conda.svg)](https://conda.anaconda.org/bfxcss)
-[![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/downloads.svg)](https://anaconda.org/bfxcss/pyntacle)
 
 Installing Pyntacle and all its dependencies can be challenging for
 inexperienced users. There are several advantages in using Anaconda to
