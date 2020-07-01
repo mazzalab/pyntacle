@@ -19,8 +19,7 @@ Instructions for installing from source on various Linux distributions
 and MacOS X are also provided.
 
 
-### Installing Pyntacle using Anaconda or Miniconda
-[![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/installer/conda.svg)](https://conda.anaconda.org/bfxcss)
+### Installing Pyntacle using Anaconda or Miniconda [![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/installer/conda.svg)](https://conda.anaconda.org/bfxcss)
 
 Installing Pyntacle and all its dependencies can be challenging for
 inexperienced users. There are several advantages in using Anaconda to
@@ -32,7 +31,7 @@ used as safe sandbox-like sub-systems that can be created, used,
 exported or deleted at your will.
 
 You can choose between the full [Anaconda](http://docs.continuum.io/anaconda/) and its lite version,
-[Miniconda](http://conda.pydata.org/miniconda.html) . The difference between the two is that Anaconda comes with
+[Miniconda](http://conda.pydata.org/miniconda.html). The difference between the two is that Anaconda comes with
 hundreds of packages and can be a bit heavier to install, while
 Miniconda allows you to create a minimal, self-contained Python
 installation, and then use the [Conda](https://conda.io/docs/) command to install additional
@@ -43,12 +42,11 @@ Miniconda distributions are built upon. It is both cross-platform and
 language agnostic (it can play a similar role to a pip and virtualenv
 combination), and you need to set it up by running either the [Anaconda
 installer](https://www.anaconda.com/download/) or the
-[Miniconda installer](https://conda.io/miniconda.html) , choosing the
-++Python 3.X++ version.
+[Miniconda installer](https://conda.io/miniconda.html), choosing the
+Python 3.6 version.
 
 The next step is to create a new Conda environment (if you are familiar
-with virtual environments, these are analogous to a virtualenv but they
-also allow you to specify precisely which Python version to install).
+with virtual environments, this is analogous to a virtualenv).
 
 #### Linux and MacOS X
 
@@ -92,7 +90,7 @@ conda create -y -n name_of_my_env python=3.6
 Then, activate the newly created environment:
 
 ```bash
-activate name_of_my_env
+conda activate name_of_my_env
 ```
 
 Finally, install the latest version of Pyntacle:
@@ -112,10 +110,10 @@ The source code can be downloaded from our GitHub
 requirements that need to be satisfied on each platform.
 
 
-**NOTE** Starting from this version (1.1), we introduced a new JavaScript-based graph visualizer, PyntacleInk. Installation
-of cairo and the pycairo python bindings is hence not required. We however recommend installing cairo if you seek to 
-perform plotting with igraph library (visit the [pycairo page](https://cairographics.org/download/) for operative-system
-specific instructions.)
+**NOTE** Starting from version 1.1, we introduced a new JavaScript-based graph visualizer, PyntacleInk. Installation
+of cairo and the pycairo python bindings is hence not required. We however recommend installing cairo if you wish to 
+plot using the built-in igraph graphical library (visit the [pycairo page](https://cairographics.org/download/) for operative-system
+specific instructions).
 
 #### Debian, Ubuntu
 
@@ -202,10 +200,27 @@ Independently of the OS in use, if you need CUDA support, you must
 also install the CUDA toolkit by downloading and installing the Toolkit from the
 [_NVIDIA website_](https://developer.nvidia.com/cuda-toolkit).
 
+**NOTE** GPU-base processing is an **experimental** feature in the current version (1.2), and is not covered by the command-line interface. This is because of weird behaviors of Numba with some hardware configurations that we were not be able to describe and circumvent so far. Although currently accessible by APIs, the GPU feature will be stable in the release 2.0, when Pyntacle will have covered the possibility to manage huge matrices for which replacing fine-grained parallelism with GPU computing would make sense.
+
 ## Release history
 
 Changelog for current and past releases:
 
+
+### 1.2:
+Major updates:
+- [command-line] The algorithm that decide the computing configuration to be used to analyze a give graph was updated to exclude the possibility to run multi-process and multi-threaded at the same time. This is still possible accessing directly to the APIs.
+- [command-line] Renamed option from -T/--threads to -O/--nprocs to avoid clashes with other synonymous options
+- [API] Removed all decorator methods that over-checked the sanity of the arguments of methods. These resulted to improve.
+- [PyntacleInk] bug #28 "initial value" and "value" are swapped, solved
+- [Tests] bug #25 "gr-finder bruteforce test fails", solved
+
+Minor:
+- [command-line] bug #23 "the command line option --type m-reach in kp-finder produces no output", solved
+- [API] removed the *max_distance* argument from all methods
+- [API] removed the seed from each methods. Posponed to later versions the implementation of clever manner of controlling randomness of number generators
+- the default number of forked processes is now 1 and not equals to the total number of available processors -1
+- removed *shortest_path_mofifications.py* file
 
 ### 1.1:
 New Graph Plotting tool: PyntacleInk
