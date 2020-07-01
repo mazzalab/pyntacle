@@ -220,7 +220,7 @@ Minor:
 - [API] removed the *max_distance* argument from all methods
 - [API] removed the seed from each methods. Posponed to later versions the implementation of clever manner of controlling randomness of number generators
 - the default number of forked processes is now 1 and not equals to the total number of available processors -1
-- removed *shortest_path_mofifications.py* file
+- removed *shortest_path_modifications.py* file
 
 ### 1.1:
 New Graph Plotting tool: PyntacleInk
