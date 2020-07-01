@@ -12,9 +12,7 @@ metrics and HPC computing.
 ## Installation
 
 The easiest way to install Pyntacle is to download it from [**Anaconda**](http://docs.continuum.io/anaconda/), 
-a cross-platform distribution for data analysis and scientific computing. This is the
-recommended installation method for most users.
-
+a cross-platform distribution for data analysis and scientific computing. This is the recommended installation method for most users.
 Instructions for installing from source on various Linux distributions
 and MacOS X are also provided.
 
