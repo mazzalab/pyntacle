@@ -209,7 +209,7 @@ Changelog for current and past releases:
 
 ### 1.2:
 Major updates:
-- [command-line] The algorithm that decide the computing configuration to be used to analyze a give graph was updated to exclude the possibility to run multi-process and multi-threaded at the same time. This is still possible accessing directly to the APIs.
+- [command-line] The algorithm that decides the computing configuration to be used to analyze a give graph was updated to exclude the possibility to run multi-process and multi-threaded at the same time. This is still possible by accessing directly to the APIs.
 - [command-line] Renamed option from -T/--threads to -O/--nprocs to avoid clashes with other synonymous options
 - [API] Removed all decorator methods that over-checked the sanity of the arguments of methods. These resulted to improve.
 - [PyntacleInk] bug #28 "initial value" and "value" are swapped, solved
@@ -218,7 +218,7 @@ Major updates:
 Minor:
 - [command-line] bug #23 "the command line option --type m-reach in kp-finder produces no output", solved
 - [API] removed the *max_distance* argument from all methods
-- [API] removed the seed from each methods. Posponed to later versions the implementation of clever manner of controlling randomness of number generators
+- [API] removed the seed from each methods. Postponed to later versions the implementation of clever manner of controlling randomness of number generators
 - the default number of forked processes is now 1 and not equals to the total number of available processors -1
 - removed *shortest_path_modifications.py* file
 
