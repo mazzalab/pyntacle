@@ -511,7 +511,6 @@ class PyntacleReporter:
         else:
             json_data = {}
 
-        # todo mauro manca il kp-info e il gr-info; rinominerei "algorithm" per groupcentrality e keyplayer a "strategy (così possiamo mettere tutto in un unico panel)
         if self.report_type == ReportEnum.KP_bruteforce or self.report_type == ReportEnum.KP_greedy:
             json_data.setdefault("Key-player", {})
             json_data["Key-player"].setdefault(str(self.report_type).split('.')[1], {})
