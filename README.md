@@ -1,4 +1,4 @@
-# Pyntacle [![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/downloads.svg)](https://anaconda.org/bfxcss/pyntacle)
+![Pyntacle logo](http://pyntacle.css-mendel.it/images/title_joined.png)
 
 A python command-line tool for network analysis based on non canonical
 metrics and HPC computing.
@@ -7,7 +7,7 @@ metrics and HPC computing.
 - **Contributions**: bioinformatics@css-mendel.it
 - **Website**: http://pyntacle.css-mendel.it
 - **Bug report**: https://github.com/mazzalab/pyntacle/issues
-- [![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/platforms.svg)](https://anaconda.org/bfxcss/pyntacle)
+- [![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/platforms.svg)](https://anaconda.org/bfxcss/pyntacle) [![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/downloads.svg)](https://anaconda.org/bfxcss/pyntacle)
 
 ## Installation
 
