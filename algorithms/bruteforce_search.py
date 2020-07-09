@@ -169,6 +169,7 @@ class BruteforceSearch:
         elif not isinstance(nprocs, int) or nprocs < 1:
             raise TypeError(u"'nprocs' must be a positive integer value")
 
+        # Generate all combinations of size k
         allS = list(itertools.combinations(node_names, k))
 
         if graph.vcount() - k == 1:  # in this case, only a node isolate exists, hence the F and dF already reach their maximum value (1)
@@ -176,9 +177,6 @@ class BruteforceSearch:
                 u"The `k` size ({}) is such that the removal of any set always returns a node isolate. Returning all the node sets and the maximum {} value (1)\n".format(
                     k, metric.name))
             return allS, 1
-
-        # Generate all combinations of size k
-
         sys.stdout.write(u"Evaluating {} possible solutions\n".format(len(allS)))
 
         if nprocs > 1:

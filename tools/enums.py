@@ -2,14 +2,14 @@
 A set of enumerators whose values are used as reserved keywords in Pyntacle's functions
 """
 
-__author__ = ["Mauro Truglio", "Tommaso Mazza"]
-__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__author__ = ["Tommaso Mazza"]
+__copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.3"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"09/07/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -169,9 +169,11 @@ class ReportEnum(enum.IntEnum):
     KP_info = 3
     KP_greedy = 4
     KP_bruteforce = 5
-    GR_info = 6
-    GR_greedy = 7
-    GR_bruteforce = 8
-    Communities = 9
-    Set = 10
+    KP_stochasticgradientdescent = 6
+    GR_info = 7
+    GR_greedy = 8
+    GR_bruteforce = 9
+    GR_stochasticgradientdescent = 10
+    Communities = 11
+    Set = 12
 
