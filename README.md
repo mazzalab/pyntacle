@@ -1,6 +1,6 @@
 ![Pyntacle logo](http://pyntacle.css-mendel.it/images/title_joined.png)
 
-A python command-line tool for network analysis based on non canonical
+A Python package for network analysis based on non canonical
 metrics and HPC computing.
 
 - **Compatibility**: Python 3.6+
