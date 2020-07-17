@@ -36,6 +36,7 @@ from math import isinf
 from igraph import Graph
 from cmds.cmds_utils.group_search_wrapper import InfoWrapper as kpw
 from cmds.cmds_utils.group_search_wrapper import GOWrapper as gow
+from cmds.cmds_utils.group_search_wrapper import SGDWrapper as sgdw
 from cmds.cmds_utils.group_search_wrapper import BFWrapper as bfw
 
 
@@ -1181,7 +1182,198 @@ class Octopus:
         sys.stdout.write(
             "Finding an optimal node set of size {} for the group closensss index calculated with a {} distance using a greedily-optimized search and storing the set and its value in the '{}' attribute.\n".format(
                 k, distance.name, gc_name))
-        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_betweenness, cmode=cmode, distance=distance)
+        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_closeness, cmode=cmode, distance=distance)
+        results_dict = kpobj.get_results()
+        add_gc_attributes(graph, gc_name,
+                          {tuple(sorted(results_dict[GroupCentralityEnum.group_closeness.name][0])):
+                               results_dict[GroupCentralityEnum.group_closeness.name][1]})
+
+    # Stochastic gradient descent
+    @staticmethod
+    def SGD_F(graph: Graph, k: int):
+        r"""
+        Performs a stochastic-gradient descent search on the input graph to search the optimal *key-player* set (kp-set) of nodes of size :math:`k` for the
+        *fragmentation* (*F*) index. It does so by wrapping the :func:`~algorithms.stochastic_gradient_descent.StochasticGradientDescent.fragmentation`
+        Pyntacle method. It then stores the found node(s) in a dictionary that is embedded in the graph attribute ``F_sgd``
+        This dictionary contains tuples storing the found node names (the vertex ``name`` attribute for each node) as ``key``s
+        and the corresponding F value for that group of nodes.
+
+        We recommend visiting the `Key Player Guide <pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html>`_ on Pyntacle official
+        website for an overview of the F index and the greedy optimization.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param int k: the size of the kp-set. Must be a positive integer.
+        """
+        kpobj = sgdw(graph=graph)
+        kp_name = KpnegEnum.F.name + '_sgd'
+        sys.stdout.write(
+            "Finding an optimal node set of size {} for the fragmentation index {} with a stochastic-gradient descent search and storing the set and its value in the '{}' attribute.\n".format(
+                k, KpnegEnum.F.name, kp_name))
+        kpobj.run_fragmentation(k, KpnegEnum.F)
+        results_dict = kpobj.get_results()
+        add_gc_attributes(graph, kp_name,
+                          {tuple(sorted(results_dict[KpnegEnum.F.name][0])): results_dict[KpnegEnum.F.name][1]})
+
+    @staticmethod
+    def SGD_dF(graph: Graph, k: int):
+        r"""
+        Performs a stochastic-gradient descent search on the input graph to search the optimal *key-player* set (kp-set) of nodes of size :math:`k` for the
+        *distance-based fragmentation* (*dF*) index. It does so by wrapping the :func:`~pyntacle.algorithms.stochastic_gradient_descent.StochasticGradientDescent.fragmentation`
+        Pyntacle method. It then stores the found node(s) in a dictionary that is embedded in the graph attribute ``dF_sgd``
+        This dictionary contains tuples storing the found node names (the vertex ``name`` attribute for each node) as ``key``s
+        and the corresponding dF value for that group of nodes.
+
+        We recommend visiting the `Key-Player Guide <pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html>`_ on Pyntacle official
+        website for an overview of the DF index.
+
+        .. warning:: This method is computationally-intensive and can take a lot of time according to the graph size and the :math:`k` size.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param int k: The size of the kp-set. It must be a positive integer.
+        """
+
+        cmode = get_cmode(graph)
+        kpobj = sgdw(graph=graph)
+        kp_name = KpnegEnum.dF.name + '_sgd'
+        sys.stdout.write(
+            "Finding an optimal node set of size {} for the fragmentation index {} with a stochastic-gradient descent search and storing the set and its value in the '{}' attribute.\n".format(
+                k, KpnegEnum.dF.name, kp_name))
+        kpobj.run_fragmentation(k, KpnegEnum.dF, cmode=cmode)
+        results_dict = kpobj.get_results()
+        add_gc_attributes(graph,
+                          kp_name,
+                          {tuple(sorted(results_dict[KpnegEnum.dF.name][0])): results_dict[KpnegEnum.dF.name][1]})
+
+    @staticmethod
+    def SGD_dR(graph: Graph, k: int):
+        r"""
+        Performs a stochastic-gradient descent search on the input graph to search the optimal *key-player* set (kp-set) of nodes of size :math:`k` for the
+        *distance-weighted reach* (*dR*) index. It does so by wrapping the :func:`~pyntacle.algorithms.stochastic_gradient_descent.StochasticGradientDescent.reachability`
+        Pyntacle method. It then stores the found node(s) in a dictionary that is embedded in the graph attribute ``dR_sgd``
+        This dictionary tuples storing the found node names (the vertex ``name`` attribute for each node) as ``key``s
+        and the corresponding dR value for that group of nodes.
+
+        We recommend visiting the `Key Player Guide <pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html>`_ on Pyntacle official
+        website for an overview of the dR index.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param int k: The size of the kp-set. Must be a positive integer.
+        """
+
+        cmode = get_cmode(graph)
+        kpobj = sgdw(graph=graph)
+        kp_name = KpposEnum.dR.name + '_sgd'
+        sys.stdout.write(
+            "Finding an optimal node set of size {} for the reachability index {} with a stochastic-gradient descent search and storing the set and its value in the '{}' attribute.\n".format(
+                k, KpposEnum.dR.name, kp_name))
+        kpobj.run_reachability(k, KpposEnum.dR, cmode=cmode)
+        results_dict = kpobj.get_results()
+        add_gc_attributes(graph, kp_name,
+                          {tuple(sorted(results_dict[KpposEnum.dR.name][0])): results_dict[KpposEnum.dR.name][1]})
+
+    @staticmethod
+    def SGD_mreach(graph: Graph, k: int, m: int or None = None):
+        r"""
+        Performs a stochastic-gradient descent search on the input graph to search the optimal *key-player* set (kp-set) of nodes of size :math:`k` for the
+        *distance-weighted reach* (*m-reach*) index. It does so by wrapping the :func:`~pyntacle.algorithms.stochastic_gradient_descent.StochasticGradientDescent.reachability`
+        Pyntacle method. It then stores the found node(s) in a dictionary that is embedded in the graph attribute ``mreach_m_greedy``,
+        where ``m`` is the maximum m-reach distance.
+        This dictionary contains tuples storing the found node names (the vertex ``name`` attribute for each node) as ``key``s
+        and the corresponding m-reach value for that group of nodes.
+
+        We recommend visiting the `Key Player Guide <pyntacle.css-mendel.it/resources/kp_guide/kp_guide.html>`_ on Pyntacle official
+        website for an overview of the m-reach index.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param int k: the size of the kp-set. It must be a positive integer.
+        :param int m: the number of steps of the m-reach algorithm.
+        """
+        cmode = get_cmode(graph)
+        kpobj = sgdw(graph=graph)
+        kp_name = KpposEnum.mreach.name + '_{}_sgd'.format(str(m))
+        sys.stdout.write(
+            "Finding an optimal node set of size {} for reachability index m-reach with a distance of {} using a stochastic-gradient descent search and storing the set and its value in the '{}' attribute.\n".format(
+                k, m, kp_name))
+        kpobj.run_reachability(k, KpposEnum.mreach, m=m, cmode=cmode)
+        results_dict = kpobj.get_results()
+        add_gc_attributes(graph, kp_name, {
+            tuple(sorted(results_dict[KpposEnum.mreach.name][0])): results_dict[KpposEnum.mreach.name][
+                1]})
+
+    @staticmethod
+    def SGD_group_degree(graph: Graph, k: int):
+        r"""
+        Performs a stochastic-gradient descent search on the input graph to search the optimal node set of size :math:`k` for  group
+        degree. It does so by wrapping the :func:`~pyntacle.algorithms.stochastic_gradient_descent.StochasticGradientDescent.groupcentrality`
+        Pyntacle method. It then stores the found node-set in a dictionary that is embedded in the graph attribute ``group_degree_sgd``.
+
+        This dictionary has ``key``s corresponding to the found node set as a :py:class:`tuple` of node names (the vertex ``name`` attribute)
+        and the corresponding group degree score as ``value``.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param int k: the size of the node set. Must be a positive integer.
+        """
+
+        kpobj = sgdw(graph=graph)
+        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_degree)
+        gc_name = GroupCentralityEnum.group_degree.name + '_sgd'
+        sys.stdout.write(
+            "Finding an optimal node set of size {} for the group degree index using a stochastic-gradient descent search and storing the set and its value in the '{}' attribute.\n".format(
+                k, gc_name))
+        results_dict = kpobj.get_results()
+        add_gc_attributes(graph, gc_name,
+                          {tuple(sorted(results_dict[GroupCentralityEnum.group_degree.name][0])):
+                               results_dict[GroupCentralityEnum.group_degree.name][1]})
+
+    @staticmethod
+    def SGD_group_betweeness(graph: Graph, k: int):
+        r"""
+        It performs a stochastic-gradient descent search on the input graph to search the optimal node set of size :math:`k` for  group
+        betweenness. It does so by wrapping the :func:`~pyntacle.algorithms.stochastic_gradient_descent.StochasticGradientDescent.groupcentrality`
+        Pyntacle method . It then stores the found node set in a dictionary that is embedded in the graph attribute ``group_betweenness_sgd``.
+
+        This dictionary has ``key``s corresponding to the found node set as a :py:class:`tuple` of node names (the vertex ``name`` attribute)
+        and the corresponding group betweenness score as ``value``.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param int k: the size of the node set. It must be a positive integer.
+        """
+
+        cmode = get_cmode(graph)
+        kpobj = sgdw(graph=graph)
+        gc_name = GroupCentralityEnum.group_betweenness.name + '_sgd'
+        sys.stdout.write(
+            "Finding an optimal node set of size {} for the group betweenness index using a stochastic-gradient descent search and storing the set and its value in the '{}' attribute.\n".format(
+                k, gc_name))
+        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_betweenness, cmode=cmode)
+        results_dict = kpobj.get_results()
+        add_gc_attributes(graph, gc_name,
+                          {tuple(sorted(results_dict[GroupCentralityEnum.group_betweenness.name][0])):
+                               results_dict[GroupCentralityEnum.group_betweenness.name][1]})
+
+    @staticmethod
+    def SGD_group_closeness(graph: Graph, k: int, distance: GroupDistanceEnum = GroupDistanceEnum.minimum):
+        r"""
+        It performs a stochastic-gradient descent search on the input graph to search the optimal node set of size :math:`k` for  group
+        closeness. It does so by wrapping the :func:`~pyntacle.algorithms.stochastic_gradient_descent.StochasticGradientDescent.groupcentrality`
+        Pyntacle method. It then stores the found node set in a dictionary that is embedded in the graph attribute ``group_betweenness_DISTANCE_sgd``.
+        where DISTANCE is one of the possible :class:`~pyntacle.tools.enums.GroupDistanceEnums` that is necessary to compute the distance
+        between the :math:`k` set and the rest of the graph.
+        This dictionary has ``key``s corresponding to the found node set as a :py:class:`tuple` of node names (the vertex ``name`` attribute)
+        and the corresponding group betweenness score as ``value``.
+
+        :param igraph.Graph graph: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
+        :param int k: the size of the node set. Must be a positive integer.
+        :param distance: the criterion to use for defining the distance between the node set and the rest of the graph. It must be one of the option in :class:`~pyntacle.tools.enums.GroupDistanceEnum`. Defaults to ``GroupDistanceEnum.minimum``.
+        """
+
+        cmode = get_cmode(graph)
+        kpobj = sgdw(graph=graph)
+        gc_name = GroupCentralityEnum.group_closeness.name + "_" + distance.name + '_sgd'
+        sys.stdout.write(
+            "Finding an optimal node set of size {} for the group closensss index calculated with a {} distance using a stochastic-gradient descent search and storing the set and its value in the '{}' attribute.\n".format(
+                k, distance.name, gc_name))
+        kpobj.run_groupcentrality(k, GroupCentralityEnum.group_closeness, cmode=cmode, distance=distance)
         results_dict = kpobj.get_results()
         add_gc_attributes(graph, gc_name,
                           {tuple(sorted(results_dict[GroupCentralityEnum.group_closeness.name][0])):

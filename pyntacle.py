@@ -116,7 +116,7 @@ class App:
         parser.add_argument("command", help="Subcommand to run", type=lambda s: s.lower())
         parser.add_argument("-v", action="count", help="Verbosity level of the internal Pyntacle logger. "
                                                        "-vvv is the highest level (for debugging purposes).")
-        parser.add_argument("-V", "--version", action="version", version="Pyntacle v1.1",
+        parser.add_argument("-V", "--version", action="version", version="Pyntacle v{}".format(__version__),
                             help="Show version number and quit")
 
         # Detect verbosity
