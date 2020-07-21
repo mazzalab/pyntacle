@@ -1,11 +1,11 @@
 __author__ = u"Mauro Truglio, Tommaso Mazza"
 __copyright__ = u"Copyright 2018, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.3"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "o@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"21/07/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t,mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -50,6 +50,9 @@ class WidgetTestGroupcentrality(unittest.TestCase):
         self.Args.input_file = os.path.join(current_dir, 'pyntacletests/test_sets/input/figure_8.txt')
         self.Args.largest_component = False
         self.Args.m_reach = 2
+        self.Args.swap_probability = 0
+        self.Args.tolerance = 0.01
+        self.Args.maxsec = 2
         self.Args.group_distance = 'min'
         self.Args.no_header = False
         self.Args.no_plot = True
@@ -129,6 +132,37 @@ class WidgetTestGroupcentrality(unittest.TestCase):
         o = set(re.findall(r"[-+]?\d*\.\d+|\d+", data))
         e = set(re.findall(r"[-+]?\d*\.\d+|\d+", data_exp))
         self.assertEqual(o,e, 'Wrong checksum for GroupCentrality, kp-finder bruteforce case')
+
+    def test_grfinder_sgd(self):
+        sys.stdout.write("Testing gr-finder sgd with {} cpus\n".format(n_cpus))
+        self.Args.which = 'gr-finder'
+        self.Args.implementation = 'sgd'
+        self.Args.k_size = 2
+
+        # override init parameters
+        self.Args.input_file = os.path.join(current_dir, 'pyntacletests/test_sets/input/figure_1.txt')
+
+        gr = groupcentrality_command(self.Args)
+        with self.assertRaises(SystemExit) as cm:
+            gr.run()
+        the_exception = cm.exception
+        self.assertEqual(the_exception.code, 0)
+        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Report_*_GR_stochasticgradientdescent_*"))[0]
+        with open(fileout, 'r') as fin:
+            next(fin)
+            next(fin)
+            data = fin.read()
+        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/groupcentrality/figure1_grfinder_stochasticgradientdescent.txt')
+        with open(expected, 'r') as exp:
+            next(exp)
+            next(exp)
+            data_exp = exp.read()
+        o = set(re.findall(r"[-+]?\d*\.\d+|\d+", data))
+        e = set(re.findall(r"[-+]?\d*\.\d+|\d+", data_exp))
+        self.assertEqual(o,e, 'Wrong checksum for GroupCentrality, kp-finder bruteforce case')
+
+        # reset starting parameters
+        self.Args.input_file = os.path.join(current_dir, 'pyntacletests/test_sets/input/figure_8.txt')
 
 
     def tearDown(self):

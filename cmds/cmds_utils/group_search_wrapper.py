@@ -5,7 +5,7 @@ __version__ = u"1.3"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"09/06/2020"
+__date__ = u"20/07/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t,mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -491,8 +491,8 @@ class SGDWrapper:
     @timeit
     def run_fragmentation(self, k: int, kp_type: KpnegEnum, cmode: CmodeEnum, **kwargs):
         r"""
-        Wrapper around the Greedy Optimization Module that stores the greedy optimization results for KPPOS metrics in
-        the "results" dictionary.
+        Wrapper around the stochastic gradient descent module that stores the results for the KP-Pos metrics in
+        the sgd_results dictionary.
 
         :param cmode:
         :param int k: size of the kpp-set to be found
@@ -500,29 +500,29 @@ class SGDWrapper:
         """
 
         if not isinstance(k, int) or k < 1:
-            raise ValueError(u"\k' must be a positive integer of size 1")
+            raise ValueError(u"\k' must be a positive integer of size greater or equal than 1")
 
         if not isinstance(kp_type, KpnegEnum):
-            raise TypeError(u"'kp_type' must be one of the KPPNEGchoices options available")
+            raise TypeError(u"'kp_type' must be one of the available KpnegEnum options")
 
-        go_results = self.sgd.fragmentation(graph=self.graph, k=k, metric=kp_type, cmode=cmode, **kwargs)
-        self.results[kp_type.name] = [go_results[0][0], go_results[1]]
+        sgd_results = self.sgd.fragmentation(graph=self.graph, k=k, metric=kp_type, cmode=cmode, **kwargs)
+        self.results[kp_type.name] = [sgd_results[0], sgd_results[1]]
 
     @timeit
     def run_reachability(self, k: int, kp_type: KpposEnum, m: int, cmode: CmodeEnum, **kwargs):
         r"""
-        Wrapper around the Greedy Optimization Module that stores the greedy optimization results for KPPOS metrics
+        Wrapper around the stochastic gradient descent module that stores the results for KP-POS metrics
 
         :param cmode:
         :param int k: size of the kpp-set to be found
         :param KpposEnum kp_type: on of the KPPOSchoices enumerators stored in internal.enums
-        :param int m: for the "m-reach" metrics, a positive integer greatrer than one representing the maximum distance for mreach
+        :param int m: for the "m-reach" metrics, a positive integer greater than one representing the maximum distance
         """
         if not isinstance(k, int) or k < 1:
-            raise ValueError(u"'k' must be a positive integer of size 1")
+            raise ValueError(u"'k' must be a positive integer of size greater or equal than 1")
 
         if not isinstance(kp_type, KpposEnum):
-            raise TypeError(u"'kp_type' must be one of the KpposEnums available in `tools.enums`")
+            raise TypeError(u"'kp_type' must be one of the KpnegEnum available in `tools.enums`")
 
         if kp_type == KpposEnum.mreach:
             if not m:
@@ -530,9 +530,9 @@ class SGDWrapper:
             elif not isinstance(m, int) or m <= 0:
                 raise ValueError(u"'m' must be a positive integer")
 
-        go_results = self.sgd.reachability(graph=self.graph, k=k, metric=kp_type, m=m, cmode=cmode, **kwargs)
+        sgd_results = self.sgd.reachability(graph=self.graph, k=k, metric=kp_type, m=m, cmode=cmode, **kwargs)
 
-        self.results[kp_type.name] = [go_results[0][0], go_results[1]]
+        self.results[kp_type.name] = [sgd_results[0], sgd_results[1]]
 
     @timeit
     def run_groupcentrality(self, k: int, gr_type: GroupCentralityEnum,
@@ -546,7 +546,7 @@ class SGDWrapper:
         :param distance:
         """
         if not isinstance(k, int) or k < 1:
-            raise ValueError(u"'k' must be a positive integer of size 1")
+            raise ValueError(u"'k' must be a positive integer of size greater or equal than 1")
 
         if not isinstance(gr_type, GroupCentralityEnum):
             raise TypeError(u"'gr_type' must be one of the enumerators available in tools.enums")
@@ -556,9 +556,9 @@ class SGDWrapper:
                 raise TypeError(
                     u"'distance' is not one of the GroupDistanceEnums,{} found".format(type(distance).__name__))
 
-        go_results = self.sgd.group_centrality(graph=self.graph, k=k, metric=gr_type, cmode=cmode, **kwargs)
+        sgd_results = self.sgd.group_centrality(graph=self.graph, k=k, metric=gr_type, cmode=cmode, **kwargs)
 
         if gr_type == GroupCentralityEnum.group_closeness:
-            self.results["_".join([gr_type.name, distance.name])] = [go_results[0][0], go_results[1]]
+            self.results["_".join([gr_type.name, distance.name])] = [sgd_results[0], sgd_results[1]]
         else:
-            self.results[gr_type.name] = [go_results[0][0], go_results[1]]
+            self.results[gr_type.name] = [sgd_results[0], sgd_results[1]]

@@ -1,0 +1,19 @@
+Pyntacle Report	GR stochasticgradientdescent	
+Run Date	2020-07-21-082522	
+
+	
+Network Overview	
+Graph name	figure_1	
+Number of Components	1	
+Nodes	8	
+Edges	8	
+
+	
+group-closeness distance	minimum	
+
+	
+Results:	
+Index	Node set	Value	
+group_degree	A,B	1.0	
+group_betweenness	A,B	0.5	
+group_closeness_minimum	A,B	1.0	

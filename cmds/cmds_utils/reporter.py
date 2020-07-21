@@ -69,13 +69,13 @@ class PyntacleReporter:
         self.report = []
         self.report.append(["Pyntacle Report", report_type.name])
         self.report.append(["Run Date", self.dat])
-        self.report.append(["\n"])
+        self.report.append("\n")
         self.report.append(["Network Overview"])
         self.report.append(["Graph name", ",".join(self.graph["name"])])
         self.report.append(["Number of Components", len(self.graph.components())])
         self.report.append(["Nodes", self.graph.vcount()])
         self.report.append(["Edges", self.graph.ecount()])
-        self.report.append(["\n"])
+        self.report.append("\n")
 
         report_copy = copy.deepcopy(report)
 
@@ -362,36 +362,23 @@ class PyntacleReporter:
 
     def __sgd_report__(self, reportdict: OrderedDict, algo_type: str = "kp"):
         r"""
-        fill the *self.__report* object with all the values contained in the Greedy Optimization Run
+        fill the *self.__report* object with all the values contained in the stochastic gradient descent Run
         :param dict reportdict: a dictionary  with the group distance names as  `keys` and a list as `values`
         """
 
         if algo_type == "kp":
             if KpnegEnum.F.name in reportdict.keys():
                 init_F = reportdict[KpnegEnum.F.name][2]
-
-                if 0.0 <= init_F <= 1.0:
-                    self.report.append(["Starting graph F value", init_F])
-                else:
-                    raise ValueError(u"Initial F must range between 0 and 1")
+                self.report.append(["Starting graph F value", init_F])
 
             if KpnegEnum.dF.name in reportdict.keys():
                 init_dF = reportdict[KpnegEnum.dF.name][2]
-
-                if 0.0 <= init_dF <= 1.0:
-                    self.report.append(["Starting graph dF value", init_dF])
-                else:
-                    raise ValueError(u"Initial dF must range between 0 and 1")
+                self.report.append(["Starting graph dF value", init_dF])
 
             if KpposEnum.mreach.name in reportdict.keys():
                 m = reportdict[KpposEnum.mreach.name][2]
-
-                if not isinstance(m, int) and m < 1:
-                    raise ValueError(u"'m' must be a positive integer")
-                else:
-                    self.report.append(["maximum m-reach distance", reportdict[KpposEnum.mreach.name][2]])
-                    self.report.append(["\n"])
-
+                self.report.append(["maximum m-reach distance", reportdict[KpposEnum.mreach.name][2]])
+                self.report.append(["\n"])
                 reportdict["m-reach"] = reportdict[KpposEnum.mreach.name]
                 del reportdict[KpposEnum.mreach.name]
 
@@ -399,11 +386,16 @@ class PyntacleReporter:
             self.report.append(["Index", "Node set", "Value"])
 
             for k in reportdict.keys():
-                if (k == KpnegEnum.F.name or k == KpnegEnum.dF.name) and reportdict[k][-1] == 1.0:
-                    self.report.append([k, "NA", "MAXIMUM FRAGMENTATION REACHED"])
-
+                if len(reportdict[k][0]) > 1:
+                    count = 0
+                    for elem in reportdict[k][0]:
+                        if count == 0:
+                            self.report.append([k, ",".join(reportdict[k][0][0]), reportdict[k][1]])
+                        else:
+                            self.report.append(["", ",".join(elem), reportdict[k][1]])
+                        count += 1
                 else:
-                    self.report.append([k, ",".join(reportdict[k][0]), reportdict[k][1]])
+                    self.report.append([k, ",".join(reportdict[k][0][0]), reportdict[k][1]])
 
         elif algo_type == "gr":
             for key in reportdict.keys():
@@ -421,8 +413,18 @@ class PyntacleReporter:
                 else:
                     metric_correct = k.replace("_", "-")
 
-                self.report.append([metric_correct, ",".join(reportdict[k][0]), round(reportdict[k][1], 5)])
+                if len(reportdict[k][0]) > 1:
+                    count = 0
+                    for elem in reportdict[k][0]:
+                        if count == 0:
+                            self.report.append([k, ",".join(reportdict[k][0][0]), reportdict[k][1]])
+                        else:
+                            self.report.append(["", ",".join(elem), reportdict[k][1]])
+                        count += 1
+                else:
+                    self.report.append([k, ",".join(reportdict[k][0][0]), reportdict[k][1]])
 
+                # self.report.append([metric_correct, ",".join(reportdict[k][0]), round(reportdict[k][1], 5)])
         else:
             raise ValueError("Invalid report type (choices are: 'kp', 'gr'")
 

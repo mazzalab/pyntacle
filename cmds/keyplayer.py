@@ -81,6 +81,7 @@ class KeyPlayer:
         sys.stdout.write(u"Importing graph from file\n")
         graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header,
                           separator=self.args.input_separator).graph_load()
+        sys.stdout.write("\n")
 
         # auto-select the implementation type
         if self.args.nprocs > 1:
@@ -138,9 +139,7 @@ class KeyPlayer:
         initial_results = {}
         results = OrderedDict()
 
-        sys.stdout.write(section_end)
         sys.stdout.write(run_start)
-
         if self.args.which == 'kp-finder':
             if self.args.implementation == "greedy":
                 report_type = ReportEnum.KP_greedy
@@ -296,13 +295,12 @@ class KeyPlayer:
 
             #  get report results
             results.update(kp_runner.get_results())
-            sys.stdout.write(section_end)
             sys.stdout.write(summary_start)
             sys.stdout.write(u"Node set size for key-player search: {}\n".format(str(self.args.k_size)))
 
             sys.stdout.write("\n")
             for kp in results.keys():
-                if len(results[kp][0]) > 1 and self.args.implementation == 'brute-force':
+                if len(results[kp][0]) > 1 and self.args.implementation in ['brute-force', 'sgd']:
                     plurals = ['s', 'are']
                 else:
                     plurals = ['', 'is']
@@ -310,7 +308,7 @@ class KeyPlayer:
                 if results[kp][0][0] is None:  # the case in which there's no solution
                     results[kp][0] = ["None"]
 
-                if self.args.implementation == 'brute-force':
+                if self.args.implementation in ['brute-force', 'sgd']:
                     list_of_results = "\n".join(['(' + ', '.join(x) + ')' for x in results[kp][0]])
                 else:
                     list_of_results = "(" + ", ".join(results[kp][0]) + ")"
@@ -320,14 +318,14 @@ class KeyPlayer:
                     results[kp].append(initial_results[kp])
 
                     sys.stdout.write(
-                        u"Best key player set{0} of size {1} for negative key player index {2} {3}:\n{4}\nFinal {2} value: {5}\nStarting graph {2} was {6}\n".format(
+                        u"The best key-player set{0} of size {1} for negative key-player index {2} {3}:\n {4}\n Final {2} value: {5}\n Starting graph {2} was {6}\n".format(
                             plurals[0], self.args.k_size, kp, plurals[1], list_of_results, results[kp][1],
                             results[kp][2]))
                     sys.stdout.write("\n")
 
                 elif kp == KpposEnum.dR.name:
                     sys.stdout.write(
-                        u"Best key player set{0} of size {1} for positive key player index {2} {3}:\n{4}\nFinal {2} value: {5}\n".format(
+                        u"The best key-player set{0} of size {1} for positive key-player index {2} {3}:\n {4}\n Final {2} value: {5}\n".format(
                             plurals[0], self.args.k_size, kp, plurals[1], list_of_results, results[kp][1]))
                     sys.stdout.write("\n")
 
@@ -339,14 +337,13 @@ class KeyPlayer:
                     else:
                         node_perc_reached = round(node_perc_reached, 2)
                     sys.stdout.write(
-                        u'Key player set{0} of size {1} for positive key player index m-reach, using at best '
+                        u'Key-player set{0} of size {1} for positive key player index m-reach, using at most '
                         '{3} steps {4}:\n{5}\nwith value {6} on {8} (number of nodes reached on total number of nodes)\nThe total percentage of nodes, which '
                         'includes the kp-set, is {7}%\n'
                             .format(
                             plurals[0], self.args.k_size, kp, self.args.m_reach, plurals[1], list_of_results,
                             results[kp][1], node_perc_reached, graph.vcount()))
                     sys.stdout.write("\n")
-            sys.stdout.write(section_end)
 
         # kpinfo: compute kpmetrics for a set of predetermined nodes
         elif self.args.which == 'kp-info':
@@ -375,7 +372,6 @@ class KeyPlayer:
                 kp_runner.run_reachability(KpposEnum.mreach, m=self.args.m_reach, cmode=implementation)
                 sys.stdout.write("\n")
 
-            sys.stdout.write(section_end)
             results.update(kp_runner.get_results())
             sys.stdout.write(summary_start)
             for metric in results.keys():
@@ -401,7 +397,6 @@ class KeyPlayer:
                         "The {0} value for node set:\n({1})\nis {2}\n".format(metric, ', '.join(results[metric][0]),
                                                                               results[metric][1]))
                     sys.stdout.write("\n")
-            sys.stdout.write(section_end)
 
         sys.stdout.write(report_start)
         # check output directory
@@ -480,181 +475,10 @@ class KeyPlayer:
             binary_path = os.path.join(self.args.directory, binary_prefix + ".graph")
             PyntacleExporter.Binary(graph, binary_path)
 
-        # - LEGACY - OLD PLOTTER -
-        # generate and output plot
-        # if not self.args.no_plot and graph.vcount() < 1000:
-        #
-        #     sys.stdout.write(u"Generating network plots in {} format\n".format(self.args.plot_format))
-        #     plot_dir = os.path.join(self.args.directory, "pyntacle-plots")
-        #
-        #     if not os.path.isdir(plot_dir):
-        #         os.mkdir(plot_dir)
-        #
-        #     plot_graph = PyntacleInkWrapper(graph=graph)
-        #
-        #     plot_format = self.args.plot_format
-        #     plot_graph.set_node_labels(labels=graph.vs()["name"])  # assign node labels to graph
-        #     pal = sns.color_palette("Accent", 8).as_hex()
-        #     framepal = sns.color_palette("Accent", 8, desat=0.5).as_hex()
-        #
-        #     other_nodes_colour = pal[2]
-        #     other_frame_colour = framepal[2]
-        #
-        #     other_nodes_size = 25
-        #     # other_nodes_shape = "circle"
-        #     other_edge_width = 1
-        #
-        #     for metric in results:
-        #         if self.args.which == 'kp-finder' and self.args.implementation == "brute-force":
-        #             results[metric][0] = list(set(list(chain(*results[metric][0]))))
-        #
-        #         if metric == "F":
-        #
-        #             f_nodes_colour = pal[0]
-        #             f_frames_colour = framepal[0]
-        #             # create a list of node colors
-        #             node_colors = [f_nodes_colour if x["name"] in results[metric][0] else other_nodes_colour
-        #                             for x in graph.vs()]
-        #             node_frames = [f_frames_colour if x["name"] in results[metric][0] else other_frame_colour
-        #                             for x in
-        #                             graph.vs()]
-        #
-        #             plot_graph.set_node_colors(colors=node_colors)
-        #
-        #             # node_shapes = ["square" if x["name"] in results[metric][1] else other_nodes_shape for x in graph.vs()]
-        #             # plot_graph.set_node_shapes(shapes=node_shapes)
-        #
-        #         elif metric == "dF":
-        #             df_nodes_colour = pal[1]
-        #             df_frames_colour = framepal[1]
-        #
-        #             # create a list of node colors
-        #             node_colors = [df_nodes_colour if x["name"] in results[metric][0] else other_nodes_colour
-        #                             for x in
-        #                             graph.vs()]
-        #             node_frames = [df_frames_colour if x["name"] in results[metric][0] else other_frame_colour
-        #                            for x in
-        #                            graph.vs()]
-        #
-        #             plot_graph.set_node_colors(colors=node_colors)
-        #
-        #             # node_shapes = ["rectangle" if x["name"] in results[metric][1] else other_nodes_shape for x in graph.vs()]
-        #             # plot_graph.set_node_shapes(shapes=node_shapes)
-        #
-        #         elif metric == "m-reach":
-        #             mreach_nodes_colour = pal[4]
-        #             mreach_frames_colour = framepal[4]
-        #             # create a list of node colors
-        #             node_colors = [mreach_nodes_colour if x["name"] in results[metric][0] else other_nodes_colour for x in graph.vs()]
-        #             node_frames = [mreach_frames_colour if x["name"] in results[metric][0] else other_frame_colour for x in graph.vs()]
-        #
-        #             plot_graph.set_node_colors(colors=node_colors)
-        #
-        #             # node_shapes = ["triangle-up" if x["name"] in results[metric][1] else other_nodes_shape for x in graph.vs()]
-        #             # plot_graph.set_node_shapes(shapes=node_shapes)
-        #
-        #         else: #dR
-        #             dr_nodes_colour = pal[3]
-        #             dr_frames_colour = framepal[3]
-        #
-        #             # create a list of node colors
-        #             node_colors = [dr_nodes_colour if x["name"] in results[metric][0] else other_nodes_colour
-        #                             for x in
-        #                             graph.vs()]
-        #             node_frames = [dr_frames_colour if x["name"] in results[metric][0] else other_frame_colour
-        #                            for x in
-        #                            graph.vs()]
-        #
-        #             plot_graph.set_node_colors(colors=node_colors)
-        #
-        #             # node_shapes = ["triangle-down" if x["name"] in results[metric][1] else other_nodes_shape for x in
-        #             #                graph.vs()]
-        #             #
-        #             # plot_graph.set_node_shapes(shapes=node_shapes)
-        #
-        #
-        #         node_sizes = [35 if x["name"] in results[metric][0] else other_nodes_size for x in graph.vs()]
-        #
-        #         plot_graph.set_node_sizes(sizes=node_sizes)
-        #         # print (other_edge_width)
-        #
-        #         #     print (edge.source(), edge.target())
-        #         # add recursive edge widths
-        #         if metric != "mreach":
-        #
-        #             edge_widths = [5 if any(y in results[metric][0] for y in x["adjacent_nodes"]) else other_edge_width for
-        #                            x in graph.es()]
-        #
-        #         else:
-        #             if self.args.m_reach > 5:
-        #                 edge_widths = [5 if any(y in results[metric][0] for y in x["adjacent_nodes"])
-        #                                else other_edge_width for x in graph.es()]
-        #                 sys.stdout.write(u"WARNING: you chose a very high value of m-reach, the edge width "
-        #                                  "may be too big, hence it may not be represented correctly\n")
-        #             else:
-        #                 mreach_nodes = results[metric][0]
-        #                 # get node indices of corresponding kpset
-        #                 indices = utils.get_node_indices(mreach_nodes)
-        #
-        #                 edge_widths = [other_edge_width] * graph.ecount()  # define a starting list of values
-        #
-        #                 mreach_width = (self.args.m_reach * 2) + 2  # maxium and minimum boundaries for edge width
-        #                 # print(mreach_width)
-        #
-        #
-        #                 memory_indices = indices
-        #                 step_before = indices
-        #
-        #                 for i in range(1, self.args.m_reach + 1):
-        #                     # print(mreach_width)
-        #                     neighbours = Graph.neighborhood(graph, vertices=indices)
-        #                     # print(neighbours)
-        #
-        #                     indices = list(chain(*neighbours)) # flat out list of indices
-        #                     # print(indices)
-        #                     remaining_indices = list(set(indices) - set(memory_indices))
-        #
-        #                     # print(remaining_indices)
-        #                     # print(step_before)
-        #
-        #                     mreach_edge_ids = []
-        #
-        #                     for elem in step_before:
-        #                         for el in remaining_indices:
-        #                             if Graph.are_connected(graph, elem, el):
-        #                                 mreach_edge_ids.append(graph.get_eid(elem, el))
-        #
-        #                     # print (mreach_edge_ids)
-        #                     for edge in mreach_edge_ids:
-        #                         edge_widths[edge] = mreach_width
-        #
-        #                     # finally
-        #                     mreach_width = mreach_width - 2
-        #                     memory_indices = memory_indices + remaining_indices
-        #                     step_before = remaining_indices
-        #
-        #                 # sys.exit()
-        #
-        #         plot_graph.set_edge_widths(edge_widths)
-        #
-        #         plot_graph.set_layouts(self.args.plot_layout)
-        #
-        #         plot_path = os.path.join(plot_dir, "_".join([self.args.which, ["name"][0], metric, self.date]) + "." + plot_format)
-        #         if os.path.exists(plot_path):
-        #             sys.stdout.write(
-        #                 u"WARNING: a plot with the name ({}) already exists, overwriting it\n".format(
-        #                     os.path.basename(plot_path)))
-        #
-        #         plot_graph.plot_graph(path=plot_path, bbox=plot_size, margin=20, edge_curved=0.2,
-        #                               keep_aspect_ratio=True, vertex_label_size=6, vertex_frame_color=node_frames)
-        #
-        # elif graph.vcount() >= 1000:
-        #     sys.stdout.write(u"The graph has too many nodes ({}). Pyntacle allows plotting for network with N <= 1000. No visual representation will be produced\n".format(graph.vcount()))
-
         if not self.args.suppress_cursor:
             cursor.stop()
 
-        sys.stdout.write(section_end)
+        sys.stdout.write("\n")
         sys.stdout.write(u"Pyntacle keyplayer completed successfully\n")
 
         sys.exit(0)

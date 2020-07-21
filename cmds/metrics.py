@@ -39,6 +39,7 @@ from internal.graph_load import GraphLoad,separator_detect
 from exceptions.generic_error import Error
 from exceptions.multiple_solutions_error import MultipleSolutionsError
 
+
 class Metrics:
     def __init__(self, args):
         self.logging = log
@@ -47,11 +48,6 @@ class Metrics:
 
         if not hasattr(self.args, 'which'):
             raise Error(u"usage: pyntacle.py metrics {local, global} [options]'")
-
-        # - DEPRECATED- Check for pycairo
-        # if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
-        #     sys.stdout.write(pycairo_message)
-        #     self.args.no_plot = True
 
     def run(self):
         if not self.args.suppress_cursor:

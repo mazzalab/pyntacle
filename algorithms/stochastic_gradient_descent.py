@@ -57,8 +57,8 @@ class StochasticGradientDescent:
     @staticmethod
     def __optimization_loop(graph, S: list, type_func, **kwargs):
         probability: float = 0
-        tolerance: float = 0.00001
-        maxsec: float = float('inf')
+        tolerance: float = 0.01
+        maxsec: float = 120
 
         for key, value in kwargs.items():
             if key == "probability":
@@ -68,17 +68,16 @@ class StochasticGradientDescent:
             elif key == "maxsec":
                 maxsec = value
 
+        # Initialize the optimization loop
+        start_time = time.time()
         node_indices = graph.vs.indices
         notS = list(set(node_indices).difference(set(S)))
 
         optimization_score = StochasticGradientDescent.__update_iteration(graph, S, type_func)
         kppset_score_pairs_history = {tuple(S): optimization_score}
+        kppset_score_pairs = {tuple(S): optimization_score}
         optimal_set_found = False
-
-        start_time = time.time()
         while not optimal_set_found:
-            kppset_score_pairs = {}
-
             si = random.choice(S)
             notsi = random.choice(notS)
 
@@ -86,31 +85,36 @@ class StochasticGradientDescent:
             temp_kpp_set.remove(si)
             temp_kpp_set.append(notsi)
             temp_kpp_set.sort()
-
             temp_kpp_set_tuple = tuple(temp_kpp_set)
+
+            # Evaluate the score of the current set S, if not already computed
             if temp_kpp_set_tuple in kppset_score_pairs_history:
-                kppset_score_pairs[temp_kpp_set_tuple] = kppset_score_pairs_history[temp_kpp_set_tuple]
+                curr_score = kppset_score_pairs_history[temp_kpp_set_tuple]
             else:
-                temp_kpp_func_value = StochasticGradientDescent.__update_iteration(
-                    graph, temp_kpp_set, type_func)
-                kppset_score_pairs_history[temp_kpp_set_tuple] = temp_kpp_func_value
-                kppset_score_pairs[temp_kpp_set_tuple] = temp_kpp_func_value
+                curr_score = StochasticGradientDescent.__update_iteration(graph, temp_kpp_set, type_func)
+                kppset_score_pairs_history[temp_kpp_set_tuple] = curr_score
 
-            # conditions for swap
-            if kppset_score_pairs[temp_kpp_set_tuple] > optimization_score \
-                    or (kppset_score_pairs[temp_kpp_set_tuple] <= optimization_score
-                        and random.uniform(0, 1) < probability):
-                    S = temp_kpp_set
-                    notS = list(set(node_indices).difference(set(S)))
-                    optimization_score = kppset_score_pairs[temp_kpp_set_tuple]
-
-            # conditions for stop
-            if kppset_score_pairs[temp_kpp_set_tuple] - optimization_score < tolerance \
-                    or time.time() - start_time >= maxsec:
+            if time.time() - start_time >= maxsec:
                 optimal_set_found = True
+            elif curr_score > optimization_score and (curr_score - optimization_score) <= tolerance:
+                optimal_set_found = True
+                kppset_score_pairs.clear()
+                kppset_score_pairs[temp_kpp_set_tuple] = curr_score
+                optimization_score = curr_score
+            elif curr_score > optimization_score or (
+                    (curr_score < optimization_score and random.uniform(0, 1) < probability)):
+                S = temp_kpp_set
+                notS = list(set(node_indices).difference(set(S)))
+                kppset_score_pairs.clear()
+                kppset_score_pairs[temp_kpp_set_tuple] = curr_score
+                optimization_score = curr_score
+            elif curr_score == optimization_score:
+                kppset_score_pairs[temp_kpp_set_tuple] = curr_score
+            else:
+                # if curr_score < optimization_score
+                continue
 
-        return S, optimization_score
-
+        return list(kppset_score_pairs.keys()), optimization_score
 
     @staticmethod
     @greedy_search_initializer
@@ -146,8 +150,6 @@ class StochasticGradientDescent:
             S_names = node_names[:k]
 
             S = gu(graph=graph).get_node_indices(S_names)
-            S.sort()
-
             if graph.vcount() - k == 1:
                 final = graph.vs(S)["name"]
                 sys.stdout.write(
@@ -160,20 +162,17 @@ class StochasticGradientDescent:
             else:
                 type_func = partial(kp.dF, cmode=cmode)
 
-            final, fragmentation_score = StochasticGradientDescent.__optimization_loop(
-                graph, S, type_func, **kwargs)
-
-            final = graph.vs(final)["name"]
-            final.sort()
+            final, fragmentation_score = StochasticGradientDescent.__optimization_loop(graph, S, type_func, **kwargs)
+            final = [list(graph.vs[f]["name"]) for f in final]
 
             sys.stdout.write(
                 u"Optimal group: {}\n Group size = {}\n Metric = {}\n Score = {}\n".format(
-                    "{" + str(final).replace("'", "")[1:-1] + "}",
+                    "{" + ",".join(["[" + ",".join(f) + "]" for f in final]) + "}",
                     k,
                     metric.name.replace("_", " "),
                     fragmentation_score))
 
-            return [final], round(fragmentation_score, 5)
+            return final, round(fragmentation_score, 5)
 
         else:
             raise KeyError(
@@ -181,7 +180,7 @@ class StochasticGradientDescent:
 
     @staticmethod
     @greedy_search_initializer
-    def reachability(graph, k: int, metric: KpposEnum, m=None,cmode=CmodeEnum.igraph, **kwargs) -> (list, float):
+    def reachability(graph, k: int, metric: KpposEnum, m=None, cmode=CmodeEnum.igraph, **kwargs) -> (list, float):
         r"""
         It searches for the best *key player* (*kp*) set of a predefined size :math:`k`, also defined as positive key
         players (*kp-pos*) using reachability indices, described in Pyntacle
@@ -213,12 +212,10 @@ class StochasticGradientDescent:
             elif metric == KpposEnum.mreach and (not isinstance(m, int) or m <= 0):
                 raise TypeError(u"The 'm' argument must be a positive integer value")
             else:
-
                 node_names = graph.vs()["name"]
                 random.shuffle(node_names)
                 S_names = node_names[:k]
                 S = gu(graph=graph).get_node_indices(S_names)
-                S.sort()
 
                 if metric == KpposEnum.mreach:
                     if cmode != CmodeEnum.igraph:
@@ -234,22 +231,19 @@ class StochasticGradientDescent:
                         type_func = partial(kp.dR, nodes=S_names,
                                             cmode=cmode, sp_matrix=sps)
                     else:
-                        type_func = partial(kp.dR, nodes=S_names,
-                                            cmode=cmode)
+                        type_func = partial(kp.dR, nodes=S_names, cmode=cmode)
 
-                final, reachability_score = StochasticGradientDescent.__optimization_loop(
-                    graph, S, type_func, **kwargs)
-                final = graph.vs(final)["name"]
-                final.sort()
+                final, reachability_score = StochasticGradientDescent.__optimization_loop(graph, S, type_func, **kwargs)
+                final = [list(graph.vs[f]["name"]) for f in final]
 
                 sys.stdout.write(
                     u"Optimal group: {}\n Group size = {}\n Metric = {}\n Score = {}\n".format(
-                        "{" + str(final).replace("'", "")[1:-1] + "}",
+                        "{" + ",".join(["[" + ",".join(f) + "]" for f in final]) + "}",
                         k,
                         metric.name.replace("_", " "),
                         reachability_score))
 
-                return [final], round(reachability_score, 5)
+                return final, round(reachability_score, 5)
         else:
             raise KeyError(
                 u"The parameter 'metric' is not valid. It must be one of the following: {}".format(list(KpposEnum)))
@@ -294,27 +288,25 @@ class StochasticGradientDescent:
             type_func = partial(LocalTopology.group_closeness, graph=graph, cmode=cmode, distance=distance_type)
         else:
             raise KeyError(
-                u"The argument 'metric' is not valid. It must be one of the following: {}".format(list(GroupCentralityEnum)))
+                u"The argument 'metric' is not valid. It must be one of the following: {}".format(
+                    list(GroupCentralityEnum)))
 
         node_names = graph.vs()["name"]
         random.shuffle(node_names)
         S_names = node_names[:k]
         S = gu(graph=graph).get_node_indices(S_names)
-        S.sort()
 
         final, group_score = StochasticGradientDescent.__optimization_loop(graph, S, type_func, **kwargs)
+        final = [list(graph.vs[f]["name"]) for f in final]
 
-        final = graph.vs(final)["name"]
-        final.sort()
-
-        metrics_distance_str = metric.name.replace("_", " ") \
+        metrics_distance_str = metric.name.replace("_", "-") \
             if metric != GroupCentralityEnum.group_closeness \
-            else metric.name.replace("_", " ") + " - Distance function = " + distance_type.name
+            else metric.name.replace("_", " ") + "; Distance function = " + distance_type.name
         sys.stdout.write(
             u"Optimal group: {}\n Group size = {}\n Metric = {}\n Score = {}\n".format(
-                "{" + str(final).replace("'", "")[1:-1] + "}",
+                "{" + ",".join(["[" + ",".join(f) + "]" for f in final]) + "}",
                 k,
                 metrics_distance_str,
                 group_score))
 
-        return [final], round(group_score, 5)
+        return final, round(group_score, 5)

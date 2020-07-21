@@ -109,9 +109,7 @@ requirements that need to be satisfied on each platform.
 
 
 **NOTE** Starting from version 1.1, we introduced a new JavaScript-based graph visualizer, PyntacleInk. Installation
-of cairo and the pycairo python bindings is hence not required. We however recommend installing cairo if you wish to 
-plot using the built-in igraph graphical library (visit the [pycairo page](https://cairographics.org/download/) for operative-system
-specific instructions).
+of cairo and the pycairo python bindings is hence not required.
 
 #### Debian, Ubuntu
 

@@ -1,0 +1,22 @@
+Pyntacle Report	KP stochasticgradientdescent	
+Run Date	2020-07-20-204426	
+
+	
+Network Overview	
+Graph name	figure_1	
+Number of Components	1	
+Nodes	8	
+Edges	8	
+
+	
+Starting graph F value	0	
+Starting graph dF value	0.39286	
+maximum m-reach distance	1	
+
+	
+Results:	
+Index	Node set	Value	
+F	A,B	1.0	
+dF	A,B	1.0	
+dR	A,B	0.75	
+m-reach	A,B	6	

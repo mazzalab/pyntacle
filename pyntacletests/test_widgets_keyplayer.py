@@ -53,6 +53,9 @@ class WidgetTestKeyplayer(unittest.TestCase):
         self.Args.input_file = os.path.join(current_dir, 'pyntacletests/test_sets/input/figure_8.txt')
         self.Args.largest_component = False
         self.Args.m_reach = 2
+        self.Args.swap_probability = 0
+        self.Args.tolerance = 0.01
+        self.Args.maxsec = 2
         self.Args.no_header = False
         self.Args.no_plot = True
         self.Args.plot_dim = None
@@ -106,10 +109,8 @@ class WidgetTestKeyplayer(unittest.TestCase):
             data_exp = exp.read()
         o = set(re.findall(r"[^A-z:\t][0-9]*\.\d+|[^A-z:\t][ 0-9]+", data))
         e = set(re.findall(r"[^A-z:\t][0-9]*\.\d+|[^A-z:\t][ 0-9]+", data_exp))
-        print(o)
-        print(e)
         self.assertEqual(o, e,
-                         'Wrong checksum for KeyPlayer, kp-finder greedy case')
+                         'Wrong checksum for key-player, kp-finder greedy case')
 
     def test_kpfinder_bf(self):
         sys.stdout.write("Testing kp-finder bruteforce with {} cpus\n".format(n_cpus))
@@ -133,6 +134,42 @@ class WidgetTestKeyplayer(unittest.TestCase):
         e = set(re.findall(r"[-+]?\d*\.\d+|\d+", data_exp))
         self.assertEqual(o, e,
                          'Wrong checksum for KeyPlayer, kp-finder bruteforce case')
+
+    def test_kpfinder_sgd(self):
+        sys.stdout.write("Testing kp-finder stochastic gradient descent with {} cpus\n".format(n_cpus))
+        self.Args.which = 'kp-finder'
+        self.Args.implementation = 'sgd'
+        self.Args.k_size = 2
+        self.Args.maxsec = 2
+
+        # override init parameters
+        self.Args.m_reach = 1
+        self.Args.input_file = os.path.join(current_dir, 'pyntacletests/test_sets/input/figure_1.txt')
+
+        kp = keyplayer_command(self.Args)
+        with self.assertRaises(SystemExit) as cm:
+            kp.run()
+        the_exception = cm.exception
+        self.assertEqual(the_exception.code, 0)
+        fileout = glob.glob(os.path.join(current_dir, "pyntacletests/test_sets/tmp/Report_*_KP_stochasticgradientdescent_*"))[0]
+        with open(fileout, 'r') as fin:
+            next(fin)
+            next(fin)
+            data = fin.read()
+        expected = os.path.join(current_dir, 'pyntacletests/test_sets/output/keyplayer/figure1_kpinfo_stochasticgradientdescent.txt')
+        with open(expected, 'r') as exp:
+            next(exp)
+            next(exp)
+            data_exp = exp.read()
+        o = set(re.findall(r"[^A-z:\t][0-9]*\.\d+|[^A-z:\t][ 0-9]+", data))
+        e = set(re.findall(r"[^A-z:\t][0-9]*\.\d+|[^A-z:\t][ 0-9]+", data_exp))
+        # print(o)
+        # print(e)
+        self.assertEqual(o, e, 'Wrong checksum for KeyPlayer, kp-finder stochastic gradient descent case')
+
+        # reset starting parameters
+        self.Args.input_file = os.path.join(current_dir, 'pyntacletests/test_sets/input/figure_8.txt')
+        self.Args.m_reach = 1
 
     def tearDown(self):
         self.cleanup()

@@ -90,6 +90,7 @@ class GroupCentrality:
         sys.stdout.write(u"Importing graph from file\n")
         graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header,
                           separator=self.args.input_separator).graph_load()
+        sys.stdout.write("\n")
 
         # auto-select the implementation type
         if self.args.nprocs > 1:
@@ -104,7 +105,6 @@ class GroupCentrality:
 
         utils = gu(graph=graph)
         if hasattr(self.args, 'nodes'):
-
             if not utils.nodes_in_graph(self.args.nodes):
                 sys.stderr.write(
                     "One or more of the specified nodes is not present in the graph. Quitting\n")
@@ -146,9 +146,7 @@ class GroupCentrality:
         reporter = PyntacleReporter(graph=graph)
         results = OrderedDict()
 
-        sys.stdout.write(section_end)
         sys.stdout.write(run_start)
-
         if self.args.which == "gr-finder":
             # Greedy optimization
             if self.args.implementation == "greedy":
@@ -254,19 +252,18 @@ class GroupCentrality:
 
                 report_type = ReportEnum.GR_stochasticgradientdescent
                 sgd_runner = sgd(graph=graph)
-                sys.stdout.write(
-                    u"Running the Stochastic Gradient Descent algorithm\n")
-                sys.stdout.write(sep_line)
+                sys.stdout.write(u"Running the Stochastic Gradient Descent algorithm\n\n")
 
                 if self.args.type in (["all", "degree"]):
                     sys.stdout.write(
-                        u"Searching a set of nodes of size {0} that optimizes the group-degree\n".format(
+                        u"Searching for a set of nodes of size {0} that optimizes the group-degree\n".format(
                             self.args.k_size))
 
                     sgd_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_degree,
                                                    distance=group_distance, cmode=implementation,
                                                    **{k: v for k, v in optional_args.items() if v is not None})
                     sys.stdout.write(sep_line)
+                    sys.stdout.write("\n")
 
                 if self.args.type in (["all", "betweenness"]):
                     sys.stdout.write(
@@ -277,6 +274,7 @@ class GroupCentrality:
                                                    distance=group_distance, cmode=implementation,
                                                    **{k: v for k, v in optional_args.items() if v is not None})
                     sys.stdout.write(sep_line)
+                    sys.stdout.write("\n")
 
                 if self.args.type in (["all", "closeness"]):
                     sys.stdout.write(
@@ -287,18 +285,17 @@ class GroupCentrality:
                                                    distance=group_distance, cmode=implementation,
                                                    **{k: v for k, v in optional_args.items() if v is not None})
                     sys.stdout.write(sep_line)
+                    sys.stdout.write("\n")
 
-                sys.stdout.write(sep_line)
                 results.update(sgd_runner.get_results())
 
             # shell output report part
-            sys.stdout.write(section_end)
             sys.stdout.write(summary_start)
-            sys.stdout.write(u"Set size for group centrality search: {}\n".format(str(self.args.k_size)))
-            sys.stdout.write(sep_line)
+            sys.stdout.write(u"Node set size for group-centrality search: {}\n".format(str(self.args.k_size)))
+            sys.stdout.write("\n")
 
             for kk in results.keys():
-                if len(results[kk][0]) > 1 and self.args.implementation == 'brute-force':
+                if len(results[kk][0]) > 1 and self.args.implementation in ['brute-force', 'sgd']:
                     plurals = ['s', 'are']
                 else:
                     plurals = ['', 'is']
@@ -306,7 +303,7 @@ class GroupCentrality:
                 if results[kk][0][0] is None:  # the case in which there's no solution
                     results[kk][0] = ["None"]
 
-                if self.args.implementation == 'brute-force':
+                if self.args.implementation in ['brute-force', 'sgd']:
                     list_of_results = "\n".join(['(' + ', '.join(x) + ')' for x in results[kk][0]])
 
                 else:
@@ -324,7 +321,7 @@ class GroupCentrality:
 
                 sys.stdout.write("\n")
 
-            sys.stdout.write(section_end)
+            # sys.stdout.write(section_end)
 
         elif self.args.which == "gr-info":
             report_type = ReportEnum.GR_info
@@ -374,7 +371,7 @@ class GroupCentrality:
         sys.stdout.write(report_start)
 
         if createdir:
-            sys.stdout.write(u"WARNING: output directory does not exist, {} will be created".format(
+            sys.stdout.write(u"WARNING: the output directory does not exist, {} will be created".format(
                 os.path.abspath(self.args.directory)))
             os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
 
@@ -441,6 +438,6 @@ class GroupCentrality:
         if not self.args.suppress_cursor:
             cursor.stop()
 
-        sys.stdout.write(section_end)
+        sys.stdout.write("\n")
         sys.stdout.write(u"Pyntacle group-centrality completed successfully\n")
         sys.exit(0)

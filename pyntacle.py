@@ -52,15 +52,6 @@ from cmds.communities import Communities as communities_command
 from pyntacletests.test_suite import Suite
 
 
-# def _check_value(action, value):
-#     # converted value must be one of the choices (if specified)
-#     if action.choices is not None and value not in action.choices:
-#         args = {"value": value,
-#                 "choices": ", ".join(map(repr, action.choices))}
-#         msg = "invalid choice: %(value)r"
-#         raise argparse.ArgumentError(action, msg % args)
-
-
 def procs_type(x):
     x = int(x)
     if x < 1:
@@ -184,15 +175,15 @@ class App:
         parser.add_argument("-t", "--type", metavar="", choices=["pos", "neg", "all", "F", "dF", "dR", 'mreach'],
                             default="all",
                             help="The key player metrics of interest. Choices are: "
-                                 "'all' (all metrics), 'pos' (reachabiliy metrics: dR and mreach),"
-                                 " 'neg' (fragmentation metrics: F and dF). 'dR', 'mreach', 'F', "
+                                 "'all' (all metrics), 'pos' (reachabiliy metrics: dR and mreach), "
+                                 "'neg' (fragmentation metrics: F and dF). 'dR', 'mreach', 'F', "
                                  "'dF'. Default is 'all'")
 
         parser.add_argument("-m", "--m-reach", metavar="", type=int, help="The maximum "
                                                                           "distance that will be "
                                                                           "used to compute the m-reach "
-                                                                          "metrics. It must be provided if the m-reach"
-                                                                          " is computed.")
+                                                                          "metrics. It is required to compute the "
+                                                                          "m-reach")
 
         parser.add_argument("-L", "--largest-component", action="store_true",
                             help="Consider only the largest component of the input graph and exclude the smaller ones."
@@ -262,13 +253,13 @@ class App:
         finder_case_parser.add_argument("-P", "--swap-probability", metavar="", default=0, type=float,
                                         help="(STOCHASTIC GRADIENT DESCENT ONLY) The probability of accepting a swap of"
                                              " nodes, even if this is not advantageous. Default to 0")
-        finder_case_parser.add_argument("-T", "--tolerance", metavar="", default=0.00001, type=float,
+        finder_case_parser.add_argument("-T", "--tolerance", metavar="", default=0.01, type=float,
                                         help="(STOCHASTIC GRADIENT DESCENT ONLY) The minimum accepted increase by a "
                                              "two-nodes swap. An increase below this threshold will cause Pyntacle to "
                                              "stop and return the best set of nodes so far obtained. Default to 0.00001")
         finder_case_parser.add_argument("-x", "--maxsec", metavar="", default=120, type=int,
                                         help="(STOCHASTIC GRADIENT DESCENT ONLY) Maximum allowed computation time "
-                                             "(seconds). Default to infinity")
+                                             "(seconds). Default to 120 seconds")
 
         finder_case_parser.set_defaults(which="kp-finder")
 
@@ -401,7 +392,7 @@ class App:
         finder_case_parser.add_argument("-P", "--swap-probability", metavar="", default=0, type=float,
                                         help="(STOCHASTIC GRADIENT DESCENT ONLY) The probability of accepting a swap of"
                                              " nodes, even if this is not advantageous. Default to 0")
-        finder_case_parser.add_argument("-T", "--tolerance", metavar="", default=0.00001, type=float,
+        finder_case_parser.add_argument("-T", "--tolerance", metavar="", default=0.01, type=float,
                                         help="(STOCHASTIC GRADIENT DESCENT ONLY) The minimum accepted increase by a "
                                              "two-nodes swap. An increase below this threshold will cause Pyntacle to "
                                              "stop and return the best set of nodes so far obtained. Default to 0.00001")

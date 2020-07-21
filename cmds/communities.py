@@ -23,6 +23,8 @@ __license__ = u"""
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
   """
+
+
 from config import *
 from collections import OrderedDict
 from warnings import simplefilter
@@ -37,7 +39,6 @@ from exceptions.generic_error import Error
 
 
 class Communities:
-
     def __init__(self, args):
         self.logging = log
         self.args = args
@@ -45,16 +46,8 @@ class Communities:
         if not hasattr(self.args, 'which'):
             raise Error(
                 u"usage: pyntacle.py communities {infomap, community-walktrap, fastgreedy, leading-eigenvector} [options]")
-        # - DEPRECATED - Check for pycairo
-        # if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
-        #     sys.stdout.write(pycairo_message)
-        #     self.args.no_plot = True
-        #
-        # if not self.args.output_separator:
-        #     self.args.output_separator = '\t'
 
     def run(self):
-
         if not self.args.suppress_cursor:
             cursor = CursorAnimation()
             cursor.daemon = True
