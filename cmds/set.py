@@ -41,7 +41,6 @@ from exceptions.generic_error import Error
 
 
 class Set:
-
     def __init__(self, args):
         self.logging = log
         self.args = args
@@ -50,13 +49,7 @@ class Set:
         if not hasattr(self.args, 'which'):
             raise Error(u"usage: pyntacle.py set {union, intersection, difference} [options]'")
 
-        # - DEPRECATED - Check for pycairo
-        # if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
-        #     sys.stdout.write(pycairo_message)
-        #     self.args.no_plot = True
-
     def run(self):
-
         if not self.args.suppress_cursor:
             cursor = CursorAnimation()
             cursor.daemon = True

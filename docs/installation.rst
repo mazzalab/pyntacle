@@ -90,14 +90,14 @@ As a user with admin rights, run:
 
 ::
 
- apt-get install -y build-essential linux-headers-$(uname -r) libgl1-mesa-glx libigraph0v5 libigraph0-dev libcairo2-dev libffi-dev libjpeg-dev libgif-dev libblas-dev liblapack-dev git python3-pip python3-tk
+ apt-get install -y build-essential linux-headers-$(uname -r) libgl1-mesa-glx libigraph0v5 libigraph0-dev libffi-dev libjpeg-dev libgif-dev libblas-dev liblapack-dev git python3-pip python3-tk
 
 .. note:: **Ubuntu/Debian version <= 16.04**:
    For Ubuntu/Debian 16.04 and older, you also have to install two dependencies from the PyPi repository, by running:
 
    ::
 
-    apt-get install -y build-essential linux-headers-$(uname -r) libgl1-mesa-glx libigraph0v5 libigraph0-dev libcairo2-dev libffi-dev libjpeg-dev libgif-dev libblas-dev liblapack-dev git python3-pip python3-tk
+    apt-get install -y build-essential linux-headers-$(uname -r) libgl1-mesa-glx libigraph0v5 libigraph0-dev libffi-dev libjpeg-dev libgif-dev libblas-dev liblapack-dev git python3-pip python3-tk
 
 
 Finally, extract the Pyntacle `source tar.gz file <https://github.com/mazzalab/pyntacle/releases/latest>`_ navigate into it and run as an administrator (or add ``--user`` if you do not have admin rights and prefer to install the Pyntacle binary in ``~/.local/bin``):
@@ -115,8 +115,7 @@ As an admin, you need to run:
 
 ::
 
-  yum groupinstall -y development kernel-headers-`uname -r` kernel-devel-`uname -r` gcc gcc-c++ yum-utils; yum install -y https://centos7.iuscommunity.org/ius-release.rpm; yum install -y wget python36u-devel.x86_64 igraph-devel.x86_64 cairo-devel.x86_64 atlas-devel.x86_64 libffi-devel.x86_64 python36u-pip python36u-tkinter.x86_64
-  wget https://github.com/pygobject/pycairo/releases/download/v1.14.1/pycairo-1.14.1.tar.gz ; tar -xf pycairo-1.14.1.tar.gz; cd pycairo-1.14.1; python3.6 setup.py build ; sudo python3.6 setup.py install; cd ..; rm -rf pycairo-1.14.1*
+  yum groupinstall -y development kernel-headers-`uname -r` kernel-devel-`uname -r` gcc gcc-c++ yum-utils; yum install -y https://centos7.iuscommunity.org/ius-release.rpm; yum install -y wget python36u-devel.x86_64 igraph-devel.x86_64 atlas-devel.x86_64 libffi-devel.x86_64 python36u-pip python36u-tkinter.x86_64
 
 Finally, extract the Pyntacle `source tar.gz file <https://github.com/mazzalab/pyntacle/releases/latest>`_ navigate into it and run as an administrator (or add ``--user`` if you do not have admin rights and prefer to install the Pyntacle binary in ``~/.local/bin``):
 
@@ -144,7 +143,7 @@ Once Mac Ports is installed, getting the dependencies is easy:
 
 ::
 
-  port install py35-cairo py35-setuptools py35-pandas py35-seaborn py35-colorama py35-xlsxwriter py35-igraph
+  port install py35-setuptools py35-pandas py35-seaborn py35-colorama py35-xlsxwriter py35-igraph
 
 Note: unfortunately, at the time of writing this guide, Mac Ports does not provide a python3.6 version of the library 'xlsxwriter'; therefore, everything must be downgraded to Python 3.5. This does not affect the performance or the results.
 

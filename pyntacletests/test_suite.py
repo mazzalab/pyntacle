@@ -1,11 +1,11 @@
 __author__ = u"Mauro Truglio, Tommaso Mazza"
 __copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.2"
+__version__ = u"1.3"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"07/06/2020"
+__date__ = u"20/07/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t,mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -38,7 +38,6 @@ from pyntacletests.test_widgets_keyplayer import WidgetTestKeyplayer
 from pyntacletests.test_widgets_groupcentrality import WidgetTestGroupcentrality
 
 
-
 def Suite():
     suite = unittest.TestSuite()
     suite.addTest(WidgetTestConvert('test_convert_sif'))
@@ -53,22 +52,29 @@ def Suite():
     suite.addTest(WidgetTestLogicOps('test_union'))
     suite.addTest(WidgetTestLogicOps('test_intersect'))
     suite.addTest(WidgetTestLogicOps('test_difference'))
+
     suite.addTest(WidgetTestMetrics('test_global'))
     suite.addTest(WidgetTestMetrics('test_local'))
+
     suite.addTest(WidgetTestCommunities('test_fastgreedy'))
     suite.addTest(WidgetTestCommunities('test_infomap'))
     suite.addTest(WidgetTestCommunities('test_leading_eigenvector'))
     suite.addTest(WidgetTestCommunities('test_community_walktrap'))
+
     suite.addTest(WidgetTestGenerator('test_random'))
     suite.addTest(WidgetTestGenerator('test_scalefree'))
     suite.addTest(WidgetTestGenerator('test_tree'))
     suite.addTest(WidgetTestGenerator('test_smallworld'))
+
     suite.addTest(WidgetTestKeyplayer('test_kpinfo'))
     suite.addTest(WidgetTestKeyplayer('test_kpfinder_greedy'))
     suite.addTest(WidgetTestKeyplayer('test_kpfinder_bf'))
+    suite.addTest(WidgetTestKeyplayer('test_kpfinder_sgd'))
+
     suite.addTest(WidgetTestGroupcentrality('test_grinfo'))
     suite.addTest(WidgetTestGroupcentrality('test_grfinder_greedy'))
     suite.addTest(WidgetTestGroupcentrality('test_grfinder_bf'))
+    suite.addTest(WidgetTestGroupcentrality('test_grfinder_sgd'))
     return suite
 
 

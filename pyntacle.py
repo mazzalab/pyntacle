@@ -1,11 +1,11 @@
 __author__ = u"Mauro Truglio, Tommaso Mazza"
 __copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.2"
+__version__ = u"1.3"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"24/06/2020"
+__date__ = u"09/07/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -35,8 +35,8 @@ from exceptions.generic_error import Error
 from colorama import init
 
 
-if sys.version_info <= (3, 4):
-    sys.exit("Python < 3.4 is not supported. Please update your Python distribution")
+if sys.version_info <= (3, 6):
+    sys.exit("Python < 3.6 is not supported. Please update your Python distribution")
 
 if os.name == "nt":
     init(convert=True)
@@ -50,15 +50,6 @@ from cmds.generate import Generate as generate_command
 from cmds.set import Set as set_command
 from cmds.communities import Communities as communities_command
 from pyntacletests.test_suite import Suite
-
-
-# def _check_value(action, value):
-#     # converted value must be one of the choices (if specified)
-#     if action.choices is not None and value not in action.choices:
-#         args = {"value": value,
-#                 "choices": ", ".join(map(repr, action.choices))}
-#         msg = "invalid choice: %(value)r"
-#         raise argparse.ArgumentError(action, msg % args)
 
 
 def procs_type(x):
@@ -116,7 +107,7 @@ class App:
         parser.add_argument("command", help="Subcommand to run", type=lambda s: s.lower())
         parser.add_argument("-v", action="count", help="Verbosity level of the internal Pyntacle logger. "
                                                        "-vvv is the highest level (for debugging purposes).")
-        parser.add_argument("-V", "--version", action="version", version="Pyntacle v1.1",
+        parser.add_argument("-V", "--version", action="version", version="Pyntacle v{}".format(__version__),
                             help="Show version number and quit")
 
         # Detect verbosity
@@ -184,15 +175,15 @@ class App:
         parser.add_argument("-t", "--type", metavar="", choices=["pos", "neg", "all", "F", "dF", "dR", 'mreach'],
                             default="all",
                             help="The key player metrics of interest. Choices are: "
-                                 "'all' (all metrics), 'pos' (reachabiliy metrics: dR and mreach),"
-                                 " 'neg' (fragmentation metrics: F and dF). 'dR', 'mreach', 'F', "
+                                 "'all' (all metrics), 'pos' (reachabiliy metrics: dR and mreach), "
+                                 "'neg' (fragmentation metrics: F and dF). 'dR', 'mreach', 'F', "
                                  "'dF'. Default is 'all'")
 
         parser.add_argument("-m", "--m-reach", metavar="", type=int, help="The maximum "
                                                                           "distance that will be "
                                                                           "used to compute the m-reach "
-                                                                          "metrics. It must be provided if the m-reach"
-                                                                          " is computed.")
+                                                                          "metrics. It is required to compute the "
+                                                                          "m-reach")
 
         parser.add_argument("-L", "--largest-component", action="store_true",
                             help="Consider only the largest component of the input graph and exclude the smaller ones."
@@ -232,7 +223,7 @@ class App:
 
         # Subparser for the kp-info case
         info_case_parser = subparsers.add_parser("kp-info",
-                                                 usage="pyntacle keyplayer kp-info [-h] [-m] [-f] [-N] [-d] [-L] [-M] [-T] [--input-separator] [--save-binary] [--report-format] [--no-plot] --type [TYPE] --input-file [FILE] --nodes NODES",
+                                                 usage="pyntacle keyplayer kp-info [-h] [-m] [-f] [-N] [-d] [-L] [-M] [--input-separator] [--save-binary] [--report-format] [--no-plot] --type [TYPE] --input-file [FILE] --nodes NODES",
                                                  add_help=False, parents=[parser],
                                                  formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                      max_help_position=100,
@@ -243,7 +234,7 @@ class App:
                                       required=True)
         # Subparser for kp-finder case
         finder_case_parser = subparsers.add_parser("kp-finder",
-                                                   usage="pyntacle keyplayer kp-finder [-h] [-m] [-f] [--input-separator] [-N] [-d] [-L] [-M] [-T] [-I] [-S] [--save-binary] [--report-format] [--no-plot] --type [TYPE] --input-file [FILE] -k [K]",
+                                                   usage="pyntacle keyplayer kp-finder [-h] [-m] [-f] [--input-separator] [-N] [-d] [-L] [-M] [-I] [-S] [-P float] [-T  float] [-x int] [--save-binary] [--report-format] [--no-plot] --type [TYPE] --input-file [FILE] -k [K]",
                                                    add_help=False, parents=[parser],
                                                    formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                        max_help_position=100,
@@ -253,13 +244,22 @@ class App:
                                         required=True)
 
         finder_case_parser.add_argument("-I", "--implementation", metavar="", type=str, default="greedy",
-                                        choices=["brute-force", "greedy"],
-                                        help="The strategy used to search for the best kp-set. Choices are: 'greedy' "
-                                             "(a greedy optimizationsearch algorithm) and "
-                                             "'brute-force'. 'greedy' is default")
+                                        choices=["brute-force", "greedy", "sgd"],
+                                        help="The strategy used to search for the best kp-set. Choices are: "
+                                             "'brute-force', 'greedy', and 'sgd'. 'greedy' is default")
         finder_case_parser.add_argument("-O", "--nprocs", metavar="", default=1, type=procs_type,
-                                        help="(BRUTE-FORCE SEARCH ONLY) Specify the maximum number of processes that will be used by the brute-force search algorithm. Default to "
-                                             "the maximum number of available CPUs - 1")
+                                        help="(BRUTE-FORCE SEARCH ONLY) Specify the maximum number of processes that "
+                                             "will be used by the brute-force search algorithm. Default to 1")
+        finder_case_parser.add_argument("-P", "--swap-probability", metavar="", default=0, type=float,
+                                        help="(STOCHASTIC GRADIENT DESCENT ONLY) The probability of accepting a swap of"
+                                             " nodes, even if this is not advantageous. Default to 0")
+        finder_case_parser.add_argument("-T", "--tolerance", metavar="", default=0.01, type=float,
+                                        help="(STOCHASTIC GRADIENT DESCENT ONLY) The minimum accepted increase by a "
+                                             "two-nodes swap. An increase below this threshold will cause Pyntacle to "
+                                             "stop and return the best set of nodes so far obtained. Default to 0.00001")
+        finder_case_parser.add_argument("-x", "--maxsec", metavar="", default=120, type=int,
+                                        help="(STOCHASTIC GRADIENT DESCENT ONLY) Maximum allowed computation time "
+                                             "(seconds). Default to 120 seconds")
 
         finder_case_parser.set_defaults(which="kp-finder")
 
@@ -362,7 +362,7 @@ class App:
 
         # Subparser for the kp-info case
         info_case_parser = subparsers.add_parser("gr-info",
-                                                 usage="pyntacle keyplayer kp-info [-h] [-f] [-N] [-d] [-L] [-M] [-T] [--input-separator] [--save-binary] [--report-format] [--no-plot] --type [TYPE] --input-file [FILE] --nodes NODES",
+                                                 usage="pyntacle keyplayer kp-info [-h] [-f] [-N] [-d] [-L] [-M] [--input-separator] [--save-binary] [--report-format] [--no-plot] --type [TYPE] --input-file [FILE] --nodes NODES",
                                                  add_help=False, parents=[parser],
                                                  formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                      max_help_position=100,
@@ -373,7 +373,7 @@ class App:
                                       required=True)
         # Subparser for kp-finder case
         finder_case_parser = subparsers.add_parser("gr-finder",
-                                                   usage="pyntacle keyplayer kp-finder [-h] [-f] [--input-separator] [-N] [-d] [-L] [-M] [-T] [-I] [-S] [--save-binary] [--report-format] [--no-plot] --type [TYPE] --input-file [FILE] -k [K]",
+                                                   usage="pyntacle keyplayer kp-finder [-h] [-f] [--input-separator] [-N] [-d] [-L] [-M] [-I] [-S] [-P float] [-T  float] [-x int] [--save-binary] [--report-format] [--no-plot] --type [TYPE] --input-file [FILE] -k [K]",
                                                    add_help=False, parents=[parser],
                                                    formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                        max_help_position=100,
@@ -383,12 +383,23 @@ class App:
                                         required=True)
 
         finder_case_parser.add_argument("-I", "--implementation", metavar="", type=str, default="greedy",
-                                        choices=["brute-force", "greedy"],
+                                        choices=["brute-force", "greedy", "sgd"],
                                         help="The strategy used for the search of the node set. Choices are: 'greedy' (a greedy optimization algorithm aimed at finding an optimal solution) "
                                              "and 'brute-force' for a brute-force search that find the best solution (or solutions). 'greedy' is the default strategy.")
         finder_case_parser.add_argument("-O", "--nprocs", metavar="", default=1, type=procs_type,
                                         help="(BRUTE-FORCE SEARCH ONLY) Specify the maximum number of processes that will be used by the brute-force search algorithm. Defaults to "
                                              "the maximum number of available CPUs - 1.")
+        finder_case_parser.add_argument("-P", "--swap-probability", metavar="", default=0, type=float,
+                                        help="(STOCHASTIC GRADIENT DESCENT ONLY) The probability of accepting a swap of"
+                                             " nodes, even if this is not advantageous. Default to 0")
+        finder_case_parser.add_argument("-T", "--tolerance", metavar="", default=0.01, type=float,
+                                        help="(STOCHASTIC GRADIENT DESCENT ONLY) The minimum accepted increase by a "
+                                             "two-nodes swap. An increase below this threshold will cause Pyntacle to "
+                                             "stop and return the best set of nodes so far obtained. Default to 0.00001")
+        finder_case_parser.add_argument("-x", "--maxsec", metavar="", default=120, type=int,
+                                        help="(STOCHASTIC GRADIENT DESCENT ONLY) Maximum allowed computation time "
+                                             "(seconds). Default to infinity")
+
 
         finder_case_parser.set_defaults(which="gr-finder")
 
@@ -863,7 +874,7 @@ class App:
         subparsers = parser.add_subparsers(metavar="", help=argparse.SUPPRESS)
 
         fastgreedy_subparser = subparsers.add_parser("fastgreedy",
-                                                     usage="pyntacle communities fastgreedy [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [-P] [--input-separator] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE] [--weights FILE] [--weights-format] [--clusters]",
+                                                     usage="pyntacle communities fastgreedy [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [--input-separator] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE] [--weights FILE] [--weights-format] [--clusters]",
                                                      add_help=False, parents=[parser],
                                                      formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                          max_help_position=100,
@@ -892,7 +903,7 @@ class App:
                                                "Default is 'standard'.")
 
         infomap_subparser = subparsers.add_parser("infomap",
-                                                  usage="pyntacle communities infomap [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [-P] [--input-separator] [--no-plot] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE]",
+                                                  usage="pyntacle communities infomap [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [--input-separator] [--no-plot] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE]",
                                                   add_help=False, parents=[parser],
                                                   formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                       max_help_position=100,
@@ -900,7 +911,7 @@ class App:
         infomap_subparser.set_defaults(which="infomap")
 
         leading_eigenvector_subparser = subparsers.add_parser("leading-eigenvector",
-                                                              usage="pyntacle communities leading-eigenvector [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [-P] [--input-separator] [--no-plot] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE]",
+                                                              usage="pyntacle communities leading-eigenvector [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [--input-separator] [--no-plot] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE]",
                                                               add_help=False, parents=[parser],
                                                               formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                                   max_help_position=100,
@@ -908,7 +919,7 @@ class App:
         leading_eigenvector_subparser.set_defaults(which="leading-eigenvector")
 
         community_walktrap_subparser = subparsers.add_parser("community-walktrap",
-                                                             usage="pyntacle communities community-walktrap [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [-P] [--input-separator] [--no-plot] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE] [--clusters] [--steps] [--weights] [--weights-format]",
+                                                             usage="pyntacle communities community-walktrap [-h] [-f] [-N] [-d] [-M] [-m] [-C] [-c] [-L] [--input-separator] [--no-plot] [--save-binary] [-o] [-u] [--no-output-header] [--output-separator] --input-file [FILE] [--clusters] [--steps] [--weights] [--weights-format]",
                                                              add_help=False, parents=[parser],
                                                              formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                                  max_help_position=100,
@@ -1049,7 +1060,7 @@ class App:
         subparsers = parser.add_subparsers(metavar="", help=argparse.SUPPRESS)
 
         unite_subparser = subparsers.add_parser("union",
-                                                usage="pyntacle set union [-h] [-1] [-2] [-f] [-N] [-d] [-L] [--input-separator] [--report-format] [-P] [--no-plot] [-o] [-u] [--output-format STR] [--output-separator] [--no-output-header]",
+                                                usage="pyntacle set union [-h] [-1] [-2] [-f] [-N] [-d] [-L] [--input-separator] [--report-format] [--no-plot] [-o] [-u] [--output-format STR] [--output-separator] [--no-output-header]",
                                                 add_help=False, parents=[parser],
                                                 formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                     max_help_position=100,
@@ -1057,7 +1068,7 @@ class App:
         unite_subparser.set_defaults(which="union")
 
         intersection_subparser = subparsers.add_parser("intersection",
-                                                       usage="pyntacle set intersection [-h] [-1] [-2] [-f] [-N] [-d] [-L] [--input-separator] [--report-format] [-P] [--no-plot] [-o] [-u] [--output-format STR] [--output-separator] [--no-output-header]",
+                                                       usage="pyntacle set intersection [-h] [-1] [-2] [-f] [-N] [-d] [-L] [--input-separator] [--report-format] [--no-plot] [-o] [-u] [--output-format STR] [--output-separator] [--no-output-header]",
                                                        add_help=False, parents=[parser],
                                                        formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                            max_help_position=100,
@@ -1065,7 +1076,7 @@ class App:
         intersection_subparser.set_defaults(which="intersection")
 
         difference_subparser = subparsers.add_parser("difference",
-                                                     usage="pyntacle set difference [-h] [-1] [-2] [-f] [-N] [-d] [-L] [--input-separator] [--report-format] [-P] [--no-plot] [-o] [-u] [--output-format STR] [--output-separator] [--no-output-header] ",
+                                                     usage="pyntacle set difference [-h] [-1] [-2] [-f] [-N] [-d] [-L] [--input-separator] [--report-format] [--no-plot] [-o] [-u] [--output-format STR] [--output-separator] [--no-output-header] ",
                                                      add_help=False, parents=[parser],
                                                      formatter_class=lambda prog: argparse.HelpFormatter(prog,
                                                                                                          max_help_position=100,

@@ -1,11 +1,11 @@
-__author__ = u"Mauro Truglio, Tommaso Mazza"
+__author__ = u"Tommaso Mazza"
 __copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.2"
+__version__ = u"1.3"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"09/06/2020"
+__date__ = u"20/07/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t,mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -28,6 +28,7 @@ from config import *
 from tools.enums import CmodeEnum
 from algorithms.greedy_optimization import GreedyOptimization
 from algorithms.bruteforce_search import BruteforceSearch
+from algorithms.stochastic_gradient_descent import StochasticGradientDescent
 from internal.timeit import timeit
 from tools.enums import KpposEnum, KpnegEnum, GroupCentralityEnum, GroupDistanceEnum
 from algorithms.keyplayer import KeyPlayer
@@ -212,120 +213,6 @@ class InfoWrapper:
                 gr_type.name))
 
 
-class GOWrapper:
-    r"""
-    Wrapper for the greedy optimization, to pass properly formatted data structures to the Pyntacle Command Line
-    after a greedy optimization run
-    """
-
-    logger = None
-
-    def __init__(self, graph: Graph):
-        """
-        """
-        self.go = GreedyOptimization  # initialize an empty GreedyOptimization class
-        # initialize graph utility class
-        self.graph = graph
-        self.logger = log
-        self.results = {}  # dictionary that will store results
-
-    def set_graph(self, graph: Graph):
-        """
-        replace the original graph with another one
-        """
-
-        if not isinstance(graph, Graph):
-            raise TypeError("'graph is not an igraph.Graph object'")
-
-        self.graph = graph
-
-    def reset_results(self):
-        """reset the rfesults dictionary"""
-
-        self.results = {}
-
-    def get_results(self) -> dict:
-        r"""
-        returns the dictionary with the queried KP metrics and the set of nodes found by greedy optimization, along with
-        the corresponding value.
-
-        :return dict: results: a dictionary with the name of the KP metrics queried as keys and a list for each kp metrics, The first element of a list ifs the queried set of nodes, the second element is the corresponding KP value
-        """
-        return self.results
-
-    @timeit
-    def run_fragmentation(self, k: int, kp_type: KpnegEnum, cmode=CmodeEnum.igraph):
-        r"""
-        Wrapper around the Greedy Optimization Module that stores the greedy optimization results for KPPOS metrics in
-        the "results" dictionary.
-
-        :param int k: size of the kpp-set to be found
-        :param KpnegEnum kp_type: on of the KPNEGchoices enumerators stored in internal.enums
-        """
-
-        if not isinstance(k, int) or k < 1:
-            raise ValueError(u"\k' must be a positive integer of size 1")
-
-        if not isinstance(kp_type, KpnegEnum):
-            raise TypeError(u"'kp_type' must be one of the KPPNEGchoices options available")
-
-        go_results = self.go.fragmentation(graph=self.graph, k=k, metric=kp_type, cmode=cmode)
-        self.results[kp_type.name] = [go_results[0][0], go_results[1]]
-
-    @timeit
-    def run_reachability(self, k: int, kp_type: KpposEnum, m=None, cmode=CmodeEnum.igraph):
-        r"""
-        Wrapper around the Greedy Optimization Module that stores the greedy optimization results for KPPOS metrics
-
-        :param int k: size of the kpp-set to be found
-        :param KpposEnum kp_type: on of the KPPOSchoices enumerators stored in internal.enums
-        :param int m: for the "mreach" metrics, a positive integer greatrer than one representing the maximum distance for mreach
-        """
-        if not isinstance(k, int) or k < 1:
-            raise ValueError(u"'k' must be a positive integer of size 1")
-
-        if not isinstance(kp_type, KpposEnum):
-            raise TypeError(u"'kp_type' must be one of the KpposEnums available in `tools.enums`")
-
-        if kp_type == KpposEnum.mreach:
-            if not m:
-                raise ValueError(u"'m' must be a specified for computing m-reach")
-            elif not isinstance(m, int) or m <= 0:
-                raise ValueError(u"'m' must be a positive integer")
-
-        go_results = self.go.reachability(graph=self.graph, k=k, metric=kp_type, m=m, cmode=cmode)
-
-        self.results[kp_type.name] = [go_results[0][0], go_results[1]]
-
-    @timeit
-    def run_groupcentrality(self, k: int, gr_type: GroupCentralityEnum, cmode=CmodeEnum.igraph,
-                            distance=GroupDistanceEnum.minimum):
-        r"""
-        
-        :param k: 
-        :param gr_type:
-        :param cmode:
-        :param distance:
-        """
-        if not isinstance(k, int) or k < 1:
-            raise ValueError(u"'k' must be a positive integer of size 1")
-
-        if not isinstance(gr_type, GroupCentralityEnum):
-            raise TypeError(u"'gr_type' must be one of the enumerators available in tools.enums")
-
-        if gr_type == GroupCentralityEnum.group_closeness:
-            if not isinstance(distance, GroupDistanceEnum):
-                raise TypeError(
-                    u"'distance' is not one of the GroupDistanceEnums,{} found".format(type(distance).__name__))
-
-        go_results = self.go.group_centrality(graph=self.graph, k=k, metric=gr_type, cmode=cmode)
-
-        if gr_type == GroupCentralityEnum.group_closeness:
-            self.results["_".join([gr_type.name, distance.name])] = [go_results[0][0], go_results[1]]
-        else:
-            self.results[gr_type.name] = [go_results[0][0], go_results[1]]
-
-
 class BFWrapper:
     r"""
     Convenient wrapper around the brute-force search methods in algorithms.bruteforce to pass properly formatted results
@@ -444,3 +331,234 @@ class BFWrapper:
             self.results["_".join([gr_type.name, distance.name])] = [bf_results[0], bf_results[1]]
         else:
             self.results[gr_type.name] = [bf_results[0], bf_results[1]]
+
+
+class GOWrapper:
+    r"""
+    Wrapper for the greedy optimization, to pass properly formatted data structures to the Pyntacle Command Line
+    after a greedy optimization run
+    """
+
+    logger = None
+
+    def __init__(self, graph: Graph):
+        """
+        """
+        self.go = GreedyOptimization  # initialize an empty GreedyOptimization class
+        # initialize graph utility class
+        self.graph = graph
+        self.logger = log
+        self.results = {}  # dictionary that will store results
+
+    def set_graph(self, graph: Graph):
+        """
+        replace the original graph with another one
+        """
+
+        if not isinstance(graph, Graph):
+            raise TypeError("'graph is not an igraph.Graph object'")
+
+        self.graph = graph
+
+    def reset_results(self):
+        """reset the rfesults dictionary"""
+
+        self.results = {}
+
+    def get_results(self) -> dict:
+        r"""
+        returns the dictionary with the queried KP metrics and the set of nodes found by greedy optimization, along with
+        the corresponding value.
+
+        :return dict: results: a dictionary with the name of the KP metrics queried as keys and a list for each kp metrics, The first element of a list ifs the queried set of nodes, the second element is the corresponding KP value
+        """
+        return self.results
+
+    @timeit
+    def run_fragmentation(self, k: int, kp_type: KpnegEnum, cmode=CmodeEnum.igraph):
+        r"""
+        Wrapper around the Greedy Optimization Module that stores the greedy optimization results for KPPOS metrics in
+        the "results" dictionary.
+
+        :param int k: size of the kpp-set to be found
+        :param KpnegEnum kp_type: on of the KPNEGchoices enumerators stored in internal.enums
+        """
+
+        if not isinstance(k, int) or k < 1:
+            raise ValueError(u"\k' must be a positive integer of size 1")
+
+        if not isinstance(kp_type, KpnegEnum):
+            raise TypeError(u"'kp_type' must be one of the KPPNEGchoices options available")
+
+        go_results = self.go.fragmentation(graph=self.graph, k=k, metric=kp_type, cmode=cmode)
+        self.results[kp_type.name] = [go_results[0][0], go_results[1]]
+
+    @timeit
+    def run_reachability(self, k: int, kp_type: KpposEnum, m=None, cmode=CmodeEnum.igraph):
+        r"""
+        Wrapper around the Greedy Optimization Module that stores the greedy optimization results for KPPOS metrics
+
+        :param int k: size of the kpp-set to be found
+        :param KpposEnum kp_type: on of the KPPOSchoices enumerators stored in internal.enums
+        :param int m: for the "mreach" metrics, a positive integer greatrer than one representing the maximum distance for mreach
+        """
+        if not isinstance(k, int) or k < 1:
+            raise ValueError(u"'k' must be a positive integer of size 1")
+
+        if not isinstance(kp_type, KpposEnum):
+            raise TypeError(u"'kp_type' must be one of the KpposEnums available in `tools.enums`")
+
+        if kp_type == KpposEnum.mreach:
+            if not m:
+                raise ValueError(u"'m' must be a specified for computing m-reach")
+            elif not isinstance(m, int) or m <= 0:
+                raise ValueError(u"'m' must be a positive integer")
+
+        go_results = self.go.reachability(graph=self.graph, k=k, metric=kp_type, m=m, cmode=cmode)
+
+        self.results[kp_type.name] = [go_results[0][0], go_results[1]]
+
+    @timeit
+    def run_groupcentrality(self, k: int, gr_type: GroupCentralityEnum, cmode=CmodeEnum.igraph,
+                            distance=GroupDistanceEnum.minimum):
+        r"""
+        
+        :param k: 
+        :param gr_type:
+        :param cmode:
+        :param distance:
+        """
+        if not isinstance(k, int) or k < 1:
+            raise ValueError(u"'k' must be a positive integer of size 1")
+
+        if not isinstance(gr_type, GroupCentralityEnum):
+            raise TypeError(u"'gr_type' must be one of the enumerators available in tools.enums")
+
+        if gr_type == GroupCentralityEnum.group_closeness:
+            if not isinstance(distance, GroupDistanceEnum):
+                raise TypeError(
+                    u"'distance' is not one of the GroupDistanceEnums,{} found".format(type(distance).__name__))
+
+        go_results = self.go.group_centrality(graph=self.graph, k=k, metric=gr_type, cmode=cmode)
+
+        if gr_type == GroupCentralityEnum.group_closeness:
+            self.results["_".join([gr_type.name, distance.name])] = [go_results[0][0], go_results[1]]
+        else:
+            self.results[gr_type.name] = [go_results[0][0], go_results[1]]
+
+
+class SGDWrapper:
+    r"""
+    Wrapper for the stochastic gradient descent algorithm, to pass properly formatted data structures to
+    the Pyntacle command-line after a run
+    """
+
+    logger = None
+
+    def __init__(self, graph: Graph):
+        """
+        """
+        self.sgd = StochasticGradientDescent
+        self.graph = graph
+        self.logger = log
+        self.results = {}
+
+    def set_graph(self, graph: Graph):
+        """
+        replace the original graph with another one
+        """
+
+        if not isinstance(graph, Graph):
+            raise TypeError("'graph is not an igraph.Graph object'")
+
+        self.graph = graph
+
+    def reset_results(self):
+        """reset the results dictionary"""
+
+        self.results = {}
+
+    def get_results(self) -> dict:
+        r"""
+        returns the dictionary with the queried KP metrics and the set of nodes found by the
+        stochastic gradient descent algorithm, along with the corresponding value.
+        :return dict: results: a dictionary with the name of the KP metrics queried as keys and a list for each
+        kp metrics. The first element of a list is the queried set of nodes, the second element is the
+        corresponding KP value
+        """
+        return self.results
+
+    @timeit
+    def run_fragmentation(self, k: int, kp_type: KpnegEnum, cmode: CmodeEnum, **kwargs):
+        r"""
+        Wrapper around the stochastic gradient descent module that stores the results for the KP-Pos metrics in
+        the sgd_results dictionary.
+
+        :param cmode:
+        :param int k: size of the kpp-set to be found
+        :param KpnegEnum kp_type: on of the KPNEGchoices enumerators stored in internal.enums
+        """
+
+        if not isinstance(k, int) or k < 1:
+            raise ValueError(u"\k' must be a positive integer of size greater or equal than 1")
+
+        if not isinstance(kp_type, KpnegEnum):
+            raise TypeError(u"'kp_type' must be one of the available KpnegEnum options")
+
+        sgd_results = self.sgd.fragmentation(graph=self.graph, k=k, metric=kp_type, cmode=cmode, **kwargs)
+        self.results[kp_type.name] = [sgd_results[0], sgd_results[1]]
+
+    @timeit
+    def run_reachability(self, k: int, kp_type: KpposEnum, m: int, cmode: CmodeEnum, **kwargs):
+        r"""
+        Wrapper around the stochastic gradient descent module that stores the results for KP-POS metrics
+
+        :param cmode:
+        :param int k: size of the kpp-set to be found
+        :param KpposEnum kp_type: on of the KPPOSchoices enumerators stored in internal.enums
+        :param int m: for the "m-reach" metrics, a positive integer greater than one representing the maximum distance
+        """
+        if not isinstance(k, int) or k < 1:
+            raise ValueError(u"'k' must be a positive integer of size greater or equal than 1")
+
+        if not isinstance(kp_type, KpposEnum):
+            raise TypeError(u"'kp_type' must be one of the KpnegEnum available in `tools.enums`")
+
+        if kp_type == KpposEnum.mreach:
+            if not m:
+                raise ValueError(u"'m' must be a specified for computing m-reach")
+            elif not isinstance(m, int) or m <= 0:
+                raise ValueError(u"'m' must be a positive integer")
+
+        sgd_results = self.sgd.reachability(graph=self.graph, k=k, metric=kp_type, m=m, cmode=cmode, **kwargs)
+
+        self.results[kp_type.name] = [sgd_results[0], sgd_results[1]]
+
+    @timeit
+    def run_groupcentrality(self, k: int, gr_type: GroupCentralityEnum,
+                            distance: GroupDistanceEnum, cmode: CmodeEnum, **kwargs):
+        r"""
+
+        :type cmode: object
+        :param k:
+        :param gr_type:
+        :param cmode:
+        :param distance:
+        """
+        if not isinstance(k, int) or k < 1:
+            raise ValueError(u"'k' must be a positive integer of size greater or equal than 1")
+
+        if not isinstance(gr_type, GroupCentralityEnum):
+            raise TypeError(u"'gr_type' must be one of the enumerators available in tools.enums")
+
+        if gr_type == GroupCentralityEnum.group_closeness:
+            if not isinstance(distance, GroupDistanceEnum):
+                raise TypeError(
+                    u"'distance' is not one of the GroupDistanceEnums,{} found".format(type(distance).__name__))
+
+        sgd_results = self.sgd.group_centrality(graph=self.graph, k=k, metric=gr_type, cmode=cmode, **kwargs)
+
+        if gr_type == GroupCentralityEnum.group_closeness:
+            self.results["_".join([gr_type.name, distance.name])] = [sgd_results[0], sgd_results[1]]
+        else:
+            self.results[gr_type.name] = [sgd_results[0], sgd_results[1]]

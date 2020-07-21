@@ -1,11 +1,11 @@
-__author__ = u"Mauro Truglio, Tommaso Mazza"
+__author__ = u"Tommaso Mazza"
 __copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.2"
+__version__ = u"1.3"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"23/06/2020"
+__date__ = u"09/07/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -31,6 +31,7 @@ from io_stream.exporter import PyntacleExporter
 from cmds.cmds_utils.group_search_wrapper import InfoWrapper as ipw
 from cmds.cmds_utils.group_search_wrapper import GOWrapper as gow
 from cmds.cmds_utils.group_search_wrapper import BFWrapper as bfw
+from cmds.cmds_utils.group_search_wrapper import SGDWrapper as sgd
 from tools.enums import ReportEnum, GroupDistanceEnum, GroupCentralityEnum, CmodeEnum
 from tools.add_attributes import AddAttributes
 from tools.graph_utils import GraphUtils as gu
@@ -45,11 +46,6 @@ class GroupCentrality:
         self.args = None
         self.args = args
         self.date = runtime_date
-
-        # - DEPRECATED - cHECK FOR Pycairo
-        # if not self.args.no_plot and importlib.util.find_spec("cairo") is None:
-        #     sys.stdout.write(pycairo_message)
-        #     self.args.no_plot = True
 
     def run(self):
         if not self.args.suppress_cursor:
@@ -66,7 +62,7 @@ class GroupCentrality:
             sys.stdout.write(u"Cannot find {}. Is the path correct?\n".format(self.args.input_file))
             sys.exit(1)
 
-        # verify that group distance is set if group closeness is specified
+        # verify that group distance is set when the group closeness is specified
         distancedict = {"min": GroupDistanceEnum.minimum, "max": GroupDistanceEnum.maximum,
                         "mean": GroupDistanceEnum.mean}
         if self.args.type in ["all", "closeness"]:
@@ -94,6 +90,7 @@ class GroupCentrality:
         sys.stdout.write(u"Importing graph from file\n")
         graph = GraphLoad(self.args.input_file, format_dictionary.get(self.args.format, "NA"), header,
                           separator=self.args.input_separator).graph_load()
+        sys.stdout.write("\n")
 
         # auto-select the implementation type
         if self.args.nprocs > 1:
@@ -106,20 +103,18 @@ class GroupCentrality:
             graph["implementation"] = CmodeEnum.cpu
             implementation = CmodeEnum.cpu
 
-        # init graph utils class
         utils = gu(graph=graph)
         if hasattr(self.args, 'nodes'):
-
             if not utils.nodes_in_graph(self.args.nodes):
                 sys.stderr.write(
-                    "One or more of the specified nodes is not present in the graph. Please check your spelling and the presence of empty spaces in between node names. Quitting\n")
+                    "One or more of the specified nodes is not present in the graph. Quitting\n")
                 sys.exit(1)
 
         if self.args.largest_component:
             try:
                 graph = utils.get_largest_component()
                 sys.stdout.write(
-                    u"Taking the largest component of the input graph as you requested ({} nodes, {} edges)\n".format(
+                    u"Extracting the largest component of the input graph as you requested ({} nodes, {} edges)\n".format(
                         graph.vcount(), graph.ecount()))
                 # reinitialize graph utils class
                 utils.set_graph(graph)
@@ -142,45 +137,17 @@ class GroupCentrality:
                 self.args.k_size, graph.vcount()))
             sys.exit(1)
 
-        # check that output directory is properly set
+        # check that the output directory is properly set
         createdir = False
         if not os.path.isdir(self.args.directory):
             createdir = True
 
-        #
-        # control plot dimensions
-        # if self.args.plot_dim:  # define custom format
-        #     self.args.plot_dim = self.args.plot_dim.split(",")
-        #
-        #     for i in range(0, len(self.args.plot_dim)):
-        #         try:
-        #             self.args.plot_dim[i] = int(self.args.plot_dim[i])
-        #
-        #             if self.args.plot_dim[i] <= 0:
-        #                 raise ValueError
-        #
-        #         except ValueError:
-        #             sys.stderr.write(
-        #                 u"Format specified must be a comma-separated list of positive integers (e.g. 1920,1080). Quitting\n")
-        #             sys.exit(1)
-        #
-        #     plot_size = tuple(self.args.plot_dim)
-        #
-        # else:
-        #     plot_size = (800, 600)
-        #
-        #     if graph.vcount() > 150:
-        #         plot_size = (1600, 1600)
-
-        # initialize reporter for later usage and plot dimension for later usage
+        #  initialize reporter for later use
         reporter = PyntacleReporter(graph=graph)
         results = OrderedDict()
 
-        sys.stdout.write(section_end)
         sys.stdout.write(run_start)
-
         if self.args.which == "gr-finder":
-
             # Greedy optimization
             if self.args.implementation == "greedy":
                 report_type = ReportEnum.GR_greedy
@@ -219,7 +186,7 @@ class GroupCentrality:
                 sys.stdout.write(sep_line)
                 results.update(go_runner.get_results())
 
-            # bruteforce implementation
+            # Bruteforce implementation
             elif self.args.implementation == "brute-force":
 
                 if self.args.nprocs > 1:
@@ -261,15 +228,74 @@ class GroupCentrality:
 
                 results.update(bf_runner.get_results())
 
+            # Stochastic gradient descent implementation
+            elif self.args.implementation == "sgd":
+                # process optional args
+                probability: float = self.args.swap_probability
+                if probability and probability < 0 or probability > 1:
+                    sys.stderr.write(
+                        "'probability' must be a decimal number between 0 and 1. Quitting\n")
+                    sys.exit(1)
+
+                tolerance: float = self.args.tolerance
+                if tolerance and probability < 0:
+                    sys.stderr.write(
+                        "'tolerance' must be a positive decimal number. Quitting\n")
+                    sys.exit(1)
+
+                maxsec: int = self.args.maxsec
+                if maxsec and maxsec < 0:
+                    sys.stderr.write(
+                        "'maxsec' must be a positive decimal number. Quitting\n")
+                    sys.exit(1)
+                optional_args = dict(probability=probability, tolerance=tolerance, maxsec=maxsec)
+
+                report_type = ReportEnum.GR_stochasticgradientdescent
+                sgd_runner = sgd(graph=graph)
+                sys.stdout.write(u"Running the Stochastic Gradient Descent algorithm\n\n")
+
+                if self.args.type in (["all", "degree"]):
+                    sys.stdout.write(
+                        u"Searching for a set of nodes of size {0} that optimizes the group-degree\n".format(
+                            self.args.k_size))
+
+                    sgd_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_degree,
+                                                   distance=group_distance, cmode=implementation,
+                                                   **{k: v for k, v in optional_args.items() if v is not None})
+                    sys.stdout.write(sep_line)
+                    sys.stdout.write("\n")
+
+                if self.args.type in (["all", "betweenness"]):
+                    sys.stdout.write(
+                        u"Searching a set of nodes of size {0} that optimizes the group-betweenness\n".format(
+                            self.args.k_size))
+
+                    sgd_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_betweenness,
+                                                   distance=group_distance, cmode=implementation,
+                                                   **{k: v for k, v in optional_args.items() if v is not None})
+                    sys.stdout.write(sep_line)
+                    sys.stdout.write("\n")
+
+                if self.args.type in (["all", "closeness"]):
+                    sys.stdout.write(
+                        u"Searching a set of nodes of size {0} that optimizes the group-closeness using the {1} distance from the node set\n".format(
+                            self.args.k_size, group_distance.name))
+
+                    sgd_runner.run_groupcentrality(k=self.args.k_size, gr_type=GroupCentralityEnum.group_closeness,
+                                                   distance=group_distance, cmode=implementation,
+                                                   **{k: v for k, v in optional_args.items() if v is not None})
+                    sys.stdout.write(sep_line)
+                    sys.stdout.write("\n")
+
+                results.update(sgd_runner.get_results())
+
             # shell output report part
-            sys.stdout.write(section_end)
             sys.stdout.write(summary_start)
-            sys.stdout.write(u"Set size for group centrality search: {}\n".format(str(self.args.k_size)))
-            sys.stdout.write(sep_line)
+            sys.stdout.write(u"Node set size for group-centrality search: {}\n".format(str(self.args.k_size)))
+            sys.stdout.write("\n")
 
             for kk in results.keys():
-
-                if len(results[kk][0]) > 1 and self.args.implementation == 'brute-force':
+                if len(results[kk][0]) > 1 and self.args.implementation in ['brute-force', 'sgd']:
                     plurals = ['s', 'are']
                 else:
                     plurals = ['', 'is']
@@ -277,7 +303,7 @@ class GroupCentrality:
                 if results[kk][0][0] is None:  # the case in which there's no solution
                     results[kk][0] = ["None"]
 
-                if self.args.implementation == 'brute-force':
+                if self.args.implementation in ['brute-force', 'sgd']:
                     list_of_results = "\n".join(['(' + ', '.join(x) + ')' for x in results[kk][0]])
 
                 else:
@@ -290,11 +316,12 @@ class GroupCentrality:
 
                 if kk.startswith(GroupCentralityEnum.group_closeness.name):
                     sys.stdout.write(
-                        "The {} distance was considered for computing the group-closeness\n".format(group_distance.name))
+                        "The {} distance was considered for computing the group-closeness\n".format(
+                            group_distance.name))
 
                 sys.stdout.write("\n")
 
-            sys.stdout.write(section_end)
+            # sys.stdout.write(section_end)
 
         elif self.args.which == "gr-info":
             report_type = ReportEnum.GR_info
@@ -342,10 +369,9 @@ class GroupCentrality:
 
         # output part
         sys.stdout.write(report_start)
-        sys.stdout.write("Writing Results\n")
 
         if createdir:
-            sys.stdout.write(u"WARNING: output directory does not exist, {} will be created".format(
+            sys.stdout.write(u"WARNING: the output directory does not exist, {} will be created".format(
                 os.path.abspath(self.args.directory)))
             os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
 
@@ -354,10 +380,11 @@ class GroupCentrality:
         reporter.create_report(report_type=report_type, report=results)
         reporter.write_report(report_dir=self.args.directory, format=self.args.report_format)
 
-        #pyntacle ink part
+        # PyntacleInk section
         if not self.args.no_plot and graph.vcount() < 5000:
             suffix = "_".join(graph["name"])
-            sys.stdout.write(u"Plotting network and run results in {} directory with PyntacleInk\n".format(self.args.directory))
+            sys.stdout.write(
+                u"Plotting network and run results in {} directory with PyntacleInk\n".format(self.args.directory))
             reporter.pyntacleink_report(report_dir=self.args.directory, report_dict=results, suffix=suffix)
 
         elif graph.vcount() >= 5000:
@@ -376,11 +403,12 @@ class GroupCentrality:
                     if self.args.implementation == "brute-force":
                         suffix = "bruteforce"
                         attr_key = tuple(tuple(sorted(tuple(x))) for x in results[key][0])
-
-                    else:
+                    elif self.args.implementation == "greedy":
                         suffix = "greedy"
                         attr_key = tuple(sorted(tuple(results[key][0])))
-
+                    else:
+                        suffix = "sgd"
+                        attr_key = tuple(sorted(tuple(results[key][0])))
                 else:
                     suffix = "info"
                     attr_key = tuple(sorted(tuple(results[key][0])))
@@ -410,6 +438,6 @@ class GroupCentrality:
         if not self.args.suppress_cursor:
             cursor.stop()
 
-        sys.stdout.write(section_end)
+        sys.stdout.write("\n")
         sys.stdout.write(u"Pyntacle group-centrality completed successfully\n")
         sys.exit(0)

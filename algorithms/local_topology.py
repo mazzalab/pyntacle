@@ -136,7 +136,6 @@ class LocalTopology:
                 raise ValueError("np_counts must be squared and of the same size of the graph ({})".format(graph.vcount()))
 
             count_all = np_counts
-
         else:
             count_all = ShortestPath.get_shortestpath_count(graph, nodes=None, cmode=cmode)
 
@@ -149,10 +148,6 @@ class LocalTopology:
 
         graph_notgroup = graph.copy()
         graph_notgroup.delete_edges(del1)
-        if graph_notgroup.ecount() == 0:
-            sys.stdout.write("Node set dis: {} \n".format(nodes))
-            return 0
-
         count_notgroup = ShortestPath.get_shortestpath_count(graph_notgroup, nodes=None, cmode=cmode)
         # Count geodesics that do pass through the group
         count_group = ShortestPath.subtract_count_dist_matrix(count_all, count_notgroup)
