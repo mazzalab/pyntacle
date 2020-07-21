@@ -1,8 +1,10 @@
 ![Pyntacle logo](http://pyntacle.css-mendel.it/images/title_joined.png)
 
 A Python package for network analysis based on non canonical
-metrics and HPC computing.
+metrics and HPC computing
 
+- **Version**: ![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/version.svg)
+- ![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/latest_release_date.svg)
 - **Compatibility**: Python 3.7
 - **Contributions**: bioinformatics@css-mendel.it
 - **Website**: http://pyntacle.css-mendel.it
