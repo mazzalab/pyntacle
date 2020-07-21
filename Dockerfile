@@ -14,8 +14,8 @@ RUN wget \
     && rm -f Miniconda3-latest-Linux-x86_64.sh
 
 ## Install Pyntacle
-RUN conda install python=3.6
-RUN conda install -y -c conda-forge -c bfxcss pyntacle=1.2
+RUN conda install python=3.7
+RUN conda install -y -c conda-forge -c bfxcss pyntacle=1.3
 
 MAINTAINER Tommaso Mazza (IRCCS Casa Sollievo della Sofferenza) <bioinformatics@css-mendel.it>
 
