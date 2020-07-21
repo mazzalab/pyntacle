@@ -1,9 +1,11 @@
 ![Pyntacle logo](http://pyntacle.css-mendel.it/images/title_joined.png)
 
 A Python package for network analysis based on non canonical
-metrics and HPC computing.
+metrics and HPC computing
 
-- **Compatibility**: Python 3.6+
+![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/version.svg) ![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/latest_release_date.svg)
+
+- **Compatibility**: Python 3.7
 - **Contributions**: bioinformatics@css-mendel.it
 - **Website**: http://pyntacle.css-mendel.it
 - **Bug report**: https://github.com/mazzalab/pyntacle/issues
@@ -41,7 +43,7 @@ language agnostic (it can play a similar role to a pip and virtualenv
 combination), and you need to set it up by running either the [Anaconda
 installer](https://www.anaconda.com/download/) or the
 [Miniconda installer](https://conda.io/miniconda.html), choosing the
-Python 3.6 version.
+Python 3.7 version.
 
 The next step is to create a new Conda environment (if you are familiar
 with virtual environments, this is analogous to a virtualenv).
@@ -51,10 +53,10 @@ with virtual environments, this is analogous to a virtualenv).
 Run the following commands from a terminal window:
 
 ```bash
-conda create -n name_of_my_env python=3.6
+conda create -n name_of_my_env python=3.7
 ```
 
-This will create a minimal environment with only Python v.3.6 installed
+This will create a minimal environment with only Python 3.7 installed
 in it. To put your self inside this environment run:
 
 ```bash
@@ -82,7 +84,7 @@ Open a windows prompt or (even better) an
 , and type:
 
 ```bash
-conda create -y -n name_of_my_env python=3.6
+conda create -y -n name_of_my_env python=3.7
 ```
 
 Then, activate the newly created environment:
@@ -202,6 +204,16 @@ also install the CUDA toolkit by downloading and installing the Toolkit from the
 
 Changelog for current and past releases:
 
+
+### 1.3:
+Major updates:
+- [algorithms] Implementation of the new Stochastic Gradient Descent (SGD) search algorithm
+- [tests] Tests for SGD included
+- [environment] Upgraded base Python version to 3.7
+- [environment] Install igraph ver. 0.8.2 (conda-forge)
+
+Minor updates:
+- removed dependency to Cairo and the old plotter
 
 ### 1.2:
 Major updates:
