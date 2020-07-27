@@ -6,7 +6,7 @@ metrics and HPC computing
 - **Compatibility**: Python 3.7
 - **Contributions**: bioinformatics@css-mendel.it
 - **Website**: http://pyntacle.css-mendel.it
-- **Pypi**: https://pypi.org/project/pyntacle/ [![PyPI version](https://badge.fury.io/py/pyntacle.svg)](https://badge.fury.io/py/pyntacle)
+- **Pypi**: https://pypi.org/project/pyntacle/
 - **Conda**: https://anaconda.org/bfxcss/pyntacle [![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/platforms.svg)](https://anaconda.org/bfxcss/pyntacle) [![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/downloads.svg)](https://anaconda.org/bfxcss/pyntacle)
 - **Docker Hub**: https://hub.docker.com/r/mazzalab/pyntacle
 - **Bug report**: https://github.com/mazzalab/pyntacle/issues
