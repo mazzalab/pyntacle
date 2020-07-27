@@ -30,7 +30,7 @@ pip install pyntacle
 ```
 
 
-### Installing using Anaconda or Miniconda [![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/installer/conda.svg)](https://conda.anaconda.org/bfxcss)
+## Installing using Anaconda or Miniconda [![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/installer/conda.svg)](https://conda.anaconda.org/bfxcss)
 ![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/version.svg) ![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/latest_release_date.svg)
 
 Installing Pyntacle and all its dependencies can be challenging for
