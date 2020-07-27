@@ -12,7 +12,9 @@ metrics and HPC computing
 - **Bug report**: https://github.com/mazzalab/pyntacle/issues
 
 
-## Installing using Pypi [![PyPI version](https://badge.fury.io/py/pyntacle.svg)](https://badge.fury.io/py/pyntacle)
+## Installing using Pypi
+[![PyPI version](https://badge.fury.io/py/pyntacle.svg)](https://badge.fury.io/py/pyntacle)
+
 ### [optional] Create and activate a virtualenv
 #### Linux and MacOS X
 ```bash
