@@ -119,7 +119,7 @@ Independently of the OS in use, if you need CUDA support, you must
 also install the CUDA toolkit by downloading and installing the Toolkit from the
 [_NVIDIA website_](https://developer.nvidia.com/cuda-toolkit).
 
-**NOTE** GPU-base processing is an **experimental** feature in the current version (1.2), and is not covered by the command-line interface. This is because of weird behaviors of Numba with some hardware configurations that we were not be able to describe and circumvent so far. Although currently accessible by APIs, the GPU feature will be stable in the release 2.0, when Pyntacle will have covered the possibility to manage huge matrices for which replacing fine-grained parallelism with GPU computing would make sense.
+**NOTE** GPU-base processing is an **experimental** feature in the current version (1.3), and is not covered by the command-line interface. This is because of weird behaviors of Numba with some hardware configurations that we were not be able to describe and circumvent so far. Although currently accessible by APIs, the GPU feature will be stable in the release 2.0, when Pyntacle will have covered the possibility to manage huge matrices for which replacing fine-grained parallelism with GPU computing would make sense.
 
 
 
