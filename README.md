@@ -3,24 +3,35 @@
 A Python package for network analysis based on non canonical
 metrics and HPC computing
 
-![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/version.svg) ![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/latest_release_date.svg)
-
 - **Compatibility**: Python 3.7
 - **Contributions**: bioinformatics@css-mendel.it
 - **Website**: http://pyntacle.css-mendel.it
+- **Pypi**: https://pypi.org/project/pyntacle/ [![PyPI version](https://badge.fury.io/py/pyntacle.svg)](https://badge.fury.io/py/pyntacle)
+- **Conda**: https://anaconda.org/bfxcss/pyntacle [![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/platforms.svg)](https://anaconda.org/bfxcss/pyntacle) [![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/downloads.svg)](https://anaconda.org/bfxcss/pyntacle)
 - **Docker Hub**: https://hub.docker.com/r/mazzalab/pyntacle
 - **Bug report**: https://github.com/mazzalab/pyntacle/issues
-- [![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/platforms.svg)](https://anaconda.org/bfxcss/pyntacle) [![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/downloads.svg)](https://anaconda.org/bfxcss/pyntacle)
-
-## Installation
-
-The easiest way to install Pyntacle is to download it from [**Anaconda**](http://docs.continuum.io/anaconda/), 
-a cross-platform distribution for data analysis and scientific computing. This is the recommended installation method for most users.
-Instructions for installing from source on various Linux distributions
-and MacOS X are also provided.
 
 
-### Installing Pyntacle using Anaconda or Miniconda [![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/installer/conda.svg)](https://conda.anaconda.org/bfxcss)
+## Installing using Pypi [![PyPI version](https://badge.fury.io/py/pyntacle.svg)](https://badge.fury.io/py/pyntacle)
+### [optional] Create and activate a virtualenv
+#### Linux and MacOS X
+```bash
+python -m venv pyntacle_env
+source pyntacle_env/bin/activate
+```
+#### Windows
+```bash
+python -m venv pyntacle_env
+.\pyntacle_env\Scripts\activate
+```
+### Installation
+```bash
+pip install pyntacle
+```
+
+
+### Installing using Anaconda or Miniconda [![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/installer/conda.svg)](https://conda.anaconda.org/bfxcss)
+![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/version.svg) ![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/latest_release_date.svg)
 
 Installing Pyntacle and all its dependencies can be challenging for
 inexperienced users. There are several advantages in using Anaconda to
