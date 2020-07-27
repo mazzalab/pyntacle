@@ -99,99 +99,6 @@ Finally, install the latest version of Pyntacle:
 conda install -y -c bfxcss -c conda-forge pyntacle
 ```
 
-### Installing Pyntacle from source
-Installing from source is advised for advanced users only. The following
-instructions were written for Mac OS v.11+ and a few major Linux
-distros. System requirements can vary for other distros/versions.
-
-The source code can be downloaded from our GitHub
-[releases](https://github.com/mazzalab/pyntacle/releases) page as a
-.tar.gz file. Before trying to install Pyntacle, there are system
-requirements that need to be satisfied on each platform.
-
-
-**NOTE** Starting from version 1.1, we introduced a new JavaScript-based graph visualizer, PyntacleInk. Installation
-of cairo and the pycairo python bindings is hence not required.
-
-#### Debian, Ubuntu
-
-As a user with admin rights, run:
-
-```bash
-apt-get install -y build-essential linux-headers-$(uname -r) libgl1-mesa-glx libigraph0v5 libigraph0-dev libffi-dev libjpeg-dev libgif-dev libblas-dev liblapack-dev git python3-pip python3-tk
-```
-
-> #### Ubuntu/Debian version <= 16.04
-> For Ubuntu/Debian 16.04 and older, you also have to install two dependencies from the PyPi repository, by running:
->```
->pip3 install numpy
->pip3 install llvmlite
->```
->
->Then, the numba package needs to be installed manually by cloning the developer's Git repository:
->
->```bash
->git clone git://github.com/numba/numba.git ; cd numba; python3 setup.py install; cd ..; rm -rf numba
->```
-
-
-Finally, extract the pyntacle [_source tar.gz_](https://github.com/mazzalab/pyntacle/releases) file navigate into it and run as an administrator (or add ```--user``` if you do not have admin rights and prefer to install the pyntacle binary in ```~/.local/bin```):
-
-```bash
-python3 setup.py install
-```
-
-#### CentOS7
-
-As an admin, you need to run:
-
-```bash
-yum groupinstall -y development kernel-headers-`uname -r` kernel-devel-`uname -r` gcc gcc-c++ yum-utils; yum install -y https://centos7.iuscommunity.org/ius-release.rpm; yum install -y wget python36u-devel.x86_64 igraph-devel.x86_64 atlas-devel.x86_64 libffi-devel.x86_64 python36u-pip python36u-tkinter.x86_64
-```
-
-Finally, extract the Pyntacle [_source tar.gz_](https://github.com/mazzalab/pyntacle/releases) file, navigate into the
-extracted folder and run as an administrator (or add ```--user``` if you do not have admin rights and prefer to install the Pyntacle binary in ```~/.local/bin```):
-
-```bash
-python3.6 setup.py install
-```
-
-#### MacOS X
-
-In order to compile from source, you need some of the tools that are
-conveniently packed in
-[XCode](https://itunes.apple.com/us/app/xcode/id497799835?mt=12), which
-has to be downloaded and installed from the Mac App Store. Once you have
-XCode - and you have opened at least once -, you will need to install
-the XCode Command Line Tools, by opening a terminal, typing:
-
-```bash
-xcode-select --install
-```
-and following the prompt on screen.
-
-Additionally, you need other dependencies to compile Pyntacle. You can
-easily fetch them using the package manager
-[Mac Ports](https://www.macports.org/install.php) .
-
-Once Mac Ports is installed, getting the dependencies is easy:
-
-```bash
-port install py36-setuptools py36-pandas py36-seaborn py36-colorama py36-xlsxwriter py36-igraph py36-numba py36-psutil
-```
-
-Finally, extract the Pyntacle [_source tar.gz_](https://github.com/mazzalab/pyntacle/releases) file, navigate into it and run:
-
-```bash
-python3.6 setup.py install --user
-```
-
-For your convenience, you can make the newly installed binary available system-wide (requires administrative rights):
-
-```
-ln -s /Users/$USER/Library/Python/3.6/bin/pyntacle /opt/local/bin
-```
-
 ### CUDA support (experimental)
 
 Independently of the OS in use, if you need CUDA support, you must
@@ -276,14 +183,4 @@ Major update of Pyntacle, including:
 
 ## License
 
-This work is licensed under a <a rel="license"
-href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU General Public License v3.0</a>.
-
-<a rel="license"
-href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img
-alt="GNU General Public License v3.0" style="border-width:0"
-src="https://en.wikipedia.org/wiki/GNU_General_Public_License#/media/File:GPLv3_Logo.svg" /></a><br
-/>
-
-
-
+This work is licensed under a [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
