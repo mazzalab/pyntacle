@@ -174,7 +174,7 @@ class KeyPlayer:
                     kp_runner.run_reachability(self.args.k_size, KpposEnum.dR, cmode=implementation)
                     sys.stdout.write("\n")
 
-                if self.args.type in (['m-reach', 'pos', 'all']):
+                if self.args.type in (['mreach', 'pos', 'all']):
                     sys.stdout.write(
                         u"KP-Pos: Finding optimal set of nodes of size {0} that maximizes the m-reach at distance {1}\n".format(
                             self.args.k_size, self.args.m_reach))
@@ -218,7 +218,7 @@ class KeyPlayer:
 
                     sys.stdout.write(sep_line)
 
-                if self.args.type in (['m-reach', 'pos', 'all']):
+                if self.args.type in (['mreach', 'pos', 'all']):
                     sys.stdout.write(
                         u"KP-Pos: Finding the best set(s) of nodes of size {0} that maximizes the m-reach at distance {1}\n".format(
                             self.args.k_size, self.args.m_reach))
@@ -284,7 +284,7 @@ class KeyPlayer:
                                                **{k: v for k, v in optional_args.items() if v is not None})
                     sys.stdout.write("\n")
 
-                if self.args.type in (['m-reach', 'pos', 'all']):
+                if self.args.type in (['mreach', 'pos', 'all']):
                     sys.stdout.write(
                         u"KP-Pos: Finding optimal set of nodes of size {0} that maximizes the m-reach at distance {1}\n".format(
                             self.args.k_size, self.args.m_reach))
@@ -368,7 +368,7 @@ class KeyPlayer:
                 kp_runner.run_reachability(KpposEnum.dR, cmode=implementation)
                 sys.stdout.write("\n")
 
-            if self.args.type in (['m-reach', 'pos', 'all']):
+            if self.args.type in (['mreach', 'pos', 'all']):
                 kp_runner.run_reachability(KpposEnum.mreach, m=self.args.m_reach, cmode=implementation)
                 sys.stdout.write("\n")
 
