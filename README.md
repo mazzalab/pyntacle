@@ -128,6 +128,16 @@ also install the CUDA toolkit by downloading and installing the Toolkit from the
 Changelog for current and past releases:
 
 
+### 1.3.1:
+Bug fixes:
+- \#47 -nprocs removed in keyplayer kp-info command line
+- \#48 empty result with kp-finder
+- \#49 -seed argument removed in pyntacle generator
+- \#50 --plot-format option removed from 1.2 onward
+- \#51 seed argument removed in group degree API
+- \#52 bad handling of missing output file names
+- \#53 bad handling of empty set due to graph intersection
+
 ### 1.3:
 Major updates:
 - [algorithms] Implementation of the new Stochastic Gradient Descent (SGD) search algorithm

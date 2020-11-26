@@ -1,11 +1,11 @@
 __author__ = u"Mauro Truglio, Tommaso Mazza"
 __copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.3"
+__version__ = u"1.3.1"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"09/07/2020"
+__date__ = u"26/11/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -27,13 +27,13 @@ __license__ = u"""
 import argparse
 import sys
 import os
+
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from config import *
 import unittest
 from copy import deepcopy
 from exceptions.generic_error import Error
 from colorama import init
-
 
 if sys.version_info <= (3, 6):
     sys.exit("Python < 3.6 is not supported. Please update your Python distribution")
@@ -143,8 +143,7 @@ class App:
                         "sub-commands:\n" + 100 * "-" + "\n" +
                         "   kp-finder\t           Find the best kp-set of size k\n"
                         "   kp-info\t           Compute individual key-player metrics for a selected set of nodes\n" + 100 * "-",
-            formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=100,
-                                                                              max_help_position=100),
+            formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(prog, width=100, max_help_position=100),
             usage=Fore.RED + Style.BRIGHT + "pyntacle keyplayer"
                   + Fore.GREEN + Style.BRIGHT + " {kp-finder, kp-info}"
                   + Fore.LIGHTBLUE_EX + " --type {all | pos | neg | F | dF | dR | mreach}" + Fore.RED + " [arguments]\n" + Style.RESET_ALL)
@@ -232,6 +231,10 @@ class App:
         info_case_parser.add_argument("-n", "--nodes",
                                       help="(REQUIRED) Comma-separated list of strings, corresponding to the node names in the input graph, or column index of the input network file if the 'no-header' flag is specified",
                                       required=True)
+        info_case_parser.add_argument("-O", "--nprocs", metavar="", default=1, type=procs_type,
+                                      help="(BRUTE-FORCE SEARCH ONLY) Specify the maximum number of processes that "
+                                           "will be used by the brute-force search algorithm. Default to 1")
+
         # Subparser for kp-finder case
         finder_case_parser = subparsers.add_parser("kp-finder",
                                                    usage="pyntacle keyplayer kp-finder [-h] [-m] [-f] [--input-separator] [-N] [-d] [-L] [-M] [-I] [-S] [-P float] [-T  float] [-x int] [--save-binary] [--report-format] [--no-plot] --type [TYPE] --input-file [FILE] -k [K]",
@@ -399,7 +402,6 @@ class App:
         finder_case_parser.add_argument("-x", "--maxsec", metavar="", default=120, type=int,
                                         help="(STOCHASTIC GRADIENT DESCENT ONLY) Maximum allowed computation time "
                                              "(seconds). Default to infinity")
-
 
         finder_case_parser.set_defaults(which="gr-finder")
 
@@ -967,7 +969,6 @@ class App:
             sys.stderr.write(sigkill_message)
 
     def set(self):
-
         parser = argparse.ArgumentParser(
             description="Perform set operations (union, intersection, difference) between two networks using "
                         "logical graph operations\n\n"
