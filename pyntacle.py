@@ -1,11 +1,11 @@
 __author__ = u"Mauro Truglio, Tommaso Mazza"
 __copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.3"
+__version__ = u"1.3.1"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"09/07/2020"
+__date__ = u"26/11/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
