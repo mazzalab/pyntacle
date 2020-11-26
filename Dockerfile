@@ -15,7 +15,7 @@ RUN wget \
 
 ## Install Pyntacle
 RUN conda install python=3.7
-RUN conda install -y -c conda-forge -c bfxcss pyntacle=1.3
+RUN conda install -y -c conda-forge -c bfxcss pyntacle=1.3.1
 
 MAINTAINER Tommaso Mazza (IRCCS Casa Sollievo della Sofferenza) <bioinformatics@css-mendel.it>
 
