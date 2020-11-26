@@ -1,11 +1,11 @@
 __author__ = u"Mauro Truglio, Tommaso Mazza"
-__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.3.1"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"26/11/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -56,11 +56,11 @@ class Set:
             cursor.start()
 
         if not os.path.exists(self.args.input_file_1) or not os.path.exists(self.args.input_file_2):
-            sys.stderr.write(u"One of the two input files does not exist. Quitting\n")
+            sys.stderr.write(u"One of the two input files does not exist. Quit\n")
             sys.exit(1)
 
         if filecmp.cmp(self.args.input_file_1, self.args.input_file_2, shallow=False):
-            sys.stderr.write(u"The two input files are equal. Quitting\n")
+            sys.stderr.write(u"The two input files are equal. Quit\n")
             sys.exit(1)
 
         input_header = True
@@ -112,7 +112,7 @@ class Set:
 
             except MultipleSolutionsError:
                 sys.stderr.write(
-                    u"Graph {} has two largest components of the same size. Cannot choose one. either remove one of the components or run 'pyntacle set' without the '--largest-component' option. Quitting\n".format(graph1["name"]))
+                    u"Graph {} has two largest components of the same size. Cannot choose one. either remove one of the components or run 'pyntacle set' without the '--largest-component' option. Quit\n".format(graph1["name"]))
                 sys.exit(1)
 
             try:
@@ -124,43 +124,14 @@ class Set:
 
             except MultipleSolutionsError:
                 sys.stderr.write(
-                    u"Graph {} has two largest components of the same size. Cannot choose one. either remove one of the components or run 'pyntacle set' without the '--largest-component' option. Quitting\n".format(
+                    u"Graph {} has two largest components of the same size. Cannot choose one: either remove one of the components or run 'pyntacle set' without the '--largest-component' option. Quit\n".format(
                         graph2["name"]))
                 sys.exit(1)
-
-        # - OLD PLOTTER - LEGACY -
-        # # Check provided dimensions' format
-        # if self.args.plot_dim:  # define custom format
-        #     self.args.plot_dim = self.args.plot_dim.split(",")
-        #
-        #     for i in range(0, len(self.args.plot_dim)):
-        #         try:
-        #             self.args.plot_dim[i] = int(self.args.plot_dim[i])
-        #
-        #         except ValueError:
-        #             sys.stderr.write(
-        #                 u"Format specified must be a comma-separated list of values(e.g. 1920,1080). Quitting\n")
-        #             sys.exit(1)
-        #
-        #         if self.args.plot_dim[i] <= 0:
-        #             sys.stderr.write(
-        #                 u"Format specified must be a comma-separated list of values(e.g. 1920,1080). Quitting\n")
-        #             sys.exit(1)
-        #
-        #     plot_size = tuple(self.args.plot_dim)
-        #
-        # else:
-        #     # generate different formats according to graph size
-        #     if graph1.vcount() <= 150 and graph2.vcount() <= 150:
-        #         plot_size = (800, 800)
-        #
-        #     else:
-        #         plot_size = (1600, 1600)
+       
 
         if self.args.format == "sif" or not all(x is None for x in graph1.es()["sif_interaction"]) or not all(
                         x is None for x in graph2.es()["sif_interaction"]):
             sys.stdout.write(u"WARNING: Interaction stored in SIF files will be removed\n")
-
 
         # GraphSetOps(graph1=graph1, graph2=graph2,new_name = new_name
         sys.stdout.write(section_end)
@@ -171,10 +142,6 @@ class Set:
                                                                            self.args.input_file_2))
 
             output_graph = GraphSetOps.union(graph1, graph2, self.args.output_file)
-            if all(len(x) <= 2 for x in output_graph.vs()["parent"]):
-                sys.stdout.write(
-                    u"There were no common nodes when performing Graph union. Will return two disjoint graphs\n")
-
         elif self.args.which == "intersection":
             sys.stdout.write(
                 u"Performing intersection between input graph {} and {}\n".format(self.args.input_file_1,
@@ -184,33 +151,25 @@ class Set:
 
             if output_graph.ecount() == 0:
                 sys.stdout.write(
-                    u"No intersection was possible for the two input graphs. No output will be generated\n")
+                    u"The intersection is empty and a graph will not be generated\n")
                 if not self.args.suppress_cursor:
                     cursor.stop()
                 sys.exit(0)
-
-        elif self.args.which == "difference":
+        else:
+            # elif self.args.which == "difference":
             sys.stdout.write(
                 "Performing difference between input graph {} and  {}\n".format(self.args.input_file_1,
                                                                                 self.args.input_file_2))
 
             output_graph = GraphSetOps.difference(graph1, graph2, self.args.output_file)
             if output_graph.vcount() == graph1.vcount() and output_graph.ecount() == graph1.ecount():
-                sys.stdout.write(u"Nothing of graph {} could be subtracted from graph {}\n".format(
+                sys.stdout.write(u"Graphs {} and {} are disjoint\n".format(
                     os.path.basename(self.args.input_file_1), os.path.basename(self.args.input_file_2)))
-
-            if output_graph.vcount() == 0 and output_graph.ecount() == 0:
-                sys.stdout.write(u"Graph difference was complete, no nodes and edges could be retrieved. No output will be produced. Quitting\n")
-                sys.exit(0)
-
-            if output_graph.vcount() <= 1 and output_graph.ecount() < 1:
-                sys.stdout.write(u"Graph difference returned only node {} and no edge. No output will be produced. Quitting\n".format("".join(output_graph.vs["name"])))
-                sys.exit(0)
 
             if output_graph.vcount() > 1 and output_graph.ecount() == 0:
                 sys.stdout.write(
-                    u"Graph difference returned {} nodes, namely: {} and no edge. No output will be produced. Quitting\n".format(
-                        output_graph.vcount(), ",\n".join(output_graph.vs()["name"])))
+                    u"Graph difference returned {} isolates. A graph will not be produced. Quit\n".format(
+                        output_graph.vcount()))
                 sys.exit(0)
 
         sys.stdout.write(section_end)
@@ -239,7 +198,7 @@ class Set:
         sys.stdout.write(section_end)
         sys.stdout.write(report_start)
         if not os.path.isdir(self.args.directory):
-            sys.stdout.write(u"WARNING: Output directory does not exist, will create one at {}\n".format(
+            sys.stdout.write(u"WARNING: The output directory does not exist. It will be created at {}\n".format(
                 os.path.abspath(self.args.directory)))
             os.makedirs(os.path.abspath(self.args.directory), exist_ok=True)
 
@@ -247,47 +206,46 @@ class Set:
         output_path = os.path.join(self.args.directory, ".".join([self.args.output_file, out_form]))
 
         sys.stdout.write(u"Basename of output graph: {}\n".format(self.args.output_file))
-        sys.stdout.write(u"Path to generated graph is: {}\n".format(output_path))
+        sys.stdout.write(u"Path of the generated graph: {}\n".format(output_path))
 
         # producing output graph
         if self.args.no_output_header:
-            sys.stdout.write(u"Skipping header on output files\n")
+            sys.stdout.write(u"Skipping header in output file\n")
             output_header = False
 
         else:
             output_header = True
 
         if self.args.output_separator is None:
-            sys.stdout.write(u"Using '\\t' as default separator for output file\n")
+            sys.stdout.write(u"Using '\\t' as default separator for the output file\n")
             self.args.output_separator = "\t"
 
         if os.path.exists(output_path):
-            self.logging.warning(u"A file named {} already exist, will be overwritten".format(output_path))
+            self.logging.warning(u"A file named {} already exist. It will be overwritten".format(output_path))
 
         # output generated networks
         if out_form == "adjm":
-            sys.stdout.write(u"Writing resulting graph to an adjacency matrix\n")
+            sys.stdout.write(u"Writing the resulting graph to an adjacency matrix file\n")
             PyntacleExporter.AdjacencyMatrix(output_graph, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "egl":
-            sys.stdout.write(u"Writing resulting graph to an edge list\n")
+            sys.stdout.write(u"Writing the resulting graph to an edge-list file\n")
             PyntacleExporter.EdgeList(output_graph, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "sif":
-            sys.stdout.write(u"Writing resulting graph to Simple Interaction Format (SIF) file\n")
+            sys.stdout.write(u"Writing the resulting graph to a SIF file\n")
             PyntacleExporter.Sif(output_graph, output_path, sep=self.args.output_separator, header=output_header)
 
         elif out_form == "dot":
-            sys.stdout.write("Writing resulting graph to a DOT file\n")
+            sys.stdout.write("Writing the resulting graph to a DOT file\n")
 
             # Ignore ugly RuntimeWarnings while creating a dot
             simplefilter("ignore", RuntimeWarning)
             PyntacleExporter.Dot(output_graph, output_path)
 
         elif out_form == "graph":
-            sys.stdout.write("Writing resulting graph into a  binary file (ending in .graph)\n")
+            sys.stdout.write("Writing the resulting graph to a binary file (with .graph extension)\n")
             PyntacleExporter.Binary(output_graph, output_path)
-
 
         intersection_set = []
         for v in output_graph.vs():
@@ -310,7 +268,7 @@ class Set:
         setF_attr_dict = OrderedDict()
 
         if self.args.which == 'intersection':
-            setF_attr_dict['\nCommon Nodes'] = 'Node names'#(len(intersection_set), ','.join(intersection_set))
+            setF_attr_dict['\nCommon nodes'] = 'Node names'#(len(intersection_set), ','.join(intersection_set))
             setF_attr_dict[len(intersection_set)] = ','.join(intersection_set)
         reporter1.create_report(ReportEnum.Set, set1_attr_dict)
         reporter2.create_report(ReportEnum.Set, set2_attr_dict)
@@ -323,10 +281,10 @@ class Set:
         del(reporter2.report[0])
         del(reporter_final.report[0])
         for e in reporter_final.report:
-            if e[0] == 'Pyntacle Command:':
+            if e[0] == 'Pyntacle command:':
                 e[1] = e[1] + ' ' + self.args.which
         
-        reporter_final.report[0] = ['\n--- Resulting Graph ---']
+        reporter_final.report[0] = ['\n--- Resulting graph ---']
         reporter1.report.extend(reporter2.report)
         reporter1.report.extend(reporter_final.report)
         reporter1.write_report(report_dir=self.args.directory, format=self.args.report_format)
@@ -345,12 +303,12 @@ class Set:
 
             suffix = "_".join(["_".join(graph1["name"]), "Set", "_".join(graph2["name"])])
 
-            sys.stdout.write(u"Plotting {} among the two graph in {} directory with PyntacleInk\n".format(self.args.which, self.args.directory))
+            sys.stdout.write(u"Plotting {} in {} with PyntacleInk\n".format(self.args.which, self.args.directory))
             reporter_both_graphs.pyntacleink_report(report_dir=self.args.directory, report_dict=report_dict, suffix=suffix)
 
         elif total_nodes >= 5000:
             sys.stdout.write(
-                u"The total sum of the two graph nodes ({}). PyntacleInk can plot networks with N < 5000. This graph will not be plotted\n".format(
+                u"The sum of the nodes of the two graphs is {}. PyntacleInk can plot graphs with N < 5000. This graph will not be plotted\n".format(
                     total_nodes))
         else:
             sys.stdout.write(pyntacleink_skip_msg)

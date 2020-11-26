@@ -1,11 +1,11 @@
 __author__ = ["Mauro Truglio", "Tommaso Mazza"]
-__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.3.1"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"26/11/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -31,6 +31,7 @@ from tools.enums import GraphOperationEnum
 from tools.add_attributes import AddAttributes
 from tools.graph_utils import GraphUtils as GUtil
 
+
 def make_sets(graph1: Graph, graph2: Graph, operation: GraphOperationEnum):
     r"""
     Internal method to deal with the set operations and the handling of the attributes. 
@@ -47,7 +48,7 @@ def make_sets(graph1: Graph, graph2: Graph, operation: GraphOperationEnum):
     union_v = {}
 
     for v in list(set1v | set2v):
-        # Looping through the Union set of vertices NAMES
+        # Looping through the Union set of vertex NAMES
         if v in intersect_v:
             union_v.setdefault(v, []).append(graph1.vs[graph1.vs.find(v).index]["parent"])
             union_v.setdefault(v, []).append(graph2.vs[graph2.vs.find(v).index]["parent"])
@@ -87,7 +88,7 @@ class GraphSetOps(object):
 
         :param igraph.Graph graph1: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
         :param igraph.Graph graph2: a :class:`igraph.Graph` object. The graph must satisfy a series of requirements, described in the `Minimum requirements specifications <http://pyntacle.css-mendel.it/requirements.html>`_ section of the Pyntacle official page.
-        :param str new_graph_name: a string representing the new name that will be added to the graph ``name`` attribute
+        :param str new_graph_name: a string representing the new name that will be assigned to the graph ``name`` attribute
         :return igraph.Graph: the resulting :class:`igraph.Graph` object. This network will contain both the first and second noddes and edges. The origin of each node it is determined by the vertex ``parent`` attribute.
         """
         union_v, union_e = make_sets(graph1, graph2, GraphOperationEnum.Union)
@@ -98,7 +99,9 @@ class GraphSetOps(object):
 
         AddAttributes.add_edge_names(graph=merged_g)
         merged_g.vs["parent"] = list(union_v.values())
-        GUtil(graph=merged_g).graph_initializer(graph_name=new_graph_name)
+
+        if merged_g.vcount() > 0:
+            GUtil(graph=merged_g).graph_initializer(graph_name=new_graph_name)
 
         return merged_g
 
@@ -134,7 +137,9 @@ class GraphSetOps(object):
 
         AddAttributes.add_edge_names(graph=intersection_g)
         intersection_g.vs["parent"] = list(intersect_v.values())
-        GUtil(graph=intersection_g).graph_initializer(graph_name=new_graph_name)
+
+        if intersection_g.vcount() > 0:
+            GUtil(graph=intersection_g).graph_initializer(graph_name=new_graph_name)
 
         return intersection_g
 
@@ -165,5 +170,6 @@ class GraphSetOps(object):
         AddAttributes.add_edge_names(graph=exclusive_g1)
         exclusive_g1.vs["parent"] = list(exclusive1_v.values())
 
-        GUtil(graph=exclusive_g1).graph_initializer(graph_name=new_graph_name)
+        if exclusive_g1.vcount() > 0:
+            GUtil(graph=exclusive_g1).graph_initializer(graph_name=new_graph_name)
         return exclusive_g1

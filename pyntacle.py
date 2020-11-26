@@ -969,7 +969,6 @@ class App:
             sys.stderr.write(sigkill_message)
 
     def set(self):
-
         parser = argparse.ArgumentParser(
             description="Perform set operations (union, intersection, difference) between two networks using "
                         "logical graph operations\n\n"
