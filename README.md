@@ -1,7 +1,7 @@
 ![Pyntacle logo](http://pyntacle.css-mendel.it/images/title_joined.png)
 
 A Python package for network analysis based on non canonical
-metrics and HPC computing
+metrics and HPC-Computing
 
 - **Compatibility**: Python 3.7
 - **Contributions**: bioinformatics@css-mendel.it
@@ -127,6 +127,9 @@ also install the CUDA toolkit by downloading and installing the Toolkit from the
 
 Changelog for current and past releases:
 
+### 1.3.2:
+Bug fixes:
+- \#55 ImportAttributes.import_node_attributes bad attribute
 
 ### 1.3.1:
 Bug fixes:

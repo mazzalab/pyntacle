@@ -1,11 +1,11 @@
-__author__ = u"Mauro Truglio, Tommaso Mazza"
-__copyright__ = u"Copyright 2018, The Pyntacle Project"
+__author__ = u"Tommaso Mazza"
+__copyright__ = u"Copyright 2018-2020, The Pyntacle Project"
 __credits__ = [u"Ferenc Jordan"]
-__version__ = u"1.1"
+__version__ = u"1.3.2"
 __maintainer__ = u"Tommaso Mazza"
 __email__ = "bioinformatics@css-mendel.it"
 __status__ = u"Development"
-__date__ = u"26/11/2018"
+__date__ = u"15/12/2020"
 __license__ = u"""
   Copyright (C) 2016-2020  Tommaso Mazza <t.mazza@css-mendel.it>
   Viale Regina Margherita 261, 00198 Rome, Italy
@@ -48,13 +48,14 @@ def check_file(graph: Graph, file: str, sep: str):
         # if this is a node, the header is not specified
         first = head.split(sep)[0]
 
-        if first in graph.vs("name"):
+        if first in graph.vs["name"]:
             sys.stdout.write("ERROR: header is not specified\n")
             raise ValueError("header is not specified")
 
-        return (file, sep)
+        return file, sep
 
-class ImportAttributes():
+
+class ImportAttributes:
     r"""
     Imports attributes for nodes, edges or the whole graph from a text file and adds it to the ``igraph.Graph`` object of
     interest at the appropriate layer. We refer to the `File Formats Guide <http://pyntacle.css-mendel.it/resources/file_formats/file_formats.html#aff>`_
