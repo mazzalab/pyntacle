@@ -35,8 +35,7 @@ pip install pyntacle
 ## Installing using Anaconda or Miniconda [![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/installer/conda.svg)](https://conda.anaconda.org/bfxcss)
 ![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/version.svg) ![Anaconda-Server Badge](https://anaconda.org/bfxcss/pyntacle/badges/latest_release_date.svg)
 
-Installing Pyntacle and all its dependencies can be challenging for
-inexperienced users. There are several advantages in using Anaconda to
+There are several advantages in using Anaconda to
 install not only Pyntacle, but also Python and other packages: it is
 cross platform (Linux, MacOS X, Windows), you do not require
 administrative rights to install it (it goes in the user home
