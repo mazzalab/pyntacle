@@ -1,0 +1,4 @@
+Nodes Set	Operation	Score
+[('BM', 'BS3'), ('BM', 'KR')]	Degree	0.5
+[('HA', 'HB')]	Betweenness	0.364
+[('BS3', 'HB'), ('HB','KR'), ('HB', 'WD'), ('NP', 'WD')]	Closeness	0.536

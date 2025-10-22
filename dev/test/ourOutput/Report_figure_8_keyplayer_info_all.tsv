@@ -1,0 +1,14 @@
+Pyntacle Report	Report_figure_8_keyplayer_info_all.tsv
+Analysisi type	keyplayer
+
+Network Overview
+Removed nodes	None
+Number of components	1
+Number of Nodes	32
+Number of Edges	56
+
+Key-player	operation	scores
+['HS', 'HA', 'GM']	F	0.443
+['HS', 'HA', 'GM']	dF	0.747
+['HS', 'HA', 'GM']	dR	0.504
+['HS', 'HA', 'GM']	mreach	18.0

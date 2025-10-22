@@ -1,0 +1,13 @@
+Pyntacle Report	Report_figure_8_groupcentrality_finder_all.tsv
+Analysisi type	groupcentrality
+
+Network Overview
+Removed nodes	None
+Number of components	1
+Number of Nodes	32
+Number of Edges	56
+
+Nodes Set	Operation	Score
+[('KR', 'BM'), ('BS3', 'BM')]	Degree	0.5
+[('HA', 'HB')]	Betweenness	0.364
+[('WD', 'HB'), ('WD', 'NP'), ('KR', 'HB'), ('BS3', 'HB')]	Closeness	0.536

@@ -1,0 +1,5 @@
+K-set	Operation	Score
+[("HA","HB"),("HB","WD")]	F	0.706
+[("HB","WD")]	dF	0.815
+[("BS3","HB"),("HB","KR")]	dR	0.641
+[("HA","NP")]	mreach	25

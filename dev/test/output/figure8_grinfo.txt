@@ -1,0 +1,4 @@
+Nodes_set	Operation	Scores
+['HS', 'HA', 'GM']	Degree	0.310
+['HS', 'HA', 'GM']	Closeness	0.387
+['HS', 'HA', 'GM']	Betweenness	0.247

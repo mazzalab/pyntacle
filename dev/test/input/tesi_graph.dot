@@ -1,0 +1,63 @@
+/* Created by igraph 0.9.8 */
+graph {
+  0 [
+    name=A
+    label=A
+  ];
+  1 [
+    name=B
+    label=B
+  ];
+  2 [
+    name=C
+    label=C
+  ];
+  3 [
+    name=D
+    label=D
+  ];
+  4 [
+    name=E
+    label=E
+  ];
+  5 [
+    name=F
+    label=F
+  ];
+  6 [
+    name=G
+    label=G
+  ];
+  7 [
+    name=H
+    label=H
+  ];
+
+  1 -- 0 [
+    weight=1
+  ];
+  2 -- 1 [
+    weight=1
+  ];
+  3 -- 1 [
+    weight=1
+  ];
+  4 -- 2 [
+    weight=1
+  ];
+  4 -- 3 [
+    weight=1
+  ];
+  5 -- 3 [
+    weight=1
+  ];
+  5 -- 4 [
+    weight=1
+  ];
+  7 -- 4 [
+    weight=1
+  ];
+  6 -- 5 [
+    weight=1
+  ];
+}

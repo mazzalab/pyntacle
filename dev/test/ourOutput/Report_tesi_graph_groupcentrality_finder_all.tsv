@@ -1,0 +1,13 @@
+Pyntacle Report	Report_tesi_graph_groupcentrality_finder_all.tsv
+Analysisi type	groupcentrality
+
+Network Overview
+Removed nodes	None
+Number of components	1
+Number of Nodes	8
+Number of Edges	9
+
+Nodes Set	Operation	Score
+[('A', 'E', 'F'), ('A', 'E', 'G'), ('B', 'E', 'F'), ('B', 'E', 'G'), ('B', 'F', 'H'), ('B', 'G', 'H')]	Degree	1.0
+[('B', 'E', 'F')]	Betweenness	0.5
+[('A', 'E', 'F'), ('A', 'E', 'G'), ('B', 'E', 'F'), ('B', 'E', 'G'), ('B', 'F', 'H'), ('B', 'G', 'H')]	Closeness	1.0

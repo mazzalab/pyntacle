@@ -1,0 +1,14 @@
+Pyntacle Report	Report_figure_8_keyplayer_finder_all.tsv
+Analysisi type	keyplayer
+
+Network Overview
+Removed nodes	None
+Number of components	1
+Number of Nodes	32
+Number of Edges	56
+
+K-set	Operation	Score
+[('WD', 'HB'), ('HA', 'HB')]	F	0.706
+[('WD', 'HB')]	dF	0.815
+[('KR', 'HB'), ('BS3', 'HB')]	dR	0.641
+[('HA', 'NP')]	mreach	25.0

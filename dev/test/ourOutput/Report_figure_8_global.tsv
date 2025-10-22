@@ -1,0 +1,27 @@
+Pyntacle Report	Report_figure_8_global.tsv
+Analysisi type	global
+
+Network Overview
+Removed nodes	None
+Number of components	1
+Number of Nodes	32
+Number of Edges	56
+
+Measure	Score
+Average shortest path length	4.083
+Median shortest path length	4.0
+Diameter	9.0
+Components	1.0
+Radius	5.0
+Density	0.113
+pi	6.222
+Average clustering coefficient	0.497
+Weighted clustering coefficient	0.498
+Average degree	3.5
+Average Closeness	0.253
+Average Eccentricity	7.281
+Average Radiality	5.917
+Average Radiality Reach	5.917
+Completeness Naive	0.127
+Completeness	3.807
+Compactness	0.06

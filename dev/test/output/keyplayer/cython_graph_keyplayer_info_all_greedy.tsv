@@ -1,0 +1,14 @@
+Pyntacle Report	Report_graph_keyplayer_info_all_greedy.tsv
+Analysisi type	keyplayer
+
+Network Overview
+Removed nodes	None
+Number of components	1
+Number of Nodes	10
+Number of Edges	13
+
+Operation	Key-player	Score
+F	['B', 'I']	0.571
+dF	['B', 'I']	0.679
+dR	['B', 'I']	0.875
+mreach	['B', 'I']	8.0

@@ -1,0 +1,13 @@
+Pyntacle Report	Report_graph_groupcentrality_info_all.tsv
+Analysisi type	groupcentrality
+
+Network Overview
+Removed nodes	None
+Number of components	1
+Number of Nodes	10
+Number of Edges	13
+
+Operation	Node-set	Score
+degree	['B', 'I']	0.75
+betweenness	['B', 'I']	0.304
+closeness	['B', 'I']	0.8

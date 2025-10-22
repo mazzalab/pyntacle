@@ -1,0 +1,6 @@
+"Node Name"	"Degree"	"Betweenness"	"Closeness"	"Radiality"	"Radiality reach"	"Clustering Coefficient"	"Eccentricity"	"Eigenvector (Scaled)"	"Pagerank"
+"HS"	2	0	0.212	5.290	5.290	1	9	0.126	0.015
+"BR"	4	0	0.254	6.065	6.065	1	8	0.266	0.026
+"WD"	7	210.75	0.313	6.806	6.806	0.571	7	0.360	0.046
+"PS"	6	18.5	0.258	6.129	6.129	0.667	8	0.330	0.039
+"WS"	4	0	0.217	5.387	5.387	1	9	0.261	0.026

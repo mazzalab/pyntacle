@@ -1,0 +1,10 @@
+import pytest
+@pytest.mark.xfail	### se fallisce va avanti con la func successiva
+@pytest.mark.skip	### skippa questa funzione
+pytest test_compare.py -v
+
+
+pytest --maxfail = <num>   		### stoppa il test dopo num fallimenti
+pytest test_failure.py -v --maxfail 1
+
+

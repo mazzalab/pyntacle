@@ -1,0 +1,5 @@
+Key-player	operation	scores
+['HS', 'HA', 'GM']	F	0.443
+['HS', 'HA', 'GM']	dF	0.747
+['HS', 'HA', 'GM']	dR	0.504
+['HS', 'HA', 'GM']	mreach	18

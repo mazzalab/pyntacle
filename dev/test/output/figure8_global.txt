@@ -1,0 +1,17 @@
+Average shortest path length	4.083
+Median shortest path length	4
+Diameter	9
+Components	1
+Radius	5
+Density	0.113
+pi	6.222
+Average clustering coefficient	0.497
+Weighted clustering coefficient	0.498
+Average degree	3.5
+Average Closeness	0.253
+Average Eccentricity	7.281
+Average Radiality	5.917
+Average Radiality Reach	5.917
+Completeness Naive	0.127
+Completeness	3.807
+Compactness	7.888

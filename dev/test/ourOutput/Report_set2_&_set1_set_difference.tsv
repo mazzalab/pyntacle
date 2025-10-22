@@ -1,0 +1,19 @@
+Pyntacle Report	Report_set2_&_set1_set_difference.tsv
+Analysisi type	set
+
+Network Overview
+Removed nodes	None
+Number of components	1
+Number of Nodes	5
+Number of Edges	4
+
+Merged from	
+set2	
+set1	
+	
+Vertex	Edges
+1	['1', '5']
+2	['2', '3']
+3	['3', 'B']
+5	['3', '5']
+B	
