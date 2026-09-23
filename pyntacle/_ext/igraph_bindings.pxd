@@ -1,9 +1,13 @@
 # igraph_bindings.pxd
 cdef extern from "igraph/igraph.h" nogil:
     
-    ctypedef long igraph_int_t
+    # The C name is igraph_integer_t; igraph_int_t is only the Cython-side alias.
+    # Spelling it out matters as soon as Cython has to emit the type into the
+    # generated C, which it does for any local it cannot elide.
+    ctypedef long igraph_int_t "igraph_integer_t"
     ctypedef int  igraph_error_t
     ctypedef double igraph_real_t
+    ctypedef bint igraph_bool_t
 
     cdef enum igraph_adjacency_t:
         IGRAPH_ADJ_DIRECTED,
@@ -32,7 +36,13 @@ cdef extern from "igraph/igraph.h" nogil:
         IGRAPH_ROW_MAJOR,
         IGRAPH_COLUMN_MAJOR,
 
-    igraph_error_t igraph_setup();
+    # Error handling. The default handler is igraph_error_handler_abort, which
+    # kills the process from inside nogil blocks with no Python traceback; the
+    # ignore handler makes the failing call return a non-zero code instead.
+    ctypedef void igraph_error_handler_t(const char *reason, const char *file,
+                                         int line, igraph_error_t igraph_errno)
+    igraph_error_handler_t igraph_error_handler_ignore
+    igraph_error_handler_t* igraph_set_error_handler(igraph_error_handler_t* new_handler)
 
     # opaque types
     ctypedef struct igraph_t: pass
@@ -53,12 +63,19 @@ cdef extern from "igraph/igraph.h" nogil:
             igraph_real_t value);
 
     igraph_error_t igraph_weighted_adjacency(
-        igraph_t *graph, 
-        const igraph_matrix_t *adjmatrix, 
+        igraph_t *graph,
+        const igraph_matrix_t *adjmatrix,
         igraph_adjacency_t mode,
-        igraph_vector_t *weights, 
+        igraph_vector_t *weights,
         igraph_loops_t loops
     );
+
+    # Edge-list construction: builds the same undirected weighted graph as
+    # igraph_weighted_adjacency above, but in O(E) memory instead of an n x n
+    # dense matrix. `attr` is NULL here -- weights are carried in a separate
+    # vector, positionally aligned with the edge order handed to add_edges.
+    igraph_error_t igraph_empty(igraph_t *graph, igraph_int_t n, igraph_bool_t directed);
+    igraph_error_t igraph_add_edges(igraph_t *graph, const igraph_vector_int_t *edges, void *attr);
 
     void igraph_destroy(igraph_t *graph);
 
@@ -66,6 +83,7 @@ cdef extern from "igraph/igraph.h" nogil:
     igraph_error_t igraph_vector_init(igraph_vector_t *v, igraph_int_t size);
     void igraph_vector_destroy(igraph_vector_t *v);
     igraph_int_t igraph_vector_size(const igraph_vector_t *v);
+    void igraph_vector_set(igraph_vector_t *v, igraph_int_t pos, igraph_real_t value);
 
     igraph_error_t igraph_vector_int_init(igraph_vector_int_t *v, igraph_int_t size);
     void igraph_vector_int_destroy(igraph_vector_int_t *v);
@@ -87,7 +105,10 @@ cdef extern from "igraph/igraph.h" nogil:
     
     igraph_real_t igraph_vector_get(const igraph_vector_t *v, igraph_int_t pos);
 
-    void igraph_matrix_copy_to(const igraph_matrix_t *m, igraph_real_t *to, igraph_matrix_storage_t storage);
+    # igraph 0.10 has no storage-order argument (that arrived in 1.0): the copy is
+    # column-major. Only used for the all-pairs distance matrix of an undirected
+    # graph, which is symmetric, so row- and column-major coincide.
+    void igraph_matrix_copy_to(const igraph_matrix_t *m, igraph_real_t *to);
 
 
     igraph_error_t igraph_vector_int_list_init(igraph_vector_int_list_t *v, igraph_int_t size);

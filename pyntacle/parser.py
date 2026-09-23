@@ -1,7 +1,24 @@
-from colorama import Fore, Style
+# from colorama import Fore, Style
 import argparse
 import textwrap
 
+import os
+
+try:
+    from colorama import Fore, Style
+except Exception:
+    # fallback: parser importabile anche senza colorama
+    class _NoColor:
+        def __getattr__(self, name):
+            return ""
+    Fore = Style = _NoColor()
+
+# Se stiamo buildando la documentazione (Sphinx), niente colori ANSI
+if os.environ.get("PYNTACLE_DOCS", "0") == "1":
+    class _NoColor:
+        def __getattr__(self, name):
+            return ""
+    Fore = Style = _NoColor()
 
 
 # build parser 
@@ -52,7 +69,7 @@ def create_parser() -> argparse.ArgumentParser:
 
 	### LOCAL ###
 	local = subparsers.add_parser('local', usage=Fore.GREEN + Style.BRIGHT +'python3 main.py' + Fore.RED +' local ' + Fore.CYAN + '-t {fileType} -i {input_file} [optional parameters] [optional outdir]' + Style.RESET_ALL, help='''Computes metrics of local nature for the whole graph''', 
-		description= Fore.YELLOW + '''Measures to be calculated: Degree, Betweenness, Closeness, Radiality, Radiality reach, Clustering Coefficient, \n\t\t\t  Eccentricity, Eigenvector (Scaled), Pagerank''', formatter_class=argparse.RawDescriptionHelpFormatter)
+		description= Fore.YELLOW + '''Measures to be calculated: Degree, Betweenness, Closeness, Radiality, Radiality reach, Clustering Coefficient,  Eccentricity, Eigenvector (Scaled), Pagerank''', formatter_class=argparse.RawDescriptionHelpFormatter)
 	local.add_argument('-t', '--fileType', action='store', type=str, choices = ["matrix", "edgelist", "sif", "dot"], help='-[required] File type', required=True)
 	local.add_argument('-i', '--inputFile', action='store', help='-[required] Specify the input file name', required=True)
 	local.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Use this flag if your file has a specific header (ex. \',\')', required=False)
@@ -62,6 +79,7 @@ def create_parser() -> argparse.ArgumentParser:
 	local.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be removed from the graph (Comma separated)', required=False)
 	local.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output (svg, png)', required=False)
 	local.add_argument('-c', '--color', action='store', default=False,help='-[optional] Specify the nodes you want to highlight', required=False)
+	local.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written (matches old Pyntacle no-plot semantics)', required=False)
 	local.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same direcotry as the input file)', required=False)
 	local._optionals.title = Fore.CYAN + Style.BRIGHT + "Arguments" + Style.RESET_ALL
 
@@ -77,6 +95,7 @@ def create_parser() -> argparse.ArgumentParser:
 	glb.add_argument('-w', '--weight', action='store_true', help='-[optional] Use this flag if your graph is weighted', required=False)
 	glb.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be removed from the graph (Comma separated)', required=False)
 	glb.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output (svg, png)', required=False)
+	glb.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written (matches old Pyntacle no-plot semantics)', required=False)
 	glb.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same direcotry as the input file)', required=False)
 	glb._optionals.title = Fore.CYAN + Style.BRIGHT + "Arguments" + Style.RESET_ALL
 
@@ -92,7 +111,7 @@ def create_parser() -> argparse.ArgumentParser:
 	groupcentrality.add_argument('-nh', '--NoHeader', action='store_true', help='-[optional] Use this flag if your file doesn\'t have an header', required=False)
 	groupcentrality.add_argument('-d', '--directed', action='store_true', help='-[optional] Use this flag if your graph is directed', required=False)
 	groupcentrality.add_argument('-w', '--weight', action='store_true', help='-[optional] Use this flag if your graph is weighted', required=False)
-	groupcentrality.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be romev from the graph (Comma separated)', required=False)
+	groupcentrality.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be removed from the graph (Comma separated)', required=False)
 	subGC = groupcentrality.add_mutually_exclusive_group()
 	subGC.add_argument('-n','--nodes', action='store', help='Nodes to select ONLY IN GC-INFO (Comma separated)')
 	subGC.add_argument('-k', '--k_size', action='store', help='Number of nodes ONLY IN GC-FINDER (default=2)', default=2)
@@ -103,6 +122,10 @@ def create_parser() -> argparse.ArgumentParser:
 	groupcentrality.add_argument('-tol', '--tolerance', action='store',type=float, help='The minimum accepted increase by a two-nodes swap - ONLY WHEN USING STOCHASTIC-GRADIENT-DESCENT as algorithm (default=0.01)', default=0.01)
 	groupcentrality.add_argument('-ms', '--maxsec', action='store',type=int, help='Maximum allowed computation time (seconds) - ONLY WHEN USING STOCHASTIC-GRADIENT-DESCENT as algorithm (default=120)', default=120)
 	groupcentrality.add_argument('-np', '--nprocs', action='store',type=int, help='-[optional] Number of process (default=1)', default=1)
+	groupcentrality.add_argument('--max-ties', action='store', type=int, default=100, help='-[optional] How many equally-scoring node sets the brute-force report lists (default=100). The reported count of optimal sets is exact even when the list is capped; greedy and gradient_descent ignore this.', required=False)
+	groupcentrality.add_argument('--engine', action='store', type=str, choices=["cython", "python"], default="cython", help='-[optional] Metric engine: the compiled kernels (default) or the pure-Python reference implementation. The python engine is single-threaded and ignores -np, and it does not implement brute_force', required=False)
+	groupcentrality.add_argument('--seed', action='store', type=int, default=None, help='-[optional] Random seed for greedy / gradient_descent, so a run can be reproduced', required=False)
+	groupcentrality.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written (matches old Pyntacle no-plot semantics)', required=False)
 	groupcentrality.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output (svg, png)', required=False)
 	groupcentrality.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same direcotry as the input file)', required=False)
 	groupcentrality._optionals.title = Fore.CYAN + Style.BRIGHT + "Arguments" + Style.RESET_ALL
@@ -119,7 +142,7 @@ def create_parser() -> argparse.ArgumentParser:
 	keyplayer.add_argument('-nh', '--NoHeader', action='store_true', help='''\n\n-[optional] Use this flag if your file doesn\'t have an header''', required=False)
 	keyplayer.add_argument('-d', '--directed', action='store_true', help='-[optional] Use this flag if your graph is directed', required=False)
 	keyplayer.add_argument('-w', '--weight', action='store_true', help='-[optional] Use this flag if your graph is weighted', required=False)
-	keyplayer.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be romev from the graph (ex. A,B,C)', required=False)
+	keyplayer.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be removed from the graph (ex. A,B,C)', required=False)
 	subKey = keyplayer.add_mutually_exclusive_group()
 	subKey.add_argument('-n','--nodes', action='store', help='Nodes to select ONLY IN KP-INFO (Comma separated)')
 	subKey.add_argument('-k', '--k_size', action='store', help='Number of nodes ONLY IN KP-FINDER (default=2)', default=2)
@@ -130,10 +153,12 @@ def create_parser() -> argparse.ArgumentParser:
 	keyplayer.add_argument('-tol', '--tolerance', action='store',type=float, help='ONLY WHEN USING STOCHASTIC-GRADIENT-DESCENT as algorithm (default=0.01)', default=0.01)
 	keyplayer.add_argument('-ms', '--maxsec', action='store',type=int, help='ONLY WHEN USING STOCHASTIC-GRADIENT-DESCENT as algorithm (default=120)', default=120)
 	keyplayer.add_argument('-np', '--nprocs', action='store',type=int, help='-[optional] Number of process (default=1)', default=1, required=False)
+	keyplayer.add_argument('--max-ties', action='store', type=int, default=100, help='-[optional] How many equally-scoring node sets the brute-force report lists (default=100). The reported count of optimal sets is exact even when the list is capped; greedy and gradient_descent ignore this.', required=False)
+	keyplayer.add_argument('--engine', action='store', type=str, choices=["cython", "python"], default="cython", help='-[optional] Metric engine: the compiled kernels (default) or the pure-Python reference implementation. The python engine is single-threaded and ignores -np, and it does not implement brute_force', required=False)
+	keyplayer.add_argument('--seed', action='store', type=int, default=None, help='-[optional] Random seed for greedy / gradient_descent, so a run can be reproduced', required=False)
+	keyplayer.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written (matches old Pyntacle no-plot semantics)', required=False)
 	keyplayer.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output (svg, png)', required=False)
 	keyplayer.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same direcotry as the input file)', required=False)
-	keyplayer.add_argument('-c', '--cuda', action='store_true', help='-[optional] Use this flag if you want to speed up computation by enabling parallel computing of APSP through CUDA.', default=False, required=False)
-
 	keyplayer._optionals.title = Fore.CYAN + Style.BRIGHT + "Arguments" + Style.RESET_ALL
 	keyplayer._positionals.title = Fore.MAGENTA + Style.BRIGHT + "Subcommand" + Style.RESET_ALL
 
@@ -150,8 +175,9 @@ def create_parser() -> argparse.ArgumentParser:
 	setop.add_argument('-nh', '--NoHeader', action='store_true', help='-[optional] Use this flag if your file doesn\'t have an header', required=False)
 	setop.add_argument('-d', '--directed', action='store_true', help='-[optional] Use this flag if your graph is directed', required=False)
 	setop.add_argument('-w', '--weight', action='store_true', help='-[optional] Use this flag if your graph is weighted', required=False)
-	setop.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be romev from the graph (ex. A,B,C)', required=False)
+	setop.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be removed from the graph (ex. A,B,C)', required=False)
 	setop.add_argument('-i2', '--inputFile2', action='store', type=str, help='-[required] Specify the second input file name (Use same format the first input file or use the \'convert\' function if necessary)', required=True)
+	setop.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written (matches old Pyntacle no-plot semantics)', required=False)
 	setop.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output (svg, png)', required=False)
 	setop.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same direcotry as the input file)', required=False)
 	setop._optionals.title = Fore.CYAN + Style.BRIGHT + "Arguments" + Style.RESET_ALL
@@ -172,7 +198,7 @@ def create_parser() -> argparse.ArgumentParser:
 	convert.add_argument('-nh', '--NoHeader', action='store_true', help='-[optional] Use this flag if your file doesn\'t have an header', required=False)
 	convert.add_argument('-d', '--directed', action='store_true', help='-[optional] Use this flag if your graph is directed', required=False)
 	convert.add_argument('-w', '--weight', action='store_true', help='-[optional] Use this flag if your graph is weighted', required=False)
-	convert.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be romev from the graph (ex. A,B,C)', required=False)
+	convert.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be removed from the graph (ex. A,B,C)', required=False)
 	convert.add_argument('-to', '--typeOutput', action='store', choices=["matrix","edgelist","dot","sif"], help='-[required] Output file type', required=True)
 	convert.add_argument('-fo', '--outputName', action='store', help='-[required] Output file name (extension will be automatically assigned)', required=True)
 	convert.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output (svg, png)', required=False)
@@ -192,17 +218,18 @@ def create_parser() -> argparse.ArgumentParser:
 	community.add_argument('-nh', '--NoHeader', action='store_true', help='-[optional] Use this flag if your file doesn\'t have an header', required=False)
 	community.add_argument('-d', '--directed', action='store_true', help='-[optional] Use this flag if your graph is directed', required=False)
 	community.add_argument('-w', '--weight', action='store_true', help='-[optional] Use this flag if your graph is weighted', required=False)
-	community.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be romev from the graph (ex. A,B,C)', required=False)
+	community.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be removed from the graph (ex. A,B,C)', required=False)
 	community.add_argument('-nc', '--numberCommunities', action='store', default = None, help='ONLY FOR FASTGREEDY Specify the number of clusters around which the modular decomposition algorithm will optimize its module search', required=False)
-	community.add_argument('-n', '--minNodes', action='store', help="Filters the resulting communities and keeps only those with a number of vertices equal or greater than this treshold", required=False,default=None)
+	community.add_argument('-n', '--minNodes', action='store', help="Filters the resulting communities and keeps only those with a number of vertices equal or greater than this threshold", required=False,default=None)
 	community.add_argument('-N', '--maxNodes', action='store', help="Filters the resulting communities and keeps only those with a number of vertices equal or lesser than this threshold", required=False,default=None)
 	community.add_argument('-c', '--minComponents', action='store', help="Filters the resulting communities and keeps only those with a number of components equal or greater than this threshold", required=False,default=None)
 	community.add_argument('-C', '--maxComponents', action='store', help="Filters the resulting communities and keeps only those with a number of components equal or greater than this threshold", required=False,default=None)
 	community.add_argument('-steps', '--steps', action='store', help="ONLY FOR RANDOM-WALK Length of random walks to perform", required=False,default=4)
 	community.add_argument('-k', '--communitySize', action='store', help="ONLY FOR PERCOLATION Size of the cliques to be used as building blocks for the community detection", required=False,default=3)
 	community.add_argument('-g', '--giant', action='store_true', help=" Considers only the largest component of the input graph and excludes the smaller ones", required=False)
+	community.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written (matches old Pyntacle no-plot semantics)', required=False)
 	community.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same direcotry as the input file)', required=False)
-	community.add_argument('-f', '--format', action='store', type=str, default="svg", help='Specify the format of the image output', required=False)
+	community.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output', required=False)
 	community._optionals.title = Fore.CYAN + Style.BRIGHT + "Arguments" + Style.RESET_ALL
 	community._positionals.title = Fore.MAGENTA + Style.BRIGHT + "Subcommand" + Style.RESET_ALL
 
@@ -221,12 +248,13 @@ def create_parser() -> argparse.ArgumentParser:
 	extract.add_argument('-nh', '--NoHeader', action='store_true', help='-[optional] Use this flag if your file doesn\'t have an header', required=False)
 	extract.add_argument('-d', '--directed', action='store_true', help='-[optional] Use this flag if your graph is directed', required=False)
 	extract.add_argument('-w', '--weight', action='store_true', help='-[optional] Use this flag if your graph is weighted', required=False)
-	extract.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be romev from the graph (ex. A,B,C)', required=False)
+	extract.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be removed from the graph (ex. A,B,C)', required=False)
 	extract.add_argument('-n','--ncomponents', action='store', help='number of components',default=False)
 	extract.add_argument('-l', '--largest', action='store_true', help='Largest component of the graph', default=False)
 	extract.add_argument('-sc', '--selectComponent', action='store', help='Node/Nodes of the graph (ex. A,B,C)', default=False)
+	extract.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written (matches old Pyntacle no-plot semantics)', required=False)
 	extract.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same direcotry as the input file)', required=False)
-	extract.add_argument('-f', '--format', action='store', type=str, default="svg", help='Specify the format of the image output', required=False)
+	extract.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output', required=False)
 	extract.add_argument('-nl', '--nodeList', action='store', help='-[optional] Select the components that contain the given node/nodes (ex. A,B,C)', required=False, default=False)
 	extract._optionals.title = "Arguments"
 
@@ -252,7 +280,7 @@ def create_parser() -> argparse.ArgumentParser:
 	generate.add_argument('-mut', '--mutual', action='store_true', help='Flag to determine wheter to create all connections as mutual in case of a directed graph.', default=False)
 	generate.add_argument('-circ', '--circular', action='store_true', help='Flag to determine wheter the generated lattice is periodic', default=False)
 	generate.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored to the current working directory)', default=False, required=False)
-	generate.add_argument('-f', '--format', action='store', type=str, default="svg", help='Specify the format of the image output', required=False)
+	generate.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output', required=False)
 	generate._optionals.title = Fore.CYAN + Style.BRIGHT + "Arguments" + Style.RESET_ALL
 	generate._positionals.title = Fore.MAGENTA + Style.BRIGHT + "Subcommand" + Style.RESET_ALL
 
@@ -267,13 +295,41 @@ def create_parser() -> argparse.ArgumentParser:
 	mesoscale.add_argument('-w', '--weight', action='store_true', help='-[optional] Use this flag if your graph is weighted', required=False)
 	mesoscale.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be removed from the graph (ex. A,B,C)', required=False)
 	# mesoscale.add_argument('-n', '--nodes', action='store', help='-[optional] Nodes to select. If not specified, the metrics are computed for all nodes', required=False, default=None)
-	mesoscale.add_argument('-k', '--kSteps', action='store', help='-[optional] Maximum effects lenght considered. Defautl value is 3.', required=False, default=3)
+	mesoscale.add_argument('-k', '--kSteps', action='store', type=int, help='-[optional] Maximum effects length considered. Default value is 3.', required=False, default=3)
 	mesoscale.add_argument('-th', '--threshold', action='store', type=float, help='-[optional] Threshold that will be used to compute TO. TO will not be computed if no threshold is selected', required=False, default=0.)
 	# mesoscale.add_argument('-thrInc', '--thrInc', action='store', help='-[optional] Increment of threshold value from 0 to 1. Default value is 0.1.', required=False, default=0.1)
+	mesoscale.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written (matches old Pyntacle no-plot semantics)', required=False)
 	mesoscale.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same direcotry as the input file)', required=False)
-	mesoscale.add_argument('-f', '--format', action='store', type=str, default="svg", help='Specify the format of the image output', required=False)
-	mesoscale.add_argument('-v', '--verbose', action='store_true', help='[optional] Use this flag to recive prints of partial results of the measures.', required=False)
+	mesoscale.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output', required=False)
+	mesoscale.add_argument('-v', '--verbose', action='store_true', help='-[optional] Use this flag to recive prints of partial results of the measures.', required=False)
 
 	mesoscale._optionals.title = Fore.CYAN + Style.BRIGHT + "Arguments" + Style.RESET_ALL
+
+
+ 	### Percolation ###
+	percolation = subparsers.add_parser('percolation',usage=Fore.GREEN + Style.BRIGHT +'python3 main.py ' + Fore.RED +'percolation' + Fore.CYAN + ' -t {fileType} -i {input_file} [optional parameters] -P {global infectivity} -tau {recovery time τ} -tauDist {recovery time distribution} -pth {maximum local threshold} -n {seed node/s} -dist {distribution}' +  Style.RESET_ALL, help='''Computes percolation metrics for all nodes of the given input graph''', 
+		description=Fore.RED + Style.BRIGHT + '''Percolation dynamics:\n\n''' + Fore.GREEN + Style.BRIGHT + ''' · Local edge thresholds p_th,ij:''' + Style.RESET_ALL + Fore.CYAN +  ''' for each edge (i,j) a local threshold p_th,ij is drawn in [0, p_thMax] from the chosen distribution.\n''' + Fore.GREEN + Style.BRIGHT + '''\n · Global percolation probability P*:''' + Style.RESET_ALL + Fore.CYAN + ''' controls how many edges become "open". An edge (i,j) can transmit only if\n''' + '''   P* ≥ p_th,ij   →   A*_ij = 1,   otherwise A*_ij = 0.\n''' + Fore.GREEN + Style.BRIGHT + '''\n · Spreading from a seed node:''' + Style.RESET_ALL + Fore.CYAN + ''' starting from the seed s at t = 0, activity spreads along open edges. The active set evolves as\n''' + '''   S_{t+1} = N_open(S_t) \\ R_t, ''' + '''where N_open(S_t) are neighbors reachable through open edges and R_t are recovered nodes.\n''' + Fore.GREEN + Style.BRIGHT + '''\n · Recovery time τ:''' + Style.RESET_ALL + Fore.CYAN + ''' a node activated at time t stays active for τ steps and then recovers (it no longer transmits).\n''' + Style.RESET_ALL, formatter_class=argparse.RawDescriptionHelpFormatter)
+	percolation.add_argument('-t', '--fileType', action='store', type=str, choices = ["matrix", "edgelist", "sif", "dot"], help='-[required] File type', required=True)
+	percolation.add_argument('-i', '--inputFile', action='store', help='-[required] Specify the input file name', required=True)
+	percolation.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Use this flag if your file has a specific separator (ex. \'\\t\')', required=False)
+	percolation.add_argument('-nh', '--NoHeader', action='store_true', help='-[optional] Use this flag if your file doesn\'t have an header', required=False)
+	percolation.add_argument('-d', '--directed', action='store_true', help='-[optional] Use this flag if your graph is directed', required=False)
+	percolation.add_argument('-w', '--weight', action='store_true', help='-[optional] Use this flag if your graph is weighted', required=False)
+	percolation.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be removed from the graph (ex. A,B,C)', required=False)
+	percolation.add_argument('-n', '--nodes', action='store', help='-[optional] ID of the seed node where the process starts. If not provided, a random node in the graph is chosen.', required=False, default=None)
+	percolation.add_argument('-P', '--PrInf', action='store', help='-[optional] Global infectivity / Occupation probability (0–1). Higher P* → easier spreading / percolation. Default value is 0.5.', required=False, default=0.5)
+	percolation.add_argument('-tau', '--tau', action='store', help='-[optional] Recovery time τ (in simulation steps). A node can transmit for τ steps after activation, then becomes recovered. Must be > 0. Default: 4.', required=False, default=4)
+	percolation.add_argument('-tauDist', '--tauDistribution', choices=['fixed', 'uniform', 'normal', 'bimodal'], action='store', help='-[optional] Distribution used for recovery times τ. "fixed": single global τ for all nodes (default). "uniform"/"normal"/"bimodal": interpret -tau as τ_max and draw per-node τ_i in (0, τ_max] from the chosen distribution.', required=False, default='fixed')
+	percolation.add_argument('-tauFile', '--tauFile', action='store', help=('-[optional] TSV file with fixed per-node recovery times. Must contain two ''columns: "Nodes" and "Recovery_time". Node labels in "Nodes" must match. When provided, these τ_i values ''override -tau and -tauDist.'), required=False, default=None)
+	percolation.add_argument('-pth', '--pthMax', action='store', help='-[optional] Maximum local threshold p_th in [0,1]. Each edge (i,j) gets a local threshold p_th,ij drawn in [0, p_thMax]; the edge can transmit only if P* >= p_th,ij. Default: 1.0.', required=False, default=1)
+	percolation.add_argument('-dist', '--pthDistribution', choices=['uniform', 'normal', 'bimodal'], action='store', help='-[optional] Distribution used to sample local thresholds p_th,ij in [0, p_thMax]. "uniform": all values equally likely; "normal": thresholds cluster around a central value; "bimodal": two groups of edges with low and high thresholds. Default: uniform.', required=False, default='uniform')
+	percolation.add_argument('-mxs', '--maxSteps', action='store', type=int, help='-[optional] Maximum number of simulation steps. Default: number of nodes in the graph.', required=False, default=None)
+	snapshot_group = percolation.add_mutually_exclusive_group()
+	snapshot_group.add_argument("--snapshotInfected", type=int, default=None, help=" -[optional] If set, take a snapshot when the number of *currently infected* nodes reaches this value. The TSV report will include node states at that time.", required=False )
+	snapshot_group.add_argument("--snapshotNode", type=str, default=None, help="-[optional] If set, take a snapshot at the time when this node becomes infected. Can be a node label or a node index (0-based).", required=False )
+	percolation.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written (matches old Pyntacle no-plot semantics)', required=False)
+	percolation.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same direcotry as the input file)', required=False)
+	percolation.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output', required=False)
+	percolation.add_argument('-v', '--verbose', action='store_true', help='-[optional] Use this flag to recive prints of partial results of the measures.', required=False)
 
 	return parser

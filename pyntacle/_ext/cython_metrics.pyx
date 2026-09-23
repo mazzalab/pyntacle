@@ -1,59 +1,97 @@
 # cython: boundscheck=False, wraparound=False, language_level=3, cdivision=True
 from cython.parallel import parallel, prange, threadid
 from cython.cimports.libc.stdlib cimport abort, malloc, free
-from cython.cimports.libc.string cimport memcpy
+from cython.cimports.libc.string cimport memcpy, memset
 from cython.cimports.libc.stdio cimport printf
+from cython.cimports.libc.math cimport fabs, fmax
 
 from . cimport kp_metrics
 from . cimport group_metrics
 from . cimport utils
 from . cimport cython_igraph
 
-cdef double INF = 1e9  # Use a large number to represent infinity
-
 
 # Example: operation_selector defined in Cython and using memoryviews.
-cdef double operation_selector(int operation, double[:, :] adj, int* K_indices, int* notK_indices,  int k, int mdist, double* floWar, int dist_type) noexcept nogil:
-    
-    cdef int k_node    
+cdef double operation_selector(int operation, int[:, :] edges, double[:] wvec, int n, int* K_indices, int* notK_indices,  int k, int mdist, double* floWar, int dist_type, utils.CSR* csr, utils.Scratch* scratch, bint unweighted) noexcept nogil:
+
     cdef double result = 0
-    cdef int i
-    cdef int n = adj.shape[0]
 
-    # F w/ assp
+    # F: flood fill on the pre-built CSR, no igraph and no allocation
     if operation == 0:
-        result = kp_metrics.get_fragmentation(adj, K_indices, k)
+        result = kp_metrics.get_fragmentation(csr, scratch, K_indices, k)
 
-    # dF w/ assp
+    # dF: one source at a time into the per-thread scratch row
     elif operation == 1:
-        result = kp_metrics.get_distance_fragmentation(adj, K_indices, k)
+        result = kp_metrics.get_distance_fragmentation(csr, scratch, K_indices, k, unweighted)
 
     # dR
     elif operation == 2:
         result = kp_metrics.get_distance_weighted_reach(floWar, K_indices, notK_indices, k, n)
 
-    # mReach 
+    # mReach (floWar holds HOP distances for this operation)
     elif operation == 3:
         result = kp_metrics.m_reach(floWar, K_indices, notK_indices, k, n, mdist)
 
-    # gD w/ assp
+    # gD: adjacency read off the CSR, membership mask refreshed into the scratch
     elif operation == 4:
-        result = group_metrics.get_group_degree(adj, K_indices, notK_indices, k, n)
-    
-    # gB w/ assp
-    elif operation == 5:
-        result = group_metrics.get_group_betweenness(adj, K_indices, notK_indices, k)
+        utils.mark_group(scratch, K_indices, k)
+        result = group_metrics.get_group_degree(csr, scratch.in_K, notK_indices, k, n)
 
-    # gC 
+    # gB: rebuilt igraph from the edge list per candidate (as before, no dense matrix)
+    elif operation == 5:
+        result = group_metrics.get_group_betweenness(edges, wvec, n, K_indices, notK_indices, k)
+
+    # gC
     elif operation == 6:
         result  = group_metrics.get_group_closeness( floWar, K_indices, notK_indices, k, n, dist_type)
 
     return result
 
-cpdef cython_greedy(int[:] K_indices, int[:] notK_indices, double[:, :] adj, int operation, int mdist, int dist_type, int num_threads):
+
+cdef double* build_all_dist(int[:, :] edges, double[:] wvec, int n, utils.CSR* csr, int op) except? NULL:
+    """All-pairs distances for the metrics that can hoist them out of the loop.
+
+    m-reach (op 3) is defined in hops, so it gets an unweighted BFS matrix; dR
+    and group closeness get the weighted one. Returns NULL when the operation
+    needs no matrix.
+    """
+    cdef double* all_dist
+    cdef utils.Scratch* tmp
+    cdef int i
+
+    if op != 2 and op != 3 and op != 6:
+        return NULL
+
+    all_dist = <double*> malloc((<size_t> n) * n * sizeof(double))
+    if all_dist == NULL:
+        raise MemoryError(
+            f"cannot allocate the {n}x{n} distance matrix "
+            f"({(<size_t> n) * n * 8 / 1e9:.1f} GB)")
+
+    if op == 3:
+        tmp = utils.scratch_alloc(n)
+        if tmp == NULL:
+            free(all_dist)
+            raise MemoryError("cannot allocate the traversal scratch buffers")
+        memset(tmp.in_K, 0, n * sizeof(char))
+        with nogil:
+            for i in range(n):
+                utils.csr_bfs_row(csr, i, tmp.in_K, all_dist + (<size_t> i) * n, tmp.stack)
+        utils.scratch_free(tmp)
+    else:
+        if cython_igraph.igraph_dijkstra(edges, wvec, n, all_dist) != 0:
+            free(all_dist)
+            raise RuntimeError(
+                "igraph refused to compute the shortest-path matrix. The most "
+                "common cause is a directed network: the compiled kernels only "
+                "support undirected graphs.")
+
+    return all_dist
+
+
+cpdef cython_greedy(int[:] K_indices, int[:] notK_indices, int[:, :] edges, double[:] wvec, int n, int operation, int mdist, int dist_type, int num_threads, bint unweighted=False):
 
     cdef int op = operation
-    cdef int n = adj.shape[0]
     cdef int k = K_indices.shape[0]
     cdef int n_k = notK_indices.shape[0]
 
@@ -71,303 +109,351 @@ cpdef cython_greedy(int[:] K_indices, int[:] notK_indices, double[:, :] adj, int
 
     cdef int* candidate_set
     cdef int* not_candidate_set
-    
+    cdef utils.Scratch* scratch
+
     cdef double* all_dist = NULL
+    cdef double* candidate_results = NULL
+    cdef int* k_tmp = NULL
+    cdef int* notk_tmp = NULL
+    cdef utils.Scratch* main_scratch = NULL
+    cdef utils.CSR* csr = NULL
+    # Heap cell rather than a plain int: a variable assigned inside a `parallel`
+    # block becomes thread-private, so the flag would never reach this scope.
+    cdef int* alloc_failed = NULL
 
-    cdef double* candidate_results = <double*> malloc((k * n_k) * sizeof(double))
+    csr = utils.csr_from_edges(edges, wvec, n)
+    if csr == NULL:
+        raise MemoryError("cannot build the CSR view of the network")
 
-    cdef int* k_tmp = <int*> malloc((k) * sizeof(int))
-    memcpy(k_tmp, &K_indices[0], k * sizeof(int))
+    try:
+        alloc_failed = <int*> malloc(sizeof(int))
+        if alloc_failed == NULL:
+            raise MemoryError("cannot allocate the worker failure flag")
+        alloc_failed[0] = 0
+        candidate_results = <double*> malloc((<size_t> k * n_k) * sizeof(double))
+        k_tmp = <int*> malloc(k * sizeof(int))
+        notk_tmp = <int*> malloc(n_k * sizeof(int))
+        main_scratch = utils.scratch_alloc(n)
+        if candidate_results == NULL or k_tmp == NULL or notk_tmp == NULL or main_scratch == NULL:
+            raise MemoryError("cannot allocate the greedy working buffers")
 
-    cdef int* notk_tmp = <int*> malloc(n_k * sizeof(int))
-    memcpy(notk_tmp, &notK_indices[0], n_k * sizeof(int))
+        memcpy(k_tmp, &K_indices[0], k * sizeof(int))
+        memcpy(notk_tmp, &notK_indices[0], n_k * sizeof(int))
 
-    # printf("\nVediamo se ha copiato k_tmp:")
-    # for test_idx in range(k):
-    #     printf("%d ", K_indices[test_idx])
-    # printf("\n\n")
+        # Distances that do not depend on the candidate set are computed once here
+        # rather than per candidate.
+        all_dist = build_all_dist(edges, wvec, n, csr, op)
 
-    # Compute the shortest path matrix, this greatly speeds up the computation
-    # not elegant but very efficient
-    if op == 2 or op == 3 or op == 6:
-        
-        all_dist = <double*> malloc((n*n) * sizeof(double))
-        
-        if cython_igraph.igraph_dijkstra(adj, all_dist, NULL, 0) != 0:
-            printf("Failed to compute shortest path matrix!\n")
+        optimization_score = operation_selector(operation,
+                                                edges, wvec, n,
+                                                k_tmp,
+                                                notk_tmp,
+                                                k, mdist,
+                                                all_dist,
+                                                dist_type,
+                                                csr, main_scratch, unweighted)
 
-        # printf("\nMatrice delle distanze:\n")
-        # for i from 0 <= i < n:
-        #     printf("riga %d: ", i)
-        #     for j from 0 <= j < n:
-        #         printf("%f ", all_dist[i*n + j])
-        #     printf("\n")
-        # printf("\n\n")
-    
-    optimization_score = operation_selector(operation, 
-                                            adj, 
-                                            k_tmp, 
-                                            notk_tmp, 
-                                            k, mdist, 
-                                            all_dist,
-                                            dist_type)
+        optimal_set_found = False
 
-    free(k_tmp)
-    free(notk_tmp)
+        while not optimal_set_found:
+            with nogil, parallel(num_threads=num_threads):
 
-    # printf("\nVediamo optimization_score:")
-    # printf("%f\n", optimization_score)
+                # For each thread copy the K set, plus its own traversal scratch.
+                # Allocated once per parallel region, not once per candidate.
+                candidate_set = <int*> malloc(k * sizeof(int))
+                not_candidate_set = <int*> malloc(n_k * sizeof(int))
+                scratch = utils.scratch_alloc(n)
 
-    optimal_set_found = False
+                if candidate_set == NULL or not_candidate_set == NULL or scratch == NULL:
+                    alloc_failed[0] = 1
+                else:
+                    # Loop over all candidate replacements in parallel.
+                    for idx in prange(k * n_k, schedule="static"):
 
+                        # Determine which element of K_indices to replace and with which element from notK_indices.
+                        k_idx = idx // n_k  # element in K_indices
+                        i_idx = idx % n_k     # element in notK_indices
 
-    while not optimal_set_found:
-        with nogil, parallel(num_threads=num_threads):
+                        # reset the sets to default
+                        memcpy(candidate_set, &K_indices[0], k * sizeof(int))
+                        memcpy(not_candidate_set, &notK_indices[0], n_k * sizeof(int))
 
-            # For each thread copy the K set 
-            candidate_set = <int*> malloc(k * sizeof(int))
-            not_candidate_set = <int*> malloc(n_k * sizeof(int))
+                        # swap element
+                        candidate_set[k_idx] = notK_indices[i_idx]
+                        not_candidate_set[i_idx] = K_indices[k_idx]
 
-            # Loop over all candidate replacements in parallel.
-            for idx in prange(k * n_k, schedule="static"):
-                
-                # Determine which element of K_indices to replace and with which element from notK_indices.
-                k_idx = idx // n_k  # element in K_indices 
-                i_idx = idx % n_k     # element in notK_indices 
+                        candidate_results[idx] = operation_selector(operation,
+                                                                    edges, wvec, n,
+                                                                    candidate_set,
+                                                                    not_candidate_set,
+                                                                    k, mdist,
+                                                                    all_dist,
+                                                                    dist_type,
+                                                                    csr, scratch, unweighted)
 
-                # reset the sets to default
-                memcpy(candidate_set, &K_indices[0], k * sizeof(int))
-                memcpy(not_candidate_set, &notK_indices[0], n_k * sizeof(int))
+                free(candidate_set)
+                free(not_candidate_set)
+                utils.scratch_free(scratch)
 
-                # swap element
-                candidate_set[k_idx] = notK_indices[i_idx]
-                not_candidate_set[i_idx] = K_indices[k_idx]
+            if alloc_failed[0]:
+                raise MemoryError("a worker thread could not allocate its scratch buffers")
 
-                # printf("swapped %d, with %d\n", K_indices[k_idx], notK_indices[i_idx])
-                # printf("After swap candidate_set:\n")
-                # printf("candidate_set:\n")
-                # for j from 0 <= j <k:
-                #     printf("%d ", candidate_set[j])
-                # printf("\nNoTcandidate_set:\n")
-                # for j from 0 <= j < n-k:
-                #     printf("%d ", not_candidate_set[j])
-                # printf("\n\n")
+            # Find the best candidate so far.
+            max_val = candidate_results[0]
+            max_index = 0
 
-                candidate_results[idx] = operation_selector(operation, 
-                                                            adj, 
-                                                            candidate_set, 
-                                                            not_candidate_set, 
-                                                            k, mdist, 
-                                                            all_dist,
-                                                            dist_type)
+            for i in range(1, k * n_k):
+                if candidate_results[i] > max_val:
+                    max_val = candidate_results[i]
+                    max_index = i
 
-                # printf("\nscore: %f", candidate_results[idx])
-                # printf("\nscore: %d", idx)
+            if max_val > optimization_score:
 
-            free(candidate_set)
-            free(not_candidate_set)
+                k_idx = max_index // n_k
+                i_idx = max_index % n_k
 
+                # swap elements
+                max_index = K_indices[k_idx] # uso come appoggio
+                K_indices[k_idx] = notK_indices[i_idx]
+                notK_indices[i_idx] = max_index
 
-        # Find the best candidate so far.
-        max_val = candidate_results[0] 
-        max_index = 0
+                optimization_score = max_val
 
-        for i in range(1, k * n_k):
-            if candidate_results[i] > max_val:
-                max_val = candidate_results[i]
-                max_index = i
-        
-        # printf("\nmax_val: %f\n", max_val)
-        # printf("optimization_score: %f\n\n", optimization_score )
+            else:
 
-        if max_val > optimization_score:
-            
-            k_idx = max_index // n_k  
-            i_idx = max_index % n_k 
-            
-            # swap elements
-            max_index = K_indices[k_idx] # uso come appoggio 
-            K_indices[k_idx] = notK_indices[i_idx]
-            notK_indices[i_idx] = max_index
-        
+                optimal_set_found = True
 
-            # printf("\nUpdated set K:")
-            # for j in range(k):
-                    
-            #     printf("%d ", K_indices[j])
-
-            # printf("\n")
-
-            # printf("New set not K: ")
-            # for i in range(n_k):
-            #     printf("%d ", notK_indices[i])
-            # printf("\n\n")
-
-            optimization_score = max_val
-
-        else:
-            
-            optimal_set_found = True
-    
-
-    free(candidate_results)
-
-    if all_dist != NULL:
+    finally:
+        free(alloc_failed)
+        free(candidate_results)
+        free(k_tmp)
+        free(notk_tmp)
         free(all_dist)
-  
-
-    # printf("the set of indices that where found is:\n")
-    # for i from 0 <= i < k:
-    #     printf("%d ", K_indices[i])
-    # printf("\n\n")
-    # printf("Optimization score found:\n")
-    # printf("%f", optimization_score)
+        utils.scratch_free(main_scratch)
+        utils.csr_free(csr)
 
     return K_indices, round(optimization_score, 3)
 
 
-cpdef cython_info(int[:] K_indices, int[:] notK_indices, double[:, :] adj, int operation, int mdist, int dist_type, int num_threads):
+cpdef cython_info(int[:] K_indices, int[:] notK_indices, int[:, :] edges, double[:] wvec, int n, int operation, int mdist, int dist_type, int num_threads, bint unweighted=False):
 
     cdef int op = operation
-    cdef int n = adj.shape[0]
     cdef int k = K_indices.shape[0]
     cdef int n_k = notK_indices.shape[0]
 
     cdef double optimization_score
 
-    # define all indices
-    cdef int i, j, w
-
     cdef double* all_dist = NULL
+    cdef int* k_tmp = NULL
+    cdef int* notk_tmp = NULL
+    cdef utils.Scratch* scratch = NULL
+    cdef utils.CSR* csr = NULL
 
-    cdef int* k_tmp = <int*> malloc((k) * sizeof(int))
-    memcpy(k_tmp, &K_indices[0], k * sizeof(int))
+    csr = utils.csr_from_edges(edges, wvec, n)
+    if csr == NULL:
+        raise MemoryError("cannot build the CSR view of the network")
 
-    cdef int* notk_tmp = <int*> malloc(n_k * sizeof(int))
-    memcpy(notk_tmp, &notK_indices[0], n_k * sizeof(int))
+    try:
+        k_tmp = <int*> malloc(k * sizeof(int))
+        notk_tmp = <int*> malloc(n_k * sizeof(int))
+        scratch = utils.scratch_alloc(n)
+        if k_tmp == NULL or notk_tmp == NULL or scratch == NULL:
+            raise MemoryError("cannot allocate the working buffers")
 
- 
-    if op == 2 or op == 3 or op == 6:
-        
-        all_dist = <double*> malloc((n*n) * sizeof(double))
-        
-        if cython_igraph.igraph_dijkstra(adj, all_dist, NULL, 0) != 0:
-            printf("Failed to compute shortest path matrix!\n")
+        memcpy(k_tmp, &K_indices[0], k * sizeof(int))
+        memcpy(notk_tmp, &notK_indices[0], n_k * sizeof(int))
 
-        # printf("\nMatrice delle distanze:\n")
-        # for i from 0 <= i < n:
-        #     printf("riga %d: ", i)
-        #     for j from 0 <= j < n:
-        #         printf("%f ", all_dist[i*n + j])
-        #     printf("\n")
-        # printf("\n\n")
-    
-    optimization_score = operation_selector(operation, 
-                                            adj, 
-                                            k_tmp, 
-                                            notk_tmp, 
-                                            k, mdist, 
-                                            all_dist,
-                                            dist_type)
+        all_dist = build_all_dist(edges, wvec, n, csr, op)
 
-    free(k_tmp)
-    free(notk_tmp)
-
-    optimal_set_found = False
-
-    if all_dist != NULL:
+        optimization_score = operation_selector(operation,
+                                                edges, wvec, n,
+                                                k_tmp,
+                                                notk_tmp,
+                                                k, mdist,
+                                                all_dist,
+                                                dist_type,
+                                                csr, scratch, unweighted)
+    finally:
+        free(k_tmp)
+        free(notk_tmp)
         free(all_dist)
-  
-    # printf("the set of indices that where found is:\n")
-    # for i from 0 <= i < k:
-    #     printf("%d ", K_indices[i])
-    # printf("\n\n")
-    # printf("Optimization score found:\n")
-    # printf("%f", optimization_score)
+        utils.scratch_free(scratch)
+        utils.csr_free(csr)
 
     return round(optimization_score, 3)
 
 
-
-cpdef cython_bruteforce(double[:, :] adj, int[:] K_indices, int operation, int mdist, int dist_type, int comb_num, int num_threads):
+cpdef cython_bruteforce(int[:, :] edges, double[:] wvec, int n, int[:] K_indices, int operation, int mdist, int dist_type, long long comb_num, int num_threads, bint unweighted=False, int max_ties=100):
 
     cdef int op = operation
-    cdef int n = adj.shape[0]
     cdef int k = K_indices.shape[0]
     # define all indices
-    cdef int idx
-    cdef int i
+    cdef long long idx
+    cdef int i, j
 
-    cdef int max_index = 0
+    cdef long long max_index = 0
     cdef double max_score = 0.
     cdef double score
+    # Thread-private inside the parallel block: assigned there, never read here.
+    cdef double best
+    cdef double eps
+    cdef int tid
+
+    # Ties: several node sets routinely reach the same optimum, and reporting one
+    # of them silently discards the rest of the answer. Each worker keeps the
+    # indices of the sets sitting at its own best score, capped at max_ties, plus
+    # an uncapped counter so the report can say "showing 100 of 4711".
+    cdef long long* tie_buf = NULL
+    cdef int* tie_count = NULL
+    cdef long long* tie_total = NULL
+    cdef long long total_ties = 0
+    cdef int n_collected = 0
 
     cdef int* k_set
     cdef int* not_k_set
+    cdef utils.Scratch* scratch
 
     cdef double* all_dist = NULL
+    cdef double* candidate_results = NULL
+    cdef long long* candidate_index = NULL
+    cdef utils.CSR* csr = NULL
+    # Heap cell rather than a plain int: a variable assigned inside a `parallel`
+    # block becomes thread-private, so the flag would never reach this scope.
+    cdef int* alloc_failed = NULL
 
-    cdef double* candidate_results = <double*> malloc(num_threads * sizeof(double))
-    cdef int* candidate_index = <int*> malloc(num_threads * sizeof(int))
+    csr = utils.csr_from_edges(edges, wvec, n)
+    if csr == NULL:
+        raise MemoryError("cannot build the CSR view of the network")
 
-    # Compute the shortest path matrix, this greatly speeds up the computation
-    # not elegant but very efficient
-    if op == 2 or op == 3 or op == 6:
-        
-        all_dist = <double*> malloc((n*n) * sizeof(double))
-        
-        if cython_igraph.igraph_dijkstra(adj, all_dist, NULL, 0) != 0:
-            printf("Failed to compute shortest path matrix!\n")
+    try:
+        alloc_failed = <int*> malloc(sizeof(int))
+        if alloc_failed == NULL:
+            raise MemoryError("cannot allocate the worker failure flag")
+        alloc_failed[0] = 0
+        if max_ties < 1:
+            max_ties = 1
+        candidate_results = <double*> malloc(num_threads * sizeof(double))
+        candidate_index = <long long*> malloc(num_threads * sizeof(long long))
+        tie_buf = <long long*> malloc(<size_t> num_threads * max_ties * sizeof(long long))
+        tie_count = <int*> malloc(num_threads * sizeof(int))
+        tie_total = <long long*> malloc(num_threads * sizeof(long long))
+        if (candidate_results == NULL or candidate_index == NULL
+                or tie_buf == NULL or tie_count == NULL or tie_total == NULL):
+            raise MemoryError("cannot allocate the brute-force result buffers")
 
+        # zero-init: a thread that runs no prange iterations (comb_num < num_threads),
+        # or whose first candidate is compared before any write, would otherwise read
+        # uninitialized memory. All metric scores are >= 0, so 0 is a safe floor.
+        # tie_count stays 0 until a candidate actually wins, which is what keeps a
+        # network where everything scores 0 behaving as it did before ties existed.
+        for i in range(num_threads):
+            candidate_results[i] = 0.
+            candidate_index[i] = 0
+            tie_count[i] = 0
+            tie_total[i] = 0
 
-    with nogil, parallel(num_threads=num_threads):
+        all_dist = build_all_dist(edges, wvec, n, csr, op)
 
-        # For each thread copy the K set 
+        with nogil, parallel(num_threads=num_threads):
+
+            # For each thread copy the K set, plus its own traversal scratch
+            k_set = <int*> malloc(k * sizeof(int))
+            not_k_set = <int*> malloc((n - k) * sizeof(int))
+            scratch = utils.scratch_alloc(n)
+
+            if k_set == NULL or not_k_set == NULL or scratch == NULL:
+                alloc_failed[0] = 1
+            else:
+                # Loop over all candidate replacements in parallel.
+                for idx in prange(comb_num, schedule="static"):
+
+                    utils.index_to_combination(idx, n, k, k_set, not_k_set)
+
+                    score =  operation_selector(operation,
+                                                edges, wvec, n,
+                                                k_set,
+                                                not_k_set,
+                                                k, mdist,
+                                                all_dist,
+                                                dist_type,
+                                                csr, scratch, unweighted)
+
+                    tid = threadid()
+                    best = candidate_results[tid]
+                    # Candidates reach the same optimum through different traversal
+                    # orders, so their scores agree to rounding, not to the bit.
+                    eps = 1e-9 * fmax(1., fabs(best))
+
+                    if score > best + eps:
+                        candidate_results[tid] = score
+                        candidate_index[tid] = idx
+                        tie_buf[tid * max_ties] = idx
+                        tie_count[tid] = 1
+                        tie_total[tid] = 1
+                    elif tie_count[tid] > 0 and fabs(score - best) <= eps:
+                        tie_total[tid] = tie_total[tid] + 1
+                        if tie_count[tid] < max_ties:
+                            tie_buf[tid * max_ties + tie_count[tid]] = idx
+                            tie_count[tid] = tie_count[tid] + 1
+
+            free(k_set)
+            free(not_k_set)
+            utils.scratch_free(scratch)
+
+        if alloc_failed[0]:
+            raise MemoryError("a worker thread could not allocate its scratch buffers")
+
+        for i from 0 <= i < num_threads:
+            if i == 0:
+                max_score = candidate_results[i]
+                max_index = candidate_index[i]
+            elif candidate_results[i] > max_score:
+                max_score = candidate_results[i]
+                max_index = candidate_index[i]
+
+        # Gather the sets sitting at the global optimum. Threads that never beat
+        # the 0 floor (tie_count == 0) are skipped: on a network where nothing
+        # scores, the answer stays what it always was -- combination 0, score 0,
+        # reported as a single set.
+        eps = 1e-9 * fmax(1., fabs(max_score))
+        collected = []
+        for i from 0 <= i < num_threads:
+            if tie_count[i] > 0 and fabs(candidate_results[i] - max_score) <= eps:
+                total_ties = total_ties + tie_total[i]
+                for j from 0 <= j < tie_count[i]:
+                    if n_collected < max_ties:
+                        collected.append(tie_buf[<size_t> i * max_ties + j])
+                        n_collected = n_collected + 1
+
+        if n_collected == 0:
+            collected = [max_index]
+            n_collected = 1
+            total_ties = 1
+        else:
+            max_index = <long long> collected[0]
+
         k_set = <int*> malloc(k * sizeof(int))
-        not_k_set = <int*> malloc((n - k) * sizeof(int))
-
-        # Loop over all candidate replacements in parallel.
-        for idx in prange(comb_num, schedule="static"):
-
-            utils.index_to_combination(idx, n, k, k_set, not_k_set)
-
-            score =  operation_selector(operation, 
-                                        adj, 
-                                        k_set, 
-                                        not_k_set, 
-                                        k, mdist, 
-                                        all_dist,
-                                        dist_type)
-
-            if score > candidate_results[threadid()]:
-                candidate_results[threadid()] = score
-                candidate_index[threadid()] = idx
-
+        if k_set == NULL:
+            raise MemoryError("cannot allocate the winning combination buffer")
+        tie_sets = []
+        for i from 0 <= i < n_collected:
+            utils.index_to_combination(<long long> collected[i], n, k, k_set, NULL)
+            tie_sets.append([k_set[j] for j in range(k)])
+        utils.index_to_combination(max_index, n, k, k_set, NULL)
+        for i from 0 <= i < k:
+            K_indices[i] = k_set[i]
         free(k_set)
-        free(not_k_set)
 
-
-    for idx from 0 <= idx < num_threads:
-        if idx == 0:
-            max_score = candidate_results[idx]
-            max_index = candidate_index[idx]
-        elif candidate_results[idx] > max_score:
-            max_score = candidate_results[idx]
-            max_index = candidate_index[idx]
-
-    free(candidate_results)
-    free(candidate_index)
-
-    if all_dist != NULL:
+    finally:
+        free(alloc_failed)
+        free(candidate_results)
+        free(candidate_index)
+        free(tie_buf)
+        free(tie_count)
+        free(tie_total)
         free(all_dist)
+        utils.csr_free(csr)
 
-    k_set = NULL
-    k_set = <int*> malloc(k * sizeof(int))
-
-    utils.index_to_combination(max_index, n, k, k_set, NULL)
-    for idx from 0 <= idx < k:
-        K_indices[idx] = k_set[idx]
-
-    free(k_set)
-
-    return K_indices, round(max_score, 3)
+    # No rounding here: the report writer decides how many decimals to show, and
+    # rounding at the source cost precision that Pyntacle 1.3.2 reported.
+    return K_indices, max_score, tie_sets, total_ties

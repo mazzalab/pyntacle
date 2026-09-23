@@ -4,11 +4,11 @@ from statistics import mean
 import pandas as pd
 import numpy as np
 import os
-from math import isinf
 import math
 import itertools
 import pickle as pk
 import collections
+import warnings
 ### home-made functions import
 from utility import *
 
@@ -18,15 +18,31 @@ from utility import *
 #######################################################################################################
 
 class Graphtacle(ig.Graph, ig.GraphBase):
-    
-    removed=None
-    sub_func=""
-    outdir=""
+    """Extended igraph.Graph subclass for Pyntacle network analysis.
+
+    Adds file I/O, local/global topology metrics (radiality, completeness,
+    compactness), group centrality measures (degree, betweenness, closeness),
+    and visualization helpers on top of the standard igraph API.
+
+    Attributes:
+        fileType (str): Input file format (matrix, edgelist, sif, dot).
+        name (str): Graph name derived from the input file basename.
+        function (str): Active Pyntacle command (local, global, keyplayer, …).
+    """
+
     def __init__(self, nodes,edges,names,labels,weights,directed,fileType,sep,header,graph_name,function):
 
-        super().__init__(directed=directed,
-                         vertex_attrs={"name":names,"label": labels}, 
-                         edges=edges, 
+        # Vertex count must be passed explicitly: otherwise igraph infers it
+        # from the maximum edge index, silently dropping any isolated vertex
+        # whose index is higher than every edge endpoint. `nodes` is an int
+        # when reconstructed via __reduce__ (pickle) and a list of indices
+        # when built by re()/from_file().
+        n = nodes if isinstance(nodes, int) else len(nodes)
+        validate_weights(weights)
+        super().__init__(n=n,
+                         directed=directed,
+                         vertex_attrs={"name":names,"label": labels},
+                         edges=edges,
                          edge_attrs={"weight": weights})
         
         self.iNodes=[v.index for v in self.vs]
@@ -36,6 +52,12 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         self.sep = sep
         self.header=header
         self.directed=directed
+        # Per-instance analysis state. These used to be class attributes assigned
+        # through `Graphtacle.x = ...`, so every live graph shared one value --
+        # which the `set` command, holding two graphs at once, silently corrupted.
+        self.removed = None
+        self.sub_func = ""
+        self.outdir = ""
         self.memory=[fileType,sep,header,graph_name,function]
         self.memories=[nodes,edges,names,labels,weights,directed,fileType,sep,header,graph_name,function]
         
@@ -60,8 +82,24 @@ class Graphtacle(ig.Graph, ig.GraphBase):
     
     ### metodo costruttore 
     @classmethod
-    def from_file(cls,file,func,fileType,sep: str or None = None, header:bool=True, directed: bool=False, weight: bool=False):
-        
+    def from_file(cls, file, func, fileType, sep: str or None = None, header: bool = True, directed: bool = False, weight: bool = False):
+        """Construct a Graphtacle by loading a network file.
+
+        Args:
+            file (str): Path to the input network file.
+            func (str): Pyntacle command being executed (e.g. ``local``).
+            fileType (str): One of ``matrix``, ``edgelist``, ``sif``, ``dot``.
+            sep (str | None): Column separator. None uses whitespace/tab auto-detect.
+            header (bool): True if the file has a header row.
+            directed (bool): True to load as a directed graph.
+            weight (bool): True to parse edge weights.
+
+        Returns:
+            Graphtacle: Loaded graph object.
+
+        Raises:
+            TypeError: If fileType is not recognized.
+        """
         function = func
         graph_name = file
         #print("\nSelect the type of input: matrix, edgelist, sif or dot\n")
@@ -115,39 +153,56 @@ class Graphtacle(ig.Graph, ig.GraphBase):
 
     
     def remove_node(self,node):
-        Graphtacle.removed=node
-    
+        self.removed=node
+
     def nameSub_function(self,funct):
-        Graphtacle.sub_func=funct
+        self.sub_func=funct
 
     def path_function(self,outdir):
-        Graphtacle.outdir=outdir
+        self.outdir=outdir
 
     def get_edge_weight(self, start, end):
         return self.es[self.get_eid(start, end)]['weight']
 
-    def export_file(self, df, outdir):
+    def export_file(self, df, outdir, notes=None):
+        """Write a TSV report file with a standard Pyntacle header.
+
+        The report contains: project header, analysis type, network overview
+        (nodes, edges, components, removed nodes), and the data DataFrame.
+
+        Args:
+            df (pandas.DataFrame): Results table to append after the header.
+            outdir (str | None): Output directory. If None, writes to the
+                current working directory.
+            notes (list[str] | None): Extra header lines, written between the
+                network overview and the table. Brute-force runs use them to
+                state how many node sets reach the optimum.
+
+        Returns:
+            str: Path of the report that was written.
+        """
+        stem = f"report_{self.name}_{self.function}"
         if self.sub_func:
-            if outdir:
-                filename=f"{outdir}/report_{self.name}_{self.function}_{self.sub_func}.tsv"
-            else:
-                filename=f"report_{self.name}_{self.function}_{self.sub_func}.tsv"
-        else:
-            if outdir:
-                filename=f"{outdir}/report_{self.name}_{self.function}.tsv"
-            else:
-                filename=f"report_{self.name}_{self.function}.tsv"
-        
-        self.name=filename
+            stem = f"{stem}_{self.sub_func}"
+        # Deliberately not stored back on self.name: doing so made a second call
+        # build report_<previous report path>_... on top of the first one.
+        filename = f"{outdir}/{stem}.tsv" if outdir else f"{stem}.tsv"
+
         with open(filename, "w") as f:
-            f.write(f"Pyntacle report\t{self.name.strip().split('/')[-1]}\n")
-            f.write(f"Analysisi type\t{self.function}\n")
+            f.write(f"Pyntacle report\t{filename.strip().split('/')[-1]}\n")
+            f.write(f"Analysis type\t{self.function}\n")
             f.write("\nNetwork Overview\n")
             f.write(f"Removed nodes\t{self.removed}\n")
             f.write(f"Number of components\t{len(self.components())}\n")
             f.write(f"Number of Nodes\t{len(self.vs['label'])}\n")
             f.write(f"Number of Edges\t{len(self.get_edgelist())}\n\n")
+            for line in notes or []:
+                f.write(f"{line}\n")
+            if notes:
+                f.write("\n")
             f.write(df.to_csv(sep="\t", index=False))
+
+        return filename
             
 
     def plot_keyplayer(self,df,filename,exp_format,operation,outdir=False):
@@ -342,34 +397,61 @@ class Graphtacle(ig.Graph, ig.GraphBase):
 
 
 
-    def radiality(self):
-        
-        radiality=[]
-        sps=self.shortest_paths(weights=self.es["weight"],mode=ig.ALL)
+    def radiality(self, sps=None, diameter=None):
+        """Compute radiality centrality for all nodes.
 
+        Radiality of node i = (diameter + 1) - mean shortest-path distance from i
+        to all other nodes. Higher values indicate nodes more centrally positioned.
+
+        Args:
+            sps: optional precomputed weighted all-pairs shortest-path matrix
+                (list of rows). If None it is computed once here.
+            diameter: optional precomputed (unweighted) diameter. If None it is
+                computed once here.
+
+        Returns:
+            list[float]: Radiality score for each node in vertex order.
+        """
+        radiality=[]
+        weights = self.es["weight"] if "weight" in self.es.attributes() else None
+        if sps is None:
+            sps=self.distances(weights=weights,mode=ig.ALL)
+
+        if diameter is None:
+            # The diameter must be measured in the same unit as sps, otherwise
+            # (diameter + 1) - mean_distance mixes hops with weighted lengths and
+            # goes negative as soon as the weights exceed 1.
+            diameter = self.diameter(weights=weights)
+        norm = self.vcount() - 1
+
+        sps = np.asarray(sps, dtype=float)
         for node in self.iNodes:
-            radiality.append( (self.diameter() + 1) - (sum(sps[node])) / (self.vcount() - 1) )
+            row = sps[node]
+            reachable = row[np.isfinite(row)]
+            radiality.append( (diameter + 1) - reachable.sum() / norm )
 
         return radiality
     
     
     
     
-    def radiality_reach(self, nodes=None):
-        comps = self.components()  
+    def radiality_reach(self, nodes=None, sps=None, diameter=None):
+        comps = self.components()
         if len(comps) == 1:
-            return self.radiality()
+            return self.radiality(sps=sps, diameter=diameter)
         else:
             tot_nodes = self.vcount()
+            # Build one plain igraph view of the whole graph, then slice each
+            # component out of it. Constructed once (O(E)) instead of rebuilt
+            # per component (O(comps*E)). A plain ig.Graph is used because
+            # induced_subgraph on the Graphtacle subclass hits its custom
+            # __init__ signature (TypeError: unexpected keyword '__ptr').
+            base = plain_copy(self, directed=False)
             if nodes is None:
                 result = [None] * tot_nodes
 
                 for c in comps:
-                    tmp = ig.Graph(directed=False,
-                         vertex_attrs={"name":self.vs["name"],"label": self.vs["label"]}, 
-                         edges=self.get_edgelist(), 
-                         edge_attrs={"weight": self.es["weight"]})
-                    subg = tmp.induced_subgraph(vertices=c)
+                    subg = base.induced_subgraph(c)
                     subg = Graphtacle.re(subg, self.function, self.fileType, self.sep, self.header, self.directed, self.es["weight"], self.name)
                     if subg.ecount() == 0:  # isolates do not have a radiality-reach value by definition
                         rad = [0]
@@ -384,60 +466,89 @@ class Graphtacle(ig.Graph, ig.GraphBase):
                 return result
             else:
                 result = [None] * len(nodes)
-                inds = self.iNodes
                 for c in comps:
-                    if any(x in c for x in inds):
-                        node_names = list(set(nodes) & set(self.vs(c)["name"]))
-                        subg = self.induced_subgraph(vertices=c)
-                        part_nodes = subg.vcount()
-                        rad = Graphtacle.radiality(graph=subg, nodes=node_names)
+                    comp_names = set(self.vs(c)["name"])
+                    wanted = [nm for nm in nodes if nm in comp_names]
+                    if not wanted:
+                        continue
+                    subg = base.induced_subgraph(c)
+                    subg = Graphtacle.re(subg, self.function, self.fileType, self.sep, self.header, self.directed, self.es["weight"], self.name)
+                    part_nodes = subg.vcount()
+                    if subg.ecount() == 0:  # isolates do not have a radiality-reach value by definition
+                        rad = [0] * part_nodes
+                    else:
                         proportion_nodes = part_nodes / tot_nodes
-                        rad = [r * proportion_nodes for r in rad]
-                        for i, elem in enumerate(node_names):
-                            orig_index = nodes.index(elem)
-                            result[orig_index] = rad[i]
+                        rad = [r * proportion_nodes for r in subg.radiality()]
+                    sub_names = subg.vs["name"]
+                    for nm in wanted:
+                        result[nodes.index(nm)] = rad[sub_names.index(nm)]
                 return result
 
     def median_global_shortest_path_length(self):
 
-        sps = np.array(self.shortest_paths())
-        return float(np.median(sps[sps != 0]))
+        sps = np.array(self.distances(), dtype=float)
+        finite = sps[np.isfinite(sps) & (sps != 0)]
+        if finite.size == 0:
+            return float("nan")
+        return float(np.median(finite))
 
     
 
 
 ######################### ex shortest_path.py
     def get_shortestpaths(self):
-        
-        sps = self.shortest_paths(weights=self.es["weight"]) ### new
-        sps = [[self.vcount() + 1 if isinf(x) else x for x in y] for y in sps]
-        sps = np.array(sps) #convert to a numpy array
-        return sps
+        """Weighted all-pairs distances, unreachable pairs left as ``np.inf``.
+
+        The previous sentinel was ``vcount() + 1``, which is not an upper bound on
+        a weighted graph -- a finite distance can exceed n+1 and would then have
+        been mistaken for "unreachable".
+        """
+        weights = self.es["weight"] if "weight" in self.es.attributes() else None
+        return np.array(self.distances(weights=weights), dtype=float)
 
 
 
     def get_shortestpath_count(self, nodes=None):
-         
+        """Packed geodesic matrix: counts above the diagonal, path lengths below.
+
+        ``spaths[i, j]`` for ``j > i`` is the number of shortest i-j paths and
+        ``spaths[j, i]`` their length; ``group_betweenness`` needs both, and
+        ``subtract_count_dist_matrix`` only subtracts counts whose length matched.
+
+        Uses int64: geodesic counts pass 32767 on any layered graph, and the old
+        int16 wrapped around to negative values without a word.
+        """
         if nodes:
             loop_nodes = nodes
         else:
             loop_nodes = self.vs()
         loop_nodes_size = len(loop_nodes)
 
-        spaths = np.zeros(shape=(loop_nodes_size, loop_nodes_size), dtype=np.int16)
+        weights = self.es["weight"] if "weight" in self.es.attributes() else None
+        spaths = np.zeros(shape=(loop_nodes_size, loop_nodes_size), dtype=np.int64)
 
         for node in loop_nodes:
-            temp_row = np.zeros(shape=loop_nodes_size)
-            temp_col = np.zeros(shape=loop_nodes_size)
+            temp_row = np.zeros(shape=loop_nodes_size, dtype=np.int64)
+            temp_col = np.zeros(shape=loop_nodes_size, dtype=np.int64)
 
-            sp = self.get_all_shortest_paths(v=node,weights=self.es["weight"])
+            # index of the source in this matrix; the source is the only vertex
+            # whose shortest path to itself has length 1, but relying on that
+            # left row_col_index undefined whenever no such path came back
+            row_col_index = node.index if hasattr(node, "index") else int(node)
+
+            # A disconnected graph is a normal input here -- group_betweenness
+            # calls this on a copy with every edge of the group deleted, which
+            # isolates those vertices on purpose. igraph warns about the
+            # unreachable targets anyway; the zeros it leaves behind are exactly
+            # what the caller wants, so keep the warning out of the user's face.
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore", message=".*[Cc]ouldn't reach.*")
+                sp = self.get_all_shortest_paths(v=node, weights=weights)
             for s in sp:
                 if len(s) > 1:
                     last = s[-1]
                     temp_row[last] += 1
                     temp_col[last] = len(s) - 1
-                else:
-                    row_col_index = s[0]
 
             spaths[row_col_index, row_col_index:loop_nodes_size] = temp_row[row_col_index:loop_nodes_size]
             spaths[row_col_index:loop_nodes_size, row_col_index] = temp_col[row_col_index:loop_nodes_size]
@@ -456,12 +567,11 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         else:
             num = self.ecount()*2
 
-        # total number of possible edges (graph-loops excluded)
+        # Total number of possible edges (graph-loops excluded). `num` above counts
+        # adjacency-matrix non-zeros, so the ceiling is n(n-1) in both orientations;
+        # the two branches used to be swapped relative to completeness() below.
         node_tot = self.vcount()
-        if directed:
-            maxe = (node_tot * (node_tot - 1)) / 2
-        else:
-            maxe = node_tot * (node_tot - 1)
+        maxe = node_tot * (node_tot - 1)
 
         # total number of non-edges (V)
         denom = maxe - num
@@ -499,10 +609,12 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         '''
         Capocefalo
         '''
+        # Number of adjacency-matrix non-zeros, same convention as completeness():
+        # an undirected edge occupies two cells. The branches used to be swapped.
         if directed:
-            e = graph.ecount() * 2
-        else:
             e = graph.ecount()
+        else:
+            e = graph.ecount() * 2
 
         node_tot = graph.vcount()
         addend_left = (math.pow(node_tot, 2) / e) - 1
@@ -514,7 +626,18 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         return compactness
 
 
-    def group_degree(self,nodes=None):
+    def group_degree(self, nodes=None):
+        """Compute group degree centrality for a set of nodes.
+
+        Group degree = (number of non-group nodes adjacent to at least one
+        group member) / (total nodes - group size).
+
+        Args:
+            nodes: Iterable of node names (labels) forming the group.
+
+        Returns:
+            float: Normalized group degree in [0, 1].
+        """
 
         # Get the corresponding node indices
         nodes_ind=[]
@@ -529,6 +652,20 @@ class Graphtacle(ig.Graph, ig.GraphBase):
 
 
     def group_betweenness(self, np_counts, nodes=None):
+        """Compute group betweenness centrality for a set of nodes.
+
+        Group betweenness = fraction of shortest paths between non-group nodes
+        that pass through at least one group member, normalized by
+        (N - k)(N - k - 1) / 2 where k = group size.
+
+        Args:
+            np_counts (numpy.ndarray | None): Pre-computed shortest-path count
+                matrix (N×N). Pass None to compute on the fly.
+            nodes: Iterable of node names forming the group.
+
+        Returns:
+            float: Normalized group betweenness in [0, 1].
+        """
 
         # Count geodesics of the original graph
         if np_counts is not None:
@@ -579,9 +716,23 @@ class Graphtacle(ig.Graph, ig.GraphBase):
 
 
     def group_closeness(self, np_paths, nodes=None, distance_type="min"):
-       
-        MAX_PATH_LENGHT = len(self.vs) + 1
+        """Compute group closeness centrality for a set of nodes.
 
+        Group closeness = (number of non-group nodes) / sum over non-group nodes j
+        of d(K, j), where d(K, j) is the distance from group K to node j
+        (aggregated using distance_type).
+
+        Args:
+            np_paths (numpy.ndarray | None): Pre-computed shortest-path matrix.
+                Pass None to compute on the fly.
+            nodes: Iterable of node names forming the group.
+            distance_type (str): How to aggregate distances from K to j.
+                One of ``min``, ``max``, ``mean``. Default ``min``.
+
+        Returns:
+            float: Group closeness score. Higher = closer to the rest of the graph.
+        """
+       
         if not isinstance(np_paths, (type(None), np.ndarray)):
             raise TypeError("'np_paths' is not one NoneType or a numpy array")
 
@@ -602,7 +753,8 @@ class Graphtacle(ig.Graph, ig.GraphBase):
 
         group_closeness = 0
         for np_path in nongroup_np_paths:
-            temp_list = [elem for elem in np_path[group_indices] if elem != MAX_PATH_LENGHT]
+            # unreachable group members are dropped, not charged a sentinel distance
+            temp_list = [elem for elem in np_path[group_indices] if np.isfinite(elem)]
             if temp_list:
                 group_closeness += capo_dist(temp_list,distance_type)
         if group_closeness != 0:

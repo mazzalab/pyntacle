@@ -1,5 +1,4 @@
 import os
-from tkinter.ttk import Style
 import numpy as np
 import igraph as ig
 from itertools import combinations
@@ -82,13 +81,27 @@ def percolation(g: ig.Graph, k: int = 3) -> List[ig.Graph]:
 	return modules
 
 
-def communities(grafo,algorithm,n,giant,steps=4, communitySize=3):
+def communities(grafo, algorithm, n, giant, steps=4, communitySize=3):
+	"""Detect communities in a graph using a chosen algorithm.
 
-	subgraph = get_connected_subgraph(ig.Graph(directed=False,vertex_attrs={"name":grafo.vs["name"],
-																		   "label": grafo.vs["label"]},
-																		   edges=grafo.get_edgelist(),
-																		   edge_attrs={"weight": grafo.es["weight"]
-																		   }), giant)
+	Args:
+		grafo: A Graphtacle (igraph.Graph subclass) object.
+		algorithm (str): One of fastgreedy, infomap, leading-eigenvector,
+			random-walk, percolation.
+		n: Target number of communities (fastgreedy/leading-eigenvector).
+			Pass None to let the algorithm choose.
+		giant (bool): If True, run only on the largest connected component.
+		steps (int): Random-walk length (random-walk only). Default 4.
+		communitySize (int): Clique size k for percolation method. Default 3.
+
+	Returns:
+		list[igraph.Graph]: List of subgraphs, one per detected community.
+
+	Raises:
+		TypeError: If algorithm is not a recognized option.
+	"""
+
+	subgraph = get_connected_subgraph(plain_copy(grafo, directed=False), giant)
 
 	if (type(n)==str) & (algorithm!="infomap"): 
 		n=int(n)

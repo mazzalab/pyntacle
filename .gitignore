@@ -17,3 +17,28 @@ dist/
 *:Zone.Identifier
 .DS_Store
 *.Identifier
+
+# Generated outputs / local junk
+figure_*.html
+figure_*.svg
+report_*.tsv
+*_union.txt
+*_intersection.txt
+*_difference.txt
+toy_*.tsv
+cat >> .gitignore <<'EOF'
+
+# Generated outputs / local junk
+figure_*.html
+figure_*.svg
+report_*.tsv
+*_union.txt
+*_intersection.txt
+*_difference.txt
+toy_*.tsv
+percolation.html
+stresstest_percolation.html
+pyntacle_backup_*.zip
+pyntacle_backup_*.tar.gz
+Documentation_backup_*/
+Documentation/NetMD/

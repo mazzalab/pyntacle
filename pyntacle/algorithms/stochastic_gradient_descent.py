@@ -33,18 +33,16 @@ def operation_selector(grafo,operation,node_names,distance_type="min",mdist=None
 	elif operation=="betweenness":
 		result=grafo.group_betweenness(np_counts=None,nodes=node_names)
 	elif operation=="F":
-		temp_grafo = ig.Graph(directed=False,vertex_attrs={"name":grafo.vs["name"],"label": grafo.vs["label"]},edges=grafo.get_edgelist())
-		temp_grafo.delete_vertices(node_names)
+		temp_grafo = prune_graph(grafo, node_names)
 
-		if temp_grafo.ecount == 0:
+		if temp_grafo.ecount() == 0:
 			result=1
 		else:
 			result=fragmentation(temp_grafo)
 	elif operation=="dF":
-		temp_grafo = ig.Graph(directed=False,vertex_attrs={"name":grafo.vs["name"],"label": grafo.vs["label"]},edges=grafo.get_edgelist())
-		temp_grafo.delete_vertices(node_names)
+		temp_grafo = prune_graph(grafo, node_names)
 
-		if temp_grafo.ecount == 0:
+		if temp_grafo.ecount() == 0:
 			result=1
 		else:
 			result=distance_fragmentation(temp_grafo)
@@ -61,15 +59,19 @@ def operation_selector(grafo,operation,node_names,distance_type="min",mdist=None
 
 
 
-def call_stochastic_gradient_descent(grafo,k_size,operation,distance_type="min",mdist=None,probability=0,tolerance=0.01,maxsec=120):
+def call_stochastic_gradient_descent(grafo,k_size,operation,distance_type="min",mdist=None,probability=0,tolerance=0.01,maxsec=120,seed=None):
 
 	start_time=count_time("start")
+
+	if seed is not None:
+		random.seed(seed)
 
 	node_names = grafo.vs()["name"]
 	node_indices =  grafo.iNodes
 	df_tmp=pd.DataFrame({"name":node_names,"indices":node_indices})
 
-	shuffled_df = df_tmp.sample(frac=1.0) ### shuffle keeping the name association with indices
+	### shuffle keeping the name association with indices
+	shuffled_df = df_tmp.sample(frac=1.0, random_state=seed)
 
 	selected=shuffled_df.iloc[:k_size]
 	sorted_df=selected.sort_values(by="indices")
@@ -122,22 +124,26 @@ def call_stochastic_gradient_descent(grafo,k_size,operation,distance_type="min",
 		else:
 			continue
 
-	S_names=list(nodeSet_score.keys())
+	# Return a flat list of node names, like call_greedy does. The dict keys are
+	# tuples, so handing back list(keys()) produced a list of tuples that every
+	# downstream consumer (report, plot, html) then mis-read.
+	best = max(nodeSet_score, key=nodeSet_score.get)
+	S_names = list(best)
 	count_time("end")
 
 	return S_names, round(optimization_score,3)
 
 
 
-def call_all_sgd(grafo,k_size,operation,distance_type="min",mdist=None,probability=0,tolerance=0.01,maxsec=120,function=None):
-    
+def call_all_sgd(grafo,k_size,operation,distance_type="min",mdist=None,probability=0,tolerance=0.01,maxsec=120,function=None,seed=None):
+
     results=[]
     if function=="groupcentrality":
         for oper in ["degree","closeness","betweenness"]:#
-            results.append(call_stochastic_gradient_descent(grafo,k_size,oper,distance_type,mdist,probability,tolerance,maxsec))
+            results.append(call_stochastic_gradient_descent(grafo,k_size,oper,distance_type,mdist,probability,tolerance,maxsec,seed))
     elif function=="keyplayer":
         for oper in ["F","dF","dR","mreach"]:
-            results.append(call_stochastic_gradient_descent(grafo,k_size,oper,distance_type,mdist,probability,tolerance,maxsec))
+            results.append(call_stochastic_gradient_descent(grafo,k_size,oper,distance_type,mdist,probability,tolerance,maxsec,seed))
     else:
         raise KeyError(u"choose the correct function keyplayer | groupcentrality")
 

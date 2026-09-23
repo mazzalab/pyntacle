@@ -1,6 +1,8 @@
 import random
 import igraph as ig
 
+from utility import plain_copy
+
 ## our import
 #from brute_force import *
 
@@ -14,7 +16,7 @@ def groupcentrality_gcInfo(grafo, node_names, operation, distance_type="min"):
     gc_c={} # closeness
     gcset_score_pairs = {}
 
-    temp_grafo = ig.Graph(directed=False,vertex_attrs={"name":grafo.vs["name"],"label": grafo.vs["label"]},edges=grafo.get_edgelist())
+    temp_grafo = plain_copy(grafo, directed=False, with_weights=False)
     temp_grafo.delete_vertices(node_names)
 
     if operation == "all":

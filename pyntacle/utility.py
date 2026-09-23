@@ -46,8 +46,18 @@ def edgeGraph(df_edge, weight, directed=False):
 
     grafo = ig.Graph.TupleList(df_edge.values.tolist(), directed=directed, weights=weight)
 
-    if not directed:
-        grafo.simplify(multiple=True, loops=False, combine_edges=max)
+    # Self-loops and parallel edges both corrupt the adjacency-matrix view the
+    # Cython engine works on (a loop lands on the diagonal, a duplicate makes the
+    # cell read as a weight of 2). Collapse them for directed graphs too, which
+    # the previous `if not directed` guard skipped entirely.
+    loops = sum(1 for e in grafo.es if e.source == e.target)
+    duplicates = grafo.ecount() - len(set(
+        (min(e.tuple), max(e.tuple)) for e in grafo.es if e.source != e.target))
+    if loops:
+        print(f"[Warning] Removed {loops} self-loop(s) from the input network")
+    if duplicates:
+        print(f"[Warning] Merged {duplicates} parallel edge(s), keeping the maximum weight")
+    grafo.simplify(multiple=True, loops=True, combine_edges=max)
 
     grafo.vs["label"] = list(grafo.vs["name"])
 
@@ -129,11 +139,12 @@ def import_dot(file, directed=False, weight=False):
     for node in gviz.nodes():
         names.append(node.attr['name'])
     
+    # `name` is mandatory downstream (vs.find(name=...) is used everywhere), so
+    # fall back to the DOT node ids rather than leaving the attribute unset.
     if None in names:
-        grafo.vs["label"] = gviz.nodes()
-    else:
-        grafo.vs["label"] = names
-        grafo.vs["name"] = names
+        names = [str(node) for node in gviz.nodes()]
+    grafo.vs["label"] = names
+    grafo.vs["name"] = names
 
     # print("QUI")
     return grafo
@@ -142,6 +153,86 @@ def import_dot(file, directed=False, weight=False):
 
 
 ###### dummy functions
+
+def plain_copy(grafo, directed=None, with_weights=True):
+    """Plain igraph copy of ``grafo``, vertex count included.
+
+    The Graphtacle subclass cannot be copied with ``induced_subgraph`` or
+    ``copy`` (its ``__init__`` takes a fixed positional signature and chokes on
+    igraph's internal ``__ptr`` keyword), so the codebase rebuilds a plain
+    ``ig.Graph`` from the edge list instead. Doing that without an explicit ``n``
+    is a trap: igraph sizes the new graph from the highest endpoint it sees, so
+    every *trailing* isolated vertex disappears and the vertex-attribute lists
+    are truncated to match. An all-zero last row in an adjacency matrix is
+    exactly that case.
+
+    The compiled kernels never went through this path -- they read the dense
+    adjacency the Graphtacle builds with the right ``n`` -- which is why the
+    symptom was the Python and Cython engines disagreeing on a network that
+    loaded and printed perfectly.
+
+    Args:
+        grafo: Source graph (Graphtacle or plain igraph Graph).
+        directed (bool | None): Orientation of the copy. None keeps the source's.
+        with_weights (bool): Carry the ``weight`` edge attribute when present.
+
+    Returns:
+        igraph.Graph: A copy with the same vertex count, names, labels and edges.
+    """
+    attrs = {}
+    if with_weights and "weight" in grafo.es.attributes():
+        attrs["weight"] = grafo.es["weight"]
+
+    vertex_attrs = {}
+    for key in ("name", "label"):
+        if key in grafo.vs.attributes():
+            vertex_attrs[key] = grafo.vs[key]
+
+    return ig.Graph(n=grafo.vcount(),
+                    directed=grafo.is_directed() if directed is None else directed,
+                    vertex_attrs=vertex_attrs,
+                    edges=grafo.get_edgelist(),
+                    edge_attrs=attrs)
+
+
+def validate_weights(weights):
+    """Reject edge weights that cannot survive the round-trip through igraph.
+
+    The Cython engine hands the network to igraph as a weighted adjacency matrix
+    built with ``get_adjacency(attribute="weight", default=0)``. In that
+    representation 0 means "no edge", so a genuine 0-weight edge silently
+    disappears: a path 0-1-2-3 whose middle weight is 0 is seen as two components
+    by the engine and as one by igraph. There is no way to tell the two apart
+    downstream, so refuse the input here rather than return a wrong number.
+
+    Sub-unit weights are legal but make the distance-based scores (dR, group
+    closeness, radiality) leave the [0, 1] range, so they earn a warning.
+    """
+    if isinstance(weights, (int, float)):
+        weights = [weights]
+
+    numeric = []
+    for w in weights:
+        try:
+            numeric.append(float(w))
+        except (TypeError, ValueError):
+            raise ValueError(f"ERROR: non-numeric edge weight {w!r}")
+
+    if any(w == 0.0 for w in numeric):
+        raise ValueError(
+            "ERROR: the network contains edges with weight zero. A zero weight is "
+            "indistinguishable from an absent edge once the graph is converted to a "
+            "weighted adjacency matrix, so the result would be silently wrong. "
+            "Remove those edges, or give them a small positive weight."
+        )
+
+    if any(0.0 < w < 1.0 for w in numeric):
+        warnings.warn(
+            "The network contains edge weights below 1. Weights are used directly as "
+            "distances, so dR, group closeness and radiality are not bounded in [0, 1] "
+            "for this input.",
+            RuntimeWarning, stacklevel=2)
+
 
 def subtract_count_dist_matrix(count_all, count_nogroup):
     if count_all.shape[0] == count_all.shape[1] == count_nogroup.shape[0] == count_nogroup.shape[1]:
@@ -364,9 +455,9 @@ def process_row_modified(row):
 
 def components_by_nodes(grafo,node_list): # node_list=name
 
-    g=ig.Graph(directed=False,vertex_attrs={"name":grafo.vs["name"],"label": grafo.vs["label"]},edges=grafo.get_edgelist(), edge_attrs={"weight": grafo.es["weight"]})
+    g=plain_copy(grafo, directed=False)
 
-    components=g.clusters(mode='weak') # 
+    components=g.connected_components(mode='weak')
 
     # Get the cluster sizes along with their ids
     cluster_sizes = [(i, len(c)) for i, c in enumerate(components)]

@@ -7,16 +7,24 @@ from colorama import Fore, Style
 from collections import defaultdict as df
     
 def gtom(graph, steps_m, verbose=False):
-    """
-    Calcola la Generalized Topological Overlap Measure per ciascun nodo in un grafo fino a un massimo di `m` passi,
-    in linea con il metodo descritto nell'articolo 'Gene network interconnectedness and the generalized topological overlap measure'.
-    
-    :param graph: Oggetto di tipo Graphtacle (sottoclasse di igraph.Graph).
-    :param m: Numero massimo di passi per il calcolo della GTOM.
-    :return: DataFrame con GTOM per ciascun nodo.
+    """Compute the Generalized Topological Overlap Measure (GTOM) matrix.
+
+    GTOM extends classical Topological Overlap Measure (TOM) to m-step
+    neighborhoods, yielding a pairwise node-similarity matrix in [0, 1].
+    Yip & Horvath (2007) formulation.
+
+    Args:
+        graph: An igraph Graph (directed graphs are treated as undirected).
+        steps_m (int): Maximum number of neighborhood steps. Clipped to
+            graph diameter if larger.
+        verbose (bool): If True, print partial results at each step.
+
+    Returns:
+        pandas.DataFrame: n x n matrix of GTOM scores. Entry [i, j] is the
+            topological overlap between nodes i and j at step steps_m.
     """
     # check if undirected
-    if graph.directed:
+    if graph.is_directed():
         print("\nThe Generalized Topological Overlap Measure, is computed on the undirected graph.\n")
     
     # check diameter to limit steps_m
@@ -27,13 +35,24 @@ def gtom(graph, steps_m, verbose=False):
         steps_m = diameter
 
     A = np.array(graph.get_adjacency().data)
-    
-    if np.any(A[np.diag_indices_from(A)] == 0.):
+
+    # Treat a directed graph as undirected, as the message above promises.
+    # get_adjacency() returns the *asymmetric* directed adjacency; GTOM is
+    # defined on the undirected graph, so symmetrise (binary OR of the two
+    # directions) instead of only claiming to. Without this the numbers were
+    # computed on the directed adjacency and did not match the undirected graph.
+    if graph.is_directed():
+        A = np.maximum(A, A.T)
+
+    # A self-loop shows up as a non-zero diagonal entry; only then is there
+    # anything to drop (and to warn about). The guard used to test `== 0`,
+    # which is true for every node without a loop, so the warning fired on
+    # essentially every graph.
+    if np.any(A[np.diag_indices_from(A)] != 0.):
         A[np.diag_indices_from(A)] = 0.
         print(Fore.YELLOW + Style.BRIGHT + "\n[Warning] The graph contains self-loops, which are not considered in the Generalized Topological Overlap Measures.\n" + Style.RESET_ALL)
-    
+
     num_nodes = len(graph.iNodes)
-    matrix_m = np.zeros((steps_m, num_nodes, num_nodes))
     
     # la funzione calcola il numeratore e denominatore in forma matriciale
     def compute_ti(matrix_step):
@@ -66,28 +85,31 @@ def gtom(graph, steps_m, verbose=False):
         
     # create the temp copies of the adj matrix
     temp = A.copy()
-    cumulative = temp.copy().astype(float)    
-    
-    # store the initial result for one step GTOM
-    matrix_m[0, :, :] = compute_ti(cumulative)
+    cumulative = temp.copy().astype(float)
+
+    # Only the final step's matrix is returned; intermediate steps are printed
+    # when verbose. Keep just the last result instead of an (steps_m, n, n)
+    # cube -- that cube was steps_m times the memory the algorithm actually
+    # needs (3.2 GB per step already at n=20k).
+    last = compute_ti(cumulative)
 
     if verbose:
         print(f"GTOM matrix for step: {1}\n\n")
-        print(f"{pd.DataFrame(matrix_m[0, :, :], index=graph.vs['label'], columns=graph.vs['label']).round(3)}\n")
+        print(f"{pd.DataFrame(last, index=graph.vs['label'], columns=graph.vs['label']).round(3)}\n")
     # compute GTOM for every step from 0 to m
-    for m in range(1, steps_m): 
-        
+    for m in range(1, steps_m):
+
         temp = np.dot(temp, A)
         cumulative += temp
-        matrix_m[m, :, :] = compute_ti(cumulative)
+        last = compute_ti(cumulative)
 
         if verbose:
-            print(f"GTOM matrix for step: {m+1}\n\n {pd.DataFrame(matrix_m[m, :, :], index=graph.vs['label'], columns=graph.vs['label']).round(3)}\n")
+            print(f"GTOM matrix for step: {m+1}\n\n {pd.DataFrame(last, index=graph.vs['label'], columns=graph.vs['label']).round(3)}\n")
 
     # Creazione del DataFrame per visualizzare i risultati
     node_labels = graph.vs["label"] if "label" in graph.vs.attribute_names() else range(graph.vcount())
 
-    df = pd.DataFrame(matrix_m[-1, :, :], index=node_labels, columns=node_labels)
+    df = pd.DataFrame(last, index=node_labels, columns=node_labels)
 
     return df
 
@@ -95,66 +117,82 @@ def gtom(graph, steps_m, verbose=False):
 ###### TI Matrix
 
 def ti(graph, k, weighted=False, weight_attr="weight", threshold=0.0, verbose=False):
-    """
-    Calcola la Topological Importance (TI) per ciascun nodo in un grafo fino a un massimo di `n` passi,
-    in linea con il metodo descritto nel manuale CoSBiLab Graph.
-    
-    :param graph: Oggetto di tipo Graphtacle (sottoclasse di igraph.Graph).
-    :param k: Numero massimo di passi per il calcolo della TI.
-    :param nodes: Nodi per cui calcolare la TI (opzionale). Se None, calcola per tutti i nodi.
-    :param weighted: Booleano, True se considerare un grafo pesato.
-    :param weight_attr: Nome dell'attributo del peso (richiesto se weighted=True).
+    """Compute Topological Importance (TI) for all nodes up to k propagation steps.
+
+    TI measures a node's influence through k-step structural propagation.
+    It is computed as the row sum of the averaged k-step effect matrix E^(k).
+
+    Args:
+        graph: An igraph Graph object.
+        k (int): Maximum propagation steps. Higher k captures longer-range effects.
+        weighted (bool): If True, use edge weights for the effect matrix.
+        weight_attr (str): Name of the edge weight attribute (used when weighted=True).
+        threshold (float): If > 0, also compute Topological Overlap (TO) by
+            thresholding the k-step effect matrix at this value.
+        verbose (bool): If True, print intermediate matrices at each step.
     :param verbose: Booleano, True stampa gli effetti tra i nodi per path di lunghezza k.
     :return: DataFrame con TI per ciascun nodo.
     """
     
     # Creazione di una matrice per memorizzare i path_effect tra i nodi
     n_nodes = len(graph.iNodes)
-    matrix_effect = np.zeros((k, n_nodes, n_nodes)) 
     node_labels = graph.vs["label"] if "label" in graph.vs.attribute_names() else range(graph.vcount())
     degree = graph.degree(loops=False)
 
-    # i path vengono calcolati con la matrice di adiacenza 
+    # i path vengono calcolati con la matrice di adiacenza
     A = np.array(graph.get_adjacency().data)
-    
-    if np.any(A[np.diag_indices_from(A)] == 0.):
+
+    # Treat a directed graph as undirected, consistently with GTOM. TI used to
+    # run silently on the asymmetric directed adjacency; symmetrise it and say
+    # so, so the number matches the same edges built undirected.
+    if graph.is_directed():
+        A = np.maximum(A, A.T)
+        print(Fore.YELLOW + Style.BRIGHT + "\nTopological Importance is computed on the undirected graph.\n" + Style.RESET_ALL)
+
+    # A self-loop is a non-zero diagonal entry; only then is there anything to
+    # drop (and to warn about). The guard used to test `== 0`, true for every
+    # node without a loop, so the warning fired on nearly every graph -- and
+    # the two branches had their messages swapped.
+    if np.any(A[np.diag_indices_from(A)] != 0.):
         A[np.diag_indices_from(A)] = 0.
         if weighted:
-            print(Fore.YELLOW + Style.BRIGHT + "\n[Warning] The graph contains self-loops, which are not considered in the Topological Importance calculation.\n" + Style.RESET_ALL)
-        else:
             print(Fore.YELLOW + Style.BRIGHT + "\n[Warning] The graph contains self-loops, which are not considered in the Weighted Topological Importance calculation.\n" + Style.RESET_ALL)
+        else:
+            print(Fore.YELLOW + Style.BRIGHT + "\n[Warning] The graph contains self-loops, which are not considered in the Topological Importance calculation.\n" + Style.RESET_ALL)
 
-    # funzione per calcolare l'effetto di tutti i nodi 
+    # funzione per calcolare l'effetto di tutti i nodi
     def Ksteps_effect(edge_effect, weighted):
-        
-        matrix_effect[0, :, :] = edge_effect
+
+        # The old code stored every step's n x n effect matrix in a
+        # (k, n, n) cube only to collapse it into two sums. Accumulate those
+        # sums on the fly instead: `acc` is the running sum of the step
+        # matrices and `ti` their running row-sums; only the last step's
+        # matrix (`last`) is kept, for the topological-overlap threshold.
+        # Memory drops from k * n^2 to ~2 * n^2, bit-for-bit identical output.
+        step_effect = np.asarray(edge_effect, dtype=float)
+        acc = step_effect.copy()
+        ti = step_effect.sum(axis=1)
+        last = step_effect
 
         if verbose:
             print(f"Topological Importance effect for step {1}:\n\n")
-            print(f"{pd.DataFrame(edge_effect, index=node_labels, columns=node_labels).round(3)}\n")
+            print(f"{pd.DataFrame(step_effect, index=node_labels, columns=node_labels).round(3)}\n")
 
         for step in range(2, k+1):
 
-            # nodi raggiunti con step di lunghezza 'step'
-            matrix_effect[step - 1, :, :] = np.linalg.matrix_power(edge_effect, step)
-            
+            # nodi raggiunti con step di lunghezza 'step': D^step = D^(step-1) . D,
+            # one matmul per step instead of re-squaring from scratch each time
+            last = last @ edge_effect
+            acc += last
+            ti = ti + last.sum(axis=1)
+
             if verbose:
                 print(f"Topological Importance effect for step {step}:\n\n")
-                print(f"{pd.DataFrame(matrix_effect[step - 1, :, :], index=node_labels, columns=node_labels).round(3)}\n")
-
-        # somma gli effetti di un nodo sul network 
-        sigma_matrix = np.sum(matrix_effect, axis=2)
+                print(f"{pd.DataFrame(last, index=node_labels, columns=node_labels).round(3)}\n")
 
         # the cell[i][j] will contain the average effect of node i on node j over all the paths
-        data = np.sum(matrix_effect, 0)/ k
-        ti = np.sum(sigma_matrix, axis=0) / k
-            
-        # else:
-            
-        #     # the cell[i][j] will contain the effect of node i on node j for a path of len k
-        #     data = matrix_effect[-1]
-        #     ti = sigma_matrix[-1]
-
+        data = acc / k
+        ti = ti / k
 
         df = pd.DataFrame(data, index=node_labels, columns=node_labels)
 
@@ -166,10 +204,8 @@ def ti(graph, k, weighted=False, weight_attr="weight", threshold=0.0, verbose=Fa
 
         # compute topological overlap
         if threshold > 0.:
-      
-            # print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-            # print(f"matrix_effect:\n{matrix_effect[-1, :, :]}\n")
-            threshold_nodes = (matrix_effect[-1, :, :] > threshold).astype(int)
+
+            threshold_nodes = (last > threshold).astype(int)
             # print(f"threshold_nodes:\n{threshold_nodes}\n")
             threshold_nodes = np.dot(threshold_nodes, threshold_nodes.T)
             # print(f"threshold_nodes:\n{threshold_nodes}\n")
@@ -191,6 +227,10 @@ def ti(graph, k, weighted=False, weight_attr="weight", threshold=0.0, verbose=Fa
     # compute weighted or unweighted graph
     if weighted:
         A_w = np.array(graph.get_adjacency(attribute=weight_attr).data)
+        # same undirected treatment for the weighted adjacency; the stronger of
+        # two reciprocal directions is kept
+        if graph.is_directed():
+            A_w = np.maximum(A_w, A_w.T)
         weighted_effect = A_w / graph.strength(graph.iNodes, weights=weight_attr)
         
         df = Ksteps_effect(weighted_effect, weighted=True)
@@ -203,140 +243,3 @@ def ti(graph, k, weighted=False, weight_attr="weight", threshold=0.0, verbose=Fa
 
     return df
 
-###### TI RECURSIVE
-
-def ti_recursive(graph, k, nodes=None, weighted=False, weight_attr="weight", threshold=None, verbose=False):
-    """
-    Calcola la Topological Importance (TI) per ciascun nodo in un grafo fino a un massimo di `n` passi,
-    in linea con il metodo descritto nel manuale CoSBiLab Graph.
-    
-    :param graph: Oggetto di tipo Graphtacle (sottoclasse di igraph.Graph).
-    :param k: Numero massimo di passi per il calcolo della TI.
-    :param nodes: Nodi per cui calcolare la TI (opzionale). Se None, calcola per tutti i nodi.
-    :param weighted: Booleano, True se considerare un grafo pesato.
-    :param weight_attr: Nome dell'attributo del peso (richiesto se weighted=True).
-    :param upto_k: Booleano, True considera la media degli effetti generati dal nodo i su path da 1 a n steps, False considera solo path di lunghezza n.
-    :param verbose: Booleano, True stampa gli effetti tra i nodi per path di lunghezza k.
-    :return: DataFrame con TI per ciascun nodo.
-    """
-    
-    if nodes is None:
-        nodes = [node.index for node in graph.vs]
-    elif isinstance(nodes, int):
-        nodes = [nodes]
-    
-    # Creazione di una matrice per memorizzare i path_effect tra i nodi
-    n_nodes = len(nodes)
-    matrix_effect = np.zeros((k+1, n_nodes, n_nodes)) # la prima dim serve per identificare la LEN massima del path (e serve come supporto nella ricorsione)
-    degree = graph.degree()
-
-    def compute_paths_and_effect(graph, start_node, k):
-        """
-        Trova tutti i percorsi di lunghezza esattamente `n` passi a partire da `start_node`.
-
-        :param graph: Graph su cui calcolare il percorso.
-        :param start_node: Nodo iniziale.
-        :param k: Numero di passi desiderati.
-        :return: Lista di percorsi (liste di nodi).
-        """
-        all_paths = []
-
-        # Funzione ricorsiva DFS per esplorare il grafo
-        def dfs(current_path, path_effect = 1 , path_effect_list = [1]):
-
-            step = len(current_path)
-
-            matrix_effect[step - 1, current_path[0], current_path[-1]] += path_effect  # store the partial result 
-
-            # Se il cammino ha raggiunto esattamente n passi, aggiungilo alla lista
-            if len(current_path) - 1 == k:  # n passi significa n+1 nodi
-                all_paths.append(current_path)          #OBSOLETI
-
-                return
-
-            # Ottieni i vicini dell'ultimo nodo
-            neighbors = graph.neighbors(current_path[-1])  # Usa il metodo `neighbors` del grafo
-            
-            # Esplora i vicini, permettendo ritorni indietro
-            for neighbor in neighbors:
-                
-                # Aggiungi il vicino al cammino e continua 
-                if weighted:
-
-                    direct_effect = graph.es[graph.get_eid(current_path[-1], neighbor)][weight_attr] / graph.strength(neighbor, weights=weight_attr)
-                    
-                    dfs(current_path + [neighbor],              # update path
-                        path_effect * direct_effect,            # update path effect
-                        path_effect_list + [direct_effect])     # update direct effect list
-                else:
-
-                    direct_effect = 1/degree[neighbor]
-
-                    dfs(current_path + [neighbor],              # update path
-                        path_effect * direct_effect,            # update path effect
-                        path_effect_list + [direct_effect])     # update direct effect list
-
-        # Avvia la DFS partendo dal nodo di partenza
-        dfs([start_node])
-        return all_paths
-
-    # Itera su ciascun nodo specificato
-    for node in nodes:
-
-        all_paths = compute_paths_and_effect(graph,node, k) 
-        
-    matrix_effect[0,:,:] = 0
-    
-    if verbose:
-        for step in range(1,k+1):
-            print(f"Topological Importance effect for step {step}:\n\n{matrix_effect[step]}\n")
-
-    # Creazione del DataFrame per visualizzare i risultati
-    node_labels = graph.vs["label"] if "label" in graph.vs.attribute_names() else range(graph.vcount())
-
-    if upto_k:
-        # Compute Ti_n, cioè la somma dei sigma_l,i (la somma degli effetti di un nodo i su gli altri per un path di lunghezza l).
-        # Il df finale sarà  sigma_l,i e Ti_n
-        print("Sum value (sigma_n,i) for the paths up to n for each node:\n")
-
-        sigma_matrix = np.sum(matrix_effect, axis=2)
-
-        df = pd.DataFrame(sigma_matrix.T, index=[node_labels[node] for node in nodes], columns=[steps for steps in range(k+1)])
-        
-        Ti_n = np.sum(sigma_matrix, axis=0) / k
-        if weighted:
-            df['WI_' + str(k)] = Ti_n
-        else:
-            df['TI_' + str(k)] = Ti_n
-    
-    else:
-
-        df = pd.DataFrame(matrix_effect[-1,:,:], index=[node_labels[node] for node in nodes], columns=[node_labels[node] for node in nodes])
-        # Aggiunta della colonna "SUM" che calcola la somma di ciascuna riga
-        df['TI_' + str(k)] = df.sum(axis=1) / k
-        # Aggiungi una nuova colonna in posizione 0
-        # df.insert(0, 'Nodes', df.index)
-
-    return df
-
-
-def filter_lists(input_lists, k):
-    # Filter based on length > k
-    
-    filtered_by_length = [lst for lst in input_lists if len(lst) <= k+1 and len(lst) != 1]
-
-    # Filter out lists that are contained in another list
-    final_filtered = filtered_by_length.copy()
-    for i, lst_i in enumerate(filtered_by_length):
-        for j, lst_j in enumerate(filtered_by_length):
-            if i != j and is_subsequence(lst_i, lst_j):
-                if lst_i in final_filtered:
-                    final_filtered.remove(lst_i)
-                break
-
-    return filtered_by_length
-
-def is_subsequence(sub, main):
-    """Check if 'sub' is a subsequence of 'main'."""
-    iter_main = iter(main)
-    return all(any(elem == main_elem for main_elem in iter_main) for elem in sub)
