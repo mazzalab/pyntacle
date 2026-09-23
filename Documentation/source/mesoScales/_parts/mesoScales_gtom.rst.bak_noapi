@@ -1,0 +1,42 @@
+The **Generalized Topological Overlap Measure (GTOM)** extends the classical Topological Overlap Measure (TOM) from *1-step neighborhoods* to *m-step neighborhoods* (with :math:`m \ge 2`), providing a similarity score between pairs of nodes based on the agreement of their multi-step neighborhoods.
+
+Definition
+^^^^^^^^^^
+
+Let :math:`A=[a_{ij}]` be the (binary) adjacency matrix of an **undirected** graph.
+For a node :math:`i`, define the :math:`m`-step neighborhood as:
+
+.. math::
+
+   N_m(i) := \{ j \ne i \mid \operatorname{dist}(i,j) \le m \}
+
+GTOM is then defined as a similarity measure :math:`t^{(m)}_{ij}` (bounded in :math:`[0,1]`) obtained by:
+(i) counting the number of shared :math:`m`-step neighbors and
+(ii) normalizing the result to account for neighborhood size.
+
+In Pyntacle, the computation follows the set-theoretic formulation introduced by Yip and Horvath (2007).
+
+Implementation notes
+^^^^^^^^^^^^^^^^^^^^
+
+* **Undirected graph**: if the input graph is directed, GTOM is computed on the undirected version.
+* **m is clipped to the graph diameter**: if ``steps_m`` is larger than the (undirected) diameter, it is clipped to avoid useless extra steps.
+* **Self-loops are ignored**: loops are not considered for overlap; a warning is shown if present.
+* The function returns the **GTOM matrix at the final step** (:math:`m=steps_m`).
+
+API
+^^^
+
+``gtom(graph, steps_m, verbose=False)``
+
+Parameters
+^^^^^^^^^^
+
+* ``graph``: a ``Graphtacle`` (igraph.Graph subclass).
+* ``steps_m``: integer maximum neighborhood radius (:math:`m`).
+* ``verbose``: if ``True``, prints intermediate GTOM matrices for each step.
+
+Returns
+^^^^^^^
+
+A ``pandas.DataFrame`` representing the final :math:`m`-step GTOM similarity matrix.

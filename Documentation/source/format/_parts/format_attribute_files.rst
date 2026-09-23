@@ -1,0 +1,1 @@
+Attributes enrich graph, used in the preovious version, are now removed. Having the possibility to handle weighted graphs allowed us to compact the input necessary for the networks. In the future upgrades will also gurantee to implement the "label" feature also for the edges.

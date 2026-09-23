@@ -1,0 +1,77 @@
+/* Make the "Note", "Warning", etc. titles smaller */
+div.admonition > p.admonition-title {
+  font-size: 0.9em;
+}
+
+/* Optional: also reduce spacing a bit */
+div.admonition > p.admonition-title {
+  margin-bottom: 0.2rem;
+}
+
+details.pyntacle-nav > div {
+  margin-left: 1.2rem;
+  margin-top: 0.4rem;
+}
+details.pyntacle-nav summary {
+  cursor: pointer;
+}
+
+/* Clean <details> summaries + right-side toggle arrow */
+details > summary { list-style: none; cursor: pointer; }
+details > summary::-webkit-details-marker { display: none; }
+
+details summary .pyntacle-arrow::before {
+  content: "▸";
+  float: right;
+  font-size: 1.15em;
+  line-height: 1.2;
+}
+
+details[open] summary .pyntacle-arrow::before {
+  content: "▾";
+}
+/* --- CLI dropdowns (main page content, not sidebar) --- */
+.cli-details summary {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1.05rem;
+  padding: .15rem 0;
+}
+
+.cli-details summary::-webkit-details-marker { display: none; }
+
+.cli-details summary::after {
+  content: "▸";
+  margin-left: 1rem;
+  flex: 0 0 auto;
+}
+
+.cli-details[open] summary::after { content: "▾"; }
+
+.cli-inner { margin-left: 1.2rem; margin-top: .35rem; }
+
+
+/* --- CLI dropdowns (main page content, not sidebar) --- */
+.cli-details summary {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1.05rem;
+  padding: .15rem 0;
+}
+
+.cli-details summary::-webkit-details-marker { display: none; }
+
+.cli-details summary::after {
+  content: "▸";
+  margin-left: 1rem;
+  flex: 0 0 auto;
+}
+
+.cli-details[open] summary::after { content: "▾"; }
+
+.cli-inner { margin-left: 1.2rem; margin-top: .35rem; }
+

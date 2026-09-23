@@ -1,0 +1,166 @@
+Welcome to Pyntacle's API!
+==========================
+
+**Pyntacle** is an open-source software package for network analysis and visualization. Pyntacle allows users to import, visualize, manipulate, and analyze network data and it provides a range of tools for network topology analysis.
+
+Reach us through:
+
+* `GitHub page`_
+* `Website`_
+
+.. note::
+
+   This project is under active development.
+
+.. _GitHub page: https://github.com/mazzalab/pyntacle/
+.. _Website: https://pyntacle.css-mendel.it/
+
+
+Contents
+========
+
+* .. raw:: html
+
+     <details>
+       <summary>
+         <span style="font-size: 1.08em; font-weight: 600;">Supported File Formats</span>
+         <span class="pyntacle-arrow"></span>
+       </summary>
+       <div style="margin-left: 1.2rem; margin-top: 0.4rem;">
+
+  - :doc:`Overview <format/format>`
+
+  .. raw:: html
+
+       </div>
+     </details>
+
+* .. raw:: html
+
+     <details>
+       <summary>
+         <span style="font-size: 1.08em; font-weight: 600;">Graph Local Metrics</span>
+         <span class="pyntacle-arrow"></span>
+       </summary>
+       <div style="margin-left: 1.2rem; margin-top: 0.4rem;">
+
+  - :doc:`Overview <localMetrics/localMetrics>`
+  - :ref:`Local topology <localmetrics-local-topology>`
+  - :ref:`Global topology <localmetrics-global-topology>`
+
+  .. raw:: html
+
+       </div>
+     </details>
+
+* .. raw:: html
+
+     <details>
+       <summary>
+         <span style="font-size: 1.08em; font-weight: 600;">Graph Group Metrics</span>
+         <span class="pyntacle-arrow"></span>
+       </summary>
+       <div style="margin-left: 1.2rem; margin-top: 0.4rem;">
+
+  - :doc:`Overview <groupCentrality/groupCentrality>`
+  - :ref:`Group Degree <group-degree>`
+  - :ref:`Group Closeness <group-closeness>`
+  - :ref:`Group Betweenness <group-betweenness>`
+
+  .. raw:: html
+
+       </div>
+     </details>
+
+
+* .. raw:: html
+
+     <details>
+       <summary>
+         <span style="font-size: 1.08em; font-weight: 600;">Mesoscale Metrics</span>
+         <span class="pyntacle-arrow"></span>
+       </summary>
+       <div style="margin-left: 1.2rem; margin-top: 0.4rem;">
+
+  - :doc:`Overview <mesoScales/mesoScales>`
+  - :ref:`Generalized Topological Overlap Measure (GTOM) <mesoscales-gtom>`
+  - :ref:`Topological Importance (TI) <mesoscales-ti>`
+
+  .. raw:: html
+
+       </div>
+     </details>
+
+
+* .. raw:: html
+
+     <details>
+       <summary>
+         <span style="font-size: 1.08em; font-weight: 600;">Key Players</span>
+         <span class="pyntacle-arrow"></span>
+       </summary>
+       <div style="margin-left: 1.2rem; margin-top: 0.4rem;">
+
+  - :doc:`Overview <keyPlayers/keyPlayers>`
+  - :ref:`KPP-Neg metrics <kpp-neg>`
+  - :ref:`KPP-Pos metrics <kpp-pos>`
+
+  .. raw:: html
+
+       </div>
+     </details>
+
+* .. raw:: html
+
+     <details>
+       <summary>
+         <span style="font-size: 1.08em; font-weight: 600;">Graph Utilities</span>
+         <span class="pyntacle-arrow"></span>
+       </summary>
+       <div style="margin-left: 1.2rem; margin-top: 0.4rem;">
+
+  - :doc:`Overview <graphUtilities/graphUtilities>`
+  - :ref:`Set-Theory <utils-set-theory>`
+  - :ref:`Converter <utils-converter>`
+  - :ref:`Communities <utils-communities>`
+  - :ref:`Extract <utils-extract>`
+  - :ref:`Generate <utils-generate>`
+
+  .. raw:: html
+
+       </div>
+     </details>
+
+* .. raw:: html
+
+     <details>
+       <summary><strong>Percolation</strong></summary>
+       <div style="margin-left: 1.2rem; margin-top: 0.4rem;">
+
+  - :doc:`Overview <percolation/percolation>`
+
+  .. raw:: html
+
+       </div>
+     </details>
+
+
+.. include:: _parts/cli_dropdown.rst
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+
+   format/format
+   localMetrics/localMetrics
+   groupCentrality/groupCentrality
+   keyPlayers/keyPlayers
+   graphUtilities/graphUtilities
+   mesoScales/mesoScales
+   percolation/percolation
+
+
+.. toctree::
+   :maxdepth: 2
+
+   cli/index

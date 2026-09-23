@@ -42,3 +42,11 @@ pyntacle_backup_*.zip
 pyntacle_backup_*.tar.gz
 Documentation_backup_*/
 Documentation/NetMD/
+Documentation/_build/
+Documentation/build/
+Documentation/_backup_source/
+Documentation/old_stuff/
+Documentation/_build/
+Documentation/build/
+Documentation/_backup_source/
+Documentation/old_stuff/

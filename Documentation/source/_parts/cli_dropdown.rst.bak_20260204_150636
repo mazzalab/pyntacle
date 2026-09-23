@@ -1,0 +1,178 @@
+* .. raw:: html
+
+     <details class="pyntacle-details">
+     <summary><strong>Command-line interface</strong><span class="chev"></span></summary>
+     <div class="pyntacle-details-body">
+
+  :doc:`Open CLI overview </cli/index>`
+
+  .. raw:: html
+
+     <details class="pyntacle-details nested">
+     <summary>local<span class="chev"></span></summary>
+     <div class="pyntacle-details-body">
+
+  Measures to be calculated: Degree, Betweenness, Closeness, Radiality, Radiality reach, Clustering Coefficient, Eccentricity, Eigenvector (Scaled), Pagerank
+
+  :doc:`Open local </cli/local/index>`
+
+  .. raw:: html
+
+     </div>
+     </details>
+
+  .. raw:: html
+
+     <details class="pyntacle-details nested">
+     <summary>global<span class="chev"></span></summary>
+     <div class="pyntacle-details-body">
+
+  Measures to be calculated: Average shortest path length, Median shortest path length, Diameter, Components, Radius, Density, pi, Average clustering coefficient, Weighted clustering coefficient, Average degree, Average Closeness, Average Eccentricity, Average Radiality, Average Radiality Reach, Completeness Naive, Completeness, Compactness
+
+  :doc:`Open global </cli/global/index>`
+
+  .. raw:: html
+
+     </div>
+     </details>
+
+  .. raw:: html
+
+     <details class="pyntacle-details nested">
+     <summary>groupcentrality<span class="chev"></span></summary>
+     <div class="pyntacle-details-body">
+
+  Specific usage: · python3 main.py groupcentrality gc-info -t {fileType} -i {input_file} [optional parameters] -n {node-list} [optional outdir] gc-info : Compute all or a selected group-centrality metric for a selected set of nodes · python3 main.py groupcentrality gc-finder -t {fileType} -i {input_file} [optional parameters] -k {k-size} [optional outdir] gc-finder : Find the optimal or the best set of size 'k' for a given group-centrality index
+
+  :doc:`Open groupcentrality </cli/groupcentrality/index>`
+
+  .. raw:: html
+
+     </div>
+     </details>
+
+  .. raw:: html
+
+     <details class="pyntacle-details nested">
+     <summary>keyplayer<span class="chev"></span></summary>
+     <div class="pyntacle-details-body">
+
+  Specific usage: · python3 main.py keyplayer kp-info -t {fileType} -i {input_file} [optional parameters] -n {node-list} [optional outdir] kp-info: Compute individual key-player metrics for a selected set of nodes · python3 main.py keyplayer kp-finder -t {fileType} -i {input_file} [optional parameters] -k {k-size} [optional outdir] kp-finder : Find the best kp-set of size k
+
+  :doc:`Open keyplayer </cli/keyplayer/index>`
+
+  .. raw:: html
+
+     </div>
+     </details>
+
+  .. raw:: html
+
+     <details class="pyntacle-details nested">
+     <summary>set<span class="chev"></span></summary>
+     <div class="pyntacle-details-body">
+
+  Specific usage: · python3 main.py set union -t {fileType} -i {input_file} [optional parameters] -i2 {input_file2} [optional outdir] union : Return a resulting merged graph of the original two networks, marking the common nodes among them along with their common connecting edges · python3 main.py set intersection -t {fileType} -i {input_file} [optional parameters] -i2 {input_file2} [optional outdir] intersection : Return only the common nodes and their connecting edges among the two graphs of interest · python3 main.py set difference -t {fileType} -i {input_file} [optional parameters] -i2 {input_file2} [optional outdir] difference : Perform the difference between the two input graphs. NOTE: the difference among graphs is not reciprocal
+
+  :doc:`Open set </cli/set/index>`
+
+  .. raw:: html
+
+     </div>
+     </details>
+
+  .. raw:: html
+
+     <details class="pyntacle-details nested">
+     <summary>convert<span class="chev"></span></summary>
+     <div class="pyntacle-details-body">
+
+  Possible combinations (-t {fileType} | -to {fileType2}): · AdjMatrix and EdgeList (and viceversa) · AdjMatrix and Sif (and viceversa) · AdjMatrix and Dot (and viceversa) · EdgeList and Sif (and viceversa) · EdgeList and Dot (and viceversa) · Sif and Dot (and viceversa)
+
+  :doc:`Open convert </cli/convert/index>`
+
+  .. raw:: html
+
+     </div>
+     </details>
+
+  .. raw:: html
+
+     <details class="pyntacle-details nested">
+     <summary>communities<span class="chev"></span></summary>
+     <div class="pyntacle-details-body">
+
+  Detects communities of tightly connected nodes within a graph by means of different modular decomposition algorithms Specific usage: · python3 main.py communities fastgreedy -t {fileType} -i {input_file} [optional parameters] -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS} -nc {NUMBERCOMMUNITIES} [optional outdir] · python3 main.py communities infomap -t {fileType} -i {input_file} [optional parameters] -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS} [optional outdir] · python3 main.py communities leading-eigenvector -t {fileType} -i {input_file} [optional parameters] -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS} -nc {NUMBERCOMMUNITIES} [optional outdir] · python3 main.py communities random_walk -t {fileType} -i {input_file} [optional parameters] -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS} -steps {STEPS} [optional outdir] · python3 main.py communities percolation -t {fileType} -i {input_file} [optional parameters] -k {COMMUNITYSIZE} [optional outdir]
+
+  :doc:`Open communities </cli/communities/index>`
+
+  .. raw:: html
+
+     </div>
+     </details>
+
+  .. raw:: html
+
+     <details class="pyntacle-details nested">
+     <summary>extract<span class="chev"></span></summary>
+     <div class="pyntacle-details-body">
+
+  Specific usage: · python3 main.py extract -t {fileType} -i {input_file} [optional parameters] -l {largest} [optional outdir] [-l {largest}] argument in order to extract only the LARGEST component of the graph · python3 main.py extract -t {fileType} -i {input_file} [optional parameters] -n {NCOMPONENTS} [optional outdir] [-n {NCOMPONENTS}] argument in order to extract the first n components of the graph · python3 main.py extract -t {fileType} -i {input_file} [optional parameters] -l {largest} -n {NCOMPONENTS} [optional outdir] [-l {largest} -n {NCOMPONENTS}] arguments in order to extract the n-th largest component of the graph · python3 main.py extract -t {fileType} -i {input_file} [optional parameters] -sc {SELECTCOMPONENT} [optional outdir] [-sc {SELECTCOMPONENT}] argument used in order to extract the components in which the given node/nodes is/are present
+
+  :doc:`Open extract </cli/extract/index>`
+
+  .. raw:: html
+
+     </div>
+     </details>
+
+  .. raw:: html
+
+     <details class="pyntacle-details nested">
+     <summary>generate<span class="chev"></span></summary>
+     <div class="pyntacle-details-body">
+
+  Specific usage: · python3 main.py generate erdos-renyi -t {fileType} -i {input_file} [optional parameters] -n {number of nodes} -e {number of edges} -p {probability} -l {loops} [optional outdir] · python3 main.py generate tree -t {fileType} -i {input_file} [optional parameters] -n {number of nodes} -c {children} [optional outdir] · python3 main.py generate barabasi -t {fileType} -i {input_file} [optional parameters] -n {number of nodes} -a {avarage edge} -i {implementation} [optional outdir] · python3 main.py generate watts-strogatz -t {fileType} -i {input_file} [optional parameters] -dim {dimesion} -s {size} -nei {nei} -p {probability} -l {loops} -m {multiple} [optional outdir] · python3 main.py generate lattice -t {fileType} -i {input_file} [optional parameters] -dim {dimension} -nei {nei} -mut {mutual} -circ {circular} [optional outdir]
+
+  :doc:`Open generate </cli/generate/index>`
+
+  .. raw:: html
+
+     </div>
+     </details>
+
+  .. raw:: html
+
+     <details class="pyntacle-details nested">
+     <summary>mesoscale<span class="chev"></span></summary>
+     <div class="pyntacle-details-body">
+
+  Metrics: · Generalized Topological Overlap Measure (GTOM): A measure of neighborhood similarity between all pairs of nodes in a graph. GTOM assigns a value in the range [0,1], this occurs when the neighborhoods of two nodes are identical or one is a subset of the other. · Topological Importance (TI): TI of a node measures its influence in a network through k-step structural propagation. It is computed as the row sum of the k-th power of the edge effect matrix, capturing indirect interactions up to path length k. · Weighted Topological Importance (WI): similar to TI it measures a node's influence in a network by accounting for both the strength and reach of its interactions. · Species Topological Overlap (STO): quantifies pairwise structural similarity based on shared 1-step effects, extended to kk-step propagation. A threshold θθ is applied to filter out weak overlaps.
+
+  :doc:`Open mesoscale </cli/mesoscale/index>`
+
+  .. raw:: html
+
+     </div>
+     </details>
+
+  .. raw:: html
+
+     <details class="pyntacle-details nested">
+     <summary>percolation<span class="chev"></span></summary>
+     <div class="pyntacle-details-body">
+
+  Percolation dynamics: · Local edge thresholds p_th,ij: for each edge (i,j) a local threshold p_th,ij is drawn in [0, p_thMax] from the chosen distribution. · Global percolation probability P*: controls how many edges become "open". An edge (i,j) can transmit only if P* ≥ p_th,ij → A*_ij = 1, otherwise A*_ij = 0. · Spreading from a seed node: starting from the seed s at t = 0, activity spreads along open edges. The active set evolves as S_{t+1} = N_open(S_t) \ R_t, where N_open(S_t) are neighbors reachable through open edges and R_t are recovered nodes. · Recovery time τ: a node activated at time t stays active for τ steps and then recovers (it no longer transmits).
+
+  :doc:`Open percolation </cli/percolation/index>`
+
+  .. raw:: html
+
+     </div>
+     </details>
+
+* .. raw:: html
+
+     </div>
+     </details>
+
