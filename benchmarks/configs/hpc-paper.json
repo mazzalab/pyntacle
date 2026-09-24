@@ -1,0 +1,36 @@
+{
+  "profile": "hpc-paper",
+  "seed": 42,
+  "repeats": 5, "long_cell_s": 300, "long_cell_repeats": 2,
+  "timeout_s": 3600, "mem_cap_mb": 200000,
+  "slots": 16, "mem_budget_mb": 420000,
+  "tools": {
+    "old_bin": "~/miniconda3/envs/pyntacle_old/bin/pyntacle",
+    "new_python": "~/miniconda3/envs/graphtacle_debug/bin/python",
+    "new_main": "pyntacle/main.py"
+  },
+  "groups": [
+    {"name": "metrics-size", "cmds": ["local", "global", "kp-info", "gc-info"],
+     "topologies": ["er", "ba", "ws"], "n": [100, 500, 1000, 5000, 10000, 25000, 50000], "d": [3],
+     "weighted": [false, true], "tools": ["old", "new"]},
+    {"name": "metrics-density", "cmds": ["local", "global", "kp-info"],
+     "topologies": ["er"], "n": [2000], "d": [3, 10, 50],
+     "weighted": [false, true], "tools": ["old", "new"]},
+    {"name": "finders-bf-k2", "cmds": ["kp-finder", "gc-finder"],
+     "topologies": ["er", "ba", "ws"], "n": [100, 250, 500, 1000], "d": [3], "k": [2],
+     "algorithms": ["brute_force"], "threads": [1, 32],
+     "weighted": [false, true], "tools": ["old", "new"]},
+    {"name": "finders-bf-k3", "cmds": ["kp-finder", "gc-finder"],
+     "topologies": ["er"], "n": [50, 100, 200, 400], "d": [3], "k": [3],
+     "algorithms": ["brute_force"], "threads": [1, 32], "tools": ["old", "new"]},
+    {"name": "finders-greedy", "cmds": ["kp-finder", "gc-finder"],
+     "topologies": ["er", "ba", "ws"], "n": [100, 250, 500, 1000, 2000, 5000], "d": [3], "k": [2, 3, 4],
+     "algorithms": ["greedy"], "weighted": [false, true], "tools": ["old", "new", "new-py"]},
+    {"name": "scaling-kp", "cmds": ["kp-finder"],
+     "topologies": ["er"], "n": [500], "d": [3], "k": [2],
+     "algorithms": ["brute_force"], "threads": [1, 2, 4, 8, 16, 32], "tools": ["old", "new"]},
+    {"name": "scaling-gc", "cmds": ["gc-finder"],
+     "topologies": ["er"], "n": [200], "d": [3], "k": [2],
+     "algorithms": ["brute_force"], "threads": [1, 2, 4, 8, 16, 32], "tools": ["old", "new"]}
+  ]
+}

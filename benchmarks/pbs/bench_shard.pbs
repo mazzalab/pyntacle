@@ -1,0 +1,23 @@
+#!/bin/bash
+# One benchmark shard on one whole node. Submit with benchmarks/pbs/submit.sh,
+# which sets SHARD (e.g. 2/5), PROFILE and the host; do not qsub this directly.
+#PBS -l walltime=168:00:00
+#PBS -l place=excl
+#PBS -j oe
+#PBS -M manuel.mangoni@guest.policlinicogemelli.it
+#PBS -m abe
+
+set -euo pipefail
+REPO=/data/data_storage/research/Mangoni_Manuel/pyntacle_final
+OUT=$REPO/benchmarks/results/$PROFILE
+
+source /home/04203147/miniconda3/etc/profile.d/conda.sh
+conda activate graphtacle_debug
+mkdir -p "$OUT"
+cd "$REPO/benchmarks"
+
+echo "host=$(hostname) shard=$SHARD profile=$PROFILE cores=$(nproc) start=$(date -Is)"
+# resumable: rows already in runs_raw_<shard>.tsv are skipped, so resubmitting
+# the same shard after a kill or walltime just continues
+python bench.py run "configs/$PROFILE.json" --shard "$SHARD" --out "$OUT"
+echo "end=$(date -Is)"

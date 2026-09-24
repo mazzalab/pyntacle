@@ -344,3 +344,53 @@ accepted by both tools and yields the same graph and the same metrics
 arms). Edge list keeps a dedicated cell of its own, where old's reciprocal-file
 requirement is measured as the usability and I/O cost it is, instead of
 contaminating every timing.
+
+
+## 16. Phases 2–5 — harness built (2026-09-24)
+
+**DECIDED 2026-09-24:** real networks dropped (§12 item 2 closed). The paper
+benchmark is synthetic only (ER / BA / WS): its purpose is the performance
+comparison with 1.3.2, not biology.
+
+**DECIDED 2026-09-24:** cluster = PBS. Shards run on hpc02–hpc06 only (identical:
+32 cores, ~504 GB). hpc01 is the login node and is never used; hpc09–11 have
+different CPUs and are excluded so all times come from one hardware model.
+One whole node per shard (`place=excl`), measurements strictly sequential
+inside a node; parallelism = one shard per node. Workflow: rsync → setup
+(`pbs/setup_cluster.sh`: Cython rebuild, `pyntacle_old` env, graph corpus) →
+`pbs/submit.sh`.
+
+Harness as built (differences from §10):
+- Config is JSON, not YAML (no extra dependency on the cluster).
+- `bench.py` is the single entry point (`plan / prepare / run / collect / parity`);
+  `matrix.py` also does sharding: longest-processing-time over families, and
+  all tools of the same parameters are kept on the same node so every speed-up
+  is a same-machine, time-interleaved ratio.
+- Runner: blocking `os.wait4` for exact wall and per-child rusage, sampler
+  thread for tree RSS/CPU%, memory cap enforced on tree RSS (not RLIMIT_AS,
+  which kills OpenMP processes on reserved address space), child in its own
+  session so a timeout kills the whole worker tree.
+- Censoring: a timeout/oom at size n skips larger n of the same family.
+  Adaptive repeats: cells whose warm-up exceeds `long_cell_s` get
+  `long_cell_repeats` measured runs instead of `repeats`.
+- Only warm-up outputs are kept (for parity); measured reps' outputs are deleted.
+
+Findings while building it:
+1. **Corpus format.** Both tools default to a header line on SIF; the earlier
+   smoke SIF had none, so new silently dropped the first edge (149 vs 150).
+   The corpus now always writes a header, and the giant component only.
+2. **Weighted cells are new-only.** 1.3.2 has no weighted shortest paths
+   (`--weights` reaches PageRank only), so the weighted axis has no old arm and
+   feeds the capability table, not speed-ups.
+3. **Old `gr-info` crashes** (`'Namespace' object has no attribute 'nprocs'`)
+   — recorded as a capability row, not worked around.
+4. **New bug fixed:** `--engine python` was refused on `kp-info`/`gc-info`
+   because `-a` defaults to brute_force there too; the guard now applies to
+   the finders only (+2 tests).
+5. **Compactness is defined differently on purpose:** new reports the
+   reciprocal of old's value (Mazza's correction). Parity inverts old's value.
+6. **Old brute force with `-O > 1` is slower than with 1** at small n
+   (multiprocessing start-up); kept as measured — it is the tool's behaviour.
+
+Smoke run (n ≤ 120, all commands, 3 tools): 189 runs, all ok; parity 14/14
+yes (+8 greedy "na" by design).

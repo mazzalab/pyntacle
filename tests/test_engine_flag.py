@@ -91,6 +91,20 @@ def test_cython_engine_brute_force_still_works(network, tmp_path):
     assert result.returncode == 0, result.stderr[-800:]
 
 
+@pytest.mark.parametrize("command,subcommand", [("keyplayer", "kp-info"),
+                                                ("groupcentrality", "gc-info")])
+def test_python_engine_info_is_not_refused(network, tmp_path, command, subcommand):
+    """-a defaults to brute_force on info commands too, but they never search:
+    the brute-force refusal must not block them."""
+    outdir = os.path.join(str(tmp_path), "out_" + subcommand)
+    os.makedirs(outdir, exist_ok=True)
+
+    result = run_cli(command, subcommand, "-i", network, "-t", "edgelist",
+                     "-n", "A,D", "--engine", "python", "--no-plot", "-o", outdir)
+
+    assert result.returncode == 0, (result.stdout + result.stderr)[-800:]
+
+
 def test_engine_flag_is_documented_as_single_threaded(network):
     """The help text has to carry the caveat too, not only the runtime warning."""
     result = run_cli("keyplayer", "--help")

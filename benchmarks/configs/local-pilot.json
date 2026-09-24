@@ -1,0 +1,27 @@
+{
+  "profile": "local-pilot",
+  "seed": 42,
+  "repeats": 1, "long_cell_s": 60, "long_cell_repeats": 1,
+  "timeout_s": 300, "mem_cap_mb": 6000,
+  "slots": 10, "mem_budget_mb": 16000,
+  "tools": {
+    "old_bin": "~/miniconda3/envs/pyntacle_old/bin/pyntacle",
+    "new_python": "~/miniconda3/envs/graphtacle_debug/bin/python",
+    "new_main": "pyntacle/main.py"
+  },
+  "groups": [
+    {"name": "metrics-size", "cmds": ["local", "global", "kp-info", "gc-info"],
+     "topologies": ["er"], "n": [1000, 5000, 10000], "d": [3],
+     "weighted": [false], "tools": ["old", "new"]},
+    {"name": "finders-bf-k2", "cmds": ["kp-finder", "gc-finder"],
+     "topologies": ["er"], "n": [100, 250, 500], "d": [3], "k": [2],
+     "algorithms": ["brute_force"], "threads": [1],
+     "weighted": [false], "tools": ["old", "new"]},
+    {"name": "finders-bf-k3", "cmds": ["kp-finder", "gc-finder"],
+     "topologies": ["er"], "n": [50, 100], "d": [3], "k": [3],
+     "algorithms": ["brute_force"], "threads": [1], "tools": ["old", "new"]},
+    {"name": "finders-greedy", "cmds": ["kp-finder", "gc-finder"],
+     "topologies": ["er"], "n": [500, 1000, 5000], "d": [3], "k": [2],
+     "algorithms": ["greedy"], "weighted": [false], "tools": ["old", "new", "new-py"]}
+  ]
+}
