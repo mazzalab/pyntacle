@@ -16,5 +16,6 @@ This section documents Pyntacle’s command-line interface (CLI). Each top-level
    keyplayer/index
    local/index
    mesoscale/index
+   omics/index
    percolation/index
    set/index

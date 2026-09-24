@@ -86,6 +86,14 @@ def first_set_only(df):
 
 def main(args):
 
+	# omics builds networks, it does not read one: none of the graph flags below
+	# exist on its parser. Imported here so the other commands never load its
+	# optional dependencies.
+	if args.command == "omics":
+		from omics.cli import run_omics
+		run_omics(args)
+		return
+
 	#### Check general flags
 	if args.directed:
 		directed = True
@@ -137,8 +145,10 @@ def main(args):
 
 	# brute_force only exists in the compiled engine (algorithms/brute_force.py
 	# was removed), so --engine python cannot serve it. Falling back to Cython
-	# would report a python-engine run that never happened.
-	if not use_cython and getattr(args, "algorithm", None) == "brute_force":
+	# would report a python-engine run that never happened. Only the finders
+	# search: kp-info/gc-info carry -a with its brute_force default but never use it.
+	if (not use_cython and getattr(args, "algorithm", None) == "brute_force"
+			and getattr(args, "subcommand", None) in ("kp-finder", "gc-finder")):
 		sys.exit(Fore.RED + Style.BRIGHT +
 			"ERROR: --algorithm brute_force has no python implementation, so it cannot "
 			"be run with --engine python. Use --algorithm greedy or gradient_descent "

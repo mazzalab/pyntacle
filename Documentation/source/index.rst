@@ -18,8 +18,17 @@ identification, mesoscale analysis, and infection-percolation dynamics.
       :link: cli/index
       :link-type: doc
 
-      Full reference for all 11 commands: local, global, keyplayer, groupcentrality,
-      mesoscale, percolation, communities, set, convert, extract, generate.
+      Full reference for all 12 commands: local, global, keyplayer, groupcentrality,
+      mesoscale, percolation, communities, set, convert, extract, generate, omics.
+
+.. grid:: 2
+
+   .. grid-item-card:: Omics to Networks
+      :link: omics/omics
+      :link-type: doc
+
+      Build tumour/normal networks from raw RNA-seq counts or microbiome
+      abundances with ``omics``, ready for every other command.
 
 .. grid:: 2
 
@@ -77,6 +86,7 @@ Contents
    keyPlayers/keyPlayers
    mesoScales/mesoScales
    percolation/percolation
+   omics/omics
    graphUtilities/graphUtilities
 
 .. toctree::

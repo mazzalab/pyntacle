@@ -92,4 +92,5 @@ setup(
     package_dir={'': 'pyntacle'},
     packages=find_packages(where='pyntacle'),    
     ext_modules=extensions,
+    extras_require={"omics": ["scikit-learn", "statsmodels"], "omics-annotation": ["mygene"]},
 )

@@ -61,6 +61,20 @@ Expected output::
       generate         Generates random graphs
       mesoscale        Computes mesoscale metrics
       percolation      Runs infection-percolation dynamics
+      omics            Builds networks from raw omics matrices
+
+Optional — the ``omics`` command
+--------------------------------
+
+:doc:`omics <cli/omics/index>` builds networks from raw RNA-seq counts or
+microbiome abundances and needs two extra packages (plus ``mygene`` for
+online gene annotation). The rest of Pyntacle does not use them:
+
+.. code-block:: bash
+
+   conda activate graphtacle_debug
+   pip install scikit-learn statsmodels mygene
+
 
 Step 4 — Verify the installation
 ----------------------------------

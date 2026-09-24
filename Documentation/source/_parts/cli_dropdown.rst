@@ -108,6 +108,17 @@
        </details>
 
        <details class="pyntacle-details nested">
+         <summary>omics<span class="chev"></span></summary>
+         <div class="pyntacle-details-body">
+
+:doc:`Open omics <cli/omics/index>`
+
+.. raw:: html
+
+         </div>
+       </details>
+
+       <details class="pyntacle-details nested">
          <summary>percolation<span class="chev"></span></summary>
          <div class="pyntacle-details-body">
 
