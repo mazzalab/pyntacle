@@ -699,11 +699,16 @@ ul.overview-list li{padding:.15rem 0;}
 .links line{stroke:#9aa5b1;stroke-opacity:.55;}
 .nodes circle{stroke:#fff;stroke-width:1.2px;fill:#3f7cac;}
 .nodetext text{font-size:11px;fill:var(--text);}
+/* order matters: a set member that is also a neighbour stays red, and the
+   clicked/hovered node turns yellow but keeps the set's dark ring */
+.neighbor-node{fill:#ff8f00 !important;}
+.keyplayer-node{fill:#f44336 !important;stroke:#7f1d1d !important;stroke-width:3px !important;}
 .hovered-node{fill:#ffce44 !important;}
 .clicked-node{fill:#ffce44 !important;}
-.neighbor-node{fill:#de5246 !important;}
-.keyplayer-node{fill:#f44336 !important;}
-.highlighted-link{stroke:#de5246 !important;stroke-opacity:.5 !important;stroke-width:2px;}
+.highlighted-link{stroke:#ff8f00 !important;stroke-opacity:.8 !important;stroke-width:2px;}
+.hl-legend{display:flex;flex-wrap:wrap;gap:.35rem .9rem;font-size:.8rem;color:var(--text-soft);margin:.5rem 0 .25rem;}
+.hl-legend span{display:inline-flex;align-items:center;gap:.35rem;}
+.hl-legend i{display:inline-block;width:11px;height:11px;border-radius:50%;}
 table.metrics-table{width:100%;border-collapse:collapse;font-size:.82rem;}
 table.metrics-table th,table.metrics-table td{padding:.4rem .5rem;border-bottom:1px solid var(--border);text-align:left;}
     </style>
@@ -763,6 +768,12 @@ table.metrics-table th,table.metrics-table td{padding:.4rem .5rem;border-bottom:
     <p class="kp-readout" id="tie-note"></p>
     <p class="kp-readout">Score: <span id="score-display" class="kp-score">--</span></p>
     <p class="kp-readout"><b>Key player set:</b> <span id="set-display">--</span></p>
+    <div class="hl-legend">
+        <span><i style="background:#f44336;box-shadow:0 0 0 2px #7f1d1d;"></i>Selected set</span>
+        <span><i style="background:#ffce44;"></i>Clicked node</span>
+        <span><i style="background:#ff8f00;"></i>Neighbours</span>
+    </div>
+    <p class="kp-readout">Click empty space to clear all highlights.</p>
 </div>
 """
         table_html = ""
@@ -914,14 +925,16 @@ function showNodeInfo(d){
     links.forEach(function(l){
         var sid = linkEndpointId(l.source), tid = linkEndpointId(l.target);
         if (sid === d.id || tid === d.id) {
-            d3.selectAll(".nodes circle").filter(function(n){ return n.id === sid || n.id === tid; })
+            d3.selectAll(".nodes circle").filter(function(n){ return n.id !== d.id && (n.id === sid || n.id === tid); })
                 .classed("neighbor-node", true);
             d3.select("#link-" + sid + "-" + tid).classed("highlighted-link", true);
         }
     });
 }
 
-svg.on("click", function(){ clearClickHighlight(); });
+// Empty-space click drops everything: the clicked node, its neighbours and
+// the highlighted set. Picking a metric again brings a set back.
+svg.on("click", function(){ clearClickHighlight(); clearSetHighlight(); });
 
 function searchNode(){
     var term = document.getElementById("node-search").value.trim();
@@ -964,6 +977,17 @@ function highlightSet(op, setIndex){
     document.getElementById("set-display").textContent = chosen.join(", ");
 }
 
+function clearSetHighlight(){
+    d3.selectAll(".nodes circle").classed("keyplayer-node", false);
+    currentKeySet = new Set();
+    // no metric left selected, so choosing any one (even the same) fires "change"
+    metricSelect.selectedIndex = -1;
+    document.getElementById("tie-row").style.display = "none";
+    document.getElementById("tie-note").textContent = "";
+    document.getElementById("score-display").textContent = "--";
+    document.getElementById("set-display").textContent = "--";
+}
+
 function applyKeyPlayerHighlight(op){
     var info = keyInfoByOp.get(op);
     var sets = tiedSetsOf(info);
@@ -1001,7 +1025,7 @@ function buildVisibleClone(){
         .attr("x2", function(d){ return d.target.x; }).attr("y2", function(d){ return d.target.y; })
         .attr("stroke", function(d){
             var live = d3.select("#link-" + linkEndpointId(d.source) + "-" + linkEndpointId(d.target));
-            return live.classed("highlighted-link") ? "#de5246" : "#9aa5b1";
+            return live.classed("highlighted-link") ? "#ff8f00" : "#9aa5b1";
         })
         .attr("stroke-opacity", edgesOn ? 0.5 : 0).attr("stroke-width", 2);
 
@@ -1011,10 +1035,12 @@ function buildVisibleClone(){
         .attr("fill", function(d){
             var live = d3.select("#node-" + d.id);
             if (live.classed("clicked-node")) return "#ffce44";
-            if (live.classed("neighbor-node")) return "#de5246";
             if (currentKeySet.has(d.id)) return "#f44336";
+            if (live.classed("neighbor-node")) return "#ff8f00";
             return "#3f7cac";
-        });
+        })
+        .attr("stroke", function(d){ return currentKeySet.has(d.id) ? "#7f1d1d" : "#ffffff"; })
+        .attr("stroke-width", function(d){ return currentKeySet.has(d.id) ? 3 : 1.2; });
 
     if (labelsOn) {
         clone.append("g").selectAll("text").data(nodes).enter().append("text")
@@ -1211,11 +1237,16 @@ ul.overview-list li{padding:.15rem 0;}
 .links line{stroke:#9aa5b1;stroke-opacity:.55;}
 .nodes circle{stroke:#fff;stroke-width:1.2px;fill:#3f7cac;}
 .nodetext text{font-size:11px;fill:var(--text);}
+/* order matters: a set member that is also a neighbour stays red, and the
+   clicked/hovered node turns yellow but keeps the set's dark ring */
+.neighbor-node{fill:#ff8f00 !important;}
+.groupcentrality-node{fill:#f44336 !important;stroke:#7f1d1d !important;stroke-width:3px !important;}
 .hovered-node{fill:#ffce44 !important;}
 .clicked-node{fill:#ffce44 !important;}
-.neighbor-node{fill:#de5246 !important;}
-.groupcentrality-node{fill:#f44336 !important;}
-.highlighted-link{stroke:#de5246 !important;stroke-opacity:.5 !important;stroke-width:2px;}
+.highlighted-link{stroke:#ff8f00 !important;stroke-opacity:.8 !important;stroke-width:2px;}
+.hl-legend{display:flex;flex-wrap:wrap;gap:.35rem .9rem;font-size:.8rem;color:var(--text-soft);margin:.5rem 0 .25rem;}
+.hl-legend span{display:inline-flex;align-items:center;gap:.35rem;}
+.hl-legend i{display:inline-block;width:11px;height:11px;border-radius:50%;}
 table.metrics-table{width:100%;border-collapse:collapse;font-size:.82rem;}
 table.metrics-table th,table.metrics-table td{padding:.4rem .5rem;border-bottom:1px solid var(--border);text-align:left;}
     </style>
@@ -1275,6 +1306,12 @@ table.metrics-table th,table.metrics-table td{padding:.4rem .5rem;border-bottom:
     <p class="kp-readout" id="tie-note"></p>
     <p class="kp-readout">Score: <span id="score-display" class="kp-score">--</span></p>
     <p class="kp-readout"><b>Group centrality set:</b> <span id="set-display">--</span></p>
+    <div class="hl-legend">
+        <span><i style="background:#f44336;box-shadow:0 0 0 2px #7f1d1d;"></i>Selected set</span>
+        <span><i style="background:#ffce44;"></i>Clicked node</span>
+        <span><i style="background:#ff8f00;"></i>Neighbours</span>
+    </div>
+    <p class="kp-readout">Click empty space to clear all highlights.</p>
 </div>
 """
         table_html = ""
@@ -1426,14 +1463,16 @@ function showNodeInfo(d){
     links.forEach(function(l){
         var sid = linkEndpointId(l.source), tid = linkEndpointId(l.target);
         if (sid === d.id || tid === d.id) {
-            d3.selectAll(".nodes circle").filter(function(n){ return n.id === sid || n.id === tid; })
+            d3.selectAll(".nodes circle").filter(function(n){ return n.id !== d.id && (n.id === sid || n.id === tid); })
                 .classed("neighbor-node", true);
             d3.select("#link-" + sid + "-" + tid).classed("highlighted-link", true);
         }
     });
 }
 
-svg.on("click", function(){ clearClickHighlight(); });
+// Empty-space click drops everything: the clicked node, its neighbours and
+// the highlighted set. Picking a metric again brings a set back.
+svg.on("click", function(){ clearClickHighlight(); clearSetHighlight(); });
 
 function searchNode(){
     var term = document.getElementById("node-search").value.trim();
@@ -1476,6 +1515,17 @@ function highlightSet(op, setIndex){
     document.getElementById("set-display").textContent = chosen.join(", ");
 }
 
+function clearSetHighlight(){
+    d3.selectAll(".nodes circle").classed("groupcentrality-node", false);
+    currentNodeSet = new Set();
+    // no metric left selected, so choosing any one (even the same) fires "change"
+    metricSelect.selectedIndex = -1;
+    document.getElementById("tie-row").style.display = "none";
+    document.getElementById("tie-note").textContent = "";
+    document.getElementById("score-display").textContent = "--";
+    document.getElementById("set-display").textContent = "--";
+}
+
 function applyGroupCentralityHighlight(op){
     var info = gcInfoByOp.get(op);
     var sets = tiedSetsOf(info);
@@ -1513,7 +1563,7 @@ function buildVisibleClone(){
         .attr("x2", function(d){ return d.target.x; }).attr("y2", function(d){ return d.target.y; })
         .attr("stroke", function(d){
             var live = d3.select("#link-" + linkEndpointId(d.source) + "-" + linkEndpointId(d.target));
-            return live.classed("highlighted-link") ? "#de5246" : "#9aa5b1";
+            return live.classed("highlighted-link") ? "#ff8f00" : "#9aa5b1";
         })
         .attr("stroke-opacity", edgesOn ? 0.5 : 0).attr("stroke-width", 2);
 
@@ -1523,10 +1573,12 @@ function buildVisibleClone(){
         .attr("fill", function(d){
             var live = d3.select("#node-" + d.id);
             if (live.classed("clicked-node")) return "#ffce44";
-            if (live.classed("neighbor-node")) return "#de5246";
             if (currentNodeSet.has(d.id)) return "#f44336";
+            if (live.classed("neighbor-node")) return "#ff8f00";
             return "#3f7cac";
-        });
+        })
+        .attr("stroke", function(d){ return currentNodeSet.has(d.id) ? "#7f1d1d" : "#ffffff"; })
+        .attr("stroke-width", function(d){ return currentNodeSet.has(d.id) ? 3 : 1.2; });
 
     if (labelsOn) {
         clone.append("g").selectAll("text").data(nodes).enter().append("text")
