@@ -415,7 +415,7 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         radiality=[]
         weights = self.es["weight"] if "weight" in self.es.attributes() else None
         if sps is None:
-            sps=self.distances(weights=weights,mode=ig.ALL)
+            sps = distance_matrix(self, weights=weights)
 
         if diameter is None:
             # The diameter must be measured in the same unit as sps, otherwise
@@ -486,7 +486,8 @@ class Graphtacle(ig.Graph, ig.GraphBase):
 
     def median_global_shortest_path_length(self):
 
-        sps = np.array(self.distances(), dtype=float)
+        # hop counts are exact in float32: half the memory of the default
+        sps = distance_matrix(self, dtype=np.float32)
         finite = sps[np.isfinite(sps) & (sps != 0)]
         if finite.size == 0:
             return float("nan")
@@ -504,7 +505,7 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         been mistaken for "unreachable".
         """
         weights = self.es["weight"] if "weight" in self.es.attributes() else None
-        return np.array(self.distances(weights=weights), dtype=float)
+        return distance_matrix(self, weights=weights)
 
 
 

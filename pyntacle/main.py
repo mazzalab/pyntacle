@@ -261,7 +261,7 @@ def main(args):
 		# Compute the weighted all-pairs shortest-path matrix and the unweighted
 		# diameter once, then feed them to radiality/radiality_reach so each APSP
 		# is not recomputed per-metric.
-		sps_w = g.distances(weights=g.es["weight"], mode=ig.ALL)
+		sps_w = distance_matrix(g, weights=g.es["weight"])
 		diam_u = g.diameter()
 		# radiality subtracts a mean distance from the diameter, so both have to be
 		# measured in the same unit: weighted sps go with the weighted diameter.

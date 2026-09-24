@@ -561,3 +561,20 @@ def print_adjacency_matrix_with_vertices(graph):
     # Print the formatted adjacency matrix
     print(matrix_str)
 
+
+
+def distance_matrix(graph, weights=None, dtype=np.float64, chunk=512):
+    """All-pairs shortest-path lengths as an (n, n) numpy array, ``inf`` if unreachable.
+
+    ``graph.distances()`` returns n lists of n Python floats -- about 32 bytes
+    per cell against 8 in an array -- and the caller then copies them into numpy
+    anyway: at n = 10k that is a 3.2 GB list next to a 0.8 GB array. Filling
+    the array a block of source rows at a time keeps only one block of Python
+    objects alive.
+    """
+    n = graph.vcount()
+    out = np.empty((n, n), dtype=dtype)
+    for start in range(0, n, chunk):
+        stop = min(n, start + chunk)
+        out[start:stop] = graph.distances(source=range(start, stop), weights=weights, mode=ig.ALL)
+    return out

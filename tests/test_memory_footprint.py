@@ -10,6 +10,7 @@ import gc
 import tracemalloc
 
 import igraph as ig
+import numpy as np
 import pytest
 
 from _ext.wrapper import cython_wrapper_info
@@ -60,3 +61,29 @@ def test_footprint_stays_below_the_dense_matrix(oper):
     assert peak < dense_bytes / 2, (
         f"{oper}: peak python allocation {peak / 1e6:.1f} MB approaches the "
         f"dense {dense_bytes / 1e6:.1f} MB matrix -- it is still being built")
+
+
+def test_distance_matrix_matches_igraph_including_unreachable():
+    from utility import distance_matrix
+    g = ig.Graph(n=6, edges=[(0, 1), (1, 2), (3, 4)])   # 5 isolated, two components
+    w = [0.5, 2.0, 1.5]
+    for weights in (None, w):
+        ref = np.array(g.distances(weights=weights), dtype=float)
+        got = distance_matrix(g, weights=weights, chunk=2)
+        assert got.dtype == np.float64 and np.array_equal(got, ref)
+    assert distance_matrix(g, dtype=np.float32).dtype == np.float32
+
+
+def test_distance_matrix_never_builds_the_full_python_list():
+    """igraph's distances() returns n lists of n Python floats -- ~32 bytes a
+    cell instead of 8. The global command used to hold two of those at n=10k
+    (6.3 GB peak). Built chunk by chunk, the peak is the array plus one chunk."""
+    from utility import distance_matrix
+    n = 3000
+    g = ig.Graph.Erdos_Renyi(n=n, m=3 * n)
+    gc.collect()
+    tracemalloc.start()
+    distance_matrix(g, chunk=256)
+    _, peak = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+    assert peak < 1.5 * n * n * 8, peak / 2 ** 20
