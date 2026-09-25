@@ -129,3 +129,23 @@ def test_runner_pins_to_given_cpus():
     cpu = sorted(os.sched_getaffinity(0))[-1]
     res = runner.run([sys.executable, "-c", "pass"], cpus=[cpu])
     assert res["exit_status"] == "ok" and res["cpus"] == str(cpu)
+
+
+def test_allowed_cpus_keeps_to_the_pbs_grant(monkeypatch):
+    import bench
+    # PBS without cpusets: affinity is the whole node, NCPUS is what was granted
+    monkeypatch.setattr(bench.os, "sched_getaffinity", lambda pid: set(range(32)))
+    monkeypatch.setenv("NCPUS", "8")
+    assert bench._allowed_cpus() == list(range(8))
+    monkeypatch.delenv("NCPUS")
+    assert len(bench._allowed_cpus()) == 32
+
+
+def test_mem_estimate_fits_the_largest_cell_in_the_job():
+    # n = 25,000 is the largest cell of hpc-paper; its estimate must fit the
+    # job's budget, or it could never start next to anything
+    import bench
+    import json
+    cfg = json.load(open(os.path.join(os.path.dirname(__file__), "..", "benchmarks", "configs", "hpc-paper.json")))
+    biggest = max(n for g in cfg["groups"] for n in g["n"])
+    assert bench._mem_estimate_mb({"n": biggest}) < cfg["mem_budget_mb"]

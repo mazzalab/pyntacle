@@ -214,7 +214,11 @@ def cmd_run(args):
                 if row["warmup"] == "1" and row["exit_status"] == "ok":
                     first_wall[row["run_id"]] = float(row["wall_s"])
 
-    allowed = sorted(os.sched_getaffinity(0))
+    allowed = _allowed_cpus()
+    widest = max(c["threads"] for c in cells)
+    if widest > len(allowed):
+        raise SystemExit("a cell asks for {} threads but this job has {} CPUs: request more "
+                         "CPUs or drop that thread count from the config".format(widest, len(allowed)))
     slots = min(cfg.get("slots") or len(allowed), len(allowed))
     budget = cfg.get("mem_budget_mb") or int(0.85 * psutil.virtual_memory().total / 2 ** 20)
     state = {"step": 0, "running": 0, "reserved": 0}
@@ -338,6 +342,19 @@ def cmd_run(args):
     print("shard {} complete: {} rows written this run".format(shard_tag, state["step"]), flush=True)
 
 
+def _allowed_cpus():
+    """CPUs this job may use. Under PBS without cpusets the affinity mask is
+    the whole node, while the job was granted only NCPUS of it: keep to that
+    many, so the benchmark never takes cores other users' jobs were given."""
+    allowed = sorted(os.sched_getaffinity(0))
+    granted = int(os.environ.get("NCPUS") or 0)
+    if 0 < granted < len(allowed):
+        print("affinity has {} CPUs, PBS granted {}: using {}".format(
+            len(allowed), granted, allowed[:granted]), flush=True)
+        allowed = allowed[:granted]
+    return allowed
+
+
 def _cpu_blocks(allowed, threads, slots):
     """Disjoint CPU sets of `threads` CPUs, at most `slots` CPUs in total,
     spread over the allowed range so that concurrent cells land on different
@@ -349,11 +366,11 @@ def _cpu_blocks(allowed, threads, slots):
 
 def _mem_estimate_mb(cell):
     """Expected peak of one cell, used only to decide how many run together
-    (the hard per-cell cap is mem_cap_mb). Calibrated on the local pilot: the
-    new tool's `global` went past 6 GB at n = 10,000, i.e. about 8 dense
-    n x n float64 matrices."""
+    (the hard per-cell cap is mem_cap_mb). Calibrated on the local pilot after
+    the distance_matrix fix: the largest peak at n = 10,000 was the old tool's
+    local/global, 2.5 GB, i.e. about 27 bytes per node pair; 32 leaves margin."""
     n = cell["n"] or 0
-    return 512 + 8 * 8 * n * n // 2 ** 20
+    return 512 + 32 * n * n // 2 ** 20
 
 
 def main():

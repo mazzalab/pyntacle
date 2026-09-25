@@ -1,0 +1,28 @@
+{
+  "profile": "hpc-paper-threads",
+  "seed": 42,
+  "repeats": 5, "long_cell_s": 300, "long_cell_repeats": 2,
+  "timeout_s": 3600, "mem_cap_mb": 8000,
+  "slots": 16, "mem_budget_mb": 14000,
+  "pbs": {"ncpus": 16, "mem": "16gb", "walltime": "48:00:00"},
+  "tools": {
+    "old_bin": "~/miniconda3/envs/pyntacle_old/bin/pyntacle",
+    "new_python": "~/miniconda3/envs/graphtacle_debug/bin/python",
+    "new_main": "pyntacle/main.py"
+  },
+  "groups": [
+    {"name": "finders-bf-k2", "cmds": ["kp-finder", "gc-finder"],
+     "topologies": ["er", "ba", "ws"], "n": [100, 250, 500, 1000], "d": [3], "k": [2],
+     "algorithms": ["brute_force"], "threads": [16],
+     "weighted": [false, true], "tools": ["old", "new"]},
+    {"name": "finders-bf-k3", "cmds": ["kp-finder", "gc-finder"],
+     "topologies": ["er"], "n": [50, 100, 200, 400], "d": [3], "k": [3],
+     "algorithms": ["brute_force"], "threads": [16], "tools": ["old", "new"]},
+    {"name": "scaling-kp", "cmds": ["kp-finder"],
+     "topologies": ["er"], "n": [500], "d": [3], "k": [2],
+     "algorithms": ["brute_force"], "threads": [1, 2, 4, 8, 16], "tools": ["old", "new"]},
+    {"name": "scaling-gc", "cmds": ["gc-finder"],
+     "topologies": ["er"], "n": [200], "d": [3], "k": [2],
+     "algorithms": ["brute_force"], "threads": [1, 2, 4, 8, 16], "tools": ["old", "new"]}
+  ]
+}
