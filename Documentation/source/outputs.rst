@@ -293,8 +293,11 @@ graphs too large to render as a network at all.
 - ``percolation`` writes ``<graph>_percolation.html``: a different kind of
   report (Plotly, not D3) since it visualizes a *time-evolving* process
   rather than a single static/optimal state — an animated network view
-  driven by a time slider (play/pause/step/speed), instant-vs-cumulative
-  edge display, a base-edge toggle, and node search/zoom-by-label. See
+  driven by a time slider (play/pause/step/speed) with the S/I/R epidemic
+  curve below it, in the same page layout as the other reports: live state
+  counts, node search with per-node infection details, display switches
+  (cumulative infection edges, other edges, labels), outcome and parameter
+  panels, PNG export. See
   :doc:`cli/percolation/index` for the ``-mxs/--maxSteps`` flag that caps
   how many steps the underlying simulation (and therefore the animation)
   runs for.

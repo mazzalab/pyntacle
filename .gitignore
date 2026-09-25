@@ -54,3 +54,4 @@ Documentation/old_stuff/
 # Benchmark outputs and the regenerated graph corpus (deterministic from seeds)
 benchmarks/results/
 benchmarks/data/*_s42*
+review_html/

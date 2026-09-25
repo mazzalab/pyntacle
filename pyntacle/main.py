@@ -789,7 +789,7 @@ def main(args):
 		print("Percolation\n")
 		# imported lazily: percolation.py pulls in plotly, keep it out of the other commands
 		from percolation import (run_percolation, summarize_percolation_results,
-								  save_percolation_html_from_results_igraph)
+								  save_percolation_html_v2)
 
 		# optional per-node recovery times from a TSV file (columns: Nodes, Recovery_time)
 		tau_vector = None
@@ -825,7 +825,7 @@ def main(args):
 
 		if not no_plot:
 			# interactive HTML animation of the spreading process
-			save_percolation_html_from_results_igraph(g, results, filename=html_path)
+			save_percolation_html_v2(g, results, filename=html_path, name=filename)
 			print(f"\nInteractive HTML saved in: {html_path}")
 
 		# per-node activation / recovery report

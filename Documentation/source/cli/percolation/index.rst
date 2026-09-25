@@ -237,9 +237,15 @@ Cap a long-running simulation at 20 steps:
 Output files:
 
 - ``report_<graph>_percolation*.tsv`` — summary block + time-series table
-- ``<graph>_percolation.html`` — interactive Plotly network animation: time
-  slider with play/pause/step/speed controls, instant-vs-cumulative edge
-  display, base-edge toggle, node search/zoom-by-label.
+- ``<graph>_percolation.html`` — interactive report: the network animation
+  (time slider with play/pause/step/speed, nodes coloured susceptible /
+  infected / recovered, infection edges shown per step or cumulatively) with
+  the epidemic curve (S, I and R counts over time) below it, whose marker
+  follows the slider and which jumps the animation to the clicked time. The
+  sidebar shows the counts at the current time, a node search (state, degree,
+  infection and recovery times, infecting neighbour), display switches, the
+  outcome (nodes ever infected, peak, duration) and the run parameters. Both
+  plots export to PNG.
 
 See :doc:`../../percolation/percolation` for the full mathematical model and
 :doc:`../../outputs` for complete report documentation.

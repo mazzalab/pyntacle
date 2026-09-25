@@ -1426,21 +1426,17 @@ def save_percolation_html_v2(
     results,
     filename="percolation.html",
     max_frames=180,
-    default_vh=90,
+    default_vh=62,
+    name=None,
 ):
     """
-    Copy of save_percolation_html_from_results_igraph() kept as a separate
-    function so the original is never modified while this one is iterated on.
+    Interactive percolation report in the style of the other Pyntacle HTML
+    reports (local, keyplayer, groupcentrality): the network animation with an
+    epidemic curve (S/I/R counts vs t) below it, and a sidebar with the live
+    state counts, the run parameters, the outcome, search and display options.
 
-    First addition over the original: an epidemic curve (S/I/R counts vs t)
-    plotted below the network animation, using active_counts/susceptible_counts/
-    recovered_counts -- run_percolation already computes these every step but the
-    original HTML never plotted them (only summarize_percolation_results read
-    them, for the printed text summary). A dotted vertical marker on the curve
-    tracks the network animation's current t, moved in lockstep by repaint().
-
-    Build an interactive HTML (KK/FR layout, instant/cumulative edges, focus on node)
-    from an igraph.Graph + the results dict returned by run_percolation().
+    Kept separate from save_percolation_html_from_results_igraph(), which is
+    left untouched, until it replaces it.
 
     Parameters
     ----------
@@ -1453,15 +1449,18 @@ def save_percolation_html_v2(
     max_frames : int
         Maximum number of time frames in the slider (subsample if longer).
     default_vh : int
-        Height of the graph area in viewport height units (vh).
+        Height of the network area in viewport height units (vh).
+    name : str or None
+        Network name shown in the header; the file name when omitted.
 
     Returns
     -------
     filename : str
         The path of the saved HTML file.
     """
+    import html as html_lib
+    import os
 
-    # basic sanity checks on results
     required_keys = [
         "Pstar", "tau", "pth_max", "distribution",
         "seed_index", "node_labels", "edges",
@@ -1478,8 +1477,7 @@ def save_percolation_html_v2(
     tau_vector       = results.get("tau_vector", None)
     pth_max          = results["pth_max"]
     distribution     = results["distribution"]
-    seed_index       = results["seed_index"]
-    node_labels      = results["node_labels"]
+    node_labels      = [str(lbl) for lbl in results["node_labels"]]
     edge_pth         = results["edge_thresholds"]
     open_edges       = results["open_edges"]
     n_steps          = results["n_steps"]
@@ -1509,9 +1507,18 @@ def save_percolation_html_v2(
             u"activation_time and/or recovery_time lengths do not match number of nodes."
         )
 
-    mean_k = 2.0 * E / max(1, N)
+    if name is None:
+        name = os.path.basename(filename)
+        for suffix in ("_percolation.html", ".html"):
+            if name.endswith(suffix):
+                name = name[:-len(suffix)]
+                break
 
-    # effective tau for q_eff and title
+    # palette of the other reports: teal accent, amber/red highlights
+    col_s, col_i, col_r = "#b0bec5", "#f4a300", "#00796b"
+    col_used, col_base = "#de5246", "#9aa5b1"
+
+    mean_k = 2.0 * E / max(1, N)
     if tau_distribution == "fixed" or tau_vector is None:
         tau_eff = float(tau)
     else:
@@ -1519,17 +1526,16 @@ def save_percolation_html_v2(
             tau_eff = float(np.nanmean(tau_vector))
         except Exception:
             tau_eff = float(tau)
+    q_eff = max(0.0, min(1.0, Pstar * (1.0 - 1.0 / max(1.0, tau_eff))))
 
-    # --- time axis: discrete steps 0..T ---
+    # --- time axis: discrete steps 0..T, subsampled for the slider ---
     T = n_steps
-    times = list(range(T + 1))
-
-    # optional subsampling if too many frames
+    full_times = list(range(T + 1))
+    times = full_times
     if len(times) > max_frames:
         idx = np.linspace(0, len(times) - 1, max_frames).astype(int)
         times = [times[i] for i in idx]
 
-    # --- per-node info for coloring ---
     node_ti = [
         float(activation_time[i]) if not math.isnan(activation_time[i]) else float("inf")
         for i in range(N)
@@ -1539,153 +1545,140 @@ def save_percolation_html_v2(
         for i in range(N)
     ]
 
-    # --- layout: KK for small graphs, FR for larger ones (threshold = 1000) ---
-    if N <= 1000:
-        layout = graph.layout_kamada_kawai()
-    else:
-        layout = graph.layout_fruchterman_reingold()
-    pos = {i: (layout[i][0], layout[i][1]) for i in range(N)}
+    # --- layout: KK for small graphs, DRL for larger ones ---
+    pos = auto_layout_igraph(graph)
+    node_x = [pos[u][0] for u in range(N)]
+    node_y = [pos[u][1] for u in range(N)]
 
-    nodes = list(range(N))
-    node_x = [pos[u][0] for u in nodes]
-    node_y = [pos[u][1] for u in nodes]
+    base_x, base_y = edges_xy(graph.get_edgelist(), pos)
 
-    # --- base edges (static faint gray) ---
-    edgelist = graph.get_edgelist()
-    base_x, base_y = edges_xy(edgelist, pos)
-
-    # --- infection edges and times ---
-    # run_percolation records infection_edges on the fly, so it's always
-    # present (possibly empty, e.g. an isolated seed that never spread).
-    raw_tedge = results["infection_edges"]
-    tedge = {
-        frozenset({int(min(e)), int(max(e))}): float(t)
-        for e, t in raw_tedge.items()
-    }
-
+    # --- infection edges, sorted by time; the earlier-infected end is the source ---
     used_sorted = sorted(
-        ((min(e), max(e), float(t)) for e, t in tedge.items()),
+        ((int(min(e)), int(max(e)), float(t)) for e, t in results["infection_edges"].items()),
         key=lambda r: r[2],
     )
     used_u = [u for u, _, _ in used_sorted]
     used_v = [v for _, v, _ in used_sorted]
     used_t = [t for _, _, t in used_sorted]
+    infected_by = [None] * N
+    for u, v, _ in used_sorted:
+        src, dst = (u, v) if node_ti[u] <= node_ti[v] else (v, u)
+        if infected_by[dst] is None:
+            infected_by[dst] = node_labels[src]
 
-    # --- title (similar style as your notebook) ---
-    q_eff = max(0.0, min(1.0, Pstar * (1.0 - 1.0 / max(1.0, tau_eff))))
-
-    if tau_distribution in ("fixed", None):
-        tau_title = f"τ={tau_eff:.2f}"
+    # --- outcome figures, as in summarize_percolation_results ---
+    sus_counts = [int(x) for x in results["susceptible_counts"]]
+    inf_counts = [int(x) for x in results["active_counts"]]
+    rec_counts = [int(x) for x in results["recovered_counts"]]
+    reached = sum(1 for t in node_ti if math.isfinite(t))
+    if inf_counts:
+        i_max = max(inf_counts)
+        t_peak = inf_counts.index(i_max)
+        alive = [t for t, c in enumerate(inf_counts) if c > 0]
+        t_end = alive[-1] if alive else 0
     else:
-        tau_title = f"τ̄≈{tau_eff:.2f}"
+        i_max, t_peak, t_end = 0, 0, 0
+    n_open = int(sum(bool(x) for x in open_edges))
 
-    title = (
-        f"Percolation v2 (KK/FR) | P*={Pstar:.2f}, {tau_title} | "
-        f"N={N}, E={E}, ⟨k⟩≈{mean_k:.2f}, q_eff≈{q_eff:.2f} | t=0.00"
-    )
+    seeds = results.get("seed_indices", [results["seed_index"]])
+    seed_names = ", ".join(node_labels[s] for s in seeds if 0 <= s < N)
 
-    base_size = 6 if N > 1500 else 8
+    def fmt_t(t):
+        return "never" if not math.isfinite(t) else "{:g}".format(t)
 
-    # --- initial Plotly figure (base edges + empty used edges + nodes) ---
+    base_size = 6 if N > 1500 else 9
+    hover = [
+        "<b>{}</b><br>infected at t = {}<br>recovered at t = {}".format(
+            html_lib.escape(node_labels[i]), fmt_t(node_ti[i]), fmt_t(node_tr[i]))
+        for i in range(N)
+    ]
+    font = dict(family='-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif',
+                color="#1f2937", size=12)
+    plot_config = {"displaylogo": False, "responsive": True,
+                   "modeBarButtonsToRemove": ["select2d", "lasso2d", "toImage"]}
+
+    # --- network figure: 0=base edges, 1=infection edges, 2=nodes ---
     fig = go.Figure([
         go.Scattergl(
             x=base_x, y=base_y, mode="lines",
-            line=dict(width=1.0, color=COL_BASE),
-            opacity=0.28,
-            hoverinfo="skip", name="Base edges"
+            line=dict(width=1.0, color=col_base), opacity=0.45,
+            hoverinfo="skip", name="Edges",
         ),
         go.Scattergl(
             x=[], y=[], mode="lines",
-            line=dict(width=2.2, color=COL_USED),
-            hoverinfo="skip", name="Used edges"
+            line=dict(width=2.4, color=col_used),
+            hoverinfo="skip", name="Infection edges",
         ),
         go.Scatter(
             x=node_x, y=node_y, mode="markers",
-            marker=dict(
-                size=base_size,
-                color=[COL_S] * N,
-                line=dict(width=0.5, color="#222")
-            ),
-            text=[str(lbl) for lbl in node_labels],  # hover label
-            hoverinfo="text",
-            name="Nodes", showlegend=False
-        ),
-        # Legend-only markers
-        go.Scatter(
-            x=[0], y=[0], mode="markers", name="Susceptible",
-            marker=dict(size=10, color=COL_S, line=dict(width=0.5, color="#222")),
-            hoverinfo="skip", visible="legendonly"
-        ),
-        go.Scatter(
-            x=[0], y=[0], mode="markers", name="Infected",
-            marker=dict(size=10, color=COL_I, line=dict(width=0.5, color="#222")),
-            hoverinfo="skip", visible="legendonly"
-        ),
-        go.Scatter(
-            x=[0], y=[0], mode="markers", name="Recovered",
-            marker=dict(size=10, color=COL_R, line=dict(width=0.5, color="#222")),
-            hoverinfo="skip", visible="legendonly"
+            marker=dict(size=base_size, color=[col_s] * N,
+                        line=dict(width=1.2, color="#ffffff")),
+            text=node_labels, textposition="top center",
+            textfont=dict(size=10, color="#1f2937"),
+            hovertext=hover, hoverinfo="text",
+            name="Nodes",
         ),
     ])
-
     fig.update_layout(
-        title=title,
-        xaxis=dict(visible=False),
-        yaxis=dict(visible=False, scaleanchor="x", scaleratio=1),
-        margin=dict(l=10, r=10, t=64, b=10),
-        showlegend=True,
-        legend=dict(itemsizing="constant"),
+        font=font, showlegend=False, dragmode="pan",
+        xaxis=dict(visible=False), yaxis=dict(visible=False, scaleanchor="x", scaleratio=1),
+        margin=dict(l=0, r=0, t=0, b=0),
+        paper_bgcolor="#ffffff", plot_bgcolor="#ffffff",
+        hoverlabel=dict(bgcolor="#ffffff", bordercolor="#e0e4e8", font=font),
         uirevision=True,
     )
+    figure_div = pio.to_html(fig, include_plotlyjs="inline", full_html=False,
+                             div_id="percoFig", config=plot_config,
+                             default_width="100%", default_height="100%")
 
-    figure_div = pio.to_html(
-        fig, include_plotlyjs="inline", full_html=False, div_id="percoFig"
-    )
-
-    # --- epidemic curve (S/I/R counts over the full, unsampled time axis) ---
-    # active_counts/susceptible_counts/recovered_counts are already computed by
-    # run_percolation for every step but the original HTML never plotted them
-    # (summarize_percolation_results only reads them for the text summary).
-    full_times = list(range(T + 1))
-    sus_counts = results["susceptible_counts"]
-    inf_counts = results["active_counts"]
-    rec_counts = results["recovered_counts"]
-
+    # --- epidemic curve over the full, unsampled time axis ---
     fig2 = go.Figure([
         go.Scatter(x=full_times, y=sus_counts, mode="lines", name="Susceptible",
-                   line=dict(color=COL_S, width=2)),
+                   line=dict(color=col_s, width=2.5)),
         go.Scatter(x=full_times, y=inf_counts, mode="lines", name="Infected",
-                   line=dict(color=COL_I, width=2)),
+                   line=dict(color=col_i, width=2.5), fill="tozeroy",
+                   fillcolor="rgba(244,163,0,.12)"),
         go.Scatter(x=full_times, y=rec_counts, mode="lines", name="Recovered",
-                   line=dict(color=COL_R, width=2)),
+                   line=dict(color=col_r, width=2.5)),
     ])
     fig2.update_layout(
-        title="Epidemic curve (S/I/R over time)",
-        xaxis=dict(title="t"),
-        yaxis=dict(title="Number of nodes"),
-        margin=dict(l=50, r=10, t=40, b=35),
-        legend=dict(orientation="h", y=1.15),
-        # vertical marker tracking the network animation's current t, moved by
-        # repaint() in lockstep with the slider -- x0/x1 updated via Plotly.relayout.
+        font=font, hovermode="x unified",
+        xaxis=dict(title="t (steps)", gridcolor="#eef1f4", zeroline=False),
+        yaxis=dict(title="Nodes", gridcolor="#eef1f4", zeroline=False, rangemode="tozero"),
+        margin=dict(l=55, r=15, t=30, b=40),
+        paper_bgcolor="#ffffff", plot_bgcolor="#ffffff",
+        legend=dict(orientation="h", x=0, xanchor="left", y=1.02, yanchor="bottom"),
+        # current-t marker, moved by repaint() with the slider
         shapes=[dict(type="line", xref="x", yref="paper", x0=0, x1=0, y0=0, y1=1,
-                     line=dict(color="#333", width=1, dash="dot"))],
+                     line=dict(color="#00796b", width=1.5, dash="dot"))],
     )
-    curve_div = pio.to_html(fig2, include_plotlyjs=False, full_html=False, div_id="percoCurve")
+    curve_div = pio.to_html(fig2, include_plotlyjs=False, full_html=False,
+                            div_id="percoCurve", config={**plot_config, "displayModeBar": False},
+                            default_width="100%", default_height="100%")
 
-    # --- tiny "bootstrap-like" CSS (no external deps) ---
-    bootstrap_min = r"""
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,sans-serif}
-.container-fluid{width:100%;padding-left:1rem;padding-right:1rem;margin-left:auto;margin-right:auto}
-.row{display:flex;flex-wrap:wrap;margin-left:-.5rem;margin-right:-.5rem;gap:.5rem}
-.col{flex:1 0 0%;padding-left:.5rem;padding-right:.5rem}
-.col-auto{flex:0 0 auto;padding-left:.5rem;padding-right:.5rem}
-.g-2{gap:.5rem}.btn{display:inline-block;font-weight:500;line-height:1.2;text-align:center;border:1px solid #ced4da;padding:.375rem .75rem;border-radius:.375rem;background:#f8f9fa;cursor:pointer}
-.btn:active{transform:translateY(1px)}.btn-primary{background:#0d6efd;color:#fff;border-color:#0d6efd}
-.btn-outline-secondary{background:#fff;color:#6c757d;border-color:#6c757d}
-.form-select,.form-range{display:block;width:100%}.form-select{padding:.375rem 2rem .375rem .75rem;border:1px solid #ced4da;border-radius:.375rem;background:#fff}
-.form-range{height:1.25rem;padding:0}.badge{display:inline-block;padding:.35em .65em;font-size:.75em;border-radius:10rem;background:#f1f3f5}
-.sticky-top{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid #e9ecef}
-"""
+    esc = html_lib.escape
+    if tau_distribution in ("fixed", None) or tau_vector is None:
+        tau_row = "<tr><td>Recovery time &tau;</td><td>{:g}</td></tr>".format(float(tau))
+    else:
+        tau_row = "<tr><td>Recovery time &tau;&#772;</td><td>{:.2f} ({})</td></tr>".format(
+            tau_eff, esc(str(tau_distribution)))
+    params_rows = "".join([
+        "<tr><td>Seed</td><td>{}</td></tr>".format(esc(seed_names)),
+        "<tr><td>Infection probability P*</td><td>{:g}</td></tr>".format(float(Pstar)),
+        tau_row,
+        "<tr><td>Edge thresholds</td><td>{}, max {:g}</td></tr>".format(esc(str(distribution)), float(pth_max)),
+        "<tr><td>Effective q</td><td>{:.2f}</td></tr>".format(q_eff),
+        "<tr><td>Nodes / edges</td><td>{} / {}</td></tr>".format(N, E),
+        "<tr><td>Mean degree</td><td>{:.2f}</td></tr>".format(mean_k),
+    ])
+    outcome_rows = "".join([
+        "<tr><td>Ever infected</td><td>{} / {} ({:.1f}%)</td></tr>".format(reached, N, 100.0 * reached / max(1, N)),
+        "<tr><td>Peak infected</td><td>{} at t = {}</td></tr>".format(i_max, t_peak),
+        "<tr><td>Last infected at</td><td>t = {}</td></tr>".format(t_end),
+        "<tr><td>Steps simulated</td><td>{}</td></tr>".format(T),
+        "<tr><td>Open edges (p<sub>th</sub> &lt; P*)</td><td>{} / {}</td></tr>".format(n_open, E),
+        "<tr><td>Edges that transmitted</td><td>{}</td></tr>".format(len(used_sorted)),
+    ])
 
     payload = {
         "times": times,
@@ -1696,74 +1689,153 @@ def save_percolation_html_v2(
         "used_u": used_u,
         "used_v": used_v,
         "used_t": used_t,
-        "default_vh": int(default_vh),
-        "node_labels": [str(lbl) for lbl in node_labels],
+        "node_labels": node_labels,
+        "degree": graph.degree(),
+        "infected_by": infected_by,
+        "S": sus_counts,
+        "I": inf_counts,
+        "R": rec_counts,
         "base_size": float(base_size),
+        "colors": [col_s, col_i, col_r],
+        "name": name,
     }
-    js_payload = json.dumps(payload)
+    # "</" would close the <script> element early if a node label contains it
+    js_payload = json.dumps(payload).replace("</", "<\\/")
 
-    html = f"""<!doctype html>
-<html><head>
-<meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Percolation v2 (KK/FR, instant/cumulative + epidemic curve)</title>
-<style>
-{bootstrap_min}
-#graphWrap {{ height: {int(default_vh)}vh; width: 100%; }}
-#percoFig  {{ height: 100%;  width: 100%; }}
-.controls .form-range {{ width: 100%; }}
-#curveWrap {{ height: 28vh; width: 100%; margin-top: .75rem; }}
-#percoCurve {{ height: 100%; width: 100%; }}
-</style>
+    css = r"""
+:root{
+  --bg:#f4f6f8; --surface:#ffffff; --border:#e0e4e8;
+  --accent:#00796b; --accent-soft:#e0f2f1; --text:#1f2937; --text-soft:#5f6b7a;
+  --radius:12px; --shadow:0 2px 8px rgba(15,23,42,.08);
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);}
+.topbar{display:flex;align-items:center;gap:.75rem;padding:.75rem 1.25rem;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow);}
+.topbar img{height:36px;}
+.topbar h1{font-size:1.05rem;margin:0;font-weight:600;color:var(--accent);}
+.app-shell{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:1rem;padding:1rem;align-items:start;}
+@media (max-width:900px){.app-shell{grid-template-columns:minmax(0,1fr);}}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:1rem;margin-bottom:1rem;}
+.panel h2{font-size:.85rem;text-transform:uppercase;letter-spacing:.04em;color:var(--accent);margin:0 0 .75rem 0;font-weight:700;}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.5rem;}
+.panel-head h2{margin:0;}
+.graph-toolbar{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;padding:.25rem .25rem .75rem;}
+.btn-modern{border:none;border-radius:8px;padding:.4rem .9rem;font-size:.85rem;font-weight:600;background:var(--accent);color:#fff;cursor:pointer;transition:background .15s ease;}
+.btn-modern:hover{background:#00695c;}
+.btn-soft{background:var(--accent-soft);color:var(--accent);}
+.btn-soft:hover{background:#b2dfdb;}
+.btn-play{width:2.4rem;padding:.4rem 0;}
+.time-slider{flex:1 1 220px;accent-color:var(--accent);}
+.t-badge{font-size:.82rem;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:.25rem .7rem;white-space:nowrap;font-variant-numeric:tabular-nums;}
+.field-row{display:flex;gap:.5rem;margin-bottom:.6rem;align-items:center;flex-wrap:wrap;}
+input[type=text]{border:1px solid var(--border);border-radius:6px;padding:.35rem .5rem;font-size:.85rem;}
+input.search-not-found{box-shadow:0 0 0 2px #de5246;}
+select{border:1px solid var(--border);border-radius:6px;padding:.35rem .5rem;font-size:.85rem;background:var(--surface);}
+.switch{position:relative;display:inline-block;width:34px;height:18px;flex:0 0 auto;}
+.switch input{opacity:0;width:0;height:0;}
+.slider-toggle{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#ccd3d9;transition:.2s;border-radius:34px;}
+.slider-toggle:before{position:absolute;content:"";height:14px;width:14px;left:2px;bottom:2px;background:#fff;transition:.2s;border-radius:50%;}
+input:checked+.slider-toggle{background:var(--accent);}
+input:checked+.slider-toggle:before{transform:translateX(16px);}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:.3rem 0;font-size:.85rem;color:var(--text-soft);}
+#graphWrap{height:__VH__vh;min-height:320px;width:100%;}
+#curveWrap{height:24vh;min-height:200px;width:100%;}
+#graphWrap>div,#curveWrap>div{height:100%;}
+#node-search{flex:1 1 0;min-width:0;}
+.state-row{display:grid;grid-template-columns:14px 1fr auto auto;gap:.6rem;align-items:center;padding:.35rem 0;font-size:.88rem;}
+.swatch{width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,.08);}
+.state-count{font-weight:700;font-variant-numeric:tabular-nums;}
+.state-pct{color:var(--text-soft);font-size:.8rem;min-width:3.4rem;text-align:right;font-variant-numeric:tabular-nums;}
+.bar{height:6px;border-radius:3px;background:var(--bg);display:flex;overflow:hidden;margin-top:.5rem;}
+.bar span{display:block;height:100%;transition:width .12s linear;}
+.edge-key{display:flex;gap:1rem;margin-top:.75rem;font-size:.8rem;color:var(--text-soft);}
+.edge-key i{display:inline-block;width:18px;height:0;border-top:3px solid;vertical-align:middle;margin-right:.35rem;}
+table.kv{width:100%;border-collapse:collapse;font-size:.83rem;}
+table.kv td{padding:.3rem 0;border-bottom:1px dashed var(--border);}
+table.kv td:first-child{color:var(--text-soft);}
+table.kv td:last-child{text-align:right;font-variant-numeric:tabular-nums;}
+table.kv tr:last-child td{border-bottom:none;}
+.muted{color:var(--text-soft);font-size:.83rem;}
+""".replace("__VH__", str(int(default_vh)))
+
+    html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Percolation Report</title>
+<style>{css}</style>
 </head>
 <body>
-<div class="sticky-top">
-  <div class="container-fluid">
-    <div class="row g-2 controls">
-      <div class="col-auto"><button id="play" class="btn btn-primary" title="Play/Pause">▶</button></div>
-      <div class="col"><input id="slider" type="range" class="form-range" min="0" value="0" step="1" /></div>
-      <div class="col-auto"><span class="badge">t=<span id="tval">0</span></span></div>
-      <div class="col-auto">
-        <select id="speed" class="form-select" title="Speed (ms/frame)">
-          <option value="30">very fast</option>
-          <option value="60">fast</option>
-          <option value="120" selected>normal</option>
-          <option value="240">slow</option>
-          <option value="480">very slow</option>
+<div class="topbar">
+    <img src="https://camo.githubusercontent.com/21117091dc0315536e4ad1ccf7548c87c4626bc3563c1c96e3b40430114a3ae5/687474703a2f2f70796e7461636c652e6373732d6d656e64656c2e69742f696d616765732f7469746c655f6a6f696e65642e706e67">
+    <h1>Percolation Report &mdash; {esc(name)}</h1>
+</div>
+<div class="app-shell">
+<div>
+<div class="panel">
+    <div class="graph-toolbar">
+        <button id="play" class="btn-modern btn-play" title="Play / pause">&#9654;</button>
+        <button id="step" class="btn-modern btn-soft" title="Next frame">Step</button>
+        <input id="slider" class="time-slider" type="range" min="0" value="0" step="1">
+        <span class="t-badge">t = <span id="tval">0</span> / {T}</span>
+        <select id="speed" title="Playback speed">
+            <option value="30">Very fast</option>
+            <option value="60">Fast</option>
+            <option value="120" selected>Normal</option>
+            <option value="240">Slow</option>
+            <option value="480">Very slow</option>
         </select>
-      </div>
-      <div class="col-auto">
-        <select id="mode" class="form-select" title="Edges mode">
-          <option value="instant" selected>Instant</option>
-          <option value="cumulative">Cumulative</option>
-        </select>
-      </div>
-      <div class="col-auto">
-        <label style="display:flex;align-items:center;gap:.4rem">
-          <input id="showBase" type="checkbox" checked/> Base edges
-        </label>
-      </div>
-      <div class="col-auto"><button id="step" class="btn btn-outline-secondary" title="Step one frame">Step</button></div>
-      <div class="col-auto"><button id="reset" class="btn btn-outline-secondary" title="Reset zoom">Reset zoom</button></div>
-      <div class="col-auto">
-        <input id="focusLabel" placeholder="Node label" 
-               style="max-width:8rem;padding:.25rem .4rem;border:1px solid #ced4da;border-radius:.375rem;font-size:.85rem" />
-      </div>
-      <div class="col-auto">
-        <button id="focusBtn" class="btn btn-outline-secondary" title="Zoom & highlight node">Focus</button>
-      </div>
-      <div class="col-auto">
-        <button id="clearFocus" class="btn btn-outline-secondary" title="Clear focus">Clear</button>
-      </div>
+        <button id="reset" class="btn-modern btn-soft" title="Fit the whole network">Reset view</button>
+        <button id="export-net" class="btn-modern">Export PNG</button>
     </div>
-  </div>
+    <div id="graphWrap">{figure_div}</div>
+    <div class="edge-key">
+        <span><i style="border-color:{col_used}"></i>Infection edges</span>
+        <span><i style="border-color:{col_base};opacity:.7"></i>Other edges</span>
+    </div>
 </div>
-
-<div class="container-fluid" style="margin-top:.5rem">
-  <div id="graphWrap">{figure_div}</div>
+<div class="panel">
+    <div class="panel-head">
+        <h2>Epidemic curve</h2>
+        <button id="export-curve" class="btn-modern">Export PNG</button>
+    </div>
+    <div id="curveWrap">{curve_div}</div>
 </div>
-
-<div class="container-fluid">
-  <div id="curveWrap">{curve_div}</div>
+</div>
+<div>
+<div class="panel">
+    <h2>State at t</h2>
+    <div class="state-row"><span class="swatch" style="background:{col_s}"></span><span>Susceptible</span><span class="state-count" id="cS">0</span><span class="state-pct" id="pS"></span></div>
+    <div class="state-row"><span class="swatch" style="background:{col_i}"></span><span>Infected</span><span class="state-count" id="cI">0</span><span class="state-pct" id="pI"></span></div>
+    <div class="state-row"><span class="swatch" style="background:{col_r}"></span><span>Recovered</span><span class="state-count" id="cR">0</span><span class="state-pct" id="pR"></span></div>
+    <div class="bar"><span id="bS" style="background:{col_s}"></span><span id="bI" style="background:{col_i}"></span><span id="bR" style="background:{col_r}"></span></div>
+</div>
+<div class="panel">
+    <h2>Search</h2>
+    <div class="field-row">
+        <input type="text" id="node-search" placeholder="Node name" list="node-names">
+        <datalist id="node-names"></datalist>
+        <button id="search-btn" class="btn-modern">Find</button>
+        <button id="search-clear" class="btn-modern btn-soft">Clear</button>
+    </div>
+    <div id="node-info" class="muted">Click a node or search for one.</div>
+</div>
+<div class="panel">
+    <h2>Display</h2>
+    <div class="toggle-row"><span>Cumulative infection edges</span><label class="switch"><input type="checkbox" id="cumulative"><span class="slider-toggle"></span></label></div>
+    <div class="toggle-row"><span>Other edges</span><label class="switch"><input type="checkbox" id="showBase" checked><span class="slider-toggle"></span></label></div>
+    <div class="toggle-row"><span>Node labels</span><label class="switch"><input type="checkbox" id="showLabels"><span class="slider-toggle"></span></label></div>
+</div>
+<div class="panel">
+    <h2>Outcome</h2>
+    <table class="kv"><tbody>{outcome_rows}</tbody></table>
+</div>
+<div class="panel">
+    <h2>Parameters</h2>
+    <table class="kv"><tbody>{params_rows}</tbody></table>
+</div>
+</div>
 </div>
 
 <script>
@@ -1771,202 +1843,186 @@ def save_percolation_html_v2(
   const DATA = {js_payload};
   const times = DATA.times;
   const N = DATA.node_x.length;
+  const [COL_S, COL_I, COL_R] = DATA.colors;
+  const BASE_SZ = DATA.base_size;
+  const FOCUS_LINE = "#1f2937";
 
-  const plotDiv    = document.getElementById('percoFig');
-  const curveDiv   = document.getElementById('percoCurve');
-  const slider     = document.getElementById('slider');
-  const tval       = document.getElementById('tval');
-  const playBtn    = document.getElementById('play');
-  const stepBtn    = document.getElementById('step');
-  const resetBtn   = document.getElementById('reset');
-  const speedSel   = document.getElementById('speed');
-  const modeSel    = document.getElementById('mode');
-  const showBase   = document.getElementById('showBase');
-  const wrap       = document.getElementById('graphWrap');
-  const focusInput = document.getElementById('focusLabel');
-  const focusBtn   = document.getElementById('focusBtn');
-  const clearFocus = document.getElementById('clearFocus');
+  const plotDiv   = document.getElementById('percoFig');
+  const curveDiv  = document.getElementById('percoCurve');
+  const slider    = document.getElementById('slider');
+  const tval      = document.getElementById('tval');
+  const playBtn   = document.getElementById('play');
+  const speedSel  = document.getElementById('speed');
+  const cumulative= document.getElementById('cumulative');
+  const showBase  = document.getElementById('showBase');
+  const showLabels= document.getElementById('showLabels');
+  const search    = document.getElementById('node-search');
+  const nodeInfo  = document.getElementById('node-info');
 
-  slider.max = Math.max(0, times.length-1);
-
-  const COL_S   = "{COL_S}";
-  const COL_I   = "{COL_I}";
-  const COL_R   = "{COL_R}";
-  const BASE_SZ = DATA.base_size || {float(base_size)};
-  const FOC_COL = "#ff0000";
-
-  // Precompute global extents to define a nice zoom window around a node
-  const minX = Math.min.apply(null, DATA.node_x);
-  const maxX = Math.max.apply(null, DATA.node_x);
-  const minY = Math.min.apply(null, DATA.node_y);
-  const maxY = Math.max.apply(null, DATA.node_y);
-  const spanX = maxX - minX || 1.0;
-  const spanY = maxY - minY || 1.0;
-  const SPAN  = Math.max(spanX, spanY) * 0.01;  // ~30% of graph extent
-
-  let focusedIndex = null;  // node index currently highlighted (if any)
-
-  function nodeColorsAndSizesAt(t) {{
-    const colors = new Array(N);
-    const sizes  = new Array(N);
-    for (let i=0;i<N;i++) {{
-      const ti = DATA.node_ti[i], tr = DATA.node_tr[i];
-      if (!isFinite(ti) || t < ti) colors[i] = COL_S;
-      else if (t < tr)             colors[i] = COL_I;
-      else                         colors[i] = COL_R;
-      sizes[i] = BASE_SZ;
-    }}
-    if (focusedIndex !== null && focusedIndex >= 0 && focusedIndex < N) {{
-      colors[focusedIndex] = FOC_COL;
-      sizes[focusedIndex]  = BASE_SZ * 1.7;
-    }}
-    return {{colors, sizes}};
+  slider.max = Math.max(0, times.length - 1);
+  const labelIndex = new Map(DATA.node_labels.map((l, i) => [l, i]));
+  const names = document.getElementById('node-names');
+  if (N <= 5000) {{
+    const frag = document.createDocumentFragment();
+    DATA.node_labels.forEach(l => {{ const o = document.createElement('option'); o.value = l; frag.appendChild(o); }});
+    names.appendChild(frag);
   }}
 
+  const spanX = (Math.max(...DATA.node_x) - Math.min(...DATA.node_x)) || 1;
+  const spanY = (Math.max(...DATA.node_y) - Math.min(...DATA.node_y)) || 1;
+  const ZOOM = Math.max(spanX, spanY) * 0.12;
+
+  let focused = null;
+
+  function stateAt(i, t) {{
+    const ti = DATA.node_ti[i], tr = DATA.node_tr[i];
+    if (!isFinite(ti) || t < ti) return 0;
+    return t < tr ? 1 : 2;
+  }}
+
+  function fmt(x) {{ return isFinite(x) ? String(+x.toFixed(3)) : 'never'; }}
+
   function usedEdgesXY(idx) {{
-    const mode = modeSel.value;
     const t0 = times[idx];
-    const t1 = (idx < times.length-1) ? times[idx+1] : Infinity;
-    const ux=[], uy=[];
-    const U=DATA.used_u, V=DATA.used_v, T=DATA.used_t;
-    if (mode === 'cumulative') {{
-      for (let i=0;i<T.length;i++) {{
-        if (T[i] <= t0) {{
-          const u=U[i], v=V[i];
-          ux.push(DATA.node_x[u], DATA.node_x[v], null);
-          uy.push(DATA.node_y[u], DATA.node_y[v], null);
-        }} else break;
-      }}
-    }} else {{
-      for (let i=0;i<T.length;i++) {{
-        const te=T[i];
-        if (te < t0) continue;
-        if (te >= t1) break;
-        const u=U[i], v=V[i];
-        ux.push(DATA.node_x[u], DATA.node_x[v], null);
-        uy.push(DATA.node_y[u], DATA.node_y[v], null);
-      }}
+    const t1 = (idx < times.length - 1) ? times[idx + 1] : Infinity;
+    const ux = [], uy = [];
+    const U = DATA.used_u, V = DATA.used_v, TT = DATA.used_t;
+    for (let i = 0; i < TT.length; i++) {{
+      const te = TT[i];
+      if (cumulative.checked) {{ if (te > t0) break; }}
+      else {{ if (te < t0) continue; if (te >= t1) break; }}
+      ux.push(DATA.node_x[U[i]], DATA.node_x[V[i]], null);
+      uy.push(DATA.node_y[U[i]], DATA.node_y[V[i]], null);
     }}
     return [ux, uy];
   }}
 
+  function renderInfo(t) {{
+    if (focused === null) {{ nodeInfo.className = 'muted'; nodeInfo.textContent = 'Click a node or search for one.'; return; }}
+    const i = focused;
+    const state = ['Susceptible', 'Infected', 'Recovered'][stateAt(i, t)];
+    const rows = [
+      ['State at t', state],
+      ['Degree', DATA.degree[i]],
+      ['Infected at', 't = ' + fmt(DATA.node_ti[i])],
+      ['Recovered at', 't = ' + fmt(DATA.node_tr[i])],
+      ['Infected by', DATA.infected_by[i] === null ? (isFinite(DATA.node_ti[i]) ? 'seed' : '—') : DATA.infected_by[i]],
+    ];
+    nodeInfo.className = '';
+    nodeInfo.innerHTML = '';
+    const title = document.createElement('div');
+    title.style.cssText = 'font-weight:700;color:var(--accent);margin-bottom:.35rem';
+    title.textContent = DATA.node_labels[i];
+    const table = document.createElement('table');
+    table.className = 'kv';
+    rows.forEach(([k, v]) => {{
+      const tr = table.insertRow();
+      tr.insertCell().textContent = k;
+      tr.insertCell().textContent = v;
+    }});
+    nodeInfo.append(title, table);
+  }}
+
   function repaint(idx) {{
-    idx = Math.max(0, Math.min(times.length-1, idx|0));
+    idx = Math.max(0, Math.min(times.length - 1, idx | 0));
     const t = times[idx];
-    const cs = nodeColorsAndSizesAt(t);
-    const colors = cs.colors;
-    const sizes  = cs.sizes;
+    const colors = new Array(N), sizes = new Array(N), lw = new Array(N), lc = new Array(N);
+    const pal = [COL_S, COL_I, COL_R];
+    for (let i = 0; i < N; i++) {{
+      colors[i] = pal[stateAt(i, t)];
+      sizes[i] = BASE_SZ; lw[i] = 1.2; lc[i] = '#ffffff';
+    }}
+    if (focused !== null) {{ sizes[focused] = BASE_SZ * 1.9; lw[focused] = 3; lc[focused] = FOCUS_LINE; }}
     const [ux, uy] = usedEdgesXY(idx);
 
-    // traces: 0=base, 1=used, 2=nodes, 3-5 legend-only
-    Plotly.restyle(plotDiv, {{x:[ux], y:[uy]}}, [1]);
+    Plotly.restyle(plotDiv, {{x: [ux], y: [uy]}}, [1]);
     Plotly.restyle(plotDiv, {{
-      'marker.color': [colors],
-      'marker.size' : [sizes]
+      'marker.color': [colors], 'marker.size': [sizes],
+      'marker.line.width': [lw], 'marker.line.color': [lc],
+      'mode': [showLabels.checked ? 'markers+text' : 'markers']
     }}, [2]);
-    Plotly.restyle(plotDiv, {{'visible':[showBase.checked]}}, [0]);
+    Plotly.restyle(plotDiv, {{visible: [showBase.checked]}}, [0]);
     Plotly.relayout(curveDiv, {{'shapes[0].x0': t, 'shapes[0].x1': t}});
 
-    tval.textContent = t.toFixed(0);
-    const title = plotDiv.layout.title.text;
-    const cut = title.lastIndexOf("| t=");
-    const newTitle = (cut>0 ? title.slice(0, cut) : title) + " | t=" + t.toFixed(0);
-    Plotly.relayout(plotDiv, {{'title.text': newTitle}});
+    tval.textContent = t;
+    const tc = Math.min(t, DATA.S.length - 1);
+    const counts = [DATA.S[tc], DATA.I[tc], DATA.R[tc]];
+    ['S', 'I', 'R'].forEach((k, j) => {{
+      const pct = 100 * counts[j] / Math.max(1, N);
+      document.getElementById('c' + k).textContent = counts[j];
+      document.getElementById('p' + k).textContent = pct.toFixed(1) + '%';
+      document.getElementById('b' + k).style.width = pct + '%';
+    }});
+    renderInfo(t);
   }}
 
-  function resizeToWrap() {{
-    const rect = wrap.getBoundingClientRect();
-    Plotly.relayout(plotDiv, {{width: rect.width, height: rect.height}});
-  }}
-  window.addEventListener('resize', resizeToWrap);
-  setTimeout(resizeToWrap, 0);
+  const current = () => parseInt(slider.value, 10);
+  slider.addEventListener('input', () => repaint(current()));
 
-  function resizeCurveToWrap() {{
-    const rect = document.getElementById('curveWrap').getBoundingClientRect();
-    Plotly.relayout(curveDiv, {{width: rect.width, height: rect.height}});
-  }}
-  window.addEventListener('resize', resizeCurveToWrap);
-  setTimeout(resizeCurveToWrap, 0);
-
-  function onSlide() {{ repaint(parseInt(slider.value,10)); }}
-  slider.addEventListener('input', onSlide);
-  slider.addEventListener('change', onSlide);
-
-  let timer=null, playing=false;
+  let timer = null;
   function step() {{
-    let i = parseInt(slider.value,10);
-    if (i >= times.length-1) i = -1; // loop
-    slider.value = i+1; repaint(i+1);
+    let i = current();
+    if (i >= times.length - 1) i = -1;
+    slider.value = i + 1; repaint(i + 1);
   }}
-  function play() {{
-    if (playing) return;
-    playing = true; playBtn.textContent = "⏸";
-    timer = setInterval(step, parseInt(speedSel.value,10));
-  }}
-  function pause() {{
-    playing = false; playBtn.textContent = "▶";
-    if (timer) {{ clearInterval(timer); timer=null; }}
-  }}
-  playBtn.addEventListener('click', ()=> playing ? pause() : play());
-  speedSel.addEventListener('change', ()=> {{ if (playing) {{ pause(); play(); }} }});
-  stepBtn.addEventListener('click', ()=> {{ pause(); step(); }});
-  resetBtn.addEventListener('click', ()=> {{
-    focusedIndex = null;
-    Plotly.relayout(plotDiv, {{
-      'xaxis.autorange':true,
-      'yaxis.autorange':true
-    }});
-    repaint(parseInt(slider.value,10));
+  function play() {{ if (timer) return; playBtn.innerHTML = '&#10074;&#10074;'; timer = setInterval(step, parseInt(speedSel.value, 10)); }}
+  function pause() {{ playBtn.innerHTML = '&#9654;'; if (timer) {{ clearInterval(timer); timer = null; }} }}
+  playBtn.addEventListener('click', () => timer ? pause() : play());
+  speedSel.addEventListener('change', () => {{ if (timer) {{ pause(); play(); }} }});
+  document.getElementById('step').addEventListener('click', () => {{ pause(); step(); }});
+  document.getElementById('reset').addEventListener('click', () => {{
+    Plotly.relayout(plotDiv, {{'xaxis.autorange': true, 'yaxis.autorange': true}});
   }});
-  showBase.addEventListener('change', ()=> repaint(parseInt(slider.value,10)));
+  [cumulative, showBase, showLabels].forEach(el => el.addEventListener('change', () => repaint(current())));
 
-  // ---- focus / highlight a node by label ----
-  function focusNodeByLabel(label) {{
-    if (!label) return;
-    const labels = DATA.node_labels || [];
-    const idx = labels.indexOf(label);
-    if (idx === -1) {{
-      alert("Node label '" + label + "' not found.");
-      return;
+  // clicking the curve jumps the animation to that t
+  curveDiv.on('plotly_click', ev => {{
+    const t = ev.points[0].x;
+    let best = 0;
+    for (let k = 0; k < times.length; k++) if (Math.abs(times[k] - t) < Math.abs(times[best] - t)) best = k;
+    pause(); slider.value = best; repaint(best);
+  }});
+
+  function focusNode(i, zoom) {{
+    focused = i;
+    if (zoom) {{
+      const x = DATA.node_x[i], y = DATA.node_y[i];
+      Plotly.relayout(plotDiv, {{'xaxis.range': [x - ZOOM, x + ZOOM], 'yaxis.range': [y - ZOOM, y + ZOOM]}});
     }}
-    focusedIndex = idx;
-
-    const x = DATA.node_x[idx];
-    const y = DATA.node_y[idx];
-
-    const xMin = x - SPAN;
-    const xMax = x + SPAN;
-    const yMin = y - SPAN;
-    const yMax = y + SPAN;
-
-    Plotly.relayout(plotDiv, {{
-      'xaxis.range': [xMin, xMax],
-      'yaxis.range': [yMin, yMax]
-    }});
-    repaint(parseInt(slider.value,10));
+    repaint(current());
   }}
-
-  focusBtn.addEventListener('click', ()=> {{
-    const label = (focusInput.value || "").trim();
-    focusNodeByLabel(label);
+  plotDiv.on('plotly_click', ev => {{
+    const pt = ev.points.find(p => p.curveNumber === 2);
+    if (pt) {{ search.value = DATA.node_labels[pt.pointIndex]; search.classList.remove('search-not-found'); focusNode(pt.pointIndex, false); }}
+  }});
+  function doSearch() {{
+    const i = labelIndex.get(search.value.trim());
+    if (i === undefined) {{ search.classList.add('search-not-found'); return; }}
+    search.classList.remove('search-not-found');
+    focusNode(i, true);
+  }}
+  document.getElementById('search-btn').addEventListener('click', doSearch);
+  search.addEventListener('keyup', e => {{ if (e.key === 'Enter') doSearch(); }});
+  document.getElementById('search-clear').addEventListener('click', () => {{
+    search.value = ''; search.classList.remove('search-not-found');
+    focused = null;
+    Plotly.relayout(plotDiv, {{'xaxis.autorange': true, 'yaxis.autorange': true}});
+    repaint(current());
   }});
 
-  focusInput.addEventListener('keyup', (e)=> {{
-    if (e.key === 'Enter') {{
-      const label = (focusInput.value || "").trim();
-      focusNodeByLabel(label);
-    }}
-  }});
+  function exportPng(div, suffix) {{
+    Plotly.downloadImage(div, {{format: 'png', scale: 2, filename: DATA.name + '_' + suffix,
+      width: div.clientWidth, height: div.clientHeight}});
+  }}
+  document.getElementById('export-net').addEventListener('click', () => exportPng(plotDiv, 'percolation_network'));
+  document.getElementById('export-curve').addEventListener('click', () => exportPng(curveDiv, 'epidemic_curve'));
 
-  clearFocus.addEventListener('click', ()=> {{
-    focusedIndex = null;
-    repaint(parseInt(slider.value,10));
-  }});
-
+  window.addEventListener('load', () => {{ Plotly.Plots.resize(plotDiv); Plotly.Plots.resize(curveDiv); }});
   repaint(0);
 }})();
 </script>
-</body></html>
+</body>
+</html>
 """
     with open(filename, "w", encoding="utf-8") as f:
         f.write(html)

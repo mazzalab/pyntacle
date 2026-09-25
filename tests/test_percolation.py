@@ -297,3 +297,19 @@ def test_v2_handles_isolated_seed_with_no_spread(tmp_path):
     out = str(tmp_path / "perc_v2_isolated.html")
     path = save_percolation_html_v2(g, results, filename=out)
     assert path == out
+
+
+def test_v2_report_header_panels_and_label_escaping(tmp_path):
+    """The restyled report names the network in the header, fills the outcome
+    and parameter panels, and a node label containing '</script>' cannot
+    close the embedded data script early."""
+    g = _cycle_with_weights()
+    g.vs["label"] = ["</script>x"] + [str(i) for i in range(1, g.vcount())]
+    results = run_percolation(g, Pstar=0.5, tau=4, seed_node=0, use_edge_weights_as_pth=True)
+    out = tmp_path / "toy_percolation.html"
+    save_percolation_html_v2(g, results, filename=str(out))
+    html = out.read_text(encoding="utf-8")
+
+    assert "Percolation Report &mdash; toy" in html
+    assert "Ever infected" in html and "Infection probability P*" in html
+    assert "</script>x" not in html
