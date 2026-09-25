@@ -16,18 +16,17 @@ All TSV reports share a common header block:
 .. code-block:: text
 
    Pyntacle report    <filename>
-   Analysisi type     <command>
+   Analysis type      <command>
 
    Network Overview
    Removed nodes      <None | list of node names>
    Number of components   <int>
    Number of Nodes    <int>
    Number of Edges    <int>
+   Edge weights       <unweighted | distance | affinity, distance = 1/w | signed, distance = 1/|w| | ...>
 
-.. note::
-
-   "Analysisi type" is the spelling used in the current output — future versions
-   will correct this typo.
+``Edge weights`` states how ``-w``, ``--weight-type`` and
+``--distance-transform`` read the weights (see :doc:`weights`).
 
 Local Metrics Report
 ---------------------

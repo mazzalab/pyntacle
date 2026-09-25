@@ -94,6 +94,7 @@ Contents
    :caption: File Formats
 
    format/format
+   weights
    outputs
 
 .. toctree::

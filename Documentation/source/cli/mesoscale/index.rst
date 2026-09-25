@@ -67,7 +67,19 @@ Options
      - bool
      - False
      - \ 
-     - Use this flag if your graph is weighted
+     - Use this flag if your graph is weighted (see :doc:`/weights`)
+   * - ``-wt``, ``--weight-type``
+     - No
+     - str
+     - distance
+     - distance, affinity, signed
+     - With ``-w``: what the weights are — lengths, tie strengths, or signed strengths such as correlations (magnitude used, sign kept). Negative weights require ``signed``
+   * - ``-dt``, ``--distance-transform``
+     - No
+     - str
+     - inverse
+     - inverse, one-minus, neglog
+     - With ``-w`` and an ``affinity`` or ``signed`` type: how a strength *a* becomes a length (1/*a*, 1 − *a*, −ln *a*)
    * - ``-r``, ``--remove``
      - No
      - \ 

@@ -6,6 +6,7 @@ from itertools import repeat
 import csv
 import matplotlib.pyplot as plt
 import warnings
+import math
 
 from generate import *
 
@@ -174,14 +175,18 @@ def plain_copy(grafo, directed=None, with_weights=True):
     Args:
         grafo: Source graph (Graphtacle or plain igraph Graph).
         directed (bool | None): Orientation of the copy. None keeps the source's.
-        with_weights (bool): Carry the ``weight`` edge attribute when present.
+        with_weights (bool): Carry the ``weight`` edge attribute, and the
+            ``raw_weight``/``affinity``/``sign`` views, when present.
 
     Returns:
         igraph.Graph: A copy with the same vertex count, names, labels and edges.
     """
     attrs = {}
-    if with_weights and "weight" in grafo.es.attributes():
-        attrs["weight"] = grafo.es["weight"]
+    if with_weights:
+        # the weight views travel with the distance (see weight_views)
+        for key in ("weight", "raw_weight", "affinity", "sign"):
+            if key in grafo.es.attributes():
+                attrs[key] = grafo.es[key]
 
     vertex_attrs = {}
     for key in ("name", "label"):
@@ -195,7 +200,83 @@ def plain_copy(grafo, directed=None, with_weights=True):
                     edge_attrs=attrs)
 
 
-def validate_weights(weights):
+WEIGHT_TYPES = ("distance", "affinity", "signed")
+DISTANCE_TRANSFORMS = ("inverse", "one-minus", "neglog")
+TRANSFORM_FORMULA = {"inverse": "1/w", "one-minus": "1 - w", "neglog": "-ln(w)"}
+MIN_DISTANCE = 1e-6
+
+
+def weight_views(raw, weight_type="distance", transform="inverse"):
+    """Distance, affinity and sign of every edge from the weights as read.
+
+    Shortest-path metrics need a length, strength-based metrics (clustering,
+    eigenvector, PageRank, communities, mesoscale TI) need a tie strength, and
+    the two are inverse notions. The user states which one the file holds:
+
+    - ``distance``: w > 0 is a length; affinity = 1/w.
+    - ``affinity``: w > 0 is a strength; distance = transform(w).
+    - ``signed``: w != 0 is a signed strength (e.g. a correlation); the
+      magnitude ``|w|`` is the strength, the sign is kept apart and never folded
+      silently.
+
+    Transforms from strength a to length d: ``inverse`` d = 1/a, the usual
+    convention for weighted shortest paths (Newman 2001; Brandes 2001; Opsahl
+    et al. 2010); ``one-minus`` d = 1 - a and ``neglog`` d = -ln a, both for
+    0 < a <= 1 and floored at MIN_DISTANCE so no pair collapses to distance 0.
+
+    Returns a dict of lists: ``distance``, ``affinity``, ``sign``.
+    """
+    if weight_type not in WEIGHT_TYPES:
+        raise ValueError(f"ERROR: unknown weight type {weight_type!r}; use one of {', '.join(WEIGHT_TYPES)}")
+    if transform not in DISTANCE_TRANSFORMS:
+        raise ValueError(f"ERROR: unknown distance transform {transform!r}; use one of {', '.join(DISTANCE_TRANSFORMS)}")
+    w = [float(x) for x in raw]
+    if any(math.isnan(x) for x in w):
+        raise ValueError("ERROR: the network contains NaN edge weights.")
+
+    if weight_type != "signed":
+        negative = [i for i, x in enumerate(w) if x < 0]
+        if negative:
+            raise ValueError(
+                f"ERROR: {len(negative)} edge weight(s) are negative (first: {w[negative[0]]}), "
+                f"which a {weight_type} cannot be. If the weights are signed associations "
+                "(e.g. correlations), use --weight-type signed: the magnitude is used as "
+                "the strength of the tie and the sign is kept.")
+    if any(x == 0.0 for x in w):
+        # validate_weights explains why a zero weight cannot be an edge
+        validate_weights(w)
+
+    sign = [-1 if x < 0 else 1 for x in w]
+    if weight_type == "distance":
+        return {"distance": w, "affinity": [1.0 / x for x in w], "sign": sign}
+
+    affinity = [abs(x) for x in w]
+    if transform == "inverse":
+        distance = [1.0 / a for a in affinity]
+    else:
+        above = [a for a in affinity if a > 1.0]
+        if above:
+            raise ValueError(
+                f"ERROR: the {transform} transform needs strengths in (0, 1], but "
+                f"{len(above)} edge(s) exceed 1 (largest: {max(above)}). Use the inverse "
+                "transform (--distance-transform inverse), which accepts any positive strength.")
+        if transform == "one-minus":
+            distance = [max(1.0 - a, MIN_DISTANCE) for a in affinity]
+        else:
+            distance = [max(-math.log(a), MIN_DISTANCE) for a in affinity]
+    return {"distance": distance, "affinity": affinity, "sign": sign}
+
+
+def describe_weights(info):
+    """One line stating how weights were read, for reports and the console."""
+    if not info:
+        return "unweighted"
+    if info["type"] == "distance":
+        return "distance"
+    return f"{info['type']}, distance = {TRANSFORM_FORMULA[info['transform']].replace('w', '|w|' if info['type'] == 'signed' else 'w')}"
+
+
+def validate_weights(weights, warn_sub_unit=True):
     """Reject edge weights that cannot survive the round-trip through igraph.
 
     The Cython engine hands the network to igraph as a weighted adjacency matrix
@@ -226,7 +307,7 @@ def validate_weights(weights):
             "Remove those edges, or give them a small positive weight."
         )
 
-    if any(0.0 < w < 1.0 for w in numeric):
+    if warn_sub_unit and any(0.0 < w < 1.0 for w in numeric):
         warnings.warn(
             "The network contains edge weights below 1. Weights are used directly as "
             "distances, so dR, group closeness and radiality are not bounded in [0, 1] "

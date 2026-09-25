@@ -83,6 +83,13 @@ def _edges(graph):
     else:
         w = np.ones(edges.shape[0], dtype=float)
 
+    if w.size and np.any(w < 0.):
+        # Dijkstra is silently wrong on negative lengths, and on an undirected
+        # graph no shortest path exists at all; load signed weights with
+        # --weight-type signed, which turns them into positive lengths
+        raise ValueError("ERROR: negative edge length reached the shortest-path kernels; "
+                         "load signed weights with --weight-type signed.")
+
     if w.size and not np.all(w != 0.):
         keep = w != 0.
         edges = edges[keep]

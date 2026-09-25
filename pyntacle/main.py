@@ -179,8 +179,24 @@ def main(args):
 			outdir = args.outdir
 
 		print(f"\nWorking on: {args.inputFile}\n")
-		g = Graphtacle.from_file(args.inputFile, args.command, args.fileType, sep, header, directed, weighted)
+		# analysis commands read the weights as declared by -wt/-dt; commands that
+		# only write the network back out keep them exactly as read
+		weight_type = getattr(args, "weightType", None) if weighted else None
+		try:
+			g = Graphtacle.from_file(args.inputFile, args.command, args.fileType, sep, header, directed, weighted,
+									 weight_type=weight_type,
+									 distance_transform=getattr(args, "distanceTransform", "inverse"))
+		except ValueError as err:
+			sys.exit(Fore.RED + Style.BRIGHT + str(err) + Style.RESET_ALL)
 		g.path_function(outdir)
+		if weight_type is not None:
+			print(f"Edge weights: {describe_weights(g.weight_info)}")
+			if weight_type == "signed":
+				n_neg = sum(1 for x in g.es["sign"] if x < 0)
+				print(Fore.YELLOW + Style.BRIGHT +
+					f"NOTE: {n_neg} of {g.ecount()} edges are negative. Every metric of "
+					f"'{args.command}' is computed on the magnitude |w|; the sign is kept "
+					"(edge attribute 'sign') but not used." + Style.RESET_ALL)
 
 		## Checking if nodes have to be removed
 
@@ -247,10 +263,11 @@ def main(args):
 					"Closeness": g.closeness(weights=g.es["weight"]),
 					"Radiality": g.radiality(),
 					"Radiality reach": g.radiality_reach(),
-					"Clustering Coefficient": g.transitivity_local_undirected(weights=g.es["weight"],mode="zero"),
+					# strength-based metrics: a heavier weight is a stronger tie
+					"Clustering Coefficient": g.transitivity_local_undirected(weights=g.affinities(),mode="zero"),
 					"Eccentricity": g.eccentricity(),
-					"Eigenvector (Scaled)": g.eigenvector_centrality(weights=g.es["weight"],scale=True),
-					"Pagerank": g.pagerank(weights=g.es["weight"])
+					"Eigenvector (Scaled)": g.eigenvector_centrality(weights=g.affinities(),scale=True),
+					"Pagerank": g.pagerank(weights=g.affinities())
 					})
 
 		if not no_plot:
@@ -780,7 +797,8 @@ def main(args):
 		
 		if weighted:
 
-			df_wi = ti( g, int(args.kSteps), weighted=True, weight_attr="weight", threshold=args.threshold, verbose=args.verbose) 
+			# TI spreads effects in proportion to tie strength
+			df_wi = ti( g, int(args.kSteps), weighted=True, weight_attr="affinity", threshold=args.threshold, verbose=args.verbose) 
 
 		df_gtom = gtom(g, int(args.kSteps), verbose=args.verbose)
 

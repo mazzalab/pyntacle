@@ -30,7 +30,11 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         function (str): Active Pyntacle command (local, global, keyplayer, …).
     """
 
-    def __init__(self, nodes,edges,names,labels,weights,directed,fileType,sep,header,graph_name,function):
+    # edge attributes that carry the weight semantics besides es["weight"]
+    WEIGHT_VIEWS = ("raw_weight", "affinity", "sign")
+
+    def __init__(self, nodes,edges,names,labels,weights,directed,fileType,sep,header,graph_name,function,
+                 weight_views=None, weight_info=None, raw_weights=False):
 
         # Vertex count must be passed explicitly: otherwise igraph infers it
         # from the maximum edge index, silently dropping any isolated vertex
@@ -38,12 +42,19 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         # when reconstructed via __reduce__ (pickle) and a list of indices
         # when built by re()/from_file().
         n = nodes if isinstance(nodes, int) else len(nodes)
-        validate_weights(weights)
+        # the sub-unit warning is about distances; raw weights kept only to be
+        # written back out (raw_weights) are not read as anything
+        validate_weights(weights, warn_sub_unit=not raw_weights)
+        edge_attrs = {"weight": weights}
+        edge_attrs.update(weight_views or {})
         super().__init__(n=n,
                          directed=directed,
                          vertex_attrs={"name":names,"label": labels},
                          edges=edges,
-                         edge_attrs={"weight": weights})
+                         edge_attrs=edge_attrs)
+        # how es["weight"] was obtained: {"type": ..., "transform": ...}, or None
+        # when the weights are the raw values (file conversions) or absent
+        self.weight_info = weight_info
         
         self.iNodes=[v.index for v in self.vs]
         self.fileType = fileType
@@ -64,6 +75,8 @@ class Graphtacle(ig.Graph, ig.GraphBase):
 
     @classmethod
     def re(cls, grafo, func, fileType,sep=None, header=True, directed=False, weight=False, file="file_name"):
+        """Rebuild a Graphtacle from an igraph graph (e.g. after removing
+        nodes), keeping the weight views and their provenance."""
 
         nodes = [v.index for v in grafo.vs]
         edges = grafo.get_edgelist()
@@ -73,16 +86,21 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         function = func
         fileType = fileType
         
+        views, info = None, None
         if weight:
             weights = grafo.es["weight"]
+            views = {a: grafo.es[a] for a in cls.WEIGHT_VIEWS if a in grafo.es.attributes()}
+            info = getattr(grafo, "weight_info", None)
         else:
             weights=1
-        return cls(nodes,edges,names,labels,weights,directed,fileType,sep,header,graph_name, function)
+        return cls(nodes,edges,names,labels,weights,directed,fileType,sep,header,graph_name, function,
+                   weight_views=views, weight_info=info, raw_weights=bool(weight) and info is None)
 
     
     ### metodo costruttore 
     @classmethod
-    def from_file(cls, file, func, fileType, sep: str or None = None, header: bool = True, directed: bool = False, weight: bool = False):
+    def from_file(cls, file, func, fileType, sep: str or None = None, header: bool = True, directed: bool = False, weight: bool = False,
+                  weight_type=None, distance_transform="inverse"):
         """Construct a Graphtacle by loading a network file.
 
         Args:
@@ -93,6 +111,12 @@ class Graphtacle(ig.Graph, ig.GraphBase):
             header (bool): True if the file has a header row.
             directed (bool): True to load as a directed graph.
             weight (bool): True to parse edge weights.
+            weight_type (str | None): What the weights are: ``distance``,
+                ``affinity`` or ``signed`` (see utility.weight_views). With
+                None the weights are kept exactly as read, for commands that
+                only write the network back out.
+            distance_transform (str): Strength-to-length transform for
+                ``affinity`` and ``signed``: inverse, one-minus or neglog.
 
         Returns:
             Graphtacle: Loaded graph object.
@@ -122,13 +146,23 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         names = grafo.vs["name"]
         labels = grafo.vs["label"]
         
+        views, info = None, None
         if weight:
-            # getting absolute values
-            weights = [abs(float(number)) for number in grafo.es["weight"]]
+            raw = [float(number) for number in grafo.es["weight"]]
+            if weight_type is None:
+                weights = raw
+            else:
+                v = weight_views(raw, weight_type, distance_transform)
+                # es["weight"] is always a length, so every shortest-path
+                # consumer (igraph and the compiled kernels) reads it unchanged
+                weights = v["distance"]
+                views = {"raw_weight": raw, "affinity": v["affinity"], "sign": v["sign"]}
+                info = {"type": weight_type, "transform": distance_transform}
         else:
             weights=1
-        
-        return cls(nodes,edges,names,labels,weights,directed,fileType,sep,header,graph_name, function)
+
+        return cls(nodes,edges,names,labels,weights,directed,fileType,sep,header,graph_name, function,
+                   weight_views=views, weight_info=info, raw_weights=bool(weight) and weight_type is None)
 
 #### Implement special methods: To make your subclass picklable, you need to implement the following special methods:
 #### __reduce__: This method should return a tuple of callable objects (functions or classes) and their arguments that 
@@ -141,6 +175,7 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         names = self.vs["name"]
         labels = self.vs["label"]
         weights = self.es["weight"]
+        views = {a: self.es[a] for a in self.WEIGHT_VIEWS if a in self.es.attributes()} or None
         directed = self.is_directed()
         fileType = self.fileType
         sep = self.sep
@@ -149,7 +184,8 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         function = self.function
 
         # Return a tuple with the class constructor and its arguments
-        return (self.__class__, (nodes, edges, names, labels, weights, directed, fileType, sep, header, graph_name, function))
+        return (self.__class__, (nodes, edges, names, labels, weights, directed, fileType, sep, header, graph_name, function,
+                                 views, self.weight_info))
 
     
     def remove_node(self,node):
@@ -160,6 +196,14 @@ class Graphtacle(ig.Graph, ig.GraphBase):
 
     def path_function(self,outdir):
         self.outdir=outdir
+
+    def affinities(self):
+        """Tie strengths for strength-based metrics (clustering, eigenvector,
+        PageRank, communities, TI): es["affinity"] when the weights were
+        declared, otherwise es["weight"] (all 1 on an unweighted graph)."""
+        if "affinity" in self.es.attributes():
+            return self.es["affinity"]
+        return self.es["weight"]
 
     def get_edge_weight(self, start, end):
         return self.es[self.get_eid(start, end)]['weight']
@@ -195,7 +239,8 @@ class Graphtacle(ig.Graph, ig.GraphBase):
             f.write(f"Removed nodes\t{self.removed}\n")
             f.write(f"Number of components\t{len(self.components())}\n")
             f.write(f"Number of Nodes\t{len(self.vs['label'])}\n")
-            f.write(f"Number of Edges\t{len(self.get_edgelist())}\n\n")
+            f.write(f"Number of Edges\t{len(self.get_edgelist())}\n")
+            f.write(f"Edge weights\t{describe_weights(getattr(self, 'weight_info', None))}\n\n")
             for line in notes or []:
                 f.write(f"{line}\n")
             if notes:

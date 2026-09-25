@@ -10,13 +10,13 @@ import igraph as ig
 from omics import export
 
 
-def test_weight_is_distance_and_sign_kept(tmp_path):
+def test_weight_is_the_signed_correlation(tmp_path):
     edges = pd.DataFrame({"source": ["a", "b"], "target": ["b", "c"], "r": [0.9, -1.0]})
     nodes = pd.DataFrame({"symbol": ["A", "B", "C", "D"]}, index=["a", "b", "c", "d"])
     out = export.write_network(edges, nodes, str(tmp_path), "crc", "Primary Tumor")
     el = pd.read_csv(out["edgelist"], sep="\t")
     assert list(el.columns) == ["N1", "N2", "Weight"]
-    assert el["Weight"].round(6).tolist() == [0.1, 1e-06]
+    assert el["Weight"].tolist() == [0.9, -1.0]
     g = ig.Graph.Read_GraphML(out["graphml"])
     assert sorted(g.es["assoc_weight"]) == [-1.0, 0.9]
     assert g.vcount() == 3 and out["n_nodes"] == 3   # isolate "d" not written
@@ -27,5 +27,13 @@ def test_exported_edgelist_loads_in_pyntacle(tmp_path):
     from GraphTacle import Graphtacle
     edges = pd.DataFrame({"source": ["a", "b"], "target": ["b", "c"], "r": [0.5, 0.2]})
     out = export.write_network(edges, pd.DataFrame(), str(tmp_path), "t", "g")
-    g = Graphtacle.from_file(out["edgelist"], "local", "edgelist", None, True, False, True)
-    assert g.vcount() == 3 and sorted(g.es["weight"]) == [0.5, 0.8]
+    g = Graphtacle.from_file(out["edgelist"], "local", "edgelist", None, True, False, True,
+                             weight_type="signed")
+    assert g.vcount() == 3 and sorted(g.es["weight"]) == pytest.approx([2.0, 5.0])
+    assert sorted(g.es["affinity"]) == [0.2, 0.5]
+
+
+def test_small_correlations_are_not_rounded_to_zero(tmp_path):
+    edges = pd.DataFrame({"source": ["a"], "target": ["b"], "r": [3.2e-9]})
+    out = export.write_network(edges, pd.DataFrame(), str(tmp_path), "t", "g")
+    assert pd.read_csv(out["edgelist"], sep="\t")["Weight"].iloc[0] == pytest.approx(3.2e-9)

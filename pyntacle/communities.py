@@ -9,24 +9,32 @@ from typing import List, Dict, Tuple
 from utility import *
 
 
+def _strength(grafo):
+	"""Community detection groups strongly tied nodes: it needs tie strengths,
+	not the distances held in es["weight"]."""
+	if "affinity" in grafo.es.attributes():
+		return grafo.es["affinity"]
+	return grafo.es["weight"]
+
+
 def fastgreedy(grafo, n=None):
 	print("\nFastgreedy")
-	modules = grafo.community_fastgreedy(weights=grafo.es["weight"])
+	modules = grafo.community_fastgreedy(weights=_strength(grafo))
 	modules = modules.as_clustering(n=n)
 	return modules.subgraphs()
 
 def infomap(grafo):
 	print("\nInfomap")
-	modules=grafo.community_infomap(edge_weights=grafo.es["weight"], vertex_weights=None, trials=10)
+	modules=grafo.community_infomap(edge_weights=_strength(grafo), vertex_weights=None, trials=10)
 	return modules.subgraphs()
 
 def leading_eigenvector(grafo,n):
 	print("\nleading-eigenvector")
-	modules=grafo.community_leading_eigenvector(clusters=n, weights=grafo.es["weight"])
+	modules=grafo.community_leading_eigenvector(clusters=n, weights=_strength(grafo))
 	return modules.subgraphs()
 
 def random_walk(grafo, n, steps=4):
-	modules=grafo.community_walktrap(weights=grafo.es["weight"],steps=steps)
+	modules=grafo.community_walktrap(weights=_strength(grafo),steps=steps)
 	modules=modules.as_clustering(n)
 	return modules.subgraphs()
 

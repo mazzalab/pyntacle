@@ -137,7 +137,7 @@ def _validate_percolation_params(
                 u"use_edge_weights_as_pth=True but the graph has no 'weight' edge attribute."
             )
 
-        weights = graph.es["weight"]
+        weights = edge_thresholds_from_graph(graph)
         if len(weights) != graph.ecount():
             raise ValueError(
                 u"Length of graph.es['weight'] does not match number of edges."
@@ -156,9 +156,9 @@ def _validate_percolation_params(
 
         if bad_idx:
             raise ValueError(
-                u"Edge weights used as thresholds must be numeric in [0,1] and not NaN. "
-                u"Found invalid values on edges indices: {bad}"
-                .format(bad=",".join(str(i) for i in bad_idx))
+                u"Edge weights used as thresholds must be numeric in [0,1] and not NaN "
+                u"({how}). Found invalid values on edges indices: {bad}"
+                .format(how=_threshold_rule(graph), bad=",".join(str(i) for i in bad_idx))
             )
 
         # if we use edge weights as thresholds, pth_max / dist are conceptually disabled.
@@ -249,13 +249,34 @@ def _sample_edge_thresholds_matrix(graph, pth_max=1.0, dist="uniform", rng=None)
     )
 
 
-def _edge_thresholds_from_weights(graph):
+def _strength_weights(graph):
+    info = getattr(graph, "weight_info", None)
+    return bool(info) and info["type"] in ("affinity", "signed") and "affinity" in graph.es.attributes()
+
+
+def _threshold_rule(graph):
+    if _strength_weights(graph):
+        return "p_th = 1 - strength, with strengths in [0, 1]"
+    return "p_th = weight, read as a distance-like resistance"
+
+
+def edge_thresholds_from_graph(graph):
+    """Local thresholds p_th,ij from the edge weights, aligned to
+    graph.get_edgelist().
+
+    A threshold is a resistance: the edge transmits when P* exceeds it. A
+    distance weight is already one (p_th = w). A strength (affinity or signed
+    weight, magnitude a) is the opposite, so p_th = 1 - a: a strong tie
+    transmits easily.
     """
-    Build a length-E array of local thresholds p_th,ij using the edge
-    attribute 'weight' as p_th,ij (assumed numeric in [0,1]), aligned to
-    graph.get_edgelist() (igraph already stores es["weight"] in that order).
-    """
+    if _strength_weights(graph):
+        return np.array([1.0 - float(a) for a in graph.es["affinity"]], dtype=float)
     return np.array([float(w) for w in graph.es["weight"]], dtype=float)
+
+
+def _edge_thresholds_from_weights(graph):
+    """Length-E thresholds for run_percolation (see edge_thresholds_from_graph)."""
+    return edge_thresholds_from_graph(graph)
 
 
 # ---------- Tau sampling (per-node recovery times) ----------

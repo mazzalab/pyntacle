@@ -3,7 +3,7 @@ import os
 import sys
 
 from . import require
-from .export import safe_name, write_network
+from .export import PYNTACLE_FLAGS, safe_name, write_network
 from .loader import check_groups, load_inputs, read_table
 from .provenance import Provenance
 
@@ -94,4 +94,6 @@ def run_omics(args, argv=None):
     for w in prov.warnings:
         print("WARNING: " + w)
     print("Report: " + os.path.join(args.outdir, prefix + "_report.tsv"))
+    print("Weights are signed partial correlations; analyse the networks with "
+          "`pyntacle <command> -t edgelist -i <network>.tsv {}`".format(PYNTACLE_FLAGS))
     return written

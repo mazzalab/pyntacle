@@ -134,17 +134,23 @@ sample sizes. Transform and estimator together are the SPIEC-EASI method
 Weights and distances
 ---------------------
 
-Pyntacle treats edge weights as **distances**: shortest paths, closeness,
-radiality, dF and dR all add weights along paths. An association network must
-therefore give a strong association a short edge. The edge list written by
-``omics`` has ``Weight = 1 − |r|``, capped away from 0 at ``1 − 0.999999``; the
-signed partial correlation, which a distance cannot carry, is kept in the
-GraphML as ``assoc_weight``.
+The edge list written by ``omics`` carries the signed partial correlation
+*r*, the quantity the pipeline estimates. Pyntacle reads it with
+``-w --weight-type signed`` (:doc:`/weights`): the networks are analysed as
+unsigned weighted networks, with the magnitude \|r\| as the strength of the
+tie and the sign kept as an edge attribute — the convention of unsigned
+weighted co-expression networks (`Zhang & Horvath 2005`_).
 
-Because these distances are below 1, Pyntacle prints a warning that dR, group
-closeness and radiality are not guaranteed to lie in [0, 1]. The warning is
-expected for these networks; values above 1 would indicate an input whose
-weights are not distances.
+Shortest-path measures (closeness, radiality, key-player dF and m-reach,
+group closeness) need lengths, and a negative weight cannot be one: on an
+undirected network it makes every path through it arbitrarily short. Strengths
+are turned into lengths by their inverse, *d* = 1/\|r\|, the usual convention
+for weighted shortest paths (`Newman 2001`_; `Brandes 2001`_; `Opsahl et al.
+2010`_; `Rubinov & Sporns 2010`_), so that strongly associated features lie
+close together. Since \|r\| ≤ 1, every length is at least 1 and the
+distance-based indices stay within [0, 1]. The transform is a convention:
+``--distance-transform one-minus`` (1 − \|r\|) and ``neglog`` (−ln \|r\|)
+allow checking that a conclusion does not depend on it.
 
 Reproducibility
 ---------------
@@ -167,6 +173,7 @@ References
 
 * `Aitchison 1982`_ — The statistical analysis of compositional data. *J R Stat Soc B* 44:139–177.
 * `Anders & Huber 2010`_ — Differential expression analysis for sequence count data. *Genome Biol* 11:R106.
+* `Brandes 2001`_ — A faster algorithm for betweenness centrality. *J Math Sociol* 25:163–177.
 * `Cleveland 1979`_ — Robust locally weighted regression and smoothing scatterplots. *J Am Stat Assoc* 74:829–836.
 * `Dohlman et al. 2021`_ — The cancer microbiome atlas. *Cell Host Microbe* 29:281–298.
 * `Friedman et al. 2008`_ — Sparse inverse covariance estimation with the graphical lasso. *Biostatistics* 9:432–441.
@@ -180,11 +187,15 @@ References
 * `Mann & Whitney 1947`_ — On a test of whether one of two random variables is stochastically larger than the other. *Ann Math Stat* 18:50–60.
 * `Martín-Fernández et al. 2003`_ — Dealing with zeros and missing values in compositional data sets using nonparametric imputation. *Math Geol* 35:253–278.
 * `McLachlan & Peel 2000`_ — *Finite Mixture Models*. Wiley.
+* `Newman 2001`_ — Scientific collaboration networks. II. Shortest paths, weighted networks, and centrality. *Phys Rev E* 64:016132.
+* `Opsahl et al. 2010`_ — Node centrality in weighted networks: generalizing degree and shortest paths. *Soc Networks* 32:245–251.
+* `Rubinov & Sporns 2010`_ — Complex network measures of brain connectivity: uses and interpretations. *NeuroImage* 52:1059–1069.
 * `Schäfer & Strimmer 2005`_ — A shrinkage approach to large-scale covariance matrix estimation and implications for functional genomics. *Stat Appl Genet Mol Biol* 4:32.
 * `Storey & Tibshirani 2003`_ — Statistical significance for genomewide studies. *PNAS* 100:9440–9445.
 * `Tusher et al. 2001`_ — Significance analysis of microarrays applied to the ionizing radiation response. *PNAS* 98:5116–5121.
 * `Wu et al. 2013`_ — BioGPS and MyGene.info: organizing online, gene-centric information. *Nucleic Acids Res* 41:D561–D565.
 * `Xin et al. 2016`_ — High-performance web services for querying gene and variant annotation. *Genome Biol* 17:91.
+* `Zhang & Horvath 2005`_ — A general framework for weighted gene co-expression network analysis. *Stat Appl Genet Mol Biol* 4:17.
 * `Zhao et al. 2012`_ — The huge package for high-dimensional undirected graph estimation in R. *J Mach Learn Res* 13:1059–1062.
 
 .. _`Aitchison 1982`: https://doi.org/10.1111/j.2517-6161.1982.tb01195.x
@@ -208,3 +219,8 @@ References
 .. _`Wu et al. 2013`: https://doi.org/10.1093/nar/gks1114
 .. _`Xin et al. 2016`: https://doi.org/10.1186/s13059-016-0953-9
 .. _`Zhao et al. 2012`: https://pubmed.ncbi.nlm.nih.gov/26834510/
+.. _`Brandes 2001`: https://doi.org/10.1080/0022250X.2001.9990249
+.. _`Newman 2001`: https://doi.org/10.1103/PhysRevE.64.016132
+.. _`Opsahl et al. 2010`: https://doi.org/10.1016/j.socnet.2010.03.006
+.. _`Rubinov & Sporns 2010`: https://doi.org/10.1016/j.neuroimage.2009.10.003
+.. _`Zhang & Horvath 2005`: https://doi.org/10.2202/1544-6115.1128

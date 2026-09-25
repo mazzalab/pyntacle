@@ -238,14 +238,15 @@ Output
 For every group ``<g>`` (lower-cased, non-alphanumerics replaced by ``_``):
 
 ``<prefix>_<g>.tsv``
-   Edge list with header ``N1 N2 Weight``. **Weight is a distance**,
-   ``1 − |r|``: Pyntacle uses edge weights as shortest-path lengths, so a
-   strong association must be a short edge. Read it with ``-t edgelist -w``.
-   Nodes without edges are not written.
+   Edge list with header ``N1 N2 Weight``. **Weight is the signed partial
+   correlation** *r*. Read it with ``-t edgelist -w -wt signed``: \|r\| is the
+   strength of the tie, 1/\|r\| the length used by shortest-path measures,
+   and the sign is kept (see :doc:`/weights`). Nodes without edges are not
+   written.
 
 ``<prefix>_<g>.graphml``
-   The same edges with ``assoc_weight`` (signed partial correlation), ``abs_r``,
-   ``pyntacle_weight`` and, for transcriptomics, ``q_value``; node attributes
+   The same edges with ``assoc_weight`` (signed partial correlation), ``abs_r``
+   and, for transcriptomics, ``q_value``; node attributes
    ``mean_log2_expr``, ``symbol``, ``biotype`` (transcriptomics) or
    ``mean_rel_abundance``, ``prevalence`` (metagenomics).
 
@@ -265,8 +266,8 @@ A generic dataset, then key players on the tumour network:
 
    python3 main.py omics metagenomics -i relabund.tsv -m samples.tsv \
        --group-col condition -o nets/
-   python3 main.py keyplayer kp-finder -t edgelist -w -i nets/relabund_tumor.tsv \
-       -k 2 -oper all -a greedy -o kp/
+   python3 main.py keyplayer kp-finder -t edgelist -w -wt signed \
+       -i nets/relabund_tumor.tsv -k 2 -oper all -a greedy -o kp/
 
 Adjusting for covariates (age and a categorical batch):
 

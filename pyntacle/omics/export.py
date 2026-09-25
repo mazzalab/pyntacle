@@ -1,8 +1,10 @@
 """Write one group's network the way Pyntacle reads it.
 
-Pyntacle uses edge weights as shortest-path distances, so the edge list's
-Weight is 1 - |r|: a strong association is a short edge. The signed r lives
-in the GraphML only, where nothing treats it as a distance.
+The edge list's Weight is the signed partial correlation r itself, the
+quantity the pipeline estimated. Pyntacle reads it with
+`-w --weight-type signed`: |r| is the strength of the tie, 1/|r| the length
+used by shortest-path metrics, and the sign is kept (see the "Edge weights"
+page of the documentation).
 """
 import os
 import re
@@ -10,7 +12,8 @@ import re
 import igraph as ig
 import numpy as np
 
-MAX_ABS_R = 0.999999
+# the command line that reads these networks with the intended semantics
+PYNTACLE_FLAGS = "-w --weight-type signed"
 
 
 def safe_name(label):
@@ -31,12 +34,13 @@ def write_network(edges, nodes, outdir, prefix, group):
     e = edges.copy()
     e["source"], e["target"] = e["source"].astype(str), e["target"].astype(str)
     e["abs_r"] = e["r"].astype(float).abs()
-    e["pyntacle_weight"] = 1.0 - np.minimum(e["abs_r"], MAX_ABS_R)
     e = e.sort_values(["source", "target"]).reset_index(drop=True)
 
-    e[["source", "target", "pyntacle_weight"]].rename(
-        columns={"source": "N1", "target": "N2", "pyntacle_weight": "Weight"}).to_csv(
-        stem + ".tsv", sep="\t", index=False, float_format="%.6f")
+    # significant digits, not decimals: a small r must never be written as 0,
+    # which Pyntacle cannot tell from a missing edge
+    e[["source", "target", "r"]].rename(
+        columns={"source": "N1", "target": "N2", "r": "Weight"}).to_csv(
+        stem + ".tsv", sep="\t", index=False, float_format="%.8g")
 
     names = sorted(set(e["source"]) | set(e["target"]))
     idx = {n: i for i, n in enumerate(names)}
@@ -46,7 +50,6 @@ def write_network(edges, nodes, outdir, prefix, group):
         g.vs[col] = [_attr(v) for v in nodes[col].reindex(names)]
     g.es["assoc_weight"] = e["r"].astype(float).tolist()
     g.es["abs_r"] = e["abs_r"].tolist()
-    g.es["pyntacle_weight"] = e["pyntacle_weight"].tolist()
     if "q_value" in e.columns:
         g.es["q_value"] = e["q_value"].astype(float).tolist()
     g.write_graphml(stem + ".graphml")
