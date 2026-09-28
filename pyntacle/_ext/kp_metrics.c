@@ -1628,9 +1628,9 @@ struct __pyx_t_4_ext_5utils_CSR {
   double *w;
 };
 
-/* "utils.pxd":12
- * # candidate: the old dF kernel malloc'd n*n doubles for every combination it
- * # scored, which dominated the brute-force runtime.
+/* "utils.pxd":11
+ * # Per-thread working memory, allocated once per parallel region rather than
+ * # once per candidate.
  * cdef struct Scratch:             # <<<<<<<<<<<<<<
  *     int n
  *     double* dist
@@ -16531,7 +16531,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_weighted_reach(double *__p
   int __pyx_t_3;
   int __pyx_t_4;
 
-  /* "_ext/kp_metrics.pyx":49
+  /* "_ext/kp_metrics.pyx":45
  *     cdef int i, j
  *     cdef int k_node, notK_node
  *     cdef double dR = 0             # <<<<<<<<<<<<<<
@@ -16540,7 +16540,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_weighted_reach(double *__p
 */
   __pyx_v_dR = 0.0;
 
-  /* "_ext/kp_metrics.pyx":52
+  /* "_ext/kp_metrics.pyx":48
  *     cdef double min_sp
  * 
  *     for i from 0 <= i < (n - k):             # <<<<<<<<<<<<<<
@@ -16550,7 +16550,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_weighted_reach(double *__p
   __pyx_t_1 = (__pyx_v_n - __pyx_v_k);
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_1; __pyx_v_i++) {
 
-    /* "_ext/kp_metrics.pyx":54
+    /* "_ext/kp_metrics.pyx":50
  *     for i from 0 <= i < (n - k):
  * 
  *         notK_node = notK_indices[i]             # <<<<<<<<<<<<<<
@@ -16559,7 +16559,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_weighted_reach(double *__p
 */
     __pyx_v_notK_node = (__pyx_v_notK_indices[__pyx_v_i]);
 
-    /* "_ext/kp_metrics.pyx":56
+    /* "_ext/kp_metrics.pyx":52
  *         notK_node = notK_indices[i]
  * 
  *         min_sp = INFINITY             # <<<<<<<<<<<<<<
@@ -16568,7 +16568,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_weighted_reach(double *__p
 */
     __pyx_v_min_sp = INFINITY;
 
-    /* "_ext/kp_metrics.pyx":58
+    /* "_ext/kp_metrics.pyx":54
  *         min_sp = INFINITY
  * 
  *         for j from 0 <= j < k:             # <<<<<<<<<<<<<<
@@ -16578,7 +16578,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_weighted_reach(double *__p
     __pyx_t_2 = __pyx_v_k;
     for (__pyx_v_j = 0; __pyx_v_j < __pyx_t_2; __pyx_v_j++) {
 
-      /* "_ext/kp_metrics.pyx":61
+      /* "_ext/kp_metrics.pyx":57
  * 
  *             # need to find the min between all sp between a notK and K
  *             k_node = K_indices[j]             # <<<<<<<<<<<<<<
@@ -16587,7 +16587,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_weighted_reach(double *__p
 */
       __pyx_v_k_node = (__pyx_v_K_indices[__pyx_v_j]);
 
-      /* "_ext/kp_metrics.pyx":63
+      /* "_ext/kp_metrics.pyx":59
  *             k_node = K_indices[j]
  * 
  *             if min_sp > all_dist[notK_node * n + k_node]:             # <<<<<<<<<<<<<<
@@ -16597,7 +16597,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_weighted_reach(double *__p
       __pyx_t_3 = (__pyx_v_min_sp > (__pyx_v_all_dist[((__pyx_v_notK_node * __pyx_v_n) + __pyx_v_k_node)]));
       if (__pyx_t_3) {
 
-        /* "_ext/kp_metrics.pyx":64
+        /* "_ext/kp_metrics.pyx":60
  * 
  *             if min_sp > all_dist[notK_node * n + k_node]:
  *                 min_sp = all_dist[notK_node * n + k_node]             # <<<<<<<<<<<<<<
@@ -16606,7 +16606,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_weighted_reach(double *__p
 */
         __pyx_v_min_sp = (__pyx_v_all_dist[((__pyx_v_notK_node * __pyx_v_n) + __pyx_v_k_node)]);
 
-        /* "_ext/kp_metrics.pyx":63
+        /* "_ext/kp_metrics.pyx":59
  *             k_node = K_indices[j]
  * 
  *             if min_sp > all_dist[notK_node * n + k_node]:             # <<<<<<<<<<<<<<
@@ -16616,7 +16616,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_weighted_reach(double *__p
       }
     }
 
-    /* "_ext/kp_metrics.pyx":67
+    /* "_ext/kp_metrics.pyx":63
  * 
  *         # an unreachable node contributes no reach at all
  *         if not isinf(min_sp) and min_sp > 0.:             # <<<<<<<<<<<<<<
@@ -16634,7 +16634,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_weighted_reach(double *__p
     __pyx_L9_bool_binop_done:;
     if (__pyx_t_3) {
 
-      /* "_ext/kp_metrics.pyx":68
+      /* "_ext/kp_metrics.pyx":64
  *         # an unreachable node contributes no reach at all
  *         if not isinf(min_sp) and min_sp > 0.:
  *             dR += 1. / min_sp             # <<<<<<<<<<<<<<
@@ -16643,7 +16643,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_weighted_reach(double *__p
 */
       __pyx_v_dR = (__pyx_v_dR + (1. / __pyx_v_min_sp));
 
-      /* "_ext/kp_metrics.pyx":67
+      /* "_ext/kp_metrics.pyx":63
  * 
  *         # an unreachable node contributes no reach at all
  *         if not isinf(min_sp) and min_sp > 0.:             # <<<<<<<<<<<<<<
@@ -16653,7 +16653,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_weighted_reach(double *__p
     }
   }
 
-  /* "_ext/kp_metrics.pyx":70
+  /* "_ext/kp_metrics.pyx":66
  *             dR += 1. / min_sp
  * 
  *     return dR / n             # <<<<<<<<<<<<<<
@@ -16676,7 +16676,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_weighted_reach(double *__p
   return __pyx_r;
 }
 
-/* "_ext/kp_metrics.pyx":73
+/* "_ext/kp_metrics.pyx":69
  * 
  * 
  * cdef double get_fragmentation(utils.CSR* g, utils.Scratch* s, int* K_indices, int k) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16695,8 +16695,8 @@ static double __pyx_f_4_ext_10kp_metrics_get_fragmentation(struct __pyx_t_4_ext_
   int __pyx_t_2;
   int __pyx_t_3;
 
-  /* "_ext/kp_metrics.pyx":79
- *     whole igraph graph from a dense n x n matrix for every candidate.
+  /* "_ext/kp_metrics.pyx":74
+ *     Flood fill over the CSR built once by the caller.
  *     """
  *     cdef int n = g.n             # <<<<<<<<<<<<<<
  *     cdef int i, comp_num
@@ -16705,7 +16705,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_fragmentation(struct __pyx_t_4_ext_
   __pyx_t_1 = __pyx_v_g->n;
   __pyx_v_n = __pyx_t_1;
 
-  /* "_ext/kp_metrics.pyx":81
+  /* "_ext/kp_metrics.pyx":76
  *     cdef int n = g.n
  *     cdef int i, comp_num
  *     cdef double component_f = 0.             # <<<<<<<<<<<<<<
@@ -16714,7 +16714,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_fragmentation(struct __pyx_t_4_ext_
 */
   __pyx_v_component_f = 0.;
 
-  /* "_ext/kp_metrics.pyx":82
+  /* "_ext/kp_metrics.pyx":77
  *     cdef int i, comp_num
  *     cdef double component_f = 0.
  *     cdef double denom = (<double> (n - k)) * ((n - k) - 1)             # <<<<<<<<<<<<<<
@@ -16723,7 +16723,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_fragmentation(struct __pyx_t_4_ext_
 */
   __pyx_v_denom = (((double)(__pyx_v_n - __pyx_v_k)) * ((__pyx_v_n - __pyx_v_k) - 1));
 
-  /* "_ext/kp_metrics.pyx":84
+  /* "_ext/kp_metrics.pyx":79
  *     cdef double denom = (<double> (n - k)) * ((n - k) - 1)
  * 
  *     utils.mark_group(s, K_indices, k)             # <<<<<<<<<<<<<<
@@ -16732,7 +16732,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_fragmentation(struct __pyx_t_4_ext_
 */
   __pyx_f_4_ext_5utils_mark_group(__pyx_v_s, __pyx_v_K_indices, __pyx_v_k);
 
-  /* "_ext/kp_metrics.pyx":85
+  /* "_ext/kp_metrics.pyx":80
  * 
  *     utils.mark_group(s, K_indices, k)
  *     comp_num = utils.csr_components(g, s.in_K, s.comp_size, s.stack, s.visited)             # <<<<<<<<<<<<<<
@@ -16741,7 +16741,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_fragmentation(struct __pyx_t_4_ext_
 */
   __pyx_v_comp_num = __pyx_f_4_ext_5utils_csr_components(__pyx_v_g, __pyx_v_s->in_K, __pyx_v_s->comp_size, __pyx_v_s->stack, __pyx_v_s->visited);
 
-  /* "_ext/kp_metrics.pyx":87
+  /* "_ext/kp_metrics.pyx":82
  *     comp_num = utils.csr_components(g, s.in_K, s.comp_size, s.stack, s.visited)
  * 
  *     if comp_num <= 1 or denom <= 0.:             # <<<<<<<<<<<<<<
@@ -16759,7 +16759,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_fragmentation(struct __pyx_t_4_ext_
   __pyx_L4_bool_binop_done:;
   if (__pyx_t_2) {
 
-    /* "_ext/kp_metrics.pyx":88
+    /* "_ext/kp_metrics.pyx":83
  * 
  *     if comp_num <= 1 or denom <= 0.:
  *         return 0.             # <<<<<<<<<<<<<<
@@ -16769,7 +16769,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_fragmentation(struct __pyx_t_4_ext_
     __pyx_r = 0.;
     goto __pyx_L0;
 
-    /* "_ext/kp_metrics.pyx":87
+    /* "_ext/kp_metrics.pyx":82
  *     comp_num = utils.csr_components(g, s.in_K, s.comp_size, s.stack, s.visited)
  * 
  *     if comp_num <= 1 or denom <= 0.:             # <<<<<<<<<<<<<<
@@ -16778,7 +16778,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_fragmentation(struct __pyx_t_4_ext_
 */
   }
 
-  /* "_ext/kp_metrics.pyx":90
+  /* "_ext/kp_metrics.pyx":85
  *         return 0.
  * 
  *     for i from 0 <= i < comp_num:             # <<<<<<<<<<<<<<
@@ -16788,7 +16788,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_fragmentation(struct __pyx_t_4_ext_
   __pyx_t_1 = __pyx_v_comp_num;
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_1; __pyx_v_i++) {
 
-    /* "_ext/kp_metrics.pyx":91
+    /* "_ext/kp_metrics.pyx":86
  * 
  *     for i from 0 <= i < comp_num:
  *         component_f += (<double> s.comp_size[i]) * (s.comp_size[i] - 1)             # <<<<<<<<<<<<<<
@@ -16798,7 +16798,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_fragmentation(struct __pyx_t_4_ext_
     __pyx_v_component_f = (__pyx_v_component_f + (((double)(__pyx_v_s->comp_size[__pyx_v_i])) * ((__pyx_v_s->comp_size[__pyx_v_i]) - 1)));
   }
 
-  /* "_ext/kp_metrics.pyx":93
+  /* "_ext/kp_metrics.pyx":88
  *         component_f += (<double> s.comp_size[i]) * (s.comp_size[i] - 1)
  * 
  *     return 1. - (component_f / denom)             # <<<<<<<<<<<<<<
@@ -16808,7 +16808,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_fragmentation(struct __pyx_t_4_ext_
   __pyx_r = (1. - (__pyx_v_component_f / __pyx_v_denom));
   goto __pyx_L0;
 
-  /* "_ext/kp_metrics.pyx":73
+  /* "_ext/kp_metrics.pyx":69
  * 
  * 
  * cdef double get_fragmentation(utils.CSR* g, utils.Scratch* s, int* K_indices, int k) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16821,7 +16821,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_fragmentation(struct __pyx_t_4_ext_
   return __pyx_r;
 }
 
-/* "_ext/kp_metrics.pyx":96
+/* "_ext/kp_metrics.pyx":91
  * 
  * 
  * cdef double get_distance_fragmentation(utils.CSR* g, utils.Scratch* s, int* K_indices, int k, bint unweighted) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16843,8 +16843,8 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
   int __pyx_t_3;
   int __pyx_t_4;
 
-  /* "_ext/kp_metrics.pyx":103
- *     into it; at n=200 that was 3850 us per combination.
+  /* "_ext/kp_metrics.pyx":96
+ *     One source at a time, accumulating into a single row of length n.
  *     """
  *     cdef int n = g.n             # <<<<<<<<<<<<<<
  *     cdef int i, j
@@ -16853,7 +16853,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
   __pyx_t_1 = __pyx_v_g->n;
   __pyx_v_n = __pyx_t_1;
 
-  /* "_ext/kp_metrics.pyx":105
+  /* "_ext/kp_metrics.pyx":98
  *     cdef int n = g.n
  *     cdef int i, j
  *     cdef double df_num = 0.             # <<<<<<<<<<<<<<
@@ -16862,7 +16862,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
 */
   __pyx_v_df_num = 0.;
 
-  /* "_ext/kp_metrics.pyx":108
+  /* "_ext/kp_metrics.pyx":101
  *     cdef double sum_sp
  *     cdef double d
  *     cdef double df_denum = (<double> (n - k)) * ((n - k) - 1)             # <<<<<<<<<<<<<<
@@ -16871,7 +16871,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
 */
   __pyx_v_df_denum = (((double)(__pyx_v_n - __pyx_v_k)) * ((__pyx_v_n - __pyx_v_k) - 1));
 
-  /* "_ext/kp_metrics.pyx":110
+  /* "_ext/kp_metrics.pyx":103
  *     cdef double df_denum = (<double> (n - k)) * ((n - k) - 1)
  * 
  *     if df_denum <= 0.:             # <<<<<<<<<<<<<<
@@ -16881,7 +16881,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
   __pyx_t_2 = (__pyx_v_df_denum <= 0.);
   if (__pyx_t_2) {
 
-    /* "_ext/kp_metrics.pyx":111
+    /* "_ext/kp_metrics.pyx":104
  * 
  *     if df_denum <= 0.:
  *         return 0.             # <<<<<<<<<<<<<<
@@ -16891,7 +16891,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
     __pyx_r = 0.;
     goto __pyx_L0;
 
-    /* "_ext/kp_metrics.pyx":110
+    /* "_ext/kp_metrics.pyx":103
  *     cdef double df_denum = (<double> (n - k)) * ((n - k) - 1)
  * 
  *     if df_denum <= 0.:             # <<<<<<<<<<<<<<
@@ -16900,7 +16900,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
 */
   }
 
-  /* "_ext/kp_metrics.pyx":113
+  /* "_ext/kp_metrics.pyx":106
  *         return 0.
  * 
  *     utils.mark_group(s, K_indices, k)             # <<<<<<<<<<<<<<
@@ -16909,7 +16909,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
 */
   __pyx_f_4_ext_5utils_mark_group(__pyx_v_s, __pyx_v_K_indices, __pyx_v_k);
 
-  /* "_ext/kp_metrics.pyx":115
+  /* "_ext/kp_metrics.pyx":108
  *     utils.mark_group(s, K_indices, k)
  * 
  *     for i from 0 <= i < n:             # <<<<<<<<<<<<<<
@@ -16919,7 +16919,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
   __pyx_t_1 = __pyx_v_n;
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_1; __pyx_v_i++) {
 
-    /* "_ext/kp_metrics.pyx":116
+    /* "_ext/kp_metrics.pyx":109
  * 
  *     for i from 0 <= i < n:
  *         if s.in_K[i]:             # <<<<<<<<<<<<<<
@@ -16929,7 +16929,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
     __pyx_t_2 = ((__pyx_v_s->in_K[__pyx_v_i]) != 0);
     if (__pyx_t_2) {
 
-      /* "_ext/kp_metrics.pyx":117
+      /* "_ext/kp_metrics.pyx":110
  *     for i from 0 <= i < n:
  *         if s.in_K[i]:
  *             continue             # <<<<<<<<<<<<<<
@@ -16938,7 +16938,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
 */
       goto __pyx_L4_continue;
 
-      /* "_ext/kp_metrics.pyx":116
+      /* "_ext/kp_metrics.pyx":109
  * 
  *     for i from 0 <= i < n:
  *         if s.in_K[i]:             # <<<<<<<<<<<<<<
@@ -16947,7 +16947,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
 */
     }
 
-    /* "_ext/kp_metrics.pyx":119
+    /* "_ext/kp_metrics.pyx":112
  *             continue
  * 
  *         if unweighted:             # <<<<<<<<<<<<<<
@@ -16956,7 +16956,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
 */
     if (__pyx_v_unweighted) {
 
-      /* "_ext/kp_metrics.pyx":120
+      /* "_ext/kp_metrics.pyx":113
  * 
  *         if unweighted:
  *             utils.csr_bfs_row(g, i, s.in_K, s.dist, s.stack)             # <<<<<<<<<<<<<<
@@ -16965,7 +16965,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
 */
       __pyx_f_4_ext_5utils_csr_bfs_row(__pyx_v_g, __pyx_v_i, __pyx_v_s->in_K, __pyx_v_s->dist, __pyx_v_s->stack);
 
-      /* "_ext/kp_metrics.pyx":119
+      /* "_ext/kp_metrics.pyx":112
  *             continue
  * 
  *         if unweighted:             # <<<<<<<<<<<<<<
@@ -16975,7 +16975,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
       goto __pyx_L7;
     }
 
-    /* "_ext/kp_metrics.pyx":122
+    /* "_ext/kp_metrics.pyx":115
  *             utils.csr_bfs_row(g, i, s.in_K, s.dist, s.stack)
  *         else:
  *             utils.csr_dijkstra_row(g, i, s.in_K, s.dist, s.heap, s.heap_pos)             # <<<<<<<<<<<<<<
@@ -16987,7 +16987,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
     }
     __pyx_L7:;
 
-    /* "_ext/kp_metrics.pyx":124
+    /* "_ext/kp_metrics.pyx":117
  *             utils.csr_dijkstra_row(g, i, s.in_K, s.dist, s.heap, s.heap_pos)
  * 
  *         sum_sp = 0.             # <<<<<<<<<<<<<<
@@ -16996,7 +16996,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
 */
     __pyx_v_sum_sp = 0.;
 
-    /* "_ext/kp_metrics.pyx":125
+    /* "_ext/kp_metrics.pyx":118
  * 
  *         sum_sp = 0.
  *         for j from i + 1 <= j < n:             # <<<<<<<<<<<<<<
@@ -17006,7 +17006,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
     __pyx_t_3 = __pyx_v_n;
     for (__pyx_v_j = (__pyx_v_i + 1); __pyx_v_j < __pyx_t_3; __pyx_v_j++) {
 
-      /* "_ext/kp_metrics.pyx":126
+      /* "_ext/kp_metrics.pyx":119
  *         sum_sp = 0.
  *         for j from i + 1 <= j < n:
  *             if s.in_K[j]:             # <<<<<<<<<<<<<<
@@ -17016,7 +17016,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
       __pyx_t_2 = ((__pyx_v_s->in_K[__pyx_v_j]) != 0);
       if (__pyx_t_2) {
 
-        /* "_ext/kp_metrics.pyx":127
+        /* "_ext/kp_metrics.pyx":120
  *         for j from i + 1 <= j < n:
  *             if s.in_K[j]:
  *                 continue             # <<<<<<<<<<<<<<
@@ -17025,7 +17025,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
 */
         goto __pyx_L8_continue;
 
-        /* "_ext/kp_metrics.pyx":126
+        /* "_ext/kp_metrics.pyx":119
  *         sum_sp = 0.
  *         for j from i + 1 <= j < n:
  *             if s.in_K[j]:             # <<<<<<<<<<<<<<
@@ -17034,7 +17034,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
 */
       }
 
-      /* "_ext/kp_metrics.pyx":128
+      /* "_ext/kp_metrics.pyx":121
  *             if s.in_K[j]:
  *                 continue
  *             d = s.dist[j]             # <<<<<<<<<<<<<<
@@ -17043,7 +17043,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
 */
       __pyx_v_d = (__pyx_v_s->dist[__pyx_v_j]);
 
-      /* "_ext/kp_metrics.pyx":129
+      /* "_ext/kp_metrics.pyx":122
  *                 continue
  *             d = s.dist[j]
  *             if not isinf(d) and d > 0.:             # <<<<<<<<<<<<<<
@@ -17061,7 +17061,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
       __pyx_L12_bool_binop_done:;
       if (__pyx_t_2) {
 
-        /* "_ext/kp_metrics.pyx":130
+        /* "_ext/kp_metrics.pyx":123
  *             d = s.dist[j]
  *             if not isinf(d) and d > 0.:
  *                 sum_sp += 1. / d             # <<<<<<<<<<<<<<
@@ -17070,7 +17070,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
 */
         __pyx_v_sum_sp = (__pyx_v_sum_sp + (1. / __pyx_v_d));
 
-        /* "_ext/kp_metrics.pyx":129
+        /* "_ext/kp_metrics.pyx":122
  *                 continue
  *             d = s.dist[j]
  *             if not isinf(d) and d > 0.:             # <<<<<<<<<<<<<<
@@ -17081,7 +17081,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
       __pyx_L8_continue:;
     }
 
-    /* "_ext/kp_metrics.pyx":132
+    /* "_ext/kp_metrics.pyx":125
  *                 sum_sp += 1. / d
  * 
  *         df_num += sum_sp             # <<<<<<<<<<<<<<
@@ -17092,7 +17092,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
     __pyx_L4_continue:;
   }
 
-  /* "_ext/kp_metrics.pyx":134
+  /* "_ext/kp_metrics.pyx":127
  *         df_num += sum_sp
  * 
  *     df_num *= 2             # <<<<<<<<<<<<<<
@@ -17101,7 +17101,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
 */
   __pyx_v_df_num = (__pyx_v_df_num * 2.0);
 
-  /* "_ext/kp_metrics.pyx":136
+  /* "_ext/kp_metrics.pyx":129
  *     df_num *= 2
  * 
  *     return 1 - (df_num / df_denum)             # <<<<<<<<<<<<<<
@@ -17109,7 +17109,7 @@ static double __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(struct __pyx
   __pyx_r = (1.0 - (__pyx_v_df_num / __pyx_v_df_denum));
   goto __pyx_L0;
 
-  /* "_ext/kp_metrics.pyx":96
+  /* "_ext/kp_metrics.pyx":91
  * 
  * 
  * cdef double get_distance_fragmentation(utils.CSR* g, utils.Scratch* s, int* K_indices, int k, bint unweighted) noexcept nogil:             # <<<<<<<<<<<<<<

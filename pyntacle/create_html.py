@@ -4,33 +4,9 @@ import json
 import html
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#########################################################################################################################################################################################
-#########################################################################################################################################################################################
-#########################################################################################################################################################################################
-
-
-
-# Rendering tiers for create_local_html, picked from the graph's own size so
-# the browser is never handed an animated physics loop or a raw DOM/element
-# count it can't keep smooth. Every tier still gets the full metrics table;
-# only the interactive network view is scaled back (or dropped) as size grows.
+# Rendering tiers, chosen from the graph size: every tier gets the full
+# metrics table; the interactive network view is simplified, then dropped,
+# as the graph grows.
 _LOCAL_LIVE_MAX_NODES = 500     # <= this: continuously-animated force layout
 _LOCAL_STATIC_MAX_NODES = 3000  # <= this: force layout is settled once, then frozen
 _LOCAL_STATIC_MAX_EDGES = 8000  # either cap crossed -> network view skipped, table-only
@@ -39,12 +15,9 @@ _LOCAL_STATIC_MAX_EDGES = 8000  # either cap crossed -> network view skipped, ta
 def create_local_html(df_metrics, grafo, outdir):
 	"""Write the interactive local-metrics report (<name>_local.html).
 
-	The network is serialized as an edge list (O(E)), never a dense n x n
-	adjacency matrix, so both the file size and the client-side link
-	construction scale with the graph's actual edge count. Graphs beyond
-	_LOCAL_STATIC_MAX_NODES/_LOCAL_STATIC_MAX_EDGES skip the interactive
-	view entirely (table-only fallback) instead of handing the browser a
-	network it can't render smoothly.
+	The network is written as an edge list, so the file grows with the
+	number of edges. Graphs beyond _LOCAL_STATIC_MAX_NODES or
+	_LOCAL_STATIC_MAX_EDGES get the table only.
 	"""
 	n_nodes = grafo.vcount()
 	n_edges = grafo.ecount()
@@ -53,17 +26,11 @@ def create_local_html(df_metrics, grafo, outdir):
 	metric_cols = [c for c in df_metrics.columns if c != "Node Name"]
 	all_cols = ["Node Name"] + metric_cols
 
-	# df_metrics.iterrows() index was never actually used below (the "Node
-	# Name" column, always present, wins the dict merge) -- to_dict(records)
-	# is the same data with the dead middleman removed.
 	records = df_metrics.to_dict(orient="records")
 
 	render_network = (n_nodes <= _LOCAL_STATIC_MAX_NODES) and (n_edges <= _LOCAL_STATIC_MAX_EDGES)
 	live_animated = render_network and (n_nodes <= _LOCAL_LIVE_MAX_NODES)
 
-	# grafo.removed is None or a list of names; wrapping it in a Python set
-	# literal (the old `str({grafo.removed})`) raised "unhashable type: list"
-	# any time -r/--remove was combined with the local command.
 	info_items = (
 		"<li>Removed nodes: " + str(grafo.removed) + "</li>"
 		"<li>Number of components: " + str(len(grafo.components())) + "</li>"
@@ -240,8 +207,7 @@ var METRIC_COLS = """ + json.dumps(metric_cols) + """;
 var LIVE_ANIMATED = """ + ("true" if live_animated else "false") + """;
 var DOWNLOAD_NAME = """ + json.dumps(name_output) + """;
 
-// O(1) lookup instead of Array.find(): with an O(n) scan called once per
-// node on every filter/slider event, filtering was effectively O(n^2).
+// node lookup by name
 var metricsById = new Map(METRICS.map(function(d){ return [d["Node Name"], d]; }));
 
 var nodes = NODE_NAMES.map(function(name){ return { id: name }; });
@@ -301,8 +267,7 @@ function ticked(){
 if (LIVE_ANIMATED) {
     simulation.on("tick", ticked);
 } else {
-    // Medium graphs: settle the layout once, synchronously, instead of
-    // paying for a physics loop the tab would have to keep alive forever.
+    // medium graphs: settle the layout once, then stop the simulation
     simulation.stop();
     var settleTicks = Math.min(300, Math.ceil(Math.log(nodes.length + 1) * 60));
     for (var i = 0; i < settleTicks; i++) simulation.tick();
@@ -334,9 +299,7 @@ node.on("mouseover", function(d){
 });
 
 function clearHighlights(){
-    // .hovered-node is deliberately left set by mouseout while a node is the
-    // active selection (see the early-return above) -- must be cleared here too,
-    // or the yellow fill sticks around after the mouse has long since left.
+    // mouseout keeps .hovered-node on the selected node: clear it here
     d3.selectAll(".nodes circle").classed("clicked-node", false).classed("neighbor-node", false).classed("hovered-node", false);
     d3.selectAll(".links line").classed("highlighted-link", false);
     highlightedNode = null;
@@ -571,49 +534,7 @@ Array.prototype.forEach.call(table.querySelectorAll("th"), function(th, idx){
 	    f.write(final_string)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#######################################################################################################################################################################
-#######################################################################################################################################################################
-#######################################################################################################################################################################
-#######################################################################################################################################################################
-
-
-# Rendering tiers for create_keyplayer_html -- same rationale as the local
-# report: large graphs get a table-only fallback instead of an animated
-# force layout the browser can't keep up with.
+# rendering tiers, as for the local report
 _KP_LIVE_MAX_NODES = 500
 _KP_STATIC_MAX_NODES = 3000
 _KP_STATIC_MAX_EDGES = 8000
@@ -622,15 +543,10 @@ _KP_STATIC_MAX_EDGES = 8000
 def create_keyplayer_html(df_metrics, grafo, outdir, filename):
     """Write the interactive keyplayer report (<filename>_keyplayer.html).
 
-    df_metrics must have exactly the columns Operation/KeySet/Score, one row
-    per key-player metric -- KeySet is a plain list of node names. Every
-    algorithm in this codebase (brute force, greedy, gradient descent)
-    returns exactly one optimal set per metric, never several candidates,
-    so there is nothing to browse beyond picking the metric itself.
-
-    The network is serialized as an edge list (O(E)), never a dense n x n
-    adjacency matrix, mirroring the local-metrics report's fix for the same
-    memory/CPU wall.
+    df_metrics has one row per key-player metric with the columns Operation,
+    KeySet (a list of node names) and Score, plus Ties (every optimal set)
+    and NOptimal (how many sets reach the optimum). The network is written as
+    an edge list.
     """
     n_nodes = grafo.vcount()
     n_edges = grafo.ecount()
@@ -642,8 +558,6 @@ def create_keyplayer_html(df_metrics, grafo, outdir, filename):
     render_network = (n_nodes <= _KP_STATIC_MAX_NODES) and (n_edges <= _KP_STATIC_MAX_EDGES)
     live_animated = render_network and (n_nodes <= _KP_LIVE_MAX_NODES)
 
-    # grafo.removed is None or a list of names; the old `str({grafo.removed})`
-    # wrapped it in a Python set literal, which raised "unhashable type: list".
     info_items = (
         "<li>Removed nodes: " + str(grafo.removed) + "</li>"
         "<li>Number of components: " + str(len(grafo.components())) + "</li>"
@@ -875,8 +789,7 @@ function ticked(){
 if (LIVE_ANIMATED) {
     simulation.on("tick", ticked);
 } else {
-    // Medium graphs: settle the layout once, synchronously, instead of
-    // paying for a physics loop the tab would have to keep alive forever.
+    // medium graphs: settle the layout once, then stop the simulation
     simulation.stop();
     var settleTicks = Math.min(300, Math.ceil(Math.log(nodes.length + 1) * 60));
     for (var i = 0; i < settleTicks; i++) simulation.tick();
@@ -908,9 +821,7 @@ node.on("mouseover", function(d){
 });
 
 function clearClickHighlight(){
-    // .hovered-node can be left set by mouseout's early-return above while a
-    // node is the active selection -- must be cleared here too, or the
-    // yellow fill sticks around after the mouse has long since left.
+    // mouseout keeps .hovered-node on the selected node: clear it here
     d3.selectAll(".nodes circle").classed("clicked-node", false).classed("neighbor-node", false).classed("hovered-node", false);
     d3.selectAll(".links line").classed("highlighted-link", false);
     highlightedNode = null;
@@ -960,7 +871,7 @@ document.getElementById("label-toggle").addEventListener("change", function(){ l
 document.getElementById("edge-toggle").addEventListener("change", function(){ edgesOn = this.checked; refreshVisibility(); });
 
 function tiedSetsOf(info){
-    // Older reports carried a single set; treat that as a one-element tie list.
+    // a single set is treated as a one-element tie list
     return (info && info.Ties && info.Ties.length) ? info.Ties : [info.KeySet];
 }
 
@@ -1107,50 +1018,7 @@ document.getElementById("export-png-btn").addEventListener("click", downloadPNG)
         f.write(final_string)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#######################################################################################################################################################################
-#######################################################################################################################################################################
-#######################################################################################################################################################################
-#######################################################################################################################################################################
-
-
-# Rendering tiers for create_groupcentrality_html -- same rationale as the
-# local/keyplayer reports: large graphs get a table-only fallback instead of
-# an animated force layout the browser can't keep up with.
+# rendering tiers, as for the local report
 _GC_LIVE_MAX_NODES = 500
 _GC_STATIC_MAX_NODES = 3000
 _GC_STATIC_MAX_EDGES = 8000
@@ -1159,16 +1027,10 @@ _GC_STATIC_MAX_EDGES = 8000
 def create_groupcentrality_html(df_metrics, grafo, outdir, filename):
     """Write the interactive group centrality report (<filename>_groupcentrality.html).
 
-    df_metrics must have exactly the columns Operation/NodeSet/Score, one row
-    per group-centrality metric (Degree/Betweenness/Closeness) -- NodeSet is a
-    plain list of node names. Every algorithm in this codebase (brute force,
-    greedy, gradient descent) returns exactly one optimal set per metric,
-    never several candidates, so there is nothing to browse beyond picking
-    the metric itself.
-
-    The network is serialized as an edge list (O(E)), never a dense n x n
-    adjacency matrix, mirroring the local-metrics/keyplayer reports' fix for
-    the same memory/CPU wall.
+    df_metrics has one row per group-centrality metric (degree, betweenness,
+    closeness) with the columns Operation, NodeSet (a list of node names) and
+    Score, plus Ties (every optimal set) and NOptimal (how many sets reach
+    the optimum). The network is written as an edge list.
     """
     n_nodes = grafo.vcount()
     n_edges = grafo.ecount()
@@ -1180,8 +1042,6 @@ def create_groupcentrality_html(df_metrics, grafo, outdir, filename):
     render_network = (n_nodes <= _GC_STATIC_MAX_NODES) and (n_edges <= _GC_STATIC_MAX_EDGES)
     live_animated = render_network and (n_nodes <= _GC_LIVE_MAX_NODES)
 
-    # grafo.removed is None or a list of names; the old `str({grafo.removed})`
-    # wrapped it in a Python set literal, which raised "unhashable type: list".
     info_items = (
         "<li>Removed nodes: " + str(grafo.removed) + "</li>"
         "<li>Number of components: " + str(len(grafo.components())) + "</li>"
@@ -1413,8 +1273,7 @@ function ticked(){
 if (LIVE_ANIMATED) {
     simulation.on("tick", ticked);
 } else {
-    // Medium graphs: settle the layout once, synchronously, instead of
-    // paying for a physics loop the tab would have to keep alive forever.
+    // medium graphs: settle the layout once, then stop the simulation
     simulation.stop();
     var settleTicks = Math.min(300, Math.ceil(Math.log(nodes.length + 1) * 60));
     for (var i = 0; i < settleTicks; i++) simulation.tick();
@@ -1446,9 +1305,7 @@ node.on("mouseover", function(d){
 });
 
 function clearClickHighlight(){
-    // .hovered-node can be left set by mouseout's early-return above while a
-    // node is the active selection -- must be cleared here too, or the
-    // yellow fill sticks around after the mouse has long since left.
+    // mouseout keeps .hovered-node on the selected node: clear it here
     d3.selectAll(".nodes circle").classed("clicked-node", false).classed("neighbor-node", false).classed("hovered-node", false);
     d3.selectAll(".links line").classed("highlighted-link", false);
     highlightedNode = null;
@@ -1498,7 +1355,7 @@ document.getElementById("label-toggle").addEventListener("change", function(){ l
 document.getElementById("edge-toggle").addEventListener("change", function(){ edgesOn = this.checked; refreshVisibility(); });
 
 function tiedSetsOf(info){
-    // Older reports carried a single set; treat that as a one-element tie list.
+    // a single set is treated as a one-element tie list
     return (info && info.Ties && info.Ties.length) ? info.Ties : [info.NodeSet];
 }
 

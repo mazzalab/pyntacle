@@ -1,4 +1,4 @@
-# igraph_bindings.pxd
+# libigraph declarations used by the compiled kernels
 cdef extern from "igraph/igraph.h" nogil:
     
     # The C name is igraph_integer_t; igraph_int_t is only the Cython-side alias.
@@ -70,10 +70,8 @@ cdef extern from "igraph/igraph.h" nogil:
         igraph_loops_t loops
     );
 
-    # Edge-list construction: builds the same undirected weighted graph as
-    # igraph_weighted_adjacency above, but in O(E) memory instead of an n x n
-    # dense matrix. `attr` is NULL here -- weights are carried in a separate
-    # vector, positionally aligned with the edge order handed to add_edges.
+    # Edge-list construction, in O(E) memory. `attr` is NULL: weights are
+    # carried in a separate vector aligned with the edge order of add_edges.
     igraph_error_t igraph_empty(igraph_t *graph, igraph_int_t n, igraph_bool_t directed);
     igraph_error_t igraph_add_edges(igraph_t *graph, const igraph_vector_int_t *edges, void *attr);
 

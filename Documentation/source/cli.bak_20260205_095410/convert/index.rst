@@ -99,4 +99,4 @@ Options
      - str
      - \ 
      - \ 
-     - Select where to store the output (if not specified the output will be stored in same direcotry as the input file)
+     - Select where to store the output (if not specified the output will be stored in same directory as the input file)

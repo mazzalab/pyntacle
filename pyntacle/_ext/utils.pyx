@@ -1,13 +1,8 @@
 # cython: boundscheck=False, wraparound=False, language_level=3, cdivision=True
 
 # Combinatorial unranking plus the CSR graph kernels used by the hot path.
-#
-# F and dF used to go through igraph for every candidate, which meant an
-# igraph_matrix_init, an O(n^2) matrix fill and a full graph construction per
-# combination -- 89 us and 3850 us per candidate respectively at n=200, against
-# 0.4-0.8 us for the metrics that hoist their APSP out of the loop. These kernels
-# work straight off a CSR built once, with caller-provided scratch buffers, so
-# nothing is allocated inside the loop.
+# The kernels work on a CSR built once, with caller-provided scratch buffers,
+# so nothing is allocated inside the search loop.
 
 from cython.cimports.libc.stdlib cimport malloc, free
 from cython.cimports.libc.string cimport memset

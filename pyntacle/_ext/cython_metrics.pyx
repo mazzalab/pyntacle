@@ -11,7 +11,6 @@ from . cimport utils
 from . cimport cython_igraph
 
 
-# Example: operation_selector defined in Cython and using memoryviews.
 cdef double operation_selector(int operation, int[:, :] edges, double[:] wvec, int n, int* K_indices, int* notK_indices,  int k, int mdist, double* floWar, int dist_type, utils.CSR* csr, utils.Scratch* scratch, bint unweighted) noexcept nogil:
 
     cdef double result = 0
@@ -37,7 +36,7 @@ cdef double operation_selector(int operation, int[:, :] edges, double[:] wvec, i
         utils.mark_group(scratch, K_indices, k)
         result = group_metrics.get_group_degree(csr, scratch.in_K, notK_indices, k, n)
 
-    # gB: rebuilt igraph from the edge list per candidate (as before, no dense matrix)
+    # gB: igraph graph rebuilt from the edge list per candidate
     elif operation == 5:
         result = group_metrics.get_group_betweenness(edges, wvec, n, K_indices, notK_indices, k)
 
@@ -213,7 +212,7 @@ cpdef cython_greedy(int[:] K_indices, int[:] notK_indices, int[:, :] edges, doub
                 i_idx = max_index % n_k
 
                 # swap elements
-                max_index = K_indices[k_idx] # uso come appoggio
+                max_index = K_indices[k_idx]  # temporary for the swap
                 K_indices[k_idx] = notK_indices[i_idx]
                 notK_indices[i_idx] = max_index
 
@@ -344,8 +343,7 @@ cpdef cython_bruteforce(int[:, :] edges, double[:] wvec, int n, int[:] K_indices
         # zero-init: a thread that runs no prange iterations (comb_num < num_threads),
         # or whose first candidate is compared before any write, would otherwise read
         # uninitialized memory. All metric scores are >= 0, so 0 is a safe floor.
-        # tie_count stays 0 until a candidate actually wins, which is what keeps a
-        # network where everything scores 0 behaving as it did before ties existed.
+        # tie_count stays 0 until a candidate actually wins.
         for i in range(num_threads):
             candidate_results[i] = 0.
             candidate_index[i] = 0
@@ -412,9 +410,8 @@ cpdef cython_bruteforce(int[:, :] edges, double[:] wvec, int n, int[:] K_indices
                 max_index = candidate_index[i]
 
         # Gather the sets sitting at the global optimum. Threads that never beat
-        # the 0 floor (tie_count == 0) are skipped: on a network where nothing
-        # scores, the answer stays what it always was -- combination 0, score 0,
-        # reported as a single set.
+        # the 0 floor (tie_count == 0) are skipped: when nothing scores, the
+        # answer is combination 0 with score 0, reported as a single set.
         eps = 1e-9 * fmax(1., fabs(max_score))
         collected = []
         for i from 0 <= i < num_threads:
@@ -454,6 +451,5 @@ cpdef cython_bruteforce(int[:, :] edges, double[:] wvec, int n, int[:] K_indices
         free(all_dist)
         utils.csr_free(csr)
 
-    # No rounding here: the report writer decides how many decimals to show, and
-    # rounding at the source cost precision that Pyntacle 1.3.2 reported.
+    # no rounding here: the report writer decides how many decimals to show
     return K_indices, max_score, tie_sets, total_ties

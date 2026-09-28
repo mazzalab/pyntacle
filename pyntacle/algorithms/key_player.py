@@ -4,16 +4,12 @@ import random
 
 from utility import plain_copy
 
-# from Algorithm.multicore.cudaext import cuda_floyd
 
 def prune_graph(grafo, node_names):
     """Return a plain igraph copy of ``grafo`` with ``node_names`` removed.
 
-    Edge weights are carried over: dF is a weighted metric, and building the copy
-    without them made ``grafo.es["weight"]`` raise KeyError further down.
-    ``plain_copy`` also keeps trailing isolated vertices, which the hand-rolled
-    ``ig.Graph(edges=...)`` this used to be dropped -- that made F and dF come
-    back lower than the Cython engine's on any network ending in an isolate.
+    Edge weights are carried over (dF is a weighted metric) and isolated
+    vertices are kept, so F and dF match the compiled engine.
     """
     temp_grafo = plain_copy(grafo, directed=False)
     temp_grafo.delete_vertices(node_names)
@@ -31,7 +27,7 @@ def edge_weights_or_none(grafo):
     return grafo.es["weight"]
 
 
-# negative
+# ---- KPP-Neg: fragmentation of the graph left after removing the set ----
 def fragmentation(grafo):
     """Compute KPP-Neg fragmentation (F) of a graph.
 
@@ -46,7 +42,7 @@ def fragmentation(grafo):
         float: F score in [0, 1]. 0 = fully connected; 1 = maximally fragmented.
     """
     components = grafo.components()
-    if len(components) == 1: #graph is complete
+    if len(components) == 1:  # connected: nothing to fragment
             f = 0
     else:
         num_nodes = grafo.vcount()
@@ -58,22 +54,14 @@ def fragmentation(grafo):
 
 
 
-def distance_fragmentation_Borgatti(grafo):   #### per adesso NON utilizzata
-        
+def distance_fragmentation_Borgatti(grafo):
+    """dF as defined by Borgatti (2006): 1 minus the mean inverse distance."""
     number_nodes = grafo.vcount()
     df_denum = number_nodes * (number_nodes - 1)
 
-    # adj = grafo.get_adjacency(attribute=None, default=0)
-
-    # adj = np.array(adj.data, dtype=float)
-    # adj[adj == 0.] = np.inf
-    # np.fill_diagonal(adj, 0.)
 
     shortest_path_lengths = grafo.distances(weights=edge_weights_or_none(grafo), mode=ig.ALL)
 
-
-    # n = adj.shape[0]  # Number of vertices
-    # shortest_path_lengths = adj.copy()  # Initialize distance matrix with adjacency matrix
 
     df_num = 0
     for i in range(number_nodes):
@@ -84,7 +72,6 @@ def distance_fragmentation_Borgatti(grafo):   #### per adesso NON utilizzata
 
     return df
 
-#negative
 def distance_fragmentation(grafo):
     """Compute KPP-Neg distance-fragmentation (dF) of a graph.
 
@@ -112,7 +99,7 @@ def distance_fragmentation(grafo):
     return distance_fragmentation_Borgatti(grafo)
 
 
-# positive
+# ---- KPP-Pos: reach of the set into the rest of the graph ----
 def distance_weighted_reach(grafo, nodes=None):
     """Compute KPP-Pos distance-weighted reach (dR) for a set of nodes.
 
@@ -130,10 +117,7 @@ def distance_weighted_reach(grafo, nodes=None):
     """
     if nodes==None: nodes=[v.index for v in grafo.vs]
 
-    # An unreachable node contributes no reach at all. The old code replaced inf
-    # with vcount()+1, which credited the group with 1/(n+1) of reach towards
-    # nodes it cannot reach -- and that sentinel is not even an upper bound on a
-    # weighted graph, where a finite distance can exceed n+1.
+    # an unreachable node contributes no reach
     sps = np.array(grafo.distances(nodes, weights=edge_weights_or_none(grafo)),
                    dtype=float)
 
@@ -148,7 +132,6 @@ def distance_weighted_reach(grafo, nodes=None):
     
 
 
-# positive
 def reachability(grafo, mdist, nodes=None):
     """Compute KPP-Pos m-reach for a set of nodes.
 
@@ -189,33 +172,34 @@ def reachability(grafo, mdist, nodes=None):
 
 
 
-def keyplayer_kpInfo(grafo, node_names, operation, mdist=None): ## kp-finder invece necessità di brute-force quindi è li il codice per kp-finder
+def keyplayer_kpInfo(grafo, node_names, operation, mdist=None):
+    """Key-player scores of a given node set (pure-Python reference of kp-info)."""
     kppset_score_pairs = {}
     temp_grafo = prune_graph(grafo, node_names)
 
     if operation=="all":
-        ksp_f = fragmentation(temp_grafo)  ## negative
-        ksp_df = distance_fragmentation(temp_grafo)  ## negative
+        ksp_f = fragmentation(temp_grafo)
+        ksp_df = distance_fragmentation(temp_grafo)
         nodes = []
         for i in list(node_names): 
             nodes.append(grafo.vs.find(name=i).index)
-        ksp_dr = distance_weighted_reach(grafo,nodes)  ## positive
-        ksp_reach = reachability(grafo,mdist,nodes) ##positive
+        ksp_dr = distance_weighted_reach(grafo,nodes)
+        ksp_reach = reachability(grafo,mdist,nodes)
         kppset_score_pairs={"F":ksp_f,"dF":ksp_df,"dR":ksp_dr,"mreach":ksp_reach}
     elif operation=="F":
-        kppset_score_pairs = fragmentation(temp_grafo)  ## negative
+        kppset_score_pairs = fragmentation(temp_grafo)
     elif operation=="dF":
-        kppset_score_pairs = distance_fragmentation(temp_grafo)  ## negative
+        kppset_score_pairs = distance_fragmentation(temp_grafo)
     elif operation=="dR":
         nodes = []
         for i in list(node_names): 
             nodes.append(grafo.vs.find(name=i).index)
-        kppset_score_pairs = distance_weighted_reach(grafo,nodes)  ## positive
+        kppset_score_pairs = distance_weighted_reach(grafo,nodes)
     elif operation=="mreach":
         nodes = []
         for i in list(node_names): 
             nodes.append(grafo.vs.find(name=i).index)
-        kppset_score_pairs = reachability(grafo,mdist,nodes) ##positive
+        kppset_score_pairs = reachability(grafo,mdist,nodes)
     else:
         raise TypeError(u"'all | F | dF | dR | mreach' are the available options if the multicore flag -oper is activated, default all") 
     return kppset_score_pairs

@@ -36,13 +36,9 @@ cdef double m_reach(double* hop_dist, int* K_indices, int* notK_indices, int k, 
 cdef double get_distance_weighted_reach(double* all_dist, int* K_indices, int* notK_indices, int k, int n) noexcept nogil:
     """KPP-Pos dR: mean inverse distance from the group to everything else.
 
-    Normalised by n, matching the reference Python implementation in
-    algorithms/key_player.py. Dividing by (n - k) instead used to make the two
-    engines disagree (0.952 against 0.868 on Zachary).
-
-    Borgatti additionally credits the k group members themselves with a distance
-    of 0; that term is left out here so the score keeps matching the numbers
-    Pyntacle has always reported.
+    Normalised by n, as in the Python implementation (algorithms/key_player.py).
+    Borgatti additionally credits the k group members with a distance of 0;
+    that term is left out, as in every Pyntacle release.
     """
     cdef int i, j
     cdef int k_node, notK_node
@@ -73,8 +69,7 @@ cdef double get_distance_weighted_reach(double* all_dist, int* K_indices, int* n
 cdef double get_fragmentation(utils.CSR* g, utils.Scratch* s, int* K_indices, int k) noexcept nogil:
     """KPP-Neg F: 1 - P(two random nodes of V \\ K are in the same component).
 
-    Flood fill over the CSR built once by the caller. This used to construct a
-    whole igraph graph from a dense n x n matrix for every candidate.
+    Flood fill over the CSR built once by the caller.
     """
     cdef int n = g.n
     cdef int i, comp_num
@@ -96,9 +91,7 @@ cdef double get_fragmentation(utils.CSR* g, utils.Scratch* s, int* K_indices, in
 cdef double get_distance_fragmentation(utils.CSR* g, utils.Scratch* s, int* K_indices, int k, bint unweighted) noexcept nogil:
     """KPP-Neg dF: 1 - the harmonic sum of pairwise distances over V \\ K.
 
-    One source at a time, accumulating into a single row of length n. The old
-    kernel malloc'd an n x n matrix per candidate and ran a full igraph Dijkstra
-    into it; at n=200 that was 3850 us per combination.
+    One source at a time, accumulating into a single row of length n.
     """
     cdef int n = g.n
     cdef int i, j

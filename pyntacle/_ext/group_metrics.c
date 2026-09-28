@@ -1628,9 +1628,9 @@ struct __pyx_t_4_ext_5utils_CSR {
   double *w;
 };
 
-/* "utils.pxd":12
- * # candidate: the old dF kernel malloc'd n*n doubles for every combination it
- * # scored, which dominated the brute-force runtime.
+/* "utils.pxd":11
+ * # Per-thread working memory, allocated once per parallel region rather than
+ * # once per candidate.
  * cdef struct Scratch:             # <<<<<<<<<<<<<<
  *     int n
  *     double* dist
@@ -16431,7 +16431,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
   int __pyx_t_2;
   int __pyx_t_3;
 
-  /* "_ext/group_metrics.pyx":28
+  /* "_ext/group_metrics.pyx":23
  *     """
  *     cdef int i, e, notK_node
  *     cdef double gDegree = 0.             # <<<<<<<<<<<<<<
@@ -16440,7 +16440,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
 */
   __pyx_v_gDegree = 0.;
 
-  /* "_ext/group_metrics.pyx":30
+  /* "_ext/group_metrics.pyx":25
  *     cdef double gDegree = 0.
  * 
  *     for i from 0 <= i < (n - k):             # <<<<<<<<<<<<<<
@@ -16450,7 +16450,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
   __pyx_t_1 = (__pyx_v_n - __pyx_v_k);
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_1; __pyx_v_i++) {
 
-    /* "_ext/group_metrics.pyx":31
+    /* "_ext/group_metrics.pyx":26
  * 
  *     for i from 0 <= i < (n - k):
  *         notK_node = notK_indices[i]             # <<<<<<<<<<<<<<
@@ -16459,7 +16459,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
 */
     __pyx_v_notK_node = (__pyx_v_notK_indices[__pyx_v_i]);
 
-    /* "_ext/group_metrics.pyx":33
+    /* "_ext/group_metrics.pyx":28
  *         notK_node = notK_indices[i]
  * 
  *         for e from g.indptr[notK_node] <= e < g.indptr[notK_node + 1]:             # <<<<<<<<<<<<<<
@@ -16469,7 +16469,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
     __pyx_t_2 = (__pyx_v_g->indptr[(__pyx_v_notK_node + 1)]);
     for (__pyx_v_e = (__pyx_v_g->indptr[__pyx_v_notK_node]); __pyx_v_e < __pyx_t_2; __pyx_v_e++) {
 
-      /* "_ext/group_metrics.pyx":34
+      /* "_ext/group_metrics.pyx":29
  * 
  *         for e from g.indptr[notK_node] <= e < g.indptr[notK_node + 1]:
  *             if in_K[g.indices[e]]:             # <<<<<<<<<<<<<<
@@ -16479,7 +16479,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
       __pyx_t_3 = ((__pyx_v_in_K[(__pyx_v_g->indices[__pyx_v_e])]) != 0);
       if (__pyx_t_3) {
 
-        /* "_ext/group_metrics.pyx":35
+        /* "_ext/group_metrics.pyx":30
  *         for e from g.indptr[notK_node] <= e < g.indptr[notK_node + 1]:
  *             if in_K[g.indices[e]]:
  *                 gDegree += 1.             # <<<<<<<<<<<<<<
@@ -16488,7 +16488,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
 */
         __pyx_v_gDegree = (__pyx_v_gDegree + 1.);
 
-        /* "_ext/group_metrics.pyx":36
+        /* "_ext/group_metrics.pyx":31
  *             if in_K[g.indices[e]]:
  *                 gDegree += 1.
  *                 break             # <<<<<<<<<<<<<<
@@ -16497,7 +16497,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
 */
         goto __pyx_L6_break;
 
-        /* "_ext/group_metrics.pyx":34
+        /* "_ext/group_metrics.pyx":29
  * 
  *         for e from g.indptr[notK_node] <= e < g.indptr[notK_node + 1]:
  *             if in_K[g.indices[e]]:             # <<<<<<<<<<<<<<
@@ -16509,7 +16509,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
     __pyx_L6_break:;
   }
 
-  /* "_ext/group_metrics.pyx":38
+  /* "_ext/group_metrics.pyx":33
  *                 break
  * 
  *     gDegree = gDegree / (n - k)             # <<<<<<<<<<<<<<
@@ -16518,7 +16518,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
 */
   __pyx_v_gDegree = (__pyx_v_gDegree / ((double)(__pyx_v_n - __pyx_v_k)));
 
-  /* "_ext/group_metrics.pyx":40
+  /* "_ext/group_metrics.pyx":35
  *     gDegree = gDegree / (n - k)
  * 
  *     return gDegree             # <<<<<<<<<<<<<<
@@ -16541,7 +16541,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
   return __pyx_r;
 }
 
-/* "_ext/group_metrics.pyx":43
+/* "_ext/group_metrics.pyx":38
  * 
  * 
  * cdef double get_group_betweenness(int[:, :] edges, double[:] wvec, int n, int* K_indices, int* notK_indices, int k) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16554,7 +16554,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_betweenness(__Pyx_memviews
   double __pyx_r;
   int __pyx_t_1;
 
-  /* "_ext/group_metrics.pyx":46
+  /* "_ext/group_metrics.pyx":41
  *     cdef double betweenness
  * 
  *     qsort(notK_indices, n - k, sizeof(int), cmp_ints)             # <<<<<<<<<<<<<<
@@ -16563,7 +16563,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_betweenness(__Pyx_memviews
 */
   qsort(__pyx_v_notK_indices, (__pyx_v_n - __pyx_v_k), (sizeof(int)), __pyx_f_4_ext_13group_metrics_cmp_ints);
 
-  /* "_ext/group_metrics.pyx":48
+  /* "_ext/group_metrics.pyx":43
  *     qsort(notK_indices, n - k, sizeof(int), cmp_ints)
  * 
  *     betweenness = cython_igraph.igraph_betweenness(edges, wvec, n, K_indices, notK_indices, k)             # <<<<<<<<<<<<<<
@@ -16572,7 +16572,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_betweenness(__Pyx_memviews
 */
   __pyx_v_betweenness = __pyx_f_4_ext_13cython_igraph_igraph_betweenness(__pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_K_indices, __pyx_v_notK_indices, __pyx_v_k);
 
-  /* "_ext/group_metrics.pyx":50
+  /* "_ext/group_metrics.pyx":45
  *     betweenness = cython_igraph.igraph_betweenness(edges, wvec, n, K_indices, notK_indices, k)
  * 
  *     if betweenness < 0.:  # igraph refused the graph; propagate the failure             # <<<<<<<<<<<<<<
@@ -16582,7 +16582,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_betweenness(__Pyx_memviews
   __pyx_t_1 = (__pyx_v_betweenness < 0.);
   if (__pyx_t_1) {
 
-    /* "_ext/group_metrics.pyx":51
+    /* "_ext/group_metrics.pyx":46
  * 
  *     if betweenness < 0.:  # igraph refused the graph; propagate the failure
  *         return -1.             # <<<<<<<<<<<<<<
@@ -16592,7 +16592,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_betweenness(__Pyx_memviews
     __pyx_r = -1.;
     goto __pyx_L0;
 
-    /* "_ext/group_metrics.pyx":50
+    /* "_ext/group_metrics.pyx":45
  *     betweenness = cython_igraph.igraph_betweenness(edges, wvec, n, K_indices, notK_indices, k)
  * 
  *     if betweenness < 0.:  # igraph refused the graph; propagate the failure             # <<<<<<<<<<<<<<
@@ -16601,7 +16601,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_betweenness(__Pyx_memviews
 */
   }
 
-  /* "_ext/group_metrics.pyx":53
+  /* "_ext/group_metrics.pyx":48
  *         return -1.
  * 
  *     return betweenness/((n - k)*(n - k - 1))             # <<<<<<<<<<<<<<
@@ -16611,7 +16611,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_betweenness(__Pyx_memviews
   __pyx_r = (__pyx_v_betweenness / ((double)((__pyx_v_n - __pyx_v_k) * ((__pyx_v_n - __pyx_v_k) - 1))));
   goto __pyx_L0;
 
-  /* "_ext/group_metrics.pyx":43
+  /* "_ext/group_metrics.pyx":38
  * 
  * 
  * cdef double get_group_betweenness(int[:, :] edges, double[:] wvec, int n, int* K_indices, int* notK_indices, int k) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16624,7 +16624,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_betweenness(__Pyx_memviews
   return __pyx_r;
 }
 
-/* "_ext/group_metrics.pyx":56
+/* "_ext/group_metrics.pyx":51
  * 
  * 
  * cdef double get_group_closeness(double* all_dist, int* K_indices, int* notK_indices, int k, int n, int dist_type) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16646,7 +16646,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
   int __pyx_t_2;
   int __pyx_t_3;
 
-  /* "_ext/group_metrics.pyx":68
+  /* "_ext/group_metrics.pyx":60
  *     """
  *     cdef int i, j
  *     cdef double gCloseness = 0.0             # <<<<<<<<<<<<<<
@@ -16655,7 +16655,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
   __pyx_v_gCloseness = 0.0;
 
-  /* "_ext/group_metrics.pyx":73
+  /* "_ext/group_metrics.pyx":65
  *     cdef int reachable
  *     cdef double d
  *     cdef double dJk = 0.0             # <<<<<<<<<<<<<<
@@ -16664,7 +16664,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
   __pyx_v_dJk = 0.0;
 
-  /* "_ext/group_metrics.pyx":75
+  /* "_ext/group_metrics.pyx":67
  *     cdef double dJk = 0.0
  * 
  *     for i from 0 <= i < (n - k):  # Iterate over non-K nodes             # <<<<<<<<<<<<<<
@@ -16674,7 +16674,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
   __pyx_t_1 = (__pyx_v_n - __pyx_v_k);
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_1; __pyx_v_i++) {
 
-    /* "_ext/group_metrics.pyx":76
+    /* "_ext/group_metrics.pyx":68
  * 
  *     for i from 0 <= i < (n - k):  # Iterate over non-K nodes
  *         notK_node = notK_indices[i]             # <<<<<<<<<<<<<<
@@ -16683,7 +16683,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
     __pyx_v_notK_node = (__pyx_v_notK_indices[__pyx_v_i]);
 
-    /* "_ext/group_metrics.pyx":77
+    /* "_ext/group_metrics.pyx":69
  *     for i from 0 <= i < (n - k):  # Iterate over non-K nodes
  *         notK_node = notK_indices[i]
  *         reachable = 0             # <<<<<<<<<<<<<<
@@ -16692,7 +16692,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
     __pyx_v_reachable = 0;
 
-    /* "_ext/group_metrics.pyx":80
+    /* "_ext/group_metrics.pyx":72
  * 
  *         # mean
  *         if dist_type == 0:             # <<<<<<<<<<<<<<
@@ -16702,7 +16702,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
     switch (__pyx_v_dist_type) {
       case 0:
 
-      /* "_ext/group_metrics.pyx":81
+      /* "_ext/group_metrics.pyx":73
  *         # mean
  *         if dist_type == 0:
  *             dJk = 0.             # <<<<<<<<<<<<<<
@@ -16711,7 +16711,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
       __pyx_v_dJk = 0.;
 
-      /* "_ext/group_metrics.pyx":82
+      /* "_ext/group_metrics.pyx":74
  *         if dist_type == 0:
  *             dJk = 0.
  *             for j from 0 <= j < k:             # <<<<<<<<<<<<<<
@@ -16721,7 +16721,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
       __pyx_t_2 = __pyx_v_k;
       for (__pyx_v_j = 0; __pyx_v_j < __pyx_t_2; __pyx_v_j++) {
 
-        /* "_ext/group_metrics.pyx":83
+        /* "_ext/group_metrics.pyx":75
  *             dJk = 0.
  *             for j from 0 <= j < k:
  *                 k_node = K_indices[j]             # <<<<<<<<<<<<<<
@@ -16730,7 +16730,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
         __pyx_v_k_node = (__pyx_v_K_indices[__pyx_v_j]);
 
-        /* "_ext/group_metrics.pyx":84
+        /* "_ext/group_metrics.pyx":76
  *             for j from 0 <= j < k:
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]             # <<<<<<<<<<<<<<
@@ -16739,7 +16739,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
         __pyx_v_d = (__pyx_v_all_dist[((__pyx_v_notK_node * __pyx_v_n) + __pyx_v_k_node)]);
 
-        /* "_ext/group_metrics.pyx":85
+        /* "_ext/group_metrics.pyx":77
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):             # <<<<<<<<<<<<<<
@@ -16749,7 +16749,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
         __pyx_t_3 = (!(isinf(__pyx_v_d) != 0));
         if (__pyx_t_3) {
 
-          /* "_ext/group_metrics.pyx":86
+          /* "_ext/group_metrics.pyx":78
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):
  *                     dJk += d             # <<<<<<<<<<<<<<
@@ -16758,7 +16758,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
           __pyx_v_dJk = (__pyx_v_dJk + __pyx_v_d);
 
-          /* "_ext/group_metrics.pyx":87
+          /* "_ext/group_metrics.pyx":79
  *                 if not isinf(d):
  *                     dJk += d
  *                     reachable += 1             # <<<<<<<<<<<<<<
@@ -16767,7 +16767,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
           __pyx_v_reachable = (__pyx_v_reachable + 1);
 
-          /* "_ext/group_metrics.pyx":85
+          /* "_ext/group_metrics.pyx":77
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):             # <<<<<<<<<<<<<<
@@ -16777,7 +16777,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
         }
       }
 
-      /* "_ext/group_metrics.pyx":89
+      /* "_ext/group_metrics.pyx":81
  *                     reachable += 1
  * 
  *             if reachable > 0:             # <<<<<<<<<<<<<<
@@ -16787,7 +16787,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
       __pyx_t_3 = (__pyx_v_reachable > 0);
       if (__pyx_t_3) {
 
-        /* "_ext/group_metrics.pyx":90
+        /* "_ext/group_metrics.pyx":82
  * 
  *             if reachable > 0:
  *                 dJk = dJk / reachable             # <<<<<<<<<<<<<<
@@ -16796,7 +16796,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
         __pyx_v_dJk = (__pyx_v_dJk / ((double)__pyx_v_reachable));
 
-        /* "_ext/group_metrics.pyx":89
+        /* "_ext/group_metrics.pyx":81
  *                     reachable += 1
  * 
  *             if reachable > 0:             # <<<<<<<<<<<<<<
@@ -16805,7 +16805,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
       }
 
-      /* "_ext/group_metrics.pyx":80
+      /* "_ext/group_metrics.pyx":72
  * 
  *         # mean
  *         if dist_type == 0:             # <<<<<<<<<<<<<<
@@ -16815,7 +16815,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
       break;
       case 1:
 
-      /* "_ext/group_metrics.pyx":94
+      /* "_ext/group_metrics.pyx":86
  *         # max
  *         elif dist_type == 1:
  *             dJk = 0.             # <<<<<<<<<<<<<<
@@ -16824,7 +16824,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
       __pyx_v_dJk = 0.;
 
-      /* "_ext/group_metrics.pyx":95
+      /* "_ext/group_metrics.pyx":87
  *         elif dist_type == 1:
  *             dJk = 0.
  *             for j from 0 <= j < k:             # <<<<<<<<<<<<<<
@@ -16834,7 +16834,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
       __pyx_t_2 = __pyx_v_k;
       for (__pyx_v_j = 0; __pyx_v_j < __pyx_t_2; __pyx_v_j++) {
 
-        /* "_ext/group_metrics.pyx":96
+        /* "_ext/group_metrics.pyx":88
  *             dJk = 0.
  *             for j from 0 <= j < k:
  *                 k_node = K_indices[j]             # <<<<<<<<<<<<<<
@@ -16843,7 +16843,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
         __pyx_v_k_node = (__pyx_v_K_indices[__pyx_v_j]);
 
-        /* "_ext/group_metrics.pyx":97
+        /* "_ext/group_metrics.pyx":89
  *             for j from 0 <= j < k:
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]             # <<<<<<<<<<<<<<
@@ -16852,7 +16852,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
         __pyx_v_d = (__pyx_v_all_dist[((__pyx_v_notK_node * __pyx_v_n) + __pyx_v_k_node)]);
 
-        /* "_ext/group_metrics.pyx":98
+        /* "_ext/group_metrics.pyx":90
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):             # <<<<<<<<<<<<<<
@@ -16862,7 +16862,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
         __pyx_t_3 = (!(isinf(__pyx_v_d) != 0));
         if (__pyx_t_3) {
 
-          /* "_ext/group_metrics.pyx":99
+          /* "_ext/group_metrics.pyx":91
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):
  *                     reachable += 1             # <<<<<<<<<<<<<<
@@ -16871,7 +16871,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
           __pyx_v_reachable = (__pyx_v_reachable + 1);
 
-          /* "_ext/group_metrics.pyx":100
+          /* "_ext/group_metrics.pyx":92
  *                 if not isinf(d):
  *                     reachable += 1
  *                     if d > dJk:             # <<<<<<<<<<<<<<
@@ -16881,7 +16881,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
           __pyx_t_3 = (__pyx_v_d > __pyx_v_dJk);
           if (__pyx_t_3) {
 
-            /* "_ext/group_metrics.pyx":101
+            /* "_ext/group_metrics.pyx":93
  *                     reachable += 1
  *                     if d > dJk:
  *                         dJk = d             # <<<<<<<<<<<<<<
@@ -16890,7 +16890,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
             __pyx_v_dJk = __pyx_v_d;
 
-            /* "_ext/group_metrics.pyx":100
+            /* "_ext/group_metrics.pyx":92
  *                 if not isinf(d):
  *                     reachable += 1
  *                     if d > dJk:             # <<<<<<<<<<<<<<
@@ -16899,7 +16899,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
           }
 
-          /* "_ext/group_metrics.pyx":98
+          /* "_ext/group_metrics.pyx":90
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):             # <<<<<<<<<<<<<<
@@ -16909,7 +16909,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
         }
       }
 
-      /* "_ext/group_metrics.pyx":93
+      /* "_ext/group_metrics.pyx":85
  * 
  *         # max
  *         elif dist_type == 1:             # <<<<<<<<<<<<<<
@@ -16919,7 +16919,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
       break;
       case 2:
 
-      /* "_ext/group_metrics.pyx":105
+      /* "_ext/group_metrics.pyx":97
  *         # min
  *         elif dist_type == 2:
  *             dJk = INFINITY             # <<<<<<<<<<<<<<
@@ -16928,7 +16928,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
       __pyx_v_dJk = INFINITY;
 
-      /* "_ext/group_metrics.pyx":106
+      /* "_ext/group_metrics.pyx":98
  *         elif dist_type == 2:
  *             dJk = INFINITY
  *             for j from 0 <= j < k:             # <<<<<<<<<<<<<<
@@ -16938,7 +16938,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
       __pyx_t_2 = __pyx_v_k;
       for (__pyx_v_j = 0; __pyx_v_j < __pyx_t_2; __pyx_v_j++) {
 
-        /* "_ext/group_metrics.pyx":107
+        /* "_ext/group_metrics.pyx":99
  *             dJk = INFINITY
  *             for j from 0 <= j < k:
  *                 k_node = K_indices[j]             # <<<<<<<<<<<<<<
@@ -16947,7 +16947,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
         __pyx_v_k_node = (__pyx_v_K_indices[__pyx_v_j]);
 
-        /* "_ext/group_metrics.pyx":108
+        /* "_ext/group_metrics.pyx":100
  *             for j from 0 <= j < k:
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]             # <<<<<<<<<<<<<<
@@ -16956,7 +16956,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
         __pyx_v_d = (__pyx_v_all_dist[((__pyx_v_notK_node * __pyx_v_n) + __pyx_v_k_node)]);
 
-        /* "_ext/group_metrics.pyx":109
+        /* "_ext/group_metrics.pyx":101
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):             # <<<<<<<<<<<<<<
@@ -16966,7 +16966,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
         __pyx_t_3 = (!(isinf(__pyx_v_d) != 0));
         if (__pyx_t_3) {
 
-          /* "_ext/group_metrics.pyx":110
+          /* "_ext/group_metrics.pyx":102
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):
  *                     reachable += 1             # <<<<<<<<<<<<<<
@@ -16975,7 +16975,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
           __pyx_v_reachable = (__pyx_v_reachable + 1);
 
-          /* "_ext/group_metrics.pyx":111
+          /* "_ext/group_metrics.pyx":103
  *                 if not isinf(d):
  *                     reachable += 1
  *                     if d < dJk:             # <<<<<<<<<<<<<<
@@ -16985,7 +16985,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
           __pyx_t_3 = (__pyx_v_d < __pyx_v_dJk);
           if (__pyx_t_3) {
 
-            /* "_ext/group_metrics.pyx":112
+            /* "_ext/group_metrics.pyx":104
  *                     reachable += 1
  *                     if d < dJk:
  *                         dJk = d             # <<<<<<<<<<<<<<
@@ -16994,7 +16994,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
             __pyx_v_dJk = __pyx_v_d;
 
-            /* "_ext/group_metrics.pyx":111
+            /* "_ext/group_metrics.pyx":103
  *                 if not isinf(d):
  *                     reachable += 1
  *                     if d < dJk:             # <<<<<<<<<<<<<<
@@ -17003,7 +17003,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
           }
 
-          /* "_ext/group_metrics.pyx":109
+          /* "_ext/group_metrics.pyx":101
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):             # <<<<<<<<<<<<<<
@@ -17013,7 +17013,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
         }
       }
 
-      /* "_ext/group_metrics.pyx":104
+      /* "_ext/group_metrics.pyx":96
  * 
  *         # min
  *         elif dist_type == 2:             # <<<<<<<<<<<<<<
@@ -17024,7 +17024,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
       default: break;
     }
 
-    /* "_ext/group_metrics.pyx":114
+    /* "_ext/group_metrics.pyx":106
  *                         dJk = d
  * 
  *         if reachable == 0:             # <<<<<<<<<<<<<<
@@ -17034,7 +17034,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
     __pyx_t_3 = (__pyx_v_reachable == 0);
     if (__pyx_t_3) {
 
-      /* "_ext/group_metrics.pyx":115
+      /* "_ext/group_metrics.pyx":107
  * 
  *         if reachable == 0:
  *             continue             # <<<<<<<<<<<<<<
@@ -17043,7 +17043,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
       goto __pyx_L3_continue;
 
-      /* "_ext/group_metrics.pyx":114
+      /* "_ext/group_metrics.pyx":106
  *                         dJk = d
  * 
  *         if reachable == 0:             # <<<<<<<<<<<<<<
@@ -17052,7 +17052,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
     }
 
-    /* "_ext/group_metrics.pyx":117
+    /* "_ext/group_metrics.pyx":109
  *             continue
  * 
  *         gCloseness += dJk             # <<<<<<<<<<<<<<
@@ -17063,7 +17063,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
     __pyx_L3_continue:;
   }
 
-  /* "_ext/group_metrics.pyx":119
+  /* "_ext/group_metrics.pyx":111
  *         gCloseness += dJk
  * 
  *     if gCloseness <= 0.:             # <<<<<<<<<<<<<<
@@ -17073,7 +17073,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
   __pyx_t_3 = (__pyx_v_gCloseness <= 0.);
   if (__pyx_t_3) {
 
-    /* "_ext/group_metrics.pyx":120
+    /* "_ext/group_metrics.pyx":112
  * 
  *     if gCloseness <= 0.:
  *         return -1.             # <<<<<<<<<<<<<<
@@ -17083,7 +17083,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
     __pyx_r = -1.;
     goto __pyx_L0;
 
-    /* "_ext/group_metrics.pyx":119
+    /* "_ext/group_metrics.pyx":111
  *         gCloseness += dJk
  * 
  *     if gCloseness <= 0.:             # <<<<<<<<<<<<<<
@@ -17092,7 +17092,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
   }
 
-  /* "_ext/group_metrics.pyx":123
+  /* "_ext/group_metrics.pyx":115
  * 
  *     # Compute group closeness centrality
  *     return (n - k) / gCloseness             # <<<<<<<<<<<<<<
@@ -17100,7 +17100,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
   __pyx_r = (((double)(__pyx_v_n - __pyx_v_k)) / __pyx_v_gCloseness);
   goto __pyx_L0;
 
-  /* "_ext/group_metrics.pyx":56
+  /* "_ext/group_metrics.pyx":51
  * 
  * 
  * cdef double get_group_closeness(double* all_dist, int* K_indices, int* notK_indices, int k, int n, int dist_type) noexcept nogil:             # <<<<<<<<<<<<<<

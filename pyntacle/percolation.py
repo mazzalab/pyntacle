@@ -1,5 +1,4 @@
-############### PERCOLATION
-
+"""Percolation (SIR-like spreading with edge thresholds) and its HTML report."""
 from igraph import Graph
 import numpy as np
 import pandas as pd
@@ -10,15 +9,8 @@ from plotly import graph_objs as go
 import plotly.io as pio
 from collections import deque
 
-# Colors (same semantics as your notebook)
-COL_S   = "#bdbdbd"   # susceptible
-COL_I   = "#FFD700"   # infected
-COL_R   = "#2ca02c"   # recovered
-COL_USED= "#d62728"   # used edges
-COL_BASE= "#bbbbbb"   # base edges
-
-# Threshold for using KK layout vs a faster layout for large graphs
-LAYOUT_KK_THRESHOLD = 1000  # use KK if N <= 1000, otherwise use a faster layout
+# Kamada-Kawai layout up to this many nodes, a faster force-directed one above
+LAYOUT_KK_THRESHOLD = 1000
 
 
 # ---------- Parameter validation ----------
@@ -220,9 +212,7 @@ def _sample_edge_thresholds_matrix(graph, pth_max=1.0, dist="uniform", rng=None)
     Samples a local threshold p_th,ij for every edge, drawing from the
     chosen distribution.
 
-    Returns a length-E array aligned to graph.get_edgelist(), not a dense
-    (n, n) matrix: a dense matrix costs O(n^2) regardless of how sparse the
-    graph is, which is the memory wall this module used to reintroduce.
+    Returns a length-E array aligned to graph.get_edgelist().
 
     Parameters
     ----------
@@ -324,10 +314,7 @@ def _build_open_neighbors(n_nodes, edges, open_mask, directed):
     Adjacency list restricted to OPEN edges: neighbors[u] holds every node
     reachable from u through an edge e with open_mask[e] == True.
 
-    Built in O(V + E) from the edge list. Replaces the old
-    open_neighbors = [np.where(open_edges[u, :])[0] for u in range(n)],
-    an O(n^2) scan over a dense (n, n) matrix regardless of how sparse the
-    graph actually is.
+    Built in O(V + E) from the edge list.
     """
     neighbors = [[] for _ in range(n_nodes)]
     for (i, j), is_open in zip(edges, open_mask):
@@ -441,7 +428,7 @@ def run_percolation(
           "pth_max": float,
           "distribution": str,
           "edge_threshold_source": str,  # "sampled" or "edge_weights"
-          "seed_index": int,        # first seed (for backward compat)
+          "seed_index": int,        # first seed
           "seed_indices": list[int],
           "seed_label": hashable,   # label of first seed
           "seed_labels": list,
@@ -492,8 +479,7 @@ def run_percolation(
     else:
         node_labels = list(range(graph.vcount()))
 
-    # edge list (fixed order; edge_thresholds/open_edges/open_neighbors below
-    # are all aligned to it -- no dense (n, n) adjacency is ever built here).
+    # edge list: edge_thresholds, open_edges and open_neighbors are aligned to it
     edges = graph.get_edgelist()
 
     # local thresholds for each edge -- length-E array, see
@@ -631,14 +617,7 @@ def run_percolation(
     susceptible_counts = []
     recovered_counts = []
 
-    # At most ONE full per-node state vector is ever kept: the single
-    # snapshot the caller asked for (if any), captured the moment its
-    # trigger fires. The old code appended state.copy() (O(n)) every step
-    # into a growing states_over_time list -- O(n) * O(max_steps), i.e. the
-    # same O(n^2)-at-scale wall this module reintroduced on the adjacency
-    # side, just from a different array. Nothing downstream actually needed
-    # the full history: only the step count (n_steps) and, optionally, the
-    # state at one specific step (the snapshot report in main.py).
+    # at most one per-node state vector is kept: the requested snapshot
     snapshot_state = None
     snapshot_time = None
 
@@ -669,7 +648,7 @@ def run_percolation(
     record_counts()
     maybe_capture_snapshot(0)
 
-    # *** SPEED-UP: record infection edges on the fly (instead of recomputing later) ***
+    # infection edges are recorded as they happen
     infection_edges = {}
 
     # temporal evolution
@@ -716,7 +695,7 @@ def run_percolation(
         maybe_capture_snapshot(step)
 
     # prepare seeds info for results
-    seed_index = seeds_idx[0]  # first seed (for old code)
+    seed_index = seeds_idx[0]
     seed_labels = [node_labels[i] for i in seeds_idx]
     seed_label_first = seed_labels[0]
 
@@ -751,8 +730,7 @@ def run_percolation(
 
 def summarize_percolation_results(graph, results):
     """
-    Build a human-readable multi-line summary of a percolation run,
-    similar to the Jupyter notebook output.
+    Build a human-readable multi-line summary of a percolation run.
 
     Parameters
     ----------
@@ -894,14 +872,6 @@ def summarize_percolation_results(graph, results):
     return summary
 # ---------- Layout & helpers (igraph-based) ----------
 
-def kk_layout_igraph(graph):
-    """
-    Kamada-Kawai layout for igraph.Graph.
-    Returns dict: node_index -> (x, y)
-    """
-    layout = graph.layout_kamada_kawai()
-    return {i: (layout[i][0], layout[i][1]) for i in range(graph.vcount())}
-
 def auto_layout_igraph(graph, kk_threshold=LAYOUT_KK_THRESHOLD):
     """
     Choose a layout depending on graph size.
@@ -938,511 +908,7 @@ def edges_xy(edgelist, pos):
     return xs, ys
 
 
-# ---------- HTML builder (igraph + results dict) ----------
-
-def save_percolation_html_from_results_igraph(
-    graph,
-    results,
-    filename="percolation.html",
-    max_frames=180,
-    default_vh=90,
-):
-    """
-    Build an interactive HTML (KK/FR layout, instant/cumulative edges, focus on node)
-    from an igraph.Graph + the results dict returned by run_percolation().
-
-    Parameters
-    ----------
-    graph : igraph.Graph
-        The same graph passed to run_percolation.
-    results : dict
-        Output of run_percolation(graph, ...).
-    filename : str
-        Path of the HTML file to create.
-    max_frames : int
-        Maximum number of time frames in the slider (subsample if longer).
-    default_vh : int
-        Height of the graph area in viewport height units (vh).
-
-    Returns
-    -------
-    filename : str
-        The path of the saved HTML file.
-    """
-
-    # basic sanity checks on results
-    required_keys = [
-        "Pstar", "tau", "pth_max", "distribution",
-        "seed_index", "node_labels", "edges",
-        "edge_thresholds", "open_edges",
-        "n_steps", "activation_time", "recovery_time",
-    ]
-    for k in required_keys:
-        if k not in results:
-            raise KeyError(u"results dict is missing key '{k}'".format(k=k))
-
-    Pstar            = results["Pstar"]
-    tau              = results["tau"]
-    tau_distribution = results.get("tau_distribution", "fixed")
-    tau_vector       = results.get("tau_vector", None)
-    pth_max          = results["pth_max"]
-    distribution     = results["distribution"]
-    seed_index       = results["seed_index"]
-    node_labels      = results["node_labels"]
-    edge_pth         = results["edge_thresholds"]
-    open_edges       = results["open_edges"]
-    n_steps          = results["n_steps"]
-    activation_time  = results["activation_time"]
-    recovery_time    = results["recovery_time"]
-
-    N = graph.vcount()
-    E = graph.ecount()
-
-    if len(node_labels) != N:
-        raise ValueError(
-            u"Length of node_labels ({ln}) does not match graph.vcount() ({N})"
-            .format(ln=len(node_labels), N=N)
-        )
-    if len(edge_pth) != E:
-        raise ValueError(
-            u"edge_thresholds length ({le}) does not match number of edges ({E})"
-            .format(le=len(edge_pth), E=E)
-        )
-    if len(open_edges) != E:
-        raise ValueError(
-            u"open_edges length ({le}) does not match number of edges ({E})"
-            .format(le=len(open_edges), E=E)
-        )
-    if len(activation_time) != N or len(recovery_time) != N:
-        raise ValueError(
-            u"activation_time and/or recovery_time lengths do not match number of nodes."
-        )
-
-    mean_k = 2.0 * E / max(1, N)
-
-    # effective tau for q_eff and title
-    if tau_distribution == "fixed" or tau_vector is None:
-        tau_eff = float(tau)
-    else:
-        try:
-            tau_eff = float(np.nanmean(tau_vector))
-        except Exception:
-            tau_eff = float(tau)
-
-    # --- time axis: discrete steps 0..T ---
-    T = n_steps
-    times = list(range(T + 1))
-
-    # optional subsampling if too many frames
-    if len(times) > max_frames:
-        idx = np.linspace(0, len(times) - 1, max_frames).astype(int)
-        times = [times[i] for i in idx]
-
-    # --- per-node info for coloring ---
-    node_ti = [
-        float(activation_time[i]) if not math.isnan(activation_time[i]) else float("inf")
-        for i in range(N)
-    ]
-    node_tr = [
-        float(recovery_time[i]) if not math.isnan(recovery_time[i]) else float("inf")
-        for i in range(N)
-    ]
-
-    # --- layout: KK for small graphs, FR for larger ones (threshold = 1000) ---
-    if N <= 1000:
-        layout = graph.layout_kamada_kawai()
-    else:
-        layout = graph.layout_fruchterman_reingold()
-    pos = {i: (layout[i][0], layout[i][1]) for i in range(N)}
-
-    nodes = list(range(N))
-    node_x = [pos[u][0] for u in nodes]
-    node_y = [pos[u][1] for u in nodes]
-
-    # --- base edges (static faint gray) ---
-    edgelist = graph.get_edgelist()
-    base_x, base_y = edges_xy(edgelist, pos)
-
-    # --- infection edges and times ---
-    # run_percolation records infection_edges on the fly, so it's always
-    # present (possibly empty, e.g. an isolated seed that never spread).
-    raw_tedge = results["infection_edges"]
-    tedge = {
-        frozenset({int(min(e)), int(max(e))}): float(t)
-        for e, t in raw_tedge.items()
-    }
-
-    used_sorted = sorted(
-        ((min(e), max(e), float(t)) for e, t in tedge.items()),
-        key=lambda r: r[2],
-    )
-    used_u = [u for u, _, _ in used_sorted]
-    used_v = [v for _, v, _ in used_sorted]
-    used_t = [t for _, _, t in used_sorted]
-
-    # --- title (similar style as your notebook) ---
-    q_eff = max(0.0, min(1.0, Pstar * (1.0 - 1.0 / max(1.0, tau_eff))))
-
-    if tau_distribution in ("fixed", None):
-        tau_title = f"τ={tau_eff:.2f}"
-    else:
-        tau_title = f"τ̄≈{tau_eff:.2f}"
-
-    title = (
-        f"Percolation (KK/FR) | P*={Pstar:.2f}, {tau_title} | "
-        f"N={N}, E={E}, ⟨k⟩≈{mean_k:.2f}, q_eff≈{q_eff:.2f} | t=0.00"
-    )
-
-    base_size = 6 if N > 1500 else 8
-
-    # --- initial Plotly figure (base edges + empty used edges + nodes) ---
-    fig = go.Figure([
-        go.Scattergl(
-            x=base_x, y=base_y, mode="lines",
-            line=dict(width=1.0, color=COL_BASE),
-            opacity=0.28,
-            hoverinfo="skip", name="Base edges"
-        ),
-        go.Scattergl(
-            x=[], y=[], mode="lines",
-            line=dict(width=2.2, color=COL_USED),
-            hoverinfo="skip", name="Used edges"
-        ),
-        go.Scatter(
-            x=node_x, y=node_y, mode="markers",
-            marker=dict(
-                size=base_size,
-                color=[COL_S] * N,
-                line=dict(width=0.5, color="#222")
-            ),
-            text=[str(lbl) for lbl in node_labels],  # hover label
-            hoverinfo="text",
-            name="Nodes", showlegend=False
-        ),
-        # Legend-only markers
-        go.Scatter(
-            x=[0], y=[0], mode="markers", name="Susceptible",
-            marker=dict(size=10, color=COL_S, line=dict(width=0.5, color="#222")),
-            hoverinfo="skip", visible="legendonly"
-        ),
-        go.Scatter(
-            x=[0], y=[0], mode="markers", name="Infected",
-            marker=dict(size=10, color=COL_I, line=dict(width=0.5, color="#222")),
-            hoverinfo="skip", visible="legendonly"
-        ),
-        go.Scatter(
-            x=[0], y=[0], mode="markers", name="Recovered",
-            marker=dict(size=10, color=COL_R, line=dict(width=0.5, color="#222")),
-            hoverinfo="skip", visible="legendonly"
-        ),
-    ])
-
-    fig.update_layout(
-        title=title,
-        xaxis=dict(visible=False),
-        yaxis=dict(visible=False, scaleanchor="x", scaleratio=1),
-        margin=dict(l=10, r=10, t=64, b=10),
-        showlegend=True,
-        legend=dict(itemsizing="constant"),
-        uirevision=True,
-    )
-
-    figure_div = pio.to_html(
-        fig, include_plotlyjs="inline", full_html=False, div_id="percoFig"
-    )
-
-    # --- tiny "bootstrap-like" CSS (no external deps) ---
-    bootstrap_min = r"""
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,sans-serif}
-.container-fluid{width:100%;padding-left:1rem;padding-right:1rem;margin-left:auto;margin-right:auto}
-.row{display:flex;flex-wrap:wrap;margin-left:-.5rem;margin-right:-.5rem;gap:.5rem}
-.col{flex:1 0 0%;padding-left:.5rem;padding-right:.5rem}
-.col-auto{flex:0 0 auto;padding-left:.5rem;padding-right:.5rem}
-.g-2{gap:.5rem}.btn{display:inline-block;font-weight:500;line-height:1.2;text-align:center;border:1px solid #ced4da;padding:.375rem .75rem;border-radius:.375rem;background:#f8f9fa;cursor:pointer}
-.btn:active{transform:translateY(1px)}.btn-primary{background:#0d6efd;color:#fff;border-color:#0d6efd}
-.btn-outline-secondary{background:#fff;color:#6c757d;border-color:#6c757d}
-.form-select,.form-range{display:block;width:100%}.form-select{padding:.375rem 2rem .375rem .75rem;border:1px solid #ced4da;border-radius:.375rem;background:#fff}
-.form-range{height:1.25rem;padding:0}.badge{display:inline-block;padding:.35em .65em;font-size:.75em;border-radius:10rem;background:#f1f3f5}
-.sticky-top{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid #e9ecef}
-"""
-
-    payload = {
-        "times": times,
-        "node_x": node_x,
-        "node_y": node_y,
-        "node_ti": node_ti,
-        "node_tr": node_tr,
-        "used_u": used_u,
-        "used_v": used_v,
-        "used_t": used_t,
-        "default_vh": int(default_vh),
-        "node_labels": [str(lbl) for lbl in node_labels],
-        "base_size": float(base_size),
-    }
-    js_payload = json.dumps(payload)
-
-    html = f"""<!doctype html>
-<html><head>
-<meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Percolation (KK/FR, instant/cumulative)</title>
-<style>
-{bootstrap_min}
-#graphWrap {{ height: {int(default_vh)}vh; width: 100%; }}
-#percoFig  {{ height: 100%;  width: 100%; }}
-.controls .form-range {{ width: 100%; }}
-</style>
-</head>
-<body>
-<div class="sticky-top">
-  <div class="container-fluid">
-    <div class="row g-2 controls">
-      <div class="col-auto"><button id="play" class="btn btn-primary" title="Play/Pause">▶</button></div>
-      <div class="col"><input id="slider" type="range" class="form-range" min="0" value="0" step="1" /></div>
-      <div class="col-auto"><span class="badge">t=<span id="tval">0</span></span></div>
-      <div class="col-auto">
-        <select id="speed" class="form-select" title="Speed (ms/frame)">
-          <option value="30">very fast</option>
-          <option value="60">fast</option>
-          <option value="120" selected>normal</option>
-          <option value="240">slow</option>
-          <option value="480">very slow</option>
-        </select>
-      </div>
-      <div class="col-auto">
-        <select id="mode" class="form-select" title="Edges mode">
-          <option value="instant" selected>Instant</option>
-          <option value="cumulative">Cumulative</option>
-        </select>
-      </div>
-      <div class="col-auto">
-        <label style="display:flex;align-items:center;gap:.4rem">
-          <input id="showBase" type="checkbox" checked/> Base edges
-        </label>
-      </div>
-      <div class="col-auto"><button id="step" class="btn btn-outline-secondary" title="Step one frame">Step</button></div>
-      <div class="col-auto"><button id="reset" class="btn btn-outline-secondary" title="Reset zoom">Reset zoom</button></div>
-      <div class="col-auto">
-        <input id="focusLabel" placeholder="Node label" 
-               style="max-width:8rem;padding:.25rem .4rem;border:1px solid #ced4da;border-radius:.375rem;font-size:.85rem" />
-      </div>
-      <div class="col-auto">
-        <button id="focusBtn" class="btn btn-outline-secondary" title="Zoom & highlight node">Focus</button>
-      </div>
-      <div class="col-auto">
-        <button id="clearFocus" class="btn btn-outline-secondary" title="Clear focus">Clear</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="container-fluid" style="margin-top:.5rem">
-  <div id="graphWrap">{figure_div}</div>
-</div>
-
-<script>
-(function() {{
-  const DATA = {js_payload};
-  const times = DATA.times;
-  const N = DATA.node_x.length;
-
-  const plotDiv    = document.getElementById('percoFig');
-  const slider     = document.getElementById('slider');
-  const tval       = document.getElementById('tval');
-  const playBtn    = document.getElementById('play');
-  const stepBtn    = document.getElementById('step');
-  const resetBtn   = document.getElementById('reset');
-  const speedSel   = document.getElementById('speed');
-  const modeSel    = document.getElementById('mode');
-  const showBase   = document.getElementById('showBase');
-  const wrap       = document.getElementById('graphWrap');
-  const focusInput = document.getElementById('focusLabel');
-  const focusBtn   = document.getElementById('focusBtn');
-  const clearFocus = document.getElementById('clearFocus');
-
-  slider.max = Math.max(0, times.length-1);
-
-  const COL_S   = "{COL_S}";
-  const COL_I   = "{COL_I}";
-  const COL_R   = "{COL_R}";
-  const BASE_SZ = DATA.base_size || {float(base_size)};
-  const FOC_COL = "#ff0000";
-
-  // Precompute global extents to define a nice zoom window around a node
-  const minX = Math.min.apply(null, DATA.node_x);
-  const maxX = Math.max.apply(null, DATA.node_x);
-  const minY = Math.min.apply(null, DATA.node_y);
-  const maxY = Math.max.apply(null, DATA.node_y);
-  const spanX = maxX - minX || 1.0;
-  const spanY = maxY - minY || 1.0;
-  const SPAN  = Math.max(spanX, spanY) * 0.01;  // ~30% of graph extent
-
-  let focusedIndex = null;  // node index currently highlighted (if any)
-
-  function nodeColorsAndSizesAt(t) {{
-    const colors = new Array(N);
-    const sizes  = new Array(N);
-    for (let i=0;i<N;i++) {{
-      const ti = DATA.node_ti[i], tr = DATA.node_tr[i];
-      if (!isFinite(ti) || t < ti) colors[i] = COL_S;
-      else if (t < tr)             colors[i] = COL_I;
-      else                         colors[i] = COL_R;
-      sizes[i] = BASE_SZ;
-    }}
-    if (focusedIndex !== null && focusedIndex >= 0 && focusedIndex < N) {{
-      colors[focusedIndex] = FOC_COL;
-      sizes[focusedIndex]  = BASE_SZ * 1.7;
-    }}
-    return {{colors, sizes}};
-  }}
-
-  function usedEdgesXY(idx) {{
-    const mode = modeSel.value;
-    const t0 = times[idx];
-    const t1 = (idx < times.length-1) ? times[idx+1] : Infinity;
-    const ux=[], uy=[];
-    const U=DATA.used_u, V=DATA.used_v, T=DATA.used_t;
-    if (mode === 'cumulative') {{
-      for (let i=0;i<T.length;i++) {{
-        if (T[i] <= t0) {{
-          const u=U[i], v=V[i];
-          ux.push(DATA.node_x[u], DATA.node_x[v], null);
-          uy.push(DATA.node_y[u], DATA.node_y[v], null);
-        }} else break;
-      }}
-    }} else {{
-      for (let i=0;i<T.length;i++) {{
-        const te=T[i];
-        if (te < t0) continue;
-        if (te >= t1) break;
-        const u=U[i], v=V[i];
-        ux.push(DATA.node_x[u], DATA.node_x[v], null);
-        uy.push(DATA.node_y[u], DATA.node_y[v], null);
-      }}
-    }}
-    return [ux, uy];
-  }}
-
-  function repaint(idx) {{
-    idx = Math.max(0, Math.min(times.length-1, idx|0));
-    const t = times[idx];
-    const cs = nodeColorsAndSizesAt(t);
-    const colors = cs.colors;
-    const sizes  = cs.sizes;
-    const [ux, uy] = usedEdgesXY(idx);
-
-    // traces: 0=base, 1=used, 2=nodes, 3-5 legend-only
-    Plotly.restyle(plotDiv, {{x:[ux], y:[uy]}}, [1]);
-    Plotly.restyle(plotDiv, {{
-      'marker.color': [colors],
-      'marker.size' : [sizes]
-    }}, [2]);
-    Plotly.restyle(plotDiv, {{'visible':[showBase.checked]}}, [0]);
-
-    tval.textContent = t.toFixed(0);
-    const title = plotDiv.layout.title.text;
-    const cut = title.lastIndexOf("| t=");
-    const newTitle = (cut>0 ? title.slice(0, cut) : title) + " | t=" + t.toFixed(0);
-    Plotly.relayout(plotDiv, {{'title.text': newTitle}});
-  }}
-
-  function resizeToWrap() {{
-    const rect = wrap.getBoundingClientRect();
-    Plotly.relayout(plotDiv, {{width: rect.width, height: rect.height}});
-  }}
-  window.addEventListener('resize', resizeToWrap);
-  setTimeout(resizeToWrap, 0);
-
-  function onSlide() {{ repaint(parseInt(slider.value,10)); }}
-  slider.addEventListener('input', onSlide);
-  slider.addEventListener('change', onSlide);
-
-  let timer=null, playing=false;
-  function step() {{
-    let i = parseInt(slider.value,10);
-    if (i >= times.length-1) i = -1; // loop
-    slider.value = i+1; repaint(i+1);
-  }}
-  function play() {{
-    if (playing) return;
-    playing = true; playBtn.textContent = "⏸";
-    timer = setInterval(step, parseInt(speedSel.value,10));
-  }}
-  function pause() {{
-    playing = false; playBtn.textContent = "▶";
-    if (timer) {{ clearInterval(timer); timer=null; }}
-  }}
-  playBtn.addEventListener('click', ()=> playing ? pause() : play());
-  speedSel.addEventListener('change', ()=> {{ if (playing) {{ pause(); play(); }} }});
-  stepBtn.addEventListener('click', ()=> {{ pause(); step(); }});
-  resetBtn.addEventListener('click', ()=> {{
-    focusedIndex = null;
-    Plotly.relayout(plotDiv, {{
-      'xaxis.autorange':true,
-      'yaxis.autorange':true
-    }});
-    repaint(parseInt(slider.value,10));
-  }});
-  showBase.addEventListener('change', ()=> repaint(parseInt(slider.value,10)));
-
-  // ---- focus / highlight a node by label ----
-  function focusNodeByLabel(label) {{
-    if (!label) return;
-    const labels = DATA.node_labels || [];
-    const idx = labels.indexOf(label);
-    if (idx === -1) {{
-      alert("Node label '" + label + "' not found.");
-      return;
-    }}
-    focusedIndex = idx;
-
-    const x = DATA.node_x[idx];
-    const y = DATA.node_y[idx];
-
-    const xMin = x - SPAN;
-    const xMax = x + SPAN;
-    const yMin = y - SPAN;
-    const yMax = y + SPAN;
-
-    Plotly.relayout(plotDiv, {{
-      'xaxis.range': [xMin, xMax],
-      'yaxis.range': [yMin, yMax]
-    }});
-    repaint(parseInt(slider.value,10));
-  }}
-
-  focusBtn.addEventListener('click', ()=> {{
-    const label = (focusInput.value || "").trim();
-    focusNodeByLabel(label);
-  }});
-
-  focusInput.addEventListener('keyup', (e)=> {{
-    if (e.key === 'Enter') {{
-      const label = (focusInput.value || "").trim();
-      focusNodeByLabel(label);
-    }}
-  }});
-
-  clearFocus.addEventListener('click', ()=> {{
-    focusedIndex = null;
-    repaint(parseInt(slider.value,10));
-  }});
-
-  repaint(0);
-}})();
-</script>
-</body></html>
-"""
-    with open(filename, "w", encoding="utf-8") as f:
-        f.write(html)
-
-    return filename
-
-
-####################################################################################################
-####################################################################################################
-
-
-def save_percolation_html_v2(
+def save_percolation_html(
     graph,
     results,
     filename="percolation.html",
@@ -1455,9 +921,6 @@ def save_percolation_html_v2(
     reports (local, keyplayer, groupcentrality): the network animation with an
     epidemic curve (S/I/R counts vs t) below it, and a sidebar with the live
     state counts, the run parameters, the outcome, search and display options.
-
-    Kept separate from save_percolation_html_from_results_igraph(), which is
-    left untouched, until it replaces it.
 
     Parameters
     ----------

@@ -1,4 +1,3 @@
-# from colorama import Fore, Style
 import argparse
 import textwrap
 
@@ -7,13 +6,13 @@ import os
 try:
     from colorama import Fore, Style
 except Exception:
-    # fallback: parser importabile anche senza colorama
+    # the parser must import without colorama too
     class _NoColor:
         def __getattr__(self, name):
             return ""
     Fore = Style = _NoColor()
 
-# Se stiamo buildando la documentazione (Sphinx), niente colori ANSI
+# no ANSI colours when the documentation is being built
 if os.environ.get("PYNTACLE_DOCS", "0") == "1":
     class _NoColor:
         def __getattr__(self, name):
@@ -21,10 +20,8 @@ if os.environ.get("PYNTACLE_DOCS", "0") == "1":
     Fore = Style = _NoColor()
 
 
-# build parser 
 def create_parser() -> argparse.ArgumentParser:
 
-	#### principal parser
 	parser = argparse.ArgumentParser(description= Fore.GREEN + Style.BRIGHT +'''\n\n
 
 	⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀       ⢀⡤⠒⠉⠉⠉⠒⢄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -55,7 +52,6 @@ def create_parser() -> argparse.ArgumentParser:
 	subparsers = parser.add_subparsers(dest='command', title="Functions",  metavar= Fore.CYAN + Style.BRIGHT + "The available commands in Pyntacle are:\n" + Style.RESET_ALL)
 	parser._optionals.title = 'Optional arguments'
 
-	#########parser_functions##########
 	def check_prob(prob):
 		try:
 			prob = float(prob)
@@ -64,10 +60,9 @@ def create_parser() -> argparse.ArgumentParser:
 		if prob > 1.0 or prob < 0.0:
 			raise argparse.ArgumentTypeError("%r invalid probability value'" % prob)
 		return prob
-	###################################
 
 
-	### LOCAL ###
+	# ---- local ----
 	local = subparsers.add_parser('local', usage=Fore.GREEN + Style.BRIGHT +'python3 main.py' + Fore.RED +' local ' + Fore.CYAN + '-t {fileType} -i {input_file} [optional parameters] [optional outdir]' + Style.RESET_ALL, help='''Computes metrics of local nature for the whole graph''', 
 		description= Fore.YELLOW + '''Measures to be calculated: Degree, Betweenness, Closeness, Radiality, Radiality reach, Clustering Coefficient,  Eccentricity, Eigenvector (Scaled), Pagerank''', formatter_class=argparse.RawDescriptionHelpFormatter)
 	local.add_argument('-t', '--fileType', action='store', type=str, choices = ["matrix", "edgelist", "sif", "dot"], help='-[required] File type', required=True)
@@ -81,12 +76,12 @@ def create_parser() -> argparse.ArgumentParser:
 	local.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be removed from the graph (Comma separated)', required=False)
 	local.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output (svg, png)', required=False)
 	local.add_argument('-c', '--color', action='store', default=False,help='-[optional] Specify the nodes you want to highlight', required=False)
-	local.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written (matches old Pyntacle no-plot semantics)', required=False)
-	local.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same direcotry as the input file)', required=False)
+	local.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written', required=False)
+	local.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same directory as the input file)', required=False)
 	local._optionals.title = Fore.CYAN + Style.BRIGHT + "Arguments" + Style.RESET_ALL
 
 
-	### GLOBAL ###
+	# ---- global ----
 	glb = subparsers.add_parser('global', usage=Fore.GREEN + Style.BRIGHT +'python3 main.py ' + Fore.RED +'global' + Fore.CYAN + ' -t {fileType} -i {input_file} [optional parameters] [optional outdir]' +  Style.RESET_ALL, help='''Computes metrics of global nature for the whole graph''',
 		description= Fore.YELLOW + '''Measures to be calculated: Average shortest path length, Median shortest path length, Diameter, Components, Radius, Density, pi, \n\t  Average clustering coefficient, Weighted clustering coefficient, Average degree, Average Closeness, \n\t  Average Eccentricity, Average Radiality, Average Radiality Reach, Completeness Naive, Completeness, Compactness''' + Style.RESET_ALL, formatter_class=argparse.RawDescriptionHelpFormatter)
 	glb.add_argument('-t', '--fileType', action='store', type=str, choices = ["matrix", "edgelist", "sif", "dot"], help='-[required] File type', required=True)
@@ -99,12 +94,12 @@ def create_parser() -> argparse.ArgumentParser:
 	glb.add_argument('-dt', '--distance-transform', dest='distanceTransform', action='store', choices=['inverse', 'one-minus', 'neglog'], default='inverse', help='-[optional] With -w and an affinity or signed weight type, how a strength a becomes a length: inverse 1/a (default), one-minus 1-a or neglog -ln(a) (both for 0<a<=1)', required=False)
 	glb.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be removed from the graph (Comma separated)', required=False)
 	glb.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output (svg, png)', required=False)
-	glb.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written (matches old Pyntacle no-plot semantics)', required=False)
-	glb.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same direcotry as the input file)', required=False)
+	glb.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written', required=False)
+	glb.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same directory as the input file)', required=False)
 	glb._optionals.title = Fore.CYAN + Style.BRIGHT + "Arguments" + Style.RESET_ALL
 
 
-	### GROUPCENTRALITY ###
+	# ---- groupcentrality ----
 	groupcentrality = subparsers.add_parser('groupcentrality',usage=Fore.GREEN + Style.BRIGHT + 'python3 main.py ' + Fore.RED +'groupcentrality ' + Fore.MAGENTA + '{gc-info | gc-finder}' +   Fore.CYAN  + ' -t {fileType} -i {input_file} [optional parameters] [-k {k-size} | -n {node-list}] [optional outdir]' +  Style.RESET_ALL, help='''Computes key player metrics for a specific set of nodes (\'gc-info\') or finds a set of nodes of size `k` that owns the optimal or the best score (\'gc-finder\').''', 
 		description=textwrap.dedent(Fore.RED + Style.BRIGHT +'''Specific usage:\n''' + Fore.GREEN + Style.BRIGHT + ''' · python3 main.py groupcentrality gc-info''' +  Fore.CYAN + ''' -t {fileType} -i {input_file} [optional parameters] -n {node-list} [optional outdir]\n''' + Style.RESET_ALL +  '''  gc-info : Compute all or a selected group-centrality metric for a selected set of nodes 
 		\n''' +  Style.RESET_ALL + Fore.GREEN + Style.BRIGHT + ''' · python3 main.py groupcentrality gc-finder''' +  Fore.CYAN + ''' -t {fileType} -i {input_file} [optional parameters] -k {k-size} [optional outdir]\n''' + Style.RESET_ALL +  '''  gc-finder : Find the optimal or the best set of size \'k\' for a given group-centrality index'''+  Style.RESET_ALL), formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -131,13 +126,13 @@ def create_parser() -> argparse.ArgumentParser:
 	groupcentrality.add_argument('--max-ties', action='store', type=int, default=100, help='-[optional] How many equally-scoring node sets the brute-force report lists (default=100). The reported count of optimal sets is exact even when the list is capped; greedy and gradient_descent ignore this.', required=False)
 	groupcentrality.add_argument('--engine', action='store', type=str, choices=["cython", "python"], default="cython", help='-[optional] Metric engine: the compiled kernels (default) or the pure-Python reference implementation. The python engine is single-threaded and ignores -np, and it does not implement brute_force', required=False)
 	groupcentrality.add_argument('--seed', action='store', type=int, default=None, help='-[optional] Random seed for greedy / gradient_descent, so a run can be reproduced', required=False)
-	groupcentrality.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written (matches old Pyntacle no-plot semantics)', required=False)
+	groupcentrality.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written', required=False)
 	groupcentrality.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output (svg, png)', required=False)
-	groupcentrality.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same direcotry as the input file)', required=False)
+	groupcentrality.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same directory as the input file)', required=False)
 	groupcentrality._optionals.title = Fore.CYAN + Style.BRIGHT + "Arguments" + Style.RESET_ALL
 	groupcentrality._positionals.title = Fore.MAGENTA + Style.BRIGHT + "Subcommand" + Style.RESET_ALL
 
-	### KEYPLAYER ###
+	# ---- keyplayer ----
 	keyplayer = subparsers.add_parser('keyplayer',usage=Fore.GREEN + Style.BRIGHT + 'python3 main.py ' + Fore.RED +'keyplayer ' + Fore.MAGENTA + '{kp-info | kp-finder}' +   Fore.CYAN  + ' -t {fileType} -i {input_file} [optional parameters] [-k {k-size} | -n {node-list}] [optional outdir]'+  Style.RESET_ALL, help='''Computes key player metrics for a specific set of nodes (\'kp-info\') or finds a set of nodes of size `k` that owns the optimal or the best score (\'kp-finder\').'''+ Style.RESET_ALL, 
 		description=textwrap.dedent(Fore.RED + Style.BRIGHT +'''Specific usage:\n''' + Fore.GREEN + Style.BRIGHT + ''' · python3 main.py keyplayer kp-info''' +  Fore.CYAN + ''' -t {fileType} -i {input_file} [optional parameters] -n {node-list} [optional outdir]\n''' + Style.RESET_ALL +  '''  kp-info: Compute individual key-player metrics for a selected set of nodes  
 		\n''' + Fore.GREEN + Style.BRIGHT + ''' · python3 main.py keyplayer kp-finder''' +  Fore.CYAN  + ''' -t {fileType} -i {input_file} [optional parameters] -k {k-size} [optional outdir]\n''' + Style.RESET_ALL +  '''  kp-finder : Find the best kp-set of size k'''), formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -164,14 +159,14 @@ def create_parser() -> argparse.ArgumentParser:
 	keyplayer.add_argument('--max-ties', action='store', type=int, default=100, help='-[optional] How many equally-scoring node sets the brute-force report lists (default=100). The reported count of optimal sets is exact even when the list is capped; greedy and gradient_descent ignore this.', required=False)
 	keyplayer.add_argument('--engine', action='store', type=str, choices=["cython", "python"], default="cython", help='-[optional] Metric engine: the compiled kernels (default) or the pure-Python reference implementation. The python engine is single-threaded and ignores -np, and it does not implement brute_force', required=False)
 	keyplayer.add_argument('--seed', action='store', type=int, default=None, help='-[optional] Random seed for greedy / gradient_descent, so a run can be reproduced', required=False)
-	keyplayer.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written (matches old Pyntacle no-plot semantics)', required=False)
+	keyplayer.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written', required=False)
 	keyplayer.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output (svg, png)', required=False)
-	keyplayer.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same direcotry as the input file)', required=False)
+	keyplayer.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same directory as the input file)', required=False)
 	keyplayer._optionals.title = Fore.CYAN + Style.BRIGHT + "Arguments" + Style.RESET_ALL
 	keyplayer._positionals.title = Fore.MAGENTA + Style.BRIGHT + "Subcommand" + Style.RESET_ALL
 
 
-	### SET ###
+	# ---- set ----
 	setop = subparsers.add_parser('set',usage=Fore.GREEN + Style.BRIGHT + 'python3 main.py ' + Fore.RED +'set ' + Fore.MAGENTA + '{union | intersection | difference}' +   Fore.CYAN  + ' -t {fileType} -i {input_file} [optional parameters] -i2 {input_file2} [optional outdir]'+  Style.RESET_ALL, help='''Performs set operations ('union', 'intersection', 'difference') between two networks using graph logical operations''', 
 		description=textwrap.dedent(Fore.RED + Style.BRIGHT +'''Specific usage:\n''' + Fore.GREEN + Style.BRIGHT + ''' · python3 main.py set union'''+ Fore.CYAN + Style.BRIGHT + ''' -t {fileType} -i {input_file} [optional parameters] -i2 {input_file2} [optional outdir]\n''' + Style.RESET_ALL + '''  union : Return a resulting merged graph of the original two networks, marking the common nodes among them along with their common connecting edges \n\n''' 
 			+ Fore.GREEN + Style.BRIGHT + ''' · python3 main.py set intersection''' + Fore.CYAN + Style.BRIGHT +''' -t {fileType} -i {input_file} [optional parameters] -i2 {input_file2} [optional outdir]\n''' + Style.RESET_ALL + '''  intersection : Return only the common nodes and their connecting edges among the two graphs of interest \n\n''' 
@@ -185,14 +180,14 @@ def create_parser() -> argparse.ArgumentParser:
 	setop.add_argument('-w', '--weight', action='store_true', help='-[optional] Use this flag if your graph is weighted', required=False)
 	setop.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be removed from the graph (ex. A,B,C)', required=False)
 	setop.add_argument('-i2', '--inputFile2', action='store', type=str, help='-[required] Specify the second input file name (Use same format the first input file or use the \'convert\' function if necessary)', required=True)
-	setop.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written (matches old Pyntacle no-plot semantics)', required=False)
+	setop.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written', required=False)
 	setop.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output (svg, png)', required=False)
-	setop.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same direcotry as the input file)', required=False)
+	setop.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same directory as the input file)', required=False)
 	setop._optionals.title = Fore.CYAN + Style.BRIGHT + "Arguments" + Style.RESET_ALL
 	setop._positionals.title = Fore.MAGENTA + Style.BRIGHT + "Subcommand" + Style.RESET_ALL
 	
 
-	### CONVERT ###
+	# ---- convert ----
 	convert = subparsers.add_parser('convert',usage=Fore.GREEN + Style.BRIGHT +'python3 main.py ' + Fore.RED +'convert' + Fore.CYAN + ' -t {fileType} -i {input_file} [optional parameters] -to {fileType2} -fo {output_name} [optional outdir]' +  Style.RESET_ALL, help='''Converts a network file format to another one ''', 
 		description=Fore.RED + Style.BRIGHT +'''\nPossible combinations''' + Fore.CYAN + ''' (-t {fileType} | -to {fileType2})''' + Style.RESET_ALL + ''':\n · AdjMatrix and EdgeList (and viceversa)
 	· AdjMatrix and Sif (and viceversa)
@@ -210,10 +205,10 @@ def create_parser() -> argparse.ArgumentParser:
 	convert.add_argument('-to', '--typeOutput', action='store', choices=["matrix","edgelist","dot","sif"], help='-[required] Output file type', required=True)
 	convert.add_argument('-fo', '--outputName', action='store', help='-[required] Output file name (extension will be automatically assigned)', required=True)
 	convert.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output (svg, png)', required=False)
-	convert.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same direcotry as the input file)', required=False)
+	convert.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same directory as the input file)', required=False)
 	convert._optionals.title = Fore.CYAN + Style.BRIGHT + "Arguments" + Style.RESET_ALL
 
-	### COMMUNITIES ### 
+	# ---- communities ----
 	community = subparsers.add_parser('communities',usage=Fore.GREEN + Style.BRIGHT +'python3 main.py ' + Fore.RED +'communities' + Fore.MAGENTA + ' {fastgreedy | infomap | leading-eigenvector | random-walk | percolation}' + Fore.CYAN + ' -t {fileType} -i {input_file} [optional parameters] -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS} [-nc {NUMBERCOMMUNITIES} | -steps {STEPS}] [optional outdir]' + Style.RESET_ALL, help='''Finds communities within a graph using several community-finding algorithms''', 
 		description=textwrap.dedent(Fore.YELLOW + '''Detects communities of tightly connected nodes within a graph by means of different modular decomposition algorithms\n\n''' + Fore.RED + Style.BRIGHT +'''Specific usage:\n''' + Fore.GREEN + Style.BRIGHT + ''' · python3 main.py communities fastgreedy''' +  Fore.CYAN + ''' -t {fileType} -i {input_file} [optional parameters] -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS} -nc {NUMBERCOMMUNITIES} [optional outdir]\n\n''' + Fore.GREEN + Style.BRIGHT + ''' · python3 main.py communities infomap''' +  Fore.CYAN  + ''' -t {fileType} -i {input_file} [optional parameters] -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS} [optional outdir]\n\n'''
 		+ Fore.GREEN + Style.BRIGHT + ''' · python3 main.py communities leading-eigenvector''' +  Fore.CYAN  + ''' -t {fileType} -i {input_file} [optional parameters] -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS} -nc {NUMBERCOMMUNITIES} [optional outdir]\n\n''' + Style.RESET_ALL
@@ -237,15 +232,15 @@ def create_parser() -> argparse.ArgumentParser:
 	community.add_argument('-steps', '--steps', action='store', help="ONLY FOR RANDOM-WALK Length of random walks to perform", required=False,default=4)
 	community.add_argument('-k', '--communitySize', action='store', help="ONLY FOR PERCOLATION Size of the cliques to be used as building blocks for the community detection", required=False,default=3)
 	community.add_argument('-g', '--giant', action='store_true', help=" Considers only the largest component of the input graph and excludes the smaller ones", required=False)
-	community.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written (matches old Pyntacle no-plot semantics)', required=False)
-	community.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same direcotry as the input file)', required=False)
+	community.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written', required=False)
+	community.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same directory as the input file)', required=False)
 	community.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output', required=False)
 	community._optionals.title = Fore.CYAN + Style.BRIGHT + "Arguments" + Style.RESET_ALL
 	community._positionals.title = Fore.MAGENTA + Style.BRIGHT + "Subcommand" + Style.RESET_ALL
 
 
 
-	### Extract ###
+	# ---- extract ----
 	extract = subparsers.add_parser('extract',usage=Fore.GREEN + Style.BRIGHT + 'python3 main.py ' + Fore.RED + 'extract' + Fore.CYAN + ' -t {fileType} -i {input_file} [optional parameters] [-l | -n | -l -n | -sc] [optional outdir]' + Style.RESET_ALL , help='''Return different components from the graph (suggested to use when the graph is fragmented)''', 
 		description=textwrap.dedent(Fore.RED + Style.BRIGHT +'''Specific usage:\n''' + Fore.GREEN + Style.BRIGHT + ''' · python3 main.py extract''' +  Fore.CYAN + ''' -t {fileType} -i {input_file} [optional parameters] -l {largest} [optional outdir]\n''' + Style.RESET_ALL +  '''   [-l {largest}] argument in order to extract only the LARGEST component of the graph  
 		\n'''  + Fore.GREEN + Style.BRIGHT + ''' · python3 main.py extract''' +  Fore.CYAN + ''' -t {fileType} -i {input_file} [optional parameters] -n {NCOMPONENTS} [optional outdir]\n''' + Style.RESET_ALL +  '''   [-n {NCOMPONENTS}] argument in order to extract the first n components of the graph  
@@ -262,13 +257,13 @@ def create_parser() -> argparse.ArgumentParser:
 	extract.add_argument('-n','--ncomponents', action='store', help='number of components',default=False)
 	extract.add_argument('-l', '--largest', action='store_true', help='Largest component of the graph', default=False)
 	extract.add_argument('-sc', '--selectComponent', action='store', help='Node/Nodes of the graph (ex. A,B,C)', default=False)
-	extract.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written (matches old Pyntacle no-plot semantics)', required=False)
-	extract.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same direcotry as the input file)', required=False)
+	extract.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written', required=False)
+	extract.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same directory as the input file)', required=False)
 	extract.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output', required=False)
 	extract.add_argument('-nl', '--nodeList', action='store', help='-[optional] Select the components that contain the given node/nodes (ex. A,B,C)', required=False, default=False)
 	extract._optionals.title = "Arguments"
 
-	### Generate ###
+	# ---- generate ----
 	generate = subparsers.add_parser('generate',usage=Fore.GREEN + Style.BRIGHT +'python3 main.py ' + Fore.RED +'generate' + Fore.MAGENTA + ' {erdos-renyi | tree | barabasi | watts-strogatz | lattice}' + Fore.CYAN + ' -t {fileType} -i {input_file} [optional parameters] [optional outdir]' + Style.RESET_ALL, help='''Generates a graph using different algorithms given some parameters and outputs the file in the desired format''', 
 		description=textwrap.dedent(Fore.RED + Style.BRIGHT +'''Specific usage:\n''' + Fore.GREEN + Style.BRIGHT + ''' · python3 main.py generate erdos-renyi''' +  Fore.CYAN + ''' -t {fileType} -i {input_file} [optional parameters] -n {number of nodes} -e {number of edges} -p {probability} -l {loops} [optional outdir]\n\n''' + Style.RESET_ALL + Fore.GREEN + Style.BRIGHT + ''' · python3 main.py generate tree''' +  Fore.CYAN  + ''' -t {fileType} -i {input_file} [optional parameters] -n {number of nodes} -c {children} [optional outdir]\n\n''' + Style.RESET_ALL	+ Fore.GREEN + Style.BRIGHT + ''' · python3 main.py generate barabasi''' +  Fore.CYAN + ''' -t {fileType} -i {input_file} [optional parameters] -n {number of nodes} -a {avarage edge} -i {implementation} [optional outdir]\n\n''' + Style.RESET_ALL + Fore.GREEN + Style.BRIGHT + ''' · python3 main.py generate watts-strogatz''' +  Fore.CYAN + ''' -t {fileType} -i {input_file} [optional parameters] -dim {dimesion} -s {size} -nei {nei} -p {probability} -l {loops} -m {multiple}
 	[optional outdir]\n\n''' + Style.RESET_ALL + Fore.GREEN + Style.BRIGHT + ''' · python3 main.py generate lattice''' +  Fore.CYAN + ''' -t {fileType} -i {input_file} [optional parameters] -dim {dimension} -nei {nei} -mut {mutual} -circ {circular} [optional outdir]''' + Style.RESET_ALL ), formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -294,7 +289,7 @@ def create_parser() -> argparse.ArgumentParser:
 	generate._optionals.title = Fore.CYAN + Style.BRIGHT + "Arguments" + Style.RESET_ALL
 	generate._positionals.title = Fore.MAGENTA + Style.BRIGHT + "Subcommand" + Style.RESET_ALL
 
-	### Mesoscale ###
+	# ---- mesoscale ----
 	mesoscale = subparsers.add_parser('mesoscale',usage=Fore.GREEN + Style.BRIGHT +'python3 main.py ' + Fore.RED +'mesoscale' + Fore.CYAN + ' -t {fileType} -i {input_file} [optional parameters] -k {steps} -th {threshold_increment} ' +  Style.RESET_ALL, help='''Computes mesoscale metrics for all nodes of the given input graph''', 
 		description=Fore.RED + Style.BRIGHT +'''Metrics:\n''' + Fore.GREEN + Style.BRIGHT + ''' · Generalized Topological Overlap Measure (GTOM):''' + Style.RESET_ALL +  Fore.CYAN + ''' A measure of neighborhood similarity between all pairs of nodes in a graph. GTOM assigns a value in the range [0,1], this occurs when the neighborhoods of two nodes are identical or one is a subset of the other.\n\n'''  + Fore.GREEN + Style.BRIGHT + ''' · Topological Importance (TI): ''' + Style.RESET_ALL +  Fore.CYAN + '''TI of a node measures its influence in a network through k-step structural propagation. It is computed as the row sum of the k-th power of the edge effect matrix, capturing indirect interactions up to path length k.\n\n'''  + Fore.GREEN + Style.BRIGHT + ''' · Weighted Topological Importance (WI):''' + Style.RESET_ALL +  Fore.CYAN + ''' similar to TI it measures a node's influence in a network by accounting for both the strength and reach of its interactions.\n\n'''  + Fore.GREEN + Style.BRIGHT + ''' · Species Topological Overlap (STO):''' + Style.RESET_ALL +  Fore.CYAN + ''' quantifies pairwise structural similarity based on shared 1-step effects, extended to kk-step propagation. A threshold θθ is applied to filter out weak overlaps.''' + Style.RESET_ALL, formatter_class=argparse.RawDescriptionHelpFormatter)
 	mesoscale.add_argument('-t', '--fileType', action='store', type=str, choices = ["matrix", "edgelist", "sif", "dot"], help='-[required] File type', required=True)
@@ -306,19 +301,17 @@ def create_parser() -> argparse.ArgumentParser:
 	mesoscale.add_argument('-wt', '--weight-type', dest='weightType', action='store', choices=['distance', 'affinity', 'signed'], default='distance', help='-[optional] With -w, what the weights are: distance (a length, the default), affinity (a tie strength, e.g. |r| or a count) or signed (a signed strength, e.g. a correlation: the magnitude is used, the sign is kept). Negative weights require signed', required=False)
 	mesoscale.add_argument('-dt', '--distance-transform', dest='distanceTransform', action='store', choices=['inverse', 'one-minus', 'neglog'], default='inverse', help='-[optional] With -w and an affinity or signed weight type, how a strength a becomes a length: inverse 1/a (default), one-minus 1-a or neglog -ln(a) (both for 0<a<=1)', required=False)
 	mesoscale.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be removed from the graph (ex. A,B,C)', required=False)
-	# mesoscale.add_argument('-n', '--nodes', action='store', help='-[optional] Nodes to select. If not specified, the metrics are computed for all nodes', required=False, default=None)
 	mesoscale.add_argument('-k', '--kSteps', action='store', type=int, help='-[optional] Maximum effects length considered. Default value is 3.', required=False, default=3)
 	mesoscale.add_argument('-th', '--threshold', action='store', type=float, help='-[optional] Threshold that will be used to compute TO. TO will not be computed if no threshold is selected', required=False, default=0.)
-	# mesoscale.add_argument('-thrInc', '--thrInc', action='store', help='-[optional] Increment of threshold value from 0 to 1. Default value is 0.1.', required=False, default=0.1)
-	mesoscale.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written (matches old Pyntacle no-plot semantics)', required=False)
-	mesoscale.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same direcotry as the input file)', required=False)
+	mesoscale.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written', required=False)
+	mesoscale.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same directory as the input file)', required=False)
 	mesoscale.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output', required=False)
-	mesoscale.add_argument('-v', '--verbose', action='store_true', help='-[optional] Use this flag to recive prints of partial results of the measures.', required=False)
+	mesoscale.add_argument('-v', '--verbose', action='store_true', help='-[optional] Use this flag to receive prints of partial results of the measures.', required=False)
 
 	mesoscale._optionals.title = Fore.CYAN + Style.BRIGHT + "Arguments" + Style.RESET_ALL
 
 
- 	### Percolation ###
+	# ---- percolation ----
 	percolation = subparsers.add_parser('percolation',usage=Fore.GREEN + Style.BRIGHT +'python3 main.py ' + Fore.RED +'percolation' + Fore.CYAN + ' -t {fileType} -i {input_file} [optional parameters] -P {global infectivity} -tau {recovery time τ} -tauDist {recovery time distribution} -pth {maximum local threshold} -n {seed node/s} -dist {distribution}' +  Style.RESET_ALL, help='''Computes percolation metrics for all nodes of the given input graph''', 
 		description=Fore.RED + Style.BRIGHT + '''Percolation dynamics:\n\n''' + Fore.GREEN + Style.BRIGHT + ''' · Local edge thresholds p_th,ij:''' + Style.RESET_ALL + Fore.CYAN +  ''' for each edge (i,j) a local threshold p_th,ij is drawn in [0, p_thMax] from the chosen distribution.\n''' + Fore.GREEN + Style.BRIGHT + '''\n · Global percolation probability P*:''' + Style.RESET_ALL + Fore.CYAN + ''' controls how many edges become "open". An edge (i,j) can transmit only if\n''' + '''   P* ≥ p_th,ij   →   A*_ij = 1,   otherwise A*_ij = 0.\n''' + Fore.GREEN + Style.BRIGHT + '''\n · Spreading from a seed node:''' + Style.RESET_ALL + Fore.CYAN + ''' starting from the seed s at t = 0, activity spreads along open edges. The active set evolves as\n''' + '''   S_{t+1} = N_open(S_t) \\ R_t, ''' + '''where N_open(S_t) are neighbors reachable through open edges and R_t are recovered nodes.\n''' + Fore.GREEN + Style.BRIGHT + '''\n · Recovery time τ:''' + Style.RESET_ALL + Fore.CYAN + ''' a node activated at time t stays active for τ steps and then recovers (it no longer transmits).\n''' + Style.RESET_ALL, formatter_class=argparse.RawDescriptionHelpFormatter)
 	percolation.add_argument('-t', '--fileType', action='store', type=str, choices = ["matrix", "edgelist", "sif", "dot"], help='-[required] File type', required=True)
@@ -341,12 +334,12 @@ def create_parser() -> argparse.ArgumentParser:
 	snapshot_group = percolation.add_mutually_exclusive_group()
 	snapshot_group.add_argument("--snapshotInfected", type=int, default=None, help=" -[optional] If set, take a snapshot when the number of *currently infected* nodes reaches this value. The TSV report will include node states at that time.", required=False )
 	snapshot_group.add_argument("--snapshotNode", type=str, default=None, help="-[optional] If set, take a snapshot at the time when this node becomes infected. Can be a node label or a node index (0-based).", required=False )
-	percolation.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written (matches old Pyntacle no-plot semantics)', required=False)
-	percolation.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same direcotry as the input file)', required=False)
+	percolation.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written', required=False)
+	percolation.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same directory as the input file)', required=False)
 	percolation.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output', required=False)
-	percolation.add_argument('-v', '--verbose', action='store_true', help='-[optional] Use this flag to recive prints of partial results of the measures.', required=False)
+	percolation.add_argument('-v', '--verbose', action='store_true', help='-[optional] Use this flag to receive prints of partial results of the measures.', required=False)
 
-	### Omics ###
+	# ---- omics ----
 	omics = subparsers.add_parser('omics', usage=Fore.GREEN + Style.BRIGHT + 'python3 main.py ' + Fore.RED + 'omics ' + Fore.MAGENTA + '{transcriptomics | metagenomics}' + Fore.CYAN + ' -i {matrix} -m {metadata} --group-col {column} -o {outdir} [optional parameters]' + Style.RESET_ALL,
 		help='''Builds one network per sample group from a raw count (transcriptomics) or relative-abundance (metagenomics) matrix, ready for the other Pyntacle commands. Needs: pip install scikit-learn statsmodels''',
 		description=Fore.RED + Style.BRIGHT + '''Pipelines:\n''' + Fore.GREEN + Style.BRIGHT + ''' · transcriptomics:''' + Style.RESET_ALL + Fore.CYAN + ''' raw counts (or log2(count+1)) -> median-of-ratios -> GMM gene selection -> expression gate -> Ledoit-Wolf partial correlations -> permutation FDR.\n\n''' + Fore.GREEN + Style.BRIGHT + ''' · metagenomics:''' + Style.RESET_ALL + Fore.CYAN + ''' relative abundances -> prevalence panel -> closure, multiplicative replacement, CLR -> graphical lasso with StARS.\n\n''' + Style.RESET_ALL + '''Edge list Weight = 1 - |r| (a distance, as Pyntacle expects); the signed r is in the GraphML.''',

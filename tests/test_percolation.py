@@ -1,19 +1,8 @@
-"""Regression tests for percolation.py.
+"""Tests for percolation.py.
 
-Covers the bugs found in the sanity check (see project memory
-project_pyntacle_percolation.md):
-  * run_percolation() built a dense (n, n) adjacency (`A`) that was never
-    used for anything but a redundant shape check;
-  * edge thresholds / open-edge flags were dense (n, n) matrices, and
-    open_neighbors was built with an O(n^2) scan over one of them --
-    the exact memory wall the CSR rewrite killed for the compiled kernels,
-    reintroduced here in pure Python;
-  * states_over_time appended a full state.copy() (length n) every step,
-    with no CLI way to cap the step count -- O(n) per step, O(n^2) overall
-    at default settings, even though nothing downstream read the per-step
-    arrays themselves (only their count, or a single snapshot).
-
-No tests existed for this module before this file.
+Memory stays O(n + m): thresholds and open-edge flags are per-edge arrays,
+neighbours are built from the edge list, and the per-step state history is
+not stored (only counts and an optional snapshot).
 """
 import gc
 import tracemalloc
@@ -22,8 +11,7 @@ import numpy as np
 import igraph as ig
 import pytest
 
-from percolation import run_percolation, summarize_percolation_results, \
-    save_percolation_html_from_results_igraph, save_percolation_html_v2
+from percolation import run_percolation, summarize_percolation_results, save_percolation_html
 
 
 def _cycle_with_weights():
@@ -201,10 +189,10 @@ def test_html_builder_runs_without_crashing(tmp_path):
     g = _cycle_with_weights()
     results = run_percolation(g, Pstar=0.5, tau=4, seed_node=0, use_edge_weights_as_pth=True)
     out = str(tmp_path / "perc.html")
-    path = save_percolation_html_from_results_igraph(g, results, filename=out)
+    path = save_percolation_html(g, results, filename=out)
     assert path == out
     content = tmp_path.joinpath("perc.html").read_text(encoding="utf-8")
-    assert "percoFig" in content
+    assert "percoFig" in content and "percoCurve" in content
 
 
 def test_directed_graph_runs_end_to_end_without_crashing(tmp_path):
@@ -230,54 +218,30 @@ def test_directed_graph_runs_end_to_end_without_crashing(tmp_path):
     assert "Final reached (ever infected): 2 / 4" in summary
 
     out = str(tmp_path / "perc_directed.html")
-    path = save_percolation_html_from_results_igraph(g, results, filename=out)
+    path = save_percolation_html(g, results, filename=out)
     assert path == out
 
 
 def test_html_builder_handles_isolated_seed_with_no_spread(tmp_path):
-    """Regression: infection_edges == {} used to fall back to a dense-matrix
-    reconstruction that no longer exists -- must not crash on zero spread."""
+    """Zero spread (no infection edges) still renders, with a flat curve."""
     g = ig.Graph(3)  # no edges at all
     g.vs["label"] = ["A", "B", "C"]
     results = run_percolation(g, Pstar=0.5, tau=4, seed_node=0)
     assert results["infection_edges"] == {}
 
     out = str(tmp_path / "perc_isolated.html")
-    path = save_percolation_html_from_results_igraph(g, results, filename=out)
+    path = save_percolation_html(g, results, filename=out)
     assert path == out
 
 
-# ---------- save_percolation_html_v2 ----------------------------------------
-#
-# A copy of save_percolation_html_from_results_igraph kept separate so the
-# original is never touched while this one is iterated on (see
-# project_pyntacle_percolation_html_v2 memory). First addition: an epidemic
-# curve (S/I/R counts vs t) below the network animation, since active_counts/
-# susceptible_counts/recovered_counts were already computed by run_percolation
-# but never plotted anywhere in the original HTML.
+# ---------- report contents ----------
 
-def test_v2_runs_without_crashing_and_does_not_touch_the_original(tmp_path):
+def test_epidemic_curve_embeds_all_three_sir_series(tmp_path):
     g = _cycle_with_weights()
     results = run_percolation(g, Pstar=0.5, tau=4, seed_node=0, use_edge_weights_as_pth=True)
-
-    out_v1 = str(tmp_path / "perc_v1.html")
-    out_v2 = str(tmp_path / "perc_v2.html")
-    path_v1 = save_percolation_html_from_results_igraph(g, results, filename=out_v1)
-    path_v2 = save_percolation_html_v2(g, results, filename=out_v2)
-
-    assert path_v1 == out_v1 and path_v2 == out_v2
-    v1_content = tmp_path.joinpath("perc_v1.html").read_text(encoding="utf-8")
-    v2_content = tmp_path.joinpath("perc_v2.html").read_text(encoding="utf-8")
-    assert "percoFig" in v1_content and "percoCurve" not in v1_content
-    assert "percoFig" in v2_content and "percoCurve" in v2_content
-
-
-def test_v2_epidemic_curve_embeds_all_three_sir_series(tmp_path):
-    g = _cycle_with_weights()
-    results = run_percolation(g, Pstar=0.5, tau=4, seed_node=0, use_edge_weights_as_pth=True)
-    out = str(tmp_path / "perc_v2.html")
-    save_percolation_html_v2(g, results, filename=out)
-    html = tmp_path.joinpath("perc_v2.html").read_text(encoding="utf-8")
+    out = str(tmp_path / "perc.html")
+    save_percolation_html(g, results, filename=out)
+    html = tmp_path.joinpath("perc.html").read_text(encoding="utf-8")
 
     assert '"name":"Susceptible"' in html
     assert '"name":"Infected"' in html
@@ -287,27 +251,15 @@ def test_v2_epidemic_curve_embeds_all_three_sir_series(tmp_path):
     assert len(results["active_counts"]) == results["n_steps"] + 1
 
 
-def test_v2_handles_isolated_seed_with_no_spread(tmp_path):
-    """Same zero-spread regression the original is covered for -- the
-    epidemic curve must still render (a flat Infected=0 line) rather than
-    crash on an empty infection_edges dict."""
-    g = ig.Graph(3)
-    g.vs["label"] = ["A", "B", "C"]
-    results = run_percolation(g, Pstar=0.5, tau=4, seed_node=0)
-    out = str(tmp_path / "perc_v2_isolated.html")
-    path = save_percolation_html_v2(g, results, filename=out)
-    assert path == out
-
-
-def test_v2_report_header_panels_and_label_escaping(tmp_path):
-    """The restyled report names the network in the header, fills the outcome
+def test_report_header_panels_and_label_escaping(tmp_path):
+    """The report names the network in the header, fills the outcome
     and parameter panels, and a node label containing '</script>' cannot
     close the embedded data script early."""
     g = _cycle_with_weights()
     g.vs["label"] = ["</script>x"] + [str(i) for i in range(1, g.vcount())]
     results = run_percolation(g, Pstar=0.5, tau=4, seed_node=0, use_edge_weights_as_pth=True)
     out = tmp_path / "toy_percolation.html"
-    save_percolation_html_v2(g, results, filename=str(out))
+    save_percolation_html(g, results, filename=str(out))
     html = out.read_text(encoding="utf-8")
 
     assert "Percolation Report &mdash; toy" in html

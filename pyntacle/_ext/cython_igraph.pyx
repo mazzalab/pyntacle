@@ -69,21 +69,18 @@ cpdef init_igraph_error_handler():
     """Stop libigraph from abort()ing the interpreter on a bad input.
 
     The kernels call igraph from inside `nogil` blocks, where the default
-    abort handler takes the whole process down with exit 134 and no traceback --
-    that is how a directed graph used to end a run. With the ignore handler the
-    failing call returns a non-zero code, which every wrapper below already
-    checks and turns into a clean Python-level error.
+    handler would abort the process. With the ignore handler a failing call
+    returns a non-zero code, which the wrappers turn into a Python error.
     """
     igraph_set_error_handler(igraph_error_handler_ignore)
 
 
 cdef int build_igraph_from_edges(igraph_t* graph, igraph_vector_t* weights,
                                  int[:, :] edges, double[:] w, int n) noexcept nogil:
-    """Assemble the same undirected weighted graph the dense path used to build.
+    """Build an undirected weighted igraph graph from an edge list, in O(E) memory.
 
-    An empty graph on n vertices plus the edge list, in O(E) memory, replaces the
-    n x n igraph_matrix + igraph_weighted_adjacency round-trip. The weight vector
-    is filled in edge order, so it stays aligned with igraph's own edge ids.
+    The weight vector is filled in edge order, so it stays aligned with
+    igraph's own edge ids.
 
     On success `graph` and `weights` are initialised and owned by the caller; on
     failure everything allocated here is torn down and a non-zero code returned.
@@ -177,8 +174,7 @@ cdef int igraph_components(double[:,:] adj_matrix, long* size_comp, int* k_set, 
                 igraph_matrix_set(&ig_adj_matrix,  k_set[i], j, 0.)  # Set the weights to 0 for the k_set vertices
                 igraph_matrix_set(&ig_adj_matrix,  j, k_set[i], 0.)  # Set the weights to 0 for the k_set vertices
 
-    # Failures return a negative code: 1 is a legitimate component count and the
-    # caller had no way to tell the two apart.
+    # failures return a negative code (1 is a legitimate component count)
     if igraph_vector_init(&weights, 0)  != 0:
         printf("Failed to initialize igraph_vector_t for weights!")
         igraph_matrix_destroy(&ig_adj_matrix)
@@ -235,8 +231,7 @@ cdef double igraph_betweenness(int[:, :] edges, double[:] wvec, int n, int* k_se
     cdef igraph_vs_t to
     cdef igraph_vector_int_t subset
 
-    # Same undirected weighted graph the dense path built, but from the edge list
-    # in O(E) memory. On failure (e.g. a directed input) graph is left untouched.
+    # on failure (e.g. a directed input) graph is left untouched
     if build_igraph_from_edges(&graph, &weights, edges, wvec, n) != 0:
         return -1.
 
@@ -264,8 +259,7 @@ cdef double igraph_betweenness(int[:, :] edges, double[:] wvec, int n, int* k_se
             node = igraph_vector_int_get(&subset, j)
             n_geo = igraph_vector_int_get(&nrgeo, node)
 
-            # unreachable destination: no geodesics to share out, and dividing by
-            # zero here used to poison the whole score with NaN
+            # unreachable destination: no geodesics to share out
             if n_geo == 0:
                 continue
 
@@ -274,9 +268,7 @@ cdef double igraph_betweenness(int[:, :] edges, double[:] wvec, int n, int* k_se
                 geodesic_ptr = igraph_vector_int_list_get_ptr(&vertices, tot_geodesics)
                 tot_geodesics += 1
 
-                # A path counts once if it touches the group at all. The old code
-                # incremented per group member on the path, so a geodesic crossing
-                # two members counted twice and the score could exceed 1.
+                # a path counts once if it touches the group at all
                 on_path = False
                 for z from 0 <= z < igraph_vector_int_size(geodesic_ptr):
                     for y from 0 <= y < k:

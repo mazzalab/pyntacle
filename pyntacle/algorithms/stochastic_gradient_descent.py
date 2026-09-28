@@ -8,19 +8,13 @@ import datetime
 def count_time(t):
 	if t=="start":
 		start_time = time.time()
-		# Get the current date and time
 		current_datetime = datetime.datetime.now()
-		# Format the datetime object as HH:MM:SS
 		formatted_time = current_datetime.strftime("%H:%M:%S")
-		# Print the formatted time
 		print("\nStarting time (HH:MM:SS):", formatted_time)
 		return start_time
 	elif t=="end":
-		# Get the current date and time
 		current_datetime = datetime.datetime.now()
-		# Format the datetime object as HH:MM:SS
 		formatted_time = current_datetime.strftime("%H:%M:%S")
-		# Print the formatted time
 		print("End time (HH:MM:SS):", formatted_time)
 		return formatted_time
 	else: print("Internal Error")
@@ -70,7 +64,7 @@ def call_stochastic_gradient_descent(grafo,k_size,operation,distance_type="min",
 	node_indices =  grafo.iNodes
 	df_tmp=pd.DataFrame({"name":node_names,"indices":node_indices})
 
-	### shuffle keeping the name association with indices
+	# shuffle keeping names aligned with indices
 	shuffled_df = df_tmp.sample(frac=1.0, random_state=seed)
 
 	selected=shuffled_df.iloc[:k_size]
@@ -81,7 +75,7 @@ def call_stochastic_gradient_descent(grafo,k_size,operation,distance_type="min",
 
 	notS = list(set(node_names).difference(set(S_names)))
 
-    # Initialize the optimization loop
+	# optimization loop
 
 	optimization_score=operation_selector(grafo,operation,S_names,distance_type,mdist)
 	nodeSet_score_history = {tuple(S_names): optimization_score}
@@ -99,7 +93,7 @@ def call_stochastic_gradient_descent(grafo,k_size,operation,distance_type="min",
 		temp_node_set_tuple = tuple(temp_node_set)
 
 
-	    # Evaluate the score of the current set S, if not already computed
+		# Evaluate the score of the current set S, if not already computed
 		if temp_node_set_tuple in nodeSet_score_history:
 			curr_score = nodeSet_score_history[temp_node_set_tuple]
 		else:
@@ -124,9 +118,7 @@ def call_stochastic_gradient_descent(grafo,k_size,operation,distance_type="min",
 		else:
 			continue
 
-	# Return a flat list of node names, like call_greedy does. The dict keys are
-	# tuples, so handing back list(keys()) produced a list of tuples that every
-	# downstream consumer (report, plot, html) then mis-read.
+	# a flat list of node names, as call_greedy returns
 	best = max(nodeSet_score, key=nodeSet_score.get)
 	S_names = list(best)
 	count_time("end")
@@ -139,7 +131,7 @@ def call_all_sgd(grafo,k_size,operation,distance_type="min",mdist=None,probabili
 
     results=[]
     if function=="groupcentrality":
-        for oper in ["degree","closeness","betweenness"]:#
+        for oper in ["degree","closeness","betweenness"]:
             results.append(call_stochastic_gradient_descent(grafo,k_size,oper,distance_type,mdist,probability,tolerance,maxsec,seed))
     elif function=="keyplayer":
         for oper in ["F","dF","dR","mreach"]:

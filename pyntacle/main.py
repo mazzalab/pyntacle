@@ -12,7 +12,6 @@ from _ext.wrapper import (cython_wrapper_greedy, cython_wrapper_info,
                           cython_wrapper_bruteforce, CYTHON_UNSUPPORTED_DIRECTED,
                           DEFAULT_MAX_TIES)
 
-### import of home-made subClass of igraph
 from parser import create_parser
 from GraphTacle import Graphtacle
 from algorithms.group_centrality import *
@@ -26,7 +25,6 @@ from algorithms.stochastic_gradient_descent import *
 from create_html import *
 from time import time
 
-# main function
 def tie_notes(tie_info):
 	"""Header lines stating how many sets reach the optimum and how many are listed."""
 	notes = []
@@ -42,7 +40,7 @@ def tied_sets_frame(tie_info, set_column, explode=False, score_column="score"):
 
 	With several operations each row holds a whole node set in one cell, which is
 	the shape the SVG plot and the HTML normaliser already expect. For a single
-	operation the historical one-row-per-node shape is kept so the TSV still reads
+	operation the one-row-per-node shape is kept so the TSV still reads
 	as a node list. Either way SetID says which optimal set a row belongs to.
 	"""
 	rows = []
@@ -86,15 +84,13 @@ def first_set_only(df):
 
 def main(args):
 
-	# omics builds networks, it does not read one: none of the graph flags below
-	# exist on its parser. Imported here so the other commands never load its
-	# optional dependencies.
+	# omics builds networks rather than reading one; imported here so the other
+	# commands never load its optional dependencies.
 	if args.command == "omics":
 		from omics.cli import run_omics
 		run_omics(args)
 		return
 
-	#### Check general flags
 	if args.directed:
 		directed = True
 	else:
@@ -105,10 +101,8 @@ def main(args):
 	else:
 		weighted = False
 
-	# The Cython engine builds the network through igraph's undirected weighted
-	# adjacency constructor, which rejects an asymmetric matrix from inside a nogil
-	# block -- that used to abort the interpreter with no traceback. Say so up
-	# front instead of letting the user wait for the file to load first.
+	# The compiled kernels work on undirected graphs only: refuse -d before the
+	# file is loaded.
 	if directed and args.command in ("keyplayer", "groupcentrality"):
 		sys.exit(Fore.RED + Style.BRIGHT +
 			f"ERROR: --directed is not supported by '{args.command}'. "
@@ -119,33 +113,26 @@ def main(args):
 	use_cython = getattr(args, "engine", "cython") != "python"
 	seed = getattr(args, "seed", None)
 
-	# Brute force fills this with oper -> (tied_sets, n_optimal, score). Several
-	# node sets routinely reach the same optimum and reporting one of them throws
-	# the rest of the answer away, so they travel together into the TSV and the
-	# HTML. Greedy and gradient descent are heuristics: they visit one set and
-	# leave the dict empty.
+	# Brute force fills this with oper -> (tied_sets, n_optimal, score): several
+	# node sets can reach the same optimum and all of them are reported. Greedy
+	# and gradient descent return a single set and leave it empty.
 	tie_info = {}
 	report_notes = []
 	max_ties = int(getattr(args, "max_ties", DEFAULT_MAX_TIES))
 
-	# --no-plot skips figure/HTML generation and writes only the TSV, as in
-	# Pyntacle 1.x: useful in pipelines and on large graphs, where drawing the
-	# network can take longer than computing the metrics.
+	# --no-plot writes only the TSV report, without figures or HTML.
 	no_plot = getattr(args, "no_plot", False)
 
-	# -np drives OpenMP inside the compiled kernels; the Python engine has no
-	# parallel path at all, so asking for N cores there silently gets one. Say so
-	# rather than let the run look like the tool does not scale.
+	# -np sets the OpenMP threads of the compiled kernels; the Python engine is
+	# single-threaded.
 	if not use_cython and int(getattr(args, "nprocs", 1)) > 1:
 		print(Fore.YELLOW + Style.BRIGHT +
 			f"WARNING: --engine python is single-threaded; -np {args.nprocs} will be ignored. "
 			"Drop --engine python to use the compiled kernels, which do honour -np."
 			+ Style.RESET_ALL)
 
-	# brute_force only exists in the compiled engine (algorithms/brute_force.py
-	# was removed), so --engine python cannot serve it. Falling back to Cython
-	# would report a python-engine run that never happened. Only the finders
-	# search: kp-info/gc-info carry -a with its brute_force default but never use it.
+	# brute_force exists only in the compiled engine. kp-info/gc-info accept -a
+	# but never search, so only the finders are checked.
 	if (not use_cython and getattr(args, "algorithm", None) == "brute_force"
 			and getattr(args, "subcommand", None) in ("kp-finder", "gc-finder")):
 		sys.exit(Fore.RED + Style.BRIGHT +
@@ -154,7 +141,7 @@ def main(args):
 			"for the python engine, or drop --engine python to brute-force with the "
 			"compiled kernels." + Style.RESET_ALL)
 
-	### Initialize the graph
+	# load the network
 	if args.command!="generate":
 		if args.NoHeader:
 			header = False
@@ -167,7 +154,7 @@ def main(args):
 		else:
 			sep=None
 		
-		# handle the output path
+		# output path
 		dirpath, filename = os.path.split(args.inputFile)
 		filename = filename.strip().split(".")[0]
 
@@ -197,18 +184,15 @@ def main(args):
 					f"'{args.command}' is computed on the magnitude |w|; the sign is kept "
 					"(edge attribute 'sign') but not used." + Style.RESET_ALL)
 
-		## Checking if nodes have to be removed
-
+		# node removal (-r)
 		if args.remove:
 			nodes_toRemove = (args.remove).split(',')
 			nodes_list = [x.replace(" ", "") for x in nodes_toRemove]
-			g.remove_node(nodes_list) ##assegno a var di classe
+			g.remove_node(nodes_list)
 			index_toRemove = [i for i in range(len(g.vs["name"])) if g.vs["name"][i] in nodes_list]
 			g.delete_vertices(index_toRemove) #remove target nodes
 			g = Graphtacle.re(g, args.command, args.fileType, sep, header, directed, weighted, args.inputFile)
-			# Graphtacle.re() builds a brand new instance via __init__, which resets
-			# self.removed = None -- re-stamp it here or every report downstream
-			# (HTML/TSV) prints "Removed nodes: None" even though -r was passed.
+			# re() builds a new instance, which resets the removed-node list
 			g.remove_node(nodes_list)
 			g.name=g.name+"_NoNodes"
 			filename = g.name
@@ -219,21 +203,12 @@ def main(args):
 
 		print(f"Number of nodes: {len(g.vs.indices)}")
 		print(f"Number of edges: {len(g.es.indices)}")
-		# print("Edges with weights:")
-		# for edge in g.es:
-		# 	source = g.vs[edge.source]["name"]
-		# 	target = g.vs[edge.target]["name"]
-		# 	weight = edge["weight"] if "weight" in edge.attributes() else None
-		# 	print(f"{source} -- {target} : {weight}")
 
-		# Detect if there are multiple components
 		print(f"Number of components: {len(g.components())}")
 		if len(g.components())>1:
 			print("WARNING: The keyplayer colored in the figure could be only one of the possible sets\n" + Style.RESET_ALL)
 
 			print(Fore.YELLOW + Style.BRIGHT + f"WARNING: The graph is fragmented in {len(g.components())} components"+ Style.RESET_ALL)
-			# print(f"Number of nodes in the largest component: {len(g.components().giant().vs.indices)}")
-			# print(f"Number of edges in the largest component: {len(g.components().giant().es.indices)}")
 
 
 	else: # in case of 'generate'
@@ -247,7 +222,7 @@ def main(args):
 
 	print(f"Function : {args.command}\n")
 
-	### Generating Local metrics
+	# ---- local ----
 	if args.command == "local":
 		
 		if args.color:
@@ -272,15 +247,12 @@ def main(args):
 		if not no_plot:
 			create_local_html(df,g,outdir)
 
-	### Generating Global metrics
+	# ---- global ----
 	elif args.command == "global":
-		# Compute the weighted all-pairs shortest-path matrix and the unweighted
-		# diameter once, then feed them to radiality/radiality_reach so each APSP
-		# is not recomputed per-metric.
+		# all-pairs distances computed once and shared by radiality and radiality reach
 		sps_w = distance_matrix(g, weights=g.es["weight"])
 		diam_u = g.diameter()
-		# radiality subtracts a mean distance from the diameter, so both have to be
-		# measured in the same unit: weighted sps go with the weighted diameter.
+		# radiality needs the diameter in the same unit as the distances
 		diam_w = g.diameter(weights=g.es["weight"])
 		radiality = g.radiality(sps=sps_w, diameter=diam_w)
 		radiality_reach = g.radiality_reach(sps=sps_w, diameter=diam_w)
@@ -305,6 +277,7 @@ def main(args):
 					},  index=[0]).melt()
 		df.columns=["Measure","Score"]
 
+	# ---- groupcentrality ----
 	elif args.command == "groupcentrality":
 
 		if args.subcommand == "gc-finder":
@@ -329,23 +302,7 @@ def main(args):
 					report_notes.extend(tie_notes(tie_info))
 					g.nameSub_function("finder_" + args.operation + "_" + args.algorithm)
 
-				# old code
-				# if args.operation=="all":
-				# 	print("all\n")        
-				# 	df = brute_force_groupcentrality(g, int(args.k_size), args.operation, distance_type=args.value, nprocs=int(args.nprocs))
-				# 	g.nameSub_function("finder_"+args.operation)
-				# else:
-				# 	if args.value:
-				# 		print(args.operation)
-				# 		gc_set, score = brute_force_groupcentrality(g, int(args.k_size), args.operation, distance_type=args.value, nprocs=int(args.nprocs))
-				# 		df = pd.DataFrame({"Nodes_set" : gc_set,args.operation : score}) 
-				# 		g.nameSub_function("finder_"+args.operation)
-				# 	else:
-				# 		print(args.operation)
-				# 		gc_set, score = brute_force_groupcentrality(g, int(args.k_size), args.operation, distance_type=None, nprocs=int(args.nprocs))
-				# 		df = pd.DataFrame({"Nodes_set" : gc_set,args.operation : score}) 
-				# 		g.nameSub_function("finder_"+args.operation)
-			
+
 			elif args.algorithm=="greedy":
 				if use_cython:
 					start = time()
@@ -395,22 +352,13 @@ def main(args):
 					g.nameSub_function("finder_"+args.operation+"_"+args.algorithm)
 
 			else:
-				raise TypeError(u"Select the the correct algorithm [brute_force | greedy | gradient_descent]") 
+				raise TypeError("Select the correct algorithm [brute_force | greedy | gradient_descent]") 
 
 			if not no_plot:
-				# Normalize brute_force/greedy/gradient_descent x all/single into the
-				# same canonical Operation/NodeSet/Score contract create_keyplayer_html
-				# already uses. df's own column names/shapes are inconsistent across
-				# the three algorithms ("Group Centrality" vs "Groupcentrality" vs, for
-				# brute_force's single-operation branch, a copy-pasted "Key-player"), so
-				# index positionally instead of by name. For "all" each row already
-				# holds a full node-set list per cell; for a single operation the dict
-				# construction above spreads the k found node names across k rows with
-				# the score broadcast onto each -- collapse that back into one row.
+				# The HTML report reads one row per operation: Operation, NodeSet, Score.
+				# Column names differ between algorithms, so df is read by position; a
+				# single-operation df holds one node per row and is collapsed to one set.
 				if tie_info:
-					# Brute force already carries one entry per operation, with every
-					# optimal set attached; positional indexing of df would now hit the
-					# SetID column instead of the node sets.
 					operations = list(tie_info)
 					df_html = pd.DataFrame({
 						"Operation": operations,
@@ -457,9 +405,9 @@ def main(args):
 				g.nameSub_function("info_"+args.operation)
 
 		else:
-			raise TypeError(u"Select the the correct subcommand [gc-finder | gc-info]") 
+			raise TypeError("Select the correct subcommand [gc-finder | gc-info]") 
 
-	### Keyplayer
+	# ---- keyplayer ----
 	elif args.command == "keyplayer":  
 			
 		if args.subcommand == "kp-finder":
@@ -538,7 +486,7 @@ def main(args):
 					df=pd.DataFrame({"Key-player":kset[0], args.operation:kset[1]})
 					g.nameSub_function("finder_"+args.operation+"_"+args.algorithm)
 			else:
-				raise TypeError(u"Select the correct algorithm [brute_force | greedy | gradient_descent]")
+				raise TypeError("Select the correct algorithm [brute_force | greedy | gradient_descent]")
 
 		elif args.subcommand == "kp-info":
 
@@ -566,9 +514,9 @@ def main(args):
 		
 		else:
 		
-			raise TypeError(u"Select the right option") 
+			raise TypeError("Select the right option") 
 
-	### Set-Theory
+	# ---- set ----
 	elif args.command == "set":
 		print("The second input file must be of the same format as the first, including separator and header\n")
 		dirpath2, filename2 = os.path.split(args.inputFile2)
@@ -597,10 +545,8 @@ def main(args):
 			print("Intersection\n")
 			g1 = plain_copy(g, directed=False)
 			g2 = plain_copy(g2, directed=False)
-			#gi=g1.intersection(g2) ## non rimuove gli isolati
-			# Identifica i vertici comuni
+			# igraph's intersection() keeps isolated vertices: build it from the shared edges
 			common_vertices = set(g1.vs["name"]).intersection(set(g2.vs["name"]))
-			# Identifica gli archi comuni
 			common_edges = set()
 			for edge in g1.es:
 				source, target = g1.vs[edge.source]["name"], g1.vs[edge.target]["name"]
@@ -662,14 +608,14 @@ def main(args):
 			output_decision(g,"matrix",g.name+str("_difference"))
 
 		else:
-			raise TypeError(u"Select the right option: union | intersection | difference")
+			raise TypeError("Select the right option: union | intersection | difference")
 
-	### Converter
+	# ---- convert ----
 	elif args.command == "convert":
 		print("\nConvert")
 		output_decision(g,args.typeOutput,args.outputName)
 
-	### Communities
+	# ---- communities ----
 	elif args.command == "communities":
 		if args.giant:
 			giant=True
@@ -689,7 +635,7 @@ def main(args):
 			print(""+ Style.RESET_ALL)
 			df=pd.DataFrame({})
 
-	### Extract
+	# ---- extract ----
 	elif args.command == "extract":
 
 		if args.nodeList:
@@ -743,7 +689,7 @@ def main(args):
 		else:
 			raise TypeError("Specify one of the following combination of flags -l | -l -n | -n | -sc ")
 
-	### Generate
+	# ---- generate ----
 	elif args.command == "generate":
 		print("\nGenerate")
 		if args.subcommand=='erdos-renyi':
@@ -753,7 +699,7 @@ def main(args):
 				g=Graphtacle.re(grafo, args.subcommand, args.fileType, file=filename)
 				output_decision(g,args.fileType,filename)
 			else:
-				TypeError(u"One of the arguments is missing")
+				raise TypeError("One of the arguments is missing")
 
 		elif args.subcommand=="tree":
 			if not all(x == False for x in [int(args.numberNodes), int(args.children)]):
@@ -762,7 +708,7 @@ def main(args):
 				g=Graphtacle.re(grafo, args.subcommand, args.fileType, file=filename)
 				output_decision(g,args.fileType,filename)
 			else:
-				TypeError(u"One of the arguments is missing")
+				raise TypeError("One of the arguments is missing")
 
 		elif args.subcommand=='barabasi':
 			if not all(x == False for x in [int(args.numberNodes), int(args.averageEdge)]):
@@ -771,7 +717,7 @@ def main(args):
 				g=Graphtacle.re(grafo, args.subcommand, args.fileType, file=filename)
 				output_decision(g,args.fileType,filename)
 			else:
-				TypeError(u"One of the arguments is missing")
+				raise TypeError("One of the arguments is missing")
 
 		elif args.subcommand=='watts-strogatz':
 			grafo=watts_strogatz(dim=int(args.dimension), size=int(args.size), nei=int(args.nei), probability=int(args.probability),loops=args.loops, multiple=args.multiple)
@@ -786,9 +732,9 @@ def main(args):
 			g=Graphtacle.re(grafo, args.subcommand, args.fileType, file=filename)
 			output_decision(g,args.fileType,filename)
 		else:
-			TypeError(u"Select the right option: erdos-renyi | tree | barabasi | watts-strogatz | lattice")
+			raise TypeError("Select the right option: erdos-renyi | tree | barabasi | watts-strogatz | lattice")
 
-	#### mesoscale
+	# ---- mesoscale ----
 	elif args.command == "mesoscale":
 		print("Mesoscale\n")
 		
@@ -801,12 +747,12 @@ def main(args):
 
 		df_gtom = gtom(g, int(args.kSteps), verbose=args.verbose)
 
-	#### percolation
+	# ---- percolation ----
 	elif args.command == "percolation":
 		print("Percolation\n")
-		# imported lazily: percolation.py pulls in plotly, keep it out of the other commands
+		# imported here so the other commands do not load plotly
 		from percolation import (run_percolation, summarize_percolation_results,
-								  save_percolation_html_v2)
+								  save_percolation_html)
 
 		# optional per-node recovery times from a TSV file (columns: Nodes, Recovery_time)
 		tau_vector = None
@@ -842,7 +788,7 @@ def main(args):
 
 		if not no_plot:
 			# interactive HTML animation of the spreading process
-			save_percolation_html_v2(g, results, filename=html_path, name=filename)
+			save_percolation_html(g, results, filename=html_path, name=filename)
 			print(f"\nInteractive HTML saved in: {html_path}")
 
 		# per-node activation / recovery report
@@ -853,8 +799,7 @@ def main(args):
 			"Recovery_time": results["recovery_time"],
 		})
 
-		# optional snapshot of node states at a chosen time (captured inline
-		# by run_percolation itself -- see snapshot_infected/snapshot_node)
+		# optional snapshot of node states (--snapshot-infected / --snapshot-node)
 		if results["snapshot_state"] is not None:
 			snap_t = results["snapshot_time"]
 			state_names = {0: "susceptible", 1: "infected", 2: "recovered"}
@@ -864,11 +809,9 @@ def main(args):
 		print(f"\nCreated report in: {report_path}.\n")
 
 	else:
-		raise TypeError(u"Select the right option:  local | global | groupcentrality | keyplayer | set | convert | communities | extract | generate | mesoscale | percolation")
+		raise TypeError("Select the right option:  local | global | groupcentrality | keyplayer | set | convert | communities | extract | generate | mesoscale | percolation")
 
-	############################################################################################################################################
-	####################################### OUTPUT img , tsv ######################################################################
-	############################################################################################################################################
+	# ---- reports and figures ----
 
 	if args.command == "convert" or args.command == "generate" or args.command == "percolation":
 		pass
@@ -965,9 +908,7 @@ def main(args):
 				g.plot_keyplayer(first_set_only(df),filename,args.format,args.operation,outdir=outdir)
 				print(Fore.YELLOW + Style.BRIGHT + "WARNING: The keyplayer colored in the figure could be only one of the possible sets\n" + Style.RESET_ALL)
 
-			# Normalize every kp-finder/kp-info x all/single-operation shape into the
-			# same canonical Operation/KeySet/Score contract for the HTML report --
-			# KeySet is always a plain list of node names, one row per operation.
+			# The HTML report reads one row per operation: Operation, KeySet, Score.
 			if args.subcommand == "kp-info":
 				if args.operation == "all":
 					df_html = pd.DataFrame({
@@ -1028,7 +969,6 @@ def main(args):
 				ig.plot(graph, opacity=0.7, target = f"{outdir}/{filename}_{g.function}.{args.format}", bbox = (1000, 1000),edge_width=0.8,vertex_size=15,vertex_color=vertex_color)
 			else:
 				ig.plot(graph, opacity=0.7, target = f"{filename}_{g.function}.{args.format}", bbox = (1000, 1000),edge_width=0.8,vertex_size=15,vertex_color=vertex_color)
-		#elif :
 		elif hasattr(args,"nodeList"):
 			vertex_color=[]
 			for node in g.vs:
@@ -1061,10 +1001,8 @@ def main(args):
 
 if __name__ == '__main__':
 
-	# build the parser
 	parser = create_parser()
 	
-	# parse arguments
 	args = parser.parse_args()
 
 	# no subcommand given: print help instead of crashing on args.directed
@@ -1072,5 +1010,4 @@ if __name__ == '__main__':
 		parser.print_help()
 		sys.exit(0)
 
-	# call main function
 	main(args)

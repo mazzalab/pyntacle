@@ -3,8 +3,6 @@ import igraph as ig
 
 from utility import plain_copy
 
-## our import
-#from brute_force import *
 
 def groupcentrality_gcInfo(grafo, node_names, operation, distance_type="min"):
     

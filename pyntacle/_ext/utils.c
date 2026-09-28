@@ -1627,9 +1627,9 @@ struct __pyx_t_4_ext_5utils_CSR {
   double *w;
 };
 
-/* "_ext/utils.pxd":12
- * # candidate: the old dF kernel malloc'd n*n doubles for every combination it
- * # scored, which dominated the brute-force runtime.
+/* "_ext/utils.pxd":11
+ * # Per-thread working memory, allocated once per parallel region rather than
+ * # once per candidate.
  * cdef struct Scratch:             # <<<<<<<<<<<<<<
  *     int n
  *     double* dist
@@ -16374,7 +16374,7 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *__
   return __pyx_r;
 }
 
-/* "_ext/utils.pyx":17
+/* "_ext/utils.pyx":12
  * 
  * 
  * cdef inline long long binomial(long long n, long long k) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16390,7 +16390,7 @@ static CYTHON_INLINE PY_LONG_LONG __pyx_f_4_ext_5utils_binomial(PY_LONG_LONG __p
   int __pyx_t_2;
   PY_LONG_LONG __pyx_t_3;
 
-  /* "_ext/utils.pyx":18
+  /* "_ext/utils.pyx":13
  * 
  * cdef inline long long binomial(long long n, long long k) noexcept nogil:
  *     cdef long long res = 1             # <<<<<<<<<<<<<<
@@ -16399,7 +16399,7 @@ static CYTHON_INLINE PY_LONG_LONG __pyx_f_4_ext_5utils_binomial(PY_LONG_LONG __p
 */
   __pyx_v_res = 1;
 
-  /* "_ext/utils.pyx":21
+  /* "_ext/utils.pyx":16
  *     cdef long long i
  * 
  *     if k < 0 or k > n:             # <<<<<<<<<<<<<<
@@ -16417,7 +16417,7 @@ static CYTHON_INLINE PY_LONG_LONG __pyx_f_4_ext_5utils_binomial(PY_LONG_LONG __p
   __pyx_L4_bool_binop_done:;
   if (__pyx_t_1) {
 
-    /* "_ext/utils.pyx":22
+    /* "_ext/utils.pyx":17
  * 
  *     if k < 0 or k > n:
  *         return 0             # <<<<<<<<<<<<<<
@@ -16427,7 +16427,7 @@ static CYTHON_INLINE PY_LONG_LONG __pyx_f_4_ext_5utils_binomial(PY_LONG_LONG __p
     __pyx_r = 0;
     goto __pyx_L0;
 
-    /* "_ext/utils.pyx":21
+    /* "_ext/utils.pyx":16
  *     cdef long long i
  * 
  *     if k < 0 or k > n:             # <<<<<<<<<<<<<<
@@ -16436,7 +16436,7 @@ static CYTHON_INLINE PY_LONG_LONG __pyx_f_4_ext_5utils_binomial(PY_LONG_LONG __p
 */
   }
 
-  /* "_ext/utils.pyx":23
+  /* "_ext/utils.pyx":18
  *     if k < 0 or k > n:
  *         return 0
  *     if k == 0 or k == n:             # <<<<<<<<<<<<<<
@@ -16454,7 +16454,7 @@ static CYTHON_INLINE PY_LONG_LONG __pyx_f_4_ext_5utils_binomial(PY_LONG_LONG __p
   __pyx_L7_bool_binop_done:;
   if (__pyx_t_1) {
 
-    /* "_ext/utils.pyx":24
+    /* "_ext/utils.pyx":19
  *         return 0
  *     if k == 0 or k == n:
  *         return 1             # <<<<<<<<<<<<<<
@@ -16464,7 +16464,7 @@ static CYTHON_INLINE PY_LONG_LONG __pyx_f_4_ext_5utils_binomial(PY_LONG_LONG __p
     __pyx_r = 1;
     goto __pyx_L0;
 
-    /* "_ext/utils.pyx":23
+    /* "_ext/utils.pyx":18
  *     if k < 0 or k > n:
  *         return 0
  *     if k == 0 or k == n:             # <<<<<<<<<<<<<<
@@ -16473,7 +16473,7 @@ static CYTHON_INLINE PY_LONG_LONG __pyx_f_4_ext_5utils_binomial(PY_LONG_LONG __p
 */
   }
 
-  /* "_ext/utils.pyx":25
+  /* "_ext/utils.pyx":20
  *     if k == 0 or k == n:
  *         return 1
  *     if k > n - k:             # <<<<<<<<<<<<<<
@@ -16483,7 +16483,7 @@ static CYTHON_INLINE PY_LONG_LONG __pyx_f_4_ext_5utils_binomial(PY_LONG_LONG __p
   __pyx_t_1 = (__pyx_v_k > (__pyx_v_n - __pyx_v_k));
   if (__pyx_t_1) {
 
-    /* "_ext/utils.pyx":26
+    /* "_ext/utils.pyx":21
  *         return 1
  *     if k > n - k:
  *         k = n - k             # <<<<<<<<<<<<<<
@@ -16492,7 +16492,7 @@ static CYTHON_INLINE PY_LONG_LONG __pyx_f_4_ext_5utils_binomial(PY_LONG_LONG __p
 */
     __pyx_v_k = (__pyx_v_n - __pyx_v_k);
 
-    /* "_ext/utils.pyx":25
+    /* "_ext/utils.pyx":20
  *     if k == 0 or k == n:
  *         return 1
  *     if k > n - k:             # <<<<<<<<<<<<<<
@@ -16501,7 +16501,7 @@ static CYTHON_INLINE PY_LONG_LONG __pyx_f_4_ext_5utils_binomial(PY_LONG_LONG __p
 */
   }
 
-  /* "_ext/utils.pyx":28
+  /* "_ext/utils.pyx":23
  *         k = n - k
  * 
  *     for i from 1 <= i < k+1:             # <<<<<<<<<<<<<<
@@ -16511,7 +16511,7 @@ static CYTHON_INLINE PY_LONG_LONG __pyx_f_4_ext_5utils_binomial(PY_LONG_LONG __p
   __pyx_t_3 = (__pyx_v_k + 1);
   for (__pyx_v_i = 1; __pyx_v_i < __pyx_t_3; __pyx_v_i++) {
 
-    /* "_ext/utils.pyx":29
+    /* "_ext/utils.pyx":24
  * 
  *     for i from 1 <= i < k+1:
  *         res = res * (n - k + i) // i             # <<<<<<<<<<<<<<
@@ -16521,7 +16521,7 @@ static CYTHON_INLINE PY_LONG_LONG __pyx_f_4_ext_5utils_binomial(PY_LONG_LONG __p
     __pyx_v_res = ((__pyx_v_res * ((__pyx_v_n - __pyx_v_k) + __pyx_v_i)) / __pyx_v_i);
   }
 
-  /* "_ext/utils.pyx":31
+  /* "_ext/utils.pyx":26
  *         res = res * (n - k + i) // i
  * 
  *     return res             # <<<<<<<<<<<<<<
@@ -16531,7 +16531,7 @@ static CYTHON_INLINE PY_LONG_LONG __pyx_f_4_ext_5utils_binomial(PY_LONG_LONG __p
   __pyx_r = __pyx_v_res;
   goto __pyx_L0;
 
-  /* "_ext/utils.pyx":17
+  /* "_ext/utils.pyx":12
  * 
  * 
  * cdef inline long long binomial(long long n, long long k) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16544,7 +16544,7 @@ static CYTHON_INLINE PY_LONG_LONG __pyx_f_4_ext_5utils_binomial(PY_LONG_LONG __p
   return __pyx_r;
 }
 
-/* "_ext/utils.pyx":34
+/* "_ext/utils.pyx":29
  * 
  * 
  * cdef void index_to_combination(long long index, int n, int k, int* out_comb,  int* out_comp) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16562,7 +16562,7 @@ static void __pyx_f_4_ext_5utils_index_to_combination(PY_LONG_LONG __pyx_v_index
   int __pyx_t_1;
   int __pyx_t_2;
 
-  /* "_ext/utils.pyx":36
+  /* "_ext/utils.pyx":31
  * cdef void index_to_combination(long long index, int n, int k, int* out_comb,  int* out_comp) noexcept nogil:
  * 
  *     cdef long long remaining = k             # <<<<<<<<<<<<<<
@@ -16571,7 +16571,7 @@ static void __pyx_f_4_ext_5utils_index_to_combination(PY_LONG_LONG __pyx_v_index
 */
   __pyx_v_remaining = __pyx_v_k;
 
-  /* "_ext/utils.pyx":37
+  /* "_ext/utils.pyx":32
  * 
  *     cdef long long remaining = k
  *     cdef long long current_index = index             # <<<<<<<<<<<<<<
@@ -16580,7 +16580,7 @@ static void __pyx_f_4_ext_5utils_index_to_combination(PY_LONG_LONG __pyx_v_index
 */
   __pyx_v_current_index = __pyx_v_index;
 
-  /* "_ext/utils.pyx":38
+  /* "_ext/utils.pyx":33
  *     cdef long long remaining = k
  *     cdef long long current_index = index
  *     cdef long long start = 0             # <<<<<<<<<<<<<<
@@ -16589,7 +16589,7 @@ static void __pyx_f_4_ext_5utils_index_to_combination(PY_LONG_LONG __pyx_v_index
 */
   __pyx_v_start = 0;
 
-  /* "_ext/utils.pyx":40
+  /* "_ext/utils.pyx":35
  *     cdef long long start = 0
  *     cdef long long count
  *     cdef int pos = 0             # <<<<<<<<<<<<<<
@@ -16598,7 +16598,7 @@ static void __pyx_f_4_ext_5utils_index_to_combination(PY_LONG_LONG __pyx_v_index
 */
   __pyx_v_pos = 0;
 
-  /* "_ext/utils.pyx":43
+  /* "_ext/utils.pyx":38
  *     cdef int x # The candidate element we are checking
  * 
  *     while remaining > 0:             # <<<<<<<<<<<<<<
@@ -16609,7 +16609,7 @@ static void __pyx_f_4_ext_5utils_index_to_combination(PY_LONG_LONG __pyx_v_index
     __pyx_t_1 = (__pyx_v_remaining > 0);
     if (!__pyx_t_1) break;
 
-    /* "_ext/utils.pyx":45
+    /* "_ext/utils.pyx":40
  *     while remaining > 0:
  *         # Linearly scan for the correct element for the current position
  *         for x from start <= x < n:             # <<<<<<<<<<<<<<
@@ -16619,7 +16619,7 @@ static void __pyx_f_4_ext_5utils_index_to_combination(PY_LONG_LONG __pyx_v_index
     __pyx_t_2 = __pyx_v_n;
     for (__pyx_v_x = __pyx_v_start; __pyx_v_x < __pyx_t_2; __pyx_v_x++) {
 
-      /* "_ext/utils.pyx":49
+      /* "_ext/utils.pyx":44
  *             # We would need to choose `remaining - 1` elements from the set
  *             # of size `n - x - 1`.
  *             count = binomial(n - x - 1, remaining - 1)             # <<<<<<<<<<<<<<
@@ -16628,7 +16628,7 @@ static void __pyx_f_4_ext_5utils_index_to_combination(PY_LONG_LONG __pyx_v_index
 */
       __pyx_v_count = __pyx_f_4_ext_5utils_binomial(((__pyx_v_n - __pyx_v_x) - 1), (__pyx_v_remaining - 1));
 
-      /* "_ext/utils.pyx":51
+      /* "_ext/utils.pyx":46
  *             count = binomial(n - x - 1, remaining - 1)
  * 
  *             if current_index < count:             # <<<<<<<<<<<<<<
@@ -16638,7 +16638,7 @@ static void __pyx_f_4_ext_5utils_index_to_combination(PY_LONG_LONG __pyx_v_index
       __pyx_t_1 = (__pyx_v_current_index < __pyx_v_count);
       if (__pyx_t_1) {
 
-        /* "_ext/utils.pyx":54
+        /* "_ext/utils.pyx":49
  *                 # We found it. The index falls within the block of combinations
  *                 # that start with the current prefix followed by `x`.
  *                 out_comb[pos] = x             # <<<<<<<<<<<<<<
@@ -16647,7 +16647,7 @@ static void __pyx_f_4_ext_5utils_index_to_combination(PY_LONG_LONG __pyx_v_index
 */
         (__pyx_v_out_comb[__pyx_v_pos]) = __pyx_v_x;
 
-        /* "_ext/utils.pyx":55
+        /* "_ext/utils.pyx":50
  *                 # that start with the current prefix followed by `x`.
  *                 out_comb[pos] = x
  *                 pos += 1             # <<<<<<<<<<<<<<
@@ -16656,7 +16656,7 @@ static void __pyx_f_4_ext_5utils_index_to_combination(PY_LONG_LONG __pyx_v_index
 */
         __pyx_v_pos = (__pyx_v_pos + 1);
 
-        /* "_ext/utils.pyx":56
+        /* "_ext/utils.pyx":51
  *                 out_comb[pos] = x
  *                 pos += 1
  *                 start = x + 1 # The next element must be larger             # <<<<<<<<<<<<<<
@@ -16665,7 +16665,7 @@ static void __pyx_f_4_ext_5utils_index_to_combination(PY_LONG_LONG __pyx_v_index
 */
         __pyx_v_start = (__pyx_v_x + 1);
 
-        /* "_ext/utils.pyx":57
+        /* "_ext/utils.pyx":52
  *                 pos += 1
  *                 start = x + 1 # The next element must be larger
  *                 remaining -= 1             # <<<<<<<<<<<<<<
@@ -16674,7 +16674,7 @@ static void __pyx_f_4_ext_5utils_index_to_combination(PY_LONG_LONG __pyx_v_index
 */
         __pyx_v_remaining = (__pyx_v_remaining - 1);
 
-        /* "_ext/utils.pyx":58
+        /* "_ext/utils.pyx":53
  *                 start = x + 1 # The next element must be larger
  *                 remaining -= 1
  *                 break  # Exit the inner for-loop to find the next element             # <<<<<<<<<<<<<<
@@ -16683,7 +16683,7 @@ static void __pyx_f_4_ext_5utils_index_to_combination(PY_LONG_LONG __pyx_v_index
 */
         goto __pyx_L6_break;
 
-        /* "_ext/utils.pyx":51
+        /* "_ext/utils.pyx":46
  *             count = binomial(n - x - 1, remaining - 1)
  * 
  *             if current_index < count:             # <<<<<<<<<<<<<<
@@ -16692,7 +16692,7 @@ static void __pyx_f_4_ext_5utils_index_to_combination(PY_LONG_LONG __pyx_v_index
 */
       }
 
-      /* "_ext/utils.pyx":62
+      /* "_ext/utils.pyx":57
  *                 # The combination we're looking for comes later.
  *                 # Subtract this block of combinations and check the next element.
  *                 current_index -= count             # <<<<<<<<<<<<<<
@@ -16706,7 +16706,7 @@ static void __pyx_f_4_ext_5utils_index_to_combination(PY_LONG_LONG __pyx_v_index
     __pyx_L6_break:;
   }
 
-  /* "_ext/utils.pyx":64
+  /* "_ext/utils.pyx":59
  *                 current_index -= count
  * 
  *     if out_comp != NULL:             # <<<<<<<<<<<<<<
@@ -16716,7 +16716,7 @@ static void __pyx_f_4_ext_5utils_index_to_combination(PY_LONG_LONG __pyx_v_index
   __pyx_t_1 = (__pyx_v_out_comp != NULL);
   if (__pyx_t_1) {
 
-    /* "_ext/utils.pyx":65
+    /* "_ext/utils.pyx":60
  * 
  *     if out_comp != NULL:
  *         generate_complement_from_combination(out_comb, k, n, out_comp)             # <<<<<<<<<<<<<<
@@ -16725,7 +16725,7 @@ static void __pyx_f_4_ext_5utils_index_to_combination(PY_LONG_LONG __pyx_v_index
 */
     __pyx_f_4_ext_5utils_generate_complement_from_combination(__pyx_v_out_comb, __pyx_v_k, __pyx_v_n, __pyx_v_out_comp);
 
-    /* "_ext/utils.pyx":64
+    /* "_ext/utils.pyx":59
  *                 current_index -= count
  * 
  *     if out_comp != NULL:             # <<<<<<<<<<<<<<
@@ -16734,7 +16734,7 @@ static void __pyx_f_4_ext_5utils_index_to_combination(PY_LONG_LONG __pyx_v_index
 */
   }
 
-  /* "_ext/utils.pyx":34
+  /* "_ext/utils.pyx":29
  * 
  * 
  * cdef void index_to_combination(long long index, int n, int k, int* out_comb,  int* out_comp) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16745,7 +16745,7 @@ static void __pyx_f_4_ext_5utils_index_to_combination(PY_LONG_LONG __pyx_v_index
   /* function exit code */
 }
 
-/* "_ext/utils.pyx":68
+/* "_ext/utils.pyx":63
  * 
  * 
  * cdef void generate_complement_from_combination(int* combination, int k, int n, int* complement) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16761,7 +16761,7 @@ static void __pyx_f_4_ext_5utils_generate_complement_from_combination(int *__pyx
   int __pyx_t_2;
   int __pyx_t_3;
 
-  /* "_ext/utils.pyx":70
+  /* "_ext/utils.pyx":65
  * cdef void generate_complement_from_combination(int* combination, int k, int n, int* complement) noexcept nogil:
  * 
  *     cdef int comp_pos = 0             # <<<<<<<<<<<<<<
@@ -16770,7 +16770,7 @@ static void __pyx_f_4_ext_5utils_generate_complement_from_combination(int *__pyx
 */
   __pyx_v_comp_pos = 0;
 
-  /* "_ext/utils.pyx":71
+  /* "_ext/utils.pyx":66
  * 
  *     cdef int comp_pos = 0
  *     cdef int comb_idx = 0             # <<<<<<<<<<<<<<
@@ -16779,7 +16779,7 @@ static void __pyx_f_4_ext_5utils_generate_complement_from_combination(int *__pyx
 */
   __pyx_v_comb_idx = 0;
 
-  /* "_ext/utils.pyx":74
+  /* "_ext/utils.pyx":69
  *     cdef int i
  * 
  *     for i from 0 <= i < n:             # <<<<<<<<<<<<<<
@@ -16789,7 +16789,7 @@ static void __pyx_f_4_ext_5utils_generate_complement_from_combination(int *__pyx
   __pyx_t_1 = __pyx_v_n;
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_1; __pyx_v_i++) {
 
-    /* "_ext/utils.pyx":75
+    /* "_ext/utils.pyx":70
  * 
  *     for i from 0 <= i < n:
  *         if comb_idx < k and i == combination[comb_idx]:             # <<<<<<<<<<<<<<
@@ -16807,7 +16807,7 @@ static void __pyx_f_4_ext_5utils_generate_complement_from_combination(int *__pyx
     __pyx_L6_bool_binop_done:;
     if (__pyx_t_2) {
 
-      /* "_ext/utils.pyx":76
+      /* "_ext/utils.pyx":71
  *     for i from 0 <= i < n:
  *         if comb_idx < k and i == combination[comb_idx]:
  *             comb_idx += 1             # <<<<<<<<<<<<<<
@@ -16816,7 +16816,7 @@ static void __pyx_f_4_ext_5utils_generate_complement_from_combination(int *__pyx
 */
       __pyx_v_comb_idx = (__pyx_v_comb_idx + 1);
 
-      /* "_ext/utils.pyx":75
+      /* "_ext/utils.pyx":70
  * 
  *     for i from 0 <= i < n:
  *         if comb_idx < k and i == combination[comb_idx]:             # <<<<<<<<<<<<<<
@@ -16826,7 +16826,7 @@ static void __pyx_f_4_ext_5utils_generate_complement_from_combination(int *__pyx
       goto __pyx_L5;
     }
 
-    /* "_ext/utils.pyx":78
+    /* "_ext/utils.pyx":73
  *             comb_idx += 1
  *         else:
  *             complement[comp_pos] = i             # <<<<<<<<<<<<<<
@@ -16836,7 +16836,7 @@ static void __pyx_f_4_ext_5utils_generate_complement_from_combination(int *__pyx
     /*else*/ {
       (__pyx_v_complement[__pyx_v_comp_pos]) = __pyx_v_i;
 
-      /* "_ext/utils.pyx":79
+      /* "_ext/utils.pyx":74
  *         else:
  *             complement[comp_pos] = i
  *             comp_pos += 1             # <<<<<<<<<<<<<<
@@ -16848,7 +16848,7 @@ static void __pyx_f_4_ext_5utils_generate_complement_from_combination(int *__pyx
     __pyx_L5:;
   }
 
-  /* "_ext/utils.pyx":68
+  /* "_ext/utils.pyx":63
  * 
  * 
  * cdef void generate_complement_from_combination(int* combination, int k, int n, int* complement) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16859,7 +16859,7 @@ static void __pyx_f_4_ext_5utils_generate_complement_from_combination(int *__pyx
   /* function exit code */
 }
 
-/* "_ext/utils.pyx":86
+/* "_ext/utils.pyx":81
  * # ---------------------------------------------------------------------------
  * 
  * cdef CSR* csr_alloc(double[:, :] adj) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16883,7 +16883,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
   size_t __pyx_t_6;
   int __pyx_t_7;
 
-  /* "_ext/utils.pyx":93
+  /* "_ext/utils.pyx":88
  *     precisely because the two are indistinguishable here.
  *     """
  *     cdef int n = adj.shape[0]             # <<<<<<<<<<<<<<
@@ -16892,7 +16892,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
 */
   __pyx_v_n = (__pyx_v_adj.shape[0]);
 
-  /* "_ext/utils.pyx":94
+  /* "_ext/utils.pyx":89
  *     """
  *     cdef int n = adj.shape[0]
  *     cdef int i, j, nnz = 0             # <<<<<<<<<<<<<<
@@ -16901,7 +16901,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
 */
   __pyx_v_nnz = 0;
 
-  /* "_ext/utils.pyx":96
+  /* "_ext/utils.pyx":91
  *     cdef int i, j, nnz = 0
  * 
  *     for i from 0 <= i < n:             # <<<<<<<<<<<<<<
@@ -16911,7 +16911,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
   __pyx_t_1 = __pyx_v_n;
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_1; __pyx_v_i++) {
 
-    /* "_ext/utils.pyx":97
+    /* "_ext/utils.pyx":92
  * 
  *     for i from 0 <= i < n:
  *         for j from 0 <= j < n:             # <<<<<<<<<<<<<<
@@ -16921,7 +16921,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
     __pyx_t_2 = __pyx_v_n;
     for (__pyx_v_j = 0; __pyx_v_j < __pyx_t_2; __pyx_v_j++) {
 
-      /* "_ext/utils.pyx":98
+      /* "_ext/utils.pyx":93
  *     for i from 0 <= i < n:
  *         for j from 0 <= j < n:
  *             if adj[i, j] != 0.:             # <<<<<<<<<<<<<<
@@ -16933,7 +16933,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
       __pyx_t_5 = ((*((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_adj.data + __pyx_t_3 * __pyx_v_adj.strides[0]) ) + __pyx_t_4 * __pyx_v_adj.strides[1]) ))) != 0.);
       if (__pyx_t_5) {
 
-        /* "_ext/utils.pyx":99
+        /* "_ext/utils.pyx":94
  *         for j from 0 <= j < n:
  *             if adj[i, j] != 0.:
  *                 nnz += 1             # <<<<<<<<<<<<<<
@@ -16942,7 +16942,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
 */
         __pyx_v_nnz = (__pyx_v_nnz + 1);
 
-        /* "_ext/utils.pyx":98
+        /* "_ext/utils.pyx":93
  *     for i from 0 <= i < n:
  *         for j from 0 <= j < n:
  *             if adj[i, j] != 0.:             # <<<<<<<<<<<<<<
@@ -16953,7 +16953,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
     }
   }
 
-  /* "_ext/utils.pyx":101
+  /* "_ext/utils.pyx":96
  *                 nnz += 1
  * 
  *     cdef CSR* g = <CSR*> malloc(sizeof(CSR))             # <<<<<<<<<<<<<<
@@ -16962,7 +16962,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
 */
   __pyx_v_g = ((struct __pyx_t_4_ext_5utils_CSR *)malloc((sizeof(struct __pyx_t_4_ext_5utils_CSR))));
 
-  /* "_ext/utils.pyx":102
+  /* "_ext/utils.pyx":97
  * 
  *     cdef CSR* g = <CSR*> malloc(sizeof(CSR))
  *     if g == NULL:             # <<<<<<<<<<<<<<
@@ -16972,7 +16972,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
   __pyx_t_5 = (__pyx_v_g == NULL);
   if (__pyx_t_5) {
 
-    /* "_ext/utils.pyx":103
+    /* "_ext/utils.pyx":98
  *     cdef CSR* g = <CSR*> malloc(sizeof(CSR))
  *     if g == NULL:
  *         return NULL             # <<<<<<<<<<<<<<
@@ -16982,7 +16982,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
     __pyx_r = NULL;
     goto __pyx_L0;
 
-    /* "_ext/utils.pyx":102
+    /* "_ext/utils.pyx":97
  * 
  *     cdef CSR* g = <CSR*> malloc(sizeof(CSR))
  *     if g == NULL:             # <<<<<<<<<<<<<<
@@ -16991,7 +16991,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
 */
   }
 
-  /* "_ext/utils.pyx":105
+  /* "_ext/utils.pyx":100
  *         return NULL
  * 
  *     g.n = n             # <<<<<<<<<<<<<<
@@ -17000,7 +17000,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
 */
   __pyx_v_g->n = __pyx_v_n;
 
-  /* "_ext/utils.pyx":106
+  /* "_ext/utils.pyx":101
  * 
  *     g.n = n
  *     g.indptr = <int*> malloc((n + 1) * sizeof(int))             # <<<<<<<<<<<<<<
@@ -17009,7 +17009,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
 */
   __pyx_v_g->indptr = ((int *)malloc(((__pyx_v_n + 1) * (sizeof(int)))));
 
-  /* "_ext/utils.pyx":107
+  /* "_ext/utils.pyx":102
  *     g.n = n
  *     g.indptr = <int*> malloc((n + 1) * sizeof(int))
  *     g.indices = <int*> malloc((nnz if nnz > 0 else 1) * sizeof(int))             # <<<<<<<<<<<<<<
@@ -17024,7 +17024,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
   }
   __pyx_v_g->indices = ((int *)malloc((__pyx_t_6 * (sizeof(int)))));
 
-  /* "_ext/utils.pyx":108
+  /* "_ext/utils.pyx":103
  *     g.indptr = <int*> malloc((n + 1) * sizeof(int))
  *     g.indices = <int*> malloc((nnz if nnz > 0 else 1) * sizeof(int))
  *     g.w = <double*> malloc((nnz if nnz > 0 else 1) * sizeof(double))             # <<<<<<<<<<<<<<
@@ -17039,7 +17039,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
   }
   __pyx_v_g->w = ((double *)malloc((__pyx_t_6 * (sizeof(double)))));
 
-  /* "_ext/utils.pyx":109
+  /* "_ext/utils.pyx":104
  *     g.indices = <int*> malloc((nnz if nnz > 0 else 1) * sizeof(int))
  *     g.w = <double*> malloc((nnz if nnz > 0 else 1) * sizeof(double))
  *     if g.indptr == NULL or g.indices == NULL or g.w == NULL:             # <<<<<<<<<<<<<<
@@ -17063,7 +17063,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
   __pyx_L10_bool_binop_done:;
   if (__pyx_t_5) {
 
-    /* "_ext/utils.pyx":110
+    /* "_ext/utils.pyx":105
  *     g.w = <double*> malloc((nnz if nnz > 0 else 1) * sizeof(double))
  *     if g.indptr == NULL or g.indices == NULL or g.w == NULL:
  *         csr_free(g)             # <<<<<<<<<<<<<<
@@ -17072,7 +17072,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
 */
     __pyx_f_4_ext_5utils_csr_free(__pyx_v_g);
 
-    /* "_ext/utils.pyx":111
+    /* "_ext/utils.pyx":106
  *     if g.indptr == NULL or g.indices == NULL or g.w == NULL:
  *         csr_free(g)
  *         return NULL             # <<<<<<<<<<<<<<
@@ -17082,7 +17082,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
     __pyx_r = NULL;
     goto __pyx_L0;
 
-    /* "_ext/utils.pyx":109
+    /* "_ext/utils.pyx":104
  *     g.indices = <int*> malloc((nnz if nnz > 0 else 1) * sizeof(int))
  *     g.w = <double*> malloc((nnz if nnz > 0 else 1) * sizeof(double))
  *     if g.indptr == NULL or g.indices == NULL or g.w == NULL:             # <<<<<<<<<<<<<<
@@ -17091,7 +17091,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
 */
   }
 
-  /* "_ext/utils.pyx":113
+  /* "_ext/utils.pyx":108
  *         return NULL
  * 
  *     cdef int pos = 0             # <<<<<<<<<<<<<<
@@ -17100,7 +17100,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
 */
   __pyx_v_pos = 0;
 
-  /* "_ext/utils.pyx":114
+  /* "_ext/utils.pyx":109
  * 
  *     cdef int pos = 0
  *     for i from 0 <= i < n:             # <<<<<<<<<<<<<<
@@ -17110,7 +17110,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
   __pyx_t_1 = __pyx_v_n;
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_1; __pyx_v_i++) {
 
-    /* "_ext/utils.pyx":115
+    /* "_ext/utils.pyx":110
  *     cdef int pos = 0
  *     for i from 0 <= i < n:
  *         g.indptr[i] = pos             # <<<<<<<<<<<<<<
@@ -17119,7 +17119,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
 */
     (__pyx_v_g->indptr[__pyx_v_i]) = __pyx_v_pos;
 
-    /* "_ext/utils.pyx":116
+    /* "_ext/utils.pyx":111
  *     for i from 0 <= i < n:
  *         g.indptr[i] = pos
  *         for j from 0 <= j < n:             # <<<<<<<<<<<<<<
@@ -17129,7 +17129,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
     __pyx_t_2 = __pyx_v_n;
     for (__pyx_v_j = 0; __pyx_v_j < __pyx_t_2; __pyx_v_j++) {
 
-      /* "_ext/utils.pyx":117
+      /* "_ext/utils.pyx":112
  *         g.indptr[i] = pos
  *         for j from 0 <= j < n:
  *             if adj[i, j] != 0.:             # <<<<<<<<<<<<<<
@@ -17141,7 +17141,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
       __pyx_t_5 = ((*((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_adj.data + __pyx_t_4 * __pyx_v_adj.strides[0]) ) + __pyx_t_3 * __pyx_v_adj.strides[1]) ))) != 0.);
       if (__pyx_t_5) {
 
-        /* "_ext/utils.pyx":118
+        /* "_ext/utils.pyx":113
  *         for j from 0 <= j < n:
  *             if adj[i, j] != 0.:
  *                 g.indices[pos] = j             # <<<<<<<<<<<<<<
@@ -17150,7 +17150,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
 */
         (__pyx_v_g->indices[__pyx_v_pos]) = __pyx_v_j;
 
-        /* "_ext/utils.pyx":119
+        /* "_ext/utils.pyx":114
  *             if adj[i, j] != 0.:
  *                 g.indices[pos] = j
  *                 g.w[pos] = adj[i, j]             # <<<<<<<<<<<<<<
@@ -17161,7 +17161,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
         __pyx_t_4 = __pyx_v_j;
         (__pyx_v_g->w[__pyx_v_pos]) = (*((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_adj.data + __pyx_t_3 * __pyx_v_adj.strides[0]) ) + __pyx_t_4 * __pyx_v_adj.strides[1]) )));
 
-        /* "_ext/utils.pyx":120
+        /* "_ext/utils.pyx":115
  *                 g.indices[pos] = j
  *                 g.w[pos] = adj[i, j]
  *                 pos += 1             # <<<<<<<<<<<<<<
@@ -17170,7 +17170,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
 */
         __pyx_v_pos = (__pyx_v_pos + 1);
 
-        /* "_ext/utils.pyx":117
+        /* "_ext/utils.pyx":112
  *         g.indptr[i] = pos
  *         for j from 0 <= j < n:
  *             if adj[i, j] != 0.:             # <<<<<<<<<<<<<<
@@ -17181,7 +17181,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
     }
   }
 
-  /* "_ext/utils.pyx":121
+  /* "_ext/utils.pyx":116
  *                 g.w[pos] = adj[i, j]
  *                 pos += 1
  *     g.indptr[n] = pos             # <<<<<<<<<<<<<<
@@ -17190,7 +17190,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
 */
   (__pyx_v_g->indptr[__pyx_v_n]) = __pyx_v_pos;
 
-  /* "_ext/utils.pyx":123
+  /* "_ext/utils.pyx":118
  *     g.indptr[n] = pos
  * 
  *     return g             # <<<<<<<<<<<<<<
@@ -17200,7 +17200,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
   __pyx_r = __pyx_v_g;
   goto __pyx_L0;
 
-  /* "_ext/utils.pyx":86
+  /* "_ext/utils.pyx":81
  * # ---------------------------------------------------------------------------
  * 
  * cdef CSR* csr_alloc(double[:, :] adj) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -17213,7 +17213,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_alloc(__Pyx_mem
   return __pyx_r;
 }
 
-/* "_ext/utils.pyx":126
+/* "_ext/utils.pyx":121
  * 
  * 
  * cdef CSR* csr_from_edges(int[:, :] edges, double[:] w, int n) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -17242,7 +17242,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
   int __pyx_t_8;
   int __pyx_t_9;
 
-  /* "_ext/utils.pyx":137
+  /* "_ext/utils.pyx":132
  *     Dijkstra via the relaxation test).
  *     """
  *     cdef int m = edges.shape[0]             # <<<<<<<<<<<<<<
@@ -17251,7 +17251,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
   __pyx_v_m = (__pyx_v_edges.shape[0]);
 
-  /* "_ext/utils.pyx":138
+  /* "_ext/utils.pyx":133
  *     """
  *     cdef int m = edges.shape[0]
  *     cdef int e, i, j, nnz = 0             # <<<<<<<<<<<<<<
@@ -17260,7 +17260,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
   __pyx_v_nnz = 0;
 
-  /* "_ext/utils.pyx":141
+  /* "_ext/utils.pyx":136
  * 
  *     # First pass: count the directed entries each retained edge contributes.
  *     for e from 0 <= e < m:             # <<<<<<<<<<<<<<
@@ -17270,7 +17270,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
   __pyx_t_1 = __pyx_v_m;
   for (__pyx_v_e = 0; __pyx_v_e < __pyx_t_1; __pyx_v_e++) {
 
-    /* "_ext/utils.pyx":142
+    /* "_ext/utils.pyx":137
  *     # First pass: count the directed entries each retained edge contributes.
  *     for e from 0 <= e < m:
  *         if w[e] == 0.:             # <<<<<<<<<<<<<<
@@ -17281,7 +17281,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
     __pyx_t_3 = ((*((double *) ( /* dim=0 */ (__pyx_v_w.data + __pyx_t_2 * __pyx_v_w.strides[0]) ))) == 0.);
     if (__pyx_t_3) {
 
-      /* "_ext/utils.pyx":143
+      /* "_ext/utils.pyx":138
  *     for e from 0 <= e < m:
  *         if w[e] == 0.:
  *             continue             # <<<<<<<<<<<<<<
@@ -17290,7 +17290,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
       goto __pyx_L3_continue;
 
-      /* "_ext/utils.pyx":142
+      /* "_ext/utils.pyx":137
  *     # First pass: count the directed entries each retained edge contributes.
  *     for e from 0 <= e < m:
  *         if w[e] == 0.:             # <<<<<<<<<<<<<<
@@ -17299,7 +17299,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
     }
 
-    /* "_ext/utils.pyx":144
+    /* "_ext/utils.pyx":139
  *         if w[e] == 0.:
  *             continue
  *         if edges[e, 0] == edges[e, 1]:             # <<<<<<<<<<<<<<
@@ -17313,7 +17313,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
     __pyx_t_3 = ((*((int *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_edges.data + __pyx_t_2 * __pyx_v_edges.strides[0]) ) + __pyx_t_4 * __pyx_v_edges.strides[1]) ))) == (*((int *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_edges.data + __pyx_t_5 * __pyx_v_edges.strides[0]) ) + __pyx_t_6 * __pyx_v_edges.strides[1]) ))));
     if (__pyx_t_3) {
 
-      /* "_ext/utils.pyx":145
+      /* "_ext/utils.pyx":140
  *             continue
  *         if edges[e, 0] == edges[e, 1]:
  *             nnz += 1             # <<<<<<<<<<<<<<
@@ -17322,7 +17322,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
       __pyx_v_nnz = (__pyx_v_nnz + 1);
 
-      /* "_ext/utils.pyx":144
+      /* "_ext/utils.pyx":139
  *         if w[e] == 0.:
  *             continue
  *         if edges[e, 0] == edges[e, 1]:             # <<<<<<<<<<<<<<
@@ -17332,7 +17332,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
       goto __pyx_L6;
     }
 
-    /* "_ext/utils.pyx":147
+    /* "_ext/utils.pyx":142
  *             nnz += 1
  *         else:
  *             nnz += 2             # <<<<<<<<<<<<<<
@@ -17346,7 +17346,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
     __pyx_L3_continue:;
   }
 
-  /* "_ext/utils.pyx":149
+  /* "_ext/utils.pyx":144
  *             nnz += 2
  * 
  *     cdef CSR* g = <CSR*> malloc(sizeof(CSR))             # <<<<<<<<<<<<<<
@@ -17355,7 +17355,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
   __pyx_v_g = ((struct __pyx_t_4_ext_5utils_CSR *)malloc((sizeof(struct __pyx_t_4_ext_5utils_CSR))));
 
-  /* "_ext/utils.pyx":150
+  /* "_ext/utils.pyx":145
  * 
  *     cdef CSR* g = <CSR*> malloc(sizeof(CSR))
  *     if g == NULL:             # <<<<<<<<<<<<<<
@@ -17365,7 +17365,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
   __pyx_t_3 = (__pyx_v_g == NULL);
   if (__pyx_t_3) {
 
-    /* "_ext/utils.pyx":151
+    /* "_ext/utils.pyx":146
  *     cdef CSR* g = <CSR*> malloc(sizeof(CSR))
  *     if g == NULL:
  *         return NULL             # <<<<<<<<<<<<<<
@@ -17375,7 +17375,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
     __pyx_r = NULL;
     goto __pyx_L0;
 
-    /* "_ext/utils.pyx":150
+    /* "_ext/utils.pyx":145
  * 
  *     cdef CSR* g = <CSR*> malloc(sizeof(CSR))
  *     if g == NULL:             # <<<<<<<<<<<<<<
@@ -17384,7 +17384,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
   }
 
-  /* "_ext/utils.pyx":153
+  /* "_ext/utils.pyx":148
  *         return NULL
  * 
  *     g.n = n             # <<<<<<<<<<<<<<
@@ -17393,7 +17393,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
   __pyx_v_g->n = __pyx_v_n;
 
-  /* "_ext/utils.pyx":154
+  /* "_ext/utils.pyx":149
  * 
  *     g.n = n
  *     g.indptr = <int*> malloc((n + 1) * sizeof(int))             # <<<<<<<<<<<<<<
@@ -17402,7 +17402,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
   __pyx_v_g->indptr = ((int *)malloc(((__pyx_v_n + 1) * (sizeof(int)))));
 
-  /* "_ext/utils.pyx":155
+  /* "_ext/utils.pyx":150
  *     g.n = n
  *     g.indptr = <int*> malloc((n + 1) * sizeof(int))
  *     g.indices = <int*> malloc((nnz if nnz > 0 else 1) * sizeof(int))             # <<<<<<<<<<<<<<
@@ -17417,7 +17417,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
   }
   __pyx_v_g->indices = ((int *)malloc((__pyx_t_7 * (sizeof(int)))));
 
-  /* "_ext/utils.pyx":156
+  /* "_ext/utils.pyx":151
  *     g.indptr = <int*> malloc((n + 1) * sizeof(int))
  *     g.indices = <int*> malloc((nnz if nnz > 0 else 1) * sizeof(int))
  *     g.w = <double*> malloc((nnz if nnz > 0 else 1) * sizeof(double))             # <<<<<<<<<<<<<<
@@ -17432,7 +17432,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
   }
   __pyx_v_g->w = ((double *)malloc((__pyx_t_7 * (sizeof(double)))));
 
-  /* "_ext/utils.pyx":157
+  /* "_ext/utils.pyx":152
  *     g.indices = <int*> malloc((nnz if nnz > 0 else 1) * sizeof(int))
  *     g.w = <double*> malloc((nnz if nnz > 0 else 1) * sizeof(double))
  *     if g.indptr == NULL or g.indices == NULL or g.w == NULL:             # <<<<<<<<<<<<<<
@@ -17456,7 +17456,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
   __pyx_L9_bool_binop_done:;
   if (__pyx_t_3) {
 
-    /* "_ext/utils.pyx":158
+    /* "_ext/utils.pyx":153
  *     g.w = <double*> malloc((nnz if nnz > 0 else 1) * sizeof(double))
  *     if g.indptr == NULL or g.indices == NULL or g.w == NULL:
  *         csr_free(g)             # <<<<<<<<<<<<<<
@@ -17465,7 +17465,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
     __pyx_f_4_ext_5utils_csr_free(__pyx_v_g);
 
-    /* "_ext/utils.pyx":159
+    /* "_ext/utils.pyx":154
  *     if g.indptr == NULL or g.indices == NULL or g.w == NULL:
  *         csr_free(g)
  *         return NULL             # <<<<<<<<<<<<<<
@@ -17475,7 +17475,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
     __pyx_r = NULL;
     goto __pyx_L0;
 
-    /* "_ext/utils.pyx":157
+    /* "_ext/utils.pyx":152
  *     g.indices = <int*> malloc((nnz if nnz > 0 else 1) * sizeof(int))
  *     g.w = <double*> malloc((nnz if nnz > 0 else 1) * sizeof(double))
  *     if g.indptr == NULL or g.indices == NULL or g.w == NULL:             # <<<<<<<<<<<<<<
@@ -17484,7 +17484,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
   }
 
-  /* "_ext/utils.pyx":162
+  /* "_ext/utils.pyx":157
  * 
  *     # Second pass: per-vertex out-degree, then prefix-sum into indptr.
  *     cdef int* deg = <int*> malloc(n * sizeof(int))             # <<<<<<<<<<<<<<
@@ -17493,7 +17493,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
   __pyx_v_deg = ((int *)malloc((__pyx_v_n * (sizeof(int)))));
 
-  /* "_ext/utils.pyx":163
+  /* "_ext/utils.pyx":158
  *     # Second pass: per-vertex out-degree, then prefix-sum into indptr.
  *     cdef int* deg = <int*> malloc(n * sizeof(int))
  *     if deg == NULL:             # <<<<<<<<<<<<<<
@@ -17503,7 +17503,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
   __pyx_t_3 = (__pyx_v_deg == NULL);
   if (__pyx_t_3) {
 
-    /* "_ext/utils.pyx":164
+    /* "_ext/utils.pyx":159
  *     cdef int* deg = <int*> malloc(n * sizeof(int))
  *     if deg == NULL:
  *         csr_free(g)             # <<<<<<<<<<<<<<
@@ -17512,7 +17512,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
     __pyx_f_4_ext_5utils_csr_free(__pyx_v_g);
 
-    /* "_ext/utils.pyx":165
+    /* "_ext/utils.pyx":160
  *     if deg == NULL:
  *         csr_free(g)
  *         return NULL             # <<<<<<<<<<<<<<
@@ -17522,7 +17522,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
     __pyx_r = NULL;
     goto __pyx_L0;
 
-    /* "_ext/utils.pyx":163
+    /* "_ext/utils.pyx":158
  *     # Second pass: per-vertex out-degree, then prefix-sum into indptr.
  *     cdef int* deg = <int*> malloc(n * sizeof(int))
  *     if deg == NULL:             # <<<<<<<<<<<<<<
@@ -17531,7 +17531,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
   }
 
-  /* "_ext/utils.pyx":166
+  /* "_ext/utils.pyx":161
  *         csr_free(g)
  *         return NULL
  *     memset(deg, 0, n * sizeof(int))             # <<<<<<<<<<<<<<
@@ -17540,7 +17540,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
   (void)(memset(__pyx_v_deg, 0, (__pyx_v_n * (sizeof(int)))));
 
-  /* "_ext/utils.pyx":168
+  /* "_ext/utils.pyx":163
  *     memset(deg, 0, n * sizeof(int))
  * 
  *     for e from 0 <= e < m:             # <<<<<<<<<<<<<<
@@ -17550,7 +17550,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
   __pyx_t_1 = __pyx_v_m;
   for (__pyx_v_e = 0; __pyx_v_e < __pyx_t_1; __pyx_v_e++) {
 
-    /* "_ext/utils.pyx":169
+    /* "_ext/utils.pyx":164
  * 
  *     for e from 0 <= e < m:
  *         if w[e] == 0.:             # <<<<<<<<<<<<<<
@@ -17561,7 +17561,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
     __pyx_t_3 = ((*((double *) ( /* dim=0 */ (__pyx_v_w.data + __pyx_t_6 * __pyx_v_w.strides[0]) ))) == 0.);
     if (__pyx_t_3) {
 
-      /* "_ext/utils.pyx":170
+      /* "_ext/utils.pyx":165
  *     for e from 0 <= e < m:
  *         if w[e] == 0.:
  *             continue             # <<<<<<<<<<<<<<
@@ -17570,7 +17570,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
       goto __pyx_L13_continue;
 
-      /* "_ext/utils.pyx":169
+      /* "_ext/utils.pyx":164
  * 
  *     for e from 0 <= e < m:
  *         if w[e] == 0.:             # <<<<<<<<<<<<<<
@@ -17579,7 +17579,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
     }
 
-    /* "_ext/utils.pyx":171
+    /* "_ext/utils.pyx":166
  *         if w[e] == 0.:
  *             continue
  *         i = edges[e, 0]             # <<<<<<<<<<<<<<
@@ -17590,7 +17590,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
     __pyx_t_5 = 0;
     __pyx_v_i = (*((int *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_edges.data + __pyx_t_6 * __pyx_v_edges.strides[0]) ) + __pyx_t_5 * __pyx_v_edges.strides[1]) )));
 
-    /* "_ext/utils.pyx":172
+    /* "_ext/utils.pyx":167
  *             continue
  *         i = edges[e, 0]
  *         j = edges[e, 1]             # <<<<<<<<<<<<<<
@@ -17601,7 +17601,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
     __pyx_t_6 = 1;
     __pyx_v_j = (*((int *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_edges.data + __pyx_t_5 * __pyx_v_edges.strides[0]) ) + __pyx_t_6 * __pyx_v_edges.strides[1]) )));
 
-    /* "_ext/utils.pyx":173
+    /* "_ext/utils.pyx":168
  *         i = edges[e, 0]
  *         j = edges[e, 1]
  *         deg[i] += 1             # <<<<<<<<<<<<<<
@@ -17611,7 +17611,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
     __pyx_t_9 = __pyx_v_i;
     (__pyx_v_deg[__pyx_t_9]) = ((__pyx_v_deg[__pyx_t_9]) + 1);
 
-    /* "_ext/utils.pyx":174
+    /* "_ext/utils.pyx":169
  *         j = edges[e, 1]
  *         deg[i] += 1
  *         if i != j:             # <<<<<<<<<<<<<<
@@ -17621,7 +17621,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
     __pyx_t_3 = (__pyx_v_i != __pyx_v_j);
     if (__pyx_t_3) {
 
-      /* "_ext/utils.pyx":175
+      /* "_ext/utils.pyx":170
  *         deg[i] += 1
  *         if i != j:
  *             deg[j] += 1             # <<<<<<<<<<<<<<
@@ -17631,7 +17631,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
       __pyx_t_9 = __pyx_v_j;
       (__pyx_v_deg[__pyx_t_9]) = ((__pyx_v_deg[__pyx_t_9]) + 1);
 
-      /* "_ext/utils.pyx":174
+      /* "_ext/utils.pyx":169
  *         j = edges[e, 1]
  *         deg[i] += 1
  *         if i != j:             # <<<<<<<<<<<<<<
@@ -17642,7 +17642,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
     __pyx_L13_continue:;
   }
 
-  /* "_ext/utils.pyx":177
+  /* "_ext/utils.pyx":172
  *             deg[j] += 1
  * 
  *     cdef int pos = 0             # <<<<<<<<<<<<<<
@@ -17651,7 +17651,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
   __pyx_v_pos = 0;
 
-  /* "_ext/utils.pyx":178
+  /* "_ext/utils.pyx":173
  * 
  *     cdef int pos = 0
  *     for i from 0 <= i < n:             # <<<<<<<<<<<<<<
@@ -17661,7 +17661,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
   __pyx_t_1 = __pyx_v_n;
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_1; __pyx_v_i++) {
 
-    /* "_ext/utils.pyx":179
+    /* "_ext/utils.pyx":174
  *     cdef int pos = 0
  *     for i from 0 <= i < n:
  *         g.indptr[i] = pos             # <<<<<<<<<<<<<<
@@ -17670,7 +17670,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
     (__pyx_v_g->indptr[__pyx_v_i]) = __pyx_v_pos;
 
-    /* "_ext/utils.pyx":180
+    /* "_ext/utils.pyx":175
  *     for i from 0 <= i < n:
  *         g.indptr[i] = pos
  *         pos += deg[i]             # <<<<<<<<<<<<<<
@@ -17680,7 +17680,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
     __pyx_v_pos = (__pyx_v_pos + (__pyx_v_deg[__pyx_v_i]));
   }
 
-  /* "_ext/utils.pyx":181
+  /* "_ext/utils.pyx":176
  *         g.indptr[i] = pos
  *         pos += deg[i]
  *     g.indptr[n] = pos             # <<<<<<<<<<<<<<
@@ -17689,7 +17689,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
   (__pyx_v_g->indptr[__pyx_v_n]) = __pyx_v_pos;
 
-  /* "_ext/utils.pyx":184
+  /* "_ext/utils.pyx":179
  * 
  *     # Third pass: scatter neighbours using a moving cursor per row.
  *     cdef int* cursor = <int*> malloc(n * sizeof(int))             # <<<<<<<<<<<<<<
@@ -17698,7 +17698,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
   __pyx_v_cursor = ((int *)malloc((__pyx_v_n * (sizeof(int)))));
 
-  /* "_ext/utils.pyx":185
+  /* "_ext/utils.pyx":180
  *     # Third pass: scatter neighbours using a moving cursor per row.
  *     cdef int* cursor = <int*> malloc(n * sizeof(int))
  *     if cursor == NULL:             # <<<<<<<<<<<<<<
@@ -17708,7 +17708,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
   __pyx_t_3 = (__pyx_v_cursor == NULL);
   if (__pyx_t_3) {
 
-    /* "_ext/utils.pyx":186
+    /* "_ext/utils.pyx":181
  *     cdef int* cursor = <int*> malloc(n * sizeof(int))
  *     if cursor == NULL:
  *         free(deg)             # <<<<<<<<<<<<<<
@@ -17717,7 +17717,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
     free(__pyx_v_deg);
 
-    /* "_ext/utils.pyx":187
+    /* "_ext/utils.pyx":182
  *     if cursor == NULL:
  *         free(deg)
  *         csr_free(g)             # <<<<<<<<<<<<<<
@@ -17726,7 +17726,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
     __pyx_f_4_ext_5utils_csr_free(__pyx_v_g);
 
-    /* "_ext/utils.pyx":188
+    /* "_ext/utils.pyx":183
  *         free(deg)
  *         csr_free(g)
  *         return NULL             # <<<<<<<<<<<<<<
@@ -17736,7 +17736,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
     __pyx_r = NULL;
     goto __pyx_L0;
 
-    /* "_ext/utils.pyx":185
+    /* "_ext/utils.pyx":180
  *     # Third pass: scatter neighbours using a moving cursor per row.
  *     cdef int* cursor = <int*> malloc(n * sizeof(int))
  *     if cursor == NULL:             # <<<<<<<<<<<<<<
@@ -17745,7 +17745,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
   }
 
-  /* "_ext/utils.pyx":189
+  /* "_ext/utils.pyx":184
  *         csr_free(g)
  *         return NULL
  *     for i from 0 <= i < n:             # <<<<<<<<<<<<<<
@@ -17755,7 +17755,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
   __pyx_t_1 = __pyx_v_n;
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_1; __pyx_v_i++) {
 
-    /* "_ext/utils.pyx":190
+    /* "_ext/utils.pyx":185
  *         return NULL
  *     for i from 0 <= i < n:
  *         cursor[i] = g.indptr[i]             # <<<<<<<<<<<<<<
@@ -17765,7 +17765,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
     (__pyx_v_cursor[__pyx_v_i]) = (__pyx_v_g->indptr[__pyx_v_i]);
   }
 
-  /* "_ext/utils.pyx":192
+  /* "_ext/utils.pyx":187
  *         cursor[i] = g.indptr[i]
  * 
  *     for e from 0 <= e < m:             # <<<<<<<<<<<<<<
@@ -17775,7 +17775,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
   __pyx_t_1 = __pyx_v_m;
   for (__pyx_v_e = 0; __pyx_v_e < __pyx_t_1; __pyx_v_e++) {
 
-    /* "_ext/utils.pyx":193
+    /* "_ext/utils.pyx":188
  * 
  *     for e from 0 <= e < m:
  *         if w[e] == 0.:             # <<<<<<<<<<<<<<
@@ -17786,7 +17786,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
     __pyx_t_3 = ((*((double *) ( /* dim=0 */ (__pyx_v_w.data + __pyx_t_6 * __pyx_v_w.strides[0]) ))) == 0.);
     if (__pyx_t_3) {
 
-      /* "_ext/utils.pyx":194
+      /* "_ext/utils.pyx":189
  *     for e from 0 <= e < m:
  *         if w[e] == 0.:
  *             continue             # <<<<<<<<<<<<<<
@@ -17795,7 +17795,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
       goto __pyx_L22_continue;
 
-      /* "_ext/utils.pyx":193
+      /* "_ext/utils.pyx":188
  * 
  *     for e from 0 <= e < m:
  *         if w[e] == 0.:             # <<<<<<<<<<<<<<
@@ -17804,7 +17804,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
     }
 
-    /* "_ext/utils.pyx":195
+    /* "_ext/utils.pyx":190
  *         if w[e] == 0.:
  *             continue
  *         i = edges[e, 0]             # <<<<<<<<<<<<<<
@@ -17815,7 +17815,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
     __pyx_t_5 = 0;
     __pyx_v_i = (*((int *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_edges.data + __pyx_t_6 * __pyx_v_edges.strides[0]) ) + __pyx_t_5 * __pyx_v_edges.strides[1]) )));
 
-    /* "_ext/utils.pyx":196
+    /* "_ext/utils.pyx":191
  *             continue
  *         i = edges[e, 0]
  *         j = edges[e, 1]             # <<<<<<<<<<<<<<
@@ -17826,7 +17826,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
     __pyx_t_6 = 1;
     __pyx_v_j = (*((int *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_edges.data + __pyx_t_5 * __pyx_v_edges.strides[0]) ) + __pyx_t_6 * __pyx_v_edges.strides[1]) )));
 
-    /* "_ext/utils.pyx":197
+    /* "_ext/utils.pyx":192
  *         i = edges[e, 0]
  *         j = edges[e, 1]
  *         g.indices[cursor[i]] = j             # <<<<<<<<<<<<<<
@@ -17835,7 +17835,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
     (__pyx_v_g->indices[(__pyx_v_cursor[__pyx_v_i])]) = __pyx_v_j;
 
-    /* "_ext/utils.pyx":198
+    /* "_ext/utils.pyx":193
  *         j = edges[e, 1]
  *         g.indices[cursor[i]] = j
  *         g.w[cursor[i]] = w[e]             # <<<<<<<<<<<<<<
@@ -17845,7 +17845,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
     __pyx_t_6 = __pyx_v_e;
     (__pyx_v_g->w[(__pyx_v_cursor[__pyx_v_i])]) = (*((double *) ( /* dim=0 */ (__pyx_v_w.data + __pyx_t_6 * __pyx_v_w.strides[0]) )));
 
-    /* "_ext/utils.pyx":199
+    /* "_ext/utils.pyx":194
  *         g.indices[cursor[i]] = j
  *         g.w[cursor[i]] = w[e]
  *         cursor[i] += 1             # <<<<<<<<<<<<<<
@@ -17855,7 +17855,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
     __pyx_t_9 = __pyx_v_i;
     (__pyx_v_cursor[__pyx_t_9]) = ((__pyx_v_cursor[__pyx_t_9]) + 1);
 
-    /* "_ext/utils.pyx":200
+    /* "_ext/utils.pyx":195
  *         g.w[cursor[i]] = w[e]
  *         cursor[i] += 1
  *         if i != j:             # <<<<<<<<<<<<<<
@@ -17865,7 +17865,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
     __pyx_t_3 = (__pyx_v_i != __pyx_v_j);
     if (__pyx_t_3) {
 
-      /* "_ext/utils.pyx":201
+      /* "_ext/utils.pyx":196
  *         cursor[i] += 1
  *         if i != j:
  *             g.indices[cursor[j]] = i             # <<<<<<<<<<<<<<
@@ -17874,7 +17874,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
       (__pyx_v_g->indices[(__pyx_v_cursor[__pyx_v_j])]) = __pyx_v_i;
 
-      /* "_ext/utils.pyx":202
+      /* "_ext/utils.pyx":197
  *         if i != j:
  *             g.indices[cursor[j]] = i
  *             g.w[cursor[j]] = w[e]             # <<<<<<<<<<<<<<
@@ -17884,7 +17884,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
       __pyx_t_6 = __pyx_v_e;
       (__pyx_v_g->w[(__pyx_v_cursor[__pyx_v_j])]) = (*((double *) ( /* dim=0 */ (__pyx_v_w.data + __pyx_t_6 * __pyx_v_w.strides[0]) )));
 
-      /* "_ext/utils.pyx":203
+      /* "_ext/utils.pyx":198
  *             g.indices[cursor[j]] = i
  *             g.w[cursor[j]] = w[e]
  *             cursor[j] += 1             # <<<<<<<<<<<<<<
@@ -17894,7 +17894,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
       __pyx_t_9 = __pyx_v_j;
       (__pyx_v_cursor[__pyx_t_9]) = ((__pyx_v_cursor[__pyx_t_9]) + 1);
 
-      /* "_ext/utils.pyx":200
+      /* "_ext/utils.pyx":195
  *         g.w[cursor[i]] = w[e]
  *         cursor[i] += 1
  *         if i != j:             # <<<<<<<<<<<<<<
@@ -17905,7 +17905,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
     __pyx_L22_continue:;
   }
 
-  /* "_ext/utils.pyx":205
+  /* "_ext/utils.pyx":200
  *             cursor[j] += 1
  * 
  *     free(deg)             # <<<<<<<<<<<<<<
@@ -17914,7 +17914,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
   free(__pyx_v_deg);
 
-  /* "_ext/utils.pyx":206
+  /* "_ext/utils.pyx":201
  * 
  *     free(deg)
  *     free(cursor)             # <<<<<<<<<<<<<<
@@ -17923,7 +17923,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 */
   free(__pyx_v_cursor);
 
-  /* "_ext/utils.pyx":207
+  /* "_ext/utils.pyx":202
  *     free(deg)
  *     free(cursor)
  *     return g             # <<<<<<<<<<<<<<
@@ -17933,7 +17933,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
   __pyx_r = __pyx_v_g;
   goto __pyx_L0;
 
-  /* "_ext/utils.pyx":126
+  /* "_ext/utils.pyx":121
  * 
  * 
  * cdef CSR* csr_from_edges(int[:, :] edges, double[:] w, int n) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -17946,7 +17946,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
   return __pyx_r;
 }
 
-/* "_ext/utils.pyx":210
+/* "_ext/utils.pyx":205
  * 
  * 
  * cdef void csr_free(CSR* g) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -17957,7 +17957,7 @@ static struct __pyx_t_4_ext_5utils_CSR *__pyx_f_4_ext_5utils_csr_from_edges(__Py
 static void __pyx_f_4_ext_5utils_csr_free(struct __pyx_t_4_ext_5utils_CSR *__pyx_v_g) {
   int __pyx_t_1;
 
-  /* "_ext/utils.pyx":211
+  /* "_ext/utils.pyx":206
  * 
  * cdef void csr_free(CSR* g) noexcept nogil:
  *     if g == NULL:             # <<<<<<<<<<<<<<
@@ -17967,7 +17967,7 @@ static void __pyx_f_4_ext_5utils_csr_free(struct __pyx_t_4_ext_5utils_CSR *__pyx
   __pyx_t_1 = (__pyx_v_g == NULL);
   if (__pyx_t_1) {
 
-    /* "_ext/utils.pyx":212
+    /* "_ext/utils.pyx":207
  * cdef void csr_free(CSR* g) noexcept nogil:
  *     if g == NULL:
  *         return             # <<<<<<<<<<<<<<
@@ -17976,7 +17976,7 @@ static void __pyx_f_4_ext_5utils_csr_free(struct __pyx_t_4_ext_5utils_CSR *__pyx
 */
     goto __pyx_L0;
 
-    /* "_ext/utils.pyx":211
+    /* "_ext/utils.pyx":206
  * 
  * cdef void csr_free(CSR* g) noexcept nogil:
  *     if g == NULL:             # <<<<<<<<<<<<<<
@@ -17985,7 +17985,7 @@ static void __pyx_f_4_ext_5utils_csr_free(struct __pyx_t_4_ext_5utils_CSR *__pyx
 */
   }
 
-  /* "_ext/utils.pyx":213
+  /* "_ext/utils.pyx":208
  *     if g == NULL:
  *         return
  *     free(g.indptr)             # <<<<<<<<<<<<<<
@@ -17994,7 +17994,7 @@ static void __pyx_f_4_ext_5utils_csr_free(struct __pyx_t_4_ext_5utils_CSR *__pyx
 */
   free(__pyx_v_g->indptr);
 
-  /* "_ext/utils.pyx":214
+  /* "_ext/utils.pyx":209
  *         return
  *     free(g.indptr)
  *     free(g.indices)             # <<<<<<<<<<<<<<
@@ -18003,7 +18003,7 @@ static void __pyx_f_4_ext_5utils_csr_free(struct __pyx_t_4_ext_5utils_CSR *__pyx
 */
   free(__pyx_v_g->indices);
 
-  /* "_ext/utils.pyx":215
+  /* "_ext/utils.pyx":210
  *     free(g.indptr)
  *     free(g.indices)
  *     free(g.w)             # <<<<<<<<<<<<<<
@@ -18012,7 +18012,7 @@ static void __pyx_f_4_ext_5utils_csr_free(struct __pyx_t_4_ext_5utils_CSR *__pyx
 */
   free(__pyx_v_g->w);
 
-  /* "_ext/utils.pyx":216
+  /* "_ext/utils.pyx":211
  *     free(g.indices)
  *     free(g.w)
  *     free(g)             # <<<<<<<<<<<<<<
@@ -18021,7 +18021,7 @@ static void __pyx_f_4_ext_5utils_csr_free(struct __pyx_t_4_ext_5utils_CSR *__pyx
 */
   free(__pyx_v_g);
 
-  /* "_ext/utils.pyx":210
+  /* "_ext/utils.pyx":205
  * 
  * 
  * cdef void csr_free(CSR* g) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -18033,7 +18033,7 @@ static void __pyx_f_4_ext_5utils_csr_free(struct __pyx_t_4_ext_5utils_CSR *__pyx
   __pyx_L0:;
 }
 
-/* "_ext/utils.pyx":223
+/* "_ext/utils.pyx":218
  * # ---------------------------------------------------------------------------
  * 
  * cdef Scratch* scratch_alloc(int n) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -18047,7 +18047,7 @@ static struct __pyx_t_4_ext_5utils_Scratch *__pyx_f_4_ext_5utils_scratch_alloc(i
   int __pyx_t_1;
   int __pyx_t_2;
 
-  /* "_ext/utils.pyx":224
+  /* "_ext/utils.pyx":219
  * 
  * cdef Scratch* scratch_alloc(int n) noexcept nogil:
  *     cdef Scratch* s = <Scratch*> malloc(sizeof(Scratch))             # <<<<<<<<<<<<<<
@@ -18056,7 +18056,7 @@ static struct __pyx_t_4_ext_5utils_Scratch *__pyx_f_4_ext_5utils_scratch_alloc(i
 */
   __pyx_v_s = ((struct __pyx_t_4_ext_5utils_Scratch *)malloc((sizeof(struct __pyx_t_4_ext_5utils_Scratch))));
 
-  /* "_ext/utils.pyx":225
+  /* "_ext/utils.pyx":220
  * cdef Scratch* scratch_alloc(int n) noexcept nogil:
  *     cdef Scratch* s = <Scratch*> malloc(sizeof(Scratch))
  *     if s == NULL:             # <<<<<<<<<<<<<<
@@ -18066,7 +18066,7 @@ static struct __pyx_t_4_ext_5utils_Scratch *__pyx_f_4_ext_5utils_scratch_alloc(i
   __pyx_t_1 = (__pyx_v_s == NULL);
   if (__pyx_t_1) {
 
-    /* "_ext/utils.pyx":226
+    /* "_ext/utils.pyx":221
  *     cdef Scratch* s = <Scratch*> malloc(sizeof(Scratch))
  *     if s == NULL:
  *         return NULL             # <<<<<<<<<<<<<<
@@ -18076,7 +18076,7 @@ static struct __pyx_t_4_ext_5utils_Scratch *__pyx_f_4_ext_5utils_scratch_alloc(i
     __pyx_r = NULL;
     goto __pyx_L0;
 
-    /* "_ext/utils.pyx":225
+    /* "_ext/utils.pyx":220
  * cdef Scratch* scratch_alloc(int n) noexcept nogil:
  *     cdef Scratch* s = <Scratch*> malloc(sizeof(Scratch))
  *     if s == NULL:             # <<<<<<<<<<<<<<
@@ -18085,7 +18085,7 @@ static struct __pyx_t_4_ext_5utils_Scratch *__pyx_f_4_ext_5utils_scratch_alloc(i
 */
   }
 
-  /* "_ext/utils.pyx":228
+  /* "_ext/utils.pyx":223
  *         return NULL
  * 
  *     s.n = n             # <<<<<<<<<<<<<<
@@ -18094,7 +18094,7 @@ static struct __pyx_t_4_ext_5utils_Scratch *__pyx_f_4_ext_5utils_scratch_alloc(i
 */
   __pyx_v_s->n = __pyx_v_n;
 
-  /* "_ext/utils.pyx":229
+  /* "_ext/utils.pyx":224
  * 
  *     s.n = n
  *     s.dist = <double*> malloc(n * sizeof(double))             # <<<<<<<<<<<<<<
@@ -18103,7 +18103,7 @@ static struct __pyx_t_4_ext_5utils_Scratch *__pyx_f_4_ext_5utils_scratch_alloc(i
 */
   __pyx_v_s->dist = ((double *)malloc((__pyx_v_n * (sizeof(double)))));
 
-  /* "_ext/utils.pyx":230
+  /* "_ext/utils.pyx":225
  *     s.n = n
  *     s.dist = <double*> malloc(n * sizeof(double))
  *     s.heap = <int*> malloc(n * sizeof(int))             # <<<<<<<<<<<<<<
@@ -18112,7 +18112,7 @@ static struct __pyx_t_4_ext_5utils_Scratch *__pyx_f_4_ext_5utils_scratch_alloc(i
 */
   __pyx_v_s->heap = ((int *)malloc((__pyx_v_n * (sizeof(int)))));
 
-  /* "_ext/utils.pyx":231
+  /* "_ext/utils.pyx":226
  *     s.dist = <double*> malloc(n * sizeof(double))
  *     s.heap = <int*> malloc(n * sizeof(int))
  *     s.heap_pos = <int*> malloc(n * sizeof(int))             # <<<<<<<<<<<<<<
@@ -18121,7 +18121,7 @@ static struct __pyx_t_4_ext_5utils_Scratch *__pyx_f_4_ext_5utils_scratch_alloc(i
 */
   __pyx_v_s->heap_pos = ((int *)malloc((__pyx_v_n * (sizeof(int)))));
 
-  /* "_ext/utils.pyx":232
+  /* "_ext/utils.pyx":227
  *     s.heap = <int*> malloc(n * sizeof(int))
  *     s.heap_pos = <int*> malloc(n * sizeof(int))
  *     s.stack = <int*> malloc(n * sizeof(int))             # <<<<<<<<<<<<<<
@@ -18130,7 +18130,7 @@ static struct __pyx_t_4_ext_5utils_Scratch *__pyx_f_4_ext_5utils_scratch_alloc(i
 */
   __pyx_v_s->stack = ((int *)malloc((__pyx_v_n * (sizeof(int)))));
 
-  /* "_ext/utils.pyx":233
+  /* "_ext/utils.pyx":228
  *     s.heap_pos = <int*> malloc(n * sizeof(int))
  *     s.stack = <int*> malloc(n * sizeof(int))
  *     s.visited = <char*> malloc(n * sizeof(char))             # <<<<<<<<<<<<<<
@@ -18139,7 +18139,7 @@ static struct __pyx_t_4_ext_5utils_Scratch *__pyx_f_4_ext_5utils_scratch_alloc(i
 */
   __pyx_v_s->visited = ((char *)malloc((__pyx_v_n * (sizeof(char)))));
 
-  /* "_ext/utils.pyx":234
+  /* "_ext/utils.pyx":229
  *     s.stack = <int*> malloc(n * sizeof(int))
  *     s.visited = <char*> malloc(n * sizeof(char))
  *     s.in_K = <char*> malloc(n * sizeof(char))             # <<<<<<<<<<<<<<
@@ -18148,7 +18148,7 @@ static struct __pyx_t_4_ext_5utils_Scratch *__pyx_f_4_ext_5utils_scratch_alloc(i
 */
   __pyx_v_s->in_K = ((char *)malloc((__pyx_v_n * (sizeof(char)))));
 
-  /* "_ext/utils.pyx":235
+  /* "_ext/utils.pyx":230
  *     s.visited = <char*> malloc(n * sizeof(char))
  *     s.in_K = <char*> malloc(n * sizeof(char))
  *     s.comp_size = <long*> malloc(n * sizeof(long))             # <<<<<<<<<<<<<<
@@ -18157,7 +18157,7 @@ static struct __pyx_t_4_ext_5utils_Scratch *__pyx_f_4_ext_5utils_scratch_alloc(i
 */
   __pyx_v_s->comp_size = ((long *)malloc((__pyx_v_n * (sizeof(long)))));
 
-  /* "_ext/utils.pyx":237
+  /* "_ext/utils.pyx":232
  *     s.comp_size = <long*> malloc(n * sizeof(long))
  * 
  *     if (s.dist == NULL or s.heap == NULL or s.heap_pos == NULL or s.stack == NULL             # <<<<<<<<<<<<<<
@@ -18183,7 +18183,7 @@ static struct __pyx_t_4_ext_5utils_Scratch *__pyx_f_4_ext_5utils_scratch_alloc(i
     goto __pyx_L5_bool_binop_done;
   }
 
-  /* "_ext/utils.pyx":238
+  /* "_ext/utils.pyx":233
  * 
  *     if (s.dist == NULL or s.heap == NULL or s.heap_pos == NULL or s.stack == NULL
  *             or s.visited == NULL or s.in_K == NULL or s.comp_size == NULL):             # <<<<<<<<<<<<<<
@@ -18212,7 +18212,7 @@ static struct __pyx_t_4_ext_5utils_Scratch *__pyx_f_4_ext_5utils_scratch_alloc(i
   __pyx_t_1 = __pyx_t_2;
   __pyx_L5_bool_binop_done:;
 
-  /* "_ext/utils.pyx":237
+  /* "_ext/utils.pyx":232
  *     s.comp_size = <long*> malloc(n * sizeof(long))
  * 
  *     if (s.dist == NULL or s.heap == NULL or s.heap_pos == NULL or s.stack == NULL             # <<<<<<<<<<<<<<
@@ -18221,7 +18221,7 @@ static struct __pyx_t_4_ext_5utils_Scratch *__pyx_f_4_ext_5utils_scratch_alloc(i
 */
   if (__pyx_t_1) {
 
-    /* "_ext/utils.pyx":239
+    /* "_ext/utils.pyx":234
  *     if (s.dist == NULL or s.heap == NULL or s.heap_pos == NULL or s.stack == NULL
  *             or s.visited == NULL or s.in_K == NULL or s.comp_size == NULL):
  *         scratch_free(s)             # <<<<<<<<<<<<<<
@@ -18230,7 +18230,7 @@ static struct __pyx_t_4_ext_5utils_Scratch *__pyx_f_4_ext_5utils_scratch_alloc(i
 */
     __pyx_f_4_ext_5utils_scratch_free(__pyx_v_s);
 
-    /* "_ext/utils.pyx":240
+    /* "_ext/utils.pyx":235
  *             or s.visited == NULL or s.in_K == NULL or s.comp_size == NULL):
  *         scratch_free(s)
  *         return NULL             # <<<<<<<<<<<<<<
@@ -18240,7 +18240,7 @@ static struct __pyx_t_4_ext_5utils_Scratch *__pyx_f_4_ext_5utils_scratch_alloc(i
     __pyx_r = NULL;
     goto __pyx_L0;
 
-    /* "_ext/utils.pyx":237
+    /* "_ext/utils.pyx":232
  *     s.comp_size = <long*> malloc(n * sizeof(long))
  * 
  *     if (s.dist == NULL or s.heap == NULL or s.heap_pos == NULL or s.stack == NULL             # <<<<<<<<<<<<<<
@@ -18249,7 +18249,7 @@ static struct __pyx_t_4_ext_5utils_Scratch *__pyx_f_4_ext_5utils_scratch_alloc(i
 */
   }
 
-  /* "_ext/utils.pyx":242
+  /* "_ext/utils.pyx":237
  *         return NULL
  * 
  *     return s             # <<<<<<<<<<<<<<
@@ -18259,7 +18259,7 @@ static struct __pyx_t_4_ext_5utils_Scratch *__pyx_f_4_ext_5utils_scratch_alloc(i
   __pyx_r = __pyx_v_s;
   goto __pyx_L0;
 
-  /* "_ext/utils.pyx":223
+  /* "_ext/utils.pyx":218
  * # ---------------------------------------------------------------------------
  * 
  * cdef Scratch* scratch_alloc(int n) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -18272,7 +18272,7 @@ static struct __pyx_t_4_ext_5utils_Scratch *__pyx_f_4_ext_5utils_scratch_alloc(i
   return __pyx_r;
 }
 
-/* "_ext/utils.pyx":245
+/* "_ext/utils.pyx":240
  * 
  * 
  * cdef void scratch_free(Scratch* s) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -18283,7 +18283,7 @@ static struct __pyx_t_4_ext_5utils_Scratch *__pyx_f_4_ext_5utils_scratch_alloc(i
 static void __pyx_f_4_ext_5utils_scratch_free(struct __pyx_t_4_ext_5utils_Scratch *__pyx_v_s) {
   int __pyx_t_1;
 
-  /* "_ext/utils.pyx":246
+  /* "_ext/utils.pyx":241
  * 
  * cdef void scratch_free(Scratch* s) noexcept nogil:
  *     if s == NULL:             # <<<<<<<<<<<<<<
@@ -18293,7 +18293,7 @@ static void __pyx_f_4_ext_5utils_scratch_free(struct __pyx_t_4_ext_5utils_Scratc
   __pyx_t_1 = (__pyx_v_s == NULL);
   if (__pyx_t_1) {
 
-    /* "_ext/utils.pyx":247
+    /* "_ext/utils.pyx":242
  * cdef void scratch_free(Scratch* s) noexcept nogil:
  *     if s == NULL:
  *         return             # <<<<<<<<<<<<<<
@@ -18302,7 +18302,7 @@ static void __pyx_f_4_ext_5utils_scratch_free(struct __pyx_t_4_ext_5utils_Scratc
 */
     goto __pyx_L0;
 
-    /* "_ext/utils.pyx":246
+    /* "_ext/utils.pyx":241
  * 
  * cdef void scratch_free(Scratch* s) noexcept nogil:
  *     if s == NULL:             # <<<<<<<<<<<<<<
@@ -18311,7 +18311,7 @@ static void __pyx_f_4_ext_5utils_scratch_free(struct __pyx_t_4_ext_5utils_Scratc
 */
   }
 
-  /* "_ext/utils.pyx":248
+  /* "_ext/utils.pyx":243
  *     if s == NULL:
  *         return
  *     free(s.dist)             # <<<<<<<<<<<<<<
@@ -18320,7 +18320,7 @@ static void __pyx_f_4_ext_5utils_scratch_free(struct __pyx_t_4_ext_5utils_Scratc
 */
   free(__pyx_v_s->dist);
 
-  /* "_ext/utils.pyx":249
+  /* "_ext/utils.pyx":244
  *         return
  *     free(s.dist)
  *     free(s.heap)             # <<<<<<<<<<<<<<
@@ -18329,7 +18329,7 @@ static void __pyx_f_4_ext_5utils_scratch_free(struct __pyx_t_4_ext_5utils_Scratc
 */
   free(__pyx_v_s->heap);
 
-  /* "_ext/utils.pyx":250
+  /* "_ext/utils.pyx":245
  *     free(s.dist)
  *     free(s.heap)
  *     free(s.heap_pos)             # <<<<<<<<<<<<<<
@@ -18338,7 +18338,7 @@ static void __pyx_f_4_ext_5utils_scratch_free(struct __pyx_t_4_ext_5utils_Scratc
 */
   free(__pyx_v_s->heap_pos);
 
-  /* "_ext/utils.pyx":251
+  /* "_ext/utils.pyx":246
  *     free(s.heap)
  *     free(s.heap_pos)
  *     free(s.stack)             # <<<<<<<<<<<<<<
@@ -18347,7 +18347,7 @@ static void __pyx_f_4_ext_5utils_scratch_free(struct __pyx_t_4_ext_5utils_Scratc
 */
   free(__pyx_v_s->stack);
 
-  /* "_ext/utils.pyx":252
+  /* "_ext/utils.pyx":247
  *     free(s.heap_pos)
  *     free(s.stack)
  *     free(s.visited)             # <<<<<<<<<<<<<<
@@ -18356,7 +18356,7 @@ static void __pyx_f_4_ext_5utils_scratch_free(struct __pyx_t_4_ext_5utils_Scratc
 */
   free(__pyx_v_s->visited);
 
-  /* "_ext/utils.pyx":253
+  /* "_ext/utils.pyx":248
  *     free(s.stack)
  *     free(s.visited)
  *     free(s.in_K)             # <<<<<<<<<<<<<<
@@ -18365,7 +18365,7 @@ static void __pyx_f_4_ext_5utils_scratch_free(struct __pyx_t_4_ext_5utils_Scratc
 */
   free(__pyx_v_s->in_K);
 
-  /* "_ext/utils.pyx":254
+  /* "_ext/utils.pyx":249
  *     free(s.visited)
  *     free(s.in_K)
  *     free(s.comp_size)             # <<<<<<<<<<<<<<
@@ -18374,7 +18374,7 @@ static void __pyx_f_4_ext_5utils_scratch_free(struct __pyx_t_4_ext_5utils_Scratc
 */
   free(__pyx_v_s->comp_size);
 
-  /* "_ext/utils.pyx":255
+  /* "_ext/utils.pyx":250
  *     free(s.in_K)
  *     free(s.comp_size)
  *     free(s)             # <<<<<<<<<<<<<<
@@ -18383,7 +18383,7 @@ static void __pyx_f_4_ext_5utils_scratch_free(struct __pyx_t_4_ext_5utils_Scratc
 */
   free(__pyx_v_s);
 
-  /* "_ext/utils.pyx":245
+  /* "_ext/utils.pyx":240
  * 
  * 
  * cdef void scratch_free(Scratch* s) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -18395,7 +18395,7 @@ static void __pyx_f_4_ext_5utils_scratch_free(struct __pyx_t_4_ext_5utils_Scratc
   __pyx_L0:;
 }
 
-/* "_ext/utils.pyx":258
+/* "_ext/utils.pyx":253
  * 
  * 
  * cdef void mark_group(Scratch* s, int* K_indices, int k) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -18407,7 +18407,7 @@ static void __pyx_f_4_ext_5utils_mark_group(struct __pyx_t_4_ext_5utils_Scratch 
   int __pyx_v_i;
   int __pyx_t_1;
 
-  /* "_ext/utils.pyx":261
+  /* "_ext/utils.pyx":256
  *     """Refresh the membership mask for the candidate set K."""
  *     cdef int i
  *     memset(s.in_K, 0, s.n * sizeof(char))             # <<<<<<<<<<<<<<
@@ -18416,7 +18416,7 @@ static void __pyx_f_4_ext_5utils_mark_group(struct __pyx_t_4_ext_5utils_Scratch 
 */
   (void)(memset(__pyx_v_s->in_K, 0, (__pyx_v_s->n * (sizeof(char)))));
 
-  /* "_ext/utils.pyx":262
+  /* "_ext/utils.pyx":257
  *     cdef int i
  *     memset(s.in_K, 0, s.n * sizeof(char))
  *     for i from 0 <= i < k:             # <<<<<<<<<<<<<<
@@ -18426,7 +18426,7 @@ static void __pyx_f_4_ext_5utils_mark_group(struct __pyx_t_4_ext_5utils_Scratch 
   __pyx_t_1 = __pyx_v_k;
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_1; __pyx_v_i++) {
 
-    /* "_ext/utils.pyx":263
+    /* "_ext/utils.pyx":258
  *     memset(s.in_K, 0, s.n * sizeof(char))
  *     for i from 0 <= i < k:
  *         s.in_K[K_indices[i]] = 1             # <<<<<<<<<<<<<<
@@ -18436,7 +18436,7 @@ static void __pyx_f_4_ext_5utils_mark_group(struct __pyx_t_4_ext_5utils_Scratch 
     (__pyx_v_s->in_K[(__pyx_v_K_indices[__pyx_v_i])]) = 1;
   }
 
-  /* "_ext/utils.pyx":258
+  /* "_ext/utils.pyx":253
  * 
  * 
  * cdef void mark_group(Scratch* s, int* K_indices, int k) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -18447,7 +18447,7 @@ static void __pyx_f_4_ext_5utils_mark_group(struct __pyx_t_4_ext_5utils_Scratch 
   /* function exit code */
 }
 
-/* "_ext/utils.pyx":270
+/* "_ext/utils.pyx":265
  * # ---------------------------------------------------------------------------
  * 
  * cdef int csr_components(CSR* g, char* in_K, long* sizes, int* stack, char* visited) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -18470,7 +18470,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
   int __pyx_t_3;
   int __pyx_t_4;
 
-  /* "_ext/utils.pyx":276
+  /* "_ext/utils.pyx":271
  *     candidate, which is where the brute-force F cost came from.
  *     """
  *     cdef int n = g.n             # <<<<<<<<<<<<<<
@@ -18480,7 +18480,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
   __pyx_t_1 = __pyx_v_g->n;
   __pyx_v_n = __pyx_t_1;
 
-  /* "_ext/utils.pyx":278
+  /* "_ext/utils.pyx":273
  *     cdef int n = g.n
  *     cdef int i, v, u, e, top
  *     cdef int ncomp = 0             # <<<<<<<<<<<<<<
@@ -18489,7 +18489,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
 */
   __pyx_v_ncomp = 0;
 
-  /* "_ext/utils.pyx":281
+  /* "_ext/utils.pyx":276
  *     cdef long size
  * 
  *     memset(visited, 0, n * sizeof(char))             # <<<<<<<<<<<<<<
@@ -18498,7 +18498,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
 */
   (void)(memset(__pyx_v_visited, 0, (__pyx_v_n * (sizeof(char)))));
 
-  /* "_ext/utils.pyx":283
+  /* "_ext/utils.pyx":278
  *     memset(visited, 0, n * sizeof(char))
  * 
  *     for i from 0 <= i < n:             # <<<<<<<<<<<<<<
@@ -18508,7 +18508,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
   __pyx_t_1 = __pyx_v_n;
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_1; __pyx_v_i++) {
 
-    /* "_ext/utils.pyx":284
+    /* "_ext/utils.pyx":279
  * 
  *     for i from 0 <= i < n:
  *         if visited[i] or in_K[i]:             # <<<<<<<<<<<<<<
@@ -18526,7 +18526,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
     __pyx_L6_bool_binop_done:;
     if (__pyx_t_2) {
 
-      /* "_ext/utils.pyx":285
+      /* "_ext/utils.pyx":280
  *     for i from 0 <= i < n:
  *         if visited[i] or in_K[i]:
  *             continue             # <<<<<<<<<<<<<<
@@ -18535,7 +18535,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
 */
       goto __pyx_L3_continue;
 
-      /* "_ext/utils.pyx":284
+      /* "_ext/utils.pyx":279
  * 
  *     for i from 0 <= i < n:
  *         if visited[i] or in_K[i]:             # <<<<<<<<<<<<<<
@@ -18544,7 +18544,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
 */
     }
 
-    /* "_ext/utils.pyx":287
+    /* "_ext/utils.pyx":282
  *             continue
  * 
  *         size = 0             # <<<<<<<<<<<<<<
@@ -18553,7 +18553,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
 */
     __pyx_v_size = 0;
 
-    /* "_ext/utils.pyx":288
+    /* "_ext/utils.pyx":283
  * 
  *         size = 0
  *         top = 0             # <<<<<<<<<<<<<<
@@ -18562,7 +18562,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
 */
     __pyx_v_top = 0;
 
-    /* "_ext/utils.pyx":289
+    /* "_ext/utils.pyx":284
  *         size = 0
  *         top = 0
  *         stack[top] = i             # <<<<<<<<<<<<<<
@@ -18571,7 +18571,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
 */
     (__pyx_v_stack[__pyx_v_top]) = __pyx_v_i;
 
-    /* "_ext/utils.pyx":290
+    /* "_ext/utils.pyx":285
  *         top = 0
  *         stack[top] = i
  *         top += 1             # <<<<<<<<<<<<<<
@@ -18580,7 +18580,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
 */
     __pyx_v_top = (__pyx_v_top + 1);
 
-    /* "_ext/utils.pyx":291
+    /* "_ext/utils.pyx":286
  *         stack[top] = i
  *         top += 1
  *         visited[i] = 1             # <<<<<<<<<<<<<<
@@ -18589,7 +18589,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
 */
     (__pyx_v_visited[__pyx_v_i]) = 1;
 
-    /* "_ext/utils.pyx":293
+    /* "_ext/utils.pyx":288
  *         visited[i] = 1
  * 
  *         while top > 0:             # <<<<<<<<<<<<<<
@@ -18600,7 +18600,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
       __pyx_t_2 = (__pyx_v_top > 0);
       if (!__pyx_t_2) break;
 
-      /* "_ext/utils.pyx":294
+      /* "_ext/utils.pyx":289
  * 
  *         while top > 0:
  *             top -= 1             # <<<<<<<<<<<<<<
@@ -18609,7 +18609,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
 */
       __pyx_v_top = (__pyx_v_top - 1);
 
-      /* "_ext/utils.pyx":295
+      /* "_ext/utils.pyx":290
  *         while top > 0:
  *             top -= 1
  *             v = stack[top]             # <<<<<<<<<<<<<<
@@ -18618,7 +18618,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
 */
       __pyx_v_v = (__pyx_v_stack[__pyx_v_top]);
 
-      /* "_ext/utils.pyx":296
+      /* "_ext/utils.pyx":291
  *             top -= 1
  *             v = stack[top]
  *             size += 1             # <<<<<<<<<<<<<<
@@ -18627,7 +18627,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
 */
       __pyx_v_size = (__pyx_v_size + 1);
 
-      /* "_ext/utils.pyx":297
+      /* "_ext/utils.pyx":292
  *             v = stack[top]
  *             size += 1
  *             for e from g.indptr[v] <= e < g.indptr[v + 1]:             # <<<<<<<<<<<<<<
@@ -18637,7 +18637,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
       __pyx_t_4 = (__pyx_v_g->indptr[(__pyx_v_v + 1)]);
       for (__pyx_v_e = (__pyx_v_g->indptr[__pyx_v_v]); __pyx_v_e < __pyx_t_4; __pyx_v_e++) {
 
-        /* "_ext/utils.pyx":298
+        /* "_ext/utils.pyx":293
  *             size += 1
  *             for e from g.indptr[v] <= e < g.indptr[v + 1]:
  *                 u = g.indices[e]             # <<<<<<<<<<<<<<
@@ -18646,7 +18646,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
 */
         __pyx_v_u = (__pyx_v_g->indices[__pyx_v_e]);
 
-        /* "_ext/utils.pyx":299
+        /* "_ext/utils.pyx":294
  *             for e from g.indptr[v] <= e < g.indptr[v + 1]:
  *                 u = g.indices[e]
  *                 if in_K[u] or visited[u]:             # <<<<<<<<<<<<<<
@@ -18664,7 +18664,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
         __pyx_L13_bool_binop_done:;
         if (__pyx_t_2) {
 
-          /* "_ext/utils.pyx":300
+          /* "_ext/utils.pyx":295
  *                 u = g.indices[e]
  *                 if in_K[u] or visited[u]:
  *                     continue             # <<<<<<<<<<<<<<
@@ -18673,7 +18673,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
 */
           goto __pyx_L10_continue;
 
-          /* "_ext/utils.pyx":299
+          /* "_ext/utils.pyx":294
  *             for e from g.indptr[v] <= e < g.indptr[v + 1]:
  *                 u = g.indices[e]
  *                 if in_K[u] or visited[u]:             # <<<<<<<<<<<<<<
@@ -18682,7 +18682,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
 */
         }
 
-        /* "_ext/utils.pyx":301
+        /* "_ext/utils.pyx":296
  *                 if in_K[u] or visited[u]:
  *                     continue
  *                 visited[u] = 1             # <<<<<<<<<<<<<<
@@ -18691,7 +18691,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
 */
         (__pyx_v_visited[__pyx_v_u]) = 1;
 
-        /* "_ext/utils.pyx":302
+        /* "_ext/utils.pyx":297
  *                     continue
  *                 visited[u] = 1
  *                 stack[top] = u             # <<<<<<<<<<<<<<
@@ -18700,7 +18700,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
 */
         (__pyx_v_stack[__pyx_v_top]) = __pyx_v_u;
 
-        /* "_ext/utils.pyx":303
+        /* "_ext/utils.pyx":298
  *                 visited[u] = 1
  *                 stack[top] = u
  *                 top += 1             # <<<<<<<<<<<<<<
@@ -18712,7 +18712,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
       }
     }
 
-    /* "_ext/utils.pyx":305
+    /* "_ext/utils.pyx":300
  *                 top += 1
  * 
  *         sizes[ncomp] = size             # <<<<<<<<<<<<<<
@@ -18721,7 +18721,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
 */
     (__pyx_v_sizes[__pyx_v_ncomp]) = __pyx_v_size;
 
-    /* "_ext/utils.pyx":306
+    /* "_ext/utils.pyx":301
  * 
  *         sizes[ncomp] = size
  *         ncomp += 1             # <<<<<<<<<<<<<<
@@ -18732,7 +18732,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
     __pyx_L3_continue:;
   }
 
-  /* "_ext/utils.pyx":308
+  /* "_ext/utils.pyx":303
  *         ncomp += 1
  * 
  *     return ncomp             # <<<<<<<<<<<<<<
@@ -18742,7 +18742,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
   __pyx_r = __pyx_v_ncomp;
   goto __pyx_L0;
 
-  /* "_ext/utils.pyx":270
+  /* "_ext/utils.pyx":265
  * # ---------------------------------------------------------------------------
  * 
  * cdef int csr_components(CSR* g, char* in_K, long* sizes, int* stack, char* visited) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -18755,7 +18755,7 @@ static int __pyx_f_4_ext_5utils_csr_components(struct __pyx_t_4_ext_5utils_CSR *
   return __pyx_r;
 }
 
-/* "_ext/utils.pyx":311
+/* "_ext/utils.pyx":306
  * 
  * 
  * cdef void csr_bfs_row(CSR* g, int src, char* in_K, double* dist, int* queue) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -18775,7 +18775,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
   int __pyx_t_2;
   int __pyx_t_3;
 
-  /* "_ext/utils.pyx":313
+  /* "_ext/utils.pyx":308
  * cdef void csr_bfs_row(CSR* g, int src, char* in_K, double* dist, int* queue) noexcept nogil:
  *     """Hop distances from `src` over V \\ K; unreachable stays INFINITY."""
  *     cdef int n = g.n             # <<<<<<<<<<<<<<
@@ -18785,7 +18785,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
   __pyx_t_1 = __pyx_v_g->n;
   __pyx_v_n = __pyx_t_1;
 
-  /* "_ext/utils.pyx":315
+  /* "_ext/utils.pyx":310
  *     cdef int n = g.n
  *     cdef int i, v, u, e
  *     cdef int head = 0, tail = 0             # <<<<<<<<<<<<<<
@@ -18795,7 +18795,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
   __pyx_v_head = 0;
   __pyx_v_tail = 0;
 
-  /* "_ext/utils.pyx":317
+  /* "_ext/utils.pyx":312
  *     cdef int head = 0, tail = 0
  * 
  *     for i from 0 <= i < n:             # <<<<<<<<<<<<<<
@@ -18805,7 +18805,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
   __pyx_t_1 = __pyx_v_n;
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_1; __pyx_v_i++) {
 
-    /* "_ext/utils.pyx":318
+    /* "_ext/utils.pyx":313
  * 
  *     for i from 0 <= i < n:
  *         dist[i] = INFINITY             # <<<<<<<<<<<<<<
@@ -18815,7 +18815,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
     (__pyx_v_dist[__pyx_v_i]) = INFINITY;
   }
 
-  /* "_ext/utils.pyx":320
+  /* "_ext/utils.pyx":315
  *         dist[i] = INFINITY
  * 
  *     if in_K[src]:             # <<<<<<<<<<<<<<
@@ -18825,7 +18825,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
   __pyx_t_2 = ((__pyx_v_in_K[__pyx_v_src]) != 0);
   if (__pyx_t_2) {
 
-    /* "_ext/utils.pyx":321
+    /* "_ext/utils.pyx":316
  * 
  *     if in_K[src]:
  *         return             # <<<<<<<<<<<<<<
@@ -18834,7 +18834,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
 */
     goto __pyx_L0;
 
-    /* "_ext/utils.pyx":320
+    /* "_ext/utils.pyx":315
  *         dist[i] = INFINITY
  * 
  *     if in_K[src]:             # <<<<<<<<<<<<<<
@@ -18843,7 +18843,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
 */
   }
 
-  /* "_ext/utils.pyx":323
+  /* "_ext/utils.pyx":318
  *         return
  * 
  *     dist[src] = 0.             # <<<<<<<<<<<<<<
@@ -18852,7 +18852,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
 */
   (__pyx_v_dist[__pyx_v_src]) = 0.;
 
-  /* "_ext/utils.pyx":324
+  /* "_ext/utils.pyx":319
  * 
  *     dist[src] = 0.
  *     queue[tail] = src             # <<<<<<<<<<<<<<
@@ -18861,7 +18861,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
 */
   (__pyx_v_queue[__pyx_v_tail]) = __pyx_v_src;
 
-  /* "_ext/utils.pyx":325
+  /* "_ext/utils.pyx":320
  *     dist[src] = 0.
  *     queue[tail] = src
  *     tail += 1             # <<<<<<<<<<<<<<
@@ -18870,7 +18870,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
 */
   __pyx_v_tail = (__pyx_v_tail + 1);
 
-  /* "_ext/utils.pyx":327
+  /* "_ext/utils.pyx":322
  *     tail += 1
  * 
  *     while head < tail:             # <<<<<<<<<<<<<<
@@ -18881,7 +18881,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
     __pyx_t_2 = (__pyx_v_head < __pyx_v_tail);
     if (!__pyx_t_2) break;
 
-    /* "_ext/utils.pyx":328
+    /* "_ext/utils.pyx":323
  * 
  *     while head < tail:
  *         v = queue[head]             # <<<<<<<<<<<<<<
@@ -18890,7 +18890,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
 */
     __pyx_v_v = (__pyx_v_queue[__pyx_v_head]);
 
-    /* "_ext/utils.pyx":329
+    /* "_ext/utils.pyx":324
  *     while head < tail:
  *         v = queue[head]
  *         head += 1             # <<<<<<<<<<<<<<
@@ -18899,7 +18899,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
 */
     __pyx_v_head = (__pyx_v_head + 1);
 
-    /* "_ext/utils.pyx":330
+    /* "_ext/utils.pyx":325
  *         v = queue[head]
  *         head += 1
  *         for e from g.indptr[v] <= e < g.indptr[v + 1]:             # <<<<<<<<<<<<<<
@@ -18909,7 +18909,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
     __pyx_t_1 = (__pyx_v_g->indptr[(__pyx_v_v + 1)]);
     for (__pyx_v_e = (__pyx_v_g->indptr[__pyx_v_v]); __pyx_v_e < __pyx_t_1; __pyx_v_e++) {
 
-      /* "_ext/utils.pyx":331
+      /* "_ext/utils.pyx":326
  *         head += 1
  *         for e from g.indptr[v] <= e < g.indptr[v + 1]:
  *             u = g.indices[e]             # <<<<<<<<<<<<<<
@@ -18918,7 +18918,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
 */
       __pyx_v_u = (__pyx_v_g->indices[__pyx_v_e]);
 
-      /* "_ext/utils.pyx":332
+      /* "_ext/utils.pyx":327
  *         for e from g.indptr[v] <= e < g.indptr[v + 1]:
  *             u = g.indices[e]
  *             if in_K[u] or dist[u] != INFINITY:             # <<<<<<<<<<<<<<
@@ -18936,7 +18936,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
       __pyx_L11_bool_binop_done:;
       if (__pyx_t_2) {
 
-        /* "_ext/utils.pyx":333
+        /* "_ext/utils.pyx":328
  *             u = g.indices[e]
  *             if in_K[u] or dist[u] != INFINITY:
  *                 continue             # <<<<<<<<<<<<<<
@@ -18945,7 +18945,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
 */
         goto __pyx_L8_continue;
 
-        /* "_ext/utils.pyx":332
+        /* "_ext/utils.pyx":327
  *         for e from g.indptr[v] <= e < g.indptr[v + 1]:
  *             u = g.indices[e]
  *             if in_K[u] or dist[u] != INFINITY:             # <<<<<<<<<<<<<<
@@ -18954,7 +18954,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
 */
       }
 
-      /* "_ext/utils.pyx":334
+      /* "_ext/utils.pyx":329
  *             if in_K[u] or dist[u] != INFINITY:
  *                 continue
  *             dist[u] = dist[v] + 1.             # <<<<<<<<<<<<<<
@@ -18963,7 +18963,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
 */
       (__pyx_v_dist[__pyx_v_u]) = ((__pyx_v_dist[__pyx_v_v]) + 1.);
 
-      /* "_ext/utils.pyx":335
+      /* "_ext/utils.pyx":330
  *                 continue
  *             dist[u] = dist[v] + 1.
  *             queue[tail] = u             # <<<<<<<<<<<<<<
@@ -18972,7 +18972,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
 */
       (__pyx_v_queue[__pyx_v_tail]) = __pyx_v_u;
 
-      /* "_ext/utils.pyx":336
+      /* "_ext/utils.pyx":331
  *             dist[u] = dist[v] + 1.
  *             queue[tail] = u
  *             tail += 1             # <<<<<<<<<<<<<<
@@ -18984,7 +18984,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
     }
   }
 
-  /* "_ext/utils.pyx":311
+  /* "_ext/utils.pyx":306
  * 
  * 
  * cdef void csr_bfs_row(CSR* g, int src, char* in_K, double* dist, int* queue) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -18996,7 +18996,7 @@ static void __pyx_f_4_ext_5utils_csr_bfs_row(struct __pyx_t_4_ext_5utils_CSR *__
   __pyx_L0:;
 }
 
-/* "_ext/utils.pyx":339
+/* "_ext/utils.pyx":334
  * 
  * 
  * cdef inline void heap_swap(int* heap, int* heap_pos, int a, int b) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -19008,7 +19008,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_swap(int *__pyx_v_heap, int 
   int __pyx_v_va;
   int __pyx_v_vb;
 
-  /* "_ext/utils.pyx":340
+  /* "_ext/utils.pyx":335
  * 
  * cdef inline void heap_swap(int* heap, int* heap_pos, int a, int b) noexcept nogil:
  *     cdef int va = heap[a]             # <<<<<<<<<<<<<<
@@ -19017,7 +19017,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_swap(int *__pyx_v_heap, int 
 */
   __pyx_v_va = (__pyx_v_heap[__pyx_v_a]);
 
-  /* "_ext/utils.pyx":341
+  /* "_ext/utils.pyx":336
  * cdef inline void heap_swap(int* heap, int* heap_pos, int a, int b) noexcept nogil:
  *     cdef int va = heap[a]
  *     cdef int vb = heap[b]             # <<<<<<<<<<<<<<
@@ -19026,7 +19026,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_swap(int *__pyx_v_heap, int 
 */
   __pyx_v_vb = (__pyx_v_heap[__pyx_v_b]);
 
-  /* "_ext/utils.pyx":342
+  /* "_ext/utils.pyx":337
  *     cdef int va = heap[a]
  *     cdef int vb = heap[b]
  *     heap[a] = vb             # <<<<<<<<<<<<<<
@@ -19035,7 +19035,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_swap(int *__pyx_v_heap, int 
 */
   (__pyx_v_heap[__pyx_v_a]) = __pyx_v_vb;
 
-  /* "_ext/utils.pyx":343
+  /* "_ext/utils.pyx":338
  *     cdef int vb = heap[b]
  *     heap[a] = vb
  *     heap[b] = va             # <<<<<<<<<<<<<<
@@ -19044,7 +19044,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_swap(int *__pyx_v_heap, int 
 */
   (__pyx_v_heap[__pyx_v_b]) = __pyx_v_va;
 
-  /* "_ext/utils.pyx":344
+  /* "_ext/utils.pyx":339
  *     heap[a] = vb
  *     heap[b] = va
  *     heap_pos[vb] = a             # <<<<<<<<<<<<<<
@@ -19053,7 +19053,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_swap(int *__pyx_v_heap, int 
 */
   (__pyx_v_heap_pos[__pyx_v_vb]) = __pyx_v_a;
 
-  /* "_ext/utils.pyx":345
+  /* "_ext/utils.pyx":340
  *     heap[b] = va
  *     heap_pos[vb] = a
  *     heap_pos[va] = b             # <<<<<<<<<<<<<<
@@ -19062,7 +19062,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_swap(int *__pyx_v_heap, int 
 */
   (__pyx_v_heap_pos[__pyx_v_va]) = __pyx_v_b;
 
-  /* "_ext/utils.pyx":339
+  /* "_ext/utils.pyx":334
  * 
  * 
  * cdef inline void heap_swap(int* heap, int* heap_pos, int a, int b) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -19073,7 +19073,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_swap(int *__pyx_v_heap, int 
   /* function exit code */
 }
 
-/* "_ext/utils.pyx":348
+/* "_ext/utils.pyx":343
  * 
  * 
  * cdef inline void heap_up(int* heap, int* heap_pos, double* dist, int idx) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -19085,7 +19085,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_up(int *__pyx_v_heap, int *_
   int __pyx_v_parent;
   int __pyx_t_1;
 
-  /* "_ext/utils.pyx":350
+  /* "_ext/utils.pyx":345
  * cdef inline void heap_up(int* heap, int* heap_pos, double* dist, int idx) noexcept nogil:
  *     cdef int parent
  *     while idx > 0:             # <<<<<<<<<<<<<<
@@ -19096,7 +19096,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_up(int *__pyx_v_heap, int *_
     __pyx_t_1 = (__pyx_v_idx > 0);
     if (!__pyx_t_1) break;
 
-    /* "_ext/utils.pyx":351
+    /* "_ext/utils.pyx":346
  *     cdef int parent
  *     while idx > 0:
  *         parent = (idx - 1) // 2             # <<<<<<<<<<<<<<
@@ -19105,7 +19105,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_up(int *__pyx_v_heap, int *_
 */
     __pyx_v_parent = ((__pyx_v_idx - 1) / 2);
 
-    /* "_ext/utils.pyx":352
+    /* "_ext/utils.pyx":347
  *     while idx > 0:
  *         parent = (idx - 1) // 2
  *         if dist[heap[parent]] <= dist[heap[idx]]:             # <<<<<<<<<<<<<<
@@ -19115,7 +19115,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_up(int *__pyx_v_heap, int *_
     __pyx_t_1 = ((__pyx_v_dist[(__pyx_v_heap[__pyx_v_parent])]) <= (__pyx_v_dist[(__pyx_v_heap[__pyx_v_idx])]));
     if (__pyx_t_1) {
 
-      /* "_ext/utils.pyx":353
+      /* "_ext/utils.pyx":348
  *         parent = (idx - 1) // 2
  *         if dist[heap[parent]] <= dist[heap[idx]]:
  *             break             # <<<<<<<<<<<<<<
@@ -19124,7 +19124,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_up(int *__pyx_v_heap, int *_
 */
       goto __pyx_L4_break;
 
-      /* "_ext/utils.pyx":352
+      /* "_ext/utils.pyx":347
  *     while idx > 0:
  *         parent = (idx - 1) // 2
  *         if dist[heap[parent]] <= dist[heap[idx]]:             # <<<<<<<<<<<<<<
@@ -19133,7 +19133,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_up(int *__pyx_v_heap, int *_
 */
     }
 
-    /* "_ext/utils.pyx":354
+    /* "_ext/utils.pyx":349
  *         if dist[heap[parent]] <= dist[heap[idx]]:
  *             break
  *         heap_swap(heap, heap_pos, parent, idx)             # <<<<<<<<<<<<<<
@@ -19142,7 +19142,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_up(int *__pyx_v_heap, int *_
 */
     __pyx_f_4_ext_5utils_heap_swap(__pyx_v_heap, __pyx_v_heap_pos, __pyx_v_parent, __pyx_v_idx);
 
-    /* "_ext/utils.pyx":355
+    /* "_ext/utils.pyx":350
  *             break
  *         heap_swap(heap, heap_pos, parent, idx)
  *         idx = parent             # <<<<<<<<<<<<<<
@@ -19153,7 +19153,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_up(int *__pyx_v_heap, int *_
   }
   __pyx_L4_break:;
 
-  /* "_ext/utils.pyx":348
+  /* "_ext/utils.pyx":343
  * 
  * 
  * cdef inline void heap_up(int* heap, int* heap_pos, double* dist, int idx) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -19164,7 +19164,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_up(int *__pyx_v_heap, int *_
   /* function exit code */
 }
 
-/* "_ext/utils.pyx":358
+/* "_ext/utils.pyx":353
  * 
  * 
  * cdef inline void heap_down(int* heap, int* heap_pos, double* dist, int idx, int size) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -19179,7 +19179,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_down(int *__pyx_v_heap, int 
   int __pyx_t_1;
   int __pyx_t_2;
 
-  /* "_ext/utils.pyx":360
+  /* "_ext/utils.pyx":355
  * cdef inline void heap_down(int* heap, int* heap_pos, double* dist, int idx, int size) noexcept nogil:
  *     cdef int left, right, smallest
  *     while True:             # <<<<<<<<<<<<<<
@@ -19188,7 +19188,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_down(int *__pyx_v_heap, int 
 */
   while (1) {
 
-    /* "_ext/utils.pyx":361
+    /* "_ext/utils.pyx":356
  *     cdef int left, right, smallest
  *     while True:
  *         left = 2 * idx + 1             # <<<<<<<<<<<<<<
@@ -19197,7 +19197,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_down(int *__pyx_v_heap, int 
 */
     __pyx_v_left = ((2 * __pyx_v_idx) + 1);
 
-    /* "_ext/utils.pyx":362
+    /* "_ext/utils.pyx":357
  *     while True:
  *         left = 2 * idx + 1
  *         right = left + 1             # <<<<<<<<<<<<<<
@@ -19206,7 +19206,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_down(int *__pyx_v_heap, int 
 */
     __pyx_v_right = (__pyx_v_left + 1);
 
-    /* "_ext/utils.pyx":363
+    /* "_ext/utils.pyx":358
  *         left = 2 * idx + 1
  *         right = left + 1
  *         smallest = idx             # <<<<<<<<<<<<<<
@@ -19215,7 +19215,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_down(int *__pyx_v_heap, int 
 */
     __pyx_v_smallest = __pyx_v_idx;
 
-    /* "_ext/utils.pyx":364
+    /* "_ext/utils.pyx":359
  *         right = left + 1
  *         smallest = idx
  *         if left < size and dist[heap[left]] < dist[heap[smallest]]:             # <<<<<<<<<<<<<<
@@ -19233,7 +19233,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_down(int *__pyx_v_heap, int 
     __pyx_L6_bool_binop_done:;
     if (__pyx_t_1) {
 
-      /* "_ext/utils.pyx":365
+      /* "_ext/utils.pyx":360
  *         smallest = idx
  *         if left < size and dist[heap[left]] < dist[heap[smallest]]:
  *             smallest = left             # <<<<<<<<<<<<<<
@@ -19242,7 +19242,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_down(int *__pyx_v_heap, int 
 */
       __pyx_v_smallest = __pyx_v_left;
 
-      /* "_ext/utils.pyx":364
+      /* "_ext/utils.pyx":359
  *         right = left + 1
  *         smallest = idx
  *         if left < size and dist[heap[left]] < dist[heap[smallest]]:             # <<<<<<<<<<<<<<
@@ -19251,7 +19251,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_down(int *__pyx_v_heap, int 
 */
     }
 
-    /* "_ext/utils.pyx":366
+    /* "_ext/utils.pyx":361
  *         if left < size and dist[heap[left]] < dist[heap[smallest]]:
  *             smallest = left
  *         if right < size and dist[heap[right]] < dist[heap[smallest]]:             # <<<<<<<<<<<<<<
@@ -19269,7 +19269,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_down(int *__pyx_v_heap, int 
     __pyx_L9_bool_binop_done:;
     if (__pyx_t_1) {
 
-      /* "_ext/utils.pyx":367
+      /* "_ext/utils.pyx":362
  *             smallest = left
  *         if right < size and dist[heap[right]] < dist[heap[smallest]]:
  *             smallest = right             # <<<<<<<<<<<<<<
@@ -19278,7 +19278,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_down(int *__pyx_v_heap, int 
 */
       __pyx_v_smallest = __pyx_v_right;
 
-      /* "_ext/utils.pyx":366
+      /* "_ext/utils.pyx":361
  *         if left < size and dist[heap[left]] < dist[heap[smallest]]:
  *             smallest = left
  *         if right < size and dist[heap[right]] < dist[heap[smallest]]:             # <<<<<<<<<<<<<<
@@ -19287,7 +19287,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_down(int *__pyx_v_heap, int 
 */
     }
 
-    /* "_ext/utils.pyx":368
+    /* "_ext/utils.pyx":363
  *         if right < size and dist[heap[right]] < dist[heap[smallest]]:
  *             smallest = right
  *         if smallest == idx:             # <<<<<<<<<<<<<<
@@ -19297,7 +19297,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_down(int *__pyx_v_heap, int 
     __pyx_t_1 = (__pyx_v_smallest == __pyx_v_idx);
     if (__pyx_t_1) {
 
-      /* "_ext/utils.pyx":369
+      /* "_ext/utils.pyx":364
  *             smallest = right
  *         if smallest == idx:
  *             break             # <<<<<<<<<<<<<<
@@ -19306,7 +19306,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_down(int *__pyx_v_heap, int 
 */
       goto __pyx_L4_break;
 
-      /* "_ext/utils.pyx":368
+      /* "_ext/utils.pyx":363
  *         if right < size and dist[heap[right]] < dist[heap[smallest]]:
  *             smallest = right
  *         if smallest == idx:             # <<<<<<<<<<<<<<
@@ -19315,7 +19315,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_down(int *__pyx_v_heap, int 
 */
     }
 
-    /* "_ext/utils.pyx":370
+    /* "_ext/utils.pyx":365
  *         if smallest == idx:
  *             break
  *         heap_swap(heap, heap_pos, smallest, idx)             # <<<<<<<<<<<<<<
@@ -19324,7 +19324,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_down(int *__pyx_v_heap, int 
 */
     __pyx_f_4_ext_5utils_heap_swap(__pyx_v_heap, __pyx_v_heap_pos, __pyx_v_smallest, __pyx_v_idx);
 
-    /* "_ext/utils.pyx":371
+    /* "_ext/utils.pyx":366
  *             break
  *         heap_swap(heap, heap_pos, smallest, idx)
  *         idx = smallest             # <<<<<<<<<<<<<<
@@ -19335,7 +19335,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_down(int *__pyx_v_heap, int 
   }
   __pyx_L4_break:;
 
-  /* "_ext/utils.pyx":358
+  /* "_ext/utils.pyx":353
  * 
  * 
  * cdef inline void heap_down(int* heap, int* heap_pos, double* dist, int idx, int size) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -19346,7 +19346,7 @@ static CYTHON_INLINE void __pyx_f_4_ext_5utils_heap_down(int *__pyx_v_heap, int 
   /* function exit code */
 }
 
-/* "_ext/utils.pyx":374
+/* "_ext/utils.pyx":369
  * 
  * 
  * cdef void csr_dijkstra_row(CSR* g, int src, char* in_K, double* dist, int* heap, int* heap_pos) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -19365,7 +19365,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
   int __pyx_t_1;
   int __pyx_t_2;
 
-  /* "_ext/utils.pyx":380
+  /* "_ext/utils.pyx":375
  *     at load time), so a settled vertex is never relaxed again.
  *     """
  *     cdef int n = g.n             # <<<<<<<<<<<<<<
@@ -19375,7 +19375,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
   __pyx_t_1 = __pyx_v_g->n;
   __pyx_v_n = __pyx_t_1;
 
-  /* "_ext/utils.pyx":382
+  /* "_ext/utils.pyx":377
  *     cdef int n = g.n
  *     cdef int i, v, u, e
  *     cdef int size = 0             # <<<<<<<<<<<<<<
@@ -19384,7 +19384,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
   __pyx_v_size = 0;
 
-  /* "_ext/utils.pyx":385
+  /* "_ext/utils.pyx":380
  *     cdef double nd
  * 
  *     for i from 0 <= i < n:             # <<<<<<<<<<<<<<
@@ -19394,7 +19394,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
   __pyx_t_1 = __pyx_v_n;
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_1; __pyx_v_i++) {
 
-    /* "_ext/utils.pyx":386
+    /* "_ext/utils.pyx":381
  * 
  *     for i from 0 <= i < n:
  *         dist[i] = INFINITY             # <<<<<<<<<<<<<<
@@ -19403,7 +19403,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
     (__pyx_v_dist[__pyx_v_i]) = INFINITY;
 
-    /* "_ext/utils.pyx":387
+    /* "_ext/utils.pyx":382
  *     for i from 0 <= i < n:
  *         dist[i] = INFINITY
  *         heap_pos[i] = -1             # <<<<<<<<<<<<<<
@@ -19413,7 +19413,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
     (__pyx_v_heap_pos[__pyx_v_i]) = -1;
   }
 
-  /* "_ext/utils.pyx":389
+  /* "_ext/utils.pyx":384
  *         heap_pos[i] = -1
  * 
  *     if in_K[src]:             # <<<<<<<<<<<<<<
@@ -19423,7 +19423,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
   __pyx_t_2 = ((__pyx_v_in_K[__pyx_v_src]) != 0);
   if (__pyx_t_2) {
 
-    /* "_ext/utils.pyx":390
+    /* "_ext/utils.pyx":385
  * 
  *     if in_K[src]:
  *         return             # <<<<<<<<<<<<<<
@@ -19432,7 +19432,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
     goto __pyx_L0;
 
-    /* "_ext/utils.pyx":389
+    /* "_ext/utils.pyx":384
  *         heap_pos[i] = -1
  * 
  *     if in_K[src]:             # <<<<<<<<<<<<<<
@@ -19441,7 +19441,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
   }
 
-  /* "_ext/utils.pyx":392
+  /* "_ext/utils.pyx":387
  *         return
  * 
  *     dist[src] = 0.             # <<<<<<<<<<<<<<
@@ -19450,7 +19450,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
   (__pyx_v_dist[__pyx_v_src]) = 0.;
 
-  /* "_ext/utils.pyx":393
+  /* "_ext/utils.pyx":388
  * 
  *     dist[src] = 0.
  *     heap[0] = src             # <<<<<<<<<<<<<<
@@ -19459,7 +19459,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
   (__pyx_v_heap[0]) = __pyx_v_src;
 
-  /* "_ext/utils.pyx":394
+  /* "_ext/utils.pyx":389
  *     dist[src] = 0.
  *     heap[0] = src
  *     heap_pos[src] = 0             # <<<<<<<<<<<<<<
@@ -19468,7 +19468,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
   (__pyx_v_heap_pos[__pyx_v_src]) = 0;
 
-  /* "_ext/utils.pyx":395
+  /* "_ext/utils.pyx":390
  *     heap[0] = src
  *     heap_pos[src] = 0
  *     size = 1             # <<<<<<<<<<<<<<
@@ -19477,7 +19477,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
   __pyx_v_size = 1;
 
-  /* "_ext/utils.pyx":397
+  /* "_ext/utils.pyx":392
  *     size = 1
  * 
  *     while size > 0:             # <<<<<<<<<<<<<<
@@ -19488,7 +19488,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
     __pyx_t_2 = (__pyx_v_size > 0);
     if (!__pyx_t_2) break;
 
-    /* "_ext/utils.pyx":398
+    /* "_ext/utils.pyx":393
  * 
  *     while size > 0:
  *         v = heap[0]             # <<<<<<<<<<<<<<
@@ -19497,7 +19497,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
     __pyx_v_v = (__pyx_v_heap[0]);
 
-    /* "_ext/utils.pyx":399
+    /* "_ext/utils.pyx":394
  *     while size > 0:
  *         v = heap[0]
  *         heap_pos[v] = -1             # <<<<<<<<<<<<<<
@@ -19506,7 +19506,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
     (__pyx_v_heap_pos[__pyx_v_v]) = -1;
 
-    /* "_ext/utils.pyx":400
+    /* "_ext/utils.pyx":395
  *         v = heap[0]
  *         heap_pos[v] = -1
  *         size -= 1             # <<<<<<<<<<<<<<
@@ -19515,7 +19515,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
     __pyx_v_size = (__pyx_v_size - 1);
 
-    /* "_ext/utils.pyx":401
+    /* "_ext/utils.pyx":396
  *         heap_pos[v] = -1
  *         size -= 1
  *         if size > 0:             # <<<<<<<<<<<<<<
@@ -19525,7 +19525,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
     __pyx_t_2 = (__pyx_v_size > 0);
     if (__pyx_t_2) {
 
-      /* "_ext/utils.pyx":402
+      /* "_ext/utils.pyx":397
  *         size -= 1
  *         if size > 0:
  *             heap[0] = heap[size]             # <<<<<<<<<<<<<<
@@ -19534,7 +19534,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
       (__pyx_v_heap[0]) = (__pyx_v_heap[__pyx_v_size]);
 
-      /* "_ext/utils.pyx":403
+      /* "_ext/utils.pyx":398
  *         if size > 0:
  *             heap[0] = heap[size]
  *             heap_pos[heap[0]] = 0             # <<<<<<<<<<<<<<
@@ -19543,7 +19543,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
       (__pyx_v_heap_pos[(__pyx_v_heap[0])]) = 0;
 
-      /* "_ext/utils.pyx":404
+      /* "_ext/utils.pyx":399
  *             heap[0] = heap[size]
  *             heap_pos[heap[0]] = 0
  *             heap_down(heap, heap_pos, dist, 0, size)             # <<<<<<<<<<<<<<
@@ -19552,7 +19552,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
       __pyx_f_4_ext_5utils_heap_down(__pyx_v_heap, __pyx_v_heap_pos, __pyx_v_dist, 0, __pyx_v_size);
 
-      /* "_ext/utils.pyx":401
+      /* "_ext/utils.pyx":396
  *         heap_pos[v] = -1
  *         size -= 1
  *         if size > 0:             # <<<<<<<<<<<<<<
@@ -19561,7 +19561,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
     }
 
-    /* "_ext/utils.pyx":406
+    /* "_ext/utils.pyx":401
  *             heap_down(heap, heap_pos, dist, 0, size)
  * 
  *         for e from g.indptr[v] <= e < g.indptr[v + 1]:             # <<<<<<<<<<<<<<
@@ -19571,7 +19571,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
     __pyx_t_1 = (__pyx_v_g->indptr[(__pyx_v_v + 1)]);
     for (__pyx_v_e = (__pyx_v_g->indptr[__pyx_v_v]); __pyx_v_e < __pyx_t_1; __pyx_v_e++) {
 
-      /* "_ext/utils.pyx":407
+      /* "_ext/utils.pyx":402
  * 
  *         for e from g.indptr[v] <= e < g.indptr[v + 1]:
  *             u = g.indices[e]             # <<<<<<<<<<<<<<
@@ -19580,7 +19580,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
       __pyx_v_u = (__pyx_v_g->indices[__pyx_v_e]);
 
-      /* "_ext/utils.pyx":408
+      /* "_ext/utils.pyx":403
  *         for e from g.indptr[v] <= e < g.indptr[v + 1]:
  *             u = g.indices[e]
  *             if in_K[u]:             # <<<<<<<<<<<<<<
@@ -19590,7 +19590,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
       __pyx_t_2 = ((__pyx_v_in_K[__pyx_v_u]) != 0);
       if (__pyx_t_2) {
 
-        /* "_ext/utils.pyx":409
+        /* "_ext/utils.pyx":404
  *             u = g.indices[e]
  *             if in_K[u]:
  *                 continue             # <<<<<<<<<<<<<<
@@ -19599,7 +19599,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
         goto __pyx_L9_continue;
 
-        /* "_ext/utils.pyx":408
+        /* "_ext/utils.pyx":403
  *         for e from g.indptr[v] <= e < g.indptr[v + 1]:
  *             u = g.indices[e]
  *             if in_K[u]:             # <<<<<<<<<<<<<<
@@ -19608,7 +19608,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
       }
 
-      /* "_ext/utils.pyx":410
+      /* "_ext/utils.pyx":405
  *             if in_K[u]:
  *                 continue
  *             nd = dist[v] + g.w[e]             # <<<<<<<<<<<<<<
@@ -19617,7 +19617,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
       __pyx_v_nd = ((__pyx_v_dist[__pyx_v_v]) + (__pyx_v_g->w[__pyx_v_e]));
 
-      /* "_ext/utils.pyx":411
+      /* "_ext/utils.pyx":406
  *                 continue
  *             nd = dist[v] + g.w[e]
  *             if nd < dist[u]:             # <<<<<<<<<<<<<<
@@ -19627,7 +19627,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
       __pyx_t_2 = (__pyx_v_nd < (__pyx_v_dist[__pyx_v_u]));
       if (__pyx_t_2) {
 
-        /* "_ext/utils.pyx":412
+        /* "_ext/utils.pyx":407
  *             nd = dist[v] + g.w[e]
  *             if nd < dist[u]:
  *                 dist[u] = nd             # <<<<<<<<<<<<<<
@@ -19636,7 +19636,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
         (__pyx_v_dist[__pyx_v_u]) = __pyx_v_nd;
 
-        /* "_ext/utils.pyx":413
+        /* "_ext/utils.pyx":408
  *             if nd < dist[u]:
  *                 dist[u] = nd
  *                 if heap_pos[u] == -1:             # <<<<<<<<<<<<<<
@@ -19646,7 +19646,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
         __pyx_t_2 = ((__pyx_v_heap_pos[__pyx_v_u]) == -1L);
         if (__pyx_t_2) {
 
-          /* "_ext/utils.pyx":414
+          /* "_ext/utils.pyx":409
  *                 dist[u] = nd
  *                 if heap_pos[u] == -1:
  *                     heap[size] = u             # <<<<<<<<<<<<<<
@@ -19655,7 +19655,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
           (__pyx_v_heap[__pyx_v_size]) = __pyx_v_u;
 
-          /* "_ext/utils.pyx":415
+          /* "_ext/utils.pyx":410
  *                 if heap_pos[u] == -1:
  *                     heap[size] = u
  *                     heap_pos[u] = size             # <<<<<<<<<<<<<<
@@ -19664,7 +19664,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
           (__pyx_v_heap_pos[__pyx_v_u]) = __pyx_v_size;
 
-          /* "_ext/utils.pyx":416
+          /* "_ext/utils.pyx":411
  *                     heap[size] = u
  *                     heap_pos[u] = size
  *                     size += 1             # <<<<<<<<<<<<<<
@@ -19673,7 +19673,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
           __pyx_v_size = (__pyx_v_size + 1);
 
-          /* "_ext/utils.pyx":417
+          /* "_ext/utils.pyx":412
  *                     heap_pos[u] = size
  *                     size += 1
  *                     heap_up(heap, heap_pos, dist, size - 1)             # <<<<<<<<<<<<<<
@@ -19682,7 +19682,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
 */
           __pyx_f_4_ext_5utils_heap_up(__pyx_v_heap, __pyx_v_heap_pos, __pyx_v_dist, (__pyx_v_size - 1));
 
-          /* "_ext/utils.pyx":413
+          /* "_ext/utils.pyx":408
  *             if nd < dist[u]:
  *                 dist[u] = nd
  *                 if heap_pos[u] == -1:             # <<<<<<<<<<<<<<
@@ -19692,7 +19692,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
           goto __pyx_L13;
         }
 
-        /* "_ext/utils.pyx":419
+        /* "_ext/utils.pyx":414
  *                     heap_up(heap, heap_pos, dist, size - 1)
  *                 else:
  *                     heap_up(heap, heap_pos, dist, heap_pos[u])             # <<<<<<<<<<<<<<
@@ -19702,7 +19702,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
         }
         __pyx_L13:;
 
-        /* "_ext/utils.pyx":411
+        /* "_ext/utils.pyx":406
  *                 continue
  *             nd = dist[v] + g.w[e]
  *             if nd < dist[u]:             # <<<<<<<<<<<<<<
@@ -19714,7 +19714,7 @@ static void __pyx_f_4_ext_5utils_csr_dijkstra_row(struct __pyx_t_4_ext_5utils_CS
     }
   }
 
-  /* "_ext/utils.pyx":374
+  /* "_ext/utils.pyx":369
  * 
  * 
  * cdef void csr_dijkstra_row(CSR* g, int src, char* in_K, double* dist, int* heap, int* heap_pos) noexcept nogil:             # <<<<<<<<<<<<<<

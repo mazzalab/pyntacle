@@ -2,7 +2,6 @@ import pandas as pd
 import igraph as ig
 import numpy as np
 from itertools import repeat
-# from numba import prange
 import csv
 import matplotlib.pyplot as plt
 import warnings
@@ -10,7 +9,7 @@ import math
 
 from generate import *
 
-###### Read Adjacency Matrix ######
+# ---- adjacency matrix ----
 
 def import_adjMatrix(file, sep=None, header=True, directed=False, weight=False):
     
@@ -24,7 +23,6 @@ def import_adjMatrix(file, sep=None, header=True, directed=False, weight=False):
     
     if directed:
         mode="directed"
-        #raise TypeError("ERROR: Your graph is directed !")
     else:
         mode="undirected"
         
@@ -41,16 +39,15 @@ def import_adjMatrix(file, sep=None, header=True, directed=False, weight=False):
     return grafo
 
 
-###### Read Edge List ######
+# ---- edge list ----
 
 def edgeGraph(df_edge, weight, directed=False):
 
     grafo = ig.Graph.TupleList(df_edge.values.tolist(), directed=directed, weights=weight)
 
-    # Self-loops and parallel edges both corrupt the adjacency-matrix view the
-    # Cython engine works on (a loop lands on the diagonal, a duplicate makes the
-    # cell read as a weight of 2). Collapse them for directed graphs too, which
-    # the previous `if not directed` guard skipped entirely.
+    # Self-loops and parallel edges would corrupt the adjacency view of the
+    # compiled kernels (a loop on the diagonal, a duplicate read as weight 2):
+    # collapse them, directed graphs included.
     loops = sum(1 for e in grafo.es if e.source == e.target)
     duplicates = grafo.ecount() - len(set(
         (min(e.tuple), max(e.tuple)) for e in grafo.es if e.source != e.target))
@@ -86,7 +83,7 @@ def import_edgeList(file, sep= None, header=True, directed=False, weight=False):
     return grafo
 
 
-###### Read SIF File ######
+# ---- SIF ----
 
 def import_sif(file, sep= None, header=True, directed=False, weight=False):
 
@@ -110,7 +107,7 @@ def import_sif(file, sep= None, header=True, directed=False, weight=False):
     return grafo
 
 
-###### Read DOT File ######
+# ---- DOT ----
 
 def import_dot(file, directed=False, weight=False):
     import pygraphviz as gdot
@@ -135,25 +132,22 @@ def import_dot(file, directed=False, weight=False):
         grafo.es["weight"] = weights
         grafo.es["width"] = grafo.es["weight"]
 
-    #new
     names=[]
     for node in gviz.nodes():
         names.append(node.attr['name'])
     
-    # `name` is mandatory downstream (vs.find(name=...) is used everywhere), so
-    # fall back to the DOT node ids rather than leaving the attribute unset.
+    # every vertex needs a name: fall back to the DOT node ids
     if None in names:
         names = [str(node) for node in gviz.nodes()]
     grafo.vs["label"] = names
     grafo.vs["name"] = names
 
-    # print("QUI")
     return grafo
 
 
 
 
-###### dummy functions
+# ---- helpers ----
 
 def plain_copy(grafo, directed=None, with_weights=True):
     """Plain igraph copy of ``grafo``, vertex count included.
@@ -358,7 +352,6 @@ def summary_to_df(grafo, dir, g1, g2):
         
     edges_listTouple=grafo.get_edgelist()
     components=grafo.clusters(mode='weak')
-    #vertex=components.giant().vs["name"]
     vertex=grafo.vs["name"]
     
     # Get the indices of the nodes in the largest connected component
@@ -390,7 +383,7 @@ def summary_to_df(grafo, dir, g1, g2):
 
 def extract_and_df(grafo,ncomponents=False):
 
-    components=grafo.clusters(mode='weak') #
+    components=grafo.clusters(mode='weak')
 
     if len(components)<=abs(int(ncomponents)): 
         print(f"Your graph has {len(components)} components")
@@ -403,13 +396,9 @@ def extract_and_df(grafo,ncomponents=False):
         # Sort the clusters by size in descending order
         sorted_clusters = sorted(cluster_sizes, key=lambda x: x[1], reverse=True)
 
-        # Now you can retrieve the first N largest clusters
         largest_clusters = sorted_clusters[:int(ncomponents)]
 
-        # If you want to get the actual vertex idsname for these clusters
-        #largest_clusters_ids = [components[i[0]] for i in largest_clusters]
         largest_subgraphs = [components.subgraph(i[0]) for i in largest_clusters]
-        # Now 'largest_clusters_ids' contains the vertex ids of the first N largest clusters
 
         # Compute separate layouts for each subgraph
         layouts = [subgraph.layout('fr') for subgraph in largest_subgraphs]
@@ -426,7 +415,7 @@ def extract_and_df(grafo,ncomponents=False):
         max_x_so_far = 0
         for i, layout in enumerate(layouts):
             min_x, max_x, min_y, max_y = bounding_boxes[i]
-            x_offset = max_x_so_far - min_x + 1  # We add a space of 1 to avoid overlap
+            x_offset = max_x_so_far - min_x + 1  # gap of 1 between subgraphs
             for pos in layout:
                 pos[0] += x_offset
             max_x_so_far += (max_x - min_x) + 1
@@ -439,7 +428,6 @@ def extract_and_df(grafo,ncomponents=False):
         for subgraph in largest_subgraphs:
             output_graph = output_graph.disjoint_union(subgraph)
 
-        # Plot the combined graph using the combined layout
         vertex=list(output_graph.vs["name"])
 
 
@@ -471,7 +459,7 @@ def extract_and_df(grafo,ncomponents=False):
 
 
 def selecting_component(grafo,selectedComponent):
-    components=grafo.clusters(mode='weak') # 
+    components=grafo.clusters(mode='weak')
 
     if len(components)<=abs(int(selectedComponent)): 
         print(f"Your graph has {len(components)} components")
@@ -483,13 +471,11 @@ def selecting_component(grafo,selectedComponent):
     # Sort the clusters by size in descending order
     sorted_clusters = sorted(cluster_sizes, key=lambda x: x[1], reverse=True)
 
-    # Now you can retrieve the first N largest clusters
     selected_component = sorted_clusters[int(selectedComponent)-1]
     
     output_graph = ig.Graph()
     output_graph = components.subgraph(selected_component[0])
 
-    # Plot the combined graph using the combined layout
     vertex=list(output_graph.vs["name"])
 
     edges_listTouple=output_graph.get_edgelist()
@@ -511,7 +497,6 @@ def selecting_component(grafo,selectedComponent):
     return output_graph,df
 
 
-# Function to apply the modified logic
 def process_row_modified(row):
     found_non_zero = False
     non_zero_count = 0
@@ -523,7 +508,7 @@ def process_row_modified(row):
             non_zero_count += 1
             row[col] = max(0, row[col] - non_zero_count)
 
-    # Modify 3 to 4 and 4 to 8
+    # marker sizes: 3 -> 4 and 4 -> 8
     for col in ['size_F', 'size_df', 'size_dR', 'size_mreach']:
         if row[col] == 3:
             row[col] = 4
@@ -534,7 +519,7 @@ def process_row_modified(row):
 
 
 
-def components_by_nodes(grafo,node_list): # node_list=name
+def components_by_nodes(grafo,node_list):
 
     g=plain_copy(grafo, directed=False)
 
@@ -557,9 +542,6 @@ def components_by_nodes(grafo,node_list): # node_list=name
     for subgraph in keep_component:
         output_graph = output_graph.disjoint_union(subgraph)
 
-
-### creating dataframe
-# Plot the combined graph using the combined layout
     vertex=list(output_graph.vs["name"])
 
     edges_listTouple=output_graph.get_edgelist()
@@ -580,67 +562,6 @@ def components_by_nodes(grafo,node_list): # node_list=name
     
     return output_graph,df
 
-
-
-
-def create_subplots(df, columns,topN):
-    # Calculate the number of rows needed for the subplots based on the number of columns to plot
-    if topN > len(df):
-        topN= int(len(df) * 0.1)
-        print(f"The number of nodes in your graph is less than the given \'-n\', so only the top {topN} will be displayed")
-
-    nvar = len(columns)
-    ncol=2
-    nrows=nvar//ncol+bool(nvar%ncol)
-
-    fig, axes = plt.subplots(nrows=nrows, ncols=ncol, figsize=(10, 6 * nrows), constrained_layout=True)
-
-    for i in range(nvar):
-        plt.subplot(nrows,ncol,i+1)
-        # Sort the dataframe by the current column in descending order and take the top 10
-        df_top10_sorted = df.sort_values(by=columns[i], ascending=False).head(topN)
-        
-        # Create a bar plot on the current axes
-        plt.bar(df_top10_sorted['Node Name'], df_top10_sorted[columns[i]])
-        
-        size_factor = max(8 / len(df_top10_sorted['Node Name']), 6)
-
-        # Plot with dynamically adjusted font size
-        plt.xticks(df_top10_sorted['Node Name'], rotation=90, fontsize=size_factor)
-        # Rotate x-axis labels
-        plt.xticks(df_top10_sorted['Node Name'], rotation=90)
-        
-        # Set the title and labels for the subplot
-        plt.title(f'Top {topN} Nodes for {columns[i]}')
-        plt.xlabel('Node Name')
-        plt.ylabel(f'{columns[i]}')
-        plt.grid(axis='y', alpha=0.75)
-
-    return fig
-
-
-###### FUNCTION FOR DEBUGING #####################################################################################
-def print_adjacency_matrix_with_vertices(graph):
-    # Custom sorting function: numbers first (sorted numerically), then alphabetic
-    def sort_key(name):
-        return (not name.isdigit(), int(name) if name.isdigit() else name)
-
-    vertices = sorted(graph.vs["name"], key=sort_key)
-
-    # Reorder the graph according to the sorted vertex names
-    vertex_mapping = {old_index: vertices.index(name) for old_index, name in enumerate(graph.vs["name"])}
-    reordered_graph = graph.permute_vertices([vertex_mapping[i] for i in range(len(graph.vs))])
-
-    # Convert the adjacency matrix of the reordered graph to a numpy array
-    adj_matrix = np.array(reordered_graph.get_adjacency().data)
-
-    # Prepare the string for printing the matrix
-    matrix_str = "   " + "  ".join(vertices) + "\n"
-    for i, row in enumerate(adj_matrix):
-        matrix_str += vertices[i] + "  " + "  ".join(map(str, row)) + "\n"
-
-    # Print the formatted adjacency matrix
-    print(matrix_str)
 
 
 

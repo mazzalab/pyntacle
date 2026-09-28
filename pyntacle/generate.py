@@ -15,13 +15,10 @@ def check_input_values(size, nei):
     nei (int): degree of each vertex (must be even and less than n)
 	"""
     if size < nei:
-        #print("Error: size must be greater than or equal to nei.")
         return False
     if nei % 2 != 0:
-        #print("Error: nei must be even.")
         return False
     if nei >= size:
-        #print("Error: nei must be less than size.")
         return False
     return True
 
@@ -78,7 +75,7 @@ def grafo_to_matrix(grafo,name):
 		raise TypeError(u"Not yet implemented")
 	
 	adj_matrix = grafo.get_adjacency(attribute="weight")
-	### round(3) of matrix
+	# rounded to 3 decimals
 
 	adj_matrix = [[round(elem, 3) for elem in row] for row in adj_matrix]
 	nodes=grafo.vs["name"]
@@ -121,7 +118,6 @@ def grafo_to_dot(grafo,name):
 	else:
 		out_name = f'{name}.dot'
 
-	# edges_listTouple=name_from_edge(grafo)
 	if grafo.directed==True:
 		raise TypeError(u"Not yet implemented")
 	if set(grafo.es["weight"])=={1}:
@@ -158,8 +154,6 @@ def output_decision(grafo,fileType,filename):
     
     if fileType=="matrix":
         grafo.outdir = ""
-        print(f"########################\n {grafo.outdir},{filename}")
-
         grafo_to_matrix(grafo,filename)
     elif fileType=="sif":
         grafo_to_sif(grafo,filename)

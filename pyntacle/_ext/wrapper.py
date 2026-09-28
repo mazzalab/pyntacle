@@ -9,10 +9,9 @@ import warnings
 import igraph as ig
 import pandas as pd
 
-# libigraph aborts the process by default when a call fails, and the kernels call
-# it from inside nogil blocks -- a directed network used to end the run with
-# exit 134 and no traceback. Swap in the returning handler at import time so the
-# wrappers below can turn a failure into a Python exception.
+# libigraph aborts the process by default when a call fails, and the kernels
+# call it from inside nogil blocks. The returning handler, installed at import
+# time, lets the wrappers below turn a failure into a Python exception.
 init_igraph_error_handler()
 
 # How many equally-scoring node sets a brute-force run reports. Symmetric networks
@@ -65,15 +64,9 @@ def _check_undirected(graph):
 def _edges(graph):
     """Edge list, weights, vertex count and a flag telling whether every weight is 1.
 
-    The kernels rebuild their CSR and igraph views from this O(E) edge list, so a
-    large sparse network is no longer forced through a dense n x n adjacency --
-    that matrix was 3.2 GB at n=20k (twice that with igraph's own copy) however
-    few edges the graph actually had.
-
-    Zero-weight edges are dropped here, reproducing the old dense convention where
-    a 0 cell was indistinguishable from "no edge". The unweighted flag lets the
-    kernels pick a BFS over a Dijkstra, which is both faster and the correct
-    choice for the hop-based metrics.
+    The kernels build their CSR and igraph views from this O(E) edge list.
+    Zero-weight edges are dropped (a zero weight is not an edge). The unweighted
+    flag lets the kernels use a BFS instead of Dijkstra.
     """
     n = graph.vcount()
     edges = np.asarray(graph.get_edgelist(), dtype=np.int32).reshape(-1, 2)
@@ -124,8 +117,8 @@ def cython_wrapper_greedy(graph, k_size, oper, distance_type='min', mdist=1, n_t
     node_indices =  graph.iNodes
     df_tmp = pd.DataFrame({"name":node_names, "indices":node_indices})
 
-    ### shuffle keeping the name association with indices; random_state makes the
-    ### starting set -- and therefore the local optimum reached -- reproducible
+    # shuffle keeping names aligned with indices; the seed makes the starting
+    # set, and so the local optimum reached, reproducible
     shuffled_df = df_tmp.sample(frac=1.0, random_state=seed)
 
     selected=shuffled_df.iloc[:k_size]
@@ -143,7 +136,7 @@ def cython_wrapper_greedy(graph, k_size, oper, distance_type='min', mdist=1, n_t
 
     found_k, found_score = cython_greedy(K_indices, notK_indices, edges, w, n, operation=oper_idx, mdist=mdist, dist_type=dist_idx, num_threads=n_threads, unweighted=unweighted)
 
-    # convert indices back to names:
+    # indices back to names
     found_k = np.asarray(found_k)
     found_k = [node_names[i] for i in found_k]
 
@@ -184,7 +177,7 @@ def cython_wrapper_bruteforce(graph, k_size, oper, distance_type='min', mdist=1,
 
     node_names = graph.vs()["name"]
 
-    K_indices = np.arange(k_size).astype(np.int32) # its just a placeholder, we will select the indices later
+    K_indices = np.arange(k_size).astype(np.int32)  # placeholder, filled by the kernel
 
     edges, w, n, unweighted = _edges(graph)
 
@@ -206,7 +199,7 @@ def cython_wrapper_bruteforce(graph, k_size, oper, distance_type='min', mdist=1,
 
     found_k, found_score, tied_indices, n_optimal = cython_bruteforce(edges, w, n, K_indices, operation=oper_idx, mdist=mdist, dist_type=dist_idx, comb_num=comb_num, num_threads=n_threads, unweighted=unweighted, max_ties=int(max_ties))
 
-    # convert indices back to names:
+    # indices back to names
     found_k = np.asarray(found_k)
     found_k = [node_names[i] for i in found_k]
     tied_sets = [[node_names[i] for i in indices] for indices in tied_indices]

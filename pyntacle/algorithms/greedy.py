@@ -42,8 +42,8 @@ def call_greedy(grafo,k_size,operation,distance_type="min",mdist=None,seed=None)
     node_indices =  grafo.iNodes
     df_tmp=pd.DataFrame({"name":node_names,"indices":node_indices})
 
-    ### shuffle keeping the name association with indices; random_state makes the
-    ### starting set -- and therefore the local optimum reached -- reproducible
+    # shuffle keeping names aligned with indices; the seed makes the starting
+    # set, and so the local optimum reached, reproducible
     shuffled_df = df_tmp.sample(frac=1.0, random_state=seed)
 
     selected=shuffled_df.iloc[:k_size]
@@ -99,7 +99,7 @@ def call_all_greedy(grafo,k_size,operation,distance_type="min",mdist=None,functi
 
     results=[]
     if function=="groupcentrality":
-        for oper in ["degree","closeness","betweenness"]:#
+        for oper in ["degree","closeness","betweenness"]:
             results.append(call_greedy(grafo,k_size,oper,distance_type,mdist,seed))
     elif function=="keyplayer":
         for oper in ["F","dF","dR","mreach"]:
@@ -108,41 +108,3 @@ def call_all_greedy(grafo,k_size,operation,distance_type="min",mdist=None,functi
         raise KeyError(u"choose the correct function keyplayer | groupcentrality")
 
     return results
-
-
-
-
-# def cython_greedy(grafo,k_size,operation,distance_type="min",mdist=None):
-
-#     node_names = grafo.vs()["name"]
-#     node_indices =  grafo.iNodes
-#     df_tmp = pd.DataFrame({"name":node_names,"indices":node_indices})
-#     df_tmp = selected.sort_values(by="indices")
-#     shuffled_df = df_tmp.sample(frac=1.0) ### shuffle keeping the name association with indices
-#     
-#     set_k = shuffled_df.iloc[:k_size]
-#     set_notK = shuffled_df.iloc[k_size:]
-
-#     set_k = set_k.sort_values(by="indices")
-#     set_notK = set_notK.sort_values(by="indices")
-
-#     k_names = np.array(set_k["name"])
-#     k_indices = np.array(set_k["indices"])
-#     all_indices = np.array(df_tmp["indices"])
-
-#     notk = set(node_names).difference(set(S_names))
-#     adj = np.array(grafo.get_adjacency(attribute="weight").data, dtype=np.float)
-
-
-#     print(f"K_indices: {k_indices}")
-#     print(f"all_indices: {len(all_indices)}")
-#     print(f"adj size: {len(adj)};\nadj: {adj[0][:20]}")
-
-
-#     S_names, score = cython_kp(k_indices, all_indices, adj, operation, distance_type, mdist)
-
-#     print(f"In greedy.py: {S_names}, {score}")
-
-#     return S_names, score
-
-#     pass

@@ -6,9 +6,8 @@ cdef struct CSR:
     int* indices
     double* w
 
-# Per-thread working memory. Allocated once per parallel region, not once per
-# candidate: the old dF kernel malloc'd n*n doubles for every combination it
-# scored, which dominated the brute-force runtime.
+# Per-thread working memory, allocated once per parallel region rather than
+# once per candidate.
 cdef struct Scratch:
     int n
     double* dist

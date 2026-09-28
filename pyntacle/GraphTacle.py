@@ -9,13 +9,8 @@ import itertools
 import pickle as pk
 import collections
 import warnings
-### home-made functions import
 from utility import *
 
-
-#######################################################################################################
-# Creating a Subclass of iGraph in order to add new functions (imports, stats, ...) to a Graph object #
-#######################################################################################################
 
 class Graphtacle(ig.Graph, ig.GraphBase):
     """Extended igraph.Graph subclass for Pyntacle network analysis.
@@ -36,14 +31,12 @@ class Graphtacle(ig.Graph, ig.GraphBase):
     def __init__(self, nodes,edges,names,labels,weights,directed,fileType,sep,header,graph_name,function,
                  weight_views=None, weight_info=None, raw_weights=False):
 
-        # Vertex count must be passed explicitly: otherwise igraph infers it
-        # from the maximum edge index, silently dropping any isolated vertex
-        # whose index is higher than every edge endpoint. `nodes` is an int
-        # when reconstructed via __reduce__ (pickle) and a list of indices
-        # when built by re()/from_file().
+        # The vertex count is passed explicitly so that isolated vertices are
+        # kept. `nodes` is an int when unpickled (__reduce__) and a list of
+        # indices when built by re()/from_file().
         n = nodes if isinstance(nodes, int) else len(nodes)
-        # the sub-unit warning is about distances; raw weights kept only to be
-        # written back out (raw_weights) are not read as anything
+        # the sub-unit warning concerns distances: raw weights that are only
+        # written back out are not checked for it
         validate_weights(weights, warn_sub_unit=not raw_weights)
         edge_attrs = {"weight": weights}
         edge_attrs.update(weight_views or {})
@@ -58,14 +51,12 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         
         self.iNodes=[v.index for v in self.vs]
         self.fileType = fileType
-        self.name = os.path.split(os.path.splitext(graph_name)[0])[1]  # name file without path
-        self.function = function  # function , for example local, global, keyplayer
+        self.name = os.path.split(os.path.splitext(graph_name)[0])[1]  # file name without path or extension
+        self.function = function  # command, e.g. local, global, keyplayer
         self.sep = sep
         self.header=header
         self.directed=directed
-        # Per-instance analysis state. These used to be class attributes assigned
-        # through `Graphtacle.x = ...`, so every live graph shared one value --
-        # which the `set` command, holding two graphs at once, silently corrupted.
+        # per-instance analysis state (the set command holds two graphs at once)
         self.removed = None
         self.sub_func = ""
         self.outdir = ""
@@ -96,8 +87,7 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         return cls(nodes,edges,names,labels,weights,directed,fileType,sep,header,graph_name, function,
                    weight_views=views, weight_info=info, raw_weights=bool(weight) and info is None)
 
-    
-    ### metodo costruttore 
+
     @classmethod
     def from_file(cls, file, func, fileType, sep: str or None = None, header: bool = True, directed: bool = False, weight: bool = False,
                   weight_type=None, distance_transform="inverse"):
@@ -126,9 +116,7 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         """
         function = func
         graph_name = file
-        #print("\nSelect the type of input: matrix, edgelist, sif or dot\n")
         fileType = str(fileType)
-        #print("\n")
         
         if fileType=="matrix":
             grafo=import_adjMatrix(file,sep,header,directed,weight)
@@ -164,12 +152,8 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         return cls(nodes,edges,names,labels,weights,directed,fileType,sep,header,graph_name, function,
                    weight_views=views, weight_info=info, raw_weights=bool(weight) and weight_type is None)
 
-#### Implement special methods: To make your subclass picklable, you need to implement the following special methods:
-#### __reduce__: This method should return a tuple of callable objects (functions or classes) and their arguments that 
-#### can be used to recreate the object when unpickling. The first element of the tuple is a callable that will create 
-#### an instance of your class, and the second element is a tuple of arguments for that callable
     def __reduce__(self):
-        # Extract necessary data for reconstruction (for load picklable objects)
+        # pickling support: rebuild the instance through __init__
         nodes = len(self.vs)
         edges = self.get_edgelist()
         names = self.vs["name"]
@@ -183,7 +167,6 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         graph_name = os.path.splitext(self.name)[0]
         function = self.function
 
-        # Return a tuple with the class constructor and its arguments
         return (self.__class__, (nodes, edges, names, labels, weights, directed, fileType, sep, header, graph_name, function,
                                  views, self.weight_info))
 
@@ -228,8 +211,7 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         stem = f"report_{self.name}_{self.function}"
         if self.sub_func:
             stem = f"{stem}_{self.sub_func}"
-        # Deliberately not stored back on self.name: doing so made a second call
-        # build report_<previous report path>_... on top of the first one.
+        # not stored on self.name, so that repeated calls do not nest the prefix
         filename = f"{outdir}/{stem}.tsv" if outdir else f"{stem}.tsv"
 
         with open(filename, "w") as f:
@@ -260,13 +242,10 @@ class Graphtacle(ig.Graph, ig.GraphBase):
 
         names = list(self.vs["name"])
         cord_df = pd.DataFrame({"Node": names, "X": coord[:, 0], "Y": coord[:, 1]}).set_index("Node")
-        #colors = ["#c73333","#71b82d","#e0c292","#186cab","#db9c2d","#f2f0ce"]
         colors = ["#BDC3C7","#F4D03F","#2ECC71","#3498DB","#EC7063"]
         texts=["not-Keyplayers","F","dF","dR","mreach"]
 
-### processing colors
         if operation=="all":
-            ###########   F       dF    dR    mreach   moreThan1
             f_x,df_x,dr_x,m_x,f_y,df_y,dr_y,m_y=[],[],[],[],[],[],[],[]
             f_names,df_names,dr_names,m_names=[],[],[],[]
             oper_names = [f_names, df_names, dr_names, m_names]
@@ -277,7 +256,6 @@ class Graphtacle(ig.Graph, ig.GraphBase):
                     if node not in oper_names[c]:
                         f_x.append(cord_df.loc[node, 'X'])
                         f_y.append(cord_df.loc[node, 'Y'])
-                        #f_nodes = np.append(f_nodes, coord[self.vs.find(str(node)).index]) ### prendiamo l'indice del nodo e con "coord" le sue coordinate
                         oper_names[c].append(node)
     
             f_names = list(set(f_names))
@@ -290,7 +268,6 @@ class Graphtacle(ig.Graph, ig.GraphBase):
             dup_y = cord_df.loc[duplicated_nodes, 'Y'].values
 
             df_metrics = pd.DataFrame({"names":sorted(list(set(KPs_all)))})
-            # Merge with suffixes
             df_metrics = df_metrics.merge(pd.DataFrame({"F":f_names}), left_on='names', right_on='F',\
                                           how='outer') \
             .merge(pd.DataFrame({"dF":df_names}), left_on='names', right_on='dF', how='outer') \
@@ -310,7 +287,6 @@ class Graphtacle(ig.Graph, ig.GraphBase):
                                                          else row['counts'], axis=1)
 
 
-            # Apply the modified logic to each row
             df_metrics = df_metrics.apply(process_row_modified, axis=1)
 
             selected_rows_f = df_metrics.loc[f_names]
@@ -330,7 +306,6 @@ class Graphtacle(ig.Graph, ig.GraphBase):
             for label, (x, y) in zip(list(self.vs["name"]), coord):
                 plt.text(x, y, label, ha='center', va='center', ma='center', zorder=20,fontsize=5)
 
-            #for segment in lines:
             plt.plot(lines[:,0, :], lines[:, 1, :], c='black', alpha=0.2, linewidth=1.5, zorder=1)
 
             plt.scatter(cord_df["X"], cord_df["Y"], c="#BDC3C7", alpha=1, zorder=10,s=100)
@@ -352,14 +327,10 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         else:
             metrics_names,metrics_x,metrics_y=[],[],[]
             for node in df["Key-player"]:
-                # for node in list_nameNode:
-                    if node not in metrics_names:
-                        metrics_x.append(cord_df.loc[node, 'X'])
-                        metrics_y.append(cord_df.loc[node, 'Y'])
-                        metrics_names.append(node)
-
-            # metrics_names = list(set(metrics_names))
-
+                if node not in metrics_names:
+                    metrics_x.append(cord_df.loc[node, 'X'])
+                    metrics_y.append(cord_df.loc[node, 'Y'])
+                    metrics_names.append(node)
 
             plt.figure(figsize=(20,20))
              
@@ -367,7 +338,6 @@ class Graphtacle(ig.Graph, ig.GraphBase):
             for label, (x, y) in zip(list(self.vs["name"]), coord):
                 plt.text(x, y, label, ha='center', va='center', ma='center', zorder=20,fontsize=5)
 
-            #for segment in lines:
             plt.plot(lines[:,0, :], lines[:, 1, :], c='black', alpha=0.2, linewidth=1.5, zorder=1)
 
             plt.scatter(cord_df["X"], cord_df["Y"], c="#BDC3C7", alpha=1, zorder=10,s=100)
@@ -392,7 +362,6 @@ class Graphtacle(ig.Graph, ig.GraphBase):
 
         names = list(self.vs["name"])
         cord_df = pd.DataFrame({"Node": names, "X": coord[:, 0], "Y": coord[:, 1]})
-        #colors = ["#c73333","#71b82d","#e0c292","#186cab","#db9c2d","#f2f0ce"]
         colors = ["#2ECC71","#3498DB","#EC7063"]
         texts=[filename1,filename2,"Common"]
         common_names=list(set(g1_names)&set(g2_names))
@@ -418,7 +387,6 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         for label, (x, y) in zip(list(self.vs["name"]), coord):
             plt.text(x, y, label, ha='center', va='center', ma='center', zorder=20,fontsize=5)
 
-        #for segment in lines:
         plt.plot(lines[:,0, :], lines[:, 1, :], c='black', alpha=0.2, linewidth=1.5, zorder=1)
 
         plt.scatter(cord_df["X"], cord_df["Y"], c="#BDC3C7", alpha=1, zorder=10,s=100)
@@ -463,9 +431,7 @@ class Graphtacle(ig.Graph, ig.GraphBase):
             sps = distance_matrix(self, weights=weights)
 
         if diameter is None:
-            # The diameter must be measured in the same unit as sps, otherwise
-            # (diameter + 1) - mean_distance mixes hops with weighted lengths and
-            # goes negative as soon as the weights exceed 1.
+            # same unit as sps: weighted distances need the weighted diameter
             diameter = self.diameter(weights=weights)
         norm = self.vcount() - 1
 
@@ -486,11 +452,8 @@ class Graphtacle(ig.Graph, ig.GraphBase):
             return self.radiality(sps=sps, diameter=diameter)
         else:
             tot_nodes = self.vcount()
-            # Build one plain igraph view of the whole graph, then slice each
-            # component out of it. Constructed once (O(E)) instead of rebuilt
-            # per component (O(comps*E)). A plain ig.Graph is used because
-            # induced_subgraph on the Graphtacle subclass hits its custom
-            # __init__ signature (TypeError: unexpected keyword '__ptr').
+            # one plain igraph copy, sliced per component: induced_subgraph cannot
+            # build a Graphtacle (its __init__ has a different signature)
             base = plain_copy(self, directed=False)
             if nodes is None:
                 result = [None] * tot_nodes
@@ -541,14 +504,8 @@ class Graphtacle(ig.Graph, ig.GraphBase):
     
 
 
-######################### ex shortest_path.py
     def get_shortestpaths(self):
-        """Weighted all-pairs distances, unreachable pairs left as ``np.inf``.
-
-        The previous sentinel was ``vcount() + 1``, which is not an upper bound on
-        a weighted graph -- a finite distance can exceed n+1 and would then have
-        been mistaken for "unreachable".
-        """
+        """Weighted all-pairs distances, unreachable pairs left as ``np.inf``."""
         weights = self.es["weight"] if "weight" in self.es.attributes() else None
         return distance_matrix(self, weights=weights)
 
@@ -561,8 +518,7 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         ``spaths[j, i]`` their length; ``group_betweenness`` needs both, and
         ``subtract_count_dist_matrix`` only subtracts counts whose length matched.
 
-        Uses int64: geodesic counts pass 32767 on any layered graph, and the old
-        int16 wrapped around to negative values without a word.
+        Counts are int64: geodesic counts grow quickly on layered graphs.
         """
         if nodes:
             loop_nodes = nodes
@@ -577,16 +533,11 @@ class Graphtacle(ig.Graph, ig.GraphBase):
             temp_row = np.zeros(shape=loop_nodes_size, dtype=np.int64)
             temp_col = np.zeros(shape=loop_nodes_size, dtype=np.int64)
 
-            # index of the source in this matrix; the source is the only vertex
-            # whose shortest path to itself has length 1, but relying on that
-            # left row_col_index undefined whenever no such path came back
+            # index of the source in this matrix
             row_col_index = node.index if hasattr(node, "index") else int(node)
 
-            # A disconnected graph is a normal input here -- group_betweenness
-            # calls this on a copy with every edge of the group deleted, which
-            # isolates those vertices on purpose. igraph warns about the
-            # unreachable targets anyway; the zeros it leaves behind are exactly
-            # what the caller wants, so keep the warning out of the user's face.
+            # group_betweenness calls this on a copy without the group's edges, so
+            # unreachable targets are expected: their zero counts are correct
             with warnings.catch_warnings():
                 warnings.filterwarnings("ignore", message=".*[Cc]ouldn't reach.*")
                 sp = self.get_all_shortest_paths(v=node, weights=weights)
@@ -613,9 +564,7 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         else:
             num = self.ecount()*2
 
-        # Total number of possible edges (graph-loops excluded). `num` above counts
-        # adjacency-matrix non-zeros, so the ceiling is n(n-1) in both orientations;
-        # the two branches used to be swapped relative to completeness() below.
+        # possible adjacency-matrix non-zeros, self-loops excluded
         node_tot = self.vcount()
         maxe = node_tot * (node_tot - 1)
 
@@ -651,12 +600,9 @@ class Graphtacle(ig.Graph, ig.GraphBase):
 
 
     def compactness(graph, directed=False):
-        ### aggiungiamo correzione T.Mazza che prende il reciproco del prodotto
-        '''
-        Capocefalo
-        '''
-        # Number of adjacency-matrix non-zeros, same convention as completeness():
-        # an undirected edge occupies two cells. The branches used to be swapped.
+        """Compactness: the reciprocal of the Randić and DeAlba product
+        ((n²/e) − 1)(1 − 1/n), with e the adjacency-matrix non-zeros."""
+        # an undirected edge occupies two cells, as in completeness()
         if directed:
             e = graph.ecount()
         else:
@@ -666,8 +612,7 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         addend_left = (math.pow(node_tot, 2) / e) - 1
         addend_right = 1 - (1 / node_tot)
         
-        # implementation by Randić and deAlba : compactness = addend_left * addend_right
-        compactness = math.pow(addend_left, -1) * math.pow(addend_right, -1) # compactness by Mazza
+        compactness = math.pow(addend_left, -1) * math.pow(addend_right, -1)
 
         return compactness
 
@@ -685,9 +630,9 @@ class Graphtacle(ig.Graph, ig.GraphBase):
             float: Normalized group degree in [0, 1].
         """
 
-        # Get the corresponding node indices
+        # node names to indices
         nodes_ind=[]
-        for i in list(nodes): #### from name to index  ### indici loop ciclo
+        for i in list(nodes):
             nodes_ind.append(self.vs.find(name=i).index)
 
         selected_neig = self.neighborhood(nodes, order=1, mode="all")
@@ -725,9 +670,9 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         else:
             count_all = self.get_shortestpath_count()
 
-        # Get the corresponding node indices
+        # node names to indices
         nodes_index=[]
-        for i in list(nodes): #### from name to index  ### indici loop ciclo
+        for i in list(nodes):
             nodes_index.append(self.vs.find(name=i).index)
 
 
@@ -735,7 +680,6 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         del_edg = [self.incident(vertex=nidx) for nidx in nodes_index]
         del1 = set(list(itertools.chain(*del_edg)))
 
-        ### il nostro copy()
         grafo_notgroup = Graphtacle.re(self, self.function, self.fileType, self.sep, self.header, self.directed, self.es["weight"], self.name)
 
         grafo_notgroup.delete_edges(del1)
@@ -785,14 +729,14 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         if np_paths is None:
             np_paths = self.get_shortestpaths()
 
-        # Get the corresponding node indices
+        # node names to indices
         group_indices=[]
-        for i in list(nodes): #### from name to index  ### indici loop ciclo
+        for i in list(nodes):
             group_indices.append(self.vs.find(name=i).index)
 
         nongroup_nodes = list(set(self.vs["name"]) - set(nodes))
         nongroup_nodes_indices = [] 
-        for i in list(nongroup_nodes): #### from name to index  ### indici loop ciclo
+        for i in list(nongroup_nodes):
             nongroup_nodes_indices.append(self.vs.find(name=i).index)
 
         nongroup_np_paths = np_paths.take(nongroup_nodes_indices, axis=0)

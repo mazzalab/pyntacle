@@ -5,7 +5,6 @@ from itertools import combinations
 from collections import defaultdict
 from typing import List, Dict, Tuple
 
-### import of home-made subClass of igraph
 from utility import *
 
 
@@ -117,7 +116,7 @@ def communities(grafo, algorithm, n, giant, steps=4, communitySize=3):
 		if type(n)==str or (algorithm=="percolation"):
 			print("Number of communities is ignored")
 		elif (algorithm=="infomap"):
-			pass#a
+			pass
 		else:
 			print("WARNING: number of clusters not provided, the algorithm tries to do as many splits as possible.")
 	

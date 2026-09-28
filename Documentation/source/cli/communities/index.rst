@@ -147,13 +147,13 @@ Options
      - bool
      - False
      - \ 
-     - Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written (matches old Pyntacle's ``--no-plot``)
+     - Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written
    * - ``-o``, ``--outdir``
      - No
      - str
      - \ 
      - \ 
-     - Select where to store the output (if not specified the output will be stored in same direcotry as the input file)
+     - Select where to store the output (if not specified the output will be stored in same directory as the input file)
    * - ``-f``, ``--format``
      - No
      - str
