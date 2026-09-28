@@ -110,7 +110,7 @@ Convert an edge-list to an adjacency matrix:
 
    python main.py convert \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -to matrix \
        -fo figure_8_matrix \
        -o /tmp/out/
@@ -121,7 +121,7 @@ Convert adjacency matrix to SIF format:
 
    python main.py convert \
        -t matrix \
-       -i ../dev/test/input/figure_8.txt \
+       -i ../examples/figure_8.txt \
        -to sif \
        -fo figure_8 \
        -o /tmp/out/

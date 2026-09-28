@@ -85,12 +85,12 @@ Run the ``local`` command on the included Figure 8 benchmark network:
 
    python main.py local \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -o /tmp/pyntacle_test/
 
 You should see output resembling::
 
-   Working on: ../dev/test/input/figure_8.egl
+   Working on: ../examples/figure_8.egl
 
    No nodes removed
 

@@ -180,7 +180,7 @@ Run percolation starting from node SR with default parameters:
 
    python main.py percolation \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -n SR \
        -o /tmp/out/
 
@@ -190,7 +190,7 @@ Run with high infectivity (P*=0.9) and fixed recovery time of 3 steps:
 
    python main.py percolation \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -n SR \
        -P 0.9 \
        -tau 3 \
@@ -203,7 +203,7 @@ Run with bimodal edge threshold distribution (easy/hard edges):
 
    python main.py percolation \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -n SR \
        -P 0.6 \
        -dist bimodal \
@@ -216,7 +216,7 @@ Take a snapshot when 5 nodes are simultaneously infected:
 
    python main.py percolation \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -n SR \
        -P 0.7 \
        --snapshotInfected 5 \
@@ -241,7 +241,7 @@ Cap a long-running simulation at 20 steps:
 
    python main.py percolation \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -n SR \
        -mxs 20 \
        -o /tmp/out/

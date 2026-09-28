@@ -187,7 +187,7 @@ Find the best 2-node group for all centrality metrics (greedy):
 
    python main.py groupcentrality gc-finder \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -k 2 \
        -oper all \
        -a greedy \
@@ -199,7 +199,7 @@ Evaluate group centrality for a specific node set:
 
    python main.py groupcentrality gc-info \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -n KR,BS3 \
        -oper all \
        -o /tmp/out/
@@ -210,7 +210,7 @@ Find best 3-node group for betweenness using brute-force:
 
    python main.py groupcentrality gc-finder \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -k 3 \
        -oper betweenness \
        -a brute_force \

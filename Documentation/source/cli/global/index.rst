@@ -106,7 +106,7 @@ Compute global topology for the Figure 8 network:
 
    python main.py global \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -o /tmp/out/
 
 **Expected output (partial):**

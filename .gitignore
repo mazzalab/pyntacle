@@ -11,8 +11,6 @@ dist/
 *.so
 
 # User-generated data and output
-/dev/profiler/graph_data/*
-/dev/output/*
 
 *:Zone.Identifier
 .DS_Store

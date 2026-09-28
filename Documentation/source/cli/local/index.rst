@@ -112,7 +112,7 @@ Compute local metrics for all nodes in an edge-list file:
 
    python main.py local \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -o /tmp/out/
 
 Highlight specific nodes (shown in green in the output figure):
@@ -121,7 +121,7 @@ Highlight specific nodes (shown in green in the output figure):
 
    python main.py local \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -c KR,BM \
        -o /tmp/out/
 
@@ -140,7 +140,7 @@ Compute metrics on a directed, weighted adjacency matrix, excluding node LR:
 
 .. code-block:: text
 
-   Working on: ../dev/test/input/figure_8.egl
+   Working on: ../examples/figure_8.egl
 
    No nodes removed
 

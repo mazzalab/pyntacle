@@ -170,7 +170,7 @@ Detect communities using the fastgreedy algorithm:
 
    python main.py communities fastgreedy \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -nc 4 \
        -o /tmp/out/
 
@@ -180,7 +180,7 @@ Run infomap and keep only communities with 3–10 nodes:
 
    python main.py communities infomap \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -n 3 -N 10 \
        -o /tmp/out/
 
@@ -190,7 +190,7 @@ Run clique percolation (k=3 cliques) on the largest component:
 
    python main.py communities percolation \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -k 3 \
        -g \
        -o /tmp/out/

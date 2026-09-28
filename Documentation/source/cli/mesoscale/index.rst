@@ -132,7 +132,7 @@ Compute GTOM and TI with default k=3 steps:
 
    python main.py mesoscale \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -k 3 \
        -o /tmp/out/
 
@@ -142,7 +142,7 @@ Use k=5 steps and enable Topological Overlap with threshold 0.3:
 
    python main.py mesoscale \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -k 5 \
        -th 0.3 \
        -o /tmp/out/

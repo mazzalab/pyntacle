@@ -6,7 +6,7 @@ a 32-node protein-interaction network included in the Pyntacle repository.
 It covers: local metrics, key-player identification (brute-force and greedy),
 and group centrality.
 
-The input file is ``dev/test/input/figure_8.egl`` — a tab-separated edge list with
+The input file is ``examples/figure_8.egl`` — a tab-separated edge list with
 a header row (``Node1``, ``Node2``).
 
 .. contents::
@@ -36,7 +36,7 @@ clustering coefficient, eccentricity, eigenvector centrality, PageRank):
 
    python main.py local \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -o /tmp/fig8_out/
 
 **Output files:**
@@ -82,7 +82,7 @@ Highlight specific nodes (e.g., ``KR`` and ``BM``) in the visualization:
 
    python main.py local \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -c KR,BM \
        -o /tmp/fig8_out/
 
@@ -95,7 +95,7 @@ Find the 2-node set that maximizes each KPP metric using the greedy algorithm:
 
    python main.py keyplayer kp-finder \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -k 2 \
        -oper all \
        -a greedy \
@@ -145,7 +145,7 @@ tests all C(32, 2) = 496 node pairs:
 
    python main.py keyplayer kp-finder \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -k 2 \
        -oper all \
        -a brute_force \
@@ -176,7 +176,7 @@ Check the KPP scores for a manually chosen node set (e.g., ``BM`` and ``KR``):
 
    python main.py keyplayer kp-info \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -n BM,KR \
        -oper all \
        -o /tmp/fig8_out/
@@ -190,7 +190,7 @@ Find the 2-node group that maximizes group degree, betweenness, and closeness:
 
    python main.py groupcentrality gc-finder \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -k 2 \
        -oper all \
        -a greedy \
@@ -202,7 +202,7 @@ To evaluate a specific set:
 
    python main.py groupcentrality gc-info \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -n KR,BS3 \
        -oper all \
        -o /tmp/fig8_out/
@@ -216,7 +216,7 @@ To study the network after removing specific nodes (e.g., simulating a knockout)
 
    python main.py local \
        -t edgelist \
-       -i ../dev/test/input/figure_8.egl \
+       -i ../examples/figure_8.egl \
        -r BM,KR \
        -o /tmp/fig8_out/
 
