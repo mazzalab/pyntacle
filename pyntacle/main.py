@@ -128,10 +128,9 @@ def main(args):
 	report_notes = []
 	max_ties = int(getattr(args, "max_ties", DEFAULT_MAX_TIES))
 
-	# Old Pyntacle's --no-plot skips figure/HTML generation and writes only the
-	# TSV; benchmarking wall time against it is unfair unless the new tool can
-	# do the same -- otherwise every cell measures "new also drew a plot" (the SVG,
-	# and HTML old never had at all), not the metric computation itself.
+	# --no-plot skips figure/HTML generation and writes only the TSV, as in
+	# Pyntacle 1.x: useful in pipelines and on large graphs, where drawing the
+	# network can take longer than computing the metrics.
 	no_plot = getattr(args, "no_plot", False)
 
 	# -np drives OpenMP inside the compiled kernels; the Python engine has no
