@@ -7,8 +7,8 @@ pytest.importorskip("statsmodels")
 
 import json
 
-import omics
-from omics.provenance import Provenance
+from pyntacle import omics
+from pyntacle.omics.provenance import Provenance
 
 
 def test_missing_dependencies_reports_pip_names(monkeypatch):

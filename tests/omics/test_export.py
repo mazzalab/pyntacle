@@ -7,7 +7,7 @@ pytest.importorskip("statsmodels")
 
 import igraph as ig
 
-from omics import export
+from pyntacle.omics import export
 
 
 def test_weight_is_the_signed_correlation(tmp_path):
@@ -24,7 +24,7 @@ def test_weight_is_the_signed_correlation(tmp_path):
 
 
 def test_exported_edgelist_loads_in_pyntacle(tmp_path):
-    from GraphTacle import Graphtacle
+    from pyntacle.GraphTacle import Graphtacle
     edges = pd.DataFrame({"source": ["a", "b"], "target": ["b", "c"], "r": [0.5, 0.2]})
     out = export.write_network(edges, pd.DataFrame(), str(tmp_path), "t", "g")
     g = Graphtacle.from_file(out["edgelist"], "local", "edgelist", None, True, False, True,

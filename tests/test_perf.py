@@ -19,7 +19,7 @@ import igraph as ig
 import pytest
 
 from conftest import make_graphtacle
-from _ext.wrapper import cython_wrapper_bruteforce
+from pyntacle._ext.wrapper import cython_wrapper_bruteforce
 
 # n -> max microseconds per candidate
 F_BUDGET = {50: 3.0, 100: 5.0, 200: 10.0}

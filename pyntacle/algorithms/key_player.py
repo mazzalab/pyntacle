@@ -2,7 +2,7 @@ import numpy as np
 import igraph as ig
 import random
 
-from utility import plain_copy
+from pyntacle.utility import plain_copy
 
 
 def prune_graph(grafo, node_names):

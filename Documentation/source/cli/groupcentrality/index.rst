@@ -8,8 +8,8 @@ Specific usage
 --------------
 .. code-block:: console
 
-   python3 main.py groupcentrality gc-info -t {fileType} -i {input_file} -n {node-list}
-   python3 main.py groupcentrality gc-finder -t {fileType} -i {input_file} -k {k-size}
+   pyntacle groupcentrality gc-info -t {fileType} -i {input_file} -n {node-list}
+   pyntacle groupcentrality gc-finder -t {fileType} -i {input_file} -k {k-size}
 
 Subcommand summary
 ------------------
@@ -24,7 +24,7 @@ Synopsis
 --------
 .. code-block:: console
 
-   python3 main.py groupcentrality <subcommand> [OPTIONS]
+   pyntacle groupcentrality <subcommand> [OPTIONS]
 
 
 Options
@@ -185,9 +185,9 @@ Find the best 2-node group for all centrality metrics (greedy):
 
 .. code-block:: bash
 
-   python main.py groupcentrality gc-finder \
+   pyntacle groupcentrality gc-finder \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -k 2 \
        -oper all \
        -a greedy \
@@ -197,9 +197,9 @@ Evaluate group centrality for a specific node set:
 
 .. code-block:: bash
 
-   python main.py groupcentrality gc-info \
+   pyntacle groupcentrality gc-info \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -n KR,BS3 \
        -oper all \
        -o /tmp/out/
@@ -208,9 +208,9 @@ Find best 3-node group for betweenness using brute-force:
 
 .. code-block:: bash
 
-   python main.py groupcentrality gc-finder \
+   pyntacle groupcentrality gc-finder \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -k 3 \
        -oper betweenness \
        -a brute_force \

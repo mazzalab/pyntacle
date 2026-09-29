@@ -7,26 +7,15 @@ build/
 dist/
 *.egg-info/
 
-# Compiled Cython files
+# Compiled Cython extensions
 *.so
 
-# User-generated data and output
-
+# OS files
 *:Zone.Identifier
-.DS_Store
 *.Identifier
+.DS_Store
 
-# Generated outputs / local junk
-figure_*.html
-figure_*.svg
-report_*.tsv
-*_union.txt
-*_intersection.txt
-*_difference.txt
-toy_*.tsv
-cat >> .gitignore <<'EOF'
-
-# Generated outputs / local junk
+# Outputs written by Pyntacle runs
 figure_*.html
 figure_*.svg
 report_*.tsv
@@ -36,20 +25,23 @@ report_*.tsv
 toy_*.tsv
 percolation.html
 stresstest_percolation.html
+
+# Local backups
 pyntacle_backup_*.zip
 pyntacle_backup_*.tar.gz
 Documentation_backup_*/
-Documentation/NetMD/
-Documentation/_build/
-Documentation/build/
-Documentation/_backup_source/
-Documentation/old_stuff/
-Documentation/_build/
-Documentation/build/
-Documentation/_backup_source/
-Documentation/old_stuff/
 
-# Benchmark outputs and the regenerated graph corpus (deterministic from seeds)
+# Documentation build and local material
+Documentation/build/
+Documentation/_build/
+Documentation/NetMD/
+Documentation/_backup_source/
+Documentation/old_stuff/
+review_html/
+
+# Benchmark outputs and the regenerated graph corpus
 benchmarks/results/
 benchmarks/data/*_s42*
-review_html/
+
+# Figures used by the documentation are part of the source
+!Documentation/source/_static/*

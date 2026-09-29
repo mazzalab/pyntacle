@@ -1,0 +1,30 @@
+# Conda environment for Pyntacle.
+#
+#   conda env create -f environment.yml
+#   conda activate pyntacle
+#   pip install .
+#
+# igraph's C library comes from Conda: the Cython extensions link against it.
+name: pyntacle
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - c-compiler
+  - cython>=3.0
+  - igraph=0.10
+  - python-igraph=0.10
+  - numpy
+  - pandas
+  - matplotlib
+  - pycairo
+  - pygraphviz
+  - plotly
+  - colorama
+  # pyntacle omics
+  - scipy
+  - scikit-learn
+  - statsmodels
+  # test suite
+  - pytest

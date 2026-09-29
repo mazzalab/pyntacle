@@ -5,7 +5,7 @@ import pytest
 pytest.importorskip("sklearn")
 pytest.importorskip("statsmodels")
 
-from omics import loader
+from pyntacle.omics import loader
 
 
 def _meta(ids, groups):

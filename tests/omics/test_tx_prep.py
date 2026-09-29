@@ -5,7 +5,7 @@ import pytest
 pytest.importorskip("sklearn")
 pytest.importorskip("statsmodels")
 
-from omics.transcriptomics import normalize, scale, tcga
+from pyntacle.omics.transcriptomics import normalize, scale, tcga
 
 
 def test_detect_scale():

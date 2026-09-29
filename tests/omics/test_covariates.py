@@ -5,7 +5,7 @@ import pytest
 pytest.importorskip("sklearn")
 pytest.importorskip("statsmodels")
 
-from omics import covariates
+from pyntacle.omics import covariates
 
 
 def test_residualise_removes_planted_confounder():

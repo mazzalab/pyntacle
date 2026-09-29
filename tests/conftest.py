@@ -1,7 +1,7 @@
 """Shared fixtures for the Pyntacle test-suite.
 
-The pyntacle package uses flat sibling imports (``from utility import *``), so the
-``pyntacle/`` directory itself has to be on ``sys.path`` before anything is imported.
+The repository root goes on ``sys.path`` so the tests import the ``pyntacle``
+package from the working tree without installing it.
 """
 import os
 import sys
@@ -11,10 +11,10 @@ import pytest
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PKG_DIR = os.path.join(REPO_ROOT, "pyntacle")
-if PKG_DIR not in sys.path:
-    sys.path.insert(0, PKG_DIR)
+if REPO_ROOT not in sys.path:
+    sys.path.insert(0, REPO_ROOT)
 
-from GraphTacle import Graphtacle  # noqa: E402
+from pyntacle.GraphTacle import Graphtacle  # noqa: E402
 
 
 def make_graphtacle(g, weights=None, directed=False, name="test"):

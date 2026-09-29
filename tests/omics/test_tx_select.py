@@ -5,7 +5,7 @@ import pytest
 pytest.importorskip("sklearn")
 pytest.importorskip("statsmodels")
 
-from omics.transcriptomics import select
+from pyntacle.omics.transcriptomics import select
 
 
 def _planted(n_samples=60, seed=0):

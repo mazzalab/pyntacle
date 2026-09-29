@@ -19,8 +19,8 @@ import numpy as np
 import igraph as ig
 import pytest
 
-from GraphTacle import Graphtacle
-from mesoscale import ti, gtom
+from pyntacle.GraphTacle import Graphtacle
+from pyntacle.mesoscale import ti, gtom
 
 
 def _g(edges, n, weights=None, directed=False):

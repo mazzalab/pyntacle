@@ -14,11 +14,11 @@ import pytest
 
 from conftest import make_graphtacle, PKG_DIR, REPO_ROOT
 
-from GraphTacle import Graphtacle
-import algorithms.greedy as greedy
-import algorithms.stochastic_gradient_descent as sgd
-from algorithms.key_player import keyplayer_kpInfo
-from _ext.wrapper import cython_wrapper_info
+from pyntacle.GraphTacle import Graphtacle
+import pyntacle.algorithms.greedy as greedy
+import pyntacle.algorithms.stochastic_gradient_descent as sgd
+from pyntacle.algorithms.key_player import keyplayer_kpInfo
+from pyntacle._ext.wrapper import cython_wrapper_info
 
 PYTHON = sys.executable
 
@@ -36,10 +36,10 @@ def test_directed_graph_is_rejected_not_aborted():
     """
     script = textwrap.dedent(f"""
         import sys
-        sys.path.insert(0, {PKG_DIR!r})
+        sys.path.insert(0, {REPO_ROOT!r})
         import igraph as ig
-        from GraphTacle import Graphtacle
-        from _ext.wrapper import cython_wrapper_info
+        from pyntacle.GraphTacle import Graphtacle
+        from pyntacle._ext.wrapper import cython_wrapper_info
 
         gd = ig.Graph(4, directed=True)
         gd.add_edges([(0, 1), (1, 2), (2, 3)])
@@ -213,7 +213,7 @@ def test_export_file_is_idempotent(zachary, tmp_path):
 
 def test_greedy_is_reproducible_with_a_seed(zachary):
     """greedy picks its starting set with an unseeded pandas sample(frac=1.0)."""
-    from algorithms.greedy import call_greedy
+    from pyntacle.algorithms.greedy import call_greedy
     first = call_greedy(zachary, 3, "F", seed=1234)
     second = call_greedy(zachary, 3, "F", seed=1234)
     assert first == second
@@ -227,7 +227,7 @@ def test_cython_greedy_is_reproducible_with_a_seed(zachary, oper):
     identical commands disagree on which of several equally-scoring sets they
     report -- exactly what the CLI did before the seed was threaded through.
     """
-    from _ext.wrapper import cython_wrapper_greedy
+    from pyntacle._ext.wrapper import cython_wrapper_greedy
     first = cython_wrapper_greedy(zachary, 3, oper, mdist=2, n_threads=1, seed=1234)
     second = cython_wrapper_greedy(zachary, 3, oper, mdist=2, n_threads=1, seed=1234)
     assert first == second

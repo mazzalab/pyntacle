@@ -17,7 +17,7 @@ from conftest import make_graphtacle, PKG_DIR
 
 PYTHON = sys.executable
 
-from _ext.wrapper import cython_wrapper_bruteforce, DEFAULT_MAX_TIES
+from pyntacle._ext.wrapper import cython_wrapper_bruteforce, DEFAULT_MAX_TIES
 
 
 def barbell():

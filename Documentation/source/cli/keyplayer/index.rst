@@ -8,8 +8,8 @@ Specific usage
 --------------
 .. code-block:: console
 
-   python3 main.py keyplayer kp-info -t {fileType} -i {input_file} -n {node-list}
-   python3 main.py keyplayer kp-finder -t {fileType} -i {input_file} -k {k-size}
+   pyntacle keyplayer kp-info -t {fileType} -i {input_file} -n {node-list}
+   pyntacle keyplayer kp-finder -t {fileType} -i {input_file} -k {k-size}
 
 Subcommand summary
 ------------------
@@ -24,7 +24,7 @@ Synopsis
 --------
 .. code-block:: console
 
-   python3 main.py keyplayer <subcommand> [OPTIONS]
+   pyntacle keyplayer <subcommand> [OPTIONS]
 
 
 Options
@@ -191,9 +191,9 @@ Find the best 2-node key-player set using the greedy algorithm (all 4 metrics):
 
 .. code-block:: bash
 
-   python main.py keyplayer kp-finder \
+   pyntacle keyplayer kp-finder \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -k 2 \
        -oper all \
        -a greedy \
@@ -204,9 +204,9 @@ Find the optimal set using exhaustive brute-force with 4 threads:
 
 .. code-block:: bash
 
-   python main.py keyplayer kp-finder \
+   pyntacle keyplayer kp-finder \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -k 2 \
        -oper all \
        -a brute_force \
@@ -218,9 +218,9 @@ Evaluate a specific node set (kp-info) for all metrics:
 
 .. code-block:: bash
 
-   python main.py keyplayer kp-info \
+   pyntacle keyplayer kp-info \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -n BM,KR \
        -oper all \
        -o /tmp/out/
@@ -229,9 +229,9 @@ Compute only the mreach metric with m=3:
 
 .. code-block:: bash
 
-   python main.py keyplayer kp-finder \
+   pyntacle keyplayer kp-finder \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -k 3 \
        -oper mreach \
        -m 3 \

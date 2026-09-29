@@ -17,9 +17,9 @@ import igraph as ig
 import pandas as pd
 import pytest
 
-from GraphTacle import Graphtacle
-import create_html
-from create_html import (
+from pyntacle.GraphTacle import Graphtacle
+from pyntacle import create_html
+from pyntacle.create_html import (
     create_local_html, _LOCAL_LIVE_MAX_NODES, _LOCAL_STATIC_MAX_NODES,
     create_keyplayer_html, _KP_STATIC_MAX_NODES,
     create_groupcentrality_html, _GC_STATIC_MAX_NODES,

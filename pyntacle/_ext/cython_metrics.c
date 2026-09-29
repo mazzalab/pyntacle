@@ -10,12 +10,12 @@
         "extra_link_args": [
             "-fopenmp"
         ],
-        "name": "_ext.cython_metrics",
+        "name": "pyntacle._ext.cython_metrics",
         "sources": [
-            "/home/manu/work/pyntacle_final/pyntacle/_ext/cython_metrics.pyx"
+            "pyntacle/_ext/cython_metrics.pyx"
         ]
     },
-    "module_name": "_ext.cython_metrics"
+    "module_name": "pyntacle._ext.cython_metrics"
 }
 END: Cython Metadata */
 
@@ -1133,8 +1133,8 @@ static int __Pyx_init_co_variables(void) {
   #endif
 #endif
 
-#define __PYX_HAVE___ext__cython_metrics
-#define __PYX_HAVE_API___ext__cython_metrics
+#define __PYX_HAVE__pyntacle___ext__cython_metrics
+#define __PYX_HAVE_API__pyntacle___ext__cython_metrics
 /* Early includes */
 #include <string.h>
 #include <stdlib.h>
@@ -1617,8 +1617,8 @@ struct __pyx_array_obj;
 struct __pyx_MemviewEnum_obj;
 struct __pyx_memoryview_obj;
 struct __pyx_memoryviewslice_obj;
-struct __pyx_t_4_ext_5utils_CSR;
-struct __pyx_t_4_ext_5utils_Scratch;
+struct __pyx_t_8pyntacle_4_ext_5utils_CSR;
+struct __pyx_t_8pyntacle_4_ext_5utils_Scratch;
 
 /* "utils.pxd":3
  * # cython: language_level=3
@@ -1627,7 +1627,7 @@ struct __pyx_t_4_ext_5utils_Scratch;
  *     int n
  *     int* indptr
 */
-struct __pyx_t_4_ext_5utils_CSR {
+struct __pyx_t_8pyntacle_4_ext_5utils_CSR {
   int n;
   int *indptr;
   int *indices;
@@ -1641,7 +1641,7 @@ struct __pyx_t_4_ext_5utils_CSR {
  *     int n
  *     double* dist
 */
-struct __pyx_t_4_ext_5utils_Scratch {
+struct __pyx_t_8pyntacle_4_ext_5utils_Scratch {
   int n;
   double *dist;
   int *heap;
@@ -1651,42 +1651,42 @@ struct __pyx_t_4_ext_5utils_Scratch {
   char *in_K;
   long *comp_size;
 };
-struct __pyx_opt_args_4_ext_14cython_metrics_cython_greedy;
-struct __pyx_opt_args_4_ext_14cython_metrics_cython_info;
-struct __pyx_opt_args_4_ext_14cython_metrics_cython_bruteforce;
+struct __pyx_opt_args_8pyntacle_4_ext_14cython_metrics_cython_greedy;
+struct __pyx_opt_args_8pyntacle_4_ext_14cython_metrics_cython_info;
+struct __pyx_opt_args_8pyntacle_4_ext_14cython_metrics_cython_bruteforce;
 
-/* "_ext/cython_metrics.pyx":91
+/* "pyntacle/_ext/cython_metrics.pyx":91
  * 
  * 
  * cpdef cython_greedy(int[:] K_indices, int[:] notK_indices, int[:, :] edges, double[:] wvec, int n, int operation, int mdist, int dist_type, int num_threads, bint unweighted=False):             # <<<<<<<<<<<<<<
  * 
  *     cdef int op = operation
 */
-struct __pyx_opt_args_4_ext_14cython_metrics_cython_greedy {
+struct __pyx_opt_args_8pyntacle_4_ext_14cython_metrics_cython_greedy {
   int __pyx_n;
   int unweighted;
 };
 
-/* "_ext/cython_metrics.pyx":237
+/* "pyntacle/_ext/cython_metrics.pyx":237
  * 
  * 
  * cpdef cython_info(int[:] K_indices, int[:] notK_indices, int[:, :] edges, double[:] wvec, int n, int operation, int mdist, int dist_type, int num_threads, bint unweighted=False):             # <<<<<<<<<<<<<<
  * 
  *     cdef int op = operation
 */
-struct __pyx_opt_args_4_ext_14cython_metrics_cython_info {
+struct __pyx_opt_args_8pyntacle_4_ext_14cython_metrics_cython_info {
   int __pyx_n;
   int unweighted;
 };
 
-/* "_ext/cython_metrics.pyx":285
+/* "pyntacle/_ext/cython_metrics.pyx":285
  * 
  * 
  * cpdef cython_bruteforce(int[:, :] edges, double[:] wvec, int n, int[:] K_indices, int operation, int mdist, int dist_type, long long comb_num, int num_threads, bint unweighted=False, int max_ties=100):             # <<<<<<<<<<<<<<
  * 
  *     cdef int op = operation
 */
-struct __pyx_opt_args_4_ext_14cython_metrics_cython_bruteforce {
+struct __pyx_opt_args_8pyntacle_4_ext_14cython_metrics_cython_bruteforce {
   int __pyx_n;
   int unweighted;
   int max_ties;
@@ -2980,32 +2980,32 @@ static PyObject *__pyx_memoryviewslice__get_base(struct __pyx_memoryviewslice_ob
 
 /* Module declarations from "libc.math" */
 
-/* Module declarations from "_ext" */
+/* Module declarations from "pyntacle._ext" */
 
-/* Module declarations from "_ext.utils" */
-static void (*__pyx_f_4_ext_5utils_index_to_combination)(PY_LONG_LONG, int, int, int *, int *); /*proto*/
-static struct __pyx_t_4_ext_5utils_CSR *(*__pyx_f_4_ext_5utils_csr_from_edges)(__Pyx_memviewslice, __Pyx_memviewslice, int); /*proto*/
-static void (*__pyx_f_4_ext_5utils_csr_free)(struct __pyx_t_4_ext_5utils_CSR *); /*proto*/
-static struct __pyx_t_4_ext_5utils_Scratch *(*__pyx_f_4_ext_5utils_scratch_alloc)(int); /*proto*/
-static void (*__pyx_f_4_ext_5utils_scratch_free)(struct __pyx_t_4_ext_5utils_Scratch *); /*proto*/
-static void (*__pyx_f_4_ext_5utils_mark_group)(struct __pyx_t_4_ext_5utils_Scratch *, int *, int); /*proto*/
-static void (*__pyx_f_4_ext_5utils_csr_bfs_row)(struct __pyx_t_4_ext_5utils_CSR *, int, char *, double *, int *); /*proto*/
+/* Module declarations from "pyntacle._ext.utils" */
+static void (*__pyx_f_8pyntacle_4_ext_5utils_index_to_combination)(PY_LONG_LONG, int, int, int *, int *); /*proto*/
+static struct __pyx_t_8pyntacle_4_ext_5utils_CSR *(*__pyx_f_8pyntacle_4_ext_5utils_csr_from_edges)(__Pyx_memviewslice, __Pyx_memviewslice, int); /*proto*/
+static void (*__pyx_f_8pyntacle_4_ext_5utils_csr_free)(struct __pyx_t_8pyntacle_4_ext_5utils_CSR *); /*proto*/
+static struct __pyx_t_8pyntacle_4_ext_5utils_Scratch *(*__pyx_f_8pyntacle_4_ext_5utils_scratch_alloc)(int); /*proto*/
+static void (*__pyx_f_8pyntacle_4_ext_5utils_scratch_free)(struct __pyx_t_8pyntacle_4_ext_5utils_Scratch *); /*proto*/
+static void (*__pyx_f_8pyntacle_4_ext_5utils_mark_group)(struct __pyx_t_8pyntacle_4_ext_5utils_Scratch *, int *, int); /*proto*/
+static void (*__pyx_f_8pyntacle_4_ext_5utils_csr_bfs_row)(struct __pyx_t_8pyntacle_4_ext_5utils_CSR *, int, char *, double *, int *); /*proto*/
 
-/* Module declarations from "_ext.kp_metrics" */
-static double (*__pyx_f_4_ext_10kp_metrics_get_fragmentation)(struct __pyx_t_4_ext_5utils_CSR *, struct __pyx_t_4_ext_5utils_Scratch *, int *, int); /*proto*/
-static double (*__pyx_f_4_ext_10kp_metrics_get_distance_fragmentation)(struct __pyx_t_4_ext_5utils_CSR *, struct __pyx_t_4_ext_5utils_Scratch *, int *, int, int); /*proto*/
-static double (*__pyx_f_4_ext_10kp_metrics_get_distance_weighted_reach)(double *, int *, int *, int, int); /*proto*/
-static double (*__pyx_f_4_ext_10kp_metrics_m_reach)(double *, int *, int *, int, int, int); /*proto*/
+/* Module declarations from "pyntacle._ext.kp_metrics" */
+static double (*__pyx_f_8pyntacle_4_ext_10kp_metrics_get_fragmentation)(struct __pyx_t_8pyntacle_4_ext_5utils_CSR *, struct __pyx_t_8pyntacle_4_ext_5utils_Scratch *, int *, int); /*proto*/
+static double (*__pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation)(struct __pyx_t_8pyntacle_4_ext_5utils_CSR *, struct __pyx_t_8pyntacle_4_ext_5utils_Scratch *, int *, int, int); /*proto*/
+static double (*__pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_weighted_reach)(double *, int *, int *, int, int); /*proto*/
+static double (*__pyx_f_8pyntacle_4_ext_10kp_metrics_m_reach)(double *, int *, int *, int, int, int); /*proto*/
 
-/* Module declarations from "_ext.group_metrics" */
-static double (*__pyx_f_4_ext_13group_metrics_get_group_degree)(struct __pyx_t_4_ext_5utils_CSR *, char *, int *, int, int); /*proto*/
-static double (*__pyx_f_4_ext_13group_metrics_get_group_betweenness)(__Pyx_memviewslice, __Pyx_memviewslice, int, int *, int *, int); /*proto*/
-static double (*__pyx_f_4_ext_13group_metrics_get_group_closeness)(double *, int *, int *, int, int, int); /*proto*/
+/* Module declarations from "pyntacle._ext.group_metrics" */
+static double (*__pyx_f_8pyntacle_4_ext_13group_metrics_get_group_degree)(struct __pyx_t_8pyntacle_4_ext_5utils_CSR *, char *, int *, int, int); /*proto*/
+static double (*__pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness)(__Pyx_memviewslice, __Pyx_memviewslice, int, int *, int *, int); /*proto*/
+static double (*__pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness)(double *, int *, int *, int, int, int); /*proto*/
 
-/* Module declarations from "_ext.cython_igraph" */
-static int (*__pyx_f_4_ext_13cython_igraph_igraph_dijkstra)(__Pyx_memviewslice, __Pyx_memviewslice, int, double *); /*proto*/
+/* Module declarations from "pyntacle._ext.cython_igraph" */
+static int (*__pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_dijkstra)(__Pyx_memviewslice, __Pyx_memviewslice, int, double *); /*proto*/
 
-/* Module declarations from "_ext.cython_metrics" */
+/* Module declarations from "pyntacle._ext.cython_metrics" */
 static PyObject *__pyx_collections_abc_Sequence = 0;
 static PyObject *generic = 0;
 static PyObject *strided = 0;
@@ -3014,11 +3014,11 @@ static PyObject *contiguous = 0;
 static PyObject *indirect_contiguous = 0;
 static int __pyx_memoryview_thread_locks_used;
 static PyThread_type_lock __pyx_memoryview_thread_locks[8];
-static double __pyx_f_4_ext_14cython_metrics_operation_selector(int, __Pyx_memviewslice, __Pyx_memviewslice, int, int *, int *, int, int, double *, int, struct __pyx_t_4_ext_5utils_CSR *, struct __pyx_t_4_ext_5utils_Scratch *, int); /*proto*/
-static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice, __Pyx_memviewslice, int, struct __pyx_t_4_ext_5utils_CSR *, int); /*proto*/
-static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, int, int, int, int, int, int __pyx_skip_dispatch, struct __pyx_opt_args_4_ext_14cython_metrics_cython_greedy *__pyx_optional_args); /*proto*/
-static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, int, int, int, int, int, int __pyx_skip_dispatch, struct __pyx_opt_args_4_ext_14cython_metrics_cython_info *__pyx_optional_args); /*proto*/
-static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviewslice, __Pyx_memviewslice, int, __Pyx_memviewslice, int, int, int, PY_LONG_LONG, int, int __pyx_skip_dispatch, struct __pyx_opt_args_4_ext_14cython_metrics_cython_bruteforce *__pyx_optional_args); /*proto*/
+static double __pyx_f_8pyntacle_4_ext_14cython_metrics_operation_selector(int, __Pyx_memviewslice, __Pyx_memviewslice, int, int *, int *, int, int, double *, int, struct __pyx_t_8pyntacle_4_ext_5utils_CSR *, struct __pyx_t_8pyntacle_4_ext_5utils_Scratch *, int); /*proto*/
+static double *__pyx_f_8pyntacle_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice, __Pyx_memviewslice, int, struct __pyx_t_8pyntacle_4_ext_5utils_CSR *, int); /*proto*/
+static PyObject *__pyx_f_8pyntacle_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, int, int, int, int, int, int __pyx_skip_dispatch, struct __pyx_opt_args_8pyntacle_4_ext_14cython_metrics_cython_greedy *__pyx_optional_args); /*proto*/
+static PyObject *__pyx_f_8pyntacle_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, int, int, int, int, int, int __pyx_skip_dispatch, struct __pyx_opt_args_8pyntacle_4_ext_14cython_metrics_cython_info *__pyx_optional_args); /*proto*/
+static PyObject *__pyx_f_8pyntacle_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviewslice, __Pyx_memviewslice, int, __Pyx_memviewslice, int, int, int, PY_LONG_LONG, int, int __pyx_skip_dispatch, struct __pyx_opt_args_8pyntacle_4_ext_14cython_metrics_cython_bruteforce *__pyx_optional_args); /*proto*/
 static int __pyx_array_allocate_buffer(struct __pyx_array_obj *); /*proto*/
 static struct __pyx_array_obj *__pyx_array_new(PyObject *, Py_ssize_t, char *, char const *, char *); /*proto*/
 static PyObject *__pyx_memoryview_new(PyObject *, int, int, __Pyx_TypeInfo const *); /*proto*/
@@ -3057,11 +3057,11 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *, 
 static const __Pyx_TypeInfo __Pyx_TypeInfo_int = { "int", NULL, sizeof(int), { 0 }, 0, __PYX_IS_UNSIGNED(int) ? 'U' : 'I', __PYX_IS_UNSIGNED(int), 0 };
 static const __Pyx_TypeInfo __Pyx_TypeInfo_double = { "double", NULL, sizeof(double), { 0 }, 0, 'R', 0, 0 };
 /* #### Code section: before_global_var ### */
-#define __Pyx_MODULE_NAME "_ext.cython_metrics"
-extern int __pyx_module_is_main__ext__cython_metrics;
-int __pyx_module_is_main__ext__cython_metrics = 0;
+#define __Pyx_MODULE_NAME "pyntacle._ext.cython_metrics"
+extern int __pyx_module_is_main_pyntacle___ext__cython_metrics;
+int __pyx_module_is_main_pyntacle___ext__cython_metrics = 0;
 
-/* Implementation of "_ext.cython_metrics" */
+/* Implementation of "pyntacle._ext.cython_metrics" */
 /* #### Code section: global_var ### */
 static PyObject *__pyx_builtin_round;
 static PyObject *__pyx_builtin___import__;
@@ -3114,9 +3114,9 @@ static void __pyx_memoryviewslice___pyx_pf_15View_dot_MemoryView_16_memoryviewsl
 static PyObject *__pyx_pf___pyx_memoryviewslice___reduce_cython__(CYTHON_UNUSED struct __pyx_memoryviewslice_obj *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf___pyx_memoryviewslice_2__setstate_cython__(CYTHON_UNUSED struct __pyx_memoryviewslice_obj *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
 static PyObject *__pyx_pf_15View_dot_MemoryView___pyx_unpickle_Enum(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v___pyx_type, long __pyx_v___pyx_checksum, PyObject *__pyx_v___pyx_state); /* proto */
-static PyObject *__pyx_pf_4_ext_14cython_metrics_cython_greedy(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_K_indices, __Pyx_memviewslice __pyx_v_notK_indices, __Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, int __pyx_v_operation, int __pyx_v_mdist, int __pyx_v_dist_type, int __pyx_v_num_threads, int __pyx_v_unweighted); /* proto */
-static PyObject *__pyx_pf_4_ext_14cython_metrics_2cython_info(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_K_indices, __Pyx_memviewslice __pyx_v_notK_indices, __Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, int __pyx_v_operation, int __pyx_v_mdist, int __pyx_v_dist_type, int __pyx_v_num_threads, int __pyx_v_unweighted); /* proto */
-static PyObject *__pyx_pf_4_ext_14cython_metrics_4cython_bruteforce(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, __Pyx_memviewslice __pyx_v_K_indices, int __pyx_v_operation, int __pyx_v_mdist, int __pyx_v_dist_type, PY_LONG_LONG __pyx_v_comb_num, int __pyx_v_num_threads, int __pyx_v_unweighted, int __pyx_v_max_ties); /* proto */
+static PyObject *__pyx_pf_8pyntacle_4_ext_14cython_metrics_cython_greedy(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_K_indices, __Pyx_memviewslice __pyx_v_notK_indices, __Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, int __pyx_v_operation, int __pyx_v_mdist, int __pyx_v_dist_type, int __pyx_v_num_threads, int __pyx_v_unweighted); /* proto */
+static PyObject *__pyx_pf_8pyntacle_4_ext_14cython_metrics_2cython_info(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_K_indices, __Pyx_memviewslice __pyx_v_notK_indices, __Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, int __pyx_v_operation, int __pyx_v_mdist, int __pyx_v_dist_type, int __pyx_v_num_threads, int __pyx_v_unweighted); /* proto */
+static PyObject *__pyx_pf_8pyntacle_4_ext_14cython_metrics_4cython_bruteforce(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, __Pyx_memviewslice __pyx_v_K_indices, int __pyx_v_operation, int __pyx_v_mdist, int __pyx_v_dist_type, PY_LONG_LONG __pyx_v_comb_num, int __pyx_v_num_threads, int __pyx_v_unweighted, int __pyx_v_max_ties); /* proto */
 static PyObject *__pyx_tp_new_array(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_Enum(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_memoryview(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
@@ -3281,35 +3281,35 @@ static __pyx_mstatetype * const __pyx_mstate_global = &__pyx_mstate_global_stati
 #define __pyx_n_u_encode __pyx_string_tab[81]
 #define __pyx_n_u_enumerate __pyx_string_tab[82]
 #define __pyx_n_u_error __pyx_string_tab[83]
-#define __pyx_n_u_ext_cython_metrics __pyx_string_tab[84]
-#define __pyx_n_u_flags __pyx_string_tab[85]
-#define __pyx_n_u_format __pyx_string_tab[86]
-#define __pyx_n_u_fortran __pyx_string_tab[87]
-#define __pyx_n_u_func __pyx_string_tab[88]
-#define __pyx_n_u_getstate __pyx_string_tab[89]
-#define __pyx_n_u_id __pyx_string_tab[90]
-#define __pyx_n_u_import __pyx_string_tab[91]
-#define __pyx_n_u_index __pyx_string_tab[92]
-#define __pyx_n_u_is_coroutine __pyx_string_tab[93]
-#define __pyx_n_u_items __pyx_string_tab[94]
-#define __pyx_n_u_itemsize __pyx_string_tab[95]
-#define __pyx_n_u_main __pyx_string_tab[96]
-#define __pyx_n_u_max_ties __pyx_string_tab[97]
-#define __pyx_n_u_mdist __pyx_string_tab[98]
-#define __pyx_n_u_memview __pyx_string_tab[99]
-#define __pyx_n_u_mode __pyx_string_tab[100]
-#define __pyx_n_u_module __pyx_string_tab[101]
-#define __pyx_n_u_n __pyx_string_tab[102]
-#define __pyx_n_u_name __pyx_string_tab[103]
-#define __pyx_n_u_name_2 __pyx_string_tab[104]
-#define __pyx_n_u_ndim __pyx_string_tab[105]
-#define __pyx_n_u_new __pyx_string_tab[106]
-#define __pyx_n_u_notK_indices __pyx_string_tab[107]
-#define __pyx_n_u_num_threads __pyx_string_tab[108]
-#define __pyx_n_u_obj __pyx_string_tab[109]
-#define __pyx_n_u_operation __pyx_string_tab[110]
-#define __pyx_n_u_pack __pyx_string_tab[111]
-#define __pyx_n_u_pop __pyx_string_tab[112]
+#define __pyx_n_u_flags __pyx_string_tab[84]
+#define __pyx_n_u_format __pyx_string_tab[85]
+#define __pyx_n_u_fortran __pyx_string_tab[86]
+#define __pyx_n_u_func __pyx_string_tab[87]
+#define __pyx_n_u_getstate __pyx_string_tab[88]
+#define __pyx_n_u_id __pyx_string_tab[89]
+#define __pyx_n_u_import __pyx_string_tab[90]
+#define __pyx_n_u_index __pyx_string_tab[91]
+#define __pyx_n_u_is_coroutine __pyx_string_tab[92]
+#define __pyx_n_u_items __pyx_string_tab[93]
+#define __pyx_n_u_itemsize __pyx_string_tab[94]
+#define __pyx_n_u_main __pyx_string_tab[95]
+#define __pyx_n_u_max_ties __pyx_string_tab[96]
+#define __pyx_n_u_mdist __pyx_string_tab[97]
+#define __pyx_n_u_memview __pyx_string_tab[98]
+#define __pyx_n_u_mode __pyx_string_tab[99]
+#define __pyx_n_u_module __pyx_string_tab[100]
+#define __pyx_n_u_n __pyx_string_tab[101]
+#define __pyx_n_u_name __pyx_string_tab[102]
+#define __pyx_n_u_name_2 __pyx_string_tab[103]
+#define __pyx_n_u_ndim __pyx_string_tab[104]
+#define __pyx_n_u_new __pyx_string_tab[105]
+#define __pyx_n_u_notK_indices __pyx_string_tab[106]
+#define __pyx_n_u_num_threads __pyx_string_tab[107]
+#define __pyx_n_u_obj __pyx_string_tab[108]
+#define __pyx_n_u_operation __pyx_string_tab[109]
+#define __pyx_n_u_pack __pyx_string_tab[110]
+#define __pyx_n_u_pop __pyx_string_tab[111]
+#define __pyx_n_u_pyntacle__ext_cython_metrics __pyx_string_tab[112]
 #define __pyx_n_u_pyx_checksum __pyx_string_tab[113]
 #define __pyx_n_u_pyx_state __pyx_string_tab[114]
 #define __pyx_n_u_pyx_type __pyx_string_tab[115]
@@ -3344,7 +3344,7 @@ static __pyx_mstatetype * const __pyx_mstate_global = &__pyx_mstate_global_stati
 #define __pyx_kp_b_iso88591_l_l_m_vQa_A_a_awfA_t3a_k_vQb_7 __pyx_string_tab[144]
 #define __pyx_kp_b_iso88591_n_n_o_vQa_A_Q_a_q_Q_awfA_t3a_k __pyx_string_tab[145]
 #define __pyx_kp_b_iso88591_q_q_E_E_F_q_A_a_1_A_Q_a_Q_awfA __pyx_string_tab[146]
-#define __pyx_kp_b_struct___pyx_t_4_ext_5utils_CSR __pyx_string_tab[147]
+#define __pyx_kp_b_struct___pyx_t_8pyntacle_4_ext_5 __pyx_string_tab[147]
 #define __pyx_n_b_O __pyx_string_tab[148]
 #define __pyx_int_0 __pyx_number_tab[0]
 #define __pyx_int_neg_1 __pyx_number_tab[1]
@@ -16694,7 +16694,7 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *__
   return __pyx_r;
 }
 
-/* "_ext/cython_metrics.pyx":14
+/* "pyntacle/_ext/cython_metrics.pyx":14
  * 
  * 
  * cdef double operation_selector(int operation, int[:, :] edges, double[:] wvec, int n, int* K_indices, int* notK_indices,  int k, int mdist, double* floWar, int dist_type, utils.CSR* csr, utils.Scratch* scratch, bint unweighted) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16702,11 +16702,11 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *__
  *     cdef double result = 0
 */
 
-static double __pyx_f_4_ext_14cython_metrics_operation_selector(int __pyx_v_operation, __Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, int *__pyx_v_K_indices, int *__pyx_v_notK_indices, int __pyx_v_k, int __pyx_v_mdist, double *__pyx_v_floWar, int __pyx_v_dist_type, struct __pyx_t_4_ext_5utils_CSR *__pyx_v_csr, struct __pyx_t_4_ext_5utils_Scratch *__pyx_v_scratch, int __pyx_v_unweighted) {
+static double __pyx_f_8pyntacle_4_ext_14cython_metrics_operation_selector(int __pyx_v_operation, __Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, int *__pyx_v_K_indices, int *__pyx_v_notK_indices, int __pyx_v_k, int __pyx_v_mdist, double *__pyx_v_floWar, int __pyx_v_dist_type, struct __pyx_t_8pyntacle_4_ext_5utils_CSR *__pyx_v_csr, struct __pyx_t_8pyntacle_4_ext_5utils_Scratch *__pyx_v_scratch, int __pyx_v_unweighted) {
   double __pyx_v_result;
   double __pyx_r;
 
-  /* "_ext/cython_metrics.pyx":16
+  /* "pyntacle/_ext/cython_metrics.pyx":16
  * cdef double operation_selector(int operation, int[:, :] edges, double[:] wvec, int n, int* K_indices, int* notK_indices,  int k, int mdist, double* floWar, int dist_type, utils.CSR* csr, utils.Scratch* scratch, bint unweighted) noexcept nogil:
  * 
  *     cdef double result = 0             # <<<<<<<<<<<<<<
@@ -16715,7 +16715,7 @@ static double __pyx_f_4_ext_14cython_metrics_operation_selector(int __pyx_v_oper
 */
   __pyx_v_result = 0.0;
 
-  /* "_ext/cython_metrics.pyx":19
+  /* "pyntacle/_ext/cython_metrics.pyx":19
  * 
  *     # F: flood fill on the pre-built CSR, no igraph and no allocation
  *     if operation == 0:             # <<<<<<<<<<<<<<
@@ -16725,16 +16725,16 @@ static double __pyx_f_4_ext_14cython_metrics_operation_selector(int __pyx_v_oper
   switch (__pyx_v_operation) {
     case 0:
 
-    /* "_ext/cython_metrics.pyx":20
+    /* "pyntacle/_ext/cython_metrics.pyx":20
  *     # F: flood fill on the pre-built CSR, no igraph and no allocation
  *     if operation == 0:
  *         result = kp_metrics.get_fragmentation(csr, scratch, K_indices, k)             # <<<<<<<<<<<<<<
  * 
  *     # dF: one source at a time into the per-thread scratch row
 */
-    __pyx_v_result = __pyx_f_4_ext_10kp_metrics_get_fragmentation(__pyx_v_csr, __pyx_v_scratch, __pyx_v_K_indices, __pyx_v_k);
+    __pyx_v_result = __pyx_f_8pyntacle_4_ext_10kp_metrics_get_fragmentation(__pyx_v_csr, __pyx_v_scratch, __pyx_v_K_indices, __pyx_v_k);
 
-    /* "_ext/cython_metrics.pyx":19
+    /* "pyntacle/_ext/cython_metrics.pyx":19
  * 
  *     # F: flood fill on the pre-built CSR, no igraph and no allocation
  *     if operation == 0:             # <<<<<<<<<<<<<<
@@ -16744,16 +16744,16 @@ static double __pyx_f_4_ext_14cython_metrics_operation_selector(int __pyx_v_oper
     break;
     case 1:
 
-    /* "_ext/cython_metrics.pyx":24
+    /* "pyntacle/_ext/cython_metrics.pyx":24
  *     # dF: one source at a time into the per-thread scratch row
  *     elif operation == 1:
  *         result = kp_metrics.get_distance_fragmentation(csr, scratch, K_indices, k, unweighted)             # <<<<<<<<<<<<<<
  * 
  *     # dR
 */
-    __pyx_v_result = __pyx_f_4_ext_10kp_metrics_get_distance_fragmentation(__pyx_v_csr, __pyx_v_scratch, __pyx_v_K_indices, __pyx_v_k, __pyx_v_unweighted);
+    __pyx_v_result = __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(__pyx_v_csr, __pyx_v_scratch, __pyx_v_K_indices, __pyx_v_k, __pyx_v_unweighted);
 
-    /* "_ext/cython_metrics.pyx":23
+    /* "pyntacle/_ext/cython_metrics.pyx":23
  * 
  *     # dF: one source at a time into the per-thread scratch row
  *     elif operation == 1:             # <<<<<<<<<<<<<<
@@ -16763,16 +16763,16 @@ static double __pyx_f_4_ext_14cython_metrics_operation_selector(int __pyx_v_oper
     break;
     case 2:
 
-    /* "_ext/cython_metrics.pyx":28
+    /* "pyntacle/_ext/cython_metrics.pyx":28
  *     # dR
  *     elif operation == 2:
  *         result = kp_metrics.get_distance_weighted_reach(floWar, K_indices, notK_indices, k, n)             # <<<<<<<<<<<<<<
  * 
  *     # mReach (floWar holds HOP distances for this operation)
 */
-    __pyx_v_result = __pyx_f_4_ext_10kp_metrics_get_distance_weighted_reach(__pyx_v_floWar, __pyx_v_K_indices, __pyx_v_notK_indices, __pyx_v_k, __pyx_v_n);
+    __pyx_v_result = __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_weighted_reach(__pyx_v_floWar, __pyx_v_K_indices, __pyx_v_notK_indices, __pyx_v_k, __pyx_v_n);
 
-    /* "_ext/cython_metrics.pyx":27
+    /* "pyntacle/_ext/cython_metrics.pyx":27
  * 
  *     # dR
  *     elif operation == 2:             # <<<<<<<<<<<<<<
@@ -16782,16 +16782,16 @@ static double __pyx_f_4_ext_14cython_metrics_operation_selector(int __pyx_v_oper
     break;
     case 3:
 
-    /* "_ext/cython_metrics.pyx":32
+    /* "pyntacle/_ext/cython_metrics.pyx":32
  *     # mReach (floWar holds HOP distances for this operation)
  *     elif operation == 3:
  *         result = kp_metrics.m_reach(floWar, K_indices, notK_indices, k, n, mdist)             # <<<<<<<<<<<<<<
  * 
  *     # gD: adjacency read off the CSR, membership mask refreshed into the scratch
 */
-    __pyx_v_result = __pyx_f_4_ext_10kp_metrics_m_reach(__pyx_v_floWar, __pyx_v_K_indices, __pyx_v_notK_indices, __pyx_v_k, __pyx_v_n, __pyx_v_mdist);
+    __pyx_v_result = __pyx_f_8pyntacle_4_ext_10kp_metrics_m_reach(__pyx_v_floWar, __pyx_v_K_indices, __pyx_v_notK_indices, __pyx_v_k, __pyx_v_n, __pyx_v_mdist);
 
-    /* "_ext/cython_metrics.pyx":31
+    /* "pyntacle/_ext/cython_metrics.pyx":31
  * 
  *     # mReach (floWar holds HOP distances for this operation)
  *     elif operation == 3:             # <<<<<<<<<<<<<<
@@ -16801,25 +16801,25 @@ static double __pyx_f_4_ext_14cython_metrics_operation_selector(int __pyx_v_oper
     break;
     case 4:
 
-    /* "_ext/cython_metrics.pyx":36
+    /* "pyntacle/_ext/cython_metrics.pyx":36
  *     # gD: adjacency read off the CSR, membership mask refreshed into the scratch
  *     elif operation == 4:
  *         utils.mark_group(scratch, K_indices, k)             # <<<<<<<<<<<<<<
  *         result = group_metrics.get_group_degree(csr, scratch.in_K, notK_indices, k, n)
  * 
 */
-    __pyx_f_4_ext_5utils_mark_group(__pyx_v_scratch, __pyx_v_K_indices, __pyx_v_k);
+    __pyx_f_8pyntacle_4_ext_5utils_mark_group(__pyx_v_scratch, __pyx_v_K_indices, __pyx_v_k);
 
-    /* "_ext/cython_metrics.pyx":37
+    /* "pyntacle/_ext/cython_metrics.pyx":37
  *     elif operation == 4:
  *         utils.mark_group(scratch, K_indices, k)
  *         result = group_metrics.get_group_degree(csr, scratch.in_K, notK_indices, k, n)             # <<<<<<<<<<<<<<
  * 
  *     # gB: igraph graph rebuilt from the edge list per candidate
 */
-    __pyx_v_result = __pyx_f_4_ext_13group_metrics_get_group_degree(__pyx_v_csr, __pyx_v_scratch->in_K, __pyx_v_notK_indices, __pyx_v_k, __pyx_v_n);
+    __pyx_v_result = __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_degree(__pyx_v_csr, __pyx_v_scratch->in_K, __pyx_v_notK_indices, __pyx_v_k, __pyx_v_n);
 
-    /* "_ext/cython_metrics.pyx":35
+    /* "pyntacle/_ext/cython_metrics.pyx":35
  * 
  *     # gD: adjacency read off the CSR, membership mask refreshed into the scratch
  *     elif operation == 4:             # <<<<<<<<<<<<<<
@@ -16829,16 +16829,16 @@ static double __pyx_f_4_ext_14cython_metrics_operation_selector(int __pyx_v_oper
     break;
     case 5:
 
-    /* "_ext/cython_metrics.pyx":41
+    /* "pyntacle/_ext/cython_metrics.pyx":41
  *     # gB: igraph graph rebuilt from the edge list per candidate
  *     elif operation == 5:
  *         result = group_metrics.get_group_betweenness(edges, wvec, n, K_indices, notK_indices, k)             # <<<<<<<<<<<<<<
  * 
  *     # gC
 */
-    __pyx_v_result = __pyx_f_4_ext_13group_metrics_get_group_betweenness(__pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_K_indices, __pyx_v_notK_indices, __pyx_v_k);
+    __pyx_v_result = __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(__pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_K_indices, __pyx_v_notK_indices, __pyx_v_k);
 
-    /* "_ext/cython_metrics.pyx":40
+    /* "pyntacle/_ext/cython_metrics.pyx":40
  * 
  *     # gB: igraph graph rebuilt from the edge list per candidate
  *     elif operation == 5:             # <<<<<<<<<<<<<<
@@ -16848,16 +16848,16 @@ static double __pyx_f_4_ext_14cython_metrics_operation_selector(int __pyx_v_oper
     break;
     case 6:
 
-    /* "_ext/cython_metrics.pyx":45
+    /* "pyntacle/_ext/cython_metrics.pyx":45
  *     # gC
  *     elif operation == 6:
  *         result  = group_metrics.get_group_closeness( floWar, K_indices, notK_indices, k, n, dist_type)             # <<<<<<<<<<<<<<
  * 
  *     return result
 */
-    __pyx_v_result = __pyx_f_4_ext_13group_metrics_get_group_closeness(__pyx_v_floWar, __pyx_v_K_indices, __pyx_v_notK_indices, __pyx_v_k, __pyx_v_n, __pyx_v_dist_type);
+    __pyx_v_result = __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(__pyx_v_floWar, __pyx_v_K_indices, __pyx_v_notK_indices, __pyx_v_k, __pyx_v_n, __pyx_v_dist_type);
 
-    /* "_ext/cython_metrics.pyx":44
+    /* "pyntacle/_ext/cython_metrics.pyx":44
  * 
  *     # gC
  *     elif operation == 6:             # <<<<<<<<<<<<<<
@@ -16868,7 +16868,7 @@ static double __pyx_f_4_ext_14cython_metrics_operation_selector(int __pyx_v_oper
     default: break;
   }
 
-  /* "_ext/cython_metrics.pyx":47
+  /* "pyntacle/_ext/cython_metrics.pyx":47
  *         result  = group_metrics.get_group_closeness( floWar, K_indices, notK_indices, k, n, dist_type)
  * 
  *     return result             # <<<<<<<<<<<<<<
@@ -16878,7 +16878,7 @@ static double __pyx_f_4_ext_14cython_metrics_operation_selector(int __pyx_v_oper
   __pyx_r = __pyx_v_result;
   goto __pyx_L0;
 
-  /* "_ext/cython_metrics.pyx":14
+  /* "pyntacle/_ext/cython_metrics.pyx":14
  * 
  * 
  * cdef double operation_selector(int operation, int[:, :] edges, double[:] wvec, int n, int* K_indices, int* notK_indices,  int k, int mdist, double* floWar, int dist_type, utils.CSR* csr, utils.Scratch* scratch, bint unweighted) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16891,7 +16891,7 @@ static double __pyx_f_4_ext_14cython_metrics_operation_selector(int __pyx_v_oper
   return __pyx_r;
 }
 
-/* "_ext/cython_metrics.pyx":50
+/* "pyntacle/_ext/cython_metrics.pyx":50
  * 
  * 
  * cdef double* build_all_dist(int[:, :] edges, double[:] wvec, int n, utils.CSR* csr, int op) except? NULL:             # <<<<<<<<<<<<<<
@@ -16899,9 +16899,9 @@ static double __pyx_f_4_ext_14cython_metrics_operation_selector(int __pyx_v_oper
  * 
 */
 
-static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, struct __pyx_t_4_ext_5utils_CSR *__pyx_v_csr, int __pyx_v_op) {
+static double *__pyx_f_8pyntacle_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, struct __pyx_t_8pyntacle_4_ext_5utils_CSR *__pyx_v_csr, int __pyx_v_op) {
   double *__pyx_v_all_dist;
-  struct __pyx_t_4_ext_5utils_Scratch *__pyx_v_tmp;
+  struct __pyx_t_8pyntacle_4_ext_5utils_Scratch *__pyx_v_tmp;
   int __pyx_v_i;
   double *__pyx_r;
   __Pyx_RefNannyDeclarations
@@ -16921,7 +16921,7 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("build_all_dist", 0);
 
-  /* "_ext/cython_metrics.pyx":61
+  /* "pyntacle/_ext/cython_metrics.pyx":61
  *     cdef int i
  * 
  *     if op != 2 and op != 3 and op != 6:             # <<<<<<<<<<<<<<
@@ -16940,7 +16940,7 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
   }
   if (__pyx_t_1) {
 
-    /* "_ext/cython_metrics.pyx":62
+    /* "pyntacle/_ext/cython_metrics.pyx":62
  * 
  *     if op != 2 and op != 3 and op != 6:
  *         return NULL             # <<<<<<<<<<<<<<
@@ -16950,7 +16950,7 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
     __pyx_r = NULL;
     goto __pyx_L0;
 
-    /* "_ext/cython_metrics.pyx":61
+    /* "pyntacle/_ext/cython_metrics.pyx":61
  *     cdef int i
  * 
  *     if op != 2 and op != 3 and op != 6:             # <<<<<<<<<<<<<<
@@ -16959,7 +16959,7 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
 */
   }
 
-  /* "_ext/cython_metrics.pyx":64
+  /* "pyntacle/_ext/cython_metrics.pyx":64
  *         return NULL
  * 
  *     all_dist = <double*> malloc((<size_t> n) * n * sizeof(double))             # <<<<<<<<<<<<<<
@@ -16968,7 +16968,7 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
 */
   __pyx_v_all_dist = ((double *)malloc(((((size_t)__pyx_v_n) * __pyx_v_n) * (sizeof(double)))));
 
-  /* "_ext/cython_metrics.pyx":65
+  /* "pyntacle/_ext/cython_metrics.pyx":65
  * 
  *     all_dist = <double*> malloc((<size_t> n) * n * sizeof(double))
  *     if all_dist == NULL:             # <<<<<<<<<<<<<<
@@ -16978,7 +16978,7 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
   __pyx_t_1 = (__pyx_v_all_dist == NULL);
   if (unlikely(__pyx_t_1)) {
 
-    /* "_ext/cython_metrics.pyx":66
+    /* "pyntacle/_ext/cython_metrics.pyx":66
  *     all_dist = <double*> malloc((<size_t> n) * n * sizeof(double))
  *     if all_dist == NULL:
  *         raise MemoryError(             # <<<<<<<<<<<<<<
@@ -16987,7 +16987,7 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
 */
     __pyx_t_3 = NULL;
 
-    /* "_ext/cython_metrics.pyx":67
+    /* "pyntacle/_ext/cython_metrics.pyx":67
  *     if all_dist == NULL:
  *         raise MemoryError(
  *             f"cannot allocate the {n}x{n} distance matrix "             # <<<<<<<<<<<<<<
@@ -16997,7 +16997,7 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
     __pyx_t_4 = __Pyx_PyUnicode_From_int(__pyx_v_n, 0, ' ', 'd'); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 67, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
 
-    /* "_ext/cython_metrics.pyx":68
+    /* "pyntacle/_ext/cython_metrics.pyx":68
  *         raise MemoryError(
  *             f"cannot allocate the {n}x{n} distance matrix "
  *             f"({(<size_t> n) * n * 8 / 1e9:.1f} GB)")             # <<<<<<<<<<<<<<
@@ -17017,7 +17017,7 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
     __pyx_t_7[5] = __pyx_t_6;
     __pyx_t_7[6] = __pyx_mstate_global->__pyx_kp_u_GB;
 
-    /* "_ext/cython_metrics.pyx":67
+    /* "pyntacle/_ext/cython_metrics.pyx":67
  *     if all_dist == NULL:
  *         raise MemoryError(
  *             f"cannot allocate the {n}x{n} distance matrix "             # <<<<<<<<<<<<<<
@@ -17042,7 +17042,7 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __PYX_ERR(0, 66, __pyx_L1_error)
 
-    /* "_ext/cython_metrics.pyx":65
+    /* "pyntacle/_ext/cython_metrics.pyx":65
  * 
  *     all_dist = <double*> malloc((<size_t> n) * n * sizeof(double))
  *     if all_dist == NULL:             # <<<<<<<<<<<<<<
@@ -17051,7 +17051,7 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
 */
   }
 
-  /* "_ext/cython_metrics.pyx":70
+  /* "pyntacle/_ext/cython_metrics.pyx":70
  *             f"({(<size_t> n) * n * 8 / 1e9:.1f} GB)")
  * 
  *     if op == 3:             # <<<<<<<<<<<<<<
@@ -17061,16 +17061,16 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
   __pyx_t_1 = (__pyx_v_op == 3);
   if (__pyx_t_1) {
 
-    /* "_ext/cython_metrics.pyx":71
+    /* "pyntacle/_ext/cython_metrics.pyx":71
  * 
  *     if op == 3:
  *         tmp = utils.scratch_alloc(n)             # <<<<<<<<<<<<<<
  *         if tmp == NULL:
  *             free(all_dist)
 */
-    __pyx_v_tmp = __pyx_f_4_ext_5utils_scratch_alloc(__pyx_v_n);
+    __pyx_v_tmp = __pyx_f_8pyntacle_4_ext_5utils_scratch_alloc(__pyx_v_n);
 
-    /* "_ext/cython_metrics.pyx":72
+    /* "pyntacle/_ext/cython_metrics.pyx":72
  *     if op == 3:
  *         tmp = utils.scratch_alloc(n)
  *         if tmp == NULL:             # <<<<<<<<<<<<<<
@@ -17080,7 +17080,7 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
     __pyx_t_1 = (__pyx_v_tmp == NULL);
     if (unlikely(__pyx_t_1)) {
 
-      /* "_ext/cython_metrics.pyx":73
+      /* "pyntacle/_ext/cython_metrics.pyx":73
  *         tmp = utils.scratch_alloc(n)
  *         if tmp == NULL:
  *             free(all_dist)             # <<<<<<<<<<<<<<
@@ -17089,7 +17089,7 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
 */
       free(__pyx_v_all_dist);
 
-      /* "_ext/cython_metrics.pyx":74
+      /* "pyntacle/_ext/cython_metrics.pyx":74
  *         if tmp == NULL:
  *             free(all_dist)
  *             raise MemoryError("cannot allocate the traversal scratch buffers")             # <<<<<<<<<<<<<<
@@ -17109,7 +17109,7 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __PYX_ERR(0, 74, __pyx_L1_error)
 
-      /* "_ext/cython_metrics.pyx":72
+      /* "pyntacle/_ext/cython_metrics.pyx":72
  *     if op == 3:
  *         tmp = utils.scratch_alloc(n)
  *         if tmp == NULL:             # <<<<<<<<<<<<<<
@@ -17118,7 +17118,7 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
 */
     }
 
-    /* "_ext/cython_metrics.pyx":75
+    /* "pyntacle/_ext/cython_metrics.pyx":75
  *             free(all_dist)
  *             raise MemoryError("cannot allocate the traversal scratch buffers")
  *         memset(tmp.in_K, 0, n * sizeof(char))             # <<<<<<<<<<<<<<
@@ -17127,7 +17127,7 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
 */
     (void)(memset(__pyx_v_tmp->in_K, 0, (__pyx_v_n * (sizeof(char)))));
 
-    /* "_ext/cython_metrics.pyx":76
+    /* "pyntacle/_ext/cython_metrics.pyx":76
  *             raise MemoryError("cannot allocate the traversal scratch buffers")
  *         memset(tmp.in_K, 0, n * sizeof(char))
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -17140,7 +17140,7 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
         __Pyx_FastGIL_Remember();
         /*try:*/ {
 
-          /* "_ext/cython_metrics.pyx":77
+          /* "pyntacle/_ext/cython_metrics.pyx":77
  *         memset(tmp.in_K, 0, n * sizeof(char))
  *         with nogil:
  *             for i in range(n):             # <<<<<<<<<<<<<<
@@ -17152,18 +17152,18 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
           for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_10; __pyx_t_11+=1) {
             __pyx_v_i = __pyx_t_11;
 
-            /* "_ext/cython_metrics.pyx":78
+            /* "pyntacle/_ext/cython_metrics.pyx":78
  *         with nogil:
  *             for i in range(n):
  *                 utils.csr_bfs_row(csr, i, tmp.in_K, all_dist + (<size_t> i) * n, tmp.stack)             # <<<<<<<<<<<<<<
  *         utils.scratch_free(tmp)
  *     else:
 */
-            __pyx_f_4_ext_5utils_csr_bfs_row(__pyx_v_csr, __pyx_v_i, __pyx_v_tmp->in_K, (__pyx_v_all_dist + (((size_t)__pyx_v_i) * __pyx_v_n)), __pyx_v_tmp->stack);
+            __pyx_f_8pyntacle_4_ext_5utils_csr_bfs_row(__pyx_v_csr, __pyx_v_i, __pyx_v_tmp->in_K, (__pyx_v_all_dist + (((size_t)__pyx_v_i) * __pyx_v_n)), __pyx_v_tmp->stack);
           }
         }
 
-        /* "_ext/cython_metrics.pyx":76
+        /* "pyntacle/_ext/cython_metrics.pyx":76
  *             raise MemoryError("cannot allocate the traversal scratch buffers")
  *         memset(tmp.in_K, 0, n * sizeof(char))
  *         with nogil:             # <<<<<<<<<<<<<<
@@ -17180,16 +17180,16 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
         }
     }
 
-    /* "_ext/cython_metrics.pyx":79
+    /* "pyntacle/_ext/cython_metrics.pyx":79
  *             for i in range(n):
  *                 utils.csr_bfs_row(csr, i, tmp.in_K, all_dist + (<size_t> i) * n, tmp.stack)
  *         utils.scratch_free(tmp)             # <<<<<<<<<<<<<<
  *     else:
  *         if cython_igraph.igraph_dijkstra(edges, wvec, n, all_dist) != 0:
 */
-    __pyx_f_4_ext_5utils_scratch_free(__pyx_v_tmp);
+    __pyx_f_8pyntacle_4_ext_5utils_scratch_free(__pyx_v_tmp);
 
-    /* "_ext/cython_metrics.pyx":70
+    /* "pyntacle/_ext/cython_metrics.pyx":70
  *             f"({(<size_t> n) * n * 8 / 1e9:.1f} GB)")
  * 
  *     if op == 3:             # <<<<<<<<<<<<<<
@@ -17199,7 +17199,7 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
     goto __pyx_L5;
   }
 
-  /* "_ext/cython_metrics.pyx":81
+  /* "pyntacle/_ext/cython_metrics.pyx":81
  *         utils.scratch_free(tmp)
  *     else:
  *         if cython_igraph.igraph_dijkstra(edges, wvec, n, all_dist) != 0:             # <<<<<<<<<<<<<<
@@ -17207,10 +17207,10 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
  *             raise RuntimeError(
 */
   /*else*/ {
-    __pyx_t_1 = (__pyx_f_4_ext_13cython_igraph_igraph_dijkstra(__pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_all_dist) != 0);
+    __pyx_t_1 = (__pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_dijkstra(__pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_all_dist) != 0);
     if (unlikely(__pyx_t_1)) {
 
-      /* "_ext/cython_metrics.pyx":82
+      /* "pyntacle/_ext/cython_metrics.pyx":82
  *     else:
  *         if cython_igraph.igraph_dijkstra(edges, wvec, n, all_dist) != 0:
  *             free(all_dist)             # <<<<<<<<<<<<<<
@@ -17219,7 +17219,7 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
 */
       free(__pyx_v_all_dist);
 
-      /* "_ext/cython_metrics.pyx":83
+      /* "pyntacle/_ext/cython_metrics.pyx":83
  *         if cython_igraph.igraph_dijkstra(edges, wvec, n, all_dist) != 0:
  *             free(all_dist)
  *             raise RuntimeError(             # <<<<<<<<<<<<<<
@@ -17239,7 +17239,7 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __PYX_ERR(0, 83, __pyx_L1_error)
 
-      /* "_ext/cython_metrics.pyx":81
+      /* "pyntacle/_ext/cython_metrics.pyx":81
  *         utils.scratch_free(tmp)
  *     else:
  *         if cython_igraph.igraph_dijkstra(edges, wvec, n, all_dist) != 0:             # <<<<<<<<<<<<<<
@@ -17250,7 +17250,7 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
   }
   __pyx_L5:;
 
-  /* "_ext/cython_metrics.pyx":88
+  /* "pyntacle/_ext/cython_metrics.pyx":88
  *                 "support undirected graphs.")
  * 
  *     return all_dist             # <<<<<<<<<<<<<<
@@ -17260,7 +17260,7 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
   __pyx_r = __pyx_v_all_dist;
   goto __pyx_L0;
 
-  /* "_ext/cython_metrics.pyx":50
+  /* "pyntacle/_ext/cython_metrics.pyx":50
  * 
  * 
  * cdef double* build_all_dist(int[:, :] edges, double[:] wvec, int n, utils.CSR* csr, int op) except? NULL:             # <<<<<<<<<<<<<<
@@ -17275,14 +17275,14 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
-  __Pyx_AddTraceback("_ext.cython_metrics.build_all_dist", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("pyntacle._ext.cython_metrics.build_all_dist", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "_ext/cython_metrics.pyx":91
+/* "pyntacle/_ext/cython_metrics.pyx":91
  * 
  * 
  * cpdef cython_greedy(int[:] K_indices, int[:] notK_indices, int[:, :] edges, double[:] wvec, int n, int operation, int mdist, int dist_type, int num_threads, bint unweighted=False):             # <<<<<<<<<<<<<<
@@ -17290,14 +17290,14 @@ static double *__pyx_f_4_ext_14cython_metrics_build_all_dist(__Pyx_memviewslice 
  *     cdef int op = operation
 */
 
-static PyObject *__pyx_pw_4_ext_14cython_metrics_1cython_greedy(PyObject *__pyx_self, 
+static PyObject *__pyx_pw_8pyntacle_4_ext_14cython_metrics_1cython_greedy(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice __pyx_v_K_indices, __Pyx_memviewslice __pyx_v_notK_indices, __Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, int __pyx_v_operation, int __pyx_v_mdist, int __pyx_v_dist_type, int __pyx_v_num_threads, CYTHON_UNUSED int __pyx_skip_dispatch, struct __pyx_opt_args_4_ext_14cython_metrics_cython_greedy *__pyx_optional_args) {
+static PyObject *__pyx_f_8pyntacle_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice __pyx_v_K_indices, __Pyx_memviewslice __pyx_v_notK_indices, __Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, int __pyx_v_operation, int __pyx_v_mdist, int __pyx_v_dist_type, int __pyx_v_num_threads, CYTHON_UNUSED int __pyx_skip_dispatch, struct __pyx_opt_args_8pyntacle_4_ext_14cython_metrics_cython_greedy *__pyx_optional_args) {
   int __pyx_v_unweighted = ((int)0);
   int __pyx_v_op;
   int __pyx_v_k;
@@ -17312,13 +17312,13 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
   int __pyx_v_max_index;
   int *__pyx_v_candidate_set;
   int *__pyx_v_not_candidate_set;
-  struct __pyx_t_4_ext_5utils_Scratch *__pyx_v_scratch;
+  struct __pyx_t_8pyntacle_4_ext_5utils_Scratch *__pyx_v_scratch;
   double *__pyx_v_all_dist;
   double *__pyx_v_candidate_results;
   int *__pyx_v_k_tmp;
   int *__pyx_v_notk_tmp;
-  struct __pyx_t_4_ext_5utils_Scratch *__pyx_v_main_scratch;
-  struct __pyx_t_4_ext_5utils_CSR *__pyx_v_csr;
+  struct __pyx_t_8pyntacle_4_ext_5utils_Scratch *__pyx_v_main_scratch;
+  struct __pyx_t_8pyntacle_4_ext_5utils_CSR *__pyx_v_csr;
   int *__pyx_v_alloc_failed;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -17352,7 +17352,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
     }
   }
 
-  /* "_ext/cython_metrics.pyx":93
+  /* "pyntacle/_ext/cython_metrics.pyx":93
  * cpdef cython_greedy(int[:] K_indices, int[:] notK_indices, int[:, :] edges, double[:] wvec, int n, int operation, int mdist, int dist_type, int num_threads, bint unweighted=False):
  * 
  *     cdef int op = operation             # <<<<<<<<<<<<<<
@@ -17361,7 +17361,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
   __pyx_v_op = __pyx_v_operation;
 
-  /* "_ext/cython_metrics.pyx":94
+  /* "pyntacle/_ext/cython_metrics.pyx":94
  * 
  *     cdef int op = operation
  *     cdef int k = K_indices.shape[0]             # <<<<<<<<<<<<<<
@@ -17370,7 +17370,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
   __pyx_v_k = (__pyx_v_K_indices.shape[0]);
 
-  /* "_ext/cython_metrics.pyx":95
+  /* "pyntacle/_ext/cython_metrics.pyx":95
  *     cdef int op = operation
  *     cdef int k = K_indices.shape[0]
  *     cdef int n_k = notK_indices.shape[0]             # <<<<<<<<<<<<<<
@@ -17379,7 +17379,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
   __pyx_v_n_k = (__pyx_v_notK_indices.shape[0]);
 
-  /* "_ext/cython_metrics.pyx":113
+  /* "pyntacle/_ext/cython_metrics.pyx":113
  *     cdef utils.Scratch* scratch
  * 
  *     cdef double* all_dist = NULL             # <<<<<<<<<<<<<<
@@ -17388,7 +17388,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
   __pyx_v_all_dist = NULL;
 
-  /* "_ext/cython_metrics.pyx":114
+  /* "pyntacle/_ext/cython_metrics.pyx":114
  * 
  *     cdef double* all_dist = NULL
  *     cdef double* candidate_results = NULL             # <<<<<<<<<<<<<<
@@ -17397,7 +17397,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
   __pyx_v_candidate_results = NULL;
 
-  /* "_ext/cython_metrics.pyx":115
+  /* "pyntacle/_ext/cython_metrics.pyx":115
  *     cdef double* all_dist = NULL
  *     cdef double* candidate_results = NULL
  *     cdef int* k_tmp = NULL             # <<<<<<<<<<<<<<
@@ -17406,7 +17406,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
   __pyx_v_k_tmp = NULL;
 
-  /* "_ext/cython_metrics.pyx":116
+  /* "pyntacle/_ext/cython_metrics.pyx":116
  *     cdef double* candidate_results = NULL
  *     cdef int* k_tmp = NULL
  *     cdef int* notk_tmp = NULL             # <<<<<<<<<<<<<<
@@ -17415,7 +17415,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
   __pyx_v_notk_tmp = NULL;
 
-  /* "_ext/cython_metrics.pyx":117
+  /* "pyntacle/_ext/cython_metrics.pyx":117
  *     cdef int* k_tmp = NULL
  *     cdef int* notk_tmp = NULL
  *     cdef utils.Scratch* main_scratch = NULL             # <<<<<<<<<<<<<<
@@ -17424,7 +17424,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
   __pyx_v_main_scratch = NULL;
 
-  /* "_ext/cython_metrics.pyx":118
+  /* "pyntacle/_ext/cython_metrics.pyx":118
  *     cdef int* notk_tmp = NULL
  *     cdef utils.Scratch* main_scratch = NULL
  *     cdef utils.CSR* csr = NULL             # <<<<<<<<<<<<<<
@@ -17433,7 +17433,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
   __pyx_v_csr = NULL;
 
-  /* "_ext/cython_metrics.pyx":121
+  /* "pyntacle/_ext/cython_metrics.pyx":121
  *     # Heap cell rather than a plain int: a variable assigned inside a `parallel`
  *     # block becomes thread-private, so the flag would never reach this scope.
  *     cdef int* alloc_failed = NULL             # <<<<<<<<<<<<<<
@@ -17442,16 +17442,16 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
   __pyx_v_alloc_failed = NULL;
 
-  /* "_ext/cython_metrics.pyx":123
+  /* "pyntacle/_ext/cython_metrics.pyx":123
  *     cdef int* alloc_failed = NULL
  * 
  *     csr = utils.csr_from_edges(edges, wvec, n)             # <<<<<<<<<<<<<<
  *     if csr == NULL:
  *         raise MemoryError("cannot build the CSR view of the network")
 */
-  __pyx_v_csr = __pyx_f_4_ext_5utils_csr_from_edges(__pyx_v_edges, __pyx_v_wvec, __pyx_v_n);
+  __pyx_v_csr = __pyx_f_8pyntacle_4_ext_5utils_csr_from_edges(__pyx_v_edges, __pyx_v_wvec, __pyx_v_n);
 
-  /* "_ext/cython_metrics.pyx":124
+  /* "pyntacle/_ext/cython_metrics.pyx":124
  * 
  *     csr = utils.csr_from_edges(edges, wvec, n)
  *     if csr == NULL:             # <<<<<<<<<<<<<<
@@ -17461,7 +17461,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
   __pyx_t_1 = (__pyx_v_csr == NULL);
   if (unlikely(__pyx_t_1)) {
 
-    /* "_ext/cython_metrics.pyx":125
+    /* "pyntacle/_ext/cython_metrics.pyx":125
  *     csr = utils.csr_from_edges(edges, wvec, n)
  *     if csr == NULL:
  *         raise MemoryError("cannot build the CSR view of the network")             # <<<<<<<<<<<<<<
@@ -17481,7 +17481,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __PYX_ERR(0, 125, __pyx_L1_error)
 
-    /* "_ext/cython_metrics.pyx":124
+    /* "pyntacle/_ext/cython_metrics.pyx":124
  * 
  *     csr = utils.csr_from_edges(edges, wvec, n)
  *     if csr == NULL:             # <<<<<<<<<<<<<<
@@ -17490,7 +17490,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
   }
 
-  /* "_ext/cython_metrics.pyx":127
+  /* "pyntacle/_ext/cython_metrics.pyx":127
  *         raise MemoryError("cannot build the CSR view of the network")
  * 
  *     try:             # <<<<<<<<<<<<<<
@@ -17499,7 +17499,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
   /*try:*/ {
 
-    /* "_ext/cython_metrics.pyx":128
+    /* "pyntacle/_ext/cython_metrics.pyx":128
  * 
  *     try:
  *         alloc_failed = <int*> malloc(sizeof(int))             # <<<<<<<<<<<<<<
@@ -17508,7 +17508,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
     __pyx_v_alloc_failed = ((int *)malloc((sizeof(int))));
 
-    /* "_ext/cython_metrics.pyx":129
+    /* "pyntacle/_ext/cython_metrics.pyx":129
  *     try:
  *         alloc_failed = <int*> malloc(sizeof(int))
  *         if alloc_failed == NULL:             # <<<<<<<<<<<<<<
@@ -17518,7 +17518,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
     __pyx_t_1 = (__pyx_v_alloc_failed == NULL);
     if (unlikely(__pyx_t_1)) {
 
-      /* "_ext/cython_metrics.pyx":130
+      /* "pyntacle/_ext/cython_metrics.pyx":130
  *         alloc_failed = <int*> malloc(sizeof(int))
  *         if alloc_failed == NULL:
  *             raise MemoryError("cannot allocate the worker failure flag")             # <<<<<<<<<<<<<<
@@ -17538,7 +17538,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __PYX_ERR(0, 130, __pyx_L5_error)
 
-      /* "_ext/cython_metrics.pyx":129
+      /* "pyntacle/_ext/cython_metrics.pyx":129
  *     try:
  *         alloc_failed = <int*> malloc(sizeof(int))
  *         if alloc_failed == NULL:             # <<<<<<<<<<<<<<
@@ -17547,7 +17547,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
     }
 
-    /* "_ext/cython_metrics.pyx":131
+    /* "pyntacle/_ext/cython_metrics.pyx":131
  *         if alloc_failed == NULL:
  *             raise MemoryError("cannot allocate the worker failure flag")
  *         alloc_failed[0] = 0             # <<<<<<<<<<<<<<
@@ -17556,7 +17556,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
     (__pyx_v_alloc_failed[0]) = 0;
 
-    /* "_ext/cython_metrics.pyx":132
+    /* "pyntacle/_ext/cython_metrics.pyx":132
  *             raise MemoryError("cannot allocate the worker failure flag")
  *         alloc_failed[0] = 0
  *         candidate_results = <double*> malloc((<size_t> k * n_k) * sizeof(double))             # <<<<<<<<<<<<<<
@@ -17565,7 +17565,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
     __pyx_v_candidate_results = ((double *)malloc(((((size_t)__pyx_v_k) * __pyx_v_n_k) * (sizeof(double)))));
 
-    /* "_ext/cython_metrics.pyx":133
+    /* "pyntacle/_ext/cython_metrics.pyx":133
  *         alloc_failed[0] = 0
  *         candidate_results = <double*> malloc((<size_t> k * n_k) * sizeof(double))
  *         k_tmp = <int*> malloc(k * sizeof(int))             # <<<<<<<<<<<<<<
@@ -17574,7 +17574,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
     __pyx_v_k_tmp = ((int *)malloc((__pyx_v_k * (sizeof(int)))));
 
-    /* "_ext/cython_metrics.pyx":134
+    /* "pyntacle/_ext/cython_metrics.pyx":134
  *         candidate_results = <double*> malloc((<size_t> k * n_k) * sizeof(double))
  *         k_tmp = <int*> malloc(k * sizeof(int))
  *         notk_tmp = <int*> malloc(n_k * sizeof(int))             # <<<<<<<<<<<<<<
@@ -17583,16 +17583,16 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
     __pyx_v_notk_tmp = ((int *)malloc((__pyx_v_n_k * (sizeof(int)))));
 
-    /* "_ext/cython_metrics.pyx":135
+    /* "pyntacle/_ext/cython_metrics.pyx":135
  *         k_tmp = <int*> malloc(k * sizeof(int))
  *         notk_tmp = <int*> malloc(n_k * sizeof(int))
  *         main_scratch = utils.scratch_alloc(n)             # <<<<<<<<<<<<<<
  *         if candidate_results == NULL or k_tmp == NULL or notk_tmp == NULL or main_scratch == NULL:
  *             raise MemoryError("cannot allocate the greedy working buffers")
 */
-    __pyx_v_main_scratch = __pyx_f_4_ext_5utils_scratch_alloc(__pyx_v_n);
+    __pyx_v_main_scratch = __pyx_f_8pyntacle_4_ext_5utils_scratch_alloc(__pyx_v_n);
 
-    /* "_ext/cython_metrics.pyx":136
+    /* "pyntacle/_ext/cython_metrics.pyx":136
  *         notk_tmp = <int*> malloc(n_k * sizeof(int))
  *         main_scratch = utils.scratch_alloc(n)
  *         if candidate_results == NULL or k_tmp == NULL or notk_tmp == NULL or main_scratch == NULL:             # <<<<<<<<<<<<<<
@@ -17622,7 +17622,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
     __pyx_L9_bool_binop_done:;
     if (unlikely(__pyx_t_1)) {
 
-      /* "_ext/cython_metrics.pyx":137
+      /* "pyntacle/_ext/cython_metrics.pyx":137
  *         main_scratch = utils.scratch_alloc(n)
  *         if candidate_results == NULL or k_tmp == NULL or notk_tmp == NULL or main_scratch == NULL:
  *             raise MemoryError("cannot allocate the greedy working buffers")             # <<<<<<<<<<<<<<
@@ -17642,7 +17642,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __PYX_ERR(0, 137, __pyx_L5_error)
 
-      /* "_ext/cython_metrics.pyx":136
+      /* "pyntacle/_ext/cython_metrics.pyx":136
  *         notk_tmp = <int*> malloc(n_k * sizeof(int))
  *         main_scratch = utils.scratch_alloc(n)
  *         if candidate_results == NULL or k_tmp == NULL or notk_tmp == NULL or main_scratch == NULL:             # <<<<<<<<<<<<<<
@@ -17651,7 +17651,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
     }
 
-    /* "_ext/cython_metrics.pyx":139
+    /* "pyntacle/_ext/cython_metrics.pyx":139
  *             raise MemoryError("cannot allocate the greedy working buffers")
  * 
  *         memcpy(k_tmp, &K_indices[0], k * sizeof(int))             # <<<<<<<<<<<<<<
@@ -17661,7 +17661,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
     __pyx_t_6 = 0;
     (void)(memcpy(__pyx_v_k_tmp, (&(*((int *) ( /* dim=0 */ (__pyx_v_K_indices.data + __pyx_t_6 * __pyx_v_K_indices.strides[0]) )))), (__pyx_v_k * (sizeof(int)))));
 
-    /* "_ext/cython_metrics.pyx":140
+    /* "pyntacle/_ext/cython_metrics.pyx":140
  * 
  *         memcpy(k_tmp, &K_indices[0], k * sizeof(int))
  *         memcpy(notk_tmp, &notK_indices[0], n_k * sizeof(int))             # <<<<<<<<<<<<<<
@@ -17671,26 +17671,26 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
     __pyx_t_6 = 0;
     (void)(memcpy(__pyx_v_notk_tmp, (&(*((int *) ( /* dim=0 */ (__pyx_v_notK_indices.data + __pyx_t_6 * __pyx_v_notK_indices.strides[0]) )))), (__pyx_v_n_k * (sizeof(int)))));
 
-    /* "_ext/cython_metrics.pyx":144
+    /* "pyntacle/_ext/cython_metrics.pyx":144
  *         # Distances that do not depend on the candidate set are computed once here
  *         # rather than per candidate.
  *         all_dist = build_all_dist(edges, wvec, n, csr, op)             # <<<<<<<<<<<<<<
  * 
  *         optimization_score = operation_selector(operation,
 */
-    __pyx_t_7 = __pyx_f_4_ext_14cython_metrics_build_all_dist(__pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_csr, __pyx_v_op); if (unlikely(__pyx_t_7 == ((void *)NULL) && PyErr_Occurred())) __PYX_ERR(0, 144, __pyx_L5_error)
+    __pyx_t_7 = __pyx_f_8pyntacle_4_ext_14cython_metrics_build_all_dist(__pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_csr, __pyx_v_op); if (unlikely(__pyx_t_7 == ((void *)NULL) && PyErr_Occurred())) __PYX_ERR(0, 144, __pyx_L5_error)
     __pyx_v_all_dist = __pyx_t_7;
 
-    /* "_ext/cython_metrics.pyx":146
+    /* "pyntacle/_ext/cython_metrics.pyx":146
  *         all_dist = build_all_dist(edges, wvec, n, csr, op)
  * 
  *         optimization_score = operation_selector(operation,             # <<<<<<<<<<<<<<
  *                                                 edges, wvec, n,
  *                                                 k_tmp,
 */
-    __pyx_v_optimization_score = __pyx_f_4_ext_14cython_metrics_operation_selector(__pyx_v_operation, __pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_k_tmp, __pyx_v_notk_tmp, __pyx_v_k, __pyx_v_mdist, __pyx_v_all_dist, __pyx_v_dist_type, __pyx_v_csr, __pyx_v_main_scratch, __pyx_v_unweighted);
+    __pyx_v_optimization_score = __pyx_f_8pyntacle_4_ext_14cython_metrics_operation_selector(__pyx_v_operation, __pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_k_tmp, __pyx_v_notk_tmp, __pyx_v_k, __pyx_v_mdist, __pyx_v_all_dist, __pyx_v_dist_type, __pyx_v_csr, __pyx_v_main_scratch, __pyx_v_unweighted);
 
-    /* "_ext/cython_metrics.pyx":155
+    /* "pyntacle/_ext/cython_metrics.pyx":155
  *                                                 csr, main_scratch, unweighted)
  * 
  *         optimal_set_found = False             # <<<<<<<<<<<<<<
@@ -17699,7 +17699,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
     __pyx_v_optimal_set_found = 0;
 
-    /* "_ext/cython_metrics.pyx":157
+    /* "pyntacle/_ext/cython_metrics.pyx":157
  *         optimal_set_found = False
  * 
  *         while not optimal_set_found:             # <<<<<<<<<<<<<<
@@ -17710,7 +17710,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
       __pyx_t_1 = (!__pyx_v_optimal_set_found);
       if (!__pyx_t_1) break;
 
-      /* "_ext/cython_metrics.pyx":158
+      /* "pyntacle/_ext/cython_metrics.pyx":158
  * 
  *         while not optimal_set_found:
  *             with nogil, parallel(num_threads=num_threads):             # <<<<<<<<<<<<<<
@@ -17734,7 +17734,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
                 #endif /* _OPENMP */
                 {
 
-                    /* "_ext/cython_metrics.pyx":162
+                    /* "pyntacle/_ext/cython_metrics.pyx":162
  *                 # For each thread copy the K set, plus its own traversal scratch.
  *                 # Allocated once per parallel region, not once per candidate.
  *                 candidate_set = <int*> malloc(k * sizeof(int))             # <<<<<<<<<<<<<<
@@ -17743,7 +17743,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
                     __pyx_v_candidate_set = ((int *)malloc((__pyx_v_k * (sizeof(int)))));
 
-                    /* "_ext/cython_metrics.pyx":163
+                    /* "pyntacle/_ext/cython_metrics.pyx":163
  *                 # Allocated once per parallel region, not once per candidate.
  *                 candidate_set = <int*> malloc(k * sizeof(int))
  *                 not_candidate_set = <int*> malloc(n_k * sizeof(int))             # <<<<<<<<<<<<<<
@@ -17752,16 +17752,16 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
                     __pyx_v_not_candidate_set = ((int *)malloc((__pyx_v_n_k * (sizeof(int)))));
 
-                    /* "_ext/cython_metrics.pyx":164
+                    /* "pyntacle/_ext/cython_metrics.pyx":164
  *                 candidate_set = <int*> malloc(k * sizeof(int))
  *                 not_candidate_set = <int*> malloc(n_k * sizeof(int))
  *                 scratch = utils.scratch_alloc(n)             # <<<<<<<<<<<<<<
  * 
  *                 if candidate_set == NULL or not_candidate_set == NULL or scratch == NULL:
 */
-                    __pyx_v_scratch = __pyx_f_4_ext_5utils_scratch_alloc(__pyx_v_n);
+                    __pyx_v_scratch = __pyx_f_8pyntacle_4_ext_5utils_scratch_alloc(__pyx_v_n);
 
-                    /* "_ext/cython_metrics.pyx":166
+                    /* "pyntacle/_ext/cython_metrics.pyx":166
  *                 scratch = utils.scratch_alloc(n)
  * 
  *                 if candidate_set == NULL or not_candidate_set == NULL or scratch == NULL:             # <<<<<<<<<<<<<<
@@ -17785,7 +17785,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
                     __pyx_L25_bool_binop_done:;
                     if (__pyx_t_1) {
 
-                      /* "_ext/cython_metrics.pyx":167
+                      /* "pyntacle/_ext/cython_metrics.pyx":167
  * 
  *                 if candidate_set == NULL or not_candidate_set == NULL or scratch == NULL:
  *                     alloc_failed[0] = 1             # <<<<<<<<<<<<<<
@@ -17794,7 +17794,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
                       (__pyx_v_alloc_failed[0]) = 1;
 
-                      /* "_ext/cython_metrics.pyx":166
+                      /* "pyntacle/_ext/cython_metrics.pyx":166
  *                 scratch = utils.scratch_alloc(n)
  * 
  *                 if candidate_set == NULL or not_candidate_set == NULL or scratch == NULL:             # <<<<<<<<<<<<<<
@@ -17804,7 +17804,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
                       goto __pyx_L24;
                     }
 
-                    /* "_ext/cython_metrics.pyx":170
+                    /* "pyntacle/_ext/cython_metrics.pyx":170
  *                 else:
  *                     # Loop over all candidate replacements in parallel.
  *                     for idx in prange(k * n_k, schedule="static"):             # <<<<<<<<<<<<<<
@@ -17824,7 +17824,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
                                   {
                                       __pyx_v_idx = (int)(0 + 1 * __pyx_t_9);
 
-                                      /* "_ext/cython_metrics.pyx":173
+                                      /* "pyntacle/_ext/cython_metrics.pyx":173
  * 
  *                         # Determine which element of K_indices to replace and with which element from notK_indices.
  *                         k_idx = idx // n_k  # element in K_indices             # <<<<<<<<<<<<<<
@@ -17833,7 +17833,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
                                       __pyx_v_k_idx = (__pyx_v_idx / __pyx_v_n_k);
 
-                                      /* "_ext/cython_metrics.pyx":174
+                                      /* "pyntacle/_ext/cython_metrics.pyx":174
  *                         # Determine which element of K_indices to replace and with which element from notK_indices.
  *                         k_idx = idx // n_k  # element in K_indices
  *                         i_idx = idx % n_k     # element in notK_indices             # <<<<<<<<<<<<<<
@@ -17842,7 +17842,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
                                       __pyx_v_i_idx = (__pyx_v_idx % __pyx_v_n_k);
 
-                                      /* "_ext/cython_metrics.pyx":177
+                                      /* "pyntacle/_ext/cython_metrics.pyx":177
  * 
  *                         # reset the sets to default
  *                         memcpy(candidate_set, &K_indices[0], k * sizeof(int))             # <<<<<<<<<<<<<<
@@ -17852,7 +17852,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
                                       __pyx_t_6 = 0;
                                       (void)(memcpy(__pyx_v_candidate_set, (&(*((int *) ( /* dim=0 */ (__pyx_v_K_indices.data + __pyx_t_6 * __pyx_v_K_indices.strides[0]) )))), (__pyx_v_k * (sizeof(int)))));
 
-                                      /* "_ext/cython_metrics.pyx":178
+                                      /* "pyntacle/_ext/cython_metrics.pyx":178
  *                         # reset the sets to default
  *                         memcpy(candidate_set, &K_indices[0], k * sizeof(int))
  *                         memcpy(not_candidate_set, &notK_indices[0], n_k * sizeof(int))             # <<<<<<<<<<<<<<
@@ -17862,7 +17862,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
                                       __pyx_t_6 = 0;
                                       (void)(memcpy(__pyx_v_not_candidate_set, (&(*((int *) ( /* dim=0 */ (__pyx_v_notK_indices.data + __pyx_t_6 * __pyx_v_notK_indices.strides[0]) )))), (__pyx_v_n_k * (sizeof(int)))));
 
-                                      /* "_ext/cython_metrics.pyx":181
+                                      /* "pyntacle/_ext/cython_metrics.pyx":181
  * 
  *                         # swap element
  *                         candidate_set[k_idx] = notK_indices[i_idx]             # <<<<<<<<<<<<<<
@@ -17872,7 +17872,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
                                       __pyx_t_6 = __pyx_v_i_idx;
                                       (__pyx_v_candidate_set[__pyx_v_k_idx]) = (*((int *) ( /* dim=0 */ (__pyx_v_notK_indices.data + __pyx_t_6 * __pyx_v_notK_indices.strides[0]) )));
 
-                                      /* "_ext/cython_metrics.pyx":182
+                                      /* "pyntacle/_ext/cython_metrics.pyx":182
  *                         # swap element
  *                         candidate_set[k_idx] = notK_indices[i_idx]
  *                         not_candidate_set[i_idx] = K_indices[k_idx]             # <<<<<<<<<<<<<<
@@ -17882,14 +17882,14 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
                                       __pyx_t_6 = __pyx_v_k_idx;
                                       (__pyx_v_not_candidate_set[__pyx_v_i_idx]) = (*((int *) ( /* dim=0 */ (__pyx_v_K_indices.data + __pyx_t_6 * __pyx_v_K_indices.strides[0]) )));
 
-                                      /* "_ext/cython_metrics.pyx":184
+                                      /* "pyntacle/_ext/cython_metrics.pyx":184
  *                         not_candidate_set[i_idx] = K_indices[k_idx]
  * 
  *                         candidate_results[idx] = operation_selector(operation,             # <<<<<<<<<<<<<<
  *                                                                     edges, wvec, n,
  *                                                                     candidate_set,
 */
-                                      (__pyx_v_candidate_results[__pyx_v_idx]) = __pyx_f_4_ext_14cython_metrics_operation_selector(__pyx_v_operation, __pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_candidate_set, __pyx_v_not_candidate_set, __pyx_v_k, __pyx_v_mdist, __pyx_v_all_dist, __pyx_v_dist_type, __pyx_v_csr, __pyx_v_scratch, __pyx_v_unweighted);
+                                      (__pyx_v_candidate_results[__pyx_v_idx]) = __pyx_f_8pyntacle_4_ext_14cython_metrics_operation_selector(__pyx_v_operation, __pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_candidate_set, __pyx_v_not_candidate_set, __pyx_v_k, __pyx_v_mdist, __pyx_v_all_dist, __pyx_v_dist_type, __pyx_v_csr, __pyx_v_scratch, __pyx_v_unweighted);
                                   }
                               }
                           }
@@ -17897,7 +17897,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
                     }
                     __pyx_L24:;
 
-                    /* "_ext/cython_metrics.pyx":193
+                    /* "pyntacle/_ext/cython_metrics.pyx":193
  *                                                                     csr, scratch, unweighted)
  * 
  *                 free(candidate_set)             # <<<<<<<<<<<<<<
@@ -17906,7 +17906,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
                     free(__pyx_v_candidate_set);
 
-                    /* "_ext/cython_metrics.pyx":194
+                    /* "pyntacle/_ext/cython_metrics.pyx":194
  * 
  *                 free(candidate_set)
  *                 free(not_candidate_set)             # <<<<<<<<<<<<<<
@@ -17915,14 +17915,14 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
                     free(__pyx_v_not_candidate_set);
 
-                    /* "_ext/cython_metrics.pyx":195
+                    /* "pyntacle/_ext/cython_metrics.pyx":195
  *                 free(candidate_set)
  *                 free(not_candidate_set)
  *                 utils.scratch_free(scratch)             # <<<<<<<<<<<<<<
  * 
  *             if alloc_failed[0]:
 */
-                    __pyx_f_4_ext_5utils_scratch_free(__pyx_v_scratch);
+                    __pyx_f_8pyntacle_4_ext_5utils_scratch_free(__pyx_v_scratch);
                 }
             }
             #if ((defined(__APPLE__) || defined(__OSX__)) && (defined(__GNUC__) && (__GNUC__ > 2 || (__GNUC__ == 2 && (__GNUC_MINOR__ > 95)))))
@@ -17933,7 +17933,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
             #endif
           }
 
-          /* "_ext/cython_metrics.pyx":158
+          /* "pyntacle/_ext/cython_metrics.pyx":158
  * 
  *         while not optimal_set_found:
  *             with nogil, parallel(num_threads=num_threads):             # <<<<<<<<<<<<<<
@@ -17950,7 +17950,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
           }
       }
 
-      /* "_ext/cython_metrics.pyx":197
+      /* "pyntacle/_ext/cython_metrics.pyx":197
  *                 utils.scratch_free(scratch)
  * 
  *             if alloc_failed[0]:             # <<<<<<<<<<<<<<
@@ -17960,7 +17960,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
       __pyx_t_1 = ((__pyx_v_alloc_failed[0]) != 0);
       if (unlikely(__pyx_t_1)) {
 
-        /* "_ext/cython_metrics.pyx":198
+        /* "pyntacle/_ext/cython_metrics.pyx":198
  * 
  *             if alloc_failed[0]:
  *                 raise MemoryError("a worker thread could not allocate its scratch buffers")             # <<<<<<<<<<<<<<
@@ -17980,7 +17980,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __PYX_ERR(0, 198, __pyx_L5_error)
 
-        /* "_ext/cython_metrics.pyx":197
+        /* "pyntacle/_ext/cython_metrics.pyx":197
  *                 utils.scratch_free(scratch)
  * 
  *             if alloc_failed[0]:             # <<<<<<<<<<<<<<
@@ -17989,7 +17989,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
       }
 
-      /* "_ext/cython_metrics.pyx":201
+      /* "pyntacle/_ext/cython_metrics.pyx":201
  * 
  *             # Find the best candidate so far.
  *             max_val = candidate_results[0]             # <<<<<<<<<<<<<<
@@ -17998,7 +17998,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
       __pyx_v_max_val = (__pyx_v_candidate_results[0]);
 
-      /* "_ext/cython_metrics.pyx":202
+      /* "pyntacle/_ext/cython_metrics.pyx":202
  *             # Find the best candidate so far.
  *             max_val = candidate_results[0]
  *             max_index = 0             # <<<<<<<<<<<<<<
@@ -18007,7 +18007,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
       __pyx_v_max_index = 0;
 
-      /* "_ext/cython_metrics.pyx":204
+      /* "pyntacle/_ext/cython_metrics.pyx":204
  *             max_index = 0
  * 
  *             for i in range(1, k * n_k):             # <<<<<<<<<<<<<<
@@ -18019,7 +18019,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
       for (__pyx_t_8 = 1; __pyx_t_8 < __pyx_t_9; __pyx_t_8+=1) {
         __pyx_v_i = __pyx_t_8;
 
-        /* "_ext/cython_metrics.pyx":205
+        /* "pyntacle/_ext/cython_metrics.pyx":205
  * 
  *             for i in range(1, k * n_k):
  *                 if candidate_results[i] > max_val:             # <<<<<<<<<<<<<<
@@ -18029,7 +18029,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
         __pyx_t_1 = ((__pyx_v_candidate_results[__pyx_v_i]) > __pyx_v_max_val);
         if (__pyx_t_1) {
 
-          /* "_ext/cython_metrics.pyx":206
+          /* "pyntacle/_ext/cython_metrics.pyx":206
  *             for i in range(1, k * n_k):
  *                 if candidate_results[i] > max_val:
  *                     max_val = candidate_results[i]             # <<<<<<<<<<<<<<
@@ -18038,7 +18038,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
           __pyx_v_max_val = (__pyx_v_candidate_results[__pyx_v_i]);
 
-          /* "_ext/cython_metrics.pyx":207
+          /* "pyntacle/_ext/cython_metrics.pyx":207
  *                 if candidate_results[i] > max_val:
  *                     max_val = candidate_results[i]
  *                     max_index = i             # <<<<<<<<<<<<<<
@@ -18047,7 +18047,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
           __pyx_v_max_index = __pyx_v_i;
 
-          /* "_ext/cython_metrics.pyx":205
+          /* "pyntacle/_ext/cython_metrics.pyx":205
  * 
  *             for i in range(1, k * n_k):
  *                 if candidate_results[i] > max_val:             # <<<<<<<<<<<<<<
@@ -18057,7 +18057,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
         }
       }
 
-      /* "_ext/cython_metrics.pyx":209
+      /* "pyntacle/_ext/cython_metrics.pyx":209
  *                     max_index = i
  * 
  *             if max_val > optimization_score:             # <<<<<<<<<<<<<<
@@ -18067,7 +18067,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
       __pyx_t_1 = (__pyx_v_max_val > __pyx_v_optimization_score);
       if (__pyx_t_1) {
 
-        /* "_ext/cython_metrics.pyx":211
+        /* "pyntacle/_ext/cython_metrics.pyx":211
  *             if max_val > optimization_score:
  * 
  *                 k_idx = max_index // n_k             # <<<<<<<<<<<<<<
@@ -18076,7 +18076,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
         __pyx_v_k_idx = (__pyx_v_max_index / __pyx_v_n_k);
 
-        /* "_ext/cython_metrics.pyx":212
+        /* "pyntacle/_ext/cython_metrics.pyx":212
  * 
  *                 k_idx = max_index // n_k
  *                 i_idx = max_index % n_k             # <<<<<<<<<<<<<<
@@ -18085,7 +18085,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
         __pyx_v_i_idx = (__pyx_v_max_index % __pyx_v_n_k);
 
-        /* "_ext/cython_metrics.pyx":215
+        /* "pyntacle/_ext/cython_metrics.pyx":215
  * 
  *                 # swap elements
  *                 max_index = K_indices[k_idx]  # temporary for the swap             # <<<<<<<<<<<<<<
@@ -18095,7 +18095,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
         __pyx_t_6 = __pyx_v_k_idx;
         __pyx_v_max_index = (*((int *) ( /* dim=0 */ (__pyx_v_K_indices.data + __pyx_t_6 * __pyx_v_K_indices.strides[0]) )));
 
-        /* "_ext/cython_metrics.pyx":216
+        /* "pyntacle/_ext/cython_metrics.pyx":216
  *                 # swap elements
  *                 max_index = K_indices[k_idx]  # temporary for the swap
  *                 K_indices[k_idx] = notK_indices[i_idx]             # <<<<<<<<<<<<<<
@@ -18106,7 +18106,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
         __pyx_t_11 = __pyx_v_k_idx;
         *((int *) ( /* dim=0 */ (__pyx_v_K_indices.data + __pyx_t_11 * __pyx_v_K_indices.strides[0]) )) = (*((int *) ( /* dim=0 */ (__pyx_v_notK_indices.data + __pyx_t_6 * __pyx_v_notK_indices.strides[0]) )));
 
-        /* "_ext/cython_metrics.pyx":217
+        /* "pyntacle/_ext/cython_metrics.pyx":217
  *                 max_index = K_indices[k_idx]  # temporary for the swap
  *                 K_indices[k_idx] = notK_indices[i_idx]
  *                 notK_indices[i_idx] = max_index             # <<<<<<<<<<<<<<
@@ -18116,7 +18116,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
         __pyx_t_6 = __pyx_v_i_idx;
         *((int *) ( /* dim=0 */ (__pyx_v_notK_indices.data + __pyx_t_6 * __pyx_v_notK_indices.strides[0]) )) = __pyx_v_max_index;
 
-        /* "_ext/cython_metrics.pyx":219
+        /* "pyntacle/_ext/cython_metrics.pyx":219
  *                 notK_indices[i_idx] = max_index
  * 
  *                 optimization_score = max_val             # <<<<<<<<<<<<<<
@@ -18125,7 +18125,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
         __pyx_v_optimization_score = __pyx_v_max_val;
 
-        /* "_ext/cython_metrics.pyx":209
+        /* "pyntacle/_ext/cython_metrics.pyx":209
  *                     max_index = i
  * 
  *             if max_val > optimization_score:             # <<<<<<<<<<<<<<
@@ -18135,7 +18135,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
         goto __pyx_L40;
       }
 
-      /* "_ext/cython_metrics.pyx":223
+      /* "pyntacle/_ext/cython_metrics.pyx":223
  *             else:
  * 
  *                 optimal_set_found = True             # <<<<<<<<<<<<<<
@@ -18149,7 +18149,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
     }
   }
 
-  /* "_ext/cython_metrics.pyx":226
+  /* "pyntacle/_ext/cython_metrics.pyx":226
  * 
  *     finally:
  *         free(alloc_failed)             # <<<<<<<<<<<<<<
@@ -18160,7 +18160,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
     /*normal exit:*/{
       free(__pyx_v_alloc_failed);
 
-      /* "_ext/cython_metrics.pyx":227
+      /* "pyntacle/_ext/cython_metrics.pyx":227
  *     finally:
  *         free(alloc_failed)
  *         free(candidate_results)             # <<<<<<<<<<<<<<
@@ -18169,7 +18169,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
       free(__pyx_v_candidate_results);
 
-      /* "_ext/cython_metrics.pyx":228
+      /* "pyntacle/_ext/cython_metrics.pyx":228
  *         free(alloc_failed)
  *         free(candidate_results)
  *         free(k_tmp)             # <<<<<<<<<<<<<<
@@ -18178,7 +18178,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
       free(__pyx_v_k_tmp);
 
-      /* "_ext/cython_metrics.pyx":229
+      /* "pyntacle/_ext/cython_metrics.pyx":229
  *         free(candidate_results)
  *         free(k_tmp)
  *         free(notk_tmp)             # <<<<<<<<<<<<<<
@@ -18187,7 +18187,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
       free(__pyx_v_notk_tmp);
 
-      /* "_ext/cython_metrics.pyx":230
+      /* "pyntacle/_ext/cython_metrics.pyx":230
  *         free(k_tmp)
  *         free(notk_tmp)
  *         free(all_dist)             # <<<<<<<<<<<<<<
@@ -18196,23 +18196,23 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
       free(__pyx_v_all_dist);
 
-      /* "_ext/cython_metrics.pyx":231
+      /* "pyntacle/_ext/cython_metrics.pyx":231
  *         free(notk_tmp)
  *         free(all_dist)
  *         utils.scratch_free(main_scratch)             # <<<<<<<<<<<<<<
  *         utils.csr_free(csr)
  * 
 */
-      __pyx_f_4_ext_5utils_scratch_free(__pyx_v_main_scratch);
+      __pyx_f_8pyntacle_4_ext_5utils_scratch_free(__pyx_v_main_scratch);
 
-      /* "_ext/cython_metrics.pyx":232
+      /* "pyntacle/_ext/cython_metrics.pyx":232
  *         free(all_dist)
  *         utils.scratch_free(main_scratch)
  *         utils.csr_free(csr)             # <<<<<<<<<<<<<<
  * 
  *     return K_indices, round(optimization_score, 3)
 */
-      __pyx_f_4_ext_5utils_csr_free(__pyx_v_csr);
+      __pyx_f_8pyntacle_4_ext_5utils_csr_free(__pyx_v_csr);
       goto __pyx_L6;
     }
     __pyx_L5_error:;
@@ -18233,7 +18233,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
       __pyx_t_10 = __pyx_lineno; __pyx_t_9 = __pyx_clineno; __pyx_t_12 = __pyx_filename;
       {
 
-        /* "_ext/cython_metrics.pyx":226
+        /* "pyntacle/_ext/cython_metrics.pyx":226
  * 
  *     finally:
  *         free(alloc_failed)             # <<<<<<<<<<<<<<
@@ -18242,7 +18242,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
         free(__pyx_v_alloc_failed);
 
-        /* "_ext/cython_metrics.pyx":227
+        /* "pyntacle/_ext/cython_metrics.pyx":227
  *     finally:
  *         free(alloc_failed)
  *         free(candidate_results)             # <<<<<<<<<<<<<<
@@ -18251,7 +18251,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
         free(__pyx_v_candidate_results);
 
-        /* "_ext/cython_metrics.pyx":228
+        /* "pyntacle/_ext/cython_metrics.pyx":228
  *         free(alloc_failed)
  *         free(candidate_results)
  *         free(k_tmp)             # <<<<<<<<<<<<<<
@@ -18260,7 +18260,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
         free(__pyx_v_k_tmp);
 
-        /* "_ext/cython_metrics.pyx":229
+        /* "pyntacle/_ext/cython_metrics.pyx":229
  *         free(candidate_results)
  *         free(k_tmp)
  *         free(notk_tmp)             # <<<<<<<<<<<<<<
@@ -18269,7 +18269,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
         free(__pyx_v_notk_tmp);
 
-        /* "_ext/cython_metrics.pyx":230
+        /* "pyntacle/_ext/cython_metrics.pyx":230
  *         free(k_tmp)
  *         free(notk_tmp)
  *         free(all_dist)             # <<<<<<<<<<<<<<
@@ -18278,23 +18278,23 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 */
         free(__pyx_v_all_dist);
 
-        /* "_ext/cython_metrics.pyx":231
+        /* "pyntacle/_ext/cython_metrics.pyx":231
  *         free(notk_tmp)
  *         free(all_dist)
  *         utils.scratch_free(main_scratch)             # <<<<<<<<<<<<<<
  *         utils.csr_free(csr)
  * 
 */
-        __pyx_f_4_ext_5utils_scratch_free(__pyx_v_main_scratch);
+        __pyx_f_8pyntacle_4_ext_5utils_scratch_free(__pyx_v_main_scratch);
 
-        /* "_ext/cython_metrics.pyx":232
+        /* "pyntacle/_ext/cython_metrics.pyx":232
  *         free(all_dist)
  *         utils.scratch_free(main_scratch)
  *         utils.csr_free(csr)             # <<<<<<<<<<<<<<
  * 
  *     return K_indices, round(optimization_score, 3)
 */
-        __pyx_f_4_ext_5utils_csr_free(__pyx_v_csr);
+        __pyx_f_8pyntacle_4_ext_5utils_csr_free(__pyx_v_csr);
       }
       __Pyx_XGIVEREF(__pyx_t_16);
       __Pyx_XGIVEREF(__pyx_t_17);
@@ -18311,7 +18311,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
     __pyx_L6:;
   }
 
-  /* "_ext/cython_metrics.pyx":234
+  /* "pyntacle/_ext/cython_metrics.pyx":234
  *         utils.csr_free(csr)
  * 
  *     return K_indices, round(optimization_score, 3)             # <<<<<<<<<<<<<<
@@ -18345,7 +18345,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
   __pyx_t_20 = 0;
   goto __pyx_L0;
 
-  /* "_ext/cython_metrics.pyx":91
+  /* "pyntacle/_ext/cython_metrics.pyx":91
  * 
  * 
  * cpdef cython_greedy(int[:] K_indices, int[:] notK_indices, int[:, :] edges, double[:] wvec, int n, int operation, int mdist, int dist_type, int num_threads, bint unweighted=False):             # <<<<<<<<<<<<<<
@@ -18359,7 +18359,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_19);
   __Pyx_XDECREF(__pyx_t_20);
-  __Pyx_AddTraceback("_ext.cython_metrics.cython_greedy", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("pyntacle._ext.cython_metrics.cython_greedy", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -18368,15 +18368,15 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_greedy(__Pyx_memviewslice
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4_ext_14cython_metrics_1cython_greedy(PyObject *__pyx_self, 
+static PyObject *__pyx_pw_8pyntacle_4_ext_14cython_metrics_1cython_greedy(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_4_ext_14cython_metrics_1cython_greedy = {"cython_greedy", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_4_ext_14cython_metrics_1cython_greedy, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_4_ext_14cython_metrics_1cython_greedy(PyObject *__pyx_self, 
+static PyMethodDef __pyx_mdef_8pyntacle_4_ext_14cython_metrics_1cython_greedy = {"cython_greedy", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8pyntacle_4_ext_14cython_metrics_1cython_greedy, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_8pyntacle_4_ext_14cython_metrics_1cython_greedy(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -18523,11 +18523,11 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __PYX_XCLEAR_MEMVIEW(&__pyx_v_notK_indices, 1);
   __PYX_XCLEAR_MEMVIEW(&__pyx_v_edges, 1);
   __PYX_XCLEAR_MEMVIEW(&__pyx_v_wvec, 1);
-  __Pyx_AddTraceback("_ext.cython_metrics.cython_greedy", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("pyntacle._ext.cython_metrics.cython_greedy", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4_ext_14cython_metrics_cython_greedy(__pyx_self, __pyx_v_K_indices, __pyx_v_notK_indices, __pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_operation, __pyx_v_mdist, __pyx_v_dist_type, __pyx_v_num_threads, __pyx_v_unweighted);
+  __pyx_r = __pyx_pf_8pyntacle_4_ext_14cython_metrics_cython_greedy(__pyx_self, __pyx_v_K_indices, __pyx_v_notK_indices, __pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_operation, __pyx_v_mdist, __pyx_v_dist_type, __pyx_v_num_threads, __pyx_v_unweighted);
 
   /* function exit code */
   for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
@@ -18541,11 +18541,11 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4_ext_14cython_metrics_cython_greedy(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_K_indices, __Pyx_memviewslice __pyx_v_notK_indices, __Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, int __pyx_v_operation, int __pyx_v_mdist, int __pyx_v_dist_type, int __pyx_v_num_threads, int __pyx_v_unweighted) {
+static PyObject *__pyx_pf_8pyntacle_4_ext_14cython_metrics_cython_greedy(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_K_indices, __Pyx_memviewslice __pyx_v_notK_indices, __Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, int __pyx_v_operation, int __pyx_v_mdist, int __pyx_v_dist_type, int __pyx_v_num_threads, int __pyx_v_unweighted) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  struct __pyx_opt_args_4_ext_14cython_metrics_cython_greedy __pyx_t_2;
+  struct __pyx_opt_args_8pyntacle_4_ext_14cython_metrics_cython_greedy __pyx_t_2;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -18557,7 +18557,7 @@ static PyObject *__pyx_pf_4_ext_14cython_metrics_cython_greedy(CYTHON_UNUSED PyO
   if (unlikely(!__pyx_v_wvec.memview)) { __Pyx_RaiseUnboundLocalError("wvec"); __PYX_ERR(0, 91, __pyx_L1_error) }
   __pyx_t_2.__pyx_n = 1;
   __pyx_t_2.unweighted = __pyx_v_unweighted;
-  __pyx_t_1 = __pyx_f_4_ext_14cython_metrics_cython_greedy(__pyx_v_K_indices, __pyx_v_notK_indices, __pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_operation, __pyx_v_mdist, __pyx_v_dist_type, __pyx_v_num_threads, 1, &__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 91, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_8pyntacle_4_ext_14cython_metrics_cython_greedy(__pyx_v_K_indices, __pyx_v_notK_indices, __pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_operation, __pyx_v_mdist, __pyx_v_dist_type, __pyx_v_num_threads, 1, &__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 91, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -18566,7 +18566,7 @@ static PyObject *__pyx_pf_4_ext_14cython_metrics_cython_greedy(CYTHON_UNUSED PyO
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("_ext.cython_metrics.cython_greedy", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("pyntacle._ext.cython_metrics.cython_greedy", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -18574,7 +18574,7 @@ static PyObject *__pyx_pf_4_ext_14cython_metrics_cython_greedy(CYTHON_UNUSED PyO
   return __pyx_r;
 }
 
-/* "_ext/cython_metrics.pyx":237
+/* "pyntacle/_ext/cython_metrics.pyx":237
  * 
  * 
  * cpdef cython_info(int[:] K_indices, int[:] notK_indices, int[:, :] edges, double[:] wvec, int n, int operation, int mdist, int dist_type, int num_threads, bint unweighted=False):             # <<<<<<<<<<<<<<
@@ -18582,14 +18582,14 @@ static PyObject *__pyx_pf_4_ext_14cython_metrics_cython_greedy(CYTHON_UNUSED PyO
  *     cdef int op = operation
 */
 
-static PyObject *__pyx_pw_4_ext_14cython_metrics_3cython_info(PyObject *__pyx_self, 
+static PyObject *__pyx_pw_8pyntacle_4_ext_14cython_metrics_3cython_info(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice __pyx_v_K_indices, __Pyx_memviewslice __pyx_v_notK_indices, __Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, int __pyx_v_operation, int __pyx_v_mdist, int __pyx_v_dist_type, CYTHON_UNUSED int __pyx_v_num_threads, CYTHON_UNUSED int __pyx_skip_dispatch, struct __pyx_opt_args_4_ext_14cython_metrics_cython_info *__pyx_optional_args) {
+static PyObject *__pyx_f_8pyntacle_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice __pyx_v_K_indices, __Pyx_memviewslice __pyx_v_notK_indices, __Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, int __pyx_v_operation, int __pyx_v_mdist, int __pyx_v_dist_type, CYTHON_UNUSED int __pyx_v_num_threads, CYTHON_UNUSED int __pyx_skip_dispatch, struct __pyx_opt_args_8pyntacle_4_ext_14cython_metrics_cython_info *__pyx_optional_args) {
   int __pyx_v_unweighted = ((int)0);
   int __pyx_v_op;
   int __pyx_v_k;
@@ -18598,8 +18598,8 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
   double *__pyx_v_all_dist;
   int *__pyx_v_k_tmp;
   int *__pyx_v_notk_tmp;
-  struct __pyx_t_4_ext_5utils_Scratch *__pyx_v_scratch;
-  struct __pyx_t_4_ext_5utils_CSR *__pyx_v_csr;
+  struct __pyx_t_8pyntacle_4_ext_5utils_Scratch *__pyx_v_scratch;
+  struct __pyx_t_8pyntacle_4_ext_5utils_CSR *__pyx_v_csr;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
@@ -18629,7 +18629,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
     }
   }
 
-  /* "_ext/cython_metrics.pyx":239
+  /* "pyntacle/_ext/cython_metrics.pyx":239
  * cpdef cython_info(int[:] K_indices, int[:] notK_indices, int[:, :] edges, double[:] wvec, int n, int operation, int mdist, int dist_type, int num_threads, bint unweighted=False):
  * 
  *     cdef int op = operation             # <<<<<<<<<<<<<<
@@ -18638,7 +18638,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
 */
   __pyx_v_op = __pyx_v_operation;
 
-  /* "_ext/cython_metrics.pyx":240
+  /* "pyntacle/_ext/cython_metrics.pyx":240
  * 
  *     cdef int op = operation
  *     cdef int k = K_indices.shape[0]             # <<<<<<<<<<<<<<
@@ -18647,7 +18647,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
 */
   __pyx_v_k = (__pyx_v_K_indices.shape[0]);
 
-  /* "_ext/cython_metrics.pyx":241
+  /* "pyntacle/_ext/cython_metrics.pyx":241
  *     cdef int op = operation
  *     cdef int k = K_indices.shape[0]
  *     cdef int n_k = notK_indices.shape[0]             # <<<<<<<<<<<<<<
@@ -18656,7 +18656,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
 */
   __pyx_v_n_k = (__pyx_v_notK_indices.shape[0]);
 
-  /* "_ext/cython_metrics.pyx":245
+  /* "pyntacle/_ext/cython_metrics.pyx":245
  *     cdef double optimization_score
  * 
  *     cdef double* all_dist = NULL             # <<<<<<<<<<<<<<
@@ -18665,7 +18665,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
 */
   __pyx_v_all_dist = NULL;
 
-  /* "_ext/cython_metrics.pyx":246
+  /* "pyntacle/_ext/cython_metrics.pyx":246
  * 
  *     cdef double* all_dist = NULL
  *     cdef int* k_tmp = NULL             # <<<<<<<<<<<<<<
@@ -18674,7 +18674,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
 */
   __pyx_v_k_tmp = NULL;
 
-  /* "_ext/cython_metrics.pyx":247
+  /* "pyntacle/_ext/cython_metrics.pyx":247
  *     cdef double* all_dist = NULL
  *     cdef int* k_tmp = NULL
  *     cdef int* notk_tmp = NULL             # <<<<<<<<<<<<<<
@@ -18683,7 +18683,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
 */
   __pyx_v_notk_tmp = NULL;
 
-  /* "_ext/cython_metrics.pyx":248
+  /* "pyntacle/_ext/cython_metrics.pyx":248
  *     cdef int* k_tmp = NULL
  *     cdef int* notk_tmp = NULL
  *     cdef utils.Scratch* scratch = NULL             # <<<<<<<<<<<<<<
@@ -18692,7 +18692,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
 */
   __pyx_v_scratch = NULL;
 
-  /* "_ext/cython_metrics.pyx":249
+  /* "pyntacle/_ext/cython_metrics.pyx":249
  *     cdef int* notk_tmp = NULL
  *     cdef utils.Scratch* scratch = NULL
  *     cdef utils.CSR* csr = NULL             # <<<<<<<<<<<<<<
@@ -18701,16 +18701,16 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
 */
   __pyx_v_csr = NULL;
 
-  /* "_ext/cython_metrics.pyx":251
+  /* "pyntacle/_ext/cython_metrics.pyx":251
  *     cdef utils.CSR* csr = NULL
  * 
  *     csr = utils.csr_from_edges(edges, wvec, n)             # <<<<<<<<<<<<<<
  *     if csr == NULL:
  *         raise MemoryError("cannot build the CSR view of the network")
 */
-  __pyx_v_csr = __pyx_f_4_ext_5utils_csr_from_edges(__pyx_v_edges, __pyx_v_wvec, __pyx_v_n);
+  __pyx_v_csr = __pyx_f_8pyntacle_4_ext_5utils_csr_from_edges(__pyx_v_edges, __pyx_v_wvec, __pyx_v_n);
 
-  /* "_ext/cython_metrics.pyx":252
+  /* "pyntacle/_ext/cython_metrics.pyx":252
  * 
  *     csr = utils.csr_from_edges(edges, wvec, n)
  *     if csr == NULL:             # <<<<<<<<<<<<<<
@@ -18720,7 +18720,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
   __pyx_t_1 = (__pyx_v_csr == NULL);
   if (unlikely(__pyx_t_1)) {
 
-    /* "_ext/cython_metrics.pyx":253
+    /* "pyntacle/_ext/cython_metrics.pyx":253
  *     csr = utils.csr_from_edges(edges, wvec, n)
  *     if csr == NULL:
  *         raise MemoryError("cannot build the CSR view of the network")             # <<<<<<<<<<<<<<
@@ -18740,7 +18740,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __PYX_ERR(0, 253, __pyx_L1_error)
 
-    /* "_ext/cython_metrics.pyx":252
+    /* "pyntacle/_ext/cython_metrics.pyx":252
  * 
  *     csr = utils.csr_from_edges(edges, wvec, n)
  *     if csr == NULL:             # <<<<<<<<<<<<<<
@@ -18749,7 +18749,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
 */
   }
 
-  /* "_ext/cython_metrics.pyx":255
+  /* "pyntacle/_ext/cython_metrics.pyx":255
  *         raise MemoryError("cannot build the CSR view of the network")
  * 
  *     try:             # <<<<<<<<<<<<<<
@@ -18758,7 +18758,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
 */
   /*try:*/ {
 
-    /* "_ext/cython_metrics.pyx":256
+    /* "pyntacle/_ext/cython_metrics.pyx":256
  * 
  *     try:
  *         k_tmp = <int*> malloc(k * sizeof(int))             # <<<<<<<<<<<<<<
@@ -18767,7 +18767,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
 */
     __pyx_v_k_tmp = ((int *)malloc((__pyx_v_k * (sizeof(int)))));
 
-    /* "_ext/cython_metrics.pyx":257
+    /* "pyntacle/_ext/cython_metrics.pyx":257
  *     try:
  *         k_tmp = <int*> malloc(k * sizeof(int))
  *         notk_tmp = <int*> malloc(n_k * sizeof(int))             # <<<<<<<<<<<<<<
@@ -18776,16 +18776,16 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
 */
     __pyx_v_notk_tmp = ((int *)malloc((__pyx_v_n_k * (sizeof(int)))));
 
-    /* "_ext/cython_metrics.pyx":258
+    /* "pyntacle/_ext/cython_metrics.pyx":258
  *         k_tmp = <int*> malloc(k * sizeof(int))
  *         notk_tmp = <int*> malloc(n_k * sizeof(int))
  *         scratch = utils.scratch_alloc(n)             # <<<<<<<<<<<<<<
  *         if k_tmp == NULL or notk_tmp == NULL or scratch == NULL:
  *             raise MemoryError("cannot allocate the working buffers")
 */
-    __pyx_v_scratch = __pyx_f_4_ext_5utils_scratch_alloc(__pyx_v_n);
+    __pyx_v_scratch = __pyx_f_8pyntacle_4_ext_5utils_scratch_alloc(__pyx_v_n);
 
-    /* "_ext/cython_metrics.pyx":259
+    /* "pyntacle/_ext/cython_metrics.pyx":259
  *         notk_tmp = <int*> malloc(n_k * sizeof(int))
  *         scratch = utils.scratch_alloc(n)
  *         if k_tmp == NULL or notk_tmp == NULL or scratch == NULL:             # <<<<<<<<<<<<<<
@@ -18809,7 +18809,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
     __pyx_L8_bool_binop_done:;
     if (unlikely(__pyx_t_1)) {
 
-      /* "_ext/cython_metrics.pyx":260
+      /* "pyntacle/_ext/cython_metrics.pyx":260
  *         scratch = utils.scratch_alloc(n)
  *         if k_tmp == NULL or notk_tmp == NULL or scratch == NULL:
  *             raise MemoryError("cannot allocate the working buffers")             # <<<<<<<<<<<<<<
@@ -18829,7 +18829,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __PYX_ERR(0, 260, __pyx_L5_error)
 
-      /* "_ext/cython_metrics.pyx":259
+      /* "pyntacle/_ext/cython_metrics.pyx":259
  *         notk_tmp = <int*> malloc(n_k * sizeof(int))
  *         scratch = utils.scratch_alloc(n)
  *         if k_tmp == NULL or notk_tmp == NULL or scratch == NULL:             # <<<<<<<<<<<<<<
@@ -18838,7 +18838,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
 */
     }
 
-    /* "_ext/cython_metrics.pyx":262
+    /* "pyntacle/_ext/cython_metrics.pyx":262
  *             raise MemoryError("cannot allocate the working buffers")
  * 
  *         memcpy(k_tmp, &K_indices[0], k * sizeof(int))             # <<<<<<<<<<<<<<
@@ -18848,7 +18848,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
     __pyx_t_6 = 0;
     (void)(memcpy(__pyx_v_k_tmp, (&(*((int *) ( /* dim=0 */ (__pyx_v_K_indices.data + __pyx_t_6 * __pyx_v_K_indices.strides[0]) )))), (__pyx_v_k * (sizeof(int)))));
 
-    /* "_ext/cython_metrics.pyx":263
+    /* "pyntacle/_ext/cython_metrics.pyx":263
  * 
  *         memcpy(k_tmp, &K_indices[0], k * sizeof(int))
  *         memcpy(notk_tmp, &notK_indices[0], n_k * sizeof(int))             # <<<<<<<<<<<<<<
@@ -18858,27 +18858,27 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
     __pyx_t_6 = 0;
     (void)(memcpy(__pyx_v_notk_tmp, (&(*((int *) ( /* dim=0 */ (__pyx_v_notK_indices.data + __pyx_t_6 * __pyx_v_notK_indices.strides[0]) )))), (__pyx_v_n_k * (sizeof(int)))));
 
-    /* "_ext/cython_metrics.pyx":265
+    /* "pyntacle/_ext/cython_metrics.pyx":265
  *         memcpy(notk_tmp, &notK_indices[0], n_k * sizeof(int))
  * 
  *         all_dist = build_all_dist(edges, wvec, n, csr, op)             # <<<<<<<<<<<<<<
  * 
  *         optimization_score = operation_selector(operation,
 */
-    __pyx_t_7 = __pyx_f_4_ext_14cython_metrics_build_all_dist(__pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_csr, __pyx_v_op); if (unlikely(__pyx_t_7 == ((void *)NULL) && PyErr_Occurred())) __PYX_ERR(0, 265, __pyx_L5_error)
+    __pyx_t_7 = __pyx_f_8pyntacle_4_ext_14cython_metrics_build_all_dist(__pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_csr, __pyx_v_op); if (unlikely(__pyx_t_7 == ((void *)NULL) && PyErr_Occurred())) __PYX_ERR(0, 265, __pyx_L5_error)
     __pyx_v_all_dist = __pyx_t_7;
 
-    /* "_ext/cython_metrics.pyx":267
+    /* "pyntacle/_ext/cython_metrics.pyx":267
  *         all_dist = build_all_dist(edges, wvec, n, csr, op)
  * 
  *         optimization_score = operation_selector(operation,             # <<<<<<<<<<<<<<
  *                                                 edges, wvec, n,
  *                                                 k_tmp,
 */
-    __pyx_v_optimization_score = __pyx_f_4_ext_14cython_metrics_operation_selector(__pyx_v_operation, __pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_k_tmp, __pyx_v_notk_tmp, __pyx_v_k, __pyx_v_mdist, __pyx_v_all_dist, __pyx_v_dist_type, __pyx_v_csr, __pyx_v_scratch, __pyx_v_unweighted);
+    __pyx_v_optimization_score = __pyx_f_8pyntacle_4_ext_14cython_metrics_operation_selector(__pyx_v_operation, __pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_k_tmp, __pyx_v_notk_tmp, __pyx_v_k, __pyx_v_mdist, __pyx_v_all_dist, __pyx_v_dist_type, __pyx_v_csr, __pyx_v_scratch, __pyx_v_unweighted);
   }
 
-  /* "_ext/cython_metrics.pyx":276
+  /* "pyntacle/_ext/cython_metrics.pyx":276
  *                                                 csr, scratch, unweighted)
  *     finally:
  *         free(k_tmp)             # <<<<<<<<<<<<<<
@@ -18889,7 +18889,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
     /*normal exit:*/{
       free(__pyx_v_k_tmp);
 
-      /* "_ext/cython_metrics.pyx":277
+      /* "pyntacle/_ext/cython_metrics.pyx":277
  *     finally:
  *         free(k_tmp)
  *         free(notk_tmp)             # <<<<<<<<<<<<<<
@@ -18898,7 +18898,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
 */
       free(__pyx_v_notk_tmp);
 
-      /* "_ext/cython_metrics.pyx":278
+      /* "pyntacle/_ext/cython_metrics.pyx":278
  *         free(k_tmp)
  *         free(notk_tmp)
  *         free(all_dist)             # <<<<<<<<<<<<<<
@@ -18907,23 +18907,23 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
 */
       free(__pyx_v_all_dist);
 
-      /* "_ext/cython_metrics.pyx":279
+      /* "pyntacle/_ext/cython_metrics.pyx":279
  *         free(notk_tmp)
  *         free(all_dist)
  *         utils.scratch_free(scratch)             # <<<<<<<<<<<<<<
  *         utils.csr_free(csr)
  * 
 */
-      __pyx_f_4_ext_5utils_scratch_free(__pyx_v_scratch);
+      __pyx_f_8pyntacle_4_ext_5utils_scratch_free(__pyx_v_scratch);
 
-      /* "_ext/cython_metrics.pyx":280
+      /* "pyntacle/_ext/cython_metrics.pyx":280
  *         free(all_dist)
  *         utils.scratch_free(scratch)
  *         utils.csr_free(csr)             # <<<<<<<<<<<<<<
  * 
  *     return round(optimization_score, 3)
 */
-      __pyx_f_4_ext_5utils_csr_free(__pyx_v_csr);
+      __pyx_f_8pyntacle_4_ext_5utils_csr_free(__pyx_v_csr);
       goto __pyx_L6;
     }
     __pyx_L5_error:;
@@ -18944,7 +18944,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
       __pyx_t_8 = __pyx_lineno; __pyx_t_9 = __pyx_clineno; __pyx_t_10 = __pyx_filename;
       {
 
-        /* "_ext/cython_metrics.pyx":276
+        /* "pyntacle/_ext/cython_metrics.pyx":276
  *                                                 csr, scratch, unweighted)
  *     finally:
  *         free(k_tmp)             # <<<<<<<<<<<<<<
@@ -18953,7 +18953,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
 */
         free(__pyx_v_k_tmp);
 
-        /* "_ext/cython_metrics.pyx":277
+        /* "pyntacle/_ext/cython_metrics.pyx":277
  *     finally:
  *         free(k_tmp)
  *         free(notk_tmp)             # <<<<<<<<<<<<<<
@@ -18962,7 +18962,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
 */
         free(__pyx_v_notk_tmp);
 
-        /* "_ext/cython_metrics.pyx":278
+        /* "pyntacle/_ext/cython_metrics.pyx":278
  *         free(k_tmp)
  *         free(notk_tmp)
  *         free(all_dist)             # <<<<<<<<<<<<<<
@@ -18971,23 +18971,23 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
 */
         free(__pyx_v_all_dist);
 
-        /* "_ext/cython_metrics.pyx":279
+        /* "pyntacle/_ext/cython_metrics.pyx":279
  *         free(notk_tmp)
  *         free(all_dist)
  *         utils.scratch_free(scratch)             # <<<<<<<<<<<<<<
  *         utils.csr_free(csr)
  * 
 */
-        __pyx_f_4_ext_5utils_scratch_free(__pyx_v_scratch);
+        __pyx_f_8pyntacle_4_ext_5utils_scratch_free(__pyx_v_scratch);
 
-        /* "_ext/cython_metrics.pyx":280
+        /* "pyntacle/_ext/cython_metrics.pyx":280
  *         free(all_dist)
  *         utils.scratch_free(scratch)
  *         utils.csr_free(csr)             # <<<<<<<<<<<<<<
  * 
  *     return round(optimization_score, 3)
 */
-        __pyx_f_4_ext_5utils_csr_free(__pyx_v_csr);
+        __pyx_f_8pyntacle_4_ext_5utils_csr_free(__pyx_v_csr);
       }
       __Pyx_XGIVEREF(__pyx_t_14);
       __Pyx_XGIVEREF(__pyx_t_15);
@@ -19004,7 +19004,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
     __pyx_L6:;
   }
 
-  /* "_ext/cython_metrics.pyx":282
+  /* "pyntacle/_ext/cython_metrics.pyx":282
  *         utils.csr_free(csr)
  * 
  *     return round(optimization_score, 3)             # <<<<<<<<<<<<<<
@@ -19028,7 +19028,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "_ext/cython_metrics.pyx":237
+  /* "pyntacle/_ext/cython_metrics.pyx":237
  * 
  * 
  * cpdef cython_info(int[:] K_indices, int[:] notK_indices, int[:, :] edges, double[:] wvec, int n, int operation, int mdist, int dist_type, int num_threads, bint unweighted=False):             # <<<<<<<<<<<<<<
@@ -19041,7 +19041,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_17);
-  __Pyx_AddTraceback("_ext.cython_metrics.cython_info", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("pyntacle._ext.cython_metrics.cython_info", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -19050,15 +19050,15 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_info(__Pyx_memviewslice _
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4_ext_14cython_metrics_3cython_info(PyObject *__pyx_self, 
+static PyObject *__pyx_pw_8pyntacle_4_ext_14cython_metrics_3cython_info(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_4_ext_14cython_metrics_3cython_info = {"cython_info", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_4_ext_14cython_metrics_3cython_info, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_4_ext_14cython_metrics_3cython_info(PyObject *__pyx_self, 
+static PyMethodDef __pyx_mdef_8pyntacle_4_ext_14cython_metrics_3cython_info = {"cython_info", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8pyntacle_4_ext_14cython_metrics_3cython_info, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_8pyntacle_4_ext_14cython_metrics_3cython_info(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -19205,11 +19205,11 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __PYX_XCLEAR_MEMVIEW(&__pyx_v_notK_indices, 1);
   __PYX_XCLEAR_MEMVIEW(&__pyx_v_edges, 1);
   __PYX_XCLEAR_MEMVIEW(&__pyx_v_wvec, 1);
-  __Pyx_AddTraceback("_ext.cython_metrics.cython_info", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("pyntacle._ext.cython_metrics.cython_info", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4_ext_14cython_metrics_2cython_info(__pyx_self, __pyx_v_K_indices, __pyx_v_notK_indices, __pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_operation, __pyx_v_mdist, __pyx_v_dist_type, __pyx_v_num_threads, __pyx_v_unweighted);
+  __pyx_r = __pyx_pf_8pyntacle_4_ext_14cython_metrics_2cython_info(__pyx_self, __pyx_v_K_indices, __pyx_v_notK_indices, __pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_operation, __pyx_v_mdist, __pyx_v_dist_type, __pyx_v_num_threads, __pyx_v_unweighted);
 
   /* function exit code */
   for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
@@ -19223,11 +19223,11 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4_ext_14cython_metrics_2cython_info(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_K_indices, __Pyx_memviewslice __pyx_v_notK_indices, __Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, int __pyx_v_operation, int __pyx_v_mdist, int __pyx_v_dist_type, int __pyx_v_num_threads, int __pyx_v_unweighted) {
+static PyObject *__pyx_pf_8pyntacle_4_ext_14cython_metrics_2cython_info(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_K_indices, __Pyx_memviewslice __pyx_v_notK_indices, __Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, int __pyx_v_operation, int __pyx_v_mdist, int __pyx_v_dist_type, int __pyx_v_num_threads, int __pyx_v_unweighted) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  struct __pyx_opt_args_4_ext_14cython_metrics_cython_info __pyx_t_2;
+  struct __pyx_opt_args_8pyntacle_4_ext_14cython_metrics_cython_info __pyx_t_2;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -19239,7 +19239,7 @@ static PyObject *__pyx_pf_4_ext_14cython_metrics_2cython_info(CYTHON_UNUSED PyOb
   if (unlikely(!__pyx_v_wvec.memview)) { __Pyx_RaiseUnboundLocalError("wvec"); __PYX_ERR(0, 237, __pyx_L1_error) }
   __pyx_t_2.__pyx_n = 1;
   __pyx_t_2.unweighted = __pyx_v_unweighted;
-  __pyx_t_1 = __pyx_f_4_ext_14cython_metrics_cython_info(__pyx_v_K_indices, __pyx_v_notK_indices, __pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_operation, __pyx_v_mdist, __pyx_v_dist_type, __pyx_v_num_threads, 1, &__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 237, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_8pyntacle_4_ext_14cython_metrics_cython_info(__pyx_v_K_indices, __pyx_v_notK_indices, __pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_operation, __pyx_v_mdist, __pyx_v_dist_type, __pyx_v_num_threads, 1, &__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 237, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -19248,7 +19248,7 @@ static PyObject *__pyx_pf_4_ext_14cython_metrics_2cython_info(CYTHON_UNUSED PyOb
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("_ext.cython_metrics.cython_info", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("pyntacle._ext.cython_metrics.cython_info", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -19256,7 +19256,7 @@ static PyObject *__pyx_pf_4_ext_14cython_metrics_2cython_info(CYTHON_UNUSED PyOb
   return __pyx_r;
 }
 
-/* "_ext/cython_metrics.pyx":285
+/* "pyntacle/_ext/cython_metrics.pyx":285
  * 
  * 
  * cpdef cython_bruteforce(int[:, :] edges, double[:] wvec, int n, int[:] K_indices, int operation, int mdist, int dist_type, long long comb_num, int num_threads, bint unweighted=False, int max_ties=100):             # <<<<<<<<<<<<<<
@@ -19264,14 +19264,14 @@ static PyObject *__pyx_pf_4_ext_14cython_metrics_2cython_info(CYTHON_UNUSED PyOb
  *     cdef int op = operation
 */
 
-static PyObject *__pyx_pw_4_ext_14cython_metrics_5cython_bruteforce(PyObject *__pyx_self, 
+static PyObject *__pyx_pw_8pyntacle_4_ext_14cython_metrics_5cython_bruteforce(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, __Pyx_memviewslice __pyx_v_K_indices, int __pyx_v_operation, int __pyx_v_mdist, int __pyx_v_dist_type, PY_LONG_LONG __pyx_v_comb_num, int __pyx_v_num_threads, CYTHON_UNUSED int __pyx_skip_dispatch, struct __pyx_opt_args_4_ext_14cython_metrics_cython_bruteforce *__pyx_optional_args) {
+static PyObject *__pyx_f_8pyntacle_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, __Pyx_memviewslice __pyx_v_K_indices, int __pyx_v_operation, int __pyx_v_mdist, int __pyx_v_dist_type, PY_LONG_LONG __pyx_v_comb_num, int __pyx_v_num_threads, CYTHON_UNUSED int __pyx_skip_dispatch, struct __pyx_opt_args_8pyntacle_4_ext_14cython_metrics_cython_bruteforce *__pyx_optional_args) {
   int __pyx_v_unweighted = ((int)0);
   int __pyx_v_max_ties = ((int)0x64);
   int __pyx_v_op;
@@ -19292,11 +19292,11 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
   int __pyx_v_n_collected;
   int *__pyx_v_k_set;
   int *__pyx_v_not_k_set;
-  struct __pyx_t_4_ext_5utils_Scratch *__pyx_v_scratch;
+  struct __pyx_t_8pyntacle_4_ext_5utils_Scratch *__pyx_v_scratch;
   double *__pyx_v_all_dist;
   double *__pyx_v_candidate_results;
   PY_LONG_LONG *__pyx_v_candidate_index;
-  struct __pyx_t_4_ext_5utils_CSR *__pyx_v_csr;
+  struct __pyx_t_8pyntacle_4_ext_5utils_CSR *__pyx_v_csr;
   int *__pyx_v_alloc_failed;
   PyObject *__pyx_v_collected = NULL;
   PyObject *__pyx_v_tie_sets = NULL;
@@ -19340,7 +19340,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
     }
   }
 
-  /* "_ext/cython_metrics.pyx":287
+  /* "pyntacle/_ext/cython_metrics.pyx":287
  * cpdef cython_bruteforce(int[:, :] edges, double[:] wvec, int n, int[:] K_indices, int operation, int mdist, int dist_type, long long comb_num, int num_threads, bint unweighted=False, int max_ties=100):
  * 
  *     cdef int op = operation             # <<<<<<<<<<<<<<
@@ -19349,7 +19349,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
   __pyx_v_op = __pyx_v_operation;
 
-  /* "_ext/cython_metrics.pyx":288
+  /* "pyntacle/_ext/cython_metrics.pyx":288
  * 
  *     cdef int op = operation
  *     cdef int k = K_indices.shape[0]             # <<<<<<<<<<<<<<
@@ -19358,7 +19358,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
   __pyx_v_k = (__pyx_v_K_indices.shape[0]);
 
-  /* "_ext/cython_metrics.pyx":293
+  /* "pyntacle/_ext/cython_metrics.pyx":293
  *     cdef int i, j
  * 
  *     cdef long long max_index = 0             # <<<<<<<<<<<<<<
@@ -19367,7 +19367,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
   __pyx_v_max_index = 0;
 
-  /* "_ext/cython_metrics.pyx":294
+  /* "pyntacle/_ext/cython_metrics.pyx":294
  * 
  *     cdef long long max_index = 0
  *     cdef double max_score = 0.             # <<<<<<<<<<<<<<
@@ -19376,7 +19376,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
   __pyx_v_max_score = 0.;
 
-  /* "_ext/cython_metrics.pyx":305
+  /* "pyntacle/_ext/cython_metrics.pyx":305
  *     # indices of the sets sitting at its own best score, capped at max_ties, plus
  *     # an uncapped counter so the report can say "showing 100 of 4711".
  *     cdef long long* tie_buf = NULL             # <<<<<<<<<<<<<<
@@ -19385,7 +19385,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
   __pyx_v_tie_buf = NULL;
 
-  /* "_ext/cython_metrics.pyx":306
+  /* "pyntacle/_ext/cython_metrics.pyx":306
  *     # an uncapped counter so the report can say "showing 100 of 4711".
  *     cdef long long* tie_buf = NULL
  *     cdef int* tie_count = NULL             # <<<<<<<<<<<<<<
@@ -19394,7 +19394,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
   __pyx_v_tie_count = NULL;
 
-  /* "_ext/cython_metrics.pyx":307
+  /* "pyntacle/_ext/cython_metrics.pyx":307
  *     cdef long long* tie_buf = NULL
  *     cdef int* tie_count = NULL
  *     cdef long long* tie_total = NULL             # <<<<<<<<<<<<<<
@@ -19403,7 +19403,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
   __pyx_v_tie_total = NULL;
 
-  /* "_ext/cython_metrics.pyx":308
+  /* "pyntacle/_ext/cython_metrics.pyx":308
  *     cdef int* tie_count = NULL
  *     cdef long long* tie_total = NULL
  *     cdef long long total_ties = 0             # <<<<<<<<<<<<<<
@@ -19412,7 +19412,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
   __pyx_v_total_ties = 0;
 
-  /* "_ext/cython_metrics.pyx":309
+  /* "pyntacle/_ext/cython_metrics.pyx":309
  *     cdef long long* tie_total = NULL
  *     cdef long long total_ties = 0
  *     cdef int n_collected = 0             # <<<<<<<<<<<<<<
@@ -19421,7 +19421,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
   __pyx_v_n_collected = 0;
 
-  /* "_ext/cython_metrics.pyx":315
+  /* "pyntacle/_ext/cython_metrics.pyx":315
  *     cdef utils.Scratch* scratch
  * 
  *     cdef double* all_dist = NULL             # <<<<<<<<<<<<<<
@@ -19430,7 +19430,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
   __pyx_v_all_dist = NULL;
 
-  /* "_ext/cython_metrics.pyx":316
+  /* "pyntacle/_ext/cython_metrics.pyx":316
  * 
  *     cdef double* all_dist = NULL
  *     cdef double* candidate_results = NULL             # <<<<<<<<<<<<<<
@@ -19439,7 +19439,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
   __pyx_v_candidate_results = NULL;
 
-  /* "_ext/cython_metrics.pyx":317
+  /* "pyntacle/_ext/cython_metrics.pyx":317
  *     cdef double* all_dist = NULL
  *     cdef double* candidate_results = NULL
  *     cdef long long* candidate_index = NULL             # <<<<<<<<<<<<<<
@@ -19448,7 +19448,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
   __pyx_v_candidate_index = NULL;
 
-  /* "_ext/cython_metrics.pyx":318
+  /* "pyntacle/_ext/cython_metrics.pyx":318
  *     cdef double* candidate_results = NULL
  *     cdef long long* candidate_index = NULL
  *     cdef utils.CSR* csr = NULL             # <<<<<<<<<<<<<<
@@ -19457,7 +19457,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
   __pyx_v_csr = NULL;
 
-  /* "_ext/cython_metrics.pyx":321
+  /* "pyntacle/_ext/cython_metrics.pyx":321
  *     # Heap cell rather than a plain int: a variable assigned inside a `parallel`
  *     # block becomes thread-private, so the flag would never reach this scope.
  *     cdef int* alloc_failed = NULL             # <<<<<<<<<<<<<<
@@ -19466,16 +19466,16 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
   __pyx_v_alloc_failed = NULL;
 
-  /* "_ext/cython_metrics.pyx":323
+  /* "pyntacle/_ext/cython_metrics.pyx":323
  *     cdef int* alloc_failed = NULL
  * 
  *     csr = utils.csr_from_edges(edges, wvec, n)             # <<<<<<<<<<<<<<
  *     if csr == NULL:
  *         raise MemoryError("cannot build the CSR view of the network")
 */
-  __pyx_v_csr = __pyx_f_4_ext_5utils_csr_from_edges(__pyx_v_edges, __pyx_v_wvec, __pyx_v_n);
+  __pyx_v_csr = __pyx_f_8pyntacle_4_ext_5utils_csr_from_edges(__pyx_v_edges, __pyx_v_wvec, __pyx_v_n);
 
-  /* "_ext/cython_metrics.pyx":324
+  /* "pyntacle/_ext/cython_metrics.pyx":324
  * 
  *     csr = utils.csr_from_edges(edges, wvec, n)
  *     if csr == NULL:             # <<<<<<<<<<<<<<
@@ -19485,7 +19485,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
   __pyx_t_1 = (__pyx_v_csr == NULL);
   if (unlikely(__pyx_t_1)) {
 
-    /* "_ext/cython_metrics.pyx":325
+    /* "pyntacle/_ext/cython_metrics.pyx":325
  *     csr = utils.csr_from_edges(edges, wvec, n)
  *     if csr == NULL:
  *         raise MemoryError("cannot build the CSR view of the network")             # <<<<<<<<<<<<<<
@@ -19505,7 +19505,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __PYX_ERR(0, 325, __pyx_L1_error)
 
-    /* "_ext/cython_metrics.pyx":324
+    /* "pyntacle/_ext/cython_metrics.pyx":324
  * 
  *     csr = utils.csr_from_edges(edges, wvec, n)
  *     if csr == NULL:             # <<<<<<<<<<<<<<
@@ -19514,7 +19514,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
   }
 
-  /* "_ext/cython_metrics.pyx":327
+  /* "pyntacle/_ext/cython_metrics.pyx":327
  *         raise MemoryError("cannot build the CSR view of the network")
  * 
  *     try:             # <<<<<<<<<<<<<<
@@ -19523,7 +19523,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
   /*try:*/ {
 
-    /* "_ext/cython_metrics.pyx":328
+    /* "pyntacle/_ext/cython_metrics.pyx":328
  * 
  *     try:
  *         alloc_failed = <int*> malloc(sizeof(int))             # <<<<<<<<<<<<<<
@@ -19532,7 +19532,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
     __pyx_v_alloc_failed = ((int *)malloc((sizeof(int))));
 
-    /* "_ext/cython_metrics.pyx":329
+    /* "pyntacle/_ext/cython_metrics.pyx":329
  *     try:
  *         alloc_failed = <int*> malloc(sizeof(int))
  *         if alloc_failed == NULL:             # <<<<<<<<<<<<<<
@@ -19542,7 +19542,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
     __pyx_t_1 = (__pyx_v_alloc_failed == NULL);
     if (unlikely(__pyx_t_1)) {
 
-      /* "_ext/cython_metrics.pyx":330
+      /* "pyntacle/_ext/cython_metrics.pyx":330
  *         alloc_failed = <int*> malloc(sizeof(int))
  *         if alloc_failed == NULL:
  *             raise MemoryError("cannot allocate the worker failure flag")             # <<<<<<<<<<<<<<
@@ -19562,7 +19562,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __PYX_ERR(0, 330, __pyx_L5_error)
 
-      /* "_ext/cython_metrics.pyx":329
+      /* "pyntacle/_ext/cython_metrics.pyx":329
  *     try:
  *         alloc_failed = <int*> malloc(sizeof(int))
  *         if alloc_failed == NULL:             # <<<<<<<<<<<<<<
@@ -19571,7 +19571,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
     }
 
-    /* "_ext/cython_metrics.pyx":331
+    /* "pyntacle/_ext/cython_metrics.pyx":331
  *         if alloc_failed == NULL:
  *             raise MemoryError("cannot allocate the worker failure flag")
  *         alloc_failed[0] = 0             # <<<<<<<<<<<<<<
@@ -19580,7 +19580,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
     (__pyx_v_alloc_failed[0]) = 0;
 
-    /* "_ext/cython_metrics.pyx":332
+    /* "pyntacle/_ext/cython_metrics.pyx":332
  *             raise MemoryError("cannot allocate the worker failure flag")
  *         alloc_failed[0] = 0
  *         if max_ties < 1:             # <<<<<<<<<<<<<<
@@ -19590,7 +19590,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
     __pyx_t_1 = (__pyx_v_max_ties < 1);
     if (__pyx_t_1) {
 
-      /* "_ext/cython_metrics.pyx":333
+      /* "pyntacle/_ext/cython_metrics.pyx":333
  *         alloc_failed[0] = 0
  *         if max_ties < 1:
  *             max_ties = 1             # <<<<<<<<<<<<<<
@@ -19599,7 +19599,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
       __pyx_v_max_ties = 1;
 
-      /* "_ext/cython_metrics.pyx":332
+      /* "pyntacle/_ext/cython_metrics.pyx":332
  *             raise MemoryError("cannot allocate the worker failure flag")
  *         alloc_failed[0] = 0
  *         if max_ties < 1:             # <<<<<<<<<<<<<<
@@ -19608,7 +19608,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
     }
 
-    /* "_ext/cython_metrics.pyx":334
+    /* "pyntacle/_ext/cython_metrics.pyx":334
  *         if max_ties < 1:
  *             max_ties = 1
  *         candidate_results = <double*> malloc(num_threads * sizeof(double))             # <<<<<<<<<<<<<<
@@ -19617,7 +19617,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
     __pyx_v_candidate_results = ((double *)malloc((__pyx_v_num_threads * (sizeof(double)))));
 
-    /* "_ext/cython_metrics.pyx":335
+    /* "pyntacle/_ext/cython_metrics.pyx":335
  *             max_ties = 1
  *         candidate_results = <double*> malloc(num_threads * sizeof(double))
  *         candidate_index = <long long*> malloc(num_threads * sizeof(long long))             # <<<<<<<<<<<<<<
@@ -19626,7 +19626,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
     __pyx_v_candidate_index = ((PY_LONG_LONG *)malloc((__pyx_v_num_threads * (sizeof(PY_LONG_LONG)))));
 
-    /* "_ext/cython_metrics.pyx":336
+    /* "pyntacle/_ext/cython_metrics.pyx":336
  *         candidate_results = <double*> malloc(num_threads * sizeof(double))
  *         candidate_index = <long long*> malloc(num_threads * sizeof(long long))
  *         tie_buf = <long long*> malloc(<size_t> num_threads * max_ties * sizeof(long long))             # <<<<<<<<<<<<<<
@@ -19635,7 +19635,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
     __pyx_v_tie_buf = ((PY_LONG_LONG *)malloc(((((size_t)__pyx_v_num_threads) * __pyx_v_max_ties) * (sizeof(PY_LONG_LONG)))));
 
-    /* "_ext/cython_metrics.pyx":337
+    /* "pyntacle/_ext/cython_metrics.pyx":337
  *         candidate_index = <long long*> malloc(num_threads * sizeof(long long))
  *         tie_buf = <long long*> malloc(<size_t> num_threads * max_ties * sizeof(long long))
  *         tie_count = <int*> malloc(num_threads * sizeof(int))             # <<<<<<<<<<<<<<
@@ -19644,7 +19644,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
     __pyx_v_tie_count = ((int *)malloc((__pyx_v_num_threads * (sizeof(int)))));
 
-    /* "_ext/cython_metrics.pyx":338
+    /* "pyntacle/_ext/cython_metrics.pyx":338
  *         tie_buf = <long long*> malloc(<size_t> num_threads * max_ties * sizeof(long long))
  *         tie_count = <int*> malloc(num_threads * sizeof(int))
  *         tie_total = <long long*> malloc(num_threads * sizeof(long long))             # <<<<<<<<<<<<<<
@@ -19653,7 +19653,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
     __pyx_v_tie_total = ((PY_LONG_LONG *)malloc((__pyx_v_num_threads * (sizeof(PY_LONG_LONG)))));
 
-    /* "_ext/cython_metrics.pyx":339
+    /* "pyntacle/_ext/cython_metrics.pyx":339
  *         tie_count = <int*> malloc(num_threads * sizeof(int))
  *         tie_total = <long long*> malloc(num_threads * sizeof(long long))
  *         if (candidate_results == NULL or candidate_index == NULL             # <<<<<<<<<<<<<<
@@ -19667,7 +19667,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
       goto __pyx_L10_bool_binop_done;
     }
 
-    /* "_ext/cython_metrics.pyx":340
+    /* "pyntacle/_ext/cython_metrics.pyx":340
  *         tie_total = <long long*> malloc(num_threads * sizeof(long long))
  *         if (candidate_results == NULL or candidate_index == NULL
  *                 or tie_buf == NULL or tie_count == NULL or tie_total == NULL):             # <<<<<<<<<<<<<<
@@ -19696,7 +19696,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
     __pyx_t_1 = __pyx_t_5;
     __pyx_L10_bool_binop_done:;
 
-    /* "_ext/cython_metrics.pyx":339
+    /* "pyntacle/_ext/cython_metrics.pyx":339
  *         tie_count = <int*> malloc(num_threads * sizeof(int))
  *         tie_total = <long long*> malloc(num_threads * sizeof(long long))
  *         if (candidate_results == NULL or candidate_index == NULL             # <<<<<<<<<<<<<<
@@ -19705,7 +19705,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
     if (unlikely(__pyx_t_1)) {
 
-      /* "_ext/cython_metrics.pyx":341
+      /* "pyntacle/_ext/cython_metrics.pyx":341
  *         if (candidate_results == NULL or candidate_index == NULL
  *                 or tie_buf == NULL or tie_count == NULL or tie_total == NULL):
  *             raise MemoryError("cannot allocate the brute-force result buffers")             # <<<<<<<<<<<<<<
@@ -19725,7 +19725,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __PYX_ERR(0, 341, __pyx_L5_error)
 
-      /* "_ext/cython_metrics.pyx":339
+      /* "pyntacle/_ext/cython_metrics.pyx":339
  *         tie_count = <int*> malloc(num_threads * sizeof(int))
  *         tie_total = <long long*> malloc(num_threads * sizeof(long long))
  *         if (candidate_results == NULL or candidate_index == NULL             # <<<<<<<<<<<<<<
@@ -19734,7 +19734,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
     }
 
-    /* "_ext/cython_metrics.pyx":347
+    /* "pyntacle/_ext/cython_metrics.pyx":347
  *         # uninitialized memory. All metric scores are >= 0, so 0 is a safe floor.
  *         # tie_count stays 0 until a candidate actually wins.
  *         for i in range(num_threads):             # <<<<<<<<<<<<<<
@@ -19746,7 +19746,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
     for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
       __pyx_v_i = __pyx_t_8;
 
-      /* "_ext/cython_metrics.pyx":348
+      /* "pyntacle/_ext/cython_metrics.pyx":348
  *         # tie_count stays 0 until a candidate actually wins.
  *         for i in range(num_threads):
  *             candidate_results[i] = 0.             # <<<<<<<<<<<<<<
@@ -19755,7 +19755,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
       (__pyx_v_candidate_results[__pyx_v_i]) = 0.;
 
-      /* "_ext/cython_metrics.pyx":349
+      /* "pyntacle/_ext/cython_metrics.pyx":349
  *         for i in range(num_threads):
  *             candidate_results[i] = 0.
  *             candidate_index[i] = 0             # <<<<<<<<<<<<<<
@@ -19764,7 +19764,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
       (__pyx_v_candidate_index[__pyx_v_i]) = 0;
 
-      /* "_ext/cython_metrics.pyx":350
+      /* "pyntacle/_ext/cython_metrics.pyx":350
  *             candidate_results[i] = 0.
  *             candidate_index[i] = 0
  *             tie_count[i] = 0             # <<<<<<<<<<<<<<
@@ -19773,7 +19773,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
       (__pyx_v_tie_count[__pyx_v_i]) = 0;
 
-      /* "_ext/cython_metrics.pyx":351
+      /* "pyntacle/_ext/cython_metrics.pyx":351
  *             candidate_index[i] = 0
  *             tie_count[i] = 0
  *             tie_total[i] = 0             # <<<<<<<<<<<<<<
@@ -19783,17 +19783,17 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
       (__pyx_v_tie_total[__pyx_v_i]) = 0;
     }
 
-    /* "_ext/cython_metrics.pyx":353
+    /* "pyntacle/_ext/cython_metrics.pyx":353
  *             tie_total[i] = 0
  * 
  *         all_dist = build_all_dist(edges, wvec, n, csr, op)             # <<<<<<<<<<<<<<
  * 
  *         with nogil, parallel(num_threads=num_threads):
 */
-    __pyx_t_9 = __pyx_f_4_ext_14cython_metrics_build_all_dist(__pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_csr, __pyx_v_op); if (unlikely(__pyx_t_9 == ((void *)NULL) && PyErr_Occurred())) __PYX_ERR(0, 353, __pyx_L5_error)
+    __pyx_t_9 = __pyx_f_8pyntacle_4_ext_14cython_metrics_build_all_dist(__pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_csr, __pyx_v_op); if (unlikely(__pyx_t_9 == ((void *)NULL) && PyErr_Occurred())) __PYX_ERR(0, 353, __pyx_L5_error)
     __pyx_v_all_dist = __pyx_t_9;
 
-    /* "_ext/cython_metrics.pyx":355
+    /* "pyntacle/_ext/cython_metrics.pyx":355
  *         all_dist = build_all_dist(edges, wvec, n, csr, op)
  * 
  *         with nogil, parallel(num_threads=num_threads):             # <<<<<<<<<<<<<<
@@ -19817,7 +19817,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
               #endif /* _OPENMP */
               {
 
-                  /* "_ext/cython_metrics.pyx":358
+                  /* "pyntacle/_ext/cython_metrics.pyx":358
  * 
  *             # For each thread copy the K set, plus its own traversal scratch
  *             k_set = <int*> malloc(k * sizeof(int))             # <<<<<<<<<<<<<<
@@ -19826,7 +19826,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
                   __pyx_v_k_set = ((int *)malloc((__pyx_v_k * (sizeof(int)))));
 
-                  /* "_ext/cython_metrics.pyx":359
+                  /* "pyntacle/_ext/cython_metrics.pyx":359
  *             # For each thread copy the K set, plus its own traversal scratch
  *             k_set = <int*> malloc(k * sizeof(int))
  *             not_k_set = <int*> malloc((n - k) * sizeof(int))             # <<<<<<<<<<<<<<
@@ -19835,16 +19835,16 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
                   __pyx_v_not_k_set = ((int *)malloc(((__pyx_v_n - __pyx_v_k) * (sizeof(int)))));
 
-                  /* "_ext/cython_metrics.pyx":360
+                  /* "pyntacle/_ext/cython_metrics.pyx":360
  *             k_set = <int*> malloc(k * sizeof(int))
  *             not_k_set = <int*> malloc((n - k) * sizeof(int))
  *             scratch = utils.scratch_alloc(n)             # <<<<<<<<<<<<<<
  * 
  *             if k_set == NULL or not_k_set == NULL or scratch == NULL:
 */
-                  __pyx_v_scratch = __pyx_f_4_ext_5utils_scratch_alloc(__pyx_v_n);
+                  __pyx_v_scratch = __pyx_f_8pyntacle_4_ext_5utils_scratch_alloc(__pyx_v_n);
 
-                  /* "_ext/cython_metrics.pyx":362
+                  /* "pyntacle/_ext/cython_metrics.pyx":362
  *             scratch = utils.scratch_alloc(n)
  * 
  *             if k_set == NULL or not_k_set == NULL or scratch == NULL:             # <<<<<<<<<<<<<<
@@ -19868,7 +19868,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
                   __pyx_L25_bool_binop_done:;
                   if (__pyx_t_1) {
 
-                    /* "_ext/cython_metrics.pyx":363
+                    /* "pyntacle/_ext/cython_metrics.pyx":363
  * 
  *             if k_set == NULL or not_k_set == NULL or scratch == NULL:
  *                 alloc_failed[0] = 1             # <<<<<<<<<<<<<<
@@ -19877,7 +19877,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
                     (__pyx_v_alloc_failed[0]) = 1;
 
-                    /* "_ext/cython_metrics.pyx":362
+                    /* "pyntacle/_ext/cython_metrics.pyx":362
  *             scratch = utils.scratch_alloc(n)
  * 
  *             if k_set == NULL or not_k_set == NULL or scratch == NULL:             # <<<<<<<<<<<<<<
@@ -19887,7 +19887,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
                     goto __pyx_L24;
                   }
 
-                  /* "_ext/cython_metrics.pyx":366
+                  /* "pyntacle/_ext/cython_metrics.pyx":366
  *             else:
  *                 # Loop over all candidate replacements in parallel.
  *                 for idx in prange(comb_num, schedule="static"):             # <<<<<<<<<<<<<<
@@ -19907,25 +19907,25 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
                                 {
                                     __pyx_v_idx = (PY_LONG_LONG)(0 + 1 * __pyx_t_11);
 
-                                    /* "_ext/cython_metrics.pyx":368
+                                    /* "pyntacle/_ext/cython_metrics.pyx":368
  *                 for idx in prange(comb_num, schedule="static"):
  * 
  *                     utils.index_to_combination(idx, n, k, k_set, not_k_set)             # <<<<<<<<<<<<<<
  * 
  *                     score =  operation_selector(operation,
 */
-                                    __pyx_f_4_ext_5utils_index_to_combination(__pyx_v_idx, __pyx_v_n, __pyx_v_k, __pyx_v_k_set, __pyx_v_not_k_set);
+                                    __pyx_f_8pyntacle_4_ext_5utils_index_to_combination(__pyx_v_idx, __pyx_v_n, __pyx_v_k, __pyx_v_k_set, __pyx_v_not_k_set);
 
-                                    /* "_ext/cython_metrics.pyx":370
+                                    /* "pyntacle/_ext/cython_metrics.pyx":370
  *                     utils.index_to_combination(idx, n, k, k_set, not_k_set)
  * 
  *                     score =  operation_selector(operation,             # <<<<<<<<<<<<<<
  *                                                 edges, wvec, n,
  *                                                 k_set,
 */
-                                    __pyx_v_score = __pyx_f_4_ext_14cython_metrics_operation_selector(__pyx_v_operation, __pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_k_set, __pyx_v_not_k_set, __pyx_v_k, __pyx_v_mdist, __pyx_v_all_dist, __pyx_v_dist_type, __pyx_v_csr, __pyx_v_scratch, __pyx_v_unweighted);
+                                    __pyx_v_score = __pyx_f_8pyntacle_4_ext_14cython_metrics_operation_selector(__pyx_v_operation, __pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_k_set, __pyx_v_not_k_set, __pyx_v_k, __pyx_v_mdist, __pyx_v_all_dist, __pyx_v_dist_type, __pyx_v_csr, __pyx_v_scratch, __pyx_v_unweighted);
 
-                                    /* "_ext/cython_metrics.pyx":379
+                                    /* "pyntacle/_ext/cython_metrics.pyx":379
  *                                                 csr, scratch, unweighted)
  * 
  *                     tid = threadid()             # <<<<<<<<<<<<<<
@@ -19939,7 +19939,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
                                     #endif
                                     __pyx_v_tid = __pyx_t_6;
 
-                                    /* "_ext/cython_metrics.pyx":380
+                                    /* "pyntacle/_ext/cython_metrics.pyx":380
  * 
  *                     tid = threadid()
  *                     best = candidate_results[tid]             # <<<<<<<<<<<<<<
@@ -19948,7 +19948,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
                                     __pyx_v_best = (__pyx_v_candidate_results[__pyx_v_tid]);
 
-                                    /* "_ext/cython_metrics.pyx":383
+                                    /* "pyntacle/_ext/cython_metrics.pyx":383
  *                     # Candidates reach the same optimum through different traversal
  *                     # orders, so their scores agree to rounding, not to the bit.
  *                     eps = 1e-9 * fmax(1., fabs(best))             # <<<<<<<<<<<<<<
@@ -19957,7 +19957,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
                                     __pyx_v_eps = (1e-9 * fmax(1., fabs(__pyx_v_best)));
 
-                                    /* "_ext/cython_metrics.pyx":385
+                                    /* "pyntacle/_ext/cython_metrics.pyx":385
  *                     eps = 1e-9 * fmax(1., fabs(best))
  * 
  *                     if score > best + eps:             # <<<<<<<<<<<<<<
@@ -19967,7 +19967,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
                                     __pyx_t_1 = (__pyx_v_score > (__pyx_v_best + __pyx_v_eps));
                                     if (__pyx_t_1) {
 
-                                      /* "_ext/cython_metrics.pyx":386
+                                      /* "pyntacle/_ext/cython_metrics.pyx":386
  * 
  *                     if score > best + eps:
  *                         candidate_results[tid] = score             # <<<<<<<<<<<<<<
@@ -19976,7 +19976,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
                                       (__pyx_v_candidate_results[__pyx_v_tid]) = __pyx_v_score;
 
-                                      /* "_ext/cython_metrics.pyx":387
+                                      /* "pyntacle/_ext/cython_metrics.pyx":387
  *                     if score > best + eps:
  *                         candidate_results[tid] = score
  *                         candidate_index[tid] = idx             # <<<<<<<<<<<<<<
@@ -19985,7 +19985,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
                                       (__pyx_v_candidate_index[__pyx_v_tid]) = __pyx_v_idx;
 
-                                      /* "_ext/cython_metrics.pyx":388
+                                      /* "pyntacle/_ext/cython_metrics.pyx":388
  *                         candidate_results[tid] = score
  *                         candidate_index[tid] = idx
  *                         tie_buf[tid * max_ties] = idx             # <<<<<<<<<<<<<<
@@ -19994,7 +19994,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
                                       (__pyx_v_tie_buf[(__pyx_v_tid * __pyx_v_max_ties)]) = __pyx_v_idx;
 
-                                      /* "_ext/cython_metrics.pyx":389
+                                      /* "pyntacle/_ext/cython_metrics.pyx":389
  *                         candidate_index[tid] = idx
  *                         tie_buf[tid * max_ties] = idx
  *                         tie_count[tid] = 1             # <<<<<<<<<<<<<<
@@ -20003,7 +20003,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
                                       (__pyx_v_tie_count[__pyx_v_tid]) = 1;
 
-                                      /* "_ext/cython_metrics.pyx":390
+                                      /* "pyntacle/_ext/cython_metrics.pyx":390
  *                         tie_buf[tid * max_ties] = idx
  *                         tie_count[tid] = 1
  *                         tie_total[tid] = 1             # <<<<<<<<<<<<<<
@@ -20012,7 +20012,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
                                       (__pyx_v_tie_total[__pyx_v_tid]) = 1;
 
-                                      /* "_ext/cython_metrics.pyx":385
+                                      /* "pyntacle/_ext/cython_metrics.pyx":385
  *                     eps = 1e-9 * fmax(1., fabs(best))
  * 
  *                     if score > best + eps:             # <<<<<<<<<<<<<<
@@ -20022,7 +20022,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
                                       goto __pyx_L32;
                                     }
 
-                                    /* "_ext/cython_metrics.pyx":391
+                                    /* "pyntacle/_ext/cython_metrics.pyx":391
  *                         tie_count[tid] = 1
  *                         tie_total[tid] = 1
  *                     elif tie_count[tid] > 0 and fabs(score - best) <= eps:             # <<<<<<<<<<<<<<
@@ -20040,7 +20040,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
                                     __pyx_L33_bool_binop_done:;
                                     if (__pyx_t_1) {
 
-                                      /* "_ext/cython_metrics.pyx":392
+                                      /* "pyntacle/_ext/cython_metrics.pyx":392
  *                         tie_total[tid] = 1
  *                     elif tie_count[tid] > 0 and fabs(score - best) <= eps:
  *                         tie_total[tid] = tie_total[tid] + 1             # <<<<<<<<<<<<<<
@@ -20049,7 +20049,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
                                       (__pyx_v_tie_total[__pyx_v_tid]) = ((__pyx_v_tie_total[__pyx_v_tid]) + 1);
 
-                                      /* "_ext/cython_metrics.pyx":393
+                                      /* "pyntacle/_ext/cython_metrics.pyx":393
  *                     elif tie_count[tid] > 0 and fabs(score - best) <= eps:
  *                         tie_total[tid] = tie_total[tid] + 1
  *                         if tie_count[tid] < max_ties:             # <<<<<<<<<<<<<<
@@ -20059,7 +20059,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
                                       __pyx_t_1 = ((__pyx_v_tie_count[__pyx_v_tid]) < __pyx_v_max_ties);
                                       if (__pyx_t_1) {
 
-                                        /* "_ext/cython_metrics.pyx":394
+                                        /* "pyntacle/_ext/cython_metrics.pyx":394
  *                         tie_total[tid] = tie_total[tid] + 1
  *                         if tie_count[tid] < max_ties:
  *                             tie_buf[tid * max_ties + tie_count[tid]] = idx             # <<<<<<<<<<<<<<
@@ -20068,7 +20068,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
                                         (__pyx_v_tie_buf[((__pyx_v_tid * __pyx_v_max_ties) + (__pyx_v_tie_count[__pyx_v_tid]))]) = __pyx_v_idx;
 
-                                        /* "_ext/cython_metrics.pyx":395
+                                        /* "pyntacle/_ext/cython_metrics.pyx":395
  *                         if tie_count[tid] < max_ties:
  *                             tie_buf[tid * max_ties + tie_count[tid]] = idx
  *                             tie_count[tid] = tie_count[tid] + 1             # <<<<<<<<<<<<<<
@@ -20077,7 +20077,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
                                         (__pyx_v_tie_count[__pyx_v_tid]) = ((__pyx_v_tie_count[__pyx_v_tid]) + 1);
 
-                                        /* "_ext/cython_metrics.pyx":393
+                                        /* "pyntacle/_ext/cython_metrics.pyx":393
  *                     elif tie_count[tid] > 0 and fabs(score - best) <= eps:
  *                         tie_total[tid] = tie_total[tid] + 1
  *                         if tie_count[tid] < max_ties:             # <<<<<<<<<<<<<<
@@ -20086,7 +20086,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
                                       }
 
-                                      /* "_ext/cython_metrics.pyx":391
+                                      /* "pyntacle/_ext/cython_metrics.pyx":391
  *                         tie_count[tid] = 1
  *                         tie_total[tid] = 1
  *                     elif tie_count[tid] > 0 and fabs(score - best) <= eps:             # <<<<<<<<<<<<<<
@@ -20102,7 +20102,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
                   }
                   __pyx_L24:;
 
-                  /* "_ext/cython_metrics.pyx":397
+                  /* "pyntacle/_ext/cython_metrics.pyx":397
  *                             tie_count[tid] = tie_count[tid] + 1
  * 
  *             free(k_set)             # <<<<<<<<<<<<<<
@@ -20111,7 +20111,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
                   free(__pyx_v_k_set);
 
-                  /* "_ext/cython_metrics.pyx":398
+                  /* "pyntacle/_ext/cython_metrics.pyx":398
  * 
  *             free(k_set)
  *             free(not_k_set)             # <<<<<<<<<<<<<<
@@ -20120,14 +20120,14 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
                   free(__pyx_v_not_k_set);
 
-                  /* "_ext/cython_metrics.pyx":399
+                  /* "pyntacle/_ext/cython_metrics.pyx":399
  *             free(k_set)
  *             free(not_k_set)
  *             utils.scratch_free(scratch)             # <<<<<<<<<<<<<<
  * 
  *         if alloc_failed[0]:
 */
-                  __pyx_f_4_ext_5utils_scratch_free(__pyx_v_scratch);
+                  __pyx_f_8pyntacle_4_ext_5utils_scratch_free(__pyx_v_scratch);
               }
           }
           #if ((defined(__APPLE__) || defined(__OSX__)) && (defined(__GNUC__) && (__GNUC__ > 2 || (__GNUC__ == 2 && (__GNUC_MINOR__ > 95)))))
@@ -20138,7 +20138,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
           #endif
         }
 
-        /* "_ext/cython_metrics.pyx":355
+        /* "pyntacle/_ext/cython_metrics.pyx":355
  *         all_dist = build_all_dist(edges, wvec, n, csr, op)
  * 
  *         with nogil, parallel(num_threads=num_threads):             # <<<<<<<<<<<<<<
@@ -20155,7 +20155,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
         }
     }
 
-    /* "_ext/cython_metrics.pyx":401
+    /* "pyntacle/_ext/cython_metrics.pyx":401
  *             utils.scratch_free(scratch)
  * 
  *         if alloc_failed[0]:             # <<<<<<<<<<<<<<
@@ -20165,7 +20165,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
     __pyx_t_1 = ((__pyx_v_alloc_failed[0]) != 0);
     if (unlikely(__pyx_t_1)) {
 
-      /* "_ext/cython_metrics.pyx":402
+      /* "pyntacle/_ext/cython_metrics.pyx":402
  * 
  *         if alloc_failed[0]:
  *             raise MemoryError("a worker thread could not allocate its scratch buffers")             # <<<<<<<<<<<<<<
@@ -20185,7 +20185,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __PYX_ERR(0, 402, __pyx_L5_error)
 
-      /* "_ext/cython_metrics.pyx":401
+      /* "pyntacle/_ext/cython_metrics.pyx":401
  *             utils.scratch_free(scratch)
  * 
  *         if alloc_failed[0]:             # <<<<<<<<<<<<<<
@@ -20194,7 +20194,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
     }
 
-    /* "_ext/cython_metrics.pyx":404
+    /* "pyntacle/_ext/cython_metrics.pyx":404
  *             raise MemoryError("a worker thread could not allocate its scratch buffers")
  * 
  *         for i from 0 <= i < num_threads:             # <<<<<<<<<<<<<<
@@ -20204,7 +20204,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
     __pyx_t_6 = __pyx_v_num_threads;
     for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_6; __pyx_v_i++) {
 
-      /* "_ext/cython_metrics.pyx":405
+      /* "pyntacle/_ext/cython_metrics.pyx":405
  * 
  *         for i from 0 <= i < num_threads:
  *             if i == 0:             # <<<<<<<<<<<<<<
@@ -20214,7 +20214,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
       __pyx_t_1 = (__pyx_v_i == 0);
       if (__pyx_t_1) {
 
-        /* "_ext/cython_metrics.pyx":406
+        /* "pyntacle/_ext/cython_metrics.pyx":406
  *         for i from 0 <= i < num_threads:
  *             if i == 0:
  *                 max_score = candidate_results[i]             # <<<<<<<<<<<<<<
@@ -20223,7 +20223,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
         __pyx_v_max_score = (__pyx_v_candidate_results[__pyx_v_i]);
 
-        /* "_ext/cython_metrics.pyx":407
+        /* "pyntacle/_ext/cython_metrics.pyx":407
  *             if i == 0:
  *                 max_score = candidate_results[i]
  *                 max_index = candidate_index[i]             # <<<<<<<<<<<<<<
@@ -20232,7 +20232,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
         __pyx_v_max_index = (__pyx_v_candidate_index[__pyx_v_i]);
 
-        /* "_ext/cython_metrics.pyx":405
+        /* "pyntacle/_ext/cython_metrics.pyx":405
  * 
  *         for i from 0 <= i < num_threads:
  *             if i == 0:             # <<<<<<<<<<<<<<
@@ -20242,7 +20242,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
         goto __pyx_L43;
       }
 
-      /* "_ext/cython_metrics.pyx":408
+      /* "pyntacle/_ext/cython_metrics.pyx":408
  *                 max_score = candidate_results[i]
  *                 max_index = candidate_index[i]
  *             elif candidate_results[i] > max_score:             # <<<<<<<<<<<<<<
@@ -20252,7 +20252,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
       __pyx_t_1 = ((__pyx_v_candidate_results[__pyx_v_i]) > __pyx_v_max_score);
       if (__pyx_t_1) {
 
-        /* "_ext/cython_metrics.pyx":409
+        /* "pyntacle/_ext/cython_metrics.pyx":409
  *                 max_index = candidate_index[i]
  *             elif candidate_results[i] > max_score:
  *                 max_score = candidate_results[i]             # <<<<<<<<<<<<<<
@@ -20261,7 +20261,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
         __pyx_v_max_score = (__pyx_v_candidate_results[__pyx_v_i]);
 
-        /* "_ext/cython_metrics.pyx":410
+        /* "pyntacle/_ext/cython_metrics.pyx":410
  *             elif candidate_results[i] > max_score:
  *                 max_score = candidate_results[i]
  *                 max_index = candidate_index[i]             # <<<<<<<<<<<<<<
@@ -20270,7 +20270,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
         __pyx_v_max_index = (__pyx_v_candidate_index[__pyx_v_i]);
 
-        /* "_ext/cython_metrics.pyx":408
+        /* "pyntacle/_ext/cython_metrics.pyx":408
  *                 max_score = candidate_results[i]
  *                 max_index = candidate_index[i]
  *             elif candidate_results[i] > max_score:             # <<<<<<<<<<<<<<
@@ -20281,7 +20281,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
       __pyx_L43:;
     }
 
-    /* "_ext/cython_metrics.pyx":415
+    /* "pyntacle/_ext/cython_metrics.pyx":415
  *         # the 0 floor (tie_count == 0) are skipped: when nothing scores, the
  *         # answer is combination 0 with score 0, reported as a single set.
  *         eps = 1e-9 * fmax(1., fabs(max_score))             # <<<<<<<<<<<<<<
@@ -20290,7 +20290,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
     __pyx_v_eps = (1e-9 * fmax(1., fabs(__pyx_v_max_score)));
 
-    /* "_ext/cython_metrics.pyx":416
+    /* "pyntacle/_ext/cython_metrics.pyx":416
  *         # answer is combination 0 with score 0, reported as a single set.
  *         eps = 1e-9 * fmax(1., fabs(max_score))
  *         collected = []             # <<<<<<<<<<<<<<
@@ -20302,7 +20302,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
     __pyx_v_collected = ((PyObject*)__pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "_ext/cython_metrics.pyx":417
+    /* "pyntacle/_ext/cython_metrics.pyx":417
  *         eps = 1e-9 * fmax(1., fabs(max_score))
  *         collected = []
  *         for i from 0 <= i < num_threads:             # <<<<<<<<<<<<<<
@@ -20312,7 +20312,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
     __pyx_t_6 = __pyx_v_num_threads;
     for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_6; __pyx_v_i++) {
 
-      /* "_ext/cython_metrics.pyx":418
+      /* "pyntacle/_ext/cython_metrics.pyx":418
  *         collected = []
  *         for i from 0 <= i < num_threads:
  *             if tie_count[i] > 0 and fabs(candidate_results[i] - max_score) <= eps:             # <<<<<<<<<<<<<<
@@ -20330,7 +20330,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
       __pyx_L47_bool_binop_done:;
       if (__pyx_t_1) {
 
-        /* "_ext/cython_metrics.pyx":419
+        /* "pyntacle/_ext/cython_metrics.pyx":419
  *         for i from 0 <= i < num_threads:
  *             if tie_count[i] > 0 and fabs(candidate_results[i] - max_score) <= eps:
  *                 total_ties = total_ties + tie_total[i]             # <<<<<<<<<<<<<<
@@ -20339,7 +20339,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
         __pyx_v_total_ties = (__pyx_v_total_ties + (__pyx_v_tie_total[__pyx_v_i]));
 
-        /* "_ext/cython_metrics.pyx":420
+        /* "pyntacle/_ext/cython_metrics.pyx":420
  *             if tie_count[i] > 0 and fabs(candidate_results[i] - max_score) <= eps:
  *                 total_ties = total_ties + tie_total[i]
  *                 for j from 0 <= j < tie_count[i]:             # <<<<<<<<<<<<<<
@@ -20349,7 +20349,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
         __pyx_t_7 = (__pyx_v_tie_count[__pyx_v_i]);
         for (__pyx_v_j = 0; __pyx_v_j < __pyx_t_7; __pyx_v_j++) {
 
-          /* "_ext/cython_metrics.pyx":421
+          /* "pyntacle/_ext/cython_metrics.pyx":421
  *                 total_ties = total_ties + tie_total[i]
  *                 for j from 0 <= j < tie_count[i]:
  *                     if n_collected < max_ties:             # <<<<<<<<<<<<<<
@@ -20359,7 +20359,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
           __pyx_t_1 = (__pyx_v_n_collected < __pyx_v_max_ties);
           if (__pyx_t_1) {
 
-            /* "_ext/cython_metrics.pyx":422
+            /* "pyntacle/_ext/cython_metrics.pyx":422
  *                 for j from 0 <= j < tie_count[i]:
  *                     if n_collected < max_ties:
  *                         collected.append(tie_buf[<size_t> i * max_ties + j])             # <<<<<<<<<<<<<<
@@ -20371,7 +20371,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
             __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_collected, __pyx_t_2); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 422, __pyx_L5_error)
             __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-            /* "_ext/cython_metrics.pyx":423
+            /* "pyntacle/_ext/cython_metrics.pyx":423
  *                     if n_collected < max_ties:
  *                         collected.append(tie_buf[<size_t> i * max_ties + j])
  *                         n_collected = n_collected + 1             # <<<<<<<<<<<<<<
@@ -20380,7 +20380,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
             __pyx_v_n_collected = (__pyx_v_n_collected + 1);
 
-            /* "_ext/cython_metrics.pyx":421
+            /* "pyntacle/_ext/cython_metrics.pyx":421
  *                 total_ties = total_ties + tie_total[i]
  *                 for j from 0 <= j < tie_count[i]:
  *                     if n_collected < max_ties:             # <<<<<<<<<<<<<<
@@ -20390,7 +20390,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
           }
         }
 
-        /* "_ext/cython_metrics.pyx":418
+        /* "pyntacle/_ext/cython_metrics.pyx":418
  *         collected = []
  *         for i from 0 <= i < num_threads:
  *             if tie_count[i] > 0 and fabs(candidate_results[i] - max_score) <= eps:             # <<<<<<<<<<<<<<
@@ -20400,7 +20400,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
       }
     }
 
-    /* "_ext/cython_metrics.pyx":425
+    /* "pyntacle/_ext/cython_metrics.pyx":425
  *                         n_collected = n_collected + 1
  * 
  *         if n_collected == 0:             # <<<<<<<<<<<<<<
@@ -20410,7 +20410,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
     __pyx_t_1 = (__pyx_v_n_collected == 0);
     if (__pyx_t_1) {
 
-      /* "_ext/cython_metrics.pyx":426
+      /* "pyntacle/_ext/cython_metrics.pyx":426
  * 
  *         if n_collected == 0:
  *             collected = [max_index]             # <<<<<<<<<<<<<<
@@ -20427,7 +20427,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
       __Pyx_DECREF_SET(__pyx_v_collected, ((PyObject*)__pyx_t_3));
       __pyx_t_3 = 0;
 
-      /* "_ext/cython_metrics.pyx":427
+      /* "pyntacle/_ext/cython_metrics.pyx":427
  *         if n_collected == 0:
  *             collected = [max_index]
  *             n_collected = 1             # <<<<<<<<<<<<<<
@@ -20436,7 +20436,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
       __pyx_v_n_collected = 1;
 
-      /* "_ext/cython_metrics.pyx":428
+      /* "pyntacle/_ext/cython_metrics.pyx":428
  *             collected = [max_index]
  *             n_collected = 1
  *             total_ties = 1             # <<<<<<<<<<<<<<
@@ -20445,7 +20445,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
       __pyx_v_total_ties = 1;
 
-      /* "_ext/cython_metrics.pyx":425
+      /* "pyntacle/_ext/cython_metrics.pyx":425
  *                         n_collected = n_collected + 1
  * 
  *         if n_collected == 0:             # <<<<<<<<<<<<<<
@@ -20455,7 +20455,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
       goto __pyx_L52;
     }
 
-    /* "_ext/cython_metrics.pyx":430
+    /* "pyntacle/_ext/cython_metrics.pyx":430
  *             total_ties = 1
  *         else:
  *             max_index = <long long> collected[0]             # <<<<<<<<<<<<<<
@@ -20468,7 +20468,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
     }
     __pyx_L52:;
 
-    /* "_ext/cython_metrics.pyx":432
+    /* "pyntacle/_ext/cython_metrics.pyx":432
  *             max_index = <long long> collected[0]
  * 
  *         k_set = <int*> malloc(k * sizeof(int))             # <<<<<<<<<<<<<<
@@ -20477,7 +20477,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
     __pyx_v_k_set = ((int *)malloc((__pyx_v_k * (sizeof(int)))));
 
-    /* "_ext/cython_metrics.pyx":433
+    /* "pyntacle/_ext/cython_metrics.pyx":433
  * 
  *         k_set = <int*> malloc(k * sizeof(int))
  *         if k_set == NULL:             # <<<<<<<<<<<<<<
@@ -20487,7 +20487,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
     __pyx_t_1 = (__pyx_v_k_set == NULL);
     if (unlikely(__pyx_t_1)) {
 
-      /* "_ext/cython_metrics.pyx":434
+      /* "pyntacle/_ext/cython_metrics.pyx":434
  *         k_set = <int*> malloc(k * sizeof(int))
  *         if k_set == NULL:
  *             raise MemoryError("cannot allocate the winning combination buffer")             # <<<<<<<<<<<<<<
@@ -20507,7 +20507,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __PYX_ERR(0, 434, __pyx_L5_error)
 
-      /* "_ext/cython_metrics.pyx":433
+      /* "pyntacle/_ext/cython_metrics.pyx":433
  * 
  *         k_set = <int*> malloc(k * sizeof(int))
  *         if k_set == NULL:             # <<<<<<<<<<<<<<
@@ -20516,7 +20516,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
     }
 
-    /* "_ext/cython_metrics.pyx":435
+    /* "pyntacle/_ext/cython_metrics.pyx":435
  *         if k_set == NULL:
  *             raise MemoryError("cannot allocate the winning combination buffer")
  *         tie_sets = []             # <<<<<<<<<<<<<<
@@ -20528,7 +20528,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
     __pyx_v_tie_sets = ((PyObject*)__pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "_ext/cython_metrics.pyx":436
+    /* "pyntacle/_ext/cython_metrics.pyx":436
  *             raise MemoryError("cannot allocate the winning combination buffer")
  *         tie_sets = []
  *         for i from 0 <= i < n_collected:             # <<<<<<<<<<<<<<
@@ -20538,7 +20538,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
     __pyx_t_6 = __pyx_v_n_collected;
     for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_6; __pyx_v_i++) {
 
-      /* "_ext/cython_metrics.pyx":437
+      /* "pyntacle/_ext/cython_metrics.pyx":437
  *         tie_sets = []
  *         for i from 0 <= i < n_collected:
  *             utils.index_to_combination(<long long> collected[i], n, k, k_set, NULL)             # <<<<<<<<<<<<<<
@@ -20546,9 +20546,9 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
  *         utils.index_to_combination(max_index, n, k, k_set, NULL)
 */
       __pyx_t_12 = __Pyx_PyLong_As_PY_LONG_LONG(__Pyx_PyList_GET_ITEM(__pyx_v_collected, __pyx_v_i)); if (unlikely((__pyx_t_12 == (PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 437, __pyx_L5_error)
-      __pyx_f_4_ext_5utils_index_to_combination(((PY_LONG_LONG)__pyx_t_12), __pyx_v_n, __pyx_v_k, __pyx_v_k_set, NULL);
+      __pyx_f_8pyntacle_4_ext_5utils_index_to_combination(((PY_LONG_LONG)__pyx_t_12), __pyx_v_n, __pyx_v_k, __pyx_v_k_set, NULL);
 
-      /* "_ext/cython_metrics.pyx":438
+      /* "pyntacle/_ext/cython_metrics.pyx":438
  *         for i from 0 <= i < n_collected:
  *             utils.index_to_combination(<long long> collected[i], n, k, k_set, NULL)
  *             tie_sets.append([k_set[j] for j in range(k)])             # <<<<<<<<<<<<<<
@@ -20572,16 +20572,16 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     }
 
-    /* "_ext/cython_metrics.pyx":439
+    /* "pyntacle/_ext/cython_metrics.pyx":439
  *             utils.index_to_combination(<long long> collected[i], n, k, k_set, NULL)
  *             tie_sets.append([k_set[j] for j in range(k)])
  *         utils.index_to_combination(max_index, n, k, k_set, NULL)             # <<<<<<<<<<<<<<
  *         for i from 0 <= i < k:
  *             K_indices[i] = k_set[i]
 */
-    __pyx_f_4_ext_5utils_index_to_combination(__pyx_v_max_index, __pyx_v_n, __pyx_v_k, __pyx_v_k_set, NULL);
+    __pyx_f_8pyntacle_4_ext_5utils_index_to_combination(__pyx_v_max_index, __pyx_v_n, __pyx_v_k, __pyx_v_k_set, NULL);
 
-    /* "_ext/cython_metrics.pyx":440
+    /* "pyntacle/_ext/cython_metrics.pyx":440
  *             tie_sets.append([k_set[j] for j in range(k)])
  *         utils.index_to_combination(max_index, n, k, k_set, NULL)
  *         for i from 0 <= i < k:             # <<<<<<<<<<<<<<
@@ -20591,7 +20591,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
     __pyx_t_6 = __pyx_v_k;
     for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_6; __pyx_v_i++) {
 
-      /* "_ext/cython_metrics.pyx":441
+      /* "pyntacle/_ext/cython_metrics.pyx":441
  *         utils.index_to_combination(max_index, n, k, k_set, NULL)
  *         for i from 0 <= i < k:
  *             K_indices[i] = k_set[i]             # <<<<<<<<<<<<<<
@@ -20602,7 +20602,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
       *((int *) ( /* dim=0 */ (__pyx_v_K_indices.data + __pyx_t_15 * __pyx_v_K_indices.strides[0]) )) = (__pyx_v_k_set[__pyx_v_i]);
     }
 
-    /* "_ext/cython_metrics.pyx":442
+    /* "pyntacle/_ext/cython_metrics.pyx":442
  *         for i from 0 <= i < k:
  *             K_indices[i] = k_set[i]
  *         free(k_set)             # <<<<<<<<<<<<<<
@@ -20612,7 +20612,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
     free(__pyx_v_k_set);
   }
 
-  /* "_ext/cython_metrics.pyx":445
+  /* "pyntacle/_ext/cython_metrics.pyx":445
  * 
  *     finally:
  *         free(alloc_failed)             # <<<<<<<<<<<<<<
@@ -20623,7 +20623,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
     /*normal exit:*/{
       free(__pyx_v_alloc_failed);
 
-      /* "_ext/cython_metrics.pyx":446
+      /* "pyntacle/_ext/cython_metrics.pyx":446
  *     finally:
  *         free(alloc_failed)
  *         free(candidate_results)             # <<<<<<<<<<<<<<
@@ -20632,7 +20632,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
       free(__pyx_v_candidate_results);
 
-      /* "_ext/cython_metrics.pyx":447
+      /* "pyntacle/_ext/cython_metrics.pyx":447
  *         free(alloc_failed)
  *         free(candidate_results)
  *         free(candidate_index)             # <<<<<<<<<<<<<<
@@ -20641,7 +20641,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
       free(__pyx_v_candidate_index);
 
-      /* "_ext/cython_metrics.pyx":448
+      /* "pyntacle/_ext/cython_metrics.pyx":448
  *         free(candidate_results)
  *         free(candidate_index)
  *         free(tie_buf)             # <<<<<<<<<<<<<<
@@ -20650,7 +20650,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
       free(__pyx_v_tie_buf);
 
-      /* "_ext/cython_metrics.pyx":449
+      /* "pyntacle/_ext/cython_metrics.pyx":449
  *         free(candidate_index)
  *         free(tie_buf)
  *         free(tie_count)             # <<<<<<<<<<<<<<
@@ -20659,7 +20659,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
       free(__pyx_v_tie_count);
 
-      /* "_ext/cython_metrics.pyx":450
+      /* "pyntacle/_ext/cython_metrics.pyx":450
  *         free(tie_buf)
  *         free(tie_count)
  *         free(tie_total)             # <<<<<<<<<<<<<<
@@ -20668,7 +20668,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
       free(__pyx_v_tie_total);
 
-      /* "_ext/cython_metrics.pyx":451
+      /* "pyntacle/_ext/cython_metrics.pyx":451
  *         free(tie_count)
  *         free(tie_total)
  *         free(all_dist)             # <<<<<<<<<<<<<<
@@ -20677,14 +20677,14 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
       free(__pyx_v_all_dist);
 
-      /* "_ext/cython_metrics.pyx":452
+      /* "pyntacle/_ext/cython_metrics.pyx":452
  *         free(tie_total)
  *         free(all_dist)
  *         utils.csr_free(csr)             # <<<<<<<<<<<<<<
  * 
  *     # no rounding here: the report writer decides how many decimals to show
 */
-      __pyx_f_4_ext_5utils_csr_free(__pyx_v_csr);
+      __pyx_f_8pyntacle_4_ext_5utils_csr_free(__pyx_v_csr);
       goto __pyx_L6;
     }
     __pyx_L5_error:;
@@ -20705,7 +20705,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
       __pyx_t_6 = __pyx_lineno; __pyx_t_7 = __pyx_clineno; __pyx_t_16 = __pyx_filename;
       {
 
-        /* "_ext/cython_metrics.pyx":445
+        /* "pyntacle/_ext/cython_metrics.pyx":445
  * 
  *     finally:
  *         free(alloc_failed)             # <<<<<<<<<<<<<<
@@ -20714,7 +20714,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
         free(__pyx_v_alloc_failed);
 
-        /* "_ext/cython_metrics.pyx":446
+        /* "pyntacle/_ext/cython_metrics.pyx":446
  *     finally:
  *         free(alloc_failed)
  *         free(candidate_results)             # <<<<<<<<<<<<<<
@@ -20723,7 +20723,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
         free(__pyx_v_candidate_results);
 
-        /* "_ext/cython_metrics.pyx":447
+        /* "pyntacle/_ext/cython_metrics.pyx":447
  *         free(alloc_failed)
  *         free(candidate_results)
  *         free(candidate_index)             # <<<<<<<<<<<<<<
@@ -20732,7 +20732,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
         free(__pyx_v_candidate_index);
 
-        /* "_ext/cython_metrics.pyx":448
+        /* "pyntacle/_ext/cython_metrics.pyx":448
  *         free(candidate_results)
  *         free(candidate_index)
  *         free(tie_buf)             # <<<<<<<<<<<<<<
@@ -20741,7 +20741,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
         free(__pyx_v_tie_buf);
 
-        /* "_ext/cython_metrics.pyx":449
+        /* "pyntacle/_ext/cython_metrics.pyx":449
  *         free(candidate_index)
  *         free(tie_buf)
  *         free(tie_count)             # <<<<<<<<<<<<<<
@@ -20750,7 +20750,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
         free(__pyx_v_tie_count);
 
-        /* "_ext/cython_metrics.pyx":450
+        /* "pyntacle/_ext/cython_metrics.pyx":450
  *         free(tie_buf)
  *         free(tie_count)
  *         free(tie_total)             # <<<<<<<<<<<<<<
@@ -20759,7 +20759,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
         free(__pyx_v_tie_total);
 
-        /* "_ext/cython_metrics.pyx":451
+        /* "pyntacle/_ext/cython_metrics.pyx":451
  *         free(tie_count)
  *         free(tie_total)
  *         free(all_dist)             # <<<<<<<<<<<<<<
@@ -20768,14 +20768,14 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 */
         free(__pyx_v_all_dist);
 
-        /* "_ext/cython_metrics.pyx":452
+        /* "pyntacle/_ext/cython_metrics.pyx":452
  *         free(tie_total)
  *         free(all_dist)
  *         utils.csr_free(csr)             # <<<<<<<<<<<<<<
  * 
  *     # no rounding here: the report writer decides how many decimals to show
 */
-        __pyx_f_4_ext_5utils_csr_free(__pyx_v_csr);
+        __pyx_f_8pyntacle_4_ext_5utils_csr_free(__pyx_v_csr);
       }
       __Pyx_XGIVEREF(__pyx_t_20);
       __Pyx_XGIVEREF(__pyx_t_21);
@@ -20792,7 +20792,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
     __pyx_L6:;
   }
 
-  /* "_ext/cython_metrics.pyx":455
+  /* "pyntacle/_ext/cython_metrics.pyx":455
  * 
  *     # no rounding here: the report writer decides how many decimals to show
  *     return K_indices, max_score, tie_sets, total_ties             # <<<<<<<<<<<<<<
@@ -20822,7 +20822,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
   __pyx_t_24 = 0;
   goto __pyx_L0;
 
-  /* "_ext/cython_metrics.pyx":285
+  /* "pyntacle/_ext/cython_metrics.pyx":285
  * 
  * 
  * cpdef cython_bruteforce(int[:, :] edges, double[:] wvec, int n, int[:] K_indices, int operation, int mdist, int dist_type, long long comb_num, int num_threads, bint unweighted=False, int max_ties=100):             # <<<<<<<<<<<<<<
@@ -20836,7 +20836,7 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_23);
   __Pyx_XDECREF(__pyx_t_24);
-  __Pyx_AddTraceback("_ext.cython_metrics.cython_bruteforce", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("pyntacle._ext.cython_metrics.cython_bruteforce", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_collected);
@@ -20847,15 +20847,15 @@ static PyObject *__pyx_f_4_ext_14cython_metrics_cython_bruteforce(__Pyx_memviews
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4_ext_14cython_metrics_5cython_bruteforce(PyObject *__pyx_self, 
+static PyObject *__pyx_pw_8pyntacle_4_ext_14cython_metrics_5cython_bruteforce(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_4_ext_14cython_metrics_5cython_bruteforce = {"cython_bruteforce", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_4_ext_14cython_metrics_5cython_bruteforce, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_4_ext_14cython_metrics_5cython_bruteforce(PyObject *__pyx_self, 
+static PyMethodDef __pyx_mdef_8pyntacle_4_ext_14cython_metrics_5cython_bruteforce = {"cython_bruteforce", (PyCFunction)(void(*)(void))(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8pyntacle_4_ext_14cython_metrics_5cython_bruteforce, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_8pyntacle_4_ext_14cython_metrics_5cython_bruteforce(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -21015,11 +21015,11 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __PYX_XCLEAR_MEMVIEW(&__pyx_v_edges, 1);
   __PYX_XCLEAR_MEMVIEW(&__pyx_v_wvec, 1);
   __PYX_XCLEAR_MEMVIEW(&__pyx_v_K_indices, 1);
-  __Pyx_AddTraceback("_ext.cython_metrics.cython_bruteforce", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("pyntacle._ext.cython_metrics.cython_bruteforce", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4_ext_14cython_metrics_4cython_bruteforce(__pyx_self, __pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_K_indices, __pyx_v_operation, __pyx_v_mdist, __pyx_v_dist_type, __pyx_v_comb_num, __pyx_v_num_threads, __pyx_v_unweighted, __pyx_v_max_ties);
+  __pyx_r = __pyx_pf_8pyntacle_4_ext_14cython_metrics_4cython_bruteforce(__pyx_self, __pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_K_indices, __pyx_v_operation, __pyx_v_mdist, __pyx_v_dist_type, __pyx_v_comb_num, __pyx_v_num_threads, __pyx_v_unweighted, __pyx_v_max_ties);
 
   /* function exit code */
   for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
@@ -21032,11 +21032,11 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4_ext_14cython_metrics_4cython_bruteforce(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, __Pyx_memviewslice __pyx_v_K_indices, int __pyx_v_operation, int __pyx_v_mdist, int __pyx_v_dist_type, PY_LONG_LONG __pyx_v_comb_num, int __pyx_v_num_threads, int __pyx_v_unweighted, int __pyx_v_max_ties) {
+static PyObject *__pyx_pf_8pyntacle_4_ext_14cython_metrics_4cython_bruteforce(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, __Pyx_memviewslice __pyx_v_K_indices, int __pyx_v_operation, int __pyx_v_mdist, int __pyx_v_dist_type, PY_LONG_LONG __pyx_v_comb_num, int __pyx_v_num_threads, int __pyx_v_unweighted, int __pyx_v_max_ties) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  struct __pyx_opt_args_4_ext_14cython_metrics_cython_bruteforce __pyx_t_2;
+  struct __pyx_opt_args_8pyntacle_4_ext_14cython_metrics_cython_bruteforce __pyx_t_2;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -21048,7 +21048,7 @@ static PyObject *__pyx_pf_4_ext_14cython_metrics_4cython_bruteforce(CYTHON_UNUSE
   __pyx_t_2.__pyx_n = 2;
   __pyx_t_2.unweighted = __pyx_v_unweighted;
   __pyx_t_2.max_ties = __pyx_v_max_ties;
-  __pyx_t_1 = __pyx_f_4_ext_14cython_metrics_cython_bruteforce(__pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_K_indices, __pyx_v_operation, __pyx_v_mdist, __pyx_v_dist_type, __pyx_v_comb_num, __pyx_v_num_threads, 1, &__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 285, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_8pyntacle_4_ext_14cython_metrics_cython_bruteforce(__pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_K_indices, __pyx_v_operation, __pyx_v_mdist, __pyx_v_dist_type, __pyx_v_comb_num, __pyx_v_num_threads, 1, &__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 285, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -21057,7 +21057,7 @@ static PyObject *__pyx_pf_4_ext_14cython_metrics_4cython_bruteforce(CYTHON_UNUSE
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("_ext.cython_metrics.cython_bruteforce", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("pyntacle._ext.cython_metrics.cython_bruteforce", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -21191,7 +21191,7 @@ static PyType_Slot __pyx_type___pyx_array_slots[] = {
   {0, 0},
 };
 static PyType_Spec __pyx_type___pyx_array_spec = {
-  "_ext.cython_metrics.array",
+  "pyntacle._ext.cython_metrics.array",
   sizeof(struct __pyx_array_obj),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_SEQUENCE,
@@ -21225,7 +21225,7 @@ static PyBufferProcs __pyx_tp_as_buffer_array = {
 
 static PyTypeObject __pyx_type___pyx_array = {
   PyVarObject_HEAD_INIT(0, 0)
-  "_ext.cython_metrics.""array", /*tp_name*/
+  "pyntacle._ext.cython_metrics.""array", /*tp_name*/
   sizeof(struct __pyx_array_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc_array, /*tp_dealloc*/
@@ -21370,7 +21370,7 @@ static PyType_Slot __pyx_type___pyx_MemviewEnum_slots[] = {
   {0, 0},
 };
 static PyType_Spec __pyx_type___pyx_MemviewEnum_spec = {
-  "_ext.cython_metrics.Enum",
+  "pyntacle._ext.cython_metrics.Enum",
   sizeof(struct __pyx_MemviewEnum_obj),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC,
@@ -21380,7 +21380,7 @@ static PyType_Spec __pyx_type___pyx_MemviewEnum_spec = {
 
 static PyTypeObject __pyx_type___pyx_MemviewEnum = {
   PyVarObject_HEAD_INIT(0, 0)
-  "_ext.cython_metrics.""Enum", /*tp_name*/
+  "pyntacle._ext.cython_metrics.""Enum", /*tp_name*/
   sizeof(struct __pyx_MemviewEnum_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc_Enum, /*tp_dealloc*/
@@ -21647,7 +21647,7 @@ static PyType_Slot __pyx_type___pyx_memoryview_slots[] = {
   {0, 0},
 };
 static PyType_Spec __pyx_type___pyx_memoryview_spec = {
-  "_ext.cython_metrics.memoryview",
+  "pyntacle._ext.cython_metrics.memoryview",
   sizeof(struct __pyx_memoryview_obj),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC,
@@ -21681,7 +21681,7 @@ static PyBufferProcs __pyx_tp_as_buffer_memoryview = {
 
 static PyTypeObject __pyx_type___pyx_memoryview = {
   PyVarObject_HEAD_INIT(0, 0)
-  "_ext.cython_metrics.""memoryview", /*tp_name*/
+  "pyntacle._ext.cython_metrics.""memoryview", /*tp_name*/
   sizeof(struct __pyx_memoryview_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc_memoryview, /*tp_dealloc*/
@@ -21824,7 +21824,7 @@ static PyType_Slot __pyx_type___pyx_memoryviewslice_slots[] = {
   {0, 0},
 };
 static PyType_Spec __pyx_type___pyx_memoryviewslice_spec = {
-  "_ext.cython_metrics._memoryviewslice",
+  "pyntacle._ext.cython_metrics._memoryviewslice",
   sizeof(struct __pyx_memoryviewslice_obj),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC|Py_TPFLAGS_SEQUENCE,
@@ -21834,7 +21834,7 @@ static PyType_Spec __pyx_type___pyx_memoryviewslice_spec = {
 
 static PyTypeObject __pyx_type___pyx_memoryviewslice = {
   PyVarObject_HEAD_INIT(0, 0)
-  "_ext.cython_metrics.""_memoryviewslice", /*tp_name*/
+  "pyntacle._ext.cython_metrics.""_memoryviewslice", /*tp_name*/
   sizeof(struct __pyx_memoryviewslice_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc__memoryviewslice, /*tp_dealloc*/
@@ -22135,14 +22135,14 @@ static int __Pyx_modinit_function_import_code(__pyx_mstatetype *__pyx_mstate) {
   __Pyx_RefNannySetupContext("__Pyx_modinit_function_import_code", 0);
   /*--- Function import code ---*/
   {
-    __pyx_t_1 = PyImport_ImportModule("_ext.utils"); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
+    __pyx_t_1 = PyImport_ImportModule("pyntacle._ext.utils"); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    const char * __pyx_import_signature = __Pyx_PyBytes_AsString(__pyx_mstate_global->__pyx_kp_b_struct___pyx_t_4_ext_5utils_CSR);
+    const char * __pyx_import_signature = __Pyx_PyBytes_AsString(__pyx_mstate_global->__pyx_kp_b_struct___pyx_t_8pyntacle_4_ext_5);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (unlikely(!__pyx_import_signature)) __PYX_ERR(0, 1, __pyx_L1_error)
     #endif
-    const char * __pyx_import_name = __pyx_import_signature + 380;
-    void (**const __pyx_import_pointers[])(void) = {(void (**)(void))&__pyx_f_4_ext_5utils_csr_from_edges, (void (**)(void))&__pyx_f_4_ext_5utils_scratch_alloc, (void (**)(void))&__pyx_f_4_ext_5utils_index_to_combination, (void (**)(void))&__pyx_f_4_ext_5utils_csr_free, (void (**)(void))&__pyx_f_4_ext_5utils_csr_bfs_row, (void (**)(void))&__pyx_f_4_ext_5utils_scratch_free, (void (**)(void))&__pyx_f_4_ext_5utils_mark_group, (void (**)(void)) NULL};
+    const char * __pyx_import_name = __pyx_import_signature + 440;
+    void (**const __pyx_import_pointers[])(void) = {(void (**)(void))&__pyx_f_8pyntacle_4_ext_5utils_csr_from_edges, (void (**)(void))&__pyx_f_8pyntacle_4_ext_5utils_scratch_alloc, (void (**)(void))&__pyx_f_8pyntacle_4_ext_5utils_index_to_combination, (void (**)(void))&__pyx_f_8pyntacle_4_ext_5utils_csr_free, (void (**)(void))&__pyx_f_8pyntacle_4_ext_5utils_csr_bfs_row, (void (**)(void))&__pyx_f_8pyntacle_4_ext_5utils_scratch_free, (void (**)(void))&__pyx_f_8pyntacle_4_ext_5utils_mark_group, (void (**)(void)) NULL};
     void (**const *__pyx_import_pointer)(void) = __pyx_import_pointers;
     const char *__pyx_import_current_signature = __pyx_import_signature;
     while (*__pyx_import_pointer) {
@@ -22155,14 +22155,14 @@ static int __Pyx_modinit_function_import_code(__pyx_mstatetype *__pyx_mstate) {
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
   {
-    __pyx_t_1 = PyImport_ImportModule("_ext.kp_metrics"); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
+    __pyx_t_1 = PyImport_ImportModule("pyntacle._ext.kp_metrics"); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     const char * __pyx_import_signature = __Pyx_PyBytes_AsString(__pyx_mstate_global->__pyx_kp_b_double_double_int_int_int_int_do);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (unlikely(!__pyx_import_signature)) __PYX_ERR(0, 1, __pyx_L1_error)
     #endif
-    const char * __pyx_import_name = __pyx_import_signature + 282;
-    void (**const __pyx_import_pointers[])(void) = {(void (**)(void))&__pyx_f_4_ext_10kp_metrics_get_distance_weighted_reach, (void (**)(void))&__pyx_f_4_ext_10kp_metrics_m_reach, (void (**)(void))&__pyx_f_4_ext_10kp_metrics_get_fragmentation, (void (**)(void))&__pyx_f_4_ext_10kp_metrics_get_distance_fragmentation, (void (**)(void)) NULL};
+    const char * __pyx_import_name = __pyx_import_signature + 322;
+    void (**const __pyx_import_pointers[])(void) = {(void (**)(void))&__pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_weighted_reach, (void (**)(void))&__pyx_f_8pyntacle_4_ext_10kp_metrics_m_reach, (void (**)(void))&__pyx_f_8pyntacle_4_ext_10kp_metrics_get_fragmentation, (void (**)(void))&__pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation, (void (**)(void)) NULL};
     void (**const *__pyx_import_pointer)(void) = __pyx_import_pointers;
     const char *__pyx_import_current_signature = __pyx_import_signature;
     while (*__pyx_import_pointer) {
@@ -22175,14 +22175,14 @@ static int __Pyx_modinit_function_import_code(__pyx_mstatetype *__pyx_mstate) {
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
   {
-    __pyx_t_1 = PyImport_ImportModule("_ext.group_metrics"); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
+    __pyx_t_1 = PyImport_ImportModule("pyntacle._ext.group_metrics"); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     const char * __pyx_import_signature = __Pyx_PyBytes_AsString(__pyx_mstate_global->__pyx_kp_b_double___Pyx_memviewslice___Pyx);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (unlikely(!__pyx_import_signature)) __PYX_ERR(0, 1, __pyx_L1_error)
     #endif
-    const char * __pyx_import_name = __pyx_import_signature + 187;
-    void (**const __pyx_import_pointers[])(void) = {(void (**)(void))&__pyx_f_4_ext_13group_metrics_get_group_betweenness, (void (**)(void))&__pyx_f_4_ext_13group_metrics_get_group_closeness, (void (**)(void))&__pyx_f_4_ext_13group_metrics_get_group_degree, (void (**)(void)) NULL};
+    const char * __pyx_import_name = __pyx_import_signature + 197;
+    void (**const __pyx_import_pointers[])(void) = {(void (**)(void))&__pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness, (void (**)(void))&__pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness, (void (**)(void))&__pyx_f_8pyntacle_4_ext_13group_metrics_get_group_degree, (void (**)(void)) NULL};
     void (**const *__pyx_import_pointer)(void) = __pyx_import_pointers;
     const char *__pyx_import_current_signature = __pyx_import_signature;
     while (*__pyx_import_pointer) {
@@ -22195,14 +22195,14 @@ static int __Pyx_modinit_function_import_code(__pyx_mstatetype *__pyx_mstate) {
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
   {
-    __pyx_t_1 = PyImport_ImportModule("_ext.cython_igraph"); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
+    __pyx_t_1 = PyImport_ImportModule("pyntacle._ext.cython_igraph"); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     const char * __pyx_import_signature = __Pyx_PyBytes_AsString(__pyx_mstate_global->__pyx_kp_b_int___Pyx_memviewslice___Pyx_mem);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (unlikely(!__pyx_import_signature)) __PYX_ERR(0, 1, __pyx_L1_error)
     #endif
     const char * __pyx_import_name = __pyx_import_signature + 60;
-    void (**const __pyx_import_pointers[])(void) = {(void (**)(void))&__pyx_f_4_ext_13cython_igraph_igraph_dijkstra, (void (**)(void)) NULL};
+    void (**const __pyx_import_pointers[])(void) = {(void (**)(void))&__pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_dijkstra, (void (**)(void)) NULL};
     void (**const *__pyx_import_pointer)(void) = __pyx_import_pointers;
     const char *__pyx_import_current_signature = __pyx_import_signature;
     while (*__pyx_import_pointer) {
@@ -22470,13 +22470,13 @@ __Pyx_RefNannySetupContext("PyInit_cython_metrics", 0);
   if (__Pyx_InitConstants(__pyx_mstate) < (0)) __PYX_ERR(0, 1, __pyx_L1_error)
   stringtab_initialized = 1;
   if (__Pyx_InitGlobals() < (0)) __PYX_ERR(0, 1, __pyx_L1_error)
-  if (__pyx_module_is_main__ext__cython_metrics) {
+  if (__pyx_module_is_main_pyntacle___ext__cython_metrics) {
     if (PyObject_SetAttr(__pyx_m, __pyx_mstate_global->__pyx_n_u_name_2, __pyx_mstate_global->__pyx_n_u_main) < (0)) __PYX_ERR(0, 1, __pyx_L1_error)
   }
   {
     PyObject *modules = PyImport_GetModuleDict(); if (unlikely(!modules)) __PYX_ERR(0, 1, __pyx_L1_error)
-    if (!PyDict_GetItemString(modules, "_ext.cython_metrics")) {
-      if (unlikely((PyDict_SetItemString(modules, "_ext.cython_metrics", __pyx_m) < 0))) __PYX_ERR(0, 1, __pyx_L1_error)
+    if (!PyDict_GetItemString(modules, "pyntacle._ext.cython_metrics")) {
+      if (unlikely((PyDict_SetItemString(modules, "pyntacle._ext.cython_metrics", __pyx_m) < 0))) __PYX_ERR(0, 1, __pyx_L1_error)
     }
   }
   /*--- Builtin init code ---*/
@@ -22985,14 +22985,14 @@ __Pyx_RefNannySetupContext("PyInit_cython_metrics", 0);
   if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_pyx_unpickle_Enum, __pyx_t_4) < (0)) __PYX_ERR(1, 4, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "_ext/cython_metrics.pyx":91
+  /* "pyntacle/_ext/cython_metrics.pyx":91
  * 
  * 
  * cpdef cython_greedy(int[:] K_indices, int[:] notK_indices, int[:, :] edges, double[:] wvec, int n, int operation, int mdist, int dist_type, int num_threads, bint unweighted=False):             # <<<<<<<<<<<<<<
  * 
  *     cdef int op = operation
 */
-  __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_4_ext_14cython_metrics_1cython_greedy, 0, __pyx_mstate_global->__pyx_n_u_cython_greedy, NULL, __pyx_mstate_global->__pyx_n_u_ext_cython_metrics, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[0])); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 91, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_8pyntacle_4_ext_14cython_metrics_1cython_greedy, 0, __pyx_mstate_global->__pyx_n_u_cython_greedy, NULL, __pyx_mstate_global->__pyx_n_u_pyntacle__ext_cython_metrics, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[0])); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 91, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_4);
@@ -23001,14 +23001,14 @@ __Pyx_RefNannySetupContext("PyInit_cython_metrics", 0);
   if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_cython_greedy, __pyx_t_4) < (0)) __PYX_ERR(0, 91, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "_ext/cython_metrics.pyx":237
+  /* "pyntacle/_ext/cython_metrics.pyx":237
  * 
  * 
  * cpdef cython_info(int[:] K_indices, int[:] notK_indices, int[:, :] edges, double[:] wvec, int n, int operation, int mdist, int dist_type, int num_threads, bint unweighted=False):             # <<<<<<<<<<<<<<
  * 
  *     cdef int op = operation
 */
-  __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_4_ext_14cython_metrics_3cython_info, 0, __pyx_mstate_global->__pyx_n_u_cython_info, NULL, __pyx_mstate_global->__pyx_n_u_ext_cython_metrics, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[1])); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 237, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_8pyntacle_4_ext_14cython_metrics_3cython_info, 0, __pyx_mstate_global->__pyx_n_u_cython_info, NULL, __pyx_mstate_global->__pyx_n_u_pyntacle__ext_cython_metrics, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[1])); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 237, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_4);
@@ -23017,14 +23017,14 @@ __Pyx_RefNannySetupContext("PyInit_cython_metrics", 0);
   if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_cython_info, __pyx_t_4) < (0)) __PYX_ERR(0, 237, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "_ext/cython_metrics.pyx":285
+  /* "pyntacle/_ext/cython_metrics.pyx":285
  * 
  * 
  * cpdef cython_bruteforce(int[:, :] edges, double[:] wvec, int n, int[:] K_indices, int operation, int mdist, int dist_type, long long comb_num, int num_threads, bint unweighted=False, int max_ties=100):             # <<<<<<<<<<<<<<
  * 
  *     cdef int op = operation
 */
-  __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_4_ext_14cython_metrics_5cython_bruteforce, 0, __pyx_mstate_global->__pyx_n_u_cython_bruteforce, NULL, __pyx_mstate_global->__pyx_n_u_ext_cython_metrics, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[2])); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 285, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_8pyntacle_4_ext_14cython_metrics_5cython_bruteforce, 0, __pyx_mstate_global->__pyx_n_u_cython_bruteforce, NULL, __pyx_mstate_global->__pyx_n_u_pyntacle__ext_cython_metrics, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[2])); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 285, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_4);
@@ -23033,7 +23033,7 @@ __Pyx_RefNannySetupContext("PyInit_cython_metrics", 0);
   if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_cython_bruteforce, __pyx_t_4) < (0)) __PYX_ERR(0, 285, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "_ext/cython_metrics.pyx":1
+  /* "pyntacle/_ext/cython_metrics.pyx":1
  * # cython: boundscheck=False, wraparound=False, language_level=3, cdivision=True             # <<<<<<<<<<<<<<
  * from cython.parallel import parallel, prange, threadid
  * from cython.cimports.libc.stdlib cimport abort, malloc, free
@@ -23051,7 +23051,7 @@ __Pyx_RefNannySetupContext("PyInit_cython_metrics", 0);
   __Pyx_XDECREF(__pyx_t_5);
   if (__pyx_m) {
     if (__pyx_mstate->__pyx_d && stringtab_initialized) {
-      __Pyx_AddTraceback("init _ext.cython_metrics", __pyx_clineno, __pyx_lineno, __pyx_filename);
+      __Pyx_AddTraceback("init pyntacle._ext.cython_metrics", __pyx_clineno, __pyx_lineno, __pyx_filename);
     }
     #if !CYTHON_USE_MODULE_STATE
     Py_CLEAR(__pyx_m);
@@ -23065,7 +23065,7 @@ __Pyx_RefNannySetupContext("PyInit_cython_metrics", 0);
     }
     #endif
   } else if (!PyErr_Occurred()) {
-    PyErr_SetString(PyExc_ImportError, "init _ext.cython_metrics");
+    PyErr_SetString(PyExc_ImportError, "init pyntacle._ext.cython_metrics");
   }
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
@@ -23129,7 +23129,7 @@ static int __Pyx_InitCachedConstants(__pyx_mstatetype *__pyx_mstate) {
   __Pyx_GOTREF(__pyx_mstate_global->__pyx_slice[0]);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_slice[0]);
 
-  /* "_ext/cython_metrics.pyx":91
+  /* "pyntacle/_ext/cython_metrics.pyx":91
  * 
  * 
  * cpdef cython_greedy(int[:] K_indices, int[:] notK_indices, int[:, :] edges, double[:] wvec, int n, int operation, int mdist, int dist_type, int num_threads, bint unweighted=False):             # <<<<<<<<<<<<<<
@@ -23140,7 +23140,7 @@ static int __Pyx_InitCachedConstants(__pyx_mstatetype *__pyx_mstate) {
   __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[1]);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[1]);
 
-  /* "_ext/cython_metrics.pyx":285
+  /* "pyntacle/_ext/cython_metrics.pyx":285
  * 
  * 
  * cpdef cython_bruteforce(int[:, :] edges, double[:] wvec, int n, int[:] K_indices, int operation, int mdist, int dist_type, long long comb_num, int num_threads, bint unweighted=False, int max_ties=100):             # <<<<<<<<<<<<<<
@@ -23199,25 +23199,25 @@ static int __Pyx_InitCachedConstants(__pyx_mstatetype *__pyx_mstate) {
 static int __Pyx_InitConstants(__pyx_mstatetype *__pyx_mstate) {
   CYTHON_UNUSED_VAR(__pyx_mstate);
   {
-    const struct { const unsigned int length: 11; } index[] = {{2},{3},{68},{35},{54},{37},{60},{24},{52},{26},{34},{4},{29},{33},{45},{22},{15},{179},{37},{30},{32},{1},{1},{1},{1},{1},{54},{8},{5},{6},{20},{46},{42},{45},{46},{39},{35},{40},{15},{23},{25},{7},{18},{6},{2},{6},{35},{149},{9},{30},{50},{8},{32},{20},{32},{22},{30},{37},{5},{8},{9},{20},{8},{15},{3},{15},{18},{4},{1},{9},{17},{18},{8},{5},{17},{13},{11},{8},{9},{15},{5},{6},{9},{5},{19},{5},{6},{7},{8},{12},{2},{10},{5},{13},{5},{8},{8},{8},{5},{7},{4},{10},{1},{4},{8},{4},{7},{12},{11},{3},{9},{4},{3},{14},{11},{10},{19},{14},{12},{10},{17},{13},{8},{5},{12},{10},{12},{19},{5},{4},{5},{4},{4},{6},{8},{6},{10},{6},{6},{4},{1},{245},{362},{75},{321},{847},{1221},{474},{1}};
-    #if (CYTHON_COMPRESS_STRINGS) == 2 /* compression: bz2 (3007 bytes) */
-const char* const cstring = "BZh91AY&SY\315-\014]\000\002\322\177\377\377\377\377\377\377\377\377\377\277\277\377\177\277\377\377\365\300@@@@@@@@@@@@\000@\000`\013\235\335\361\033\225\275\336v\224=\273\242\256\004\326\204\330\266\030\204=\320\017\257\270\032\021\020\223j1\000hi\351\342\204yL\3614\364SQ\243M=C\312~\251\351\006\206j2\0312i\246\2324=M2h2h\310$\220\021\240\024\302`S\001O\"\237\224\315S\324\r\r\2504\320\332\201\204\r4\000\032\006\215\000\323FFC\324\032\023\t\023M\024\321\220\320\320\r\036\243\324\323M\006\217P\000\000\032\000\000\000\0002\001\2404\003L\204$\320\206\232\223\332\232\217j\230z\236\242l\232\2004\r\000\0004\006\203@\0004i\352\006\232\003\3124\003\210\321\243L\021\264j`M\223@\230&\321\030\0020\023\000\214\214\0040\0012bd\300L\230\230$H\020D'\223T\315'\264\247\244\3644j\033Pz\200hz\200\r\000\000\0004\032\000\000\000\003\376f-[\271\030\334f\306\203\251v \206\247\271\360\364\271\201\211\371N\360\225\361\326j\204\201L\224\200JYc\354>\344\007\343\363\372i(\314gE\226a\244 \016\351\361\312\276` \203D\353\376\237\326\272\351\366\355)C\325\207\221y\023!\223&H0\t_\220\031R9s.1'B\242\245'@\275`0\033\001\260c\033M\211\215\003i\230^\211\226-\377a\2456\031\035L0\033\033i&\321^U\004\027\344\214j\233,\367VJ\001\034\204eT\253l\033\020\344\250\2551\267\214U`\225\342(\027\270x\3170s\335\2045I\315\022\017|\246\255J\330\346-z\353\220\341\326\253\n\351U\222\246\027\214\311\261\201b\275\234\324Ex\225w\246\257\221u\331\262\232\310\272x\252x0\031\241\t\334\221\223MT6lH1\030\330K\025^9R\302seu\330v\306>\027e\220r\264(\203\024\234\200R\300,Z1\031\3518\201\026&\355\262v\236V\020\324\2141/\251\345\311t\024\334\033trA\035-\307\263\227W<\001\010\222\351\204\026\004{\035\027\246\002\257\376y\357\372jV9\355\273@\032\351\305\202\tf\215I$\216\203\210\362oC\010\207\374\316I\375QTv\2543-U\035V\332\260\212\313\024%\243\231\035\236]\214{#\034\336\232\334t!\336\226\250\354\210Z\327PT\006\002&\260\235\032o\251:\302Q\340+\"\213\302/\251\212\361\010\334q\206\331\301\274\313\351ls\321\360\271\324s\337\2112\021\312,""\351<\330\332Y\023\223\224X\265\324\232\261r\2457qz\335\335\322rZA<\357\257\360\201\320y\204\352(\n@\237|?\001.i\235D\010F\312\216\352\300IP\030LlaM\215\205u\314LS`q\225V\272\266\225\360\361b.\200\326\361\324\"\326\262\2525\212W?W\326\373|\214\241\303[g\026]w_9\210m-\300!\2148\016\263\243\3143\344W\253\320\006\322[k\034[\214 \220\320\232l\2248q\003\036\273\005\264>\256\037\276\253\312\363[V\323\263\253\031\277\247\273c\350v\311\347{\212P\364\275%g\211\010:\357\357`\337\026\002\rF\025\306Yg]\024\031\241\207-\260\004\220\250\351\315x\037\342p\305E\n5\365\376O\273\362\022&2E)J+\013\"D\235.&\274N\223\004\217B\263\331\377o\262e\272\017/\3139\332%\244\254\365\340p\357\024\203\017\225|~<\300$\022T\r\005\206#\211I\244\201\r\025$\250\251\237ep\251v\344\344\3003\314d\340\202\277\303\265pb-4wm\363\245\327I\027\307\307\352w\375\215\271j\323\246\317`>\316o\342\3150\230K<\354\375\325w\r\316\264\250\233\214\370?\003\217m\363\350#G\375/\340M\347\251\037\3150<\005\024\2220A\271&\r)-1{72\220\316\214\207s%Vi\301\023\376^\316\264\256GN7\326V\256\247'\216\372\252\215\333\236\250R\224\376|\377\031\264X\334\325\324\365\013\341\007|\037\357/\363\235\007\010\221\312+\273=\270v\311) \263R\037;fif~\332\215\340\231\177K\302\272\224\345\272r\322{~S\334\314 %\212\321k\030\310\236B\264VMUl$\263:\005MO\242\361\020eX8\242\253\320J \376\001\253U R \243\r_\332\371\000jN\t0\260'8,\355\023\221w\020\373\253\277\257G\326\231\211aQvbOSo\265!\276\006\037\352^\361\225\2425\375\317\305\034CW\202\363\025Z\013\322\233k\206\225\006\231\251\242\316\355}|\341K\235\307\032H4e\020\357P\344O\033\365(\331I\232\013J[F.D\237\000o\213\232\215\365\274\267z\251\320t'U%\275J\026$\367\345uT\341\312/\2057\206}\256\201\264k\033{e\216`P\025@\252\243\014\300Q\024.\\\027\341OO\213\271\263\201\326\364fY\352ui\021\312\271g\023\263\003\020\204\361f\304\316\235\005\306\202\351\325\331\317\207T\224\212\363\010\270;q\221\271\034~\321\031\202E\305\253$\213\322\0369\300\346\010\025\230?\303\331n\375\306\355\333\267\350\245\350`\322\364""\210\336P\227&\004\024\342\004\204&t\276M4\316*\3065\362\250\0270\260\" \244\301\320LX\222<xDl\313\361W\r\203\215-a\206XF\024\332v5\303\215^VP\033\254\265\304\024\321\240\250\343\361)\242\217@\360\2350\033r\334i\261i\265\233d\263\335g$\354(\030i\002b\347T$e\205\210\000nW\226\353\020\t\022B\271,u\272\366\314\252pj\321\307\014\251\213\357\002\\!\210\266\355\363\337 \242\305\344Q\335Kj\217\334\026LY\265\261\365\374$1H\002\210\216N\357-\322\"sdq\031\255X\330 \035\275\253J\370\016\034\322\207, 5\013tpR\2610\331\016seYU\000s\001i\255\227\020\343\316d\207q\367\303\220\314\217;\350j\233\032\2223\"\346D2\301\307\216p\355\340\304$\331\335uNR0\024\271z\r\321Y\352\224\241\030\033pD\335QI\253\366Pe4\270s;\020p\340<L'2C\330\206\323\213\240\014Hq\036{\335\271\0210z+\260\337 \220K5r\01492\325\247g\033\263\005\2265\013\014VjK\346\020\256H\020a!\374\306\252\362\273?Lh\002\326\300\241C!\231\223\014\326\320\027t$\020\270\207k\006\246\262\371\323Dk\274\214d\240\266\035\276\r\n\233\335\031\256\006(\303\216\306<\245\345\032\377^\335M\320L;\227\336\205\271\202\033\335\032\244\363,\351P\252_;\227\317\212\024\001Fu\244B\211\316m\252\r\244\325\350Y\022U\017\314\356'j\326=\242\243\225\301\004m\220\253\026qW\026\246\323\356bf\211\266U\r\005\231\014{(b\252bAS\205\336\000)\006'\010\337\240\353\270X\305E-B;\264\230\007\346Hj$\003\261\306r\233\255\002\260\315<\220\302T\225\350XX\260\r\214lun\327\214.\025\256\022\013\244F)\330\347\251\366\221\226\213\264\"\346\013w\273\002\313q\005\240\326\334\262GJ!h\302\260 \322n\333\231\003\210v\014\344H99\360\216#X\343x\232d\325\036Z\223\314\035\266\360L\3032]\375\234\000\251o(\347\007\n\301\313c\365\262\241\035\017\246\344\307S\263\220[VU\344\346\233\343\337C\035\214\271.89\272@77\035\267y\333\253u\033\321'6\346\273\240\3429\255/\2170\271\002H\031Q\0328\300\267\025\247;\000Y\363\261U\031\265\307\037X\325\033v\002\216\225qr\252\014Z\005\274\356Wb\302\201Q\201X@\256JH\036'L\027 \364\272\363i\324\264\234:\365\353.\320s=\313`\306\016tyZ]\017\2218\247\356\334\367""\3254\207\311\354\332\233Q\006\r\206\322\355%z\237UQ\241V\265]\333 \240\321\274[\270\3257\212N3\312\211\353\001a{\314\001\263\227\260\362\356[|\304\307\207\276\214\354\221Vah#/Q\245i\314\0013[2G\032\020q\\8d\206\023\330\320Nf.w\t\026\247(iR:d\206\221-\016\330\305\257I\343]\354f\003\305\321\003\254I\246\326F\206\321r\303L9M\340\214\235\2166wjX\263y\200:\2044\013\325\211\030\2611S\006\262\244\0259\254\036>#\013\2731\300\251mrUT\345\245\324\334\316o\"\3473\376\253\207\002\230P\023C.\243\325d\022\216U3d\035}}3\305\214F\342\351N\013:,0\202\272\235/\372zs\236\332D\016\276s\237A\267\177z\370?J\344X%\324\215]\235Axq\227\254p\021\252\253\356P\200\3448Z\254,,]x\324z\3046\304\034H\205\345re0h\013\371\322\331lz\220li}\006F\265vs\\.\363*\013\225/lM%\2239\263\230\301\315Ob\204h\232\1772\312\272H\370Xt`l\023a\317\000\371\303\362O\351i\232\0061\207D\345\260\355\217\317\212\370}\345\365\255\246\007\301\324\265\346\203]&43\365q\361\264\326s\207\364\371dO\344\\\0039\377\267\262JJ\3737\240v\324\341,\226\014|\"\354\247\314W@2\013+[\312\0148n%\376\320\361\231\212\250\363\026?e\233|;F\217\362\232~\220\177`]t\336\202\t\350o\017\265\267\031\313\215\307\204\341\270\010\251\022\376\201\022\225\"E\360\025\264: \204\2355\376\226\274@\335j:zx\2035\366\212a\356\216\251\224\002\340\014\320\016\032\n\201\r{\220c43\210\321\362|\327\002\020\311\324\2317\036\340De\244\001\302\025\270\206d[\263_:f\020\306\307\250=\003\227#Gl\nt\346L\227\203V \355\211\350\244\021\0165\205\006\300i\251\214M\2618S\250g\260r\2500\320\323z25\022\232\231\362\026O\024g\0310I\212\235\355y$\220\352\377\232XhG\322(\307\020TI\024R\036\273\"6\033#\013\n\007_TG\225hX\302\252\004uM\022\370a\210\237\030\231\220T\367\257\027Z\274$.\241L\277\354J\261l\010a\332\014,e\r\020\306\010Hj%\2662X\"\022\210\262\353C\250\031\025\242\352t\010\342\314L\225Y\263R)Wg\014?yX\245\243\004\270%\201_\n\321x\260x_\303\337w\302\353\333\317=\200\355\014\212\317l\255\345\256xr\203\256+\034\235\312\337G\203\301\341\335q8YF\020P\273\204\014_t!\204\233pG\016""\254G\330\017J\272I\025\223\000\025\346@\3610\276\266\216y]\003\330\n\013m\r\001{\236Y\357^N\234\346>\223\257~\306\031FY\001,O%\235\031\346jm\260\332)\263P\2730\tZA\244\014\271\216\322@a\2400\234\215\215\304\032\207;\2516V\2242#2\302\027\001Z$\rh\010t\214T\300\2046\246\217K\004\251\010*\2430\326fj\266\354t@\245\314\340\324q\007{\023x\004\337x\201k\336T\313\362\035:X*\225.\300\325\240\234\026t\352\304\223\016\014`\204\177\361w$S\205\t\014\322\320\305\320";
-    PyObject *data = __Pyx_DecompressString(cstring, 3007, 2);
+    const struct { const unsigned int length: 11; } index[] = {{2},{3},{68},{35},{54},{37},{60},{24},{52},{26},{34},{4},{29},{33},{45},{22},{15},{179},{37},{30},{32},{1},{1},{1},{1},{1},{54},{8},{5},{6},{20},{46},{42},{45},{46},{39},{35},{40},{15},{23},{25},{7},{18},{6},{2},{6},{35},{149},{9},{30},{50},{8},{32},{20},{32},{22},{30},{37},{5},{8},{9},{20},{8},{15},{3},{15},{18},{4},{1},{9},{17},{18},{8},{5},{17},{13},{11},{8},{9},{15},{5},{6},{9},{5},{5},{6},{7},{8},{12},{2},{10},{5},{13},{5},{8},{8},{8},{5},{7},{4},{10},{1},{4},{8},{4},{7},{12},{11},{3},{9},{4},{3},{28},{14},{11},{10},{19},{14},{12},{10},{17},{13},{8},{5},{12},{10},{12},{19},{5},{4},{5},{4},{4},{6},{8},{6},{10},{6},{6},{4},{1},{255},{402},{75},{321},{847},{1221},{534},{1}};
+    #if (CYTHON_COMPRESS_STRINGS) == 2 /* compression: bz2 (3024 bytes) */
+const char* const cstring = "BZh91AY&SY\216\372O\233\000\002\330\177\377\377\377\377\377\377\377\377\377\277\277\377\177\277\377\377\365\300@@@@@@@@@@@@\000@\000`\013\275\335\361\331\331[\272\353r\264\356\306]`X\212i\246\333Y\252h\363\240\037o\240hD\232\223F\200\000\007\230\2416\243lOS\324\321L\2154\365\017)\372\247\244i\241\350\214\215\r\032z\230M\r4\311\223\t\246@\222@\010\004\t\246\204\223x\244\320\331\031\t\204\320d\3012d\302a\0324d\001\211\204\323OPi\221\241\201\2410\2214\321M\030\200\320\r\036\243\324\323M\006\217P\000\000\032\000\000\000\0002\001\2404\003\010\210\020\204\302d\236\236\251\3527\251\246\247\232\231A\243 \320\000\003@h4\000\003A\240\003C#CD\030\t\200M1\240\000\232\030L\000\000\000#\t\246\000\2320\023\0024\323\000\000\000\221I\246I\223B2&\325?\024\364&\323H\236Q\345\006\206\214\2324\000\r\r\000\000\365\032\001\246\2004\000\016\271(\331w\037$\r|\214C\244\024\0205\366\376\016\217$\024\276E\322\024\177\025\224\261\212\001\\\224\200JYc\354>\344\007\343\363\372i(\314gE\226a\244 \016\351\361\312\276` \203D\353\375{5\255\277%\345\254~X}\013\350L\206L\231 \310%\216\200ih\351\320\276\240\223\240\251T\323\032B\342\254`6\003`\3066\233\023\032\006\323+\270\210\223'\377W\2316\027\\\212\353\033\033i&\321-\024\210.]\205\222M\223zU\332@\206\322-T\311\266\r\210t*T\3426\354\204\225i\\\020\274\014\214@P4\034=\t\327\253T\023\021[\016\"qSLb\203\236\241\207\210\340+j]+e\210\314\2338\027,Y\315dW2\237bk\031\030a\257I\255\014'\232\267_!\232\020\236\t\0324\325\006\327\231\006#\033\211f\253\236\226\270\234\331a\206]\210\307\274v\232\007+B\2101I\310\005,\002\305\243\021\236\223\210\021bn\333'i\345a\rH\303\022\372\236\\\2272g\253\275XH!\321\317\026\302\207tH\022\322P\310\224B\036\277B+zx\177\\\350\375\264,\236q\337\250\006\352c\276R&t(\222\034\370\023\344`\306!1\372\256\025:m:\273V\031\226\252\216\253mXEe\212\022\321\314\216\317.\306=\221\216oMn:\020\357KTvD\275+\252,\000\2014\262\\5^\243\242\322\024k\252\237\t\316\001\250\320\307\200\226\256Y\303\222po\007\033_\035\226|0u\234\367\346L\204t\213:O86\346D""\344\345\026/u\252\211v\212%^Ij`\207\"\230\026\274\373{\303\332\321\315[\220\2407\305\303\302p\361(\324\337s\002\004l\250\356\254\004\225\001\204\306\306\024\330\330W\\\304\3056\007\031Uk\253i_\017\026\"\350\rn\313\304'9\251#\001L\260\357\360\373\333V\207FS\302+q9u\030\206\322\345\001\00609C\223\361\356\r<F\343q\000\014\244\355\0340I\336\304\004AE!\r4\330\316\253\013\265\236e\376\265W\213\230n\325\220\340\336\301:4\362\354(\254\342\225\0073<\243\323\351\253:\010@\353\277\275\237\276,\004\032\214+\214\262\301tPf\206\034\266\300\022B\243\2475\340\177\211\303\025\025Q\257W\365\376\177\t\"c$Z\326\262\270\272$I\333\002k\356\331!\363`\231\345X\370?\343\357\231\206\323\271\356N\226\211y+\277\204\016.aH2\373\330\307\355L\002A%`\334X\026\302\022\223I\002\032*IQS<\312\341R\355\311\311\200g\230\311\301\005\177\207j\340\304\205\253\372\263\351K\253i\030\307\313\374}\327\273\311\246\375\333\256\367C\324\327\360\263L&\022\331;\275\352u\016W^TN\006+\364_6r^\236\202\232\350\362z\344\350=\nx\346\007\tZ\222E\364\031Ra\271%\272/f\350R\031\321\220\356\204\251\256pD\377\247\301\306\226\010\355\363\306\245V\026\355|\274iH\341\312\365b\326\267\305\323\3406\333\233\242\264z\2060\203\273\277\361/\365\261\005\311\034BG8\235\326\351\317mRjB&\263\031N\271\2411\333\324\370\n\221\350\3707V\273\260\341\032.\342\350\270\220\241\022\251\254\346c\"\346B\264VMf\246\022Y\235\002\246\271\350\274D\031l\314\347M\233\320JM\273$r\204\007\t\343\210\260g\362\325\340\031A\303\330&\t\240\342m7A\3455\035\231i\262\317\252f%\225\0145\222Bz\233z\262\033\270\313\375\313\3464\274G\037\255\354\3070\337\327\304\315U\005R\2032\360\343 d\306;f\324\331\263XF\215C{\320m\306\010W\026\240N\027d\242B\2225E\221\031F\n\004.P\034\000\366\204p\035\323\310\336\232\005A50wiA`\205\301\026\324\313P\356fU\372y|\301\224h\215\255\241`\334\004AH\t(\260\314\005\221c\005\253\034\255\350\366\235N\032\235\177m\255l\243\252\221\035+,B\206\020dc\033\031\216&D\025\032\305Q\223\233\217F\371B\025\004\267\210T\036\020\303\272\035\303\300F\240y""\201z\321#\024\207\216p9\202\005L\237\336u\257\346\3456vvx\272\267\344!\001\255\005\241\322r\337\"D\247\002E\003\024\246\334p\266\353\224XT\351\3529\027\021hBe6D0\312)!\343KC\211H\354\236\301\0206\315\243\025\010\234L\355\360\364\304\r\035\315@\017Y\351\211L\316d\347\215\265\\\325\212\210\227\014\201\275C\331\322\324im\247\210\214]h\204\001K\206\344b\254\212M\320\352\220\324\227\214\000\256x#\326@$(\203\271\274\226]\201\327v+\364k\003a:N\030\001H\014cG\177\nw\2549\265E\005b\035\016\210\376\002,\242t\262v\032\254c\240\002\255\016F\376\3546\304w\352y\r\364\2348\230\033\270\346\274\256\243\213\\\241\317\010\rb\375\272\255Q0\332\016sj\\*\254\0100.\230\332\316@\3514\210l\366\241\264aGK\305\330\2336\0220\242\326\210\342\277\003\310\236\036,:\201'\211\313\001\241\025\212\215\335sH\246\360\024\322B\263f\004\"\344\212b\256eAi\231\302\016\030\002\004\000\3501A\244P\310\3453\350\0032\033\217\035\356\345DL\236\212\320\371Xf\031\222\236\242\375[&\243\303\027\244;d2daE(\277y\007U\316\0302\220\376\203}t\303go\033\000\270\330\024,h32a\232\373\002\372\341 \206\004;\014\033\332\354gm\261\256$c%\005\300\354u\366\253sB\231\255VV\310\034\014\335[\246?\227&\303\320L97\257!ea\024,\320\246\251Pi\261+\024\227\215\317\343\305\n\000\243:\244B\311\316nE\006\334o\362\256\211*\017\326\356\321\333\370\307\264Tt\300 \216I\n\242\352\023yIs?\253\202P\2156:\n\014\223\214x1\216\306R\t\323\024D\200\233\005,C\251Q\255\253\220X+mP\3466@\216M\005'8\036\233\026\330\325\244\t\301(^\346\007\305\365B\264\311\200\3140\3144\231\247Q\202\202\235\004\202\210O#\024\354\366Q\367\221\226\3346\243\006\013\371\235|\262\356\000Z\3067\267$iDn\214V\004\\\237\025\255\004\010\360\016\010\220t\363\345\034\306b\356a:d\225\236^\223\314\235\311\210&a\231.\353\206\240V\277\234s\203\211d\345\301\341R\033\037^T\307\326nFxO'\313\247T\033\205bV\356<\037B\234\257<\221\273\224\0003fWnpn\035\3027\234)J_,@\236a\244h\354\013\230I\003]h\345\rm\250\347@\325\031\323\204\316\313\t\271\220u\030\362\002\247]ZZ\252\213+\274\013\373g'\346\302""\201C\"\241\002\262R@\361:`\271\307\245\326\327\273z\3348{\033\033\003\036\250\315\014\361\002\032\r\323\214\253\267\025\026P\306\316\314E\266\022\"\264\226\265\326\271\026\016\007!\206\342\333\337JF\3058\325x==\241\210\271{U^aI\306\311jOY\n\375\352\013\340\361\027\231Ao*\35793\270\341F&PI\225\316\004-\317\231f\325\000\211\203U#b\0109\016\016\014\240a\034z\304bX\343P\221:wF\2250\001\326$F\252\263\007e\304\254+\275\201\006@\013\005B\002\253\204R8\221\t\"\245^h:\"\353E\274\333&\352\2752m\352\200r\3048\227\225\211\030\0311_\240\260\264\201kX\010\021@\201\335\2600\r\370\256\251\266\326u\235\373)\256\271\3145>\213H\002\230V\t\307Sx\365Z\tS\251Sz\201\301\277\246x\031\200y\364\250\005\232,/\305[^\232<\275|Ga\"&\376\341\271\254d\315\314\275\0325\326\322\276\226\362687\202\360l\230\254\362\021\276\230\340\241\001\310p\267\334\\\\\272\271\310l\30730\203G9z=4D\032\002\347iFV\307z\006<\317\312d0K*\026\255B\351Z\202\245M\306\304\322Wp\231uJ\334Tq\322CZ)\375*\325\362#\343a\307\001\260M\207<\003\254\035\204\372\3553Xc\030q\233\2549\307\347\310~\007\302\276\305\311`uv\332\352\003/\231\203 cd\323<\310\313\2200\277z*\013\320&\003\030\033^\322RW\325\350\001\337S\304\262X1\242\316\352}\205t\003\014\274\332\026\201\207\215\344\235\254<\346b\252@FG\364\270-\240\242[\373\323.\372!~\341C\347\305D\245\317\351\017\264\3470\240g\211p\017T\234\346~\360\336|\345\317\\\351\241\317\004$\354/ek\240&V\237\233\233@d\302\341:{\203\000\312!r\006H\007\034\325D\206\275\270\260\\\031Di\tBk\211\010b[v\343\n\3440\313\340\001\306\025\266\206d[\227\020\235\023\010cS,A\023\334!\231\256\005\032.\273/\3739\201\373\027H\244\014\034\233\n\023\000q\307Z\232\343\200(\3223\3249T\032hi\273L\215D\247\035\372\213'Pe\0314IQ<ZRI!\325\336qa\301N\370\251\216 \244\222(\244=&\260\332m\246\026\024\016\276p\247\215\220,^\325\002\235SD\352\013\360\310E\014x\251g\256\246\205x\310qcK_\326*\306\230\021\307\254\032X*\031\201\255\021\220\266\232ml\2610J\031j\264v\303Y\220]\236\251\0331\323\021Vl\322d\253\263~!\343\326)g\305-\341]""\327\275\310/-\347\007\370{\357\342\277\006\354\020]\2777\016\264\032\253\201k\272\017M}\345a\023\370\333\351\000\200@w\3365U\305~9\255~tyoN<\213\231\343\006T\370(\000\252z\276)\306\222\001yBPI\257\261\253\266i\020\254\025\000\332\235>\243\024\272\351!\"$J\007\025\273\320\365\006\371\345\237\014?+\031\225\275\215(\255E\\U@\322@\031\244\n@G\320\255!\204\032\003\t\310\330\334A\250s\272\223eiC\"3, \240\010t@p\340\3046\246\305\"X\342\322\261[Cu\226\035\215RM\244\233\016\374\364\000\255\306\002\260m\016\362i\200\ta\200\221n\021GJG\036\0347}\215\326\353\315\225\024\276\330p\355I)\200\246\371k\377\027rE8P\220\216\372O\233";
+    PyObject *data = __Pyx_DecompressString(cstring, 3024, 2);
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #elif (CYTHON_COMPRESS_STRINGS) != 0 /* compression: zlib (2888 bytes) */
-const char* const cstring = "x\332\265X\317W\333V\026\306\004\032\3328S\034\310\017\032\222\210\374\"t\202\033\207\2206)\2239\206P\016\323i\022\207\244g23\255\316\263\364lTd\311\350\007\340\236\234v\226,\265\324RK-\265\324\322K\226^j\351?!\177\302|\367I\006Ch\222\366\234\236\003\322\363\323}\367\335\373\335\357\273O\366C\251X\252\225u]R\265\0067l\3154l\251iq\205\253\232Q?\230\224n\250R\303\265\035\251\312%\315P\371\016W%f\250\222a:\222\255k0_tk5nI[\032\337\226T\223\333\342\021\337i\2326\227l\307\322Tn/1C2\r\275%)\026g\016\227\230TM\0279\353\314\2214[RL\303\321\352\256\351\332\330Dj\360\206i\265\212XE\256\230mkuCrL\t\213\325Y\341'\265\240-3\243\314\361\266\2459\254\252\363\314 \r\252f\231\215w\255\025iI\333\232\263.9\255&\227\246\263y\307b\206-\3228X\222\232a\205\006\250\234>\354\036\367\003\246\245 \244F\313\215\246\323\222\354u\006\327\216\333Dp5\323\222\224\226\263n\032EfY\254%\255,\316\254\212 L\327\221\314\232T5]C\265\245[l\007\236n\250\364\360\350~i\001\334f\323\264\034\256\256\032[L\327P)S\345\267\t|\030\243P\323\312\264\204\275\246\261!%3}[\252cU\3178\r\tx\213m\026\276\023I~OI\"\204'&\340\024\345Y\022\221RN*\327\265*\267\0004`\244\322b\023QCCz\266\374l\366\336W\367\0045,\376\023\266\267\021]U\321Q=P\202rr5\335\301f\004\261]\224VkR\313t%\203#L\224\266\t\273\376\005\316:7$\233;4\220\246E=\230\203\274e,\007?\2473l\265-N\253\277a\272\315\213O\017\201\207\2203\2221E\341v\017\3155\2077\245\0060'\374\300\351\237\271e\036\000\375\322\020\354\201K0r\213[ \207\303\033\364\331\254RR\305G\3233\177g\322\266im\210\314\211U0u\365T\020L\327M\205x\250Q\372\n\220R\326\263(l\246\252\262A\240\022D\022p\275\263\243d\004\357\255\242\\\217\233\253Z\256\303gQD\205\003\\\333\325\235\236\323\343\254\353\0260m\211\030I\311\357\260\004'\266(2\375h\254\307\031ok\206A\376\024\263Q\325\014Q\214\314\374X\353\024\241\032\323t\327\002\343uV\377-\263\267\203$\252\250\342\371\322\332\363T\303\250+}6\270CK\024S\327\251\372\320A\221U\225\205\276\366A\350\246\334xtt\272\247\332G\252f\2132\343\3560\003\2406\030\310\274#\335""\342\242\374uE\272E:\251\013\tS`\024\"\337q\270\341\210\376t\320\034\265\272\305\232\353(J\315\265S\"\003\236\246\233eg\257\2238mg\266\311\3204\322M\212\322\013<i\230\350\2500m\300\207\302\260\226\344\305\262\300\341(\313\363aJ\t\270\324t\314\002Q\203\353v\332J3\355K\256\261\277J\004c\0275;\315C%\356\332\332\317\\Z\370\233t\347\255\256c\230\020t\215\021\233d\331\342\252\253pY\226TW\320\3370\215Y\204\273\245\201\034\262\254h\206\346\340a*\202G\315\226\3410E\347_\310\000\345\213\324\247\334\340\324\020\354b\263\265\263\220\266}\365P1\336\236\243\326\264_\223C\317\367g\335}=\356\323&\355\230*sX\361\230\247iO#\037\331\321S,\257-\255\256.\353\272\326\2645\373[\231\\\243\035\310\362\263\326\016\376\037\243\207\311O\220\306s^[\343\233.\007\035\250\005\026\017\272!\010\326s/\247<ev\313P4\263\250\230\026\032\266fp\273\312l\256\000'\352^\262\334\033\324\271C%\240\2170\302\3262\024\247\360*S6HE\262\3416\320;\014'CP\310\\\250<\233H\225\234}\320\214\232)\313*\305+\023q\251\023r\225.\262f\313ie\270Z\347(\276\202S\200\303\271h\325\334\262L\213\nU<\\(\222\244\215\335@\313\354x\220\345\232k(\024>\002\2072\220\257\254\251\370o\020\321dY\234\223\264\331~\336)\3012\226\311r\203!E\\wdG\343v\203\242\304\311I\372\245s\tOL\325\325q7\014\326\240[z\205\232p\345\3332\265\307\375\002!|9\355\2576r3\233\224\013\024\327\004vM\263)\313\240\231\254\254se\303\206\241\370\224ELC\201\212\030\271FSS6\260\351\262\321\263\333\022o\010\224\346\246\313\3644\210\003\001\354\2172\264\016&\220;\206u$E\220Bv\262\214\003*\313\002\243LLb\234\305\3227\356\271\023\004%\2700m\341\031o\332\216\211\177\313\245\302R\267\220)h\244\351\032\333\\\253\257\243\250n\023t\3478\264]nooqeG5]\"\376\255\224\305\031\306\342m\354\266t\334\234f8\342\"}\336\177\233\031\350\371\311\356\237\037ctp90O\243\2252\254\345{\304.y\036\214\320m\231:6V*\353\314:\306\321\314\000\250\005^\233nS\256\242\307\201\246P\217\3357\253\350x\341:2\247r\241\204\017\014\366\317L\353]&k\331\031\372\033\030\377\031\336\3730\355\235er\2174\340*S\326\007\032""\331\235lj\026\253\343\344J\337\244\016\257:\364\2106\370}\334\352!=3\220\236\210p\374\323\006\322ao\006\006r\372 \256\372`c\260;t\306\233J\206\n\336\204\1773\310\005\205dh\314[\360\267\202J\300\336\214\014\014_\362\313\311\3209\217%C\023>\236]\r`\373\231?\325\035\372t\367W\237\371\333A-\204\301\311\3779\273s\273,\031\371\313\356\206_\240\307\303\311\310\250w\322\333\362+~5\030\304\252\2211\357K\261\303x\360<\330LF\316{\277\320\036\311\310\251\335\373\336\230\267\354\217\371\253\301Z8\034\256E#\361\211\270\224\344\317x\177\305j\326\205S\266\273\3551\257\225\255\266\302B\"&\177\306^\267\003\0268\341\275\320\212\n]\354\361((\004\323\341\271\320\216nD\233\335\221K\235K_\204\233Q.\271\363e\264\025W\222;%\3617\027\225z\303\371\350U\214=\362\273\345\335Jr\370v\032\211\372\245\3444\322\3676\273C\247v\347\275\\\247p#\250\020\200\006\001h\014\232\357\004\360z\006 \326\364\2438\r\000\010\3057\037\r\014_\366+\037\002\346yo\333\257\005e\370\001`\177\363O\370\007\000%#\343^\331{\351\003\343I\377\037\360\261\030j\221\025\237\211\347\333\203\355\251\367\325a\322\177\022N\205%\270\355\234\272\344\257\005\303(\302G\241\022\235\215\224x\242}\255\375r\357\332\336\017\235\177\377\320\371\341\307?P\022P\350\343\361?R\224\037\333\245.b+\323V*\360-H\301\351\260\002w\205\251\340d\260\025V\302j4\030M%\243\327\203\225\360~T\210\256G\3258\227\214^\361\177\3013\326\035%*\214\005\313\341X\347\366\243Xi\237m+{\027:\225\027\235\027/\223q\tQ\237Ey>\032\230\270\211:U\303\301\220j11\025\014\005K\000\345\202\204\301bjp\005\205\3715da+\316\305\343\361\363\330j\027\222\013\227}\326\271r7\232\212\026\342\315\366P\373\361\336\340\336T\317\233\026\276\216Kq9\2710\023\026\302\231\350A\\\216+]\361a\272SZj\227\332\345\344\361\267{\367;\225\347\311\343e\361\267\322\336\354\rW\367&:\317\327\272\243T\321J\222\335\316BuA\251\233\377t\367\265_\002\235F\317y\033@\224v<}\276s\016l\nsI\376\202\237\353\346G\275ab\202?\227U{t\2543v\035\264Y\243\024\223\361\313\235\313)\362\004\0019\334\361,\277\320\035\275\340\177""\022\\\003\267\304\340jP\206\347\302%\350\221\004:\n\312\3723\301\202X7\212\222\370\257\002\340K2@5n\010\343\217O\037#\237\367\210\351k\217\373\245\316\344\235(Gr\332$9m\016.\237\300m\371\3047'\216\252\352\315'\003\303\222\017\331 \2007\347\006\206Q\026!\241d\010\231d\227\213~\351M\276_q7\003\366\347\350\354\324\356\003o\021r\316\237\3676{\252+\207\377\205\346 \244\317\374YAP=\276\n\032\214\234\361fE7 ^\334\215_\265\253{9\362\264\342\337G\ro\203\306\342\343w\3019\2241\037-F\330'\337\311_\366\025PT\351\314<\210\307\340\005t\376\nE\345\301\\\360St\"\232G\207|\330^\203\247^pH\034EX\366\316\022\274I\376\022\346x\200\330\201\211\277\214\246\224?\353U\010\360\375\301\333\315\362\364\244\377]X R\235\315\242\273J\" f\235D\006$\3623\341\234\010\030n\037\201\320SD\241-o\315\037F\343\370$\274\026\276\214\256E\377\212\327\332\031Q^\n\216\202\276 kw\242\010\025\271\321Rd\307\323\355Bw\374C[\3638\2359\343\027;\027o\003\342\n\371\273\350\337\360-\264\235J\240\206\327\341t\263;~\036\035\356\271\357\212xS\255E\220))\343d\010=_\3617\205\242ut\214\013S\"\353\302\301`\202\3645\017\205\\\r\037GCQ9\372\036\205\372\276=\327f=\233\tH}>\036\214\261\372\242\377\000\364x\t\333r2y-(\005\217\261p&\272K\261\306;P\362$\250\027\324\303W\021\213\334x\021\t@\2249\017\025Ho\005\364\016\037M\360\324\356\202\267\351\347\372zj~w\305{\000\356\002S\013'\"\212>\331\231\234\245nFh>\rK\330\261@\241\316\241c\345\216y\n\215|\374\351.\367\356z/\300\347\353\276JmC\2606\351w\336\362s8l\027\321!\206\020|\2563\3630\236\212\347\342j\373\324\336\334\036\274]\362\377#R*Ee\352@+HxU\354\003\224_\007w!\r\240r>\314\205\347\243\\4\001\222/\306Z\333\332\003\2407\001\360\325\250\234&gC(\324\224p\340\345I\250y\364\221.&\362\251\267\356\321s)}\017(\367\311m\314+\035\004^\200\230\203\327\242\235\276h\217\265\227\332\333\2105O\341\225R\246\001\0265\274\001\206\225#t\033\302\351k\034cc\321J\334\347%c\377\2748\250\323\316\364a\355\353H3\023]\214\332J\036}l#\370,,\275\367U\362\367\274\274\315\014|\320k\347-a\272ej\252t\353\331+""\371\237O\237\254\210\313\221\267\351\375\367\323\236\355{c\375`\303l\223\3367\213#/\367\037\342f?\231\337e|\370u^\261-\231~P\226\305w\355\201\354\2073Y\374B0\220~CvL\271\357G\262l\005\347bP\255\331\262en\357\257\023\017\032\314\332H\277\352<\375?h\210\374\366";
-    PyObject *data = __Pyx_DecompressString(cstring, 2888, 1);
+    #elif (CYTHON_COMPRESS_STRINGS) != 0 /* compression: zlib (2898 bytes) */
+const char* const cstring = "x\332\275X\317W\333V\026\306\004\032\3328S\034\310\017\032\222<\362\213\320\tn\034B\332\2444s\014\241\034\246\323$\016I\317dfZ\035Yz6*\262d\364\003pOO;K\226Zj\251\245\226Zj\351%K/\265\364\237\220?a\276\373$\203!\264Mr\316\364\034\220\236\237\356\273\357\336\357~\337}\262\037\262b\251V\326u\246j\rn\330\232i\330\254iq\205\253\232Q?\230d7T\326pm\207U9\323\014\225\357p\225\311\206\312\014\323a\266\256\301|\321\255\325\270\305\2664\276\315T\223\333\342\021\337i\2326g\266ci*\267\227d\203\231\206\336b\212\305e\2073\231U\323E\316\272\3540\315f\212i8Z\3355]\033\233\260\006o\230V\253\210U\344J\266m\255n0\307dX\254\316\n?\251\005m\231\031e\216\267-\315\221\253:\317\014\322\240j\226\331\370\275\265\"-\266\2559\353\314i59\233\316\346\035K6l\221\306\301\222\324\014+4@\345\364a\367\270\0370-\005!5Zn4\235\026\263\327e\270v\334&\202\253\231\026SZ\316\272i\024e\313\222[leqfU\004a\272\0163k\254j\272\206j\263[\362\016<\335P\351\341\321\375\322\002\270\315\246i9\\]5\266d]C\245L\225\337&\360a\214BM+\323\014{McCJf\3726\253cU\3178\r\tx\213m\026\276\025I~GI\"\204'&\340\024\345Y\022\221RN*\327\265*\267\0004`\244\322b\023QC\203=[~6{\357\213{\202\032\026\377\021\333\333\210\256\252\350\250\036(A9\271\232\356`3\202\330.\262\325\032k\231.38\302Di\233\260\353_\340\254s\203\331\334\241\001\233\026\365\220\035\344-a9\3709\235a\253mqZ\375\265\254\333\274\370\364\020x\0109#\231\254(\334\356\241\271\346\360&k\000s\302\017\234\376\211[\346\001\320/\r\301\036\270\004#\267\270\005r8\274A\237\315*%U|4=\3637\231m\233\326\206\310\234X\005SWO\005!\353\272\251\020\0175J_\001R\312z\026\205-\253\252d\020\250\004\021\003\256wv\224\214\340\275U\224\353qsU\313u\370,\212\250p\200k\273\272\323sz\234u\335\002\246-\021#)\371w,\301\211-\212L?\032\353q\306\333\232a\220?\305lT5C\024#3?\326:E\250&k\272k\201\361\272\\\377-\2637\203$\252\250\342\371\322\332\363T\303\250+}6\270CK\024S\327\251\372\320AQ\256*\013}\355\203\320M\271\361\350\350tO\265\217T\315\026e\306\335\221\r\200\332\220A\346\035v\213\213\362\327\025v\213tR""\027\022\246\300(D\276\343p\303\021\375\351\2409juKn\256\243(5\327N\211\014x\232n\226\235\275N\342\264\235\331\246\214\246\221nRd/\360\244a\242\243\302\264\001\037\212\214\265$/9\013\034\216\262<\037\246\224\200KM\307,\0205\270n\247\2554\323>s\215\375U\"\030\273\250\331i\036*q\327\326~\342l\341+v\347\215\256c\230\020tM&6I\222\305UW\341\222\304TW\320\3370\215Y\204\273\245\201\034\222\244h\206\346\340a*\202G\315\226\341\310\212\316?\223\000\312g\251O\251\301\251!\330\305fkg!m\373\352\241b\2749G\255i\277&\207\236\357\317\272\373z\334\247M\3321U\331\221\213\307<M{\032\371\310\216\236bymiuuY\327\265\246\255\331\337H\344\032\355@\222\236\265v\360\377\030=Lz\2024\236\363\332\032\337t9\350@-\260x\320\rA\260\236{)\345\251l\267\014E3\213\212i\241ak\006\267\253\262\315\025\340D\335K\222z\203:w\250\004\364\021F\330Z\202\342\024^\225\225\rR\221d\270\r\364\016\303\311\020\0242\027*\317&R%g\0374\243fJ\222J\361JD\\\352\204\\\245\213\244\331RZ\031\256\3269\212\257\340\024\340p.Z5\267,\323\"\375\331p\r\016fg\201$\325\\C\241X\021%d\200\344$M\305\177\203X%I\342P$\317\373I\246l\312(%I\r\031\371\340\272#9\032\267\033\024\022\216I\022+\035Bxb\252\256\216\273a\310\r\272\245WH\007W\276-Q/\334\257\006b\225\322fj#\021\263I\201C^M\000\3254\233=\272\025\211n\305\303t\223$\360MR\326\271\262a\303\211\370\224eCC\001\217\030\271FSS6\020\320\262\321\263\333\022\257\n\004\301\246+\353i\200\007J\330\037e\033\036L\000\027\014\353H\230\260\205\376$\t'U\226!F\231\252\3048\213\245o\334s'\230JPb\332\3023\336\264\035\023\377\226K\025\246\266!Q\320\200\3005\266\271V_Gu\335&x\317qz\273\334\336\336\342\312\216j\272\244\200[)\2353\374\305k\331mv\334\234f8\342\302>\355\277\315\014\364\374d\367O\2171:\270\034\230\247\321\262\014k\351\213^\245\244{T*i\036\274\321m\211\2328|(\353\262u\214\313\231\001\020\020T7\335\246TE\333\003s!(\273oV\321\361\016vdN\345B\034o\031\366\237\223\340\333\031\257eG\355oT\340\317\332\261\017\373\3361(\365h\006v\313\312\372@#\273\223M\315\222\3538\364\322\227\260\303\253\016=\242\r\336""\215\215\275\212\314\014\244\207)\034\377\270\201\304\344\327\003\0039}\020W}\2601\330\035:\343M%C\005o\302\277\031\344\202B24\346-\370[A%\220_\217\014\014_\362\313\311\3209ON\206&|<\273\032\300\366\023\177\252;\364\361\356\257\276\354o\007\265\020\006'\377\353\354\316\355\312\311\310_v7\374\002=\036NFF\275\223\336\226_\361\253\301 V\215\214y\237\213\035\306\203\347\301f2r\336\373\205\366HFN\355\336\367\306\274e\177\314_\r\326\302\341p-\032\211O\304\245$\177\306\373+V\313]8\225w\267=\331ke\253\255\260\220\210\311\237\260\327\355@\016\234\360^hE\205.\366x\024\024\202\351\360\\hG7\242\315\356\310\245\316\245\317\302\315(\227\334\371<\332\212+\311\235\222\370\233\213J\275\341|\364*\306\036\371\335\362n%9|;\215D\375Rr\032\351{\233\335\241S\273\363^\256S\270\021T\010@\203\0004\006\315\337\005\360z\006 \326\364\2438\r\000\010\305\327\037\014\014_\366+o\003\346yo\333\257\005e\370\001`_\371'\374\003\200\222\221q\257\354\275\364\201\361\244\377w\370X\014\265\310\212\317\304\363\355\301\366\324\037\325a\322\177\022N\205%\270\355\234\272\344\257\005\303(\302\007\241\022\235\215\224x\242}\255\375r\357\332\336\367\235\177}\337\371\376\207\367(\t(\364\341\370\373\024\345\207v\251\213\330\312\264\225\n|\013,8\035V\340\2560\025\234\014\266\302JX\215\006\243\251d\364z\260\022\336\217\n\321\365\250\032\347\222\321+\376/x&wG\211\nc\301r8\326\271\375(V\332g\333\312\336\205N\345E\347\305\313d\234!\352\263(\317\007\003\0237Q\247j8\030R-&\246\202\241`\t\240\\`\030,\246\006WP\230_C9l\305\271x<~\036[\355Br\341\262/w\256\334\215\246\242\205x\263=\324~\2747\2707\325\363\246\205?\307\245\270\234\\\230\t\013\341L\364 .\307\225\256\3700\335)-\265K\355r\362\370\233\275\373\235\312\363\344\361\262\370[io\366\206\253{\023\235\347k\335Q\252h%\311ng\241\272\240\324\315\177\274\373\263_\002\235F\317y\033@\224v<}\276s\016l\nsI\376\202\237\353\346G\275ab\202?\227U{t\2543v\035\264Y\243\024\223\361\313\235\313)\362\004\0019\334\361,\277\320\035\275\340\177\024\\\003\267\304\340jP\206\347\302%\350\221\004:""\n\312\3723\301\202X7\212\222\370\257\002\340K2@5n\010\343\017O\037#\237?\020\323\227\036\367K\235\311;Q\216\344\264Ir\332\034\\>\201\333\362\211\257O\034U\325\353\217\006\206\231\017\331 \200\327\347\006\206Q\026!\241d\010\231d\227\213~\351u\276_q7\003\371\377\243\263S\273\017\274E\3109\177\336\333\354\251\256\034\376\007\232\203\220>\361g\005A\365\370*h0r\306\233\025\335\200xq7~\325\256\356\345\310\323\212\177\0375\274\r\032\213\217\337\006\347P\306|\264\030a\237|'\177\331W@Q\2453\363 \036\203\027\320\371\013\024\225\007s\301\217\321\211h\036\035\362a{\r\236z\301!q\024a\331;K\360&\371K\230\343\001b\007&\3762\232R\376\254W!\300\367\007o6\313\323\223\376\267a\201Hu6\213\356*\211\200\230u\022\031\220\310\317\204s\"`\270}\004BO\021\205\266\2745\177\030\215\343\243\360Z\3702\272\026\3753^kgDy)8\n\372\202\254\335\211\"T\344FK\221\035O\267\013\335\361\267m\315\343t\346\214_\354\\\274\r\210+\344\357\242\177\303\267\320v*\201\032^\207\323\315\356\370yt\270\347\276+\342M\265\026A\246\244\214\223!\364|\305\337\024\212\326\3211.L\211\254\013\007\203\t\322\327<\024r5|\034\rE\345\350;\024\352\273\366\\[\356\331L@\352\363\361`\214\325\027\375\007\240\307K\330\226\223\311kA)x\214\2053\321]\2125\336\201\222'A\275\240\036\276\212\344\310\215\027\221\000D\231\363P\201\364V@\357\360\321\004O\355.x\233~\256\257\247\346wW\274\007\340.0\265p\"\242\350\223\235\311Y\352f\204\346\323\260\204\035\013\024\352\034:V\356\230\247\320\310\207\037\357r\357\256\367\002|\276\356\253\3246\004k\223~\347-?\207\303v\021\035b\010\301\347:3\017\343\251x.\256\266O\355\315\355\301\333%\377\337\"\245RT\246\016\264\202\204W\305>@\371\347\340.\244\001T\316\207\271\360|\224\213&@\362\305Xk[{\000\364&\000\276\032\225\323\344l\010\205\232\022\016\274<\t5\217>\322\305D>\365\326=z.\245\357\001\345>\271\215y\245\203\300\013\020s\360\263h\247/\332c\355\245\3666b\315Sx\245\224i\200E\ro\200a\345\010\335\206p\372\022\307\330X\264\022\367y\311\330?/\016\352\2643\275]\373:\322\314D\027\243\266\222G\037\333\010>\tK\357""\360z\371.\257q3\003\357\370*zK,\33225\225\335z\366J\372\307\323'+\342r\344M|\377\235\265g\373\016\361\277\307\222l\343\3367\225#_\026\336\315\341~\252\357\271\354\360\327\003\305\266$\372\035[\022_\361\007\262\337\353$\361\303\304@\372]\3351\245\276\337\346\262\025\234\213A\265fK\226\271\275\277N<h\310\326F\372u\352\351\377\000\210>,0";
+    PyObject *data = __Pyx_DecompressString(cstring, 2898, 1);
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #else /* compression: none (6038 bytes) */
-const char* const bytes = ": .1fAll dimensions preceding dimension %d must be indexed and not slicedBuffer view does not expose stridesCan only create a buffer that is contiguous in memory.Cannot assign to read-only memoryviewCannot create writable memory view from read-only memoryviewCannot index with type 'Cannot transpose memoryview with indirect dimensionsDimension %d is not directEmpty shape tuple for cython.array GB)Index out of bounds (axis %d)Indirect dimensions not supportedInvalid mode, expected 'c' or 'fortran', got Invalid shape in axis <MemoryView of Note that Cython is deliberately stricter than PEP-484 and rejects subclasses of builtin types. If you need to pass subclasses then set the 'annotation_typing' directive to False.Out of bounds on buffer access (axis Step may not be zero (axis %d)Unable to convert item to object.>')?a worker thread could not allocate its scratch buffersadd_note and  at 0xcannot allocate the cannot allocate the brute-force result bufferscannot allocate the greedy working bufferscannot allocate the traversal scratch bufferscannot allocate the winning combination buffercannot allocate the worker failure flagcannot allocate the working bufferscannot build the CSR view of the networkcollections.abc<contiguous and direct><contiguous and indirect>disable distance matrix (enablegc (got got differing extents in dimension igraph refused to compute the shortest-path matrix. The most common cause is a directed network: the compiled kernels only support undirected graphs.isenableditemsize <= 0 for cython.arrayno default __reduce__ due to non-trivial __cinit__ object>pyntacle/_ext/cython_metrics.pyx<strided and direct><strided and direct or indirect><strided and indirect>unable to allocate array data.unable to allocate shape and strides.ASCIIEllipsisK_indices__Pyx_PyDict_NextRefSequenceView.MemoryViewabcallocate_bufferasyncio.coroutinesbasec__class____class_getitem__cline_in_tracebackcomb_numcountcython_bruteforcecython_greedycython_info__dict__dist_typedtype_is_ob""jectedgesencodeenumerateerror_ext.cython_metricsflagsformatfortran__func____getstate__id__import__index_is_coroutineitemsitemsize__main__max_tiesmdistmemviewmode__module__nname__name__ndim__new__notK_indicesnum_threadsobjoperationpackpop__pyx_checksum__pyx_state__pyx_type__pyx_unpickle_Enum__pyx_vtable____qualname____reduce____reduce_cython____reduce_ex__registerround__set_name__setdefault__setstate____setstate_cython__shapesizestartstepstopstruct__test__unpackunweightedupdatevalueswvecxdouble (__Pyx_memviewslice, __Pyx_memviewslice, int, int *, int *, int)\000double (double *, int *, int *, int, int, int)\000double (struct __pyx_t_4_ext_5utils_CSR *, char *, int *, int, int)\000get_group_betweenness\000get_group_closeness\000get_group_degreedouble (double *, int *, int *, int, int)\000double (double *, int *, int *, int, int, int)\000double (struct __pyx_t_4_ext_5utils_CSR *, struct __pyx_t_4_ext_5utils_Scratch *, int *, int)\000double (struct __pyx_t_4_ext_5utils_CSR *, struct __pyx_t_4_ext_5utils_Scratch *, int *, int, int)\000get_distance_weighted_reach\000m_reach\000get_fragmentation\000get_distance_fragmentationint (__Pyx_memviewslice, __Pyx_memviewslice, int, double *)\000igraph_dijkstra\360\000\000\001l\002\360\000\000l\002m\002\340\004\022\220!\330\004\021\220\031\230&\240\001\240\021\330\004\023\220<\230v\240Q\240a\360\010\000\005\035\230A\330\004\026\220a\330\004\031\230\021\330\004\"\240!\330\004\032\230!\340\004\017\210\177\230a\230w\240f\250A\330\004\007\200t\2103\210a\330\010\016\210k\230\021\230!\340\004\005\330\010\020\220\007\220v\230Q\230b\240\002\240!\330\010\023\2207\230&\240\001\240\024\240R\240q\330\010\027\220~\240Q\240a\330\010\013\2106\220\023\220E\230\023\230I\240S\250\005\250S\260\010\270\003\2701\330\014\022\220+\230Q\230a\340\010\016\210a\210w\220a\220y\240\001\240\024\240R\240r\250\021\330\010\016\210a\210z\230\021\230,\240a\240t\2504\250r\260\021\340\010\023\220>\240\021\240'\250\026\250s\260%\260q\340\010\035\320\035/\250q\260\001""\33007\260v\270Q\33001\33001\33003\2601\33001\33001\33005\260Y\270a\340\010\014\210A\210Q\330\010\014\210A\210Q\330\010\014\210A\210Q\330\r\032\230!\2301\330\r\026\220a\220q\340\004\013\2105\220\001\320\021%\240Q\360\000\000\001n\002\360\000\000n\002o\002\340\004\022\220!\330\004\021\220\031\230&\240\001\240\021\330\004\023\220<\230v\240Q\240a\360$\000\005\035\230A\330\004%\240Q\330\004\026\220a\330\004\031\230\021\330\004'\240q\330\004\032\230!\360\006\000\005\036\230Q\340\004\017\210\177\230a\230w\240f\250A\330\004\007\200t\2103\210a\330\010\016\210k\230\021\230!\340\004\005\330\010\027\220w\230f\240A\240Q\330\010\013\210=\230\003\2301\330\014\022\220+\230Q\230a\330\010\024\220A\220U\230!\330\010\034\230J\240f\250B\250i\260r\270\022\2705\300\002\300!\330\010\020\220\007\220v\230Q\230b\240\002\240!\330\010\023\2207\230&\240\001\240\024\240R\240q\330\010\034\230N\250!\2501\330\010\013\320\013\035\230S\240\005\240S\250\006\250c\260\025\260c\270\031\300#\300U\310#\310]\320Z]\320]^\330\014\022\220+\230Q\230a\340\010\016\210a\210w\220a\220y\240\001\240\024\240R\240r\250\021\330\010\016\210a\210z\230\021\230,\240a\240t\2504\250r\260\021\360\010\000\t\024\220>\240\021\240'\250\026\250s\260%\260q\340\010\035\320\035/\250q\260\001\33007\260v\270Q\33001\33001\33003\2601\33001\33001\33005\260^\3001\340\010\034\230A\340\010\016\210d\220!\330\021 \240\r\250Q\360\010\000\021!\240\007\240v\250Q\250b\260\002\260!\330\020$\240G\2506\260\021\260$\260b\270\001\330\020\037\230~\250Q\250a\340\020\023\220>\240\023\240E\250\023\320,>\270c\300\025\300c\310\030\320QT\320TU\330\024 \240\001\240\025\240a\360\006\000\031&\240Q\240b\250\002\250!\360\006\000\031!\240\004\240C\240q\330\030 \240\004\240B\240a\360\006\000\031\037\230a\230\177\250a\250y\270\001\270\024\270R\270r\300\021\330\030\036\230a\320\0372\260!\260<\270q\300\004\300D\310\002\310!\360\006\000\031&\240Q\240i\250|\2701\270A\330\030)\250\021\250)\2609\270A\270Q\340\030)\250\021\250'\3201C\3001\300A\330DK\3106\320QR\330DE\330DE""\330DG\300q\330DE\330DE\330DI\310\031\320RS\340\020\024\220A\220Q\330\020\024\220A\220Q\330\025\"\240!\2401\340\014\017\210|\2301\230A\330\020\026\220k\240\021\240!\360\006\000\r\027\320\026'\240q\250\001\330\014\030\230\001\340\014\020\220\005\220U\230!\2303\230b\240\002\240!\330\020\023\320\023$\240A\240S\250\002\250!\330\024\036\320\036/\250q\260\001\330\024 \240\001\340\014\017\210x\220r\230\021\340\020\030\230\n\240#\240Q\330\020\030\230\n\240\"\240A\360\006\000\021\035\230I\240Q\240a\330\020\031\230\021\230)\240<\250q\260\001\330\020\034\230A\230Y\240a\340\020%\240Q\360\010\000\021%\240A\360\006\000\t\r\210A\210Q\330\010\014\210A\210Q\330\010\014\210A\210Q\330\010\014\210A\210Q\330\010\014\210A\210Q\330\r\032\230!\2301\330\r\026\220a\220q\340\004\013\210;\220e\2301\320\0340\260\001\360\000\000\001q\002\360\000\000q\002E\003\360\000\000E\003F\003\340\004\022\220!\330\004\021\220\031\230&\240\001\240\021\360\n\000\005 \230q\330\004\034\230A\360\026\000\005\037\230a\330\004\032\230!\330\004 \240\001\330\004 \240\001\330\004\033\2301\360\014\000\005\035\230A\330\004%\240Q\330\004&\240a\330\004\032\230!\360\006\000\005\036\230Q\340\004\017\210\177\230a\230w\240f\250A\330\004\007\200t\2103\210a\330\010\016\210k\230\021\230!\340\004\005\330\010\027\220w\230f\240A\240Q\330\010\013\210=\230\003\2301\330\014\022\220+\230Q\230a\330\010\024\220A\220U\230!\330\010\013\2109\220B\220a\330\014\027\220q\330\010\034\230J\240f\250A\250\\\270\022\2701\330\010\032\230-\240v\250Q\250l\270\"\270A\330\010\022\220-\230v\240Q\240i\250|\2702\270Y\300b\310\001\330\010\024\220G\2306\240\021\240,\250b\260\001\330\010\024\220M\240\026\240q\250\014\260B\260a\330\010\014\320\014\036\230c\240\025\240c\320)9\270\023\270A\330\020\023\2208\2303\230e\2403\240j\260\003\2605\270\003\270:\300S\310\001\330\014\022\220+\230Q\230a\360\014\000\t\r\210E\220\025\220a\220q\330\014\035\230Q\230e\2401\330\014\033\2301\230E\240\021\330\014\025\220Q\220e\2301\330\014\025\220Q\220e\2301\340\010\023\220>\240\021""\240'\250\026\250s\260%\260q\340\r\034\230M\250\021\360\006\000\r\025\220G\2306\240\021\240\"\240B\240a\330\014\030\230\007\230v\240R\240r\250\022\2503\250b\260\001\330\014\033\230>\250\021\250!\340\014\017\210v\220S\230\005\230S\240\n\250#\250U\260#\260X\270S\300\001\330\020\034\230A\230U\240!\360\006\000\025\"\240\021\240!\340\031.\250a\250u\260C\260s\270'\300\021\340\024\035\320\035/\250q\260\001\33007\260v\270Q\33001\33001\33003\2601\33001\33001\33005\260Y\270a\340\024\"\240!\330\024\033\320\033,\250A\250Q\360\006\000\025\033\230%\230r\240\024\240Q\240d\250$\250a\250q\340\024\027\220v\230R\230u\240B\240a\330\030)\250\021\250'\260\021\330\030'\240q\250\007\250q\330\030\037\230q\240\004\240B\240l\260!\330\030!\240\021\240'\250\021\330\030!\240\021\240'\250\021\330\031\"\240!\2405\250\002\250\"\250D\260\004\260A\260V\2702\270V\3003\300a\330\030!\240\021\240'\250\031\260!\2605\270\002\270!\330\030\033\2309\240A\240U\250\"\250A\330\034#\2401\240D\250\002\250)\2602\260Y\270a\270x\300q\330\034%\240Q\240g\250Y\260a\260u\270B\270a\340\014\020\220\001\220\021\330\014\020\220\001\220\021\330\021\036\230a\230q\340\010\013\210<\220q\230\001\330\014\022\220+\230Q\230a\340\010\014\210G\2209\230A\330\014\017\210r\220\023\220A\330\020\034\320\034-\250Q\250a\330\020\034\230O\2501\250A\330\021\"\240!\2403\240b\250\001\330\020\034\320\034-\250Q\250a\330\020\034\230O\2501\250A\360\n\000\t\017\210e\2202\220T\230\021\230$\230d\240!\2401\330\010\024\220A\330\010\014\210G\2209\230A\330\014\017\210y\230\001\230\023\230B\230b\240\004\240D\250\001\320):\270!\2703\270b\300\013\3103\310a\330\020\035\230[\250\002\250)\2601\260A\330\020\024\220G\2309\240I\250Q\250a\330\024\027\220|\2402\240Q\330\030!\240\027\250\001\250\027\260\001\260\031\270\"\270B\270i\300r\310\021\330\030&\240l\260\"\260A\340\010\013\210<\220s\230!\330\014\030\230\001\230\021\330\014\032\230!\330\014\031\230\021\340\014\030\230\014\240I\250Q\250a\340\010\020\220\007\220v\230Q\230b\240\002\240!\330\010\013\2106\220\023\220A""\330\014\022\220+\230Q\230a\330\010\023\2201\330\010\014\210G\2209\230A\330\021&\240a\240|\2609\270A\270T\300\023\300C\300w\310a\330\014\024\220G\2301\230A\230U\240!\2403\240d\250%\250u\260A\260Q\330\r\"\240!\240;\250c\260\023\260G\2701\330\010\014\210G\2209\230A\330\014\025\220Q\220e\2305\240\001\240\021\330\010\014\210A\210Q\360\006\000\t\r\210A\210Q\330\010\014\210A\210Q\330\010\014\210A\210Q\330\010\014\210A\210Q\330\010\014\210A\210Q\330\010\014\210A\210Q\330\010\014\210A\210Q\330\r\026\220a\220q\360\006\000\005\014\210;\220k\240\032\2501struct __pyx_t_4_ext_5utils_CSR *(__Pyx_memviewslice, __Pyx_memviewslice, int)\000struct __pyx_t_4_ext_5utils_Scratch *(int)\000void (PY_LONG_LONG, int, int, int *, int *)\000void (struct __pyx_t_4_ext_5utils_CSR *)\000void (struct __pyx_t_4_ext_5utils_CSR *, int, char *, double *, int *)\000void (struct __pyx_t_4_ext_5utils_Scratch *)\000void (struct __pyx_t_4_ext_5utils_Scratch *, int *, int)\000csr_from_edges\000scratch_alloc\000index_to_combination\000csr_free\000csr_bfs_row\000scratch_free\000mark_groupO";
+    #else /* compression: none (6157 bytes) */
+const char* const bytes = ": .1fAll dimensions preceding dimension %d must be indexed and not slicedBuffer view does not expose stridesCan only create a buffer that is contiguous in memory.Cannot assign to read-only memoryviewCannot create writable memory view from read-only memoryviewCannot index with type 'Cannot transpose memoryview with indirect dimensionsDimension %d is not directEmpty shape tuple for cython.array GB)Index out of bounds (axis %d)Indirect dimensions not supportedInvalid mode, expected 'c' or 'fortran', got Invalid shape in axis <MemoryView of Note that Cython is deliberately stricter than PEP-484 and rejects subclasses of builtin types. If you need to pass subclasses then set the 'annotation_typing' directive to False.Out of bounds on buffer access (axis Step may not be zero (axis %d)Unable to convert item to object.>')?a worker thread could not allocate its scratch buffersadd_note and  at 0xcannot allocate the cannot allocate the brute-force result bufferscannot allocate the greedy working bufferscannot allocate the traversal scratch bufferscannot allocate the winning combination buffercannot allocate the worker failure flagcannot allocate the working bufferscannot build the CSR view of the networkcollections.abc<contiguous and direct><contiguous and indirect>disable distance matrix (enablegc (got got differing extents in dimension igraph refused to compute the shortest-path matrix. The most common cause is a directed network: the compiled kernels only support undirected graphs.isenableditemsize <= 0 for cython.arrayno default __reduce__ due to non-trivial __cinit__ object>pyntacle/_ext/cython_metrics.pyx<strided and direct><strided and direct or indirect><strided and indirect>unable to allocate array data.unable to allocate shape and strides.ASCIIEllipsisK_indices__Pyx_PyDict_NextRefSequenceView.MemoryViewabcallocate_bufferasyncio.coroutinesbasec__class____class_getitem__cline_in_tracebackcomb_numcountcython_bruteforcecython_greedycython_info__dict__dist_typedtype_is_ob""jectedgesencodeenumerateerrorflagsformatfortran__func____getstate__id__import__index_is_coroutineitemsitemsize__main__max_tiesmdistmemviewmode__module__nname__name__ndim__new__notK_indicesnum_threadsobjoperationpackpoppyntacle._ext.cython_metrics__pyx_checksum__pyx_state__pyx_type__pyx_unpickle_Enum__pyx_vtable____qualname____reduce____reduce_cython____reduce_ex__registerround__set_name__setdefault__setstate____setstate_cython__shapesizestartstepstopstruct__test__unpackunweightedupdatevalueswvecxdouble (__Pyx_memviewslice, __Pyx_memviewslice, int, int *, int *, int)\000double (double *, int *, int *, int, int, int)\000double (struct __pyx_t_8pyntacle_4_ext_5utils_CSR *, char *, int *, int, int)\000get_group_betweenness\000get_group_closeness\000get_group_degreedouble (double *, int *, int *, int, int)\000double (double *, int *, int *, int, int, int)\000double (struct __pyx_t_8pyntacle_4_ext_5utils_CSR *, struct __pyx_t_8pyntacle_4_ext_5utils_Scratch *, int *, int)\000double (struct __pyx_t_8pyntacle_4_ext_5utils_CSR *, struct __pyx_t_8pyntacle_4_ext_5utils_Scratch *, int *, int, int)\000get_distance_weighted_reach\000m_reach\000get_fragmentation\000get_distance_fragmentationint (__Pyx_memviewslice, __Pyx_memviewslice, int, double *)\000igraph_dijkstra\360\000\000\001l\002\360\000\000l\002m\002\340\004\022\220!\330\004\021\220\031\230&\240\001\240\021\330\004\023\220<\230v\240Q\240a\360\010\000\005\035\230A\330\004\026\220a\330\004\031\230\021\330\004\"\240!\330\004\032\230!\340\004\017\210\177\230a\230w\240f\250A\330\004\007\200t\2103\210a\330\010\016\210k\230\021\230!\340\004\005\330\010\020\220\007\220v\230Q\230b\240\002\240!\330\010\023\2207\230&\240\001\240\024\240R\240q\330\010\027\220~\240Q\240a\330\010\013\2106\220\023\220E\230\023\230I\240S\250\005\250S\260\010\270\003\2701\330\014\022\220+\230Q\230a\340\010\016\210a\210w\220a\220y\240\001\240\024\240R\240r\250\021\330\010\016\210a\210z\230\021\230,\240a\240t\2504\250r\260\021\340\010\023\220>\240\021\240'""\250\026\250s\260%\260q\340\010\035\320\035/\250q\260\001\33007\260v\270Q\33001\33001\33003\2601\33001\33001\33005\260Y\270a\340\010\014\210A\210Q\330\010\014\210A\210Q\330\010\014\210A\210Q\330\r\032\230!\2301\330\r\026\220a\220q\340\004\013\2105\220\001\320\021%\240Q\360\000\000\001n\002\360\000\000n\002o\002\340\004\022\220!\330\004\021\220\031\230&\240\001\240\021\330\004\023\220<\230v\240Q\240a\360$\000\005\035\230A\330\004%\240Q\330\004\026\220a\330\004\031\230\021\330\004'\240q\330\004\032\230!\360\006\000\005\036\230Q\340\004\017\210\177\230a\230w\240f\250A\330\004\007\200t\2103\210a\330\010\016\210k\230\021\230!\340\004\005\330\010\027\220w\230f\240A\240Q\330\010\013\210=\230\003\2301\330\014\022\220+\230Q\230a\330\010\024\220A\220U\230!\330\010\034\230J\240f\250B\250i\260r\270\022\2705\300\002\300!\330\010\020\220\007\220v\230Q\230b\240\002\240!\330\010\023\2207\230&\240\001\240\024\240R\240q\330\010\034\230N\250!\2501\330\010\013\320\013\035\230S\240\005\240S\250\006\250c\260\025\260c\270\031\300#\300U\310#\310]\320Z]\320]^\330\014\022\220+\230Q\230a\340\010\016\210a\210w\220a\220y\240\001\240\024\240R\240r\250\021\330\010\016\210a\210z\230\021\230,\240a\240t\2504\250r\260\021\360\010\000\t\024\220>\240\021\240'\250\026\250s\260%\260q\340\010\035\320\035/\250q\260\001\33007\260v\270Q\33001\33001\33003\2601\33001\33001\33005\260^\3001\340\010\034\230A\340\010\016\210d\220!\330\021 \240\r\250Q\360\010\000\021!\240\007\240v\250Q\250b\260\002\260!\330\020$\240G\2506\260\021\260$\260b\270\001\330\020\037\230~\250Q\250a\340\020\023\220>\240\023\240E\250\023\320,>\270c\300\025\300c\310\030\320QT\320TU\330\024 \240\001\240\025\240a\360\006\000\031&\240Q\240b\250\002\250!\360\006\000\031!\240\004\240C\240q\330\030 \240\004\240B\240a\360\006\000\031\037\230a\230\177\250a\250y\270\001\270\024\270R\270r\300\021\330\030\036\230a\320\0372\260!\260<\270q\300\004\300D\310\002\310!\360\006\000\031&\240Q\240i\250|\2701\270A\330\030)\250\021\250)\2609\270A\270Q\340\030)""\250\021\250'\3201C\3001\300A\330DK\3106\320QR\330DE\330DE\330DG\300q\330DE\330DE\330DI\310\031\320RS\340\020\024\220A\220Q\330\020\024\220A\220Q\330\025\"\240!\2401\340\014\017\210|\2301\230A\330\020\026\220k\240\021\240!\360\006\000\r\027\320\026'\240q\250\001\330\014\030\230\001\340\014\020\220\005\220U\230!\2303\230b\240\002\240!\330\020\023\320\023$\240A\240S\250\002\250!\330\024\036\320\036/\250q\260\001\330\024 \240\001\340\014\017\210x\220r\230\021\340\020\030\230\n\240#\240Q\330\020\030\230\n\240\"\240A\360\006\000\021\035\230I\240Q\240a\330\020\031\230\021\230)\240<\250q\260\001\330\020\034\230A\230Y\240a\340\020%\240Q\360\010\000\021%\240A\360\006\000\t\r\210A\210Q\330\010\014\210A\210Q\330\010\014\210A\210Q\330\010\014\210A\210Q\330\010\014\210A\210Q\330\r\032\230!\2301\330\r\026\220a\220q\340\004\013\210;\220e\2301\320\0340\260\001\360\000\000\001q\002\360\000\000q\002E\003\360\000\000E\003F\003\340\004\022\220!\330\004\021\220\031\230&\240\001\240\021\360\n\000\005 \230q\330\004\034\230A\360\026\000\005\037\230a\330\004\032\230!\330\004 \240\001\330\004 \240\001\330\004\033\2301\360\014\000\005\035\230A\330\004%\240Q\330\004&\240a\330\004\032\230!\360\006\000\005\036\230Q\340\004\017\210\177\230a\230w\240f\250A\330\004\007\200t\2103\210a\330\010\016\210k\230\021\230!\340\004\005\330\010\027\220w\230f\240A\240Q\330\010\013\210=\230\003\2301\330\014\022\220+\230Q\230a\330\010\024\220A\220U\230!\330\010\013\2109\220B\220a\330\014\027\220q\330\010\034\230J\240f\250A\250\\\270\022\2701\330\010\032\230-\240v\250Q\250l\270\"\270A\330\010\022\220-\230v\240Q\240i\250|\2702\270Y\300b\310\001\330\010\024\220G\2306\240\021\240,\250b\260\001\330\010\024\220M\240\026\240q\250\014\260B\260a\330\010\014\320\014\036\230c\240\025\240c\320)9\270\023\270A\330\020\023\2208\2303\230e\2403\240j\260\003\2605\270\003\270:\300S\310\001\330\014\022\220+\230Q\230a\360\014\000\t\r\210E\220\025\220a\220q\330\014\035\230Q\230e\2401\330\014\033\2301\230E\240\021\330\014\025\220Q\220e""\2301\330\014\025\220Q\220e\2301\340\010\023\220>\240\021\240'\250\026\250s\260%\260q\340\r\034\230M\250\021\360\006\000\r\025\220G\2306\240\021\240\"\240B\240a\330\014\030\230\007\230v\240R\240r\250\022\2503\250b\260\001\330\014\033\230>\250\021\250!\340\014\017\210v\220S\230\005\230S\240\n\250#\250U\260#\260X\270S\300\001\330\020\034\230A\230U\240!\360\006\000\025\"\240\021\240!\340\031.\250a\250u\260C\260s\270'\300\021\340\024\035\320\035/\250q\260\001\33007\260v\270Q\33001\33001\33003\2601\33001\33001\33005\260Y\270a\340\024\"\240!\330\024\033\320\033,\250A\250Q\360\006\000\025\033\230%\230r\240\024\240Q\240d\250$\250a\250q\340\024\027\220v\230R\230u\240B\240a\330\030)\250\021\250'\260\021\330\030'\240q\250\007\250q\330\030\037\230q\240\004\240B\240l\260!\330\030!\240\021\240'\250\021\330\030!\240\021\240'\250\021\330\031\"\240!\2405\250\002\250\"\250D\260\004\260A\260V\2702\270V\3003\300a\330\030!\240\021\240'\250\031\260!\2605\270\002\270!\330\030\033\2309\240A\240U\250\"\250A\330\034#\2401\240D\250\002\250)\2602\260Y\270a\270x\300q\330\034%\240Q\240g\250Y\260a\260u\270B\270a\340\014\020\220\001\220\021\330\014\020\220\001\220\021\330\021\036\230a\230q\340\010\013\210<\220q\230\001\330\014\022\220+\230Q\230a\340\010\014\210G\2209\230A\330\014\017\210r\220\023\220A\330\020\034\320\034-\250Q\250a\330\020\034\230O\2501\250A\330\021\"\240!\2403\240b\250\001\330\020\034\320\034-\250Q\250a\330\020\034\230O\2501\250A\360\n\000\t\017\210e\2202\220T\230\021\230$\230d\240!\2401\330\010\024\220A\330\010\014\210G\2209\230A\330\014\017\210y\230\001\230\023\230B\230b\240\004\240D\250\001\320):\270!\2703\270b\300\013\3103\310a\330\020\035\230[\250\002\250)\2601\260A\330\020\024\220G\2309\240I\250Q\250a\330\024\027\220|\2402\240Q\330\030!\240\027\250\001\250\027\260\001\260\031\270\"\270B\270i\300r\310\021\330\030&\240l\260\"\260A\340\010\013\210<\220s\230!\330\014\030\230\001\230\021\330\014\032\230!\330\014\031\230\021\340\014\030\230\014\240I\250Q\250a\340\010\020\220\007""\220v\230Q\230b\240\002\240!\330\010\013\2106\220\023\220A\330\014\022\220+\230Q\230a\330\010\023\2201\330\010\014\210G\2209\230A\330\021&\240a\240|\2609\270A\270T\300\023\300C\300w\310a\330\014\024\220G\2301\230A\230U\240!\2403\240d\250%\250u\260A\260Q\330\r\"\240!\240;\250c\260\023\260G\2701\330\010\014\210G\2209\230A\330\014\025\220Q\220e\2305\240\001\240\021\330\010\014\210A\210Q\360\006\000\t\r\210A\210Q\330\010\014\210A\210Q\330\010\014\210A\210Q\330\010\014\210A\210Q\330\010\014\210A\210Q\330\010\014\210A\210Q\330\010\014\210A\210Q\330\r\026\220a\220q\360\006\000\005\014\210;\220k\240\032\2501struct __pyx_t_8pyntacle_4_ext_5utils_CSR *(__Pyx_memviewslice, __Pyx_memviewslice, int)\000struct __pyx_t_8pyntacle_4_ext_5utils_Scratch *(int)\000void (PY_LONG_LONG, int, int, int *, int *)\000void (struct __pyx_t_8pyntacle_4_ext_5utils_CSR *)\000void (struct __pyx_t_8pyntacle_4_ext_5utils_CSR *, int, char *, double *, int *)\000void (struct __pyx_t_8pyntacle_4_ext_5utils_Scratch *)\000void (struct __pyx_t_8pyntacle_4_ext_5utils_Scratch *, int *, int)\000csr_from_edges\000scratch_alloc\000index_to_combination\000csr_free\000csr_bfs_row\000scratch_free\000mark_groupO";
     PyObject *data = NULL;
     CYTHON_UNUSED_VAR(__Pyx_DecompressString);
     #endif

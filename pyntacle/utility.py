@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import warnings
 import math
 
-from generate import *
+from pyntacle.generate import *
 
 # ---- adjacency matrix ----
 

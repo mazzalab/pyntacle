@@ -3,7 +3,7 @@ import igraph as ig
 import csv
 import pygraphviz as gdot
 
-from utility import *
+from pyntacle.utility import *
 
 
 

@@ -1,8 +1,8 @@
 import os
 import sys
 
-# Point autodoc at the pyntacle source tree
-sys.path.insert(0, os.path.abspath('../../pyntacle'))
+# Point autodoc at the repository root, where the pyntacle package lives
+sys.path.insert(0, os.path.abspath('../..'))
 os.environ.setdefault('PYNTACLE_DOCS', '1')
 
 project = 'Pyntacle'
@@ -35,8 +35,6 @@ templates_path = ['_templates']
 exclude_patterns = [
     "_parts/**",
     "**/_parts/**",
-    "cli.bak_*",
-    "**/cli.bak_*/**",
 ]
 
 master_doc = "index"

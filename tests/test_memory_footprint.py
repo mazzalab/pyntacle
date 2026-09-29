@@ -13,8 +13,8 @@ import igraph as ig
 import numpy as np
 import pytest
 
-from _ext.wrapper import cython_wrapper_info
-from GraphTacle import Graphtacle
+from pyntacle._ext.wrapper import cython_wrapper_info
+from pyntacle.GraphTacle import Graphtacle
 
 
 def _sparse_graphtacle(n, m, name="big"):
@@ -64,7 +64,7 @@ def test_footprint_stays_below_the_dense_matrix(oper):
 
 
 def test_distance_matrix_matches_igraph_including_unreachable():
-    from utility import distance_matrix
+    from pyntacle.utility import distance_matrix
     g = ig.Graph(n=6, edges=[(0, 1), (1, 2), (3, 4)])   # 5 isolated, two components
     w = [0.5, 2.0, 1.5]
     for weights in (None, w):
@@ -78,7 +78,7 @@ def test_distance_matrix_never_builds_the_full_python_list():
     """igraph's distances() returns n lists of n Python floats -- ~32 bytes a
     cell instead of 8. The global command used to hold two of those at n=10k
     (6.3 GB peak). Built chunk by chunk, the peak is the array plus one chunk."""
-    from utility import distance_matrix
+    from pyntacle.utility import distance_matrix
     n = 3000
     g = ig.Graph.Erdos_Renyi(n=n, m=3 * n)
     gc.collect()

@@ -1,7 +1,7 @@
 import random
 import igraph as ig
 
-from utility import plain_copy
+from pyntacle.utility import plain_copy
 
 
 def groupcentrality_gcInfo(grafo, node_names, operation, distance_type="min"):

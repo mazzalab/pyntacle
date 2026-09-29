@@ -1,96 +1,105 @@
 Installation & Setup
 ====================
 
-Pyntacle runs inside a pre-configured conda environment called ``graphtacle_debug``
-that ships with all required dependencies, including the compiled Cython extensions.
+Pyntacle is installed from source into a conda environment. Conda provides
+igraph's C library, which Pyntacle's compiled (Cython) extensions link
+against; ``pip`` then builds those extensions and installs the ``pyntacle``
+command.
 
 Requirements
 ------------
 
-* `Anaconda <https://www.anaconda.com/products/distribution>`_ or
-  `Miniconda <https://docs.conda.io/en/latest/miniconda.html>`_ (Python 3.10)
-* The ``graphtacle_debug`` environment (see below)
+* Linux (the platform Pyntacle is developed and tested on)
+* `Miniconda <https://docs.conda.io/en/latest/miniconda.html>`_ or
+  `Anaconda <https://www.anaconda.com/download>`_
+* Git
 
-Step 1 — Clone or download the repository
-------------------------------------------
+Step 1 — Get the source
+-----------------------
 
 .. code-block:: bash
 
    git clone https://github.com/mazzalab/pyntacle.git
-   cd pyntacle_final
+   cd pyntacle
 
 Step 2 — Create the conda environment
---------------------------------------
+-------------------------------------
 
-If you already have the ``graphtacle_debug`` environment:
-
-.. code-block:: bash
-
-   conda activate graphtacle_debug
-
-If you need to create it from scratch using the provided environment file:
+``environment.yml`` lists Python, igraph (C library and Python bindings), a C
+compiler, Cython and every runtime dependency, including the optional ones of
+:doc:`omics <cli/omics/index>`:
 
 .. code-block:: bash
 
-   conda env create -f exact_working_env.yml
-   conda activate graphtacle_debug
+   conda env create -f environment.yml
+   conda activate pyntacle
 
-Step 3 — Run Pyntacle
-----------------------
+Step 3 — Install Pyntacle
+-------------------------
 
-All commands must be run from inside the ``pyntacle/`` source directory:
-
-.. code-block:: bash
-
-   cd pyntacle/
-   python main.py --help
-
-Expected output::
-
-    usage: python3 main.py command [subcommand] parameters
-
-    The available commands in Pyntacle are:
-      local            Computes metrics of local nature for the whole graph
-      global           Computes metrics of global nature for the whole graph
-      groupcentrality  Computes group centrality metrics
-      keyplayer        Identifies key-player node sets
-      set              Performs set operations between two networks
-      convert          Converts a network file format to another
-      communities      Finds communities within a graph
-      extract          Extracts components from a fragmented graph
-      generate         Generates random graphs
-      mesoscale        Computes mesoscale metrics
-      percolation      Runs infection-percolation dynamics
-      omics            Builds networks from raw omics matrices
-
-Optional — the ``omics`` command
---------------------------------
-
-:doc:`omics <cli/omics/index>` builds networks from raw RNA-seq counts or
-microbiome abundances and needs two extra packages (plus ``mygene`` for
-online gene annotation). The rest of Pyntacle does not use them:
+From the root of the repository, with the environment active:
 
 .. code-block:: bash
 
-   conda activate graphtacle_debug
-   pip install scikit-learn statsmodels mygene
+   pip install .
 
+This compiles the extensions and puts the ``pyntacle`` command on the
+``PATH``. For development, ``pip install -e .`` installs in editable mode:
+Python changes take effect immediately, while changes to ``pyntacle/_ext/*.pyx``
+need ``python setup.py build_ext --inplace``.
 
-Step 4 — Verify the installation
-----------------------------------
-
-Run the ``local`` command on the included Figure 8 benchmark network:
+Check the installation:
 
 .. code-block:: bash
 
-   python main.py local \
+   pyntacle --version
+   pyntacle --help
+
+The help lists the available commands:
+
+.. code-block:: text
+
+   local            Computes metrics of local nature for the whole graph
+   global           Computes metrics of global nature for the whole graph
+   groupcentrality  Computes group centrality metrics
+   keyplayer        Identifies key-player node sets
+   set              Performs set operations between two networks
+   convert          Converts a network file format to another
+   communities      Finds communities within a graph
+   extract          Extracts components from a fragmented graph
+   generate         Generates random graphs
+   mesoscale        Computes mesoscale metrics
+   percolation      Runs infection-percolation dynamics
+   omics            Builds networks from raw omics matrices
+
+``python -m pyntacle`` is equivalent to ``pyntacle``.
+
+Optional — online gene annotation
+---------------------------------
+
+:doc:`omics <cli/omics/index>` can map Ensembl identifiers to gene symbols
+online through ``mygene``, which is not in the environment:
+
+.. code-block:: bash
+
+   pip install mygene
+
+Step 4 — Run a first analysis
+-----------------------------
+
+From the root of the repository, run ``local`` on the example network shipped
+in ``examples/``:
+
+.. code-block:: bash
+
+   pyntacle local \
        -t edgelist \
-       -i ../examples/figure_8.egl \
-       -o /tmp/pyntacle_test/
+       -i examples/figure_8.egl \
+       -o pyntacle_test/
 
 You should see output resembling::
 
-   Working on: ../examples/figure_8.egl
+   Working on: examples/figure_8.egl
 
    No nodes removed
 
@@ -101,31 +110,50 @@ You should see output resembling::
 
    Done!
 
-The output directory will contain:
+The output directory is created if it does not exist and will contain:
+
 - ``report_figure_8_local.tsv`` — per-node metric table
 - ``figure_8_local.svg`` — network visualization colored by degree
-- ``figure_8_local.html`` — interactive Plotly visualization
+- ``figure_8_local.html`` — interactive visualization
+
+Step 5 — Run the tests (optional)
+---------------------------------
+
+The tests import Pyntacle from the source tree, so the extensions must be
+compiled there first:
+
+.. code-block:: bash
+
+   python setup.py build_ext --inplace
+   pytest tests                # add --runslow for the performance tests
 
 Troubleshooting
 ---------------
 
-**``ModuleNotFoundError: No module named '_ext.cython_metrics'``**
+**``This build requires ... a Conda environment``**
 
-The Cython extensions are not compiled. Rebuild them from inside ``pyntacle/_ext/``:
+``pip install .`` was run outside the environment. Run
+``conda activate pyntacle`` and repeat Step 3.
+
+**``ModuleNotFoundError: No module named 'pyntacle._ext.cython_metrics'``**
+
+The extensions are not compiled, typically after editing a ``.pyx`` file in an
+editable install. Rebuild them from the root of the repository:
 
 .. code-block:: bash
 
-   cd pyntacle/_ext/
    python setup.py build_ext --inplace
 
 **``conda: command not found``**
 
-Add conda to your PATH. Typically: ``export PATH="$HOME/miniconda3/bin:$PATH"``
+Add conda to your ``PATH``, typically ``export PATH="$HOME/miniconda3/bin:$PATH"``.
 
-**Build the documentation**
+Build the documentation
+-----------------------
 
 .. code-block:: bash
 
+   pip install sphinx sphinx-design sphinx-rtd-theme
    cd Documentation/
-   conda run -n graphtacle_debug make html
-   # Output in Documentation/build/html/index.html
+   make html
+   # open Documentation/build/html/index.html

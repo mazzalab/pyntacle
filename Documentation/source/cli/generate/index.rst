@@ -10,17 +10,17 @@ Specific usage:
 
 .. code-block:: console
 
-   python3 main.py generate erdos-renyi [OPTIONS]
-   python3 main.py generate tree [OPTIONS]
-   python3 main.py generate barabasi [OPTIONS]
-   python3 main.py generate watts-strogatz [OPTIONS]
-   python3 main.py generate lattice [OPTIONS]
+   pyntacle generate erdos-renyi [OPTIONS]
+   pyntacle generate tree [OPTIONS]
+   pyntacle generate barabasi [OPTIONS]
+   pyntacle generate watts-strogatz [OPTIONS]
+   pyntacle generate lattice [OPTIONS]
 
 Synopsis
 --------
 .. code-block:: console
 
-   python3 main.py generate <subcommand> [OPTIONS]
+   pyntacle generate <subcommand> [OPTIONS]
 
 
 Options
@@ -157,7 +157,7 @@ Generate an Erdős–Rényi random graph with 50 nodes, 100 edges:
 
 .. code-block:: bash
 
-   python main.py generate erdos-renyi \
+   pyntacle generate erdos-renyi \
        -t edgelist \
        -n 50 \
        -e 100 \
@@ -168,7 +168,7 @@ Generate a Barabási–Albert scale-free graph with 100 nodes, average degree 3:
 
 .. code-block:: bash
 
-   python main.py generate barabasi \
+   pyntacle generate barabasi \
        -t edgelist \
        -n 100 \
        -a 3 \
@@ -178,7 +178,7 @@ Generate a 2D lattice (5×5):
 
 .. code-block:: bash
 
-   python main.py generate lattice \
+   pyntacle generate lattice \
        -t edgelist \
        -dim 5,5 \
        -nei 1 \

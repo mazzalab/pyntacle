@@ -32,8 +32,8 @@ Synopsis
 --------
 .. code-block:: console
 
-   python3 main.py omics transcriptomics -i counts.tsv -m metadata.tsv --group-col condition -o out/ [OPTIONS]
-   python3 main.py omics metagenomics    -i relabund.tsv -m metadata.tsv --group-col condition -o out/ [OPTIONS]
+   pyntacle omics transcriptomics -i counts.tsv -m metadata.tsv --group-col condition -o out/ [OPTIONS]
+   pyntacle omics metagenomics    -i relabund.tsv -m metadata.tsv --group-col condition -o out/ [OPTIONS]
 
 Input
 -----
@@ -264,16 +264,16 @@ A generic dataset, then key players on the tumour network:
 
 .. code-block:: console
 
-   python3 main.py omics metagenomics -i relabund.tsv -m samples.tsv \
+   pyntacle omics metagenomics -i relabund.tsv -m samples.tsv \
        --group-col condition -o nets/
-   python3 main.py keyplayer kp-finder -t edgelist -w -wt signed \
+   pyntacle keyplayer kp-finder -t edgelist -w -wt signed \
        -i nets/relabund_tumor.tsv -k 2 -oper all -a greedy -o kp/
 
 Adjusting for covariates (age and a categorical batch):
 
 .. code-block:: console
 
-   python3 main.py omics transcriptomics -i counts.tsv -m samples.tsv \
+   pyntacle omics transcriptomics -i counts.tsv -m samples.tsv \
        --group-col condition --covariates age,batch -o nets/
 
 The colorectal cancer case study (TCGA-COAD from UCSC Xena; TCMA microbiome):
@@ -281,16 +281,16 @@ The colorectal cancer case study (TCGA-COAD from UCSC Xena; TCMA microbiome):
 .. code-block:: console
 
    # transcriptome: 1,715 nodes / 3,148 edges (tumour), 824 / 3,371 (normal)
-   python3 main.py omics transcriptomics -i TCGA-COAD.star_counts.tsv --tcga \
+   pyntacle omics transcriptomics -i TCGA-COAD.star_counts.tsv --tcga \
        --biotype mygene_biotype_cache_hvg.csv --drop-sex-genes -o coad/ --prefix coad
 
    # microbiome, genus: the automatic prevalence threshold is 0.15
-   python3 main.py omics metagenomics -i bacteria.sample.relabund.genus.txt \
+   pyntacle omics metagenomics -i bacteria.sample.relabund.genus.txt \
        -m sample_metadata_genus.txt --group-col Definition \
        --groups "Primary Solid Tumor,Solid Tissue Normal" -o tcma/ --prefix genus
 
    # microbiome, family: same threshold as genus, applied uniformly
-   python3 main.py omics metagenomics -i bacteria.sample.relabund.family.txt \
+   pyntacle omics metagenomics -i bacteria.sample.relabund.family.txt \
        -m sample_metadata_family.txt --group-col Definition \
        --groups "Primary Solid Tumor,Solid Tissue Normal" -o tcma/ --prefix family \
        --prevalence 0.15

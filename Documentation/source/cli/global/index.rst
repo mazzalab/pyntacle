@@ -9,7 +9,7 @@ Synopsis
 --------
 .. code-block:: console
 
-   python3 main.py global [OPTIONS]
+   pyntacle global [OPTIONS]
 
 
 Options
@@ -104,9 +104,9 @@ Compute global topology for the Figure 8 network:
 
 .. code-block:: bash
 
-   python main.py global \
+   pyntacle global \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -o /tmp/out/
 
 **Expected output (partial):**

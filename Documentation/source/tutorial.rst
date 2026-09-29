@@ -16,12 +16,13 @@ a header row (``Node1``, ``Node2``).
 Setup
 -----
 
-Activate the environment and move to the source directory:
+With Pyntacle installed (:doc:`installation`), activate the environment and
+move to the root of the repository, where the ``examples/`` folder is:
 
 .. code-block:: bash
 
-   conda activate graphtacle_debug
-   cd /path/to/pyntacle_final/pyntacle
+   conda activate pyntacle
+   cd pyntacle
 
 The Figure 8 network has 32 nodes and 56 edges. It represents a subset of a
 protein–protein interaction network used to benchmark network topology tools.
@@ -34,9 +35,9 @@ clustering coefficient, eccentricity, eigenvector centrality, PageRank):
 
 .. code-block:: bash
 
-   python main.py local \
+   pyntacle local \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -o /tmp/fig8_out/
 
 **Output files:**
@@ -80,9 +81,9 @@ Highlight specific nodes (e.g., ``KR`` and ``BM``) in the visualization:
 
 .. code-block:: bash
 
-   python main.py local \
+   pyntacle local \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -c KR,BM \
        -o /tmp/fig8_out/
 
@@ -93,9 +94,9 @@ Find the 2-node set that maximizes each KPP metric using the greedy algorithm:
 
 .. code-block:: bash
 
-   python main.py keyplayer kp-finder \
+   pyntacle keyplayer kp-finder \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -k 2 \
        -oper all \
        -a greedy \
@@ -143,9 +144,9 @@ tests all C(32, 2) = 496 node pairs:
 
 .. code-block:: bash
 
-   python main.py keyplayer kp-finder \
+   pyntacle keyplayer kp-finder \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -k 2 \
        -oper all \
        -a brute_force \
@@ -174,9 +175,9 @@ Check the KPP scores for a manually chosen node set (e.g., ``BM`` and ``KR``):
 
 .. code-block:: bash
 
-   python main.py keyplayer kp-info \
+   pyntacle keyplayer kp-info \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -n BM,KR \
        -oper all \
        -o /tmp/fig8_out/
@@ -188,9 +189,9 @@ Find the 2-node group that maximizes group degree, betweenness, and closeness:
 
 .. code-block:: bash
 
-   python main.py groupcentrality gc-finder \
+   pyntacle groupcentrality gc-finder \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -k 2 \
        -oper all \
        -a greedy \
@@ -200,9 +201,9 @@ To evaluate a specific set:
 
 .. code-block:: bash
 
-   python main.py groupcentrality gc-info \
+   pyntacle groupcentrality gc-info \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -n KR,BS3 \
        -oper all \
        -o /tmp/fig8_out/
@@ -214,9 +215,9 @@ To study the network after removing specific nodes (e.g., simulating a knockout)
 
 .. code-block:: bash
 
-   python main.py local \
+   pyntacle local \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -r BM,KR \
        -o /tmp/fig8_out/
 

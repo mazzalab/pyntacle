@@ -9,7 +9,7 @@ import itertools
 import pickle as pk
 import collections
 import warnings
-from utility import *
+from pyntacle.utility import *
 
 
 class Graphtacle(ig.Graph, ig.GraphBase):

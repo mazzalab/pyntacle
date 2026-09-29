@@ -17,7 +17,7 @@ Synopsis
 --------
 .. code-block:: console
 
-   python3 main.py percolation [OPTIONS]
+   pyntacle percolation [OPTIONS]
 
 
 Options
@@ -178,9 +178,9 @@ Run percolation starting from node SR with default parameters:
 
 .. code-block:: bash
 
-   python main.py percolation \
+   pyntacle percolation \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -n SR \
        -o /tmp/out/
 
@@ -188,9 +188,9 @@ Run with high infectivity (P*=0.9) and fixed recovery time of 3 steps:
 
 .. code-block:: bash
 
-   python main.py percolation \
+   pyntacle percolation \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -n SR \
        -P 0.9 \
        -tau 3 \
@@ -201,9 +201,9 @@ Run with bimodal edge threshold distribution (easy/hard edges):
 
 .. code-block:: bash
 
-   python main.py percolation \
+   pyntacle percolation \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -n SR \
        -P 0.6 \
        -dist bimodal \
@@ -214,9 +214,9 @@ Take a snapshot when 5 nodes are simultaneously infected:
 
 .. code-block:: bash
 
-   python main.py percolation \
+   pyntacle percolation \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -n SR \
        -P 0.7 \
        --snapshotInfected 5 \
@@ -239,9 +239,9 @@ Cap a long-running simulation at 20 steps:
 
 .. code-block:: bash
 
-   python main.py percolation \
+   pyntacle percolation \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -n SR \
        -mxs 20 \
        -o /tmp/out/

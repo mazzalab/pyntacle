@@ -9,17 +9,17 @@ Specific usage
 --------------
 .. code-block:: console
 
-   python3 main.py communities fastgreedy -t {fileType} -i {input_file} -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS} -nc {NUMBERCOMMUNITIES}
-   python3 main.py communities infomap -t {fileType} -i {input_file} -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS}
-   python3 main.py communities leading-eigenvector -t {fileType} -i {input_file} -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS} -nc {NUMBERCOMMUNITIES}
-   python3 main.py communities random_walk -t {fileType} -i {input_file} -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS} -steps {STEPS}
-   python3 main.py communities percolation -t {fileType} -i {input_file} -k {COMMUNITYSIZE}
+   pyntacle communities fastgreedy -t {fileType} -i {input_file} -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS} -nc {NUMBERCOMMUNITIES}
+   pyntacle communities infomap -t {fileType} -i {input_file} -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS}
+   pyntacle communities leading-eigenvector -t {fileType} -i {input_file} -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS} -nc {NUMBERCOMMUNITIES}
+   pyntacle communities random_walk -t {fileType} -i {input_file} -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS} -steps {STEPS}
+   pyntacle communities percolation -t {fileType} -i {input_file} -k {COMMUNITYSIZE}
 
 Synopsis
 --------
 .. code-block:: console
 
-   python3 main.py communities <subcommand> [OPTIONS]
+   pyntacle communities <subcommand> [OPTIONS]
 
 
 Options
@@ -168,9 +168,9 @@ Detect communities using the fastgreedy algorithm:
 
 .. code-block:: bash
 
-   python main.py communities fastgreedy \
+   pyntacle communities fastgreedy \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -nc 4 \
        -o /tmp/out/
 
@@ -178,9 +178,9 @@ Run infomap and keep only communities with 3–10 nodes:
 
 .. code-block:: bash
 
-   python main.py communities infomap \
+   pyntacle communities infomap \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -n 3 -N 10 \
        -o /tmp/out/
 
@@ -188,9 +188,9 @@ Run clique percolation (k=3 cliques) on the largest component:
 
 .. code-block:: bash
 
-   python main.py communities percolation \
+   pyntacle communities percolation \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -k 3 \
        -g \
        -o /tmp/out/

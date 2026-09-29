@@ -18,8 +18,8 @@ import igraph as ig
 import pandas as pd
 import pytest
 
-from GraphTacle import Graphtacle
-from utility import weight_views
+from pyntacle.GraphTacle import Graphtacle
+from pyntacle.utility import weight_views
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MAIN = os.path.join(REPO_ROOT, "pyntacle", "main.py")
@@ -227,7 +227,7 @@ def test_python_and_cython_engines_agree(tmp_path, wtype):
 # ---------- percolation thresholds --------------------------------------------
 
 def test_percolation_thresholds_follow_the_weight_type(tmp_path):
-    from percolation import edge_thresholds_from_graph
+    from pyntacle.percolation import edge_thresholds_from_graph
     path = _write(tmp_path, "perc.txt", [("A", "B", -0.9), ("B", "C", 0.2)])
     g = _load(path, "signed")
     assert sorted(edge_thresholds_from_graph(g)) == pytest.approx([0.1, 0.8])
@@ -236,7 +236,7 @@ def test_percolation_thresholds_follow_the_weight_type(tmp_path):
 
 
 def test_kernels_refuse_a_negative_length():
-    from _ext.wrapper import _edges
+    from pyntacle._ext.wrapper import _edges
     g = ig.Graph([(0, 1), (1, 2)])
     g.es["weight"] = [1.0, -0.5]
     with pytest.raises(ValueError, match="signed"):

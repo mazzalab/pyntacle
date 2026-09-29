@@ -11,7 +11,7 @@ import numpy as np
 import igraph as ig
 import pytest
 
-from percolation import run_percolation, summarize_percolation_results, save_percolation_html
+from pyntacle.percolation import run_percolation, summarize_percolation_results, save_percolation_html
 
 
 def _cycle_with_weights():
@@ -111,7 +111,7 @@ def test_summarize_results_blocked_and_usable_counts():
 
 @pytest.mark.parametrize("directed", [False, True])
 def test_open_neighbors_matches_naive_dense_reference(directed):
-    from percolation import _build_open_neighbors
+    from pyntacle.percolation import _build_open_neighbors
 
     rng = np.random.default_rng(42)
     n = 40

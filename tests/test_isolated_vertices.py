@@ -21,13 +21,13 @@ import igraph as ig
 import pytest
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(REPO_ROOT, "pyntacle"))
+sys.path.insert(0, REPO_ROOT)
 
-from GraphTacle import Graphtacle  # noqa: E402
-from _ext.wrapper import cython_wrapper_info  # noqa: E402
-from algorithms.key_player import keyplayer_kpInfo, prune_graph  # noqa: E402
-from algorithms.group_centrality import groupcentrality_gcInfo  # noqa: E402
-from utility import components_by_nodes  # noqa: E402
+from pyntacle.GraphTacle import Graphtacle  # noqa: E402
+from pyntacle._ext.wrapper import cython_wrapper_info  # noqa: E402
+from pyntacle.algorithms.key_player import keyplayer_kpInfo, prune_graph  # noqa: E402
+from pyntacle.algorithms.group_centrality import groupcentrality_gcInfo  # noqa: E402
+from pyntacle.utility import components_by_nodes  # noqa: E402
 
 
 @pytest.fixture

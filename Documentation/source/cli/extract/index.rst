@@ -10,16 +10,16 @@ Specific usage:
 
 .. code-block:: console
 
-   python3 main.py extract -t {fileType} -i {input_file} -l
-   python3 main.py extract -t {fileType} -i {input_file} -n {NCOMPONENTS}
-   python3 main.py extract -t {fileType} -i {input_file} -l -n {NCOMPONENTS}
-   python3 main.py extract -t {fileType} -i {input_file} -sc {SELECTCOMPONENT} -nl {node_list}
+   pyntacle extract -t {fileType} -i {input_file} -l
+   pyntacle extract -t {fileType} -i {input_file} -n {NCOMPONENTS}
+   pyntacle extract -t {fileType} -i {input_file} -l -n {NCOMPONENTS}
+   pyntacle extract -t {fileType} -i {input_file} -sc {SELECTCOMPONENT} -nl {node_list}
 
 Synopsis
 --------
 .. code-block:: console
 
-   python3 main.py extract [OPTIONS]
+   pyntacle extract [OPTIONS]
 
 
 Options
@@ -126,7 +126,7 @@ Extract only the largest connected component:
 
 .. code-block:: bash
 
-   python main.py extract \
+   pyntacle extract \
        -t edgelist \
        -i fragmented_network.egl \
        -l \
@@ -136,7 +136,7 @@ Extract the top 3 largest components:
 
 .. code-block:: bash
 
-   python main.py extract \
+   pyntacle extract \
        -t edgelist \
        -i fragmented_network.egl \
        -l -n 3 \
@@ -146,7 +146,7 @@ Extract the component containing a specific node:
 
 .. code-block:: bash
 
-   python main.py extract \
+   pyntacle extract \
        -t edgelist \
        -i fragmented_network.egl \
        -nl KR \

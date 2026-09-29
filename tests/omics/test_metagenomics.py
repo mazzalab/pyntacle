@@ -5,10 +5,10 @@ import pytest
 pytest.importorskip("sklearn")
 pytest.importorskip("statsmodels")
 
-from omics import metagenomics
-from omics.metagenomics import coda, panel
-from omics.metagenomics import infer as minfer
-from omics.provenance import Provenance
+from pyntacle.omics import metagenomics
+from pyntacle.omics.metagenomics import coda, panel
+from pyntacle.omics.metagenomics import infer as minfer
+from pyntacle.omics.provenance import Provenance
 
 
 def test_coda_matches_definitions_and_is_scale_invariant():

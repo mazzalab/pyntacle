@@ -8,21 +8,25 @@ import numpy as np
 from statistics import mean
 from colorama import Fore, Style, Back
 
-from _ext.wrapper import (cython_wrapper_greedy, cython_wrapper_info,
-                          cython_wrapper_bruteforce, CYTHON_UNSUPPORTED_DIRECTED,
-                          DEFAULT_MAX_TIES)
+if __package__ in (None, ""):
+	# run as a script (python pyntacle/main.py): make the package importable
+	sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from parser import create_parser
-from GraphTacle import Graphtacle
-from algorithms.group_centrality import *
-from algorithms.key_player import *
-from utility import *
-from communities import *
-from generate import *
-from mesoscale import *
-from algorithms.greedy import *
-from algorithms.stochastic_gradient_descent import *
-from create_html import *
+from pyntacle._ext.wrapper import (cython_wrapper_greedy, cython_wrapper_info,
+                                   cython_wrapper_bruteforce, CYTHON_UNSUPPORTED_DIRECTED,
+                                   DEFAULT_MAX_TIES)
+
+from pyntacle.parser import create_parser
+from pyntacle.GraphTacle import Graphtacle
+from pyntacle.algorithms.group_centrality import *
+from pyntacle.algorithms.key_player import *
+from pyntacle.utility import *
+from pyntacle.communities import *
+from pyntacle.generate import *
+from pyntacle.mesoscale import *
+from pyntacle.algorithms.greedy import *
+from pyntacle.algorithms.stochastic_gradient_descent import *
+from pyntacle.create_html import *
 from time import time
 
 def tie_notes(tie_info):
@@ -84,10 +88,13 @@ def first_set_only(df):
 
 def main(args):
 
+	if getattr(args, "outdir", None):
+		os.makedirs(args.outdir, exist_ok=True)
+
 	# omics builds networks rather than reading one; imported here so the other
 	# commands never load its optional dependencies.
 	if args.command == "omics":
-		from omics.cli import run_omics
+		from pyntacle.omics.cli import run_omics
 		run_omics(args)
 		return
 
@@ -751,7 +758,7 @@ def main(args):
 	elif args.command == "percolation":
 		print("Percolation\n")
 		# imported here so the other commands do not load plotly
-		from percolation import (run_percolation, summarize_percolation_results,
+		from pyntacle.percolation import (run_percolation, summarize_percolation_results,
 								  save_percolation_html)
 
 		# optional per-node recovery times from a TSV file (columns: Nodes, Recovery_time)
@@ -999,11 +1006,10 @@ def main(args):
 
 
 
-if __name__ == '__main__':
-
+def cli(argv=None):
+	"""Entry point of the ``pyntacle`` command."""
 	parser = create_parser()
-	
-	args = parser.parse_args()
+	args = parser.parse_args(argv)
 
 	# no subcommand given: print help instead of crashing on args.directed
 	if args.command is None:
@@ -1011,3 +1017,7 @@ if __name__ == '__main__':
 		sys.exit(0)
 
 	main(args)
+
+
+if __name__ == '__main__':
+	cli()

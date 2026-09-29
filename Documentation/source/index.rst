@@ -12,7 +12,7 @@ identification, mesoscale analysis, and infection-percolation dynamics.
       :link: installation
       :link-type: doc
 
-      Activate the conda environment and start analyzing networks in minutes.
+      Create the conda environment, install with pip and start analyzing networks.
 
    .. grid-item-card:: CLI Reference
       :link: cli/index
@@ -50,21 +50,18 @@ Quick Start
 
 .. code-block:: bash
 
-   # 1. Activate the environment
-   conda activate graphtacle_debug
+   # 1. Activate the environment (see Installation)
+   conda activate pyntacle
 
-   # 2. Move into the source directory
-   cd /path/to/pyntacle_final/pyntacle
+   # 2. Compute local metrics on an edge-list file
+   pyntacle local -t edgelist -i my_network.egl -o output/
 
-   # 3. Compute local metrics on an edge-list file
-   python main.py local -t edgelist -i my_network.egl -o output/
-
-   # 4. Find the 2 best key-player nodes (greedy algorithm)
-   python main.py keyplayer kp-finder -t edgelist -i my_network.egl \
+   # 3. Find the 2 best key-player nodes (greedy algorithm)
+   pyntacle keyplayer kp-finder -t edgelist -i my_network.egl \
        -k 2 -oper all -a greedy -o output/
 
-   # 5. Run a percolation simulation from a seed node
-   python main.py percolation -t edgelist -i my_network.egl \
+   # 4. Run a percolation simulation from a seed node
+   pyntacle percolation -t edgelist -i my_network.egl \
        -n NodeA -P 0.7 -tau 3 -o output/
 
 Contents

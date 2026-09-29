@@ -1,19 +1,17 @@
 API Reference
 =============
 
-This section documents the public Python API of Pyntacle.
-All modules live under the ``pyntacle/`` source directory.
+This section documents the public Python API of Pyntacle. After
+:doc:`installation`, every module is importable from the ``pyntacle`` package:
+
+.. code-block:: python
+
+   from pyntacle.GraphTacle import Graphtacle
+   from pyntacle.algorithms.key_player import keyplayer_kpInfo
 
 .. note::
 
-   To use the API directly, add the ``pyntacle/`` directory to your Python path:
-
-   .. code-block:: python
-
-      import sys
-      sys.path.insert(0, '/path/to/pyntacle_final/pyntacle')
-
-   Most users will interact with Pyntacle through the CLI (``python main.py``).
+   Most users will interact with Pyntacle through the ``pyntacle`` command.
    The Python API is useful for embedding analyses in notebooks or custom scripts.
 
 .. contents::
@@ -23,42 +21,42 @@ All modules live under the ``pyntacle/`` source directory.
 Core Graph Class
 -----------------
 
-.. autoclass:: GraphTacle.Graphtacle
+.. autoclass:: pyntacle.GraphTacle.Graphtacle
    :members:
    :show-inheritance:
 
 Key-Player Metrics
 ------------------
 
-.. automodule:: algorithms.key_player
+.. automodule:: pyntacle.algorithms.key_player
    :members: fragmentation, distance_fragmentation, distance_weighted_reach, reachability, keyplayer_kpInfo
 
 Group Centrality Metrics
 -------------------------
 
-.. automodule:: algorithms.group_centrality
+.. automodule:: pyntacle.algorithms.group_centrality
    :members:
 
 Mesoscale Metrics
 -----------------
 
-.. automodule:: mesoscale
+.. automodule:: pyntacle.mesoscale
    :members: gtom, ti
 
 Community Detection
 --------------------
 
-.. automodule:: communities
+.. automodule:: pyntacle.communities
    :members: communities, communities_filtering, communities_to_df
 
 Graph Generation
 -----------------
 
-.. automodule:: generate
+.. automodule:: pyntacle.generate
    :members: erdos_renyi, tree_generate, barabasi, watts_strogatz, lattice
 
 Graph I/O Utilities
 --------------------
 
-.. automodule:: utility
+.. automodule:: pyntacle.utility
    :members: import_adjMatrix, import_edgeList, import_sif, import_dot, output_decision, get_connected_subgraph, extract_and_df

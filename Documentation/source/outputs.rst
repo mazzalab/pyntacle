@@ -33,7 +33,7 @@ Local Metrics Report
 
 **Filename pattern:** ``report_<graph>_local.tsv``
 
-**Command:** ``python main.py local``
+**Command:** ``pyntacle local``
 
 The data section is a tab-separated table with one row per node:
 
@@ -81,7 +81,7 @@ Global Metrics Report
 
 **Filename pattern:** ``report_<graph>_global.tsv``
 
-**Command:** ``python main.py global``
+**Command:** ``pyntacle global``
 
 The data section is a two-column ``Measure / Score`` table (one metric per row):
 
@@ -131,7 +131,7 @@ Key-Player Report
 
 **Filename pattern:** ``report_<graph>_keyplayer_<subcommand>_<operation>_<algorithm>.tsv``
 
-**Command:** ``python main.py keyplayer kp-finder`` or ``kp-info``
+**Command:** ``pyntacle keyplayer kp-finder`` or ``kp-info``
 
 For ``--operation all``, the data section has three columns:
 
@@ -172,7 +172,7 @@ Group Centrality Report
 
 **Filename pattern:** ``report_<graph>_groupcentrality_<subcommand>_<operation>_<algorithm>.tsv``
 
-**Command:** ``python main.py groupcentrality gc-finder`` or ``gc-info``
+**Command:** ``pyntacle groupcentrality gc-finder`` or ``gc-info``
 
 Same structure as the key-player report but the metric names are:
 ``degree``, ``betweenness``, ``closeness`` (scored in [0, 1]).
@@ -182,7 +182,7 @@ Mesoscale Report
 
 **Filename pattern:** ``report_<graph>_mesoscale.tsv``
 
-**Command:** ``python main.py mesoscale``
+**Command:** ``pyntacle mesoscale``
 
 The report contains three concatenated sections:
 
@@ -196,7 +196,7 @@ Percolation Report
 
 **Filename pattern:** ``report_<graph>_percolation*.tsv``
 
-**Command:** ``python main.py percolation``
+**Command:** ``pyntacle percolation``
 
 The report has a human-readable summary block followed by a time-series table:
 
@@ -304,7 +304,7 @@ graphs too large to render as a network at all.
 Set Theory Reports
 -------------------
 
-**Command:** ``python main.py set``
+**Command:** ``pyntacle set``
 
 The TSV report contains a summary comparison table with the node/edge counts for
 each input graph and the result graph (union, intersection, or difference).

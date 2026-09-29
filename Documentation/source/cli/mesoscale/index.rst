@@ -17,7 +17,7 @@ Synopsis
 --------
 .. code-block:: console
 
-   python3 main.py mesoscale [OPTIONS]
+   pyntacle mesoscale [OPTIONS]
 
 
 Options
@@ -130,9 +130,9 @@ Compute GTOM and TI with default k=3 steps:
 
 .. code-block:: bash
 
-   python main.py mesoscale \
+   pyntacle mesoscale \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -k 3 \
        -o /tmp/out/
 
@@ -140,9 +140,9 @@ Use k=5 steps and enable Topological Overlap with threshold 0.3:
 
 .. code-block:: bash
 
-   python main.py mesoscale \
+   pyntacle mesoscale \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -k 5 \
        -th 0.3 \
        -o /tmp/out/
@@ -151,7 +151,7 @@ Compute weighted TI on a weighted network:
 
 .. code-block:: bash
 
-   python main.py mesoscale \
+   pyntacle mesoscale \
        -t edgelist \
        -i weighted_network.egl \
        -w \

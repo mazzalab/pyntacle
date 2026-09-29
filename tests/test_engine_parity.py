@@ -8,8 +8,8 @@ import math
 
 import pytest
 
-from algorithms.greedy import operation_selector as python_metric
-from _ext.wrapper import cython_wrapper_info
+from pyntacle.algorithms.greedy import operation_selector as python_metric
+from pyntacle._ext.wrapper import cython_wrapper_info
 
 KP_METRICS = ["F", "dF", "dR", "mreach"]
 GROUP_METRICS = ["degree", "betweenness", "closeness"]

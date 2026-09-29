@@ -5,7 +5,7 @@ from itertools import combinations
 from collections import defaultdict
 from typing import List, Dict, Tuple
 
-from utility import *
+from pyntacle.utility import *
 
 
 def _strength(grafo):

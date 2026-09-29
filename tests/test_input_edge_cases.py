@@ -12,11 +12,11 @@ import sys
 import pytest
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(REPO_ROOT, "pyntacle"))
+sys.path.insert(0, REPO_ROOT)
 
-from GraphTacle import Graphtacle  # noqa: E402
-from _ext.wrapper import cython_wrapper_info  # noqa: E402
-from algorithms.key_player import keyplayer_kpInfo  # noqa: E402
+from pyntacle.GraphTacle import Graphtacle  # noqa: E402
+from pyntacle._ext.wrapper import cython_wrapper_info  # noqa: E402
+from pyntacle.algorithms.key_player import keyplayer_kpInfo  # noqa: E402
 
 
 def write(tmp_path, name, text):
@@ -152,14 +152,14 @@ def test_directed_file_gives_a_python_error_not_a_core_dump(tmp_path):
     path = write(tmp_path, "dir.txt", "V1\tV2\nA\tB\nB\tC\nC\tD\n")
     code = (
         "import sys; sys.path.insert(0, %r)\n"
-        "from GraphTacle import Graphtacle\n"
-        "from _ext.wrapper import cython_wrapper_info\n"
+        "from pyntacle.GraphTacle import Graphtacle\n"
+        "from pyntacle._ext.wrapper import cython_wrapper_info\n"
         "g = Graphtacle.from_file(%r, 'keyplayer', 'edgelist', sep='\\t', header=True, directed=True)\n"
         "try:\n"
         "    cython_wrapper_info(g, ['B'], 'dF', distance_type='min', mdist=2, n_threads=1)\n"
         "except ValueError:\n"
         "    print('VALUEERROR')\n"
-    ) % (os.path.join(REPO_ROOT, "pyntacle"), path)
+    ) % (REPO_ROOT, path)
 
     result = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, timeout=120)
 

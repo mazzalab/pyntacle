@@ -9,7 +9,7 @@ Synopsis
 --------
 .. code-block:: console
 
-   python3 main.py local [OPTIONS]
+   pyntacle local [OPTIONS]
 
 
 Options
@@ -110,18 +110,18 @@ Compute local metrics for all nodes in an edge-list file:
 
 .. code-block:: bash
 
-   python main.py local \
+   pyntacle local \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -o /tmp/out/
 
 Highlight specific nodes (shown in green in the output figure):
 
 .. code-block:: bash
 
-   python main.py local \
+   pyntacle local \
        -t edgelist \
-       -i ../examples/figure_8.egl \
+       -i examples/figure_8.egl \
        -c KR,BM \
        -o /tmp/out/
 
@@ -129,7 +129,7 @@ Compute metrics on a directed, weighted adjacency matrix, excluding node LR:
 
 .. code-block:: bash
 
-   python main.py local \
+   pyntacle local \
        -t matrix \
        -i network.txt \
        -d -w \
@@ -140,7 +140,7 @@ Compute metrics on a directed, weighted adjacency matrix, excluding node LR:
 
 .. code-block:: text
 
-   Working on: ../examples/figure_8.egl
+   Working on: examples/figure_8.egl
 
    No nodes removed
 

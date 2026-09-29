@@ -16,12 +16,12 @@ import sys
 
 import pytest
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "pyntacle"))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from GraphTacle import Graphtacle  # noqa: E402
-from _ext.wrapper import cython_wrapper_info  # noqa: E402
-from algorithms.key_player import keyplayer_kpInfo  # noqa: E402
-from algorithms.group_centrality import groupcentrality_gcInfo  # noqa: E402
+from pyntacle.GraphTacle import Graphtacle  # noqa: E402
+from pyntacle._ext.wrapper import cython_wrapper_info  # noqa: E402
+from pyntacle.algorithms.key_player import keyplayer_kpInfo  # noqa: E402
+from pyntacle.algorithms.group_centrality import groupcentrality_gcInfo  # noqa: E402
 
 # One connected 8-node network, written below in every supported format.
 NODES = ["A", "B", "C", "D", "E", "F", "G", "H"]

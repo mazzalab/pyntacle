@@ -5,7 +5,7 @@ import pytest
 pytest.importorskip("sklearn")
 pytest.importorskip("statsmodels")
 
-from omics.transcriptomics import gate, infer
+from pyntacle.omics.transcriptomics import gate, infer
 
 
 def _ggm(n=300, p=40, seed=1):
@@ -65,7 +65,7 @@ def test_covariate_removes_confounded_edge():
     base[:, 1] += 2 * age          # g0-g1 only through age
     df = pd.DataFrame(base.T + 8.0, index=["g{}".format(i) for i in range(30)],
                       columns=["s{}".format(i) for i in range(n)])
-    from omics.covariates import design_matrix
+    from pyntacle.omics.covariates import design_matrix
     design = design_matrix(pd.DataFrame({"age": age}, index=df.columns), ["age"])
     def top_pair(X):
         pc, iu, _ = infer.lw_pcor(X)

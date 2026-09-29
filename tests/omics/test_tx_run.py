@@ -5,8 +5,8 @@ import pytest
 pytest.importorskip("sklearn")
 pytest.importorskip("statsmodels")
 
-from omics import transcriptomics
-from omics.provenance import Provenance
+from pyntacle.omics import transcriptomics
+from pyntacle.omics.provenance import Provenance
 
 
 def test_run_end_to_end_on_synthetic_counts():

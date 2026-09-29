@@ -8,9 +8,9 @@ Specific usage
 --------------
 .. code-block:: console
 
-   python3 main.py set union -t {fileType} -i {input_file} -i2 {input_file2}
-   python3 main.py set intersection -t {fileType} -i {input_file} -i2 {input_file2}
-   python3 main.py set difference -t {fileType} -i {input_file} -i2 {input_file2}
+   pyntacle set union -t {fileType} -i {input_file} -i2 {input_file2}
+   pyntacle set intersection -t {fileType} -i {input_file} -i2 {input_file2}
+   pyntacle set difference -t {fileType} -i {input_file} -i2 {input_file2}
 
 Subcommand summary
 ------------------
@@ -28,7 +28,7 @@ Synopsis
 --------
 .. code-block:: console
 
-   python3 main.py set <subcommand> [OPTIONS]
+   pyntacle set <subcommand> [OPTIONS]
 
 
 Options
@@ -123,7 +123,7 @@ Compute the union of two networks:
 
 .. code-block:: bash
 
-   python main.py set union \
+   pyntacle set union \
        -t edgelist \
        -i network1.egl \
        -i2 network2.egl \
@@ -133,7 +133,7 @@ Find the intersection (shared nodes and edges):
 
 .. code-block:: bash
 
-   python main.py set intersection \
+   pyntacle set intersection \
        -t edgelist \
        -i network1.egl \
        -i2 network2.egl \
@@ -143,7 +143,7 @@ Compute the difference (edges in network1 not in network2):
 
 .. code-block:: bash
 
-   python main.py set difference \
+   pyntacle set difference \
        -t edgelist \
        -i network1.egl \
        -i2 network2.egl \

@@ -4,12 +4,12 @@
 {
     "distutils": {
         "depends": [],
-        "name": "_ext.group_metrics",
+        "name": "pyntacle._ext.group_metrics",
         "sources": [
-            "/home/manu/work/pyntacle_final/pyntacle/_ext/group_metrics.pyx"
+            "pyntacle/_ext/group_metrics.pyx"
         ]
     },
-    "module_name": "_ext.group_metrics"
+    "module_name": "pyntacle._ext.group_metrics"
 }
 END: Cython Metadata */
 
@@ -1127,8 +1127,8 @@ static int __Pyx_init_co_variables(void) {
   #endif
 #endif
 
-#define __PYX_HAVE___ext__group_metrics
-#define __PYX_HAVE_API___ext__group_metrics
+#define __PYX_HAVE__pyntacle___ext__group_metrics
+#define __PYX_HAVE_API__pyntacle___ext__group_metrics
 /* Early includes */
 #include <string.h>
 #include <stdlib.h>
@@ -1611,8 +1611,8 @@ struct __pyx_array_obj;
 struct __pyx_MemviewEnum_obj;
 struct __pyx_memoryview_obj;
 struct __pyx_memoryviewslice_obj;
-struct __pyx_t_4_ext_5utils_CSR;
-struct __pyx_t_4_ext_5utils_Scratch;
+struct __pyx_t_8pyntacle_4_ext_5utils_CSR;
+struct __pyx_t_8pyntacle_4_ext_5utils_Scratch;
 
 /* "utils.pxd":3
  * # cython: language_level=3
@@ -1621,7 +1621,7 @@ struct __pyx_t_4_ext_5utils_Scratch;
  *     int n
  *     int* indptr
 */
-struct __pyx_t_4_ext_5utils_CSR {
+struct __pyx_t_8pyntacle_4_ext_5utils_CSR {
   int n;
   int *indptr;
   int *indices;
@@ -1635,7 +1635,7 @@ struct __pyx_t_4_ext_5utils_CSR {
  *     int n
  *     double* dist
 */
-struct __pyx_t_4_ext_5utils_Scratch {
+struct __pyx_t_8pyntacle_4_ext_5utils_Scratch {
   int n;
   double *dist;
   int *heap;
@@ -2751,9 +2751,9 @@ static PyObject *__pyx_memoryviewslice_convert_item_to_object(struct __pyx_memor
 static PyObject *__pyx_memoryviewslice_assign_item_from_object(struct __pyx_memoryviewslice_obj *__pyx_v_self, char *__pyx_v_itemp, PyObject *__pyx_v_value); /* proto*/
 static PyObject *__pyx_memoryviewslice__get_base(struct __pyx_memoryviewslice_obj *__pyx_v_self); /* proto*/
 
-/* Module declarations from "_ext" */
+/* Module declarations from "pyntacle._ext" */
 
-/* Module declarations from "_ext.utils" */
+/* Module declarations from "pyntacle._ext.utils" */
 
 /* Module declarations from "libc.string" */
 
@@ -2763,10 +2763,10 @@ static PyObject *__pyx_memoryviewslice__get_base(struct __pyx_memoryviewslice_ob
 
 /* Module declarations from "libc.math" */
 
-/* Module declarations from "_ext.cython_igraph" */
-static double (*__pyx_f_4_ext_13cython_igraph_igraph_betweenness)(__Pyx_memviewslice, __Pyx_memviewslice, int, int *, int *, int); /*proto*/
+/* Module declarations from "pyntacle._ext.cython_igraph" */
+static double (*__pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_betweenness)(__Pyx_memviewslice, __Pyx_memviewslice, int, int *, int *, int); /*proto*/
 
-/* Module declarations from "_ext.group_metrics" */
+/* Module declarations from "pyntacle._ext.group_metrics" */
 static PyObject *__pyx_collections_abc_Sequence = 0;
 static PyObject *generic = 0;
 static PyObject *strided = 0;
@@ -2775,7 +2775,7 @@ static PyObject *contiguous = 0;
 static PyObject *indirect_contiguous = 0;
 static int __pyx_memoryview_thread_locks_used;
 static PyThread_type_lock __pyx_memoryview_thread_locks[8];
-static int __pyx_f_4_ext_13group_metrics_cmp_ints(void const *, void const *); /*proto*/
+static int __pyx_f_8pyntacle_4_ext_13group_metrics_cmp_ints(void const *, void const *); /*proto*/
 static int __pyx_array_allocate_buffer(struct __pyx_array_obj *); /*proto*/
 static struct __pyx_array_obj *__pyx_array_new(PyObject *, Py_ssize_t, char *, char const *, char *); /*proto*/
 static PyObject *__pyx_memoryview_new(PyObject *, int, int, __Pyx_TypeInfo const *); /*proto*/
@@ -2812,11 +2812,11 @@ static void __pyx_memoryview__slice_assign_scalar(char *, Py_ssize_t *, Py_ssize
 static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *, PyObject *); /*proto*/
 /* #### Code section: typeinfo ### */
 /* #### Code section: before_global_var ### */
-#define __Pyx_MODULE_NAME "_ext.group_metrics"
-extern int __pyx_module_is_main__ext__group_metrics;
-int __pyx_module_is_main__ext__group_metrics = 0;
+#define __Pyx_MODULE_NAME "pyntacle._ext.group_metrics"
+extern int __pyx_module_is_main_pyntacle___ext__group_metrics;
+int __pyx_module_is_main_pyntacle___ext__group_metrics = 0;
 
-/* Implementation of "_ext.group_metrics" */
+/* Implementation of "pyntacle._ext.group_metrics" */
 /* #### Code section: global_var ### */
 static PyObject *__pyx_builtin___import__;
 static PyObject *__pyx_builtin_enumerate;
@@ -16379,7 +16379,7 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *__
   return __pyx_r;
 }
 
-/* "_ext/group_metrics.pyx":12
+/* "pyntacle/_ext/group_metrics.pyx":12
  * from . cimport cython_igraph
  * 
  * cdef int cmp_ints(const void *a, const void *b) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16387,10 +16387,10 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *__
  * 
 */
 
-static int __pyx_f_4_ext_13group_metrics_cmp_ints(void const *__pyx_v_a, void const *__pyx_v_b) {
+static int __pyx_f_8pyntacle_4_ext_13group_metrics_cmp_ints(void const *__pyx_v_a, void const *__pyx_v_b) {
   int __pyx_r;
 
-  /* "_ext/group_metrics.pyx":13
+  /* "pyntacle/_ext/group_metrics.pyx":13
  * 
  * cdef int cmp_ints(const void *a, const void *b) noexcept nogil:
  *     return (<int*>a)[0] - (<int*>b)[0]             # <<<<<<<<<<<<<<
@@ -16400,7 +16400,7 @@ static int __pyx_f_4_ext_13group_metrics_cmp_ints(void const *__pyx_v_a, void co
   __pyx_r = ((((int *)__pyx_v_a)[0]) - (((int *)__pyx_v_b)[0]));
   goto __pyx_L0;
 
-  /* "_ext/group_metrics.pyx":12
+  /* "pyntacle/_ext/group_metrics.pyx":12
  * from . cimport cython_igraph
  * 
  * cdef int cmp_ints(const void *a, const void *b) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16413,7 +16413,7 @@ static int __pyx_f_4_ext_13group_metrics_cmp_ints(void const *__pyx_v_a, void co
   return __pyx_r;
 }
 
-/* "_ext/group_metrics.pyx":15
+/* "pyntacle/_ext/group_metrics.pyx":15
  *     return (<int*>a)[0] - (<int*>b)[0]
  * 
  * cdef double get_group_degree(utils.CSR* g, char* in_K, int* notK_indices, int k, int n) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16421,7 +16421,7 @@ static int __pyx_f_4_ext_13group_metrics_cmp_ints(void const *__pyx_v_a, void co
  * 
 */
 
-static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ext_5utils_CSR *__pyx_v_g, char *__pyx_v_in_K, int *__pyx_v_notK_indices, int __pyx_v_k, int __pyx_v_n) {
+static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_degree(struct __pyx_t_8pyntacle_4_ext_5utils_CSR *__pyx_v_g, char *__pyx_v_in_K, int *__pyx_v_notK_indices, int __pyx_v_k, int __pyx_v_n) {
   int __pyx_v_i;
   int __pyx_v_e;
   int __pyx_v_notK_node;
@@ -16431,7 +16431,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
   int __pyx_t_2;
   int __pyx_t_3;
 
-  /* "_ext/group_metrics.pyx":23
+  /* "pyntacle/_ext/group_metrics.pyx":23
  *     """
  *     cdef int i, e, notK_node
  *     cdef double gDegree = 0.             # <<<<<<<<<<<<<<
@@ -16440,7 +16440,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
 */
   __pyx_v_gDegree = 0.;
 
-  /* "_ext/group_metrics.pyx":25
+  /* "pyntacle/_ext/group_metrics.pyx":25
  *     cdef double gDegree = 0.
  * 
  *     for i from 0 <= i < (n - k):             # <<<<<<<<<<<<<<
@@ -16450,7 +16450,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
   __pyx_t_1 = (__pyx_v_n - __pyx_v_k);
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_1; __pyx_v_i++) {
 
-    /* "_ext/group_metrics.pyx":26
+    /* "pyntacle/_ext/group_metrics.pyx":26
  * 
  *     for i from 0 <= i < (n - k):
  *         notK_node = notK_indices[i]             # <<<<<<<<<<<<<<
@@ -16459,7 +16459,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
 */
     __pyx_v_notK_node = (__pyx_v_notK_indices[__pyx_v_i]);
 
-    /* "_ext/group_metrics.pyx":28
+    /* "pyntacle/_ext/group_metrics.pyx":28
  *         notK_node = notK_indices[i]
  * 
  *         for e from g.indptr[notK_node] <= e < g.indptr[notK_node + 1]:             # <<<<<<<<<<<<<<
@@ -16469,7 +16469,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
     __pyx_t_2 = (__pyx_v_g->indptr[(__pyx_v_notK_node + 1)]);
     for (__pyx_v_e = (__pyx_v_g->indptr[__pyx_v_notK_node]); __pyx_v_e < __pyx_t_2; __pyx_v_e++) {
 
-      /* "_ext/group_metrics.pyx":29
+      /* "pyntacle/_ext/group_metrics.pyx":29
  * 
  *         for e from g.indptr[notK_node] <= e < g.indptr[notK_node + 1]:
  *             if in_K[g.indices[e]]:             # <<<<<<<<<<<<<<
@@ -16479,7 +16479,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
       __pyx_t_3 = ((__pyx_v_in_K[(__pyx_v_g->indices[__pyx_v_e])]) != 0);
       if (__pyx_t_3) {
 
-        /* "_ext/group_metrics.pyx":30
+        /* "pyntacle/_ext/group_metrics.pyx":30
  *         for e from g.indptr[notK_node] <= e < g.indptr[notK_node + 1]:
  *             if in_K[g.indices[e]]:
  *                 gDegree += 1.             # <<<<<<<<<<<<<<
@@ -16488,7 +16488,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
 */
         __pyx_v_gDegree = (__pyx_v_gDegree + 1.);
 
-        /* "_ext/group_metrics.pyx":31
+        /* "pyntacle/_ext/group_metrics.pyx":31
  *             if in_K[g.indices[e]]:
  *                 gDegree += 1.
  *                 break             # <<<<<<<<<<<<<<
@@ -16497,7 +16497,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
 */
         goto __pyx_L6_break;
 
-        /* "_ext/group_metrics.pyx":29
+        /* "pyntacle/_ext/group_metrics.pyx":29
  * 
  *         for e from g.indptr[notK_node] <= e < g.indptr[notK_node + 1]:
  *             if in_K[g.indices[e]]:             # <<<<<<<<<<<<<<
@@ -16509,7 +16509,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
     __pyx_L6_break:;
   }
 
-  /* "_ext/group_metrics.pyx":33
+  /* "pyntacle/_ext/group_metrics.pyx":33
  *                 break
  * 
  *     gDegree = gDegree / (n - k)             # <<<<<<<<<<<<<<
@@ -16518,7 +16518,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
 */
   __pyx_v_gDegree = (__pyx_v_gDegree / ((double)(__pyx_v_n - __pyx_v_k)));
 
-  /* "_ext/group_metrics.pyx":35
+  /* "pyntacle/_ext/group_metrics.pyx":35
  *     gDegree = gDegree / (n - k)
  * 
  *     return gDegree             # <<<<<<<<<<<<<<
@@ -16528,7 +16528,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
   __pyx_r = __pyx_v_gDegree;
   goto __pyx_L0;
 
-  /* "_ext/group_metrics.pyx":15
+  /* "pyntacle/_ext/group_metrics.pyx":15
  *     return (<int*>a)[0] - (<int*>b)[0]
  * 
  * cdef double get_group_degree(utils.CSR* g, char* in_K, int* notK_indices, int k, int n) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16541,7 +16541,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
   return __pyx_r;
 }
 
-/* "_ext/group_metrics.pyx":38
+/* "pyntacle/_ext/group_metrics.pyx":38
  * 
  * 
  * cdef double get_group_betweenness(int[:, :] edges, double[:] wvec, int n, int* K_indices, int* notK_indices, int k) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16549,30 +16549,30 @@ static double __pyx_f_4_ext_13group_metrics_get_group_degree(struct __pyx_t_4_ex
  * 
 */
 
-static double __pyx_f_4_ext_13group_metrics_get_group_betweenness(__Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, int *__pyx_v_K_indices, int *__pyx_v_notK_indices, int __pyx_v_k) {
+static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(__Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, int *__pyx_v_K_indices, int *__pyx_v_notK_indices, int __pyx_v_k) {
   double __pyx_v_betweenness;
   double __pyx_r;
   int __pyx_t_1;
 
-  /* "_ext/group_metrics.pyx":41
+  /* "pyntacle/_ext/group_metrics.pyx":41
  *     cdef double betweenness
  * 
  *     qsort(notK_indices, n - k, sizeof(int), cmp_ints)             # <<<<<<<<<<<<<<
  * 
  *     betweenness = cython_igraph.igraph_betweenness(edges, wvec, n, K_indices, notK_indices, k)
 */
-  qsort(__pyx_v_notK_indices, (__pyx_v_n - __pyx_v_k), (sizeof(int)), __pyx_f_4_ext_13group_metrics_cmp_ints);
+  qsort(__pyx_v_notK_indices, (__pyx_v_n - __pyx_v_k), (sizeof(int)), __pyx_f_8pyntacle_4_ext_13group_metrics_cmp_ints);
 
-  /* "_ext/group_metrics.pyx":43
+  /* "pyntacle/_ext/group_metrics.pyx":43
  *     qsort(notK_indices, n - k, sizeof(int), cmp_ints)
  * 
  *     betweenness = cython_igraph.igraph_betweenness(edges, wvec, n, K_indices, notK_indices, k)             # <<<<<<<<<<<<<<
  * 
  *     if betweenness < 0.:  # igraph refused the graph; propagate the failure
 */
-  __pyx_v_betweenness = __pyx_f_4_ext_13cython_igraph_igraph_betweenness(__pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_K_indices, __pyx_v_notK_indices, __pyx_v_k);
+  __pyx_v_betweenness = __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_betweenness(__pyx_v_edges, __pyx_v_wvec, __pyx_v_n, __pyx_v_K_indices, __pyx_v_notK_indices, __pyx_v_k);
 
-  /* "_ext/group_metrics.pyx":45
+  /* "pyntacle/_ext/group_metrics.pyx":45
  *     betweenness = cython_igraph.igraph_betweenness(edges, wvec, n, K_indices, notK_indices, k)
  * 
  *     if betweenness < 0.:  # igraph refused the graph; propagate the failure             # <<<<<<<<<<<<<<
@@ -16582,7 +16582,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_betweenness(__Pyx_memviews
   __pyx_t_1 = (__pyx_v_betweenness < 0.);
   if (__pyx_t_1) {
 
-    /* "_ext/group_metrics.pyx":46
+    /* "pyntacle/_ext/group_metrics.pyx":46
  * 
  *     if betweenness < 0.:  # igraph refused the graph; propagate the failure
  *         return -1.             # <<<<<<<<<<<<<<
@@ -16592,7 +16592,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_betweenness(__Pyx_memviews
     __pyx_r = -1.;
     goto __pyx_L0;
 
-    /* "_ext/group_metrics.pyx":45
+    /* "pyntacle/_ext/group_metrics.pyx":45
  *     betweenness = cython_igraph.igraph_betweenness(edges, wvec, n, K_indices, notK_indices, k)
  * 
  *     if betweenness < 0.:  # igraph refused the graph; propagate the failure             # <<<<<<<<<<<<<<
@@ -16601,7 +16601,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_betweenness(__Pyx_memviews
 */
   }
 
-  /* "_ext/group_metrics.pyx":48
+  /* "pyntacle/_ext/group_metrics.pyx":48
  *         return -1.
  * 
  *     return betweenness/((n - k)*(n - k - 1))             # <<<<<<<<<<<<<<
@@ -16611,7 +16611,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_betweenness(__Pyx_memviews
   __pyx_r = (__pyx_v_betweenness / ((double)((__pyx_v_n - __pyx_v_k) * ((__pyx_v_n - __pyx_v_k) - 1))));
   goto __pyx_L0;
 
-  /* "_ext/group_metrics.pyx":38
+  /* "pyntacle/_ext/group_metrics.pyx":38
  * 
  * 
  * cdef double get_group_betweenness(int[:, :] edges, double[:] wvec, int n, int* K_indices, int* notK_indices, int k) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16624,7 +16624,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_betweenness(__Pyx_memviews
   return __pyx_r;
 }
 
-/* "_ext/group_metrics.pyx":51
+/* "pyntacle/_ext/group_metrics.pyx":51
  * 
  * 
  * cdef double get_group_closeness(double* all_dist, int* K_indices, int* notK_indices, int k, int n, int dist_type) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16632,7 +16632,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_betweenness(__Pyx_memviews
  * 
 */
 
-static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_all_dist, int *__pyx_v_K_indices, int *__pyx_v_notK_indices, int __pyx_v_k, int __pyx_v_n, int __pyx_v_dist_type) {
+static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_all_dist, int *__pyx_v_K_indices, int *__pyx_v_notK_indices, int __pyx_v_k, int __pyx_v_n, int __pyx_v_dist_type) {
   int __pyx_v_i;
   int __pyx_v_j;
   double __pyx_v_gCloseness;
@@ -16646,7 +16646,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
   int __pyx_t_2;
   int __pyx_t_3;
 
-  /* "_ext/group_metrics.pyx":60
+  /* "pyntacle/_ext/group_metrics.pyx":60
  *     """
  *     cdef int i, j
  *     cdef double gCloseness = 0.0             # <<<<<<<<<<<<<<
@@ -16655,7 +16655,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
   __pyx_v_gCloseness = 0.0;
 
-  /* "_ext/group_metrics.pyx":65
+  /* "pyntacle/_ext/group_metrics.pyx":65
  *     cdef int reachable
  *     cdef double d
  *     cdef double dJk = 0.0             # <<<<<<<<<<<<<<
@@ -16664,7 +16664,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
   __pyx_v_dJk = 0.0;
 
-  /* "_ext/group_metrics.pyx":67
+  /* "pyntacle/_ext/group_metrics.pyx":67
  *     cdef double dJk = 0.0
  * 
  *     for i from 0 <= i < (n - k):  # Iterate over non-K nodes             # <<<<<<<<<<<<<<
@@ -16674,7 +16674,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
   __pyx_t_1 = (__pyx_v_n - __pyx_v_k);
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_1; __pyx_v_i++) {
 
-    /* "_ext/group_metrics.pyx":68
+    /* "pyntacle/_ext/group_metrics.pyx":68
  * 
  *     for i from 0 <= i < (n - k):  # Iterate over non-K nodes
  *         notK_node = notK_indices[i]             # <<<<<<<<<<<<<<
@@ -16683,7 +16683,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
     __pyx_v_notK_node = (__pyx_v_notK_indices[__pyx_v_i]);
 
-    /* "_ext/group_metrics.pyx":69
+    /* "pyntacle/_ext/group_metrics.pyx":69
  *     for i from 0 <= i < (n - k):  # Iterate over non-K nodes
  *         notK_node = notK_indices[i]
  *         reachable = 0             # <<<<<<<<<<<<<<
@@ -16692,7 +16692,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
     __pyx_v_reachable = 0;
 
-    /* "_ext/group_metrics.pyx":72
+    /* "pyntacle/_ext/group_metrics.pyx":72
  * 
  *         # mean
  *         if dist_type == 0:             # <<<<<<<<<<<<<<
@@ -16702,7 +16702,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
     switch (__pyx_v_dist_type) {
       case 0:
 
-      /* "_ext/group_metrics.pyx":73
+      /* "pyntacle/_ext/group_metrics.pyx":73
  *         # mean
  *         if dist_type == 0:
  *             dJk = 0.             # <<<<<<<<<<<<<<
@@ -16711,7 +16711,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
       __pyx_v_dJk = 0.;
 
-      /* "_ext/group_metrics.pyx":74
+      /* "pyntacle/_ext/group_metrics.pyx":74
  *         if dist_type == 0:
  *             dJk = 0.
  *             for j from 0 <= j < k:             # <<<<<<<<<<<<<<
@@ -16721,7 +16721,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
       __pyx_t_2 = __pyx_v_k;
       for (__pyx_v_j = 0; __pyx_v_j < __pyx_t_2; __pyx_v_j++) {
 
-        /* "_ext/group_metrics.pyx":75
+        /* "pyntacle/_ext/group_metrics.pyx":75
  *             dJk = 0.
  *             for j from 0 <= j < k:
  *                 k_node = K_indices[j]             # <<<<<<<<<<<<<<
@@ -16730,7 +16730,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
         __pyx_v_k_node = (__pyx_v_K_indices[__pyx_v_j]);
 
-        /* "_ext/group_metrics.pyx":76
+        /* "pyntacle/_ext/group_metrics.pyx":76
  *             for j from 0 <= j < k:
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]             # <<<<<<<<<<<<<<
@@ -16739,7 +16739,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
         __pyx_v_d = (__pyx_v_all_dist[((__pyx_v_notK_node * __pyx_v_n) + __pyx_v_k_node)]);
 
-        /* "_ext/group_metrics.pyx":77
+        /* "pyntacle/_ext/group_metrics.pyx":77
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):             # <<<<<<<<<<<<<<
@@ -16749,7 +16749,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
         __pyx_t_3 = (!(isinf(__pyx_v_d) != 0));
         if (__pyx_t_3) {
 
-          /* "_ext/group_metrics.pyx":78
+          /* "pyntacle/_ext/group_metrics.pyx":78
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):
  *                     dJk += d             # <<<<<<<<<<<<<<
@@ -16758,7 +16758,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
           __pyx_v_dJk = (__pyx_v_dJk + __pyx_v_d);
 
-          /* "_ext/group_metrics.pyx":79
+          /* "pyntacle/_ext/group_metrics.pyx":79
  *                 if not isinf(d):
  *                     dJk += d
  *                     reachable += 1             # <<<<<<<<<<<<<<
@@ -16767,7 +16767,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
           __pyx_v_reachable = (__pyx_v_reachable + 1);
 
-          /* "_ext/group_metrics.pyx":77
+          /* "pyntacle/_ext/group_metrics.pyx":77
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):             # <<<<<<<<<<<<<<
@@ -16777,7 +16777,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
         }
       }
 
-      /* "_ext/group_metrics.pyx":81
+      /* "pyntacle/_ext/group_metrics.pyx":81
  *                     reachable += 1
  * 
  *             if reachable > 0:             # <<<<<<<<<<<<<<
@@ -16787,7 +16787,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
       __pyx_t_3 = (__pyx_v_reachable > 0);
       if (__pyx_t_3) {
 
-        /* "_ext/group_metrics.pyx":82
+        /* "pyntacle/_ext/group_metrics.pyx":82
  * 
  *             if reachable > 0:
  *                 dJk = dJk / reachable             # <<<<<<<<<<<<<<
@@ -16796,7 +16796,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
         __pyx_v_dJk = (__pyx_v_dJk / ((double)__pyx_v_reachable));
 
-        /* "_ext/group_metrics.pyx":81
+        /* "pyntacle/_ext/group_metrics.pyx":81
  *                     reachable += 1
  * 
  *             if reachable > 0:             # <<<<<<<<<<<<<<
@@ -16805,7 +16805,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
       }
 
-      /* "_ext/group_metrics.pyx":72
+      /* "pyntacle/_ext/group_metrics.pyx":72
  * 
  *         # mean
  *         if dist_type == 0:             # <<<<<<<<<<<<<<
@@ -16815,7 +16815,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
       break;
       case 1:
 
-      /* "_ext/group_metrics.pyx":86
+      /* "pyntacle/_ext/group_metrics.pyx":86
  *         # max
  *         elif dist_type == 1:
  *             dJk = 0.             # <<<<<<<<<<<<<<
@@ -16824,7 +16824,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
       __pyx_v_dJk = 0.;
 
-      /* "_ext/group_metrics.pyx":87
+      /* "pyntacle/_ext/group_metrics.pyx":87
  *         elif dist_type == 1:
  *             dJk = 0.
  *             for j from 0 <= j < k:             # <<<<<<<<<<<<<<
@@ -16834,7 +16834,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
       __pyx_t_2 = __pyx_v_k;
       for (__pyx_v_j = 0; __pyx_v_j < __pyx_t_2; __pyx_v_j++) {
 
-        /* "_ext/group_metrics.pyx":88
+        /* "pyntacle/_ext/group_metrics.pyx":88
  *             dJk = 0.
  *             for j from 0 <= j < k:
  *                 k_node = K_indices[j]             # <<<<<<<<<<<<<<
@@ -16843,7 +16843,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
         __pyx_v_k_node = (__pyx_v_K_indices[__pyx_v_j]);
 
-        /* "_ext/group_metrics.pyx":89
+        /* "pyntacle/_ext/group_metrics.pyx":89
  *             for j from 0 <= j < k:
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]             # <<<<<<<<<<<<<<
@@ -16852,7 +16852,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
         __pyx_v_d = (__pyx_v_all_dist[((__pyx_v_notK_node * __pyx_v_n) + __pyx_v_k_node)]);
 
-        /* "_ext/group_metrics.pyx":90
+        /* "pyntacle/_ext/group_metrics.pyx":90
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):             # <<<<<<<<<<<<<<
@@ -16862,7 +16862,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
         __pyx_t_3 = (!(isinf(__pyx_v_d) != 0));
         if (__pyx_t_3) {
 
-          /* "_ext/group_metrics.pyx":91
+          /* "pyntacle/_ext/group_metrics.pyx":91
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):
  *                     reachable += 1             # <<<<<<<<<<<<<<
@@ -16871,7 +16871,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
           __pyx_v_reachable = (__pyx_v_reachable + 1);
 
-          /* "_ext/group_metrics.pyx":92
+          /* "pyntacle/_ext/group_metrics.pyx":92
  *                 if not isinf(d):
  *                     reachable += 1
  *                     if d > dJk:             # <<<<<<<<<<<<<<
@@ -16881,7 +16881,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
           __pyx_t_3 = (__pyx_v_d > __pyx_v_dJk);
           if (__pyx_t_3) {
 
-            /* "_ext/group_metrics.pyx":93
+            /* "pyntacle/_ext/group_metrics.pyx":93
  *                     reachable += 1
  *                     if d > dJk:
  *                         dJk = d             # <<<<<<<<<<<<<<
@@ -16890,7 +16890,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
             __pyx_v_dJk = __pyx_v_d;
 
-            /* "_ext/group_metrics.pyx":92
+            /* "pyntacle/_ext/group_metrics.pyx":92
  *                 if not isinf(d):
  *                     reachable += 1
  *                     if d > dJk:             # <<<<<<<<<<<<<<
@@ -16899,7 +16899,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
           }
 
-          /* "_ext/group_metrics.pyx":90
+          /* "pyntacle/_ext/group_metrics.pyx":90
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):             # <<<<<<<<<<<<<<
@@ -16909,7 +16909,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
         }
       }
 
-      /* "_ext/group_metrics.pyx":85
+      /* "pyntacle/_ext/group_metrics.pyx":85
  * 
  *         # max
  *         elif dist_type == 1:             # <<<<<<<<<<<<<<
@@ -16919,7 +16919,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
       break;
       case 2:
 
-      /* "_ext/group_metrics.pyx":97
+      /* "pyntacle/_ext/group_metrics.pyx":97
  *         # min
  *         elif dist_type == 2:
  *             dJk = INFINITY             # <<<<<<<<<<<<<<
@@ -16928,7 +16928,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
       __pyx_v_dJk = INFINITY;
 
-      /* "_ext/group_metrics.pyx":98
+      /* "pyntacle/_ext/group_metrics.pyx":98
  *         elif dist_type == 2:
  *             dJk = INFINITY
  *             for j from 0 <= j < k:             # <<<<<<<<<<<<<<
@@ -16938,7 +16938,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
       __pyx_t_2 = __pyx_v_k;
       for (__pyx_v_j = 0; __pyx_v_j < __pyx_t_2; __pyx_v_j++) {
 
-        /* "_ext/group_metrics.pyx":99
+        /* "pyntacle/_ext/group_metrics.pyx":99
  *             dJk = INFINITY
  *             for j from 0 <= j < k:
  *                 k_node = K_indices[j]             # <<<<<<<<<<<<<<
@@ -16947,7 +16947,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
         __pyx_v_k_node = (__pyx_v_K_indices[__pyx_v_j]);
 
-        /* "_ext/group_metrics.pyx":100
+        /* "pyntacle/_ext/group_metrics.pyx":100
  *             for j from 0 <= j < k:
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]             # <<<<<<<<<<<<<<
@@ -16956,7 +16956,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
         __pyx_v_d = (__pyx_v_all_dist[((__pyx_v_notK_node * __pyx_v_n) + __pyx_v_k_node)]);
 
-        /* "_ext/group_metrics.pyx":101
+        /* "pyntacle/_ext/group_metrics.pyx":101
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):             # <<<<<<<<<<<<<<
@@ -16966,7 +16966,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
         __pyx_t_3 = (!(isinf(__pyx_v_d) != 0));
         if (__pyx_t_3) {
 
-          /* "_ext/group_metrics.pyx":102
+          /* "pyntacle/_ext/group_metrics.pyx":102
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):
  *                     reachable += 1             # <<<<<<<<<<<<<<
@@ -16975,7 +16975,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
           __pyx_v_reachable = (__pyx_v_reachable + 1);
 
-          /* "_ext/group_metrics.pyx":103
+          /* "pyntacle/_ext/group_metrics.pyx":103
  *                 if not isinf(d):
  *                     reachable += 1
  *                     if d < dJk:             # <<<<<<<<<<<<<<
@@ -16985,7 +16985,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
           __pyx_t_3 = (__pyx_v_d < __pyx_v_dJk);
           if (__pyx_t_3) {
 
-            /* "_ext/group_metrics.pyx":104
+            /* "pyntacle/_ext/group_metrics.pyx":104
  *                     reachable += 1
  *                     if d < dJk:
  *                         dJk = d             # <<<<<<<<<<<<<<
@@ -16994,7 +16994,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
             __pyx_v_dJk = __pyx_v_d;
 
-            /* "_ext/group_metrics.pyx":103
+            /* "pyntacle/_ext/group_metrics.pyx":103
  *                 if not isinf(d):
  *                     reachable += 1
  *                     if d < dJk:             # <<<<<<<<<<<<<<
@@ -17003,7 +17003,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
           }
 
-          /* "_ext/group_metrics.pyx":101
+          /* "pyntacle/_ext/group_metrics.pyx":101
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):             # <<<<<<<<<<<<<<
@@ -17013,7 +17013,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
         }
       }
 
-      /* "_ext/group_metrics.pyx":96
+      /* "pyntacle/_ext/group_metrics.pyx":96
  * 
  *         # min
  *         elif dist_type == 2:             # <<<<<<<<<<<<<<
@@ -17024,7 +17024,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
       default: break;
     }
 
-    /* "_ext/group_metrics.pyx":106
+    /* "pyntacle/_ext/group_metrics.pyx":106
  *                         dJk = d
  * 
  *         if reachable == 0:             # <<<<<<<<<<<<<<
@@ -17034,7 +17034,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
     __pyx_t_3 = (__pyx_v_reachable == 0);
     if (__pyx_t_3) {
 
-      /* "_ext/group_metrics.pyx":107
+      /* "pyntacle/_ext/group_metrics.pyx":107
  * 
  *         if reachable == 0:
  *             continue             # <<<<<<<<<<<<<<
@@ -17043,7 +17043,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
       goto __pyx_L3_continue;
 
-      /* "_ext/group_metrics.pyx":106
+      /* "pyntacle/_ext/group_metrics.pyx":106
  *                         dJk = d
  * 
  *         if reachable == 0:             # <<<<<<<<<<<<<<
@@ -17052,7 +17052,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
     }
 
-    /* "_ext/group_metrics.pyx":109
+    /* "pyntacle/_ext/group_metrics.pyx":109
  *             continue
  * 
  *         gCloseness += dJk             # <<<<<<<<<<<<<<
@@ -17063,7 +17063,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
     __pyx_L3_continue:;
   }
 
-  /* "_ext/group_metrics.pyx":111
+  /* "pyntacle/_ext/group_metrics.pyx":111
  *         gCloseness += dJk
  * 
  *     if gCloseness <= 0.:             # <<<<<<<<<<<<<<
@@ -17073,7 +17073,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
   __pyx_t_3 = (__pyx_v_gCloseness <= 0.);
   if (__pyx_t_3) {
 
-    /* "_ext/group_metrics.pyx":112
+    /* "pyntacle/_ext/group_metrics.pyx":112
  * 
  *     if gCloseness <= 0.:
  *         return -1.             # <<<<<<<<<<<<<<
@@ -17083,7 +17083,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
     __pyx_r = -1.;
     goto __pyx_L0;
 
-    /* "_ext/group_metrics.pyx":111
+    /* "pyntacle/_ext/group_metrics.pyx":111
  *         gCloseness += dJk
  * 
  *     if gCloseness <= 0.:             # <<<<<<<<<<<<<<
@@ -17092,7 +17092,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
 */
   }
 
-  /* "_ext/group_metrics.pyx":115
+  /* "pyntacle/_ext/group_metrics.pyx":115
  * 
  *     # Compute group closeness centrality
  *     return (n - k) / gCloseness             # <<<<<<<<<<<<<<
@@ -17100,7 +17100,7 @@ static double __pyx_f_4_ext_13group_metrics_get_group_closeness(double *__pyx_v_
   __pyx_r = (((double)(__pyx_v_n - __pyx_v_k)) / __pyx_v_gCloseness);
   goto __pyx_L0;
 
-  /* "_ext/group_metrics.pyx":51
+  /* "pyntacle/_ext/group_metrics.pyx":51
  * 
  * 
  * cdef double get_group_closeness(double* all_dist, int* K_indices, int* notK_indices, int k, int n, int dist_type) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -17239,7 +17239,7 @@ static PyType_Slot __pyx_type___pyx_array_slots[] = {
   {0, 0},
 };
 static PyType_Spec __pyx_type___pyx_array_spec = {
-  "_ext.group_metrics.array",
+  "pyntacle._ext.group_metrics.array",
   sizeof(struct __pyx_array_obj),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_SEQUENCE,
@@ -17273,7 +17273,7 @@ static PyBufferProcs __pyx_tp_as_buffer_array = {
 
 static PyTypeObject __pyx_type___pyx_array = {
   PyVarObject_HEAD_INIT(0, 0)
-  "_ext.group_metrics.""array", /*tp_name*/
+  "pyntacle._ext.group_metrics.""array", /*tp_name*/
   sizeof(struct __pyx_array_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc_array, /*tp_dealloc*/
@@ -17418,7 +17418,7 @@ static PyType_Slot __pyx_type___pyx_MemviewEnum_slots[] = {
   {0, 0},
 };
 static PyType_Spec __pyx_type___pyx_MemviewEnum_spec = {
-  "_ext.group_metrics.Enum",
+  "pyntacle._ext.group_metrics.Enum",
   sizeof(struct __pyx_MemviewEnum_obj),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC,
@@ -17428,7 +17428,7 @@ static PyType_Spec __pyx_type___pyx_MemviewEnum_spec = {
 
 static PyTypeObject __pyx_type___pyx_MemviewEnum = {
   PyVarObject_HEAD_INIT(0, 0)
-  "_ext.group_metrics.""Enum", /*tp_name*/
+  "pyntacle._ext.group_metrics.""Enum", /*tp_name*/
   sizeof(struct __pyx_MemviewEnum_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc_Enum, /*tp_dealloc*/
@@ -17695,7 +17695,7 @@ static PyType_Slot __pyx_type___pyx_memoryview_slots[] = {
   {0, 0},
 };
 static PyType_Spec __pyx_type___pyx_memoryview_spec = {
-  "_ext.group_metrics.memoryview",
+  "pyntacle._ext.group_metrics.memoryview",
   sizeof(struct __pyx_memoryview_obj),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC,
@@ -17729,7 +17729,7 @@ static PyBufferProcs __pyx_tp_as_buffer_memoryview = {
 
 static PyTypeObject __pyx_type___pyx_memoryview = {
   PyVarObject_HEAD_INIT(0, 0)
-  "_ext.group_metrics.""memoryview", /*tp_name*/
+  "pyntacle._ext.group_metrics.""memoryview", /*tp_name*/
   sizeof(struct __pyx_memoryview_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc_memoryview, /*tp_dealloc*/
@@ -17872,7 +17872,7 @@ static PyType_Slot __pyx_type___pyx_memoryviewslice_slots[] = {
   {0, 0},
 };
 static PyType_Spec __pyx_type___pyx_memoryviewslice_spec = {
-  "_ext.group_metrics._memoryviewslice",
+  "pyntacle._ext.group_metrics._memoryviewslice",
   sizeof(struct __pyx_memoryviewslice_obj),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC|Py_TPFLAGS_SEQUENCE,
@@ -17882,7 +17882,7 @@ static PyType_Spec __pyx_type___pyx_memoryviewslice_spec = {
 
 static PyTypeObject __pyx_type___pyx_memoryviewslice = {
   PyVarObject_HEAD_INIT(0, 0)
-  "_ext.group_metrics.""_memoryviewslice", /*tp_name*/
+  "pyntacle._ext.group_metrics.""_memoryviewslice", /*tp_name*/
   sizeof(struct __pyx_memoryviewslice_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc__memoryviewslice, /*tp_dealloc*/
@@ -18019,8 +18019,8 @@ static int __Pyx_modinit_function_export_code(__pyx_mstatetype *__pyx_mstate) {
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (unlikely(!__pyx_export_signature)) __PYX_ERR(0, 1, __pyx_L1_error)
     #endif
-    const char * __pyx_export_name = __pyx_export_signature + 187;
-    void (*const __pyx_export_pointers[])(void) = {(void (*)(void))&__pyx_f_4_ext_13group_metrics_get_group_betweenness, (void (*)(void))&__pyx_f_4_ext_13group_metrics_get_group_closeness, (void (*)(void))&__pyx_f_4_ext_13group_metrics_get_group_degree, (void (*)(void)) NULL};
+    const char * __pyx_export_name = __pyx_export_signature + 197;
+    void (*const __pyx_export_pointers[])(void) = {(void (*)(void))&__pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness, (void (*)(void))&__pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness, (void (*)(void))&__pyx_f_8pyntacle_4_ext_13group_metrics_get_group_degree, (void (*)(void)) NULL};
     void (*const *__pyx_export_pointer)(void) = __pyx_export_pointers;
     const char *__pyx_export_current_signature = __pyx_export_signature;
     while (*__pyx_export_pointer) {
@@ -18211,14 +18211,14 @@ static int __Pyx_modinit_function_import_code(__pyx_mstatetype *__pyx_mstate) {
   __Pyx_RefNannySetupContext("__Pyx_modinit_function_import_code", 0);
   /*--- Function import code ---*/
   {
-    __pyx_t_1 = PyImport_ImportModule("_ext.cython_igraph"); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
+    __pyx_t_1 = PyImport_ImportModule("pyntacle._ext.cython_igraph"); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     const char * __pyx_import_signature = __Pyx_PyBytes_AsString(__pyx_mstate_global->__pyx_kp_b_double___Pyx_memviewslice___Pyx_2);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (unlikely(!__pyx_import_signature)) __PYX_ERR(0, 1, __pyx_L1_error)
     #endif
     const char * __pyx_import_name = __pyx_import_signature + 72;
-    void (**const __pyx_import_pointers[])(void) = {(void (**)(void))&__pyx_f_4_ext_13cython_igraph_igraph_betweenness, (void (**)(void)) NULL};
+    void (**const __pyx_import_pointers[])(void) = {(void (**)(void))&__pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_betweenness, (void (**)(void)) NULL};
     void (**const *__pyx_import_pointer)(void) = __pyx_import_pointers;
     const char *__pyx_import_current_signature = __pyx_import_signature;
     while (*__pyx_import_pointer) {
@@ -18486,13 +18486,13 @@ __Pyx_RefNannySetupContext("PyInit_group_metrics", 0);
   if (__Pyx_InitConstants(__pyx_mstate) < (0)) __PYX_ERR(0, 1, __pyx_L1_error)
   stringtab_initialized = 1;
   if (__Pyx_InitGlobals() < (0)) __PYX_ERR(0, 1, __pyx_L1_error)
-  if (__pyx_module_is_main__ext__group_metrics) {
+  if (__pyx_module_is_main_pyntacle___ext__group_metrics) {
     if (PyObject_SetAttr(__pyx_m, __pyx_mstate_global->__pyx_n_u_name_2, __pyx_mstate_global->__pyx_n_u_main) < (0)) __PYX_ERR(0, 1, __pyx_L1_error)
   }
   {
     PyObject *modules = PyImport_GetModuleDict(); if (unlikely(!modules)) __PYX_ERR(0, 1, __pyx_L1_error)
-    if (!PyDict_GetItemString(modules, "_ext.group_metrics")) {
-      if (unlikely((PyDict_SetItemString(modules, "_ext.group_metrics", __pyx_m) < 0))) __PYX_ERR(0, 1, __pyx_L1_error)
+    if (!PyDict_GetItemString(modules, "pyntacle._ext.group_metrics")) {
+      if (unlikely((PyDict_SetItemString(modules, "pyntacle._ext.group_metrics", __pyx_m) < 0))) __PYX_ERR(0, 1, __pyx_L1_error)
     }
   }
   /*--- Builtin init code ---*/
@@ -19001,7 +19001,7 @@ __Pyx_RefNannySetupContext("PyInit_group_metrics", 0);
   if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_pyx_unpickle_Enum, __pyx_t_4) < (0)) __PYX_ERR(1, 4, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "_ext/group_metrics.pyx":1
+  /* "pyntacle/_ext/group_metrics.pyx":1
  * # cython: boundscheck=False, wraparound=False, language_level=3, cdivision=True             # <<<<<<<<<<<<<<
  * from cython.cimports.libc.stdlib cimport abort, malloc, free
  * from cython.cimports.libc.string import memset
@@ -19019,7 +19019,7 @@ __Pyx_RefNannySetupContext("PyInit_group_metrics", 0);
   __Pyx_XDECREF(__pyx_t_5);
   if (__pyx_m) {
     if (__pyx_mstate->__pyx_d && stringtab_initialized) {
-      __Pyx_AddTraceback("init _ext.group_metrics", __pyx_clineno, __pyx_lineno, __pyx_filename);
+      __Pyx_AddTraceback("init pyntacle._ext.group_metrics", __pyx_clineno, __pyx_lineno, __pyx_filename);
     }
     #if !CYTHON_USE_MODULE_STATE
     Py_CLEAR(__pyx_m);
@@ -19033,7 +19033,7 @@ __Pyx_RefNannySetupContext("PyInit_group_metrics", 0);
     }
     #endif
   } else if (!PyErr_Occurred()) {
-    PyErr_SetString(PyExc_ImportError, "init _ext.group_metrics");
+    PyErr_SetString(PyExc_ImportError, "init pyntacle._ext.group_metrics");
   }
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
@@ -19144,25 +19144,25 @@ static int __Pyx_InitCachedConstants(__pyx_mstatetype *__pyx_mstate) {
 static int __Pyx_InitConstants(__pyx_mstatetype *__pyx_mstate) {
   CYTHON_UNUSED_VAR(__pyx_mstate);
   {
-    const struct { const unsigned int length: 8; } index[] = {{2},{68},{35},{54},{37},{60},{24},{52},{26},{34},{29},{33},{45},{22},{15},{179},{37},{30},{32},{1},{1},{1},{1},{1},{8},{5},{6},{15},{23},{25},{7},{6},{2},{6},{35},{9},{30},{50},{8},{20},{32},{22},{30},{37},{5},{8},{20},{8},{15},{3},{15},{4},{1},{9},{17},{18},{5},{8},{15},{6},{9},{5},{5},{6},{7},{12},{2},{10},{5},{5},{8},{8},{7},{4},{10},{4},{8},{4},{7},{3},{4},{3},{12},{14},{11},{10},{19},{14},{12},{10},{17},{13},{8},{12},{10},{12},{19},{5},{4},{5},{4},{4},{6},{8},{6},{6},{6},{1},{245},{90},{1}};
-    #if (CYTHON_COMPRESS_STRINGS) == 2 /* compression: bz2 (1083 bytes) */
-const char* const cstring = "BZh91AY&SY\037Z\266\367\000\000\217\337\200@\000B\367FW\277#\333\000\277\377\377\360P\004k^\356X\332M\333\267nV\353w\014D&\203(h\312f\251\247\240\232\0314\332\2314\365\001\240\323I\243@\251\372Pi\241\2404\000\000\000\320%4\022\002\004\233\023M5\007\244\000\003C\3244\030\000\000\000\r\000\000\000\000\tM\0212eS\324\3751&\325\036\246!\352\001\240\036\240\006\235\262<\302`~~\202\003\300?6\017\352\233\305|\227\344I\021\242ypy\344\336XK!\353\021KP.\034\2227\240%\265U\026\013\340\267\245u=\302\301\233\316\213\203\204;\277\271\356\323\327\312\325S\220\357\367\325\221`\n\321\t\372]\013YG\363ddJ\215Z1$\303\\x\274O\345\036\353i\225\203\206\312\005a\004\017\027\213k\301\347{K1\316\006n\016\232\260\tp\317\302@\305NjS d(\035\316\230\024\322k,\253\0239\\\365\372\266;:Lc\210\035\375z\301\356ic\353~\270\3423\263tr\364\302\331?&\262\224z\322o{\371\274\001\325\207,\373\255\236\216\325\203\005\346r\374\244\032\"~%\3453GK7%]\234\360*\272\341\341\004\366z\236\371\035\364s\233\357E\335\363cKL\t\307\362\352\213\231\022\222,\t\241\nE\2100\n\326L\302\371o\253H\245b\215?T\030\017?\246\315\277\341h\335\341\370\205\000\317\311\221V\007\016q X\274\370\032\351\246\360\231\201\266\270\212\254\352\304\264\216\263\221\212\302h\252\366\034\014\016\256GpI\211\2010\222\356\341\255\224\352\324\3048\330\")\235\352Njj>\226\034\307\263\322b\177Q\340\2631q\334t\320T\2540\230\3514\343\250\2031\311\335w\n\326S)\337\213\311\210D:c\007\035\223#\335\017\251\266\016\211\013 \004\256\303\206\204{TA;d\335\220K\251\316R\204\267\214\220\232\261.\226\221\215\252\211\275\336\311k\236\340\214\037Bo\024$\024\370C\337\213m\352\306U\321pd\243\274\276\357\303\223N\224\266\223\366&vLi\325\227UD\0244:=\374\335\nz\334n\226Y\3323\250[F\345\205\265\263\264\240\222T\021\367\223b\006\341\242\032\017\343\265@\362\330q\"\240[\321`\257u^\246\336\243@\326\304u3\300\3669\230\315^\006lR\r\033u\214\377\3169\310\273\261\201\376I\t1;o\260k+&1\315\247\224@\220/\033\353b \001t\241\004\273\204\032@\2125\032\0323Z\024\234\247\2444\240\233\351""\266hF\252\357p F\264\007\305m\223\031\332E\242q\345\323\366\210\0201\321\356\014\333\215\323D\321\273^\333\3011\014P\325\036I\271\232\263v\244\306\005\364\351\t\343tD\200\252\223A\252C\025E\016\200qM\031T\007\006\270s&\002\250\302h<\235\312BB)R\201A\251P\tI\245\271X\214\266\013 \271sss4\\(\"\375$z_\027\007\217\001\302\301\333\235q\026\017\"2fs=\331\262B@\3743\324G\270R\363\231\246[\234\367\337\027\273yC\212c\026\207\034q\3438\333\235)>\035h\205\010U\230\2407\201\233\014J\270m\032\260\004_y\233J\353\201\267\213;\360\302f\215%\003\330vm\206f\367s`\212w\273j\263\325\245\241'\341g\021y\030;\300WQ\327G/\013A\331\264\341\210\026E\316\t\021\255\206\241r\025\272~%\016\347ce[\263\\\317\216\257\232h\020K\253y)\025U`\2006\315>\371=n\367\304\013?3 \264b\244\022\022SP\350!^\251\300\336BC\0104 \302e\224\251\203@-m\304@\335\250\266\024l0sG\257'|\373\354;\023\n\212[\273N\364KP\235G\327\225\343\000\270\224xt\315\317\025\317\332\361\226\214\262\032\031\221I\020/\021\014\220\324\2231\375\3166\002\033k\241\\\373\316\222\342\302\230\360\342\024\326\342 Ld\034\377\213\271\"\234(H\017\255[{\200";
-    PyObject *data = __Pyx_DecompressString(cstring, 1083, 2);
+    const struct { const unsigned int length: 8; } index[] = {{2},{68},{35},{54},{37},{60},{24},{52},{26},{34},{29},{33},{45},{22},{15},{179},{37},{30},{32},{1},{1},{1},{1},{1},{8},{5},{6},{15},{23},{25},{7},{6},{2},{6},{35},{9},{30},{50},{8},{20},{32},{22},{30},{37},{5},{8},{20},{8},{15},{3},{15},{4},{1},{9},{17},{18},{5},{8},{15},{6},{9},{5},{5},{6},{7},{12},{2},{10},{5},{5},{8},{8},{7},{4},{10},{4},{8},{4},{7},{3},{4},{3},{12},{14},{11},{10},{19},{14},{12},{10},{17},{13},{8},{12},{10},{12},{19},{5},{4},{5},{4},{4},{6},{8},{6},{6},{6},{1},{255},{90},{1}};
+    #if (CYTHON_COMPRESS_STRINGS) == 2 /* compression: bz2 (1084 bytes) */
+const char* const cstring = "BZh91AY&SY_\001\030]\000\000\220_\200@\000B\367FW\277#\333\000\277\377\377\360P\004kV\233\326\335\233]\261\333\263\263\260d!4\231\222OSzS5\017H\000\032\006\215\003A(C@DF\324\321\265!\247\250\003\3244\320\302\032\004\246\211\244\320&\215SC\324\365<\240\364 \000\365\006\206C\000\000\000\001\240\000\000\000\001\"Bd\322L\3104\201\003@\000\000\031: ~B(=\276\301\303\2747\312\206\332\213\342\235\211\270A\010\305\032\032\2324]\226\302\203k\312\336\243g5U8@}\326b\343}\233\025\267\234\3604#\036\352\266k\232/W\367~#M\274\2533LG~\232bT\002s\204\375\327B\332I\375\335\030\224Q\246x\024/\333\035\363\222\377+<5\350\255\t\221\331\005hA\t\312r\216\330N\230\273\350\273\303OG\302\321\004\300n\330@\305\216j\222@\310P;\235*]\254\2554\264I\303\023\331\333\3459.\217\027\336\007w6pz\226\027\355\315\235\367\214*\320\372{[\\\033\315j\224\232r\213X\336\254\340n\267\351\227\032\345\237\005{\003\330\311\337\225\001\242)\362,K4wU\271)\337\316\362g\252\036\020S\177k\332\203\276|\351k\"\356\272T\330\324\2018\376\215\"\346E\022EA4\024\312L\202DZ\262\263\027~\254\331\321Vk,\274\262\037\007w.m\336e\215>}\361\3145\354\314\262\010\016\351L\0361N&{\367\346\02409\360\304vP\356O|\273MJ\253\311J/\304\320s\243S\220E\t\001 \212\362\323u\226TI\3247\330\".\335\215\211\225*>\330\021\005\374\273\013\317\3622\301\230\304w\0354\026-\014$}\250\340\207)\027 \236\265\352\246e\023\237;\304\313\204\245\r\030\301\t\246w\262\334\274\003\212\002\247\001\014\326\352\304\215\363\016FZ/;\2215\261\244\035\r\"\210\"\225\004\270\275L+2R\316\365Km8\204^\371\246\357BA/|=\260o\036\270Q]\027\006*:\313]\371r\222\351Q\266\037\3013\262cf\230\3531\004\215\016\217\2077c\237\031\034p\345\256&\273G\300\342\366c\266\275\311\215\267\320S\304\225X\256u\263\254\374e\230\0338\r\344L\n\370\252\023\352\233L\327\254\310-o\032\325\234y\330\304`\226\001\204&\305.}\242\217\356\272L\312\021\201\336\333\033E/\235\303\204\356\321\216\212\233\245\001T1,e\234\2000\225QVs\020\342\022H\3260\327K\302\264zq\"\360<f\211\".\236\226\001\304g@\027\255x`\2465\221X""\251\376|\236\217\001\305\370\266`\261\305^\314\235\rs\345`h\222(*K\204\352\2256B\243F%\251\r\216%\254\2450q\r\342w\340m\272\202\250<vS\210\n\216\373j\360\230]L\262>u\253llelT**\330\002v\242\247C\271-\334\303&\033\r\206m\314\325y\244\"\332\021\330\3708<~\007\n\207\014\247\316+\336\2021fs,-(\201\020\036\235\027\021\306%a\300\312\232\030\367X\366\315\244\240\311\024\275]\225\367\345\027\327\277,\251\337\257\025Ae-\214\310\241\300:X\334\213sCnB\027\272Q\236\326\022\275\217\021\303+6mBA\352;6\246F\367sQ\022\357w\221U\346\264hI\370U\304X\213\342(l\321\266\347\r\024\274m\335M\226\241t\303d\223\033\\\320\301\0330\267\3013\323(:]\262K#MxF\215Ha>Y\223\231gd\022\003\244\3226\305\251v\275B\363\367RH]\335\224U\022ub\210B\377*Ap\343\231\241\326\206\023f\307\256k0-l\210@N\305,\363Gv9\332\232\263s\177\2542\022\n\010\351k\033\320:\341\031\215\236\226\013BdP\352\344\213\034\223v\373\0051T\240\304\304\211@\206E\010lTm#\375\262Z\003\027(c\254s?\223\201\365_\004~;\003\005\\\006\r\033\212\277\370\273\222)\302\204\202\370\010\302\350";
+    PyObject *data = __Pyx_DecompressString(cstring, 1084, 2);
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #elif (CYTHON_COMPRESS_STRINGS) != 0 /* compression: zlib (962 bytes) */
-const char* const cstring = "x\332\255UMo\0337\020\315O\231K ;\260\205\034\\\240(\\\027\251\343\002:4\tb\264W\202K\216V\254\271\344\206\037\262\224_\3377\334\225%\307FO=h\227K\316\307\2337o\250_\350\203\367d\335\300!\273\0302\215\211\r[\027\372\343&\275\2654\324\\\250cr\301\362\216-\351`)\304B\331;\230\377^\327kN\264u\374H6rnG\274\033cf\312%9\313\371V\007\212\301\357\311$\326\205IS79\225\215.\3442\231\030\212\353k\254\031Ih\340!\246\375\022^\022J\347\354\372@%\022\234\355e\2133YH\312\331h\016\374\230\\\321\235\347\331`\002\265Nq\370/\337V\026=\272\262\241\262\037\231\026\363~I:\344V\306\321e2\203\207\003U\345\204\273\217\247\204\271\211\204\311\350n\030\313\236\362F#t\251#\300\255c\"\263/\233\030\226:%\275_5\000\261\026\212k\352b\r6\323\231\336!\312[{\276z\231k\"\277\216cL\205\355*l\265w\350R\264|!\304\303\030MZ\230\005!\317\002\311\244\220\305\005\365\360:\030Op\300uKs\375g+\360o)\020\020>EP\331Zs\333PJ=\226\275\3538\201dP(mE\222\326\277@_\356\276\\^\375|\325d\221\370\037\244\317@\327\031\217\316A\016RSu\276 \231\320\233\227\264Z\323>V\n\014\230h\353\010\273S\207\262\341@\231\213,h\321z\241\013\352Vp\2076\0273\257n\313\342\375\207\366\231\227\237\237\221\007\310\263\300\2641\234\017l\336\027\036i\320\373\306\037\364\374\235S<\022\375Wh\312AH\250q\313\t\302(<\310w\354\244\250\345\315\342\3747m\255\nB\217\024K`\350\375\316D\357\005\016\032\263\324\235\271>\321\262\030M`o~\334>H\350\306\272,y\271e\357\r\235I\233\372\246\036\251@\206\221w\205Ci\243q\234K\227'\027+(\263\373\316t\375+\275\177\241\255\020\321\272\265\256\276\220R\211m5\254\024\331\332\n\r1\\\242\225[\247=N\215\013\256\340p*\367\346z\032^\373\254\212\227{\"\262\247b\236\235?\355\326'f\265\367\321\264\033@\260\221\325E/_9\235\324)1\346\013d\371\341\376v\265\272\363\336\215\331e\245\276\354w\370}\204\010\325'\260\363\225\327\367\374\255r0,\032^\036\345\214\206\034\242\252I\022\235\316lP\254\210M\251\303\242\347\"<\312\247\013\254\034\304\226\264\341N\233\007\003M\201\026+\311\224\025\t+@\230HBFL\035\207:\264\321\340\224bZ{\335g\264a""\320e\236=%\341s\021\014\312Y\374\006\231\\\274e\356\247\366\315=Tj\320\310\255p\341\310m##\215\217h\253\307;\350\341\370\204\020\360\344G%HF\300\034\343\250\324\010^\214\036\235\024\326\326\0336\017\271\016\323\327\014A\226\255\214\266\252at\346\001\361\357\302\301n\333\356P\211\361\255j?%<\212\347i5\311\354d\203w\262\354]\306\325\240\024&x\006\213\325\254\301\266\236a\234\254\017\221Z\337\205\007l'\234\361\230K\304/U\341\276`[\t^T[Gh\207q\227U\316;\033\253(\350l\322\305\314]\373s\272\240\327\366\\(\355A\357N_\347o\016q\346\367\273W\214\216\217\243\371\204\217fb\325\025x(\352\247Z\234\317\352\366\376\253x\232\215N\257\004:\177\003a\250>\305:\252\216\313#\224\024p]\235\354\032\217\377\237\037\366,\367\tW\347\377T\264\353\223\0367\247\351?\377\013\317\233\t\241";
-    PyObject *data = __Pyx_DecompressString(cstring, 962, 1);
+    #elif (CYTHON_COMPRESS_STRINGS) != 0 /* compression: zlib (969 bytes) */
+const char* const cstring = "x\332\255UMo\0337\020\315O\231K ;\260\205\034\\ (\\\027\251\343\002:41b\244W\202\"G+\326\\r\303\017}\344\327\367\rwe\311\261\321S\017\332\345\222\363\361\346\315\033\352W\372\350=Y\327s\310.\206LCb\303\326\205\356\270Io-\3655\027Z2\271`y\307\226t\260\024b\241\354\035\314\377\250\253\025'\3328\336\222\215\234\333\021\357\206\230\231rI\316r\276\325\201b\360{2\211ua\322\264\034\235\312Z\027r\231L\014\305u5\326\214$\324s\037\323~\016/\t\245sv]\240\022\t\316\366\262\305\031-$\345d4\005\336&W\364\322\363d0\202Z\245\330\377\227o+\213\266\256\254\251\354\007\246\331\264_\222\016\271\225qt\031\315\340\341@U9\341\356\323)an$a4\272\353\207\262\247\274\326\010]\352\000p\253\230\310\354\313:\206\271NI\357\027\r@\254\205\342\212\226\261\006\233\351L\357\020\345\255=_\274\3145\222_\207!\246\302v\0216\332;t)Z\276\020\342a\214&\315\314\214\220g\206dR\310\354\202:x\035\214G8\340\272\245\271\376\253\025\370\267\024\010\010\237#\250l\255\271m(\245\036\313\336-9\201dP(mE\222\326\277@\367w\367\227W\037\256\232,\022\377\203\364\031\350\226\306\243s\220\203\324T\235/H&\364\3469-V\264\217\225\002\003&\332:\300\356\324\241\2549P\346\"\013\232\265^\350\202\272\025\334\241\315\331\304\253\333\260x\377\251}\346\371\227g\344\001\362$0m\014\347\003\233\017\205\007\352\365\276\361\007=\377\340\024\217D\177\013M9\010\t5n8A\030\205{\371\216K)j~3;\377][\253\202\320#\305\022\030z\2773\321{\201\203\306\314\365\322\\\237hY\214F\2607?o\037$tc]\226\274\334\262w\206\316\244M]S\217T \303\310\273\302\241\264\3218\316\245\313\243\213\025\224\331\375`\272\376\215\336\277\320V\210h\335JW_H\251\304\266\032V\212lm\205\206\030.\321\312\215\323\036\247\306\005Wp8\226{s=\016\257}V\305\313=\021\331S1\317\316\237v\353\023\263\332\373h\332\r \330\310\352\242\347\257\234\216\352\224\030\323\0052\377\370p\273X\334y\357\206\354\262R\367\373\035~\237 B\365\031\354|\345\325\003\177\257\034\014\213\206\347G9\243!\207\250j\224\304Rg6(V\304\246\324a\321q\021\036\345\323\005V\016bK\332\360R\233G\003M\201\026+\311\224\025\t+@""\030IBFL\035\207\332\267\321\340\224bZy\335e\264\241\327e\232=%\341s\021\014\312Y\374z\231\\\274e\356\307\366M=T\252\327\310\255p\341\310m##\215\217h\253\307;\350\376\370\204\020\360\344\255\022$\003`\016qPj\000/F\017N\nk\3535\233\307\\\373\361k\202 \313VF[\32508\363\210\370w\341`\267iw\250\304\370^\265\037\023\036\305\363\264\032ev\262\301;Yv.\343jP\n\023<\201\305j\322`[O0N\326\207H\255\357\302\003\266\023\316x\310%\342\227\252p_\260\255\004/\252\255\003\264\303\270\313*\347\235\215U\024t6\352b\342\256\3759]\320k{.\224\366\240w\247\257\3637\2078\323\373\335+F\307\307\321|\304G\023\261\352\303\260\017E\033\020x\005F\212\372\245\026\347\263\272}\370*1\314Z\247WB\236\277\201DT\227b\035\324\222\313\026\232\n\270\270Nv\215\307?\321O{\226\273\204K\364\177*\337uI\017\353\323\364_\376\005\214\310\r\230";
+    PyObject *data = __Pyx_DecompressString(cstring, 969, 1);
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #else /* compression: none (2072 bytes) */
-const char* const bytes = ": All dimensions preceding dimension %d must be indexed and not slicedBuffer view does not expose stridesCan only create a buffer that is contiguous in memory.Cannot assign to read-only memoryviewCannot create writable memory view from read-only memoryviewCannot index with type 'Cannot transpose memoryview with indirect dimensionsDimension %d is not directEmpty shape tuple for cython.arrayIndex out of bounds (axis %d)Indirect dimensions not supportedInvalid mode, expected 'c' or 'fortran', got Invalid shape in axis <MemoryView of Note that Cython is deliberately stricter than PEP-484 and rejects subclasses of builtin types. If you need to pass subclasses then set the 'annotation_typing' directive to False.Out of bounds on buffer access (axis Step may not be zero (axis %d)Unable to convert item to object.>')?add_note and  at 0xcollections.abc<contiguous and direct><contiguous and indirect>disableenablegc (got got differing extents in dimension isenableditemsize <= 0 for cython.arrayno default __reduce__ due to non-trivial __cinit__ object><strided and direct><strided and direct or indirect><strided and indirect>unable to allocate array data.unable to allocate shape and strides.ASCIIEllipsis__Pyx_PyDict_NextRefSequenceView.MemoryViewabcallocate_bufferbasec__class____class_getitem__cline_in_tracebackcount__dict__dtype_is_objectencodeenumerateerrorflagsformatfortran__getstate__id__import__indexitemsitemsize__main__memviewmode__module__name__name__ndim__new__objpackpop__pyx_capi____pyx_checksum__pyx_state__pyx_type__pyx_unpickle_Enum__pyx_vtable____qualname____reduce____reduce_cython____reduce_ex__register__set_name__setdefault__setstate____setstate_cython__shapesizestartstepstopstruct__test__unpackupdatevaluesxdouble (__Pyx_memviewslice, __Pyx_memviewslice, int, int *, int *, int)\000double (double *, int *, int *, int, int, int)\000double (struct __pyx_t_4_ext_5utils_CSR *, char *, int *, int, int)\000get_group_betweenness\000get_group_closeness\000get_group_degreedoub""le (__Pyx_memviewslice, __Pyx_memviewslice, int, int *, int *, int)\000igraph_betweennessO";
+    #else /* compression: none (2082 bytes) */
+const char* const bytes = ": All dimensions preceding dimension %d must be indexed and not slicedBuffer view does not expose stridesCan only create a buffer that is contiguous in memory.Cannot assign to read-only memoryviewCannot create writable memory view from read-only memoryviewCannot index with type 'Cannot transpose memoryview with indirect dimensionsDimension %d is not directEmpty shape tuple for cython.arrayIndex out of bounds (axis %d)Indirect dimensions not supportedInvalid mode, expected 'c' or 'fortran', got Invalid shape in axis <MemoryView of Note that Cython is deliberately stricter than PEP-484 and rejects subclasses of builtin types. If you need to pass subclasses then set the 'annotation_typing' directive to False.Out of bounds on buffer access (axis Step may not be zero (axis %d)Unable to convert item to object.>')?add_note and  at 0xcollections.abc<contiguous and direct><contiguous and indirect>disableenablegc (got got differing extents in dimension isenableditemsize <= 0 for cython.arrayno default __reduce__ due to non-trivial __cinit__ object><strided and direct><strided and direct or indirect><strided and indirect>unable to allocate array data.unable to allocate shape and strides.ASCIIEllipsis__Pyx_PyDict_NextRefSequenceView.MemoryViewabcallocate_bufferbasec__class____class_getitem__cline_in_tracebackcount__dict__dtype_is_objectencodeenumerateerrorflagsformatfortran__getstate__id__import__indexitemsitemsize__main__memviewmode__module__name__name__ndim__new__objpackpop__pyx_capi____pyx_checksum__pyx_state__pyx_type__pyx_unpickle_Enum__pyx_vtable____qualname____reduce____reduce_cython____reduce_ex__register__set_name__setdefault__setstate____setstate_cython__shapesizestartstepstopstruct__test__unpackupdatevaluesxdouble (__Pyx_memviewslice, __Pyx_memviewslice, int, int *, int *, int)\000double (double *, int *, int *, int, int, int)\000double (struct __pyx_t_8pyntacle_4_ext_5utils_CSR *, char *, int *, int, int)\000get_group_betweenness\000get_group_closeness\000get_group_""degreedouble (__Pyx_memviewslice, __Pyx_memviewslice, int, int *, int *, int)\000igraph_betweennessO";
     PyObject *data = NULL;
     CYTHON_UNUSED_VAR(__Pyx_DecompressString);
     #endif

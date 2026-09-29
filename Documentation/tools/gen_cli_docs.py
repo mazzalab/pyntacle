@@ -142,7 +142,7 @@ def build_command_page(cmd: str, sp: argparse.ArgumentParser) -> str:
 
     # synopsis “pulito”: niente ANSI, niente {a|b|c}
     ph = positional_placeholders(actions)
-    syn = f"python3 main.py {cmd}"
+    syn = f"pyntacle {cmd}"
     if ph:
         syn += " " + " ".join(ph)
     syn += " [OPTIONS]"

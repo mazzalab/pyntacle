@@ -134,14 +134,14 @@ Examples
 .. code-block:: console
 
    # lengths (default): road distances
-   python3 main.py global -t edgelist -i roads.tsv -w
+   pyntacle global -t edgelist -i roads.tsv -w
 
    # strengths: interaction confidence scores in (0, 1]
-   python3 main.py keyplayer kp-finder -t edgelist -i ppi.tsv -w -wt affinity -k 3
+   pyntacle keyplayer kp-finder -t edgelist -i ppi.tsv -w -wt affinity -k 3
 
    # signed partial correlations, e.g. from `omics`; sensitivity to the transform
-   python3 main.py keyplayer kp-finder -t edgelist -i net.tsv -w -wt signed -k 2
-   python3 main.py keyplayer kp-finder -t edgelist -i net.tsv -w -wt signed -dt neglog -k 2
+   pyntacle keyplayer kp-finder -t edgelist -i net.tsv -w -wt signed -k 2
+   pyntacle keyplayer kp-finder -t edgelist -i net.tsv -w -wt signed -dt neglog -k 2
 
 References
 ----------

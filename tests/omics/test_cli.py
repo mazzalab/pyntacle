@@ -55,6 +55,6 @@ def test_cli_reports_unknown_group_column(tmp_path):
 
 
 def test_existing_commands_do_not_import_omics():
-    code = "import sys; sys.path.insert(0, 'pyntacle'); import main; print('omics' in sys.modules)"
+    code = "import sys; sys.path.insert(0, '.'); import pyntacle.main; print('pyntacle.omics' in sys.modules)"
     r = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, cwd=ROOT)
     assert r.stdout.strip().endswith("False"), r.stderr
