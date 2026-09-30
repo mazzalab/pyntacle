@@ -1,7 +1,39 @@
 """TCGA barcodes: sample type and one aliquot per patient (--tcga)."""
+import re
+
 import pandas as pd
 
+# GDC sample type codes -> group name; --tcga-types overrides
 TYPE_NAMES = {"01": "tumor", "11": "normal"}
+BARCODE = re.compile(r"^TCGA-[A-Z0-9]{2}-[A-Z0-9]{4}-\d{2}", re.IGNORECASE)
+
+
+def parse_types(spec):
+    """'01:tumor,11:normal' -> {'01': 'tumor', '11': 'normal'}."""
+    codes = {}
+    for item in spec.split(","):
+        code, _, name = item.strip().partition(":")
+        if not re.fullmatch(r"\d{2}", code) or not name.strip():
+            raise SystemExit("ERROR: --tcga-types expects CODE:NAME pairs such as "
+                             "01:tumor,11:normal; got {!r}".format(item))
+        codes[code] = name.strip()
+    if len(set(codes.values())) != len(codes):
+        raise SystemExit("ERROR: --tcga-types gives the same group name to two codes")
+    return codes
+
+
+def is_barcode(name):
+    return bool(BARCODE.match(str(name)))
+
+
+def orient_barcodes(X):
+    """Samples in columns, whichever way the file was written."""
+    in_cols = sum(map(is_barcode, X.columns))
+    in_rows = sum(map(is_barcode, X.index))
+    if in_cols == 0 and in_rows == 0:
+        raise SystemExit("ERROR: --tcga needs TCGA barcodes (TCGA-XX-XXXX-01A) as sample names; "
+                         "got names like {!r}".format(list(X.columns[:2])))
+    return X if in_cols >= in_rows else X.T
 
 
 def sample_type(barcode):
@@ -34,7 +66,7 @@ def dedup_by_patient(cols, prefer_vial="A"):
 
 
 def tcga_groups(columns, codes=TYPE_NAMES):
-    types = {c: sample_type(c) for c in columns}
+    types = {c: sample_type(c) if is_barcode(c) else None for c in columns}
     other = [c for c in columns if types[c] not in codes]
     # samples ordered by group, then by patient id (dedup order), as in the case
     # study: the permutation null shuffles sample rows, so this order is part

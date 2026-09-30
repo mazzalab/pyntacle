@@ -30,6 +30,9 @@ def run(X, labels, *, prov, meta=None, prevalence="auto", covariates=None,
         th = float(prevalence)
         prov.record("panel", "prevalence", th, "user")
     taxa = panel.union_panel(by_group, th)
+    if len(taxa) < 2:
+        raise SystemExit("ERROR: prevalence {} leaves {} taxa; a network needs at least 2".format(
+            th, len(taxa)))
     prov.record("panel", "n_taxa", len(taxa), "data-driven")
 
     results = {}

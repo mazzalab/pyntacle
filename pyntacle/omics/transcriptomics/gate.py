@@ -22,6 +22,9 @@ def expression_bias_pvalue(df, design=None, top=100):
     best = np.argsort(-np.abs(pcor))[:top]
     mask = np.zeros(X.shape[1], dtype=bool)
     mask[np.unique(np.concatenate([iu[0][best], iu[1][best]]))] = True
+    if mask.all():
+        raise SystemExit("ERROR: the {} strongest edges touch all {} genes, leaving none to compare "
+                         "them with: lower --gate-top".format(top, X.shape[1]))
     pval = mannwhitneyu(mean_expr[mask], mean_expr[~mask], alternative="less").pvalue
     return float(pval), X.shape[1], float(mean_expr[mask].mean()), float(mean_expr[~mask].mean())
 

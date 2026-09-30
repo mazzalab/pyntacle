@@ -26,6 +26,10 @@ def run(X, labels, *, prov, meta=None, input_scale="auto", annotation=None,
     detected = scale.detect_scale(X) if input_scale == "auto" else input_scale
     prov.record("scale", "input_scale", detected,
                 "data-driven" if input_scale == "auto" else "user")
+    if input_scale == "counts" and not np.allclose(X.values, np.round(X.values)) \
+            and np.nanmax(X.values) <= scale.LOG_MAX:
+        prov.warn("--input-scale counts on non-integer values no larger than {}: if they are "
+                  "log2(count + 1), the counts are wrong".format(scale.LOG_MAX))
     counts = scale.to_counts(X, detected)
 
     log_norm, sf = normalize.log_normalise(counts)

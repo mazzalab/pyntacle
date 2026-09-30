@@ -21,6 +21,28 @@ if os.environ.get("PYNTACLE_DOCS", "0") == "1":
     Fore = Style = _NoColor()
 
 
+def _number(kind, test, text):
+	def check(value):
+		try:
+			x = kind(value)
+		except ValueError:
+			raise argparse.ArgumentTypeError("{!r} is not {}".format(value, text))
+		if not test(x):
+			raise argparse.ArgumentTypeError("{!r} is not {}".format(value, text))
+		return x
+	return check
+
+
+_pos_int = _number(int, lambda x: x >= 1, "a positive integer")
+_nonneg_int = _number(int, lambda x: x >= 0, "a non-negative integer")
+_fraction = _number(float, lambda x: 0 < x < 1, "a number between 0 and 1")
+_stars_beta = _number(float, lambda x: 0 < x < 0.5, "a number between 0 and 0.5")
+
+
+def _prevalence(value):
+	return "auto" if value == "auto" else _number(float, lambda x: 0 < x <= 1, "'auto' or a number in (0, 1]")(value)
+
+
 def _installed_version():
 	try:
 		return version("pyntacle")
@@ -54,10 +76,10 @@ def create_parser() -> argparse.ArgumentParser:
 	##       and it provides a range of tools for network topology analysis.                           ##
 	#####################################################################################################
 
-	''' +  Style.RESET_ALL , add_help=False,  usage="pyntacle" + Fore.RED + " command" + Fore.MAGENTA + " [subcommand]" + Fore.CYAN + " parameters"+Style.RESET_ALL, formatter_class=argparse.RawDescriptionHelpFormatter)
+	''' +  Style.RESET_ALL , add_help=False, prog="pyntacle", usage="pyntacle" + Fore.RED + " command" + Fore.MAGENTA + " [subcommand]" + Fore.CYAN + " parameters"+Style.RESET_ALL, formatter_class=argparse.RawDescriptionHelpFormatter)
 	parser.add_argument('-h', '--help', action='help', default=argparse.SUPPRESS, help='Show this help message and exit')
 	parser.add_argument('-v', '--version', action='version', version='Pyntacle ' + _installed_version(), help='Show version number and quit')
-	subparsers = parser.add_subparsers(dest='command', title="Functions",  metavar= Fore.CYAN + Style.BRIGHT + "The available commands in Pyntacle are:\n" + Style.RESET_ALL)
+	subparsers = parser.add_subparsers(dest='command', prog='pyntacle', title="Functions",  metavar= Fore.CYAN + Style.BRIGHT + "The available commands in Pyntacle are:\n" + Style.RESET_ALL)
 	parser._optionals.title = 'Optional arguments'
 
 	def check_prob(prob):
@@ -348,33 +370,35 @@ def create_parser() -> argparse.ArgumentParser:
 	percolation.add_argument('-v', '--verbose', action='store_true', help='-[optional] Use this flag to receive prints of partial results of the measures.', required=False)
 
 	# ---- omics ----
-	omics = subparsers.add_parser('omics', usage=Fore.GREEN + Style.BRIGHT + 'pyntacle ' + Fore.RED + 'omics ' + Fore.MAGENTA + '{transcriptomics | metagenomics}' + Fore.CYAN + ' -i {matrix} -m {metadata} --group-col {column} -o {outdir} [optional parameters]' + Style.RESET_ALL,
-		help='''Builds one network per sample group from a raw count (transcriptomics) or relative-abundance (metagenomics) matrix, ready for the other Pyntacle commands. Needs: pip install scikit-learn statsmodels''',
-		description=Fore.RED + Style.BRIGHT + '''Pipelines:\n''' + Fore.GREEN + Style.BRIGHT + ''' · transcriptomics:''' + Style.RESET_ALL + Fore.CYAN + ''' raw counts (or log2(count+1)) -> median-of-ratios -> GMM gene selection -> expression gate -> Ledoit-Wolf partial correlations -> permutation FDR.\n\n''' + Fore.GREEN + Style.BRIGHT + ''' · metagenomics:''' + Style.RESET_ALL + Fore.CYAN + ''' relative abundances -> prevalence panel -> closure, multiplicative replacement, CLR -> graphical lasso with StARS.\n\n''' + Style.RESET_ALL + '''Edge list Weight = 1 - |r| (a distance, as Pyntacle expects); the signed r is in the GraphML.''',
+	omics = subparsers.add_parser('omics', allow_abbrev=False, usage=Fore.GREEN + Style.BRIGHT + 'pyntacle ' + Fore.RED + 'omics ' + Fore.MAGENTA + '{transcriptomics | metagenomics}' + Fore.CYAN + ' -i {matrix} (-m {metadata} --group-col {column} | --tcga) -o {outdir} [optional parameters]' + Style.RESET_ALL,
+		help='''Builds one network per sample group from a raw count (transcriptomics) or abundance (metagenomics) matrix, ready for the other Pyntacle commands. Needs: pip install scikit-learn statsmodels''',
+		description=Fore.RED + Style.BRIGHT + '''Pipelines:\n''' + Fore.GREEN + Style.BRIGHT + ''' · transcriptomics:''' + Style.RESET_ALL + Fore.CYAN + ''' raw counts (or log2(count+1)) -> median-of-ratios -> GMM gene selection -> expression gate -> Ledoit-Wolf partial correlations -> permutation FDR.\n\n''' + Fore.GREEN + Style.BRIGHT + ''' · metagenomics:''' + Style.RESET_ALL + Fore.CYAN + ''' relative abundances or read counts -> prevalence panel -> closure, multiplicative replacement, CLR -> graphical lasso with StARS.\n\n''' + Style.RESET_ALL + '''The edge list Weight is the signed partial correlation r: analyse the networks with -w --weight-type signed.''',
 		formatter_class=argparse.RawDescriptionHelpFormatter)
 	omics.add_argument(dest='subcommand', choices=['transcriptomics', 'metagenomics'], help='Select the pipeline')
-	omics.add_argument('-i', '--inputFile', required=True, help='-[required] Feature x sample matrix (or sample x feature: detected from the metadata ids). TSV, or CSV by extension; may be gzipped')
+	omics.add_argument('-i', '--inputFile', required=True, help='-[required] Feature x sample matrix (or sample x feature: detected from the metadata ids). TSV, or CSV by extension; may be compressed')
 	omics.add_argument('-m', '--metadata', default=None, help='-[required unless --tcga] Sample metadata table, first column = sample id')
 	omics.add_argument('--group-col', default=None, help='-[required with -m] Metadata column with the sample group (one network per group)')
 	omics.add_argument('--groups', default=None, help='-[optional] Comma-separated group values to keep (default: all)')
 	omics.add_argument('-o', '--outdir', required=True, help='-[required] Output directory (created if missing)')
-	omics.add_argument('--prefix', default=None, help='-[optional] Output file prefix (default: input file name)')
-	omics.add_argument('--sep', default=None, help='-[optional] Field separator (default: comma for .csv, tab otherwise)')
+	omics.add_argument('--prefix', default=None, help='-[optional] Output file prefix (default: input file name without extension)')
+	omics.add_argument('--sep', default=None, help='-[optional] Field separator of the matrix and the metadata (default: comma for .csv, tab otherwise)')
 	omics.add_argument('--covariates', default=None, help='-[optional] Comma-separated metadata columns regressed out of every feature, per group')
-	omics.add_argument('--seed', type=int, default=None, help='-[optional] Random seed (default: 20260731 transcriptomics, 0 metagenomics)')
+	omics.add_argument('--seed', type=_nonneg_int, default=None, help='-[optional] Random seed (default: 20260731 transcriptomics, 0 metagenomics)')
 	omics.add_argument('--save-stages', action='store_true', help='-[optional] Also write the intermediate matrices')
 	omics.add_argument('--input-scale', choices=['auto', 'counts', 'log2p1'], default='auto', help='-[transcriptomics] Scale of the input values (default: detected)')
-	omics.add_argument('--tcga', action='store_true', help='-[transcriptomics] Groups from TCGA barcodes (01 tumor, 11 normal), one aliquot per patient; -m not needed')
+	omics.add_argument('--tcga', action='store_true', help='-[transcriptomics] Groups from the TCGA barcodes (see --tcga-types), one sample per patient; replaces -m and --group-col')
+	omics.add_argument('--tcga-types', default='01:tumor,11:normal', help='-[transcriptomics] With --tcga: sample type codes to keep and their group names (default 01:tumor,11:normal)')
 	omics.add_argument('--biotype', default=None, help="-[transcriptomics] 'mygene' or an annotation file (columns gene,symbol,type_of_gene): keep protein-coding + ncRNA")
 	omics.add_argument('--drop-sex-genes', action='store_true', help='-[transcriptomics] Remove 16 sex-linked genes (needs --biotype)')
-	omics.add_argument('--gate-alpha', type=float, default=0.05, help='-[transcriptomics] Significance of the expression-bias test (default 0.05)')
-	omics.add_argument('--gate-top', type=int, default=100, help='-[transcriptomics] Strongest edges inspected by the gate (default 100)')
-	omics.add_argument('--gate-min-genes', type=int, default=300, help='-[transcriptomics] Stop raising the gate below this many genes (default 300)')
-	omics.add_argument('--fdr', type=float, default=0.001, help='-[transcriptomics] Edge FDR (default 0.001)')
-	omics.add_argument('--n-perm', type=int, default=3, help='-[transcriptomics] Permutations for the null (default 3)')
-	omics.add_argument('--prevalence', default='auto', help="-[metagenomics] Prevalence threshold, or 'auto' (default)")
-	omics.add_argument('--stars-beta', type=float, default=0.10, help='-[metagenomics] StARS instability bound (default 0.10)')
-	omics.add_argument('--n-sub', type=int, default=50, help='-[metagenomics] StARS subsamples (default 50)')
+	omics.add_argument('--gate-alpha', type=_fraction, default=0.05, help='-[transcriptomics] Significance of the expression-bias test (default 0.05)')
+	omics.add_argument('--gate-top', type=_pos_int, default=100, help='-[transcriptomics] Strongest edges inspected by the gate (default 100)')
+	omics.add_argument('--gate-min-genes', type=_pos_int, default=300, help='-[transcriptomics] Stop raising the gate below this many genes (default 300)')
+	omics.add_argument('--fdr', type=_fraction, default=0.001, help='-[transcriptomics] Edge FDR (default 0.001)')
+	omics.add_argument('--n-perm', type=_pos_int, default=3, help='-[transcriptomics] Permutations for the null (default 3)')
+	omics.add_argument('--rank', choices=['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'strain'], default=None, help='-[metagenomics] Taxonomic rank to analyse when the feature ids are lineages (MetaPhlAn, QIIME 2)')
+	omics.add_argument('--prevalence', type=_prevalence, default='auto', help="-[metagenomics] Prevalence threshold in (0, 1], or 'auto' (default)")
+	omics.add_argument('--stars-beta', type=_stars_beta, default=0.10, help='-[metagenomics] StARS instability bound, in (0, 0.5) (default 0.10)')
+	omics.add_argument('--n-sub', type=_pos_int, default=50, help='-[metagenomics] StARS subsamples (default 50)')
 	omics._optionals.title = Fore.CYAN + Style.BRIGHT + "Arguments" + Style.RESET_ALL
 	omics._positionals.title = Fore.MAGENTA + Style.BRIGHT + "Subcommand" + Style.RESET_ALL
 
