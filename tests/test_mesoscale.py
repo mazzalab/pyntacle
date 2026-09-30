@@ -187,9 +187,8 @@ def _peak(fn, g, k, **kwargs):
     (gtom, {}),
 ])
 def test_mesoscale_memory_independent_of_k(fn, kwargs):
-    # The old code stored every step in a (k, n, n) cube, so its peak grew
-    # linearly with k. The refactor keeps only a running sum plus the last
-    # slice, so a 6x-deeper propagation must not cost meaningfully more memory.
+    # Only a running sum and the last step are kept, never a (k, n, n) cube,
+    # so a 6x-deeper propagation must not cost meaningfully more memory.
     n = 400
     g0 = ig.Graph.Erdos_Renyi(n=n, m=3 * n)
     g0.simplify()

@@ -86,6 +86,19 @@ def first_set_only(df):
 	return df[df["SetID"] == 1].drop(columns=["SetID"]).reset_index(drop=True)
 
 
+def info_node_set(g, nodes_arg, subcommand):
+	"""The node set given with -n to kp-info / gc-info, checked against the graph."""
+	if not nodes_arg:
+		sys.exit(Fore.RED + Style.BRIGHT + f"ERROR: {subcommand} needs a node set: give it with -n "
+		         "(comma-separated node names)" + Style.RESET_ALL)
+	nodes = [n.strip() for n in nodes_arg.split(",") if n.strip()]
+	unknown = sorted(set(nodes) - set(g.vs["name"]))
+	if unknown:
+		sys.exit(Fore.RED + Style.BRIGHT + "ERROR: nodes not in the network: " + ", ".join(unknown)
+		         + Style.RESET_ALL)
+	return nodes
+
+
 def main(args):
 
 	if getattr(args, "outdir", None):
@@ -387,29 +400,19 @@ def main(args):
 				create_groupcentrality_html(with_tie_columns(df_html, "NodeSet", tie_info), g, outdir, filename)
 
 		elif args.subcommand == "gc-info":
-			
-			if args.nodes is None:
-				print(Fore.YELLOW + Style.BRIGHT + "WARNING: No nodes specified. Specify the nodes using the -n flag" + Style.RESET_ALL)
-				return
-			
-			nodes=args.nodes.split(",")
 
+			nodes = info_node_set(g, args.nodes, args.subcommand)
+			operations = ["degree", "closeness", "betweenness"] if args.operation == "all" else [args.operation]
+			scores = [cython_wrapper_info(g, nodes, oper, distance_type=args.value, mdist=-1,
+			                              n_threads=int(args.nprocs)) for oper in operations]
+			df = pd.DataFrame({"Operation": operations, "Node-set": [nodes] * len(operations), "Score": scores})
+			g.nameSub_function("info_" + args.operation)
 
-			if args.operation=="all":
-
-				info_results = []
-				for oper in ["degree", "betweenness", "closeness"]:
-					info_results.append((nodes, cython_wrapper_info(g, nodes, oper, distance_type=args.value, mdist=-1, n_threads=int(args.nprocs))))
-
-				df = pd.DataFrame(info_results, columns=["Node-set","Score"])
-				df.insert(0, 'Operation', ["degree","betweenness","closeness"])
-				g.nameSub_function("info_"+args.operation)
-
-			else:
-
-				score = cython_wrapper_info(g, nodes, args.operation, distance_type=args.value, mdist=-1, n_threads=int(args.nprocs))
-				df = pd.DataFrame({"Node-set" : "[" + ",".join(nodes) + "]", args.operation : score}, index=[0]) 
-				g.nameSub_function("info_"+args.operation)
+			if not no_plot:
+				df_html = pd.DataFrame({"Operation": operations,
+				                        "NodeSet": [list(nodes) for _ in operations],
+				                        "Score": scores})
+				create_groupcentrality_html(with_tie_columns(df_html, "NodeSet"), g, outdir, filename)
 
 		else:
 			raise TypeError("Select the correct subcommand [gc-finder | gc-info]") 
@@ -497,27 +500,12 @@ def main(args):
 
 		elif args.subcommand == "kp-info":
 
-			if args.nodes is None:
-				print(Fore.YELLOW + Style.BRIGHT + "WARNING: No nodes specified. Specify the nodes using the -n flag" + Style.RESET_ALL)
-				return
-
-			nodes=args.nodes.split(",")
-
-			if args.operation=="all":
-
-				info_results = []
-				for oper in ['F', 'dF', 'dR', 'mreach']:
-					info_results.append((nodes, cython_wrapper_info(g, nodes, oper, distance_type='min', mdist=int(args.mdist), n_threads=int(args.nprocs))))
-
-				df = pd.DataFrame(info_results, columns=["Key-player","Score"])
-				df.insert(0, 'Operation', ["F","dF","dR","mreach"])
-				g.nameSub_function("info_"+args.operation+"_"+args.algorithm)
-
-			else:
-
-				score = cython_wrapper_info(g, nodes, args.operation, distance_type='min', mdist=int(args.mdist), n_threads=int(args.nprocs))
-				df = pd.DataFrame({"Key-player" : "[" + ",".join(nodes) + "]", args.operation : score}, index=[0]) 
-				g.nameSub_function("info_"+args.operation)
+			nodes = info_node_set(g, args.nodes, args.subcommand)
+			operations = ["F", "dF", "dR", "mreach"] if args.operation == "all" else [args.operation]
+			scores = [cython_wrapper_info(g, nodes, oper, distance_type='min', mdist=int(args.mdist),
+			                              n_threads=int(args.nprocs)) for oper in operations]
+			df = pd.DataFrame({"Operation": operations, "Key-player": [nodes] * len(operations), "Score": scores})
+			g.nameSub_function("info_" + args.operation)
 		
 		else:
 		
@@ -917,18 +905,11 @@ def main(args):
 
 			# The HTML report reads one row per operation: Operation, KeySet, Score.
 			if args.subcommand == "kp-info":
-				if args.operation == "all":
-					df_html = pd.DataFrame({
-						"Operation": df["Operation"],
-						"KeySet": [list(nodes) for _ in range(len(df))],
-						"Score": df["Score"],
-					})
-				else:
-					df_html = pd.DataFrame({
-						"Operation": [str(args.operation)],
-						"KeySet": [list(nodes)],
-						"Score": [df[str(args.operation)].iloc[0]],
-					})
+				df_html = pd.DataFrame({
+					"Operation": df["Operation"],
+					"KeySet": [list(nodes) for _ in range(len(df))],
+					"Score": df["Score"],
+				})
 			elif tie_info:
 				operations = list(tie_info)
 				df_html = pd.DataFrame({

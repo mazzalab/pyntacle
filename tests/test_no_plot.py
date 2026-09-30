@@ -1,11 +1,6 @@
 """--no-plot must suppress every figure and HTML report, on every command that
-produces one, while still writing the TSV.
-
-Old Pyntacle ships --no-plot; the benchmark comparing it against this tool
-runs both arms with report generation off so wall-clock time measures metric
-computation, not "new also drew a plot / built a D3 page old never had at
-all". This pins that the flag actually reaches every plotting/HTML call site,
-not just the ones exercised by the smoke test that first added it.
+produces one, while still writing the TSV: each command is run once with and
+once without the flag, so every plotting and HTML call site is covered.
 """
 import os
 import subprocess
@@ -62,7 +57,7 @@ def test_groupcentrality_gcfinder_no_plot_skips_html_and_svg(tmp_path):
                               "-oper", "degree", "-a", "greedy", "--seed", "1")
 
 
-def test_groupcentrality_gcinfo_no_plot_skips_svg(tmp_path):
+def test_groupcentrality_gcinfo_no_plot_skips_html_and_svg(tmp_path):
     _assert_plots_suppressed(tmp_path, "groupcentrality", "gc-info", "-n", "A,B",
                               "-oper", "degree")
 

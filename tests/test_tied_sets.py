@@ -1,8 +1,7 @@
 """Brute-force search must report every node set that reaches the best score.
 
-Pyntacle 1.3.2 enumerated all optimal sets; the rewritten kernel kept a single
-winner per thread and dropped the rest, so a run on a symmetric network hid most
-of the answer. These tests pin the recovered behaviour.
+On a symmetric network many sets tie for the optimum; every one of them has to
+reach the report, across threads, engines and the CLI.
 """
 import json
 import os
@@ -81,7 +80,7 @@ def test_unique_optimum_reports_a_single_set():
 
 
 def test_score_is_not_rounded_by_the_kernel():
-    """The kernel used to round to 3 decimals, which cost precision old Pyntacle kept.
+    """The kernel returns the exact score; rounding happens only in the report.
 
     Deleting two opposite nodes of C10 leaves two paths of 4 nodes, so
     F = 1 - (4*3 + 4*3) / (8*7) = 0.571428..., which 3 decimals truncate.

@@ -1,15 +1,11 @@
 """Regression tests for create_html.create_local_html.
 
-Covers the local-metrics HTML report rewrite:
-  * the report used to embed a dense (n, n) adjacency matrix as a JS literal
-    and scan it with a nested forEach to build links -- both an O(n^2) memory
-    and CPU cost that scaled with n regardless of how sparse the graph was;
-  * str({grafo.removed}) crashed with "unhashable type: list" any time
-    -r/--remove was combined with the local command, since grafo.removed is a
-    list of names, not a hashable value;
-  * there was no size-based fallback at all: a large graph got the same
-    animated D3 force layout as a 10-node graph, with no guard against
-    handing the browser something it can't render smoothly.
+Covers the local-metrics HTML report:
+  * the network is embedded as an edge list, so size and build time grow with
+    the number of edges, not with n squared;
+  * -r/--remove combined with the local command lists the removed nodes;
+  * the view depends on the network size: animated layout for small graphs,
+    static layout for mid-size ones, table only for the largest.
 """
 import json
 

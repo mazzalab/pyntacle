@@ -43,7 +43,7 @@ Weight types
 ------------
 
 ``--weight-type distance`` (default)
-   The weights are lengths, as in Pyntacle 1.x: kilometres, costs, times.
+   The weights are lengths: kilometres, costs, times.
    Every weight must be positive. Strength-based measures use 1/w.
 
 ``--weight-type affinity``

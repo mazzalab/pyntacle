@@ -219,11 +219,15 @@ Find best 3-node group for betweenness using brute-force:
 
 Output files:
 
-- ``report_<graph>_groupcentrality_<subcommand>_<operation>_<algorithm>.tsv`` — results table
+- ``report_<graph>_groupcentrality_finder_<operation>_<algorithm>.tsv``
+  (``gc-finder``) or ``report_<graph>_groupcentrality_info_<operation>.tsv``
+  (``gc-info``) — results table
 - ``<graph>_groupcentrality.html`` — interactive network report (D3), same
   metric-highlight/search/edge-toggle/SVG+PNG-export pattern as the
-  keyplayer report. **Only produced by** ``gc-finder`` — ``gc-info`` writes
-  its TSV report but does not generate an HTML view.
+  keyplayer report. Written by both ``gc-finder`` and ``gc-info``.
+
+``gc-info`` needs the node set (``-n``) and stops with an error if it is
+missing or names nodes that are not in the network.
 
 See :doc:`../../groupCentrality/groupCentrality` for metric definitions and
 :doc:`../../outputs` for report documentation.

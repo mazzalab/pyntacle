@@ -234,13 +234,8 @@ def test_cython_greedy_is_reproducible_with_a_seed(zachary, oper):
 
 
 def test_cli_remove_node_survives_the_graphtacle_rebuild(tmp_path):
-    """Regression: -r's node list used to vanish from every downstream report.
-
-    main.py stamps `g.removed` via remove_node(), then deletes those vertices
-    and rebuilds `g` with Graphtacle.re() -- but re() calls __init__, which
-    resets self.removed = None on the *new* instance, silently discarding it.
-    Every report (HTML/TSV) then printed "Removed nodes: None" even though -r
-    was passed and the vertices really were gone.
+    """-r's node list must survive the Graphtacle.re() rebuild that follows the
+    removal, and appear in every report (HTML and TSV).
     """
     edgelist = tmp_path / "toy.tsv"
     edgelist.write_text("A\tB\nB\tC\nC\tD\nD\tA\nA\tC\n")

@@ -129,7 +129,8 @@ The data section is a two-column ``Measure / Score`` table (one metric per row):
 Key-Player Report
 ------------------
 
-**Filename pattern:** ``report_<graph>_keyplayer_<subcommand>_<operation>_<algorithm>.tsv``
+**Filename pattern:** ``report_<graph>_keyplayer_finder_<operation>_<algorithm>.tsv``
+(``kp-finder``) or ``report_<graph>_keyplayer_info_<operation>.tsv`` (``kp-info``)
 
 **Command:** ``pyntacle keyplayer kp-finder`` or ``kp-info``
 
@@ -162,20 +163,35 @@ For ``--operation all``, the data section has three columns:
    dR         ['KR', 'HB']  0.683
    mreach     ['HA', 'NP']  25.0
 
-For a single ``--operation``, the table has two columns: ``Key-player`` and the
-operation name (e.g., ``F``).
+For a single ``--operation``, the ``kp-finder`` table has two columns:
+``Key-player`` and the operation name (e.g., ``F``). With ``-a brute_force``,
+every set that reaches the optimum is listed, numbered in a ``SetID`` column,
+and the report header states how many optimal sets exist.
 
-For ``kp-info``, the table has ``Key-player``, ``Operation``, and ``Score`` columns.
+``kp-info`` scores the node set given with ``-n``. Its table always has the
+columns ``Operation``, ``Key-player`` and ``Score``, one row per operation
+(four rows with ``-oper all``, one otherwise):
+
+.. code-block:: text
+
+   Operation  Key-player    Score
+   F          ['HS', 'BR']  0.0
+   dF         ['HS', 'BR']  0.646
+   dR         ['HS', 'BR']  0.365
+   mreach     ['HS', 'BR']  10.0
 
 Group Centrality Report
 ------------------------
 
-**Filename pattern:** ``report_<graph>_groupcentrality_<subcommand>_<operation>_<algorithm>.tsv``
+**Filename pattern:** ``report_<graph>_groupcentrality_finder_<operation>_<algorithm>.tsv``
+(``gc-finder``) or ``report_<graph>_groupcentrality_info_<operation>.tsv`` (``gc-info``)
 
 **Command:** ``pyntacle groupcentrality gc-finder`` or ``gc-info``
 
 Same structure as the key-player report but the metric names are:
-``degree``, ``betweenness``, ``closeness`` (scored in [0, 1]).
+``degree``, ``closeness``, ``betweenness`` (scored in [0, 1]). The ``gc-info``
+table has the columns ``Operation``, ``Node-set`` and ``Score``, one row per
+operation.
 
 Mesoscale Report
 -----------------
@@ -280,15 +296,13 @@ graphs too large to render as a network at all.
   filter, and SVG/PNG export of the currently filtered view.
 - ``keyplayer`` (both ``kp-finder`` and ``kp-info``) writes
   ``<graph>_keyplayer.html``: a metric dropdown auto-highlights that
-  metric's key-player node set with its score — one set at a time, since
-  every KPP algorithm returns a single optimal (or best-found) set per
-  metric rather than several candidates. No filtering UI. Search,
-  edge-toggle, and SVG/PNG export are also available.
-- ``groupcentrality`` writes ``<graph>_groupcentrality.html`` **only from**
-  ``gc-finder`` — ``gc-info`` writes a TSV report but currently generates no
-  HTML view. Same metric-select-highlight/search/edge-toggle/export pattern
-  as the keyplayer report (degree/betweenness/closeness instead of the four
-  KPP metrics).
+  metric's key-player node set with its score. When brute force finds
+  several optimal sets, the report says how many and lets you step through
+  them. Search, edge-toggle, and SVG/PNG export are also available.
+- ``groupcentrality`` (both ``gc-finder`` and ``gc-info``) writes
+  ``<graph>_groupcentrality.html``, with the same metric-select-highlight/
+  search/edge-toggle/export pattern as the keyplayer report
+  (degree/closeness/betweenness instead of the four KPP metrics).
 - ``percolation`` writes ``<graph>_percolation.html``: a different kind of
   report (Plotly, not D3) since it visualizes a *time-evolving* process
   rather than a single static/optimal state — an animated network view

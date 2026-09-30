@@ -253,11 +253,14 @@ Output files:
 - ``report_figure_8_keyplayer_finder_all_greedy.tsv`` — results table
 - ``figure_8_keyplayer_finder_all_greedy.svg`` — multi-metric static visualization
 - ``figure_8_keyplayer.html`` — interactive network report (D3): a metric
-  dropdown auto-highlights that metric's key-player node set with its score
-  (one set at a time — Pyntacle's algorithms return a single optimal set per
-  metric, not multiple candidates to browse). Also has search, edge toggle,
-  and SVG/PNG export. Same size-tiered fallback as the local report. Written
-  by both ``kp-finder`` and ``kp-info``.
+  dropdown auto-highlights that metric's key-player node set with its score;
+  when brute force finds several optimal sets, the report says how many and
+  lets you choose among them. Also has search, edge toggle, and SVG/PNG
+  export. Same size-tiered fallback as the local report. Written by both
+  ``kp-finder`` and ``kp-info``.
+
+``kp-info`` needs the node set (``-n``) and stops with an error if it is
+missing or names nodes that are not in the network.
 
 See :doc:`../../keyPlayers/keyPlayers` for metric definitions and
 :doc:`../../outputs` for column documentation.

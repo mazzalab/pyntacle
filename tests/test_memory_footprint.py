@@ -1,10 +1,8 @@
 """The compiled kernels must not materialise a dense n x n adjacency.
 
-The wrapper used to hand the kernels ``graph.get_adjacency(...).data`` -- an
-n-by-n Python list of lists, then an n-by-n numpy copy. At n=20k that is a
-3.2 GB wall (twice that with the igraph copy) for a graph that may have only a
-few edges per node. The kernels build their CSR and their igraph view from an
-edge list instead, so the footprint has to track E, not n squared.
+The kernels build their CSR and their igraph view from an edge list, so the
+footprint has to track the number of edges, not n squared: a dense adjacency
+at n=20k would take several GB for a graph with a few edges per node.
 """
 import gc
 import tracemalloc
@@ -75,9 +73,8 @@ def test_distance_matrix_matches_igraph_including_unreachable():
 
 
 def test_distance_matrix_never_builds_the_full_python_list():
-    """igraph's distances() returns n lists of n Python floats -- ~32 bytes a
-    cell instead of 8. The global command used to hold two of those at n=10k
-    (6.3 GB peak). Built chunk by chunk, the peak is the array plus one chunk."""
+    """igraph's distances() returns n lists of n Python floats, ~32 bytes a
+    cell instead of 8. Built chunk by chunk, the peak is the array plus one chunk."""
     from pyntacle.utility import distance_matrix
     n = 3000
     g = ig.Graph.Erdos_Renyi(n=n, m=3 * n)
