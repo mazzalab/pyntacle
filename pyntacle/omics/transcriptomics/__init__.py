@@ -31,6 +31,10 @@ def run(X, labels, *, prov, meta=None, input_scale="auto", annotation=None,
         prov.warn("--input-scale counts on non-integer values no larger than {}: if they are "
                   "log2(count + 1), the counts are wrong".format(scale.LOG_MAX))
     counts = scale.to_counts(X, detected)
+    empty = list(counts.columns[counts.sum(axis=0) == 0])
+    if empty:
+        raise SystemExit("ERROR: {} sample(s) with no counts: {}".format(
+            len(empty), ", ".join(map(str, empty[:5]))))
 
     log_norm, sf = normalize.log_normalise(counts)
     prov.diagnostic("size_factors", sf.describe().round(4).to_dict())

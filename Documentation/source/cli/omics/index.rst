@@ -54,7 +54,8 @@ Input
   distributed by UCSC Xena; the scale is detected. Normalised values (TPM,
   FPKM, their logarithms, z-scores) are refused.
 * **Metagenomics values**: relative abundances, as fractions or percentages,
-  or read counts; closure makes them equivalent.
+  or read counts; closure makes them equivalent. Log- or CLR-transformed
+  tables (negative values) are refused: the pipeline applies the CLR itself.
 
 Microbiome profilers
 ~~~~~~~~~~~~~~~~~~~~
@@ -317,8 +318,9 @@ letters and digits replaced by ``_``):
    The same edges with the attributes ``assoc_weight`` (signed partial
    correlation), ``abs_r`` and, for transcriptomics, ``q_value``. Node
    attributes: ``mean_log2_expr``, plus ``symbol`` and ``biotype`` with
-   ``--biotype`` (transcriptomics); ``mean_rel_abundance`` and
-   ``prevalence`` (metagenomics).
+   ``--biotype`` (transcriptomics); ``mean_rel_abundance`` (mean share
+   of the sample total, 0–1, whatever the input unit) and ``prevalence``
+   (metagenomics).
 
 ``<prefix>_report.tsv`` and ``<prefix>_report.json``
    Every value used, with its kind (data-driven / default / user), the

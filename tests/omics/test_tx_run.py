@@ -50,3 +50,13 @@ def test_xena_log_scale_gives_the_same_network_as_counts():
     else:
         for g in ("A", "B"):
             assert runs[0][g]["edges"].equals(runs[1][g]["edges"])
+
+
+def test_run_refuses_a_sample_without_counts():
+    rng = np.random.default_rng(7)
+    X = pd.DataFrame(rng.poisson(50, (60, 40)).astype(float), index=["g{}".format(i) for i in range(60)],
+                     columns=["s{}".format(i) for i in range(40)])
+    X["s3"] = 0.0
+    labels = pd.Series(["A"] * 20 + ["B"] * 20, index=X.columns)
+    with pytest.raises(SystemExit, match="1 sample.*no counts: s3"):
+        transcriptomics.run(X, labels, prov=Provenance("transcriptomics"))

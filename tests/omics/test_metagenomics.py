@@ -65,3 +65,26 @@ def test_run_builds_one_network_per_group_on_shared_panel():
     assert set(out) == {"T", "N"}
     assert ("prevalence", "data-driven") in {(v["name"], v["kind"]) for v in prov.values}
     assert any("s0" in w for w in prov.warnings)
+
+
+def test_run_refuses_log_transformed_input():
+    rng = np.random.default_rng(3)
+    ab = pd.DataFrame(rng.dirichlet(np.ones(8), 40).T, index=["t{}".format(i) for i in range(8)],
+                      columns=["s{}".format(i) for i in range(40)])
+    clr = np.log(ab) - np.log(ab).mean()
+    labels = pd.Series(["A"] * 20 + ["B"] * 20, index=ab.columns)
+    with pytest.raises(SystemExit, match="CLR-transformed"):
+        metagenomics.run(clr, labels, prov=Provenance("metagenomics"), n_sub=5)
+
+
+def test_node_abundance_is_a_share_of_the_sample_whatever_the_unit():
+    rng = np.random.default_rng(3)
+    ab = pd.DataFrame(rng.dirichlet(np.ones(8), 40).T, index=["t{}".format(i) for i in range(8)],
+                      columns=["s{}".format(i) for i in range(40)])
+    labels = pd.Series(["A"] * 20 + ["B"] * 20, index=ab.columns)
+    frac = metagenomics.run(ab, labels, prov=Provenance("metagenomics"), n_sub=5)
+    reads = metagenomics.run((ab * 12345).round(), labels, prov=Provenance("metagenomics"), n_sub=5)
+    for g in ("A", "B"):
+        a, b = frac[g]["nodes"]["mean_rel_abundance"], reads[g]["nodes"]["mean_rel_abundance"]
+        assert np.allclose(a, ab.T.loc[labels.index[labels == g], a.index].mean())
+        assert np.allclose(a, b, atol=1e-4)

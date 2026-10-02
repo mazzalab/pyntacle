@@ -39,6 +39,7 @@ def test_cli_metagenomics_writes_networks_and_report(tmp_path):
     kinds = dict(zip(report["name"], report["kind"]))
     assert kinds["n_sub"] == "user" and kinds["stars_beta"] == "default"
     assert kinds["prevalence"] == "data-driven" and kinds["covariates"] == "user"
+    assert kinds["zeros_Tumor"] == "data-driven"
 
 
 def test_cli_requires_metadata_unless_tcga(tmp_path):

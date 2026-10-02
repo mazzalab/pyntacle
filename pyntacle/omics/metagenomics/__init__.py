@@ -18,6 +18,11 @@ def run(X, labels, *, prov, meta=None, prevalence="auto", covariates=None,
     if covariates:
         prov.record("parameters", "covariates", ",".join(covariates), "user")
     A = X.T.astype(float)                       # samples x taxa
+    if (A.values < 0).any():
+        raise SystemExit("ERROR: negative values in the table: it looks log- or CLR-transformed. "
+                         "Pass relative abundances or counts; the pipeline does the CLR itself.")
+    # share of each sample's total, whatever the input unit (%, fraction, reads)
+    rel = A.div(A.sum(axis=1).where(lambda t: t > 0), axis=0)
     groups = list(dict.fromkeys(labels))
     by_group = {g: A.loc[labels.index[labels == g]] for g in groups}
 
@@ -38,6 +43,9 @@ def run(X, labels, *, prov, meta=None, prevalence="auto", covariates=None,
     results = {}
     for g in groups:
         sub, dropped = coda.drop_allzero(by_group[g][taxa])
+        prov.record("panel", "zeros_" + g, round(float((sub.values == 0).mean()), 3), "data-driven",
+                    "fraction of zero values in the panel; edges of sparse panels mostly "
+                    "record co-presence")
         if dropped:
             prov.warn("group {}: dropped all-zero sample(s) {}".format(g, dropped))
         Z = coda.coda_transform(sub)
@@ -49,7 +57,7 @@ def run(X, labels, *, prov, meta=None, prevalence="auto", covariates=None,
         prov.record("network", "edges_" + g, len(fit["edges"]), "data-driven",
                     "n={} p={}".format(Z.shape[0], Z.shape[1]))
         prov.diagnostic("stars_" + g, fit["instability"])
-        nodes = pd.DataFrame({"mean_rel_abundance": by_group[g][taxa].mean(axis=0),
+        nodes = pd.DataFrame({"mean_rel_abundance": rel.loc[by_group[g].index, taxa].mean(axis=0),
                               "prevalence": panel.prevalence(by_group[g][taxa])})
         results[g] = {"edges": fit["edges"], "nodes": nodes, "stages": {"clr": Z}}
     return results

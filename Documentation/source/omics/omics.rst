@@ -49,9 +49,13 @@ from vial A if there is one.
 Normalisation
 ~~~~~~~~~~~~~
 
-Counts are normalised by the DESeq2 median-of-ratios method (`Anders & Huber
+Counts are normalised by median-of-ratios size factors (`Anders & Huber
 2010`_; `Love et al. 2014`_) and transformed to ``log2(x + 1)``. Size factors
 are estimated on all groups together, so every group is on the same scale.
+Zeros are handled as in the case study: a gene's reference is the geometric
+mean of its non-zero counts, and each sample's median skips the genes it does
+not detect. DESeq2's default instead uses only the genes detected in every
+sample, which in large cohorts can leave few genes.
 
 Gene selection
 ~~~~~~~~~~~~~~
@@ -107,6 +111,16 @@ there would inflate it, narrow the null and understate the error rate. The
 false discovery rate of the top-ranked edges is estimated from how often the
 null exceeds them (`Storey & Tibshirani 2003`_), and edges are kept down to
 the requested FDR (0.001 by default).
+
+The null is independence of all genes, so the FDR bounds the edges between
+genes that are not associated at all. Shrinkage also mixes part of the
+marginal correlation into the partial correlation, so two genes that share a
+neighbour can pass the threshold without a direct link. In simulations with a
+known sparse network this mattered only under strong shrinkage (intensity of
+0.5 or more, weak associations for the number of samples): such indirect
+edges then took the realised FDR above the nominal one. With the lower
+shrinkage of strongly associated data, the realised FDR stayed at or below
+the nominal level. The report gives the intensity of each group.
 
 Metagenomics
 ------------
@@ -168,6 +182,13 @@ the 0.05 of the original description, which can leave the network empty with
 few samples. Together, the transform and the estimator are the SPIEC-EASI
 method (`Kurtz et al. 2015`_). For a given seed the result is deterministic.
 
+Sparse profiles limit what the network can say. After zero replacement, the
+CLR coordinate of a taxon absent from a sample depends only on the sample's
+geometric mean, so taxa absent from the same samples look associated
+(`Austin & Korem 2025`_). When most values are zeros, an edge mostly records
+that two taxa are present or absent together, not that their abundances
+covary; the fraction of zeros in the panel of each group is in the report.
+
 Weights and distances
 ---------------------
 
@@ -211,6 +232,7 @@ References
 
 * `Aitchison 1982`_ — The statistical analysis of compositional data. *J R Stat Soc B* 44:139–177.
 * `Anders & Huber 2010`_ — Differential expression analysis for sequence count data. *Genome Biol* 11:R106.
+* `Austin & Korem 2025`_ — Compositional transformations can reasonably introduce phenotype-associated values into sparse features. *mSystems* 10:e0002125.
 * `Blanco-Míguez et al. 2023`_ — Extending and improving metagenomic taxonomic profiling with uncharacterized species using MetaPhlAn 4. *Nat Biotechnol* 41:1633–1644.
 * `Bolyen et al. 2019`_ — Reproducible, interactive, scalable and extensible microbiome data science using QIIME 2. *Nat Biotechnol* 37:852–857.
 * `Brandes 2001`_ — A faster algorithm for betweenness centrality. *J Math Sociol* 25:163–177.
@@ -239,6 +261,7 @@ References
 * `Zhao et al. 2012`_ — The huge package for high-dimensional undirected graph estimation in R. *J Mach Learn Res* 13:1059–1062.
 
 .. _`Aitchison 1982`: https://doi.org/10.1111/j.2517-6161.1982.tb01195.x
+.. _`Austin & Korem 2025`: https://doi.org/10.1128/msystems.00021-25
 .. _`Anders & Huber 2010`: https://doi.org/10.1186/gb-2010-11-10-r106
 .. _`Cleveland 1979`: https://doi.org/10.1080/01621459.1979.10481038
 .. _`Dohlman et al. 2021`: https://doi.org/10.1016/j.chom.2020.12.001
