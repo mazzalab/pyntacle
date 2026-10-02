@@ -3,15 +3,10 @@ from cython.cimports.libc.stdlib cimport abort, malloc, free
 from cython.cimports.libc.string import memset
 from cython.cimports.libc.string cimport memcpy
 from cython.cimports.libc.stdio cimport printf
-from libc.stdlib cimport qsort
-from libc.math cimport INFINITY, isinf
+from libc.math cimport INFINITY, isinf, fabs, fmax
 
 from . cimport utils
-from . cimport cython_igraph
 
-cdef int cmp_ints(const void *a, const void *b) noexcept nogil:
-    return (<int*>a)[0] - (<int*>b)[0]
-    
 cdef double get_group_degree(utils.CSR* g, char* in_K, int* notK_indices, int k, int n) noexcept nogil:
     """Fraction of non-group nodes adjacent to at least one group member.
 
@@ -35,17 +30,66 @@ cdef double get_group_degree(utils.CSR* g, char* in_K, int* notK_indices, int k,
     return gDegree
 
 
-cdef double get_group_betweenness(int[:, :] edges, double[:] wvec, int n, int* K_indices, int* notK_indices, int k) noexcept nogil:
-    cdef double betweenness
+cdef double get_group_betweenness(utils.CSR* g, utils.Scratch* s, int k, int n, bint unweighted) noexcept nogil:
+    """Share of the shortest paths between non-group nodes that pass through the group.
 
-    qsort(notK_indices, n - k, sizeof(int), cmp_ints)
+    For every pair (u, v) of non-group nodes joined by a path, the pair adds
+    the fraction of its shortest paths with an inner node in the group; the
+    sum is divided by (n - k)(n - k - 1). Shortest paths are counted, never
+    listed: from each source one traversal of the whole network settles the
+    vertices in distance order, then one pass over that order gives sigma (the
+    number of shortest paths) and sigma_avoid (the number that avoid the
+    group, zero on group members) as sums over shortest-path predecessors.
+    Counts are doubles, exact up to 2**53. `s.in_K` holds the candidate set.
+    """
+    cdef int src, v, u, e, i, reached
+    cdef double total = 0.
+    cdef double dv, tol, sig, avoid
+    cdef double* dist = s.dist
+    cdef double* sigma = s.sigma
+    cdef double* sigma_avoid = s.sigma_avoid
+    cdef int* order = s.stack
 
-    betweenness = cython_igraph.igraph_betweenness(edges, wvec, n, K_indices, notK_indices, k)
+    if n - k < 2:
+        return 0.
 
-    if betweenness < 0.:  # igraph refused the graph; propagate the failure
-        return -1.
+    for src from 0 <= src < n:
+        if s.in_K[src]:
+            continue
+        reached = utils.csr_sssp_order(g, src, unweighted, dist, order, s.heap, s.heap_pos)
+        for i from 0 <= i < reached:
+            sigma[order[i]] = 0.
+            sigma_avoid[order[i]] = 0.
+        sigma[src] = 1.
+        sigma_avoid[src] = 1.
 
-    return betweenness/((n - k)*(n - k - 1))
+        for i from 1 <= i < reached:
+            v = order[i]
+            dv = dist[v]
+            # Dijkstra sums lengths in different orders along different
+            # paths: equal lengths agree to rounding, not to the bit
+            tol = 1e-10 * fmax(1., dv)
+            sig = 0.
+            avoid = 0.
+            for e from g.indptr[v] <= e < g.indptr[v + 1]:
+                u = g.indices[e]
+                if unweighted:
+                    if dist[u] != dv - 1.:
+                        continue
+                elif fabs(dist[u] + g.w[e] - dv) > tol:
+                    continue
+                sig += sigma[u]
+                avoid += sigma_avoid[u]
+            sigma[v] = sig
+            sigma_avoid[v] = 0. if s.in_K[v] else avoid
+
+        # each unordered pair once, from its lower-numbered end
+        for i from 1 <= i < reached:
+            v = order[i]
+            if v > src and not s.in_K[v] and sigma[v] > 0.:
+                total += 1. - sigma_avoid[v] / sigma[v]
+
+    return total / ((<double> (n - k)) * (n - k - 1))
 
 
 cdef double get_group_closeness(double* all_dist, int* K_indices, int* notK_indices, int k, int n, int dist_type) noexcept nogil:

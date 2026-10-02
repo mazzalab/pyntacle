@@ -17,6 +17,8 @@ cdef struct Scratch:
     char* visited
     char* in_K
     long* comp_size
+    double* sigma
+    double* sigma_avoid
 
 cdef void index_to_combination(long long index, int n, int k, int* out_comb, int* out_comp) noexcept nogil
 
@@ -31,3 +33,4 @@ cdef void mark_group(Scratch* s, int* K_indices, int k) noexcept nogil
 cdef int csr_components(CSR* g, char* in_K, long* sizes, int* stack, char* visited) noexcept nogil
 cdef void csr_bfs_row(CSR* g, int src, char* in_K, double* dist, int* queue) noexcept nogil
 cdef void csr_dijkstra_row(CSR* g, int src, char* in_K, double* dist, int* heap, int* heap_pos) noexcept nogil
+cdef int csr_sssp_order(CSR* g, int src, bint unweighted, double* dist, int* order, int* heap, int* heap_pos) noexcept nogil

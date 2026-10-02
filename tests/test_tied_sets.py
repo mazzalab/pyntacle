@@ -79,6 +79,19 @@ def test_unique_optimum_reports_a_single_set():
     assert tied_sets == [["0"]]
 
 
+def test_a_zero_optimum_is_tied_by_every_set():
+    """No node disconnects K6, so every one of the 6 single-node sets scores F = 0
+    and all of them are optimal."""
+    complete = make_graphtacle(ig.Graph.Full(6), name="complete")
+
+    k_set, score, tied_sets, n_optimal = cython_wrapper_bruteforce(complete, 1, "F", max_ties=4)
+
+    assert score == 0
+    assert n_optimal == 6
+    assert len(tied_sets) == 4
+    assert tied_sets[0] == k_set
+
+
 def test_score_is_not_rounded_by_the_kernel():
     """The kernel returns the exact score; rounding happens only in the report.
 

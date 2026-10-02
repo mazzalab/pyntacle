@@ -1644,6 +1644,8 @@ struct __pyx_t_8pyntacle_4_ext_5utils_Scratch {
   char *visited;
   char *in_K;
   long *comp_size;
+  double *sigma;
+  double *sigma_avoid;
 };
 
 /* "View.MemoryView":110

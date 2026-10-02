@@ -36,9 +36,10 @@ cdef double operation_selector(int operation, int[:, :] edges, double[:] wvec, i
         utils.mark_group(scratch, K_indices, k)
         result = group_metrics.get_group_degree(csr, scratch.in_K, notK_indices, k, n)
 
-    # gB: igraph graph rebuilt from the edge list per candidate
+    # gB: shortest paths counted per source on the CSR, membership mask in the scratch
     elif operation == 5:
-        result = group_metrics.get_group_betweenness(edges, wvec, n, K_indices, notK_indices, k)
+        utils.mark_group(scratch, K_indices, k)
+        result = group_metrics.get_group_betweenness(csr, scratch, k, n, unweighted)
 
     # gC
     elif operation == 6:
@@ -343,7 +344,7 @@ cpdef cython_bruteforce(int[:, :] edges, double[:] wvec, int n, int[:] K_indices
         # zero-init: a thread that runs no prange iterations (comb_num < num_threads),
         # or whose first candidate is compared before any write, would otherwise read
         # uninitialized memory. All metric scores are >= 0, so 0 is a safe floor.
-        # tie_count stays 0 until a candidate actually wins.
+        # tie_count stays 0 until the thread scores its first candidate.
         for i in range(num_threads):
             candidate_results[i] = 0.
             candidate_index[i] = 0
@@ -382,7 +383,7 @@ cpdef cython_bruteforce(int[:, :] edges, double[:] wvec, int n, int[:] K_indices
                     # orders, so their scores agree to rounding, not to the bit.
                     eps = 1e-9 * fmax(1., fabs(best))
 
-                    if score > best + eps:
+                    if tie_count[tid] == 0 or score > best + eps:
                         candidate_results[tid] = score
                         candidate_index[tid] = idx
                         tie_buf[tid * max_ties] = idx
@@ -409,9 +410,8 @@ cpdef cython_bruteforce(int[:, :] edges, double[:] wvec, int n, int[:] K_indices
                 max_score = candidate_results[i]
                 max_index = candidate_index[i]
 
-        # Gather the sets sitting at the global optimum. Threads that never beat
-        # the 0 floor (tie_count == 0) are skipped: when nothing scores, the
-        # answer is combination 0 with score 0, reported as a single set.
+        # Gather the sets sitting at the global optimum, a score of 0 included.
+        # Threads that ran no candidate (tie_count == 0) are skipped.
         eps = 1e-9 * fmax(1., fabs(max_score))
         collected = []
         for i from 0 <= i < num_threads:

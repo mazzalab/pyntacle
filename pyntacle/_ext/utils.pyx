@@ -228,9 +228,12 @@ cdef Scratch* scratch_alloc(int n) noexcept nogil:
     s.visited = <char*> malloc(n * sizeof(char))
     s.in_K = <char*> malloc(n * sizeof(char))
     s.comp_size = <long*> malloc(n * sizeof(long))
+    s.sigma = <double*> malloc(n * sizeof(double))
+    s.sigma_avoid = <double*> malloc(n * sizeof(double))
 
     if (s.dist == NULL or s.heap == NULL or s.heap_pos == NULL or s.stack == NULL
-            or s.visited == NULL or s.in_K == NULL or s.comp_size == NULL):
+            or s.visited == NULL or s.in_K == NULL or s.comp_size == NULL
+            or s.sigma == NULL or s.sigma_avoid == NULL):
         scratch_free(s)
         return NULL
 
@@ -247,6 +250,8 @@ cdef void scratch_free(Scratch* s) noexcept nogil:
     free(s.visited)
     free(s.in_K)
     free(s.comp_size)
+    free(s.sigma)
+    free(s.sigma_avoid)
     free(s)
 
 
@@ -412,3 +417,63 @@ cdef void csr_dijkstra_row(CSR* g, int src, char* in_K, double* dist, int* heap,
                     heap_up(heap, heap_pos, dist, size - 1)
                 else:
                     heap_up(heap, heap_pos, dist, heap_pos[u])
+
+
+cdef int csr_sssp_order(CSR* g, int src, bint unweighted, double* dist, int* order, int* heap, int* heap_pos) noexcept nogil:
+    """Distances from `src` over the whole network, and the vertices reached in
+    the order they were settled (non-decreasing distance, `src` first).
+    Returns how many were reached; unreachable distances stay INFINITY."""
+    cdef int n = g.n
+    cdef int i, v, u, e
+    cdef int head = 0, count = 0, size = 0
+    cdef double nd
+
+    for i from 0 <= i < n:
+        dist[i] = INFINITY
+
+    dist[src] = 0.
+    if unweighted:
+        order[0] = src
+        count = 1
+        while head < count:
+            v = order[head]
+            head += 1
+            for e from g.indptr[v] <= e < g.indptr[v + 1]:
+                u = g.indices[e]
+                if dist[u] != INFINITY:
+                    continue
+                dist[u] = dist[v] + 1.
+                order[count] = u
+                count += 1
+        return count
+
+    for i from 0 <= i < n:
+        heap_pos[i] = -1
+    heap[0] = src
+    heap_pos[src] = 0
+    size = 1
+
+    while size > 0:
+        v = heap[0]
+        heap_pos[v] = -1
+        size -= 1
+        if size > 0:
+            heap[0] = heap[size]
+            heap_pos[heap[0]] = 0
+            heap_down(heap, heap_pos, dist, 0, size)
+        order[count] = v
+        count += 1
+
+        for e from g.indptr[v] <= e < g.indptr[v + 1]:
+            u = g.indices[e]
+            nd = dist[v] + g.w[e]
+            if nd < dist[u]:
+                dist[u] = nd
+                if heap_pos[u] == -1:
+                    heap[size] = u
+                    heap_pos[u] = size
+                    size += 1
+                    heap_up(heap, heap_pos, dist, size - 1)
+                else:
+                    heap_up(heap, heap_pos, dist, heap_pos[u])
+    return count

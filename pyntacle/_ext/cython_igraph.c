@@ -3,9 +3,7 @@
 /* BEGIN: Cython Metadata
 {
     "distutils": {
-        "depends": [
-            "/home/manu/miniconda3/envs/graphtacle_debug/include/igraph/igraph.h"
-        ],
+        "depends": [],
         "extra_compile_args": [
             "-fopenmp"
         ],
@@ -13,17 +11,17 @@
             "-fopenmp"
         ],
         "include_dirs": [
-            "/home/manu/miniconda3/envs/graphtacle_debug/include"
+            "/home/manu/miniconda3/include"
         ],
         "libraries": [
             "igraph"
         ],
         "library_dirs": [
-            "/home/manu/miniconda3/envs/graphtacle_debug/lib"
+            "/home/manu/miniconda3/lib"
         ],
         "name": "pyntacle._ext.cython_igraph",
         "runtime_library_dirs": [
-            "/home/manu/miniconda3/envs/graphtacle_debug/lib"
+            "/home/manu/miniconda3/lib"
         ],
         "sources": [
             "pyntacle/_ext/cython_igraph.pyx"
@@ -3161,7 +3159,7 @@ static __pyx_mstatetype * const __pyx_mstate_global = &__pyx_mstate_global_stati
 #define __pyx_n_u_update __pyx_string_tab[111]
 #define __pyx_n_u_values __pyx_string_tab[112]
 #define __pyx_n_u_x __pyx_string_tab[113]
-#define __pyx_kp_b_double___Pyx_memviewslice___Pyx __pyx_string_tab[114]
+#define __pyx_kp_b_int___Pyx_memviewslice___Pyx_mem __pyx_string_tab[114]
 #define __pyx_kp_b_iso88591_AQ __pyx_string_tab[115]
 #define __pyx_n_b_O __pyx_string_tab[116]
 #define __pyx_int_0 __pyx_number_tab[0]
@@ -17536,8 +17534,6 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
  *     igraph_destroy(&graph)
  * 
  *     return comp_size             # <<<<<<<<<<<<<<
- * 
- * 
 */
   __pyx_r = __pyx_v_comp_size;
   goto __pyx_L0;
@@ -17548,478 +17544,6 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
  * cdef int igraph_components(double[:,:] adj_matrix, long* size_comp, int* k_set, int k) noexcept nogil:             # <<<<<<<<<<<<<<
  * 
  *     cdef int i, j
-*/
-
-  /* function exit code */
-  __pyx_L0:;
-  return __pyx_r;
-}
-
-/* "pyntacle/_ext/cython_igraph.pyx":215
- * 
- * 
- * cdef double igraph_betweenness(int[:, :] edges, double[:] wvec, int n, int* k_set, int* notk_set, int k) noexcept nogil:             # <<<<<<<<<<<<<<
- * 
- *     cdef int i, j, w, z, y, node
-*/
-
-static double __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_betweenness(__Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_wvec, int __pyx_v_n, int *__pyx_v_k_set, int *__pyx_v_notk_set, int __pyx_v_k) {
-  int __pyx_v_i;
-  int __pyx_v_j;
-  CYTHON_UNUSED int __pyx_v_w;
-  int __pyx_v_z;
-  int __pyx_v_y;
-  int __pyx_v_node;
-  int __pyx_v_tot_geodesics;
-  int __pyx_v_n_geo;
-  int __pyx_v_on_path;
-  double __pyx_v_geodesic_group;
-  double __pyx_v_betweenness;
-  igraph_t __pyx_v_graph;
-  igraph_vector_t __pyx_v_weights;
-  igraph_integer_t __pyx_v_ig_n;
-  igraph_vector_int_list_t __pyx_v_vertices;
-  igraph_vector_int_t __pyx_v_nrgeo;
-  igraph_vector_int_t *__pyx_v_geodesic_ptr;
-  igraph_vs_t __pyx_v_to;
-  igraph_vector_int_t __pyx_v_subset;
-  double __pyx_r;
-  int __pyx_t_1;
-  igraph_integer_t __pyx_t_2;
-  igraph_integer_t __pyx_t_3;
-  int __pyx_t_4;
-  igraph_integer_t __pyx_t_5;
-  int __pyx_t_6;
-
-  /* "pyntacle/_ext/cython_igraph.pyx":222
- *     cdef bint on_path
- *     cdef double geodesic_group
- *     cdef double betweenness = 0.             # <<<<<<<<<<<<<<
- *     cdef igraph_t graph
- *     cdef igraph_vector_t weights
-*/
-  __pyx_v_betweenness = 0.;
-
-  /* "pyntacle/_ext/cython_igraph.pyx":226
- *     cdef igraph_vector_t weights
- * 
- *     cdef igraph_int_t ig_n = n             # <<<<<<<<<<<<<<
- * 
- *     cdef igraph_vector_int_list_t vertices
-*/
-  __pyx_v_ig_n = __pyx_v_n;
-
-  /* "pyntacle/_ext/cython_igraph.pyx":235
- * 
- *     # on failure (e.g. a directed input) graph is left untouched
- *     if build_igraph_from_edges(&graph, &weights, edges, wvec, n) != 0:             # <<<<<<<<<<<<<<
- *         return -1.
- * 
-*/
-  __pyx_t_1 = (__pyx_f_8pyntacle_4_ext_13cython_igraph_build_igraph_from_edges((&__pyx_v_graph), (&__pyx_v_weights), __pyx_v_edges, __pyx_v_wvec, __pyx_v_n) != 0);
-  if (__pyx_t_1) {
-
-    /* "pyntacle/_ext/cython_igraph.pyx":236
- *     # on failure (e.g. a directed input) graph is left untouched
- *     if build_igraph_from_edges(&graph, &weights, edges, wvec, n) != 0:
- *         return -1.             # <<<<<<<<<<<<<<
- * 
- *     igraph_vector_int_list_init(&vertices, 0);
-*/
-    __pyx_r = -1.;
-    goto __pyx_L0;
-
-    /* "pyntacle/_ext/cython_igraph.pyx":235
- * 
- *     # on failure (e.g. a directed input) graph is left untouched
- *     if build_igraph_from_edges(&graph, &weights, edges, wvec, n) != 0:             # <<<<<<<<<<<<<<
- *         return -1.
- * 
-*/
-  }
-
-  /* "pyntacle/_ext/cython_igraph.pyx":238
- *         return -1.
- * 
- *     igraph_vector_int_list_init(&vertices, 0);             # <<<<<<<<<<<<<<
- *     igraph_vector_int_init(&nrgeo, 0);
- * 
-*/
-  (void)(igraph_vector_int_list_init((&__pyx_v_vertices), 0));
-
-  /* "pyntacle/_ext/cython_igraph.pyx":239
- * 
- *     igraph_vector_int_list_init(&vertices, 0);
- *     igraph_vector_int_init(&nrgeo, 0);             # <<<<<<<<<<<<<<
- * 
- *     for i from 0 <= i < (ig_n - k - 1):  # -1 because last node has no remaining destinations
-*/
-  (void)(igraph_vector_int_init((&__pyx_v_nrgeo), 0));
-
-  /* "pyntacle/_ext/cython_igraph.pyx":241
- *     igraph_vector_int_init(&nrgeo, 0);
- * 
- *     for i from 0 <= i < (ig_n - k - 1):  # -1 because last node has no remaining destinations             # <<<<<<<<<<<<<<
- *         # Create vector selector starting from position i+1
- *         igraph_vector_int_init(&subset, (ig_n - k - i - 1))
-*/
-  __pyx_t_2 = ((__pyx_v_ig_n - __pyx_v_k) - 1);
-  for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_2; __pyx_v_i++) {
-
-    /* "pyntacle/_ext/cython_igraph.pyx":243
- *     for i from 0 <= i < (ig_n - k - 1):  # -1 because last node has no remaining destinations
- *         # Create vector selector starting from position i+1
- *         igraph_vector_int_init(&subset, (ig_n - k - i - 1))             # <<<<<<<<<<<<<<
- * 
- *         # Copy remaining vertices
-*/
-    (void)(igraph_vector_int_init((&__pyx_v_subset), (((__pyx_v_ig_n - __pyx_v_k) - __pyx_v_i) - 1)));
-
-    /* "pyntacle/_ext/cython_igraph.pyx":246
- * 
- *         # Copy remaining vertices
- *         for j from 0 <= j < (ig_n - k - i - 1):             # <<<<<<<<<<<<<<
- *             igraph_vector_int_set(&subset, j, notk_set[i + 1 + j])
- * 
-*/
-    __pyx_t_3 = (((__pyx_v_ig_n - __pyx_v_k) - __pyx_v_i) - 1);
-    for (__pyx_v_j = 0; __pyx_v_j < __pyx_t_3; __pyx_v_j++) {
-
-      /* "pyntacle/_ext/cython_igraph.pyx":247
- *         # Copy remaining vertices
- *         for j from 0 <= j < (ig_n - k - i - 1):
- *             igraph_vector_int_set(&subset, j, notk_set[i + 1 + j])             # <<<<<<<<<<<<<<
- * 
- *         igraph_vs_vector(&to, &subset)
-*/
-      igraph_vector_int_set((&__pyx_v_subset), __pyx_v_j, (__pyx_v_notk_set[((__pyx_v_i + 1) + __pyx_v_j)]));
-    }
-
-    /* "pyntacle/_ext/cython_igraph.pyx":249
- *             igraph_vector_int_set(&subset, j, notk_set[i + 1 + j])
- * 
- *         igraph_vs_vector(&to, &subset)             # <<<<<<<<<<<<<<
- *         igraph_get_all_shortest_paths_dijkstra(&graph, &vertices, NULL, &nrgeo, notk_set[i], to, &weights, IGRAPH_ALL)
- *         igraph_vs_destroy(&to)
-*/
-    (void)(igraph_vs_vector((&__pyx_v_to), (&__pyx_v_subset)));
-
-    /* "pyntacle/_ext/cython_igraph.pyx":250
- * 
- *         igraph_vs_vector(&to, &subset)
- *         igraph_get_all_shortest_paths_dijkstra(&graph, &vertices, NULL, &nrgeo, notk_set[i], to, &weights, IGRAPH_ALL)             # <<<<<<<<<<<<<<
- *         igraph_vs_destroy(&to)
- * 
-*/
-    (void)(igraph_get_all_shortest_paths_dijkstra((&__pyx_v_graph), (&__pyx_v_vertices), NULL, (&__pyx_v_nrgeo), (__pyx_v_notk_set[__pyx_v_i]), __pyx_v_to, (&__pyx_v_weights), IGRAPH_ALL));
-
-    /* "pyntacle/_ext/cython_igraph.pyx":251
- *         igraph_vs_vector(&to, &subset)
- *         igraph_get_all_shortest_paths_dijkstra(&graph, &vertices, NULL, &nrgeo, notk_set[i], to, &weights, IGRAPH_ALL)
- *         igraph_vs_destroy(&to)             # <<<<<<<<<<<<<<
- * 
- *         tot_geodesics = 0
-*/
-    igraph_vs_destroy((&__pyx_v_to));
-
-    /* "pyntacle/_ext/cython_igraph.pyx":253
- *         igraph_vs_destroy(&to)
- * 
- *         tot_geodesics = 0             # <<<<<<<<<<<<<<
- * 
- *         # for each destination node in the subset
-*/
-    __pyx_v_tot_geodesics = 0;
-
-    /* "pyntacle/_ext/cython_igraph.pyx":256
- * 
- *         # for each destination node in the subset
- *         for j from 0 <= j < igraph_vector_int_size(&subset):             # <<<<<<<<<<<<<<
- * 
- *             geodesic_group = 0.
-*/
-    __pyx_t_3 = igraph_vector_int_size((&__pyx_v_subset));
-    for (__pyx_v_j = 0; __pyx_v_j < __pyx_t_3; __pyx_v_j++) {
-
-      /* "pyntacle/_ext/cython_igraph.pyx":258
- *         for j from 0 <= j < igraph_vector_int_size(&subset):
- * 
- *             geodesic_group = 0.             # <<<<<<<<<<<<<<
- *             node = igraph_vector_int_get(&subset, j)
- *             n_geo = igraph_vector_int_get(&nrgeo, node)
-*/
-      __pyx_v_geodesic_group = 0.;
-
-      /* "pyntacle/_ext/cython_igraph.pyx":259
- * 
- *             geodesic_group = 0.
- *             node = igraph_vector_int_get(&subset, j)             # <<<<<<<<<<<<<<
- *             n_geo = igraph_vector_int_get(&nrgeo, node)
- * 
-*/
-      __pyx_v_node = igraph_vector_int_get((&__pyx_v_subset), __pyx_v_j);
-
-      /* "pyntacle/_ext/cython_igraph.pyx":260
- *             geodesic_group = 0.
- *             node = igraph_vector_int_get(&subset, j)
- *             n_geo = igraph_vector_int_get(&nrgeo, node)             # <<<<<<<<<<<<<<
- * 
- *             # unreachable destination: no geodesics to share out
-*/
-      __pyx_v_n_geo = igraph_vector_int_get((&__pyx_v_nrgeo), __pyx_v_node);
-
-      /* "pyntacle/_ext/cython_igraph.pyx":263
- * 
- *             # unreachable destination: no geodesics to share out
- *             if n_geo == 0:             # <<<<<<<<<<<<<<
- *                 continue
- * 
-*/
-      __pyx_t_1 = (__pyx_v_n_geo == 0);
-      if (__pyx_t_1) {
-
-        /* "pyntacle/_ext/cython_igraph.pyx":264
- *             # unreachable destination: no geodesics to share out
- *             if n_geo == 0:
- *                 continue             # <<<<<<<<<<<<<<
- * 
- *             # for each geodesic path found
-*/
-        goto __pyx_L8_continue;
-
-        /* "pyntacle/_ext/cython_igraph.pyx":263
- * 
- *             # unreachable destination: no geodesics to share out
- *             if n_geo == 0:             # <<<<<<<<<<<<<<
- *                 continue
- * 
-*/
-      }
-
-      /* "pyntacle/_ext/cython_igraph.pyx":267
- * 
- *             # for each geodesic path found
- *             for w from 0 <= w < n_geo:             # <<<<<<<<<<<<<<
- *                 geodesic_ptr = igraph_vector_int_list_get_ptr(&vertices, tot_geodesics)
- *                 tot_geodesics += 1
-*/
-      __pyx_t_4 = __pyx_v_n_geo;
-      for (__pyx_v_w = 0; __pyx_v_w < __pyx_t_4; __pyx_v_w++) {
-
-        /* "pyntacle/_ext/cython_igraph.pyx":268
- *             # for each geodesic path found
- *             for w from 0 <= w < n_geo:
- *                 geodesic_ptr = igraph_vector_int_list_get_ptr(&vertices, tot_geodesics)             # <<<<<<<<<<<<<<
- *                 tot_geodesics += 1
- * 
-*/
-        __pyx_v_geodesic_ptr = igraph_vector_int_list_get_ptr((&__pyx_v_vertices), __pyx_v_tot_geodesics);
-
-        /* "pyntacle/_ext/cython_igraph.pyx":269
- *             for w from 0 <= w < n_geo:
- *                 geodesic_ptr = igraph_vector_int_list_get_ptr(&vertices, tot_geodesics)
- *                 tot_geodesics += 1             # <<<<<<<<<<<<<<
- * 
- *                 # a path counts once if it touches the group at all
-*/
-        __pyx_v_tot_geodesics = (__pyx_v_tot_geodesics + 1);
-
-        /* "pyntacle/_ext/cython_igraph.pyx":272
- * 
- *                 # a path counts once if it touches the group at all
- *                 on_path = False             # <<<<<<<<<<<<<<
- *                 for z from 0 <= z < igraph_vector_int_size(geodesic_ptr):
- *                     for y from 0 <= y < k:
-*/
-        __pyx_v_on_path = 0;
-
-        /* "pyntacle/_ext/cython_igraph.pyx":273
- *                 # a path counts once if it touches the group at all
- *                 on_path = False
- *                 for z from 0 <= z < igraph_vector_int_size(geodesic_ptr):             # <<<<<<<<<<<<<<
- *                     for y from 0 <= y < k:
- *                         if igraph_vector_int_get(geodesic_ptr, z) == k_set[y]:
-*/
-        __pyx_t_5 = igraph_vector_int_size(__pyx_v_geodesic_ptr);
-        for (__pyx_v_z = 0; __pyx_v_z < __pyx_t_5; __pyx_v_z++) {
-
-          /* "pyntacle/_ext/cython_igraph.pyx":274
- *                 on_path = False
- *                 for z from 0 <= z < igraph_vector_int_size(geodesic_ptr):
- *                     for y from 0 <= y < k:             # <<<<<<<<<<<<<<
- *                         if igraph_vector_int_get(geodesic_ptr, z) == k_set[y]:
- *                             on_path = True
-*/
-          __pyx_t_6 = __pyx_v_k;
-          for (__pyx_v_y = 0; __pyx_v_y < __pyx_t_6; __pyx_v_y++) {
-
-            /* "pyntacle/_ext/cython_igraph.pyx":275
- *                 for z from 0 <= z < igraph_vector_int_size(geodesic_ptr):
- *                     for y from 0 <= y < k:
- *                         if igraph_vector_int_get(geodesic_ptr, z) == k_set[y]:             # <<<<<<<<<<<<<<
- *                             on_path = True
- *                             break
-*/
-            __pyx_t_1 = (igraph_vector_int_get(__pyx_v_geodesic_ptr, __pyx_v_z) == (__pyx_v_k_set[__pyx_v_y]));
-            if (__pyx_t_1) {
-
-              /* "pyntacle/_ext/cython_igraph.pyx":276
- *                     for y from 0 <= y < k:
- *                         if igraph_vector_int_get(geodesic_ptr, z) == k_set[y]:
- *                             on_path = True             # <<<<<<<<<<<<<<
- *                             break
- *                     if on_path:
-*/
-              __pyx_v_on_path = 1;
-
-              /* "pyntacle/_ext/cython_igraph.pyx":277
- *                         if igraph_vector_int_get(geodesic_ptr, z) == k_set[y]:
- *                             on_path = True
- *                             break             # <<<<<<<<<<<<<<
- *                     if on_path:
- *                         break
-*/
-              goto __pyx_L16_break;
-
-              /* "pyntacle/_ext/cython_igraph.pyx":275
- *                 for z from 0 <= z < igraph_vector_int_size(geodesic_ptr):
- *                     for y from 0 <= y < k:
- *                         if igraph_vector_int_get(geodesic_ptr, z) == k_set[y]:             # <<<<<<<<<<<<<<
- *                             on_path = True
- *                             break
-*/
-            }
-          }
-          __pyx_L16_break:;
-
-          /* "pyntacle/_ext/cython_igraph.pyx":278
- *                             on_path = True
- *                             break
- *                     if on_path:             # <<<<<<<<<<<<<<
- *                         break
- * 
-*/
-          if (__pyx_v_on_path) {
-
-            /* "pyntacle/_ext/cython_igraph.pyx":279
- *                             break
- *                     if on_path:
- *                         break             # <<<<<<<<<<<<<<
- * 
- *                 if on_path:
-*/
-            goto __pyx_L14_break;
-
-            /* "pyntacle/_ext/cython_igraph.pyx":278
- *                             on_path = True
- *                             break
- *                     if on_path:             # <<<<<<<<<<<<<<
- *                         break
- * 
-*/
-          }
-        }
-        __pyx_L14_break:;
-
-        /* "pyntacle/_ext/cython_igraph.pyx":281
- *                         break
- * 
- *                 if on_path:             # <<<<<<<<<<<<<<
- *                     geodesic_group += 1.
- * 
-*/
-        if (__pyx_v_on_path) {
-
-          /* "pyntacle/_ext/cython_igraph.pyx":282
- * 
- *                 if on_path:
- *                     geodesic_group += 1.             # <<<<<<<<<<<<<<
- * 
- *             betweenness += geodesic_group / n_geo
-*/
-          __pyx_v_geodesic_group = (__pyx_v_geodesic_group + 1.);
-
-          /* "pyntacle/_ext/cython_igraph.pyx":281
- *                         break
- * 
- *                 if on_path:             # <<<<<<<<<<<<<<
- *                     geodesic_group += 1.
- * 
-*/
-        }
-      }
-
-      /* "pyntacle/_ext/cython_igraph.pyx":284
- *                     geodesic_group += 1.
- * 
- *             betweenness += geodesic_group / n_geo             # <<<<<<<<<<<<<<
- * 
- *         igraph_vector_int_destroy(&subset)
-*/
-      __pyx_v_betweenness = (__pyx_v_betweenness + (__pyx_v_geodesic_group / ((double)__pyx_v_n_geo)));
-      __pyx_L8_continue:;
-    }
-
-    /* "pyntacle/_ext/cython_igraph.pyx":286
- *             betweenness += geodesic_group / n_geo
- * 
- *         igraph_vector_int_destroy(&subset)             # <<<<<<<<<<<<<<
- * 
- *     igraph_vector_int_list_destroy(&vertices)
-*/
-    igraph_vector_int_destroy((&__pyx_v_subset));
-  }
-
-  /* "pyntacle/_ext/cython_igraph.pyx":288
- *         igraph_vector_int_destroy(&subset)
- * 
- *     igraph_vector_int_list_destroy(&vertices)             # <<<<<<<<<<<<<<
- *     igraph_vector_destroy(&weights)
- *     igraph_vector_int_destroy(&nrgeo)
-*/
-  igraph_vector_int_list_destroy((&__pyx_v_vertices));
-
-  /* "pyntacle/_ext/cython_igraph.pyx":289
- * 
- *     igraph_vector_int_list_destroy(&vertices)
- *     igraph_vector_destroy(&weights)             # <<<<<<<<<<<<<<
- *     igraph_vector_int_destroy(&nrgeo)
- *     igraph_destroy(&graph)
-*/
-  igraph_vector_destroy((&__pyx_v_weights));
-
-  /* "pyntacle/_ext/cython_igraph.pyx":290
- *     igraph_vector_int_list_destroy(&vertices)
- *     igraph_vector_destroy(&weights)
- *     igraph_vector_int_destroy(&nrgeo)             # <<<<<<<<<<<<<<
- *     igraph_destroy(&graph)
- * 
-*/
-  igraph_vector_int_destroy((&__pyx_v_nrgeo));
-
-  /* "pyntacle/_ext/cython_igraph.pyx":291
- *     igraph_vector_destroy(&weights)
- *     igraph_vector_int_destroy(&nrgeo)
- *     igraph_destroy(&graph)             # <<<<<<<<<<<<<<
- * 
- *     return betweenness
-*/
-  igraph_destroy((&__pyx_v_graph));
-
-  /* "pyntacle/_ext/cython_igraph.pyx":293
- *     igraph_destroy(&graph)
- * 
- *     return betweenness             # <<<<<<<<<<<<<<
-*/
-  __pyx_r = __pyx_v_betweenness;
-  goto __pyx_L0;
-
-  /* "pyntacle/_ext/cython_igraph.pyx":215
- * 
- * 
- * cdef double igraph_betweenness(int[:, :] edges, double[:] wvec, int n, int* k_set, int* notk_set, int k) noexcept nogil:             # <<<<<<<<<<<<<<
- * 
- *     cdef int i, j, w, z, y, node
 */
 
   /* function exit code */
@@ -18929,12 +18453,12 @@ static int __Pyx_modinit_function_export_code(__pyx_mstatetype *__pyx_mstate) {
   {
     __pyx_t_1 = __Pyx_ApiExport_GetApiDict(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    const char * __pyx_export_signature = __Pyx_PyBytes_AsString(__pyx_mstate_global->__pyx_kp_b_double___Pyx_memviewslice___Pyx);
+    const char * __pyx_export_signature = __Pyx_PyBytes_AsString(__pyx_mstate_global->__pyx_kp_b_int___Pyx_memviewslice___Pyx_mem);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (unlikely(!__pyx_export_signature)) __PYX_ERR(0, 1, __pyx_L1_error)
     #endif
-    const char * __pyx_export_name = __pyx_export_signature + 177;
-    void (*const __pyx_export_pointers[])(void) = {(void (*)(void))&__pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_betweenness, (void (*)(void))&__pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_dijkstra, (void (*)(void))&__pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components, (void (*)(void)) NULL};
+    const char * __pyx_export_name = __pyx_export_signature + 105;
+    void (*const __pyx_export_pointers[])(void) = {(void (*)(void))&__pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_dijkstra, (void (*)(void))&__pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components, (void (*)(void)) NULL};
     void (*const *__pyx_export_pointer)(void) = __pyx_export_pointers;
     const char *__pyx_export_current_signature = __pyx_export_signature;
     while (*__pyx_export_pointer) {
@@ -20045,25 +19569,25 @@ static int __Pyx_InitCachedConstants(__pyx_mstatetype *__pyx_mstate) {
 static int __Pyx_InitConstants(__pyx_mstatetype *__pyx_mstate) {
   CYTHON_UNUSED_VAR(__pyx_mstate);
   {
-    const struct { const unsigned int length: 8; } index[] = {{2},{68},{35},{54},{37},{60},{24},{52},{26},{34},{29},{33},{45},{22},{15},{179},{37},{30},{32},{1},{1},{1},{1},{1},{8},{5},{6},{15},{23},{25},{7},{6},{2},{6},{35},{9},{30},{50},{8},{31},{20},{32},{22},{30},{37},{5},{8},{20},{8},{15},{3},{15},{18},{4},{1},{9},{17},{18},{5},{8},{15},{6},{9},{5},{5},{6},{7},{8},{12},{2},{10},{5},{25},{13},{5},{8},{8},{7},{4},{10},{4},{8},{4},{7},{3},{4},{3},{27},{12},{14},{11},{10},{19},{14},{12},{10},{17},{13},{8},{12},{10},{12},{19},{5},{4},{5},{4},{4},{6},{8},{6},{6},{6},{1},{229},{11},{1}};
-    #if (CYTHON_COMPRESS_STRINGS) == 2 /* compression: bz2 (1148 bytes) */
-const char* const cstring = "BZh91AY&SY\345d\241\276\000\000\205\177\340\342\001\000\002B\367\304W\277#\373\000\277\377\377\360@\000\000@@\000P\004l\330\327\2303\336\334\336w\275^\356\360\320@\232\231\244`\231OQ\265=P\365=M4\3104\365?TyM4\036\240\224S\322m\t\244\324\036\2404\000\000\000\000\000\r2\020D\320\023D\364\233Q\352\036\220\003@\000\030@\221D\324\324\366\2113SODz\215\000\000\000\000\000\tD54\312z\223&1L@4\003@\000\000\032/\001\037w$\n\013\372\356\223x\375\304\007\310/\347\315M\234\317\311\234ZY\232\267\265_\326\234gwX\3457\312\341g\251$x\234S\237\0041\013\231Z\375\264\304'\210\325e\221\311\216\376\315;\214[O\222\2231\210K\357\243\021Fi\311\312\177\345`\351\024\035z\237\021\005\364e\210\201}/\333[W\352o[.\222\330\316C\006[\031\220{^\330f3\312\267G\025\321\014r\362\322\010\205N\025R\030B`\323b4\005-\034\037S\216\232^\025\242\267U\324\345\240w\373\3734`\256\261q\370v\304\027\004\177Ky\330\333F\017\332\333\364\237'/\325\037*\026\232 \274\227Ea\026\311\370\346\335S\342p\004\021\367(\"U\253\310@\033@\013\177\243\3133{7\314\032\333\025\024\300f\031\243\203l\272b\326\"\257#&|\240;\222\266\374\342n\256.\252a!v\005\240\212\036\200\023\r\350h\201\372\237\032\021\344g\003k\275;\203\204\343O\r\225\377\204E\237\016l\220\026\356\341+@{\303D\036\n$\233!\207\026, \321Z\313\261\314Y#\226\242\030\237\262f$\2652\225\333\314XD\2676\220\200\3000Az,\311u\347U$\256hU0w\256\272\212L\2311\362\270p\364\336\272Fp\267v\270\301\230b2A\026qA\302\270K\002\303\361R\202.\3430B7_\242u\211c\034\345\305\300\314\345&\027A1b=N\357\250\2410\003\333\016\215\343\375\230Au\265s\301<\035\266\322)\270l-j\204I\336\2500\244\310\213%Bt\306\360\036\353\"\335\304\002D\253\272\266\r\263^\020kP1\\mN\304\"\224/-\234u\202\311\210l\3723k\225!\225\335\016\256(\203\235\035bY|.\333@\333\260I\016\331G[\313\326frn$P2(\211\030\352\010?\211 >;\n\242\022\002k\336%\276K<\200\212oI\232=\250\0133(\013\201\0345\000\205s\002\214\332\251C\357-\264\025A\030\017\326\330\330\2459\030\323\232\243#\233E\030\324\260f\025B\260-\255\3716\352I\021\257I(\2539\2108""E!B\r\253\211V\235\216\206a\216R\304\235jH\275F*\327\202\200\321Y\200\203\202\\\344*uN\n\"\016\361\354\367H\020\333\026#J\344llDH\345\331k\000X8i\r/\266*\315jb\355B\032\005\245\022\n~Wx\000\244\304\334wPe\203C\365\0330\034.\324H\007\211e\313E\301\331\220T\223\2417uU\025E\036C\203\210\362@\204\213Q\213\3531\3702\205\345\tP\241}4\030\326\306\007\311b?\205\323p\216\313&\361 \021\006\243g\026c\230a\305\021\034[DU\025D\340\311\200\316J\324\245\0136\247\006\315y\030\334h\000j2\235\307\257t\033\204m\241a\016\356\374s0\r\3573#\000\317\002\032\202\202\323V\027\025\341\0219\247)\314UmB1\276\262&UB\200BPK%f\344\206\300D\245^cE4\206re\311!\352:/\0222\316\3325\273<`\033U\312\315$S(\225\213\034\014D\331\206y\252\347L\213\"\351\252\231\242\005\266\274M\\\020#\223@\210\0276\001\373\300\263\023\241\325pXM\260\\l%\206\024\242 \220\317;\t \324\343\223.tH\230!\225\022\251\223\0023\310\256\005\n^3\t\262\264\213\311\312\345\255!\202&\316\221\010\032\004\306\311d:\030e\"\024\014\262\312q@=\305\21631l?\026V]|\035\305\352\221Y\201\004\344A\264\2446\221\355\\KA\212\347(\261u\307\234\034T\354\244\342\207vq\"\215Z\212\202\206\002+-Zu\177\213\271\"\234(Hr\262P\337\000";
-    PyObject *data = __Pyx_DecompressString(cstring, 1148, 2);
+    const struct { const unsigned int length: 8; } index[] = {{2},{68},{35},{54},{37},{60},{24},{52},{26},{34},{29},{33},{45},{22},{15},{179},{37},{30},{32},{1},{1},{1},{1},{1},{8},{5},{6},{15},{23},{25},{7},{6},{2},{6},{35},{9},{30},{50},{8},{31},{20},{32},{22},{30},{37},{5},{8},{20},{8},{15},{3},{15},{18},{4},{1},{9},{17},{18},{5},{8},{15},{6},{9},{5},{5},{6},{7},{8},{12},{2},{10},{5},{25},{13},{5},{8},{8},{7},{4},{10},{4},{8},{4},{7},{3},{4},{3},{27},{12},{14},{11},{10},{19},{14},{12},{10},{17},{13},{8},{12},{10},{12},{19},{5},{4},{5},{4},{4},{6},{8},{6},{6},{6},{1},{138},{11},{1}};
+    #if (CYTHON_COMPRESS_STRINGS) == 2 /* compression: bz2 (1119 bytes) */
+const char* const cstring = "BZh91AY&SY\331\343\203\322\000\000{\377\340\342\001\000\002B\367\304W\277#\373\000\277\377\377\360@\000\000@@\000P\004lIy\206om\312\335\263\256\336\032\010\0056\202a\032\231\036\220\324i\247\251\352h\036\247\352\215\244\003\3240\231\030\000\0010\004\323\000\000\t\220\320\320i\220\202\nd\324\364\322y\032\214\207\250\032\000\000\014 H\251\212\236\217M(\320z\203\3224\320\000\000\000\320\000J\024\300H\236\223\311\222i\240\000\000\000\000\001|\007\263@@_\326\364\207\034\307\240\370\005\364\374\006s?\233\2717\264\325\273\225\373S\225\016\333\346\330\316!qT\222:\\Sv\010b\027*\265\373i\210O\021\307e\231\315\216\376\315;L[O\216\2231\210K\357\243\021F\234\334\247\376V\016\221A\327\306\370\210/\243<D\013\351~\332\311\353\275rX\330\247\250\215\016S\273\n\315f4\275m\2264\326v\001\257\233\253\010\0142\363j\320!\256\323cB\014\334\037\245\347UO\n\321k\264\3659f8{z\363`\266\321\201\361\335 ^\010\376\227\363\271\267\214_\251\272\363\243'/\321\037L\326\251\301|\3275a\013(\345\332\335\024l8\002\010\374\024\006w\325\361\261\220\003\367\377\265n\223X\341q3\255\323\220#oJpm\237\010\265\210P3kg\001\334\225\311\363\211\272\270\272\251\204\205\330\264\021\235P\r\006\250\244+\241\362\232<\214\340mw\353\3048P3\343e\277\341!w\273\233)\003\r\325\210\020\n\240w\261AP\233\362\231-\267 >+#5\324\026h\313\001\326\325\254j\223X=Ia\310^D\303\224*p\016\r\013\317~\\\325\264&\222\242B\201UQ\266$\036\365z\273\272eC\323z\3408\202\333\332\343\006a\210\315\004Y\305\007Ep\226\005\207\342\245\004]\306A\010\333~y\324%\214n..\006NRat\023\026#\251\335\301\020\340=o\317\277\375\210\202\353\221n\202z\035\265\322)\267Q\026\250D\235\352\203\nL\210\262T'Lo\001\356\263-\334@$J\273\253`\334\332\260\203Z\201\212\254\366 \363%\345\263\037\260d\204`N\235\0265\240\216,A\345\336\206\016\204u\251n\250_\204\306\026\nR\352e[\313\270\314\331\324E\003!\0213\030\204\037\304\230\036U\225\204&\004u\274O}+E I7\232o7\331\r\245I\027\240\262\254\031/P\035\206t\033\357\r7\023d ~\252\250\330Jr1\016j:nm\021\304\245\241\010\r\205\"J\226\347""\345)\201B\325\201\2038\304\020x\016&H1q\270P\261\271\320\340\030\345-\244\353\322\222\3561\246\274T\006\334\240\307\013a\006K+\304\024%\016\215~\247\203\222\346\254\310\331R\271(\347\230])\001`\340Hi~H\2535\251\213\265\010\020-(\220S\354w\200\nLM\307u\006x4?\264\331\200\350\273Q \036\201bp4I\201iai\320I\004\205!\022\0011#$\035!\350\363\032\320\252\314\341Z\204\361\030\214i\272\\\267\274\036\346\241\370,\020e\266\363\364\020\005@\234\247\230\034\002\221!\014\231\220\331\223\022\014\301o\272\255\2028\025\024\013\372\344\306\307Y\030\3544\"j2\256\303\257\262\r\306W\315a\017\036\0337\030:\353m0oa\032\350\251j*\027\026Z\"sNS\230\260\345\252\020\276\300\343cC \024\246l\006\335hw\201\022\225yM\024\322\031\311\227$\207\250\347\213\032'IU\245IY V^Ti'\265t\002\255\005BF'-Q\342F\024\302\233\342\371\022\013,:\214\257\006\003.\2501\202'\000\272\301\221\031\324\250\371$\233\t&\370\007\241HA\224U\0223bHUN9T\266\300\201b\032\0211&\225\204'\244\261\002BS\n\240\26299\344\345u\247\014Q,\351 \215\002\006\312r\035\0142\241\n\006YeB\321\344X\361\341\212\310\374\231au\365;\213\325aL\344\021\033h\210\332\014\314SL\030K\331E\306\331\217'1\006\316R(v\350\022(\371(\250\241a\025\237\023q\374]\311\024\341BCg\216\017H";
+    PyObject *data = __Pyx_DecompressString(cstring, 1119, 2);
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #elif (CYTHON_COMPRESS_STRINGS) != 0 /* compression: zlib (1013 bytes) */
-const char* const cstring = "x\332\225U\315n\3346\020N\017\275\366\r\n\314%X;\260\225\034r(\n\327\205\353\270\300\036\232\2705\332+A\221#-c\212T\370\263^\345\224\307\310c\366\021:CJ\273\3538\010\320\203\264\0249?\337|\363q\366g\270\262\026\264\031\320E\343]\2041\240Bm\\\177\330\204\347\032\206\034\023\264\010\306i\334\241\006\35148\237 ZC\346\277\345\256\303\000[\203\017\240=\306r\204\273\321G\204\230\202\321\030\257\245\003\357\354\004*\240L\010\022\332\352\22462\201\211\240\274K\246\317>GJ\002\003\016>L\ryq(\031\243\351\035$\017\344\254\317K\234j\301)g\2439\360C0I\266\026g\203\n\252\013~\370\226o)\013\036L\332@\232F\204\325\274\237\202t\261\224qp\251f\344a\210\252t\304\335\233c\302L%\241\032\335\014c\232 n$\205Ny$p\235\017\240\246\264\361\256\221!\310i]\000\370\234\300w\320\372\354t\204\023\271\243(\317\365\351\372i\256J~\036G\037\022\352\265\333Jk\250K^\343\031\023O\306\324\244\225Z\001\345YQ2.du\006=y-\306\025\016q]\322\\\374Q\n\374\207\013$\010o=QYZs]Pr=\032\255i1\020\311D!\267\225\222\224\3769\270\275\271=\177\375\323\353\"\213\200\357)}$t\255\262\3249\222\003\327\224\215M\224\214\351\215\r\254;\230|\006\207\004\223\332:\222\335\261C\332\240\203\210\211\027\260*\275\220\211\352\026\344N\332\\\315\274\232-\262\367\357\322Fl\336=\"\217 \317\002\223Ja\\\330\274K8\302 \247\302\037\351\371#\006\177 \372oW\224C!I\215[\014$\214\204\003\177\373\226\213j.W\247\277J\255\205cz\270X \206^\355\224\267\226\341Pc\032\331\252\213#-\263Q\005{\371\345\366\"\241Km\"\347\305\222\275Wp\302m\352\213z\270\002\276\214\270K\350R\271\032\207{ibu\321\2142\232\217\010\027\277\300\253'\332r\236Z\327\311l\023\010\021Pg\205B\200\316\245P\347\3359\265rk\244\245Se\234ItX\313\275\034'\227\244\262\370RP\376\2275\2460}\220\343\246\031\247\335E\275\333\372Q\221O\367X\203\373Z\037\235\357w\363\236xi\255We@0t\3202\311\346+\247U\274\034c\236/\315\325\335\365z}c\255\031\243\211B\334N;z\336\220F\305[\002\377\027vw\370!\243S\310\022o\016j\247~-QEU\214\214\223S\3067\312\007\272\220\306aleDE\354\260:\205X\026=&&\236?\311H\030Rg\220""\n[\251\356\025\211\220x\324\234^h\326\274 P\225U\302@\327\024]\036\312]\302\020|\350\254\354#\365m\220i\276\254Bt\331)NFibbt\302hz\006\276\362\364\313\003\243t\253\366C\2248\202.\243\266\0308\333\036~U\307,\021!\006IH\005\3153\036f<1\350\303\353l\351\327\311\341\360&\235\321\033\037\004\343\036\251\250\321\217\213 \032\026D\363H\020B\220\"\204\222\243a\320e\275Au\037\363P\277\346\032xY\370(\253\354F\243\356)\365\215[\354\266ezs\214\017Y\332\212\345 \333\375j\316}\330\300\035/{\023i(\tA\263c\256\203V\263\372\313z\206q\264^\"\025I1E\264\035\350\014\307\230<=!s\023\023m\013\306KD\344\221d\2114E3\306\235\366\231\305yR%7\323Z\376\026\317\340k{\306\245\362\202\027\307?\247\317x\375\377\202\314\231_|\303\327z\232\035_&\252\355j1=\220\nI\335q\331\322\346\375=\325+\227o\345Il\216\347\316\247\357\376\375\341\331\367?~\276\372\374\347\273\377\000\361\205\033R";
-    PyObject *data = __Pyx_DecompressString(cstring, 1013, 1);
+    #elif (CYTHON_COMPRESS_STRINGS) != 0 /* compression: zlib (998 bytes) */
+const char* const cstring = "x\332}UMo\0337\020M\017\275\366\037\024\230K '\26079\344P\024\256\013\327q\001\035\232\2705\332+A\221#\2111\227\334\360\303\326\346\224\237\221\237\331\237\3207\334\225e\327i\017\253\345\222\363\361\346\315\033\352G:\367\236\254\3539d\027C\246!\261a\353\302\346\260I\317-\3655\027Z1\271`y\307\226t\260\024b\241\354\035\314\177\251\3535'\272u|G6rnG\274\033bf\312%9\313\371B\007\212\301\217d\022\353\302\244i59\225\255.\3442\231\030\212\333\324X3\222P\317}Lc\007/\t\245sv\233@%\022\234\355I\2133YH\312\331h\016|\227\\\321+\317\263\301\004j\235b\377\177\276\255,\272seKe\034\230\026\363~I:\344V\306\301e2\203\207\003U\345\001wo\037\022\346&\022&\243\313~(#\345\255F\350R\007\200[\307Df,\333\030:\235\222\036\227\r@\254\205\342\232V\261\006\233\351H\357\020\345\271}\261|\232k\"\277\016CL\205\3552\334j\357\320\245h\371X\210\2071\232\2640\013B\236\005\222I!\213c\332\300ko<\301\001\327-\315\351o\255\300\277\244@@x\027Aek\315EC)\365X\366n\305\t$\203Bi+\222\264\376\005\272\272\274:y\363\303\233&\213\304\037\220>\003\335\312xt\016r\220\232\252\363\005\311\204\336\334\321rMc\254\024\0300\321\326\001v\017\035\312\226\003e.\262\240E\353\205.\250[\301\035\332\\\314\274\272[\026\357_\265\317\334\275\177D\036 \317\002\323\306p\336\263y]x\240^\217\215?\350\371\023\247x \372\317\320\224\203\220P\343-'\010\243p/\337q%Eug\213\027?kkU\020z\244X\002C\257w&z/p\320\230N\257\314\351\003-\213\321\004\366\354\337\333{\t\235Y\227%/\267\354\033CG\322\246MS\217T \303\310\273\302\241\264\3218\314\245\313\223\213\025\224\331}b:\375\211^?\321V\210h\335ZW_H\251\304\266\032V\212lm\205\206\030N\320\312[\247=N\215\013\256\340p*\367l\030C\321\306\363+\205\374\257\246\230\312m\222\036\266\3350\356N\247\331\266\217\212|\272'\032\274\257\365\321\371\375n\275'^{\037M\273 \004:Y]t\367\225\323I\274\022c\276_\272\363\353\213\345\362\322{7d\227\225\272\032wx\336B\243\352\035\300\377\301\353k\376X9\030\026\211w\007\265\243_\373\250jR\214\316c0.v&&\014\244\013\234W:\263\001;\242N\245\366\213\r\027!^>a\244\034\324\231\264""\341\22567\006\"\004\217V\322++\232W\0005\261\n\014\030S\016\265o\263\304)\305\264\366z\223\321\267^\227yX\225Z\327`$\031\322\344\"\350\224\263xz\031y\274\345\302h\335\232\372\241Z\034\205a\264\236\223d\273\207?\251c\226\210R\275\006R\205\373L.3\2711\360\021m\365x\007\335\037~\2413\374\362\235\022\334\003\212\032\342\260\027D'\202\350\036\tB)(B\031=8\001\335\326[67\271\366\323\327\\\203,\033\037mU\303\340\314\rR_\206\275\335m\273\275%\306\307\252\375\204\345 \333\373\325\234\373\260\301;Yn\\\306\245\244\024\356\216\271\016\254f\365\267\365\014\343\301z\037\251IJ(\302v\302\031\017\271D<\251J\023\013\266\225\340\005\021u\200,\031\267h\345\214\036\024:\232\3646s\332\376\023\217\351k{0>\306?d\0259\277|\361\354?}}\304\314\277l\366\363\013\306\023\315\326}\270\001(\275\3776\021\212\010r9|\376\346\357\357\236}\373\375\227\363/\277\277\377\007#\350\372\316";
+    PyObject *data = __Pyx_DecompressString(cstring, 998, 1);
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #else /* compression: none (2099 bytes) */
-const char* const bytes = ": All dimensions preceding dimension %d must be indexed and not slicedBuffer view does not expose stridesCan only create a buffer that is contiguous in memory.Cannot assign to read-only memoryviewCannot create writable memory view from read-only memoryviewCannot index with type 'Cannot transpose memoryview with indirect dimensionsDimension %d is not directEmpty shape tuple for cython.arrayIndex out of bounds (axis %d)Indirect dimensions not supportedInvalid mode, expected 'c' or 'fortran', got Invalid shape in axis <MemoryView of Note that Cython is deliberately stricter than PEP-484 and rejects subclasses of builtin types. If you need to pass subclasses then set the 'annotation_typing' directive to False.Out of bounds on buffer access (axis Step may not be zero (axis %d)Unable to convert item to object.>')?add_note and  at 0xcollections.abc<contiguous and direct><contiguous and indirect>disableenablegc (got got differing extents in dimension isenableditemsize <= 0 for cython.arrayno default __reduce__ due to non-trivial __cinit__ object>pyntacle/_ext/cython_igraph.pyx<strided and direct><strided and direct or indirect><strided and indirect>unable to allocate array data.unable to allocate shape and strides.ASCIIEllipsis__Pyx_PyDict_NextRefSequenceView.MemoryViewabcallocate_bufferasyncio.coroutinesbasec__class____class_getitem__cline_in_tracebackcount__dict__dtype_is_objectencodeenumerateerrorflagsformatfortran__func____getstate__id__import__indexinit_igraph_error_handler_is_coroutineitemsitemsize__main__memviewmode__module__name__name__ndim__new__objpackpoppyntacle._ext.cython_igraph__pyx_capi____pyx_checksum__pyx_state__pyx_type__pyx_unpickle_Enum__pyx_vtable____qualname____reduce____reduce_cython____reduce_ex__register__set_name__setdefault__setstate____setstate_cython__shapesizestartstepstopstruct__test__unpackupdatevaluesxdouble (__Pyx_memviewslice, __Pyx_memviewslice, int, int *, int *, int)\000int (__Pyx_memviewslice, __Pyx_memviewslice, int, double *)\000int ""(__Pyx_memviewslice, long *, int *, int)\000igraph_betweenness\000igraph_dijkstra\000igraph_components\200\001\360\016\000\005\035\230A\230QO";
+    #else /* compression: none (2008 bytes) */
+const char* const bytes = ": All dimensions preceding dimension %d must be indexed and not slicedBuffer view does not expose stridesCan only create a buffer that is contiguous in memory.Cannot assign to read-only memoryviewCannot create writable memory view from read-only memoryviewCannot index with type 'Cannot transpose memoryview with indirect dimensionsDimension %d is not directEmpty shape tuple for cython.arrayIndex out of bounds (axis %d)Indirect dimensions not supportedInvalid mode, expected 'c' or 'fortran', got Invalid shape in axis <MemoryView of Note that Cython is deliberately stricter than PEP-484 and rejects subclasses of builtin types. If you need to pass subclasses then set the 'annotation_typing' directive to False.Out of bounds on buffer access (axis Step may not be zero (axis %d)Unable to convert item to object.>')?add_note and  at 0xcollections.abc<contiguous and direct><contiguous and indirect>disableenablegc (got got differing extents in dimension isenableditemsize <= 0 for cython.arrayno default __reduce__ due to non-trivial __cinit__ object>pyntacle/_ext/cython_igraph.pyx<strided and direct><strided and direct or indirect><strided and indirect>unable to allocate array data.unable to allocate shape and strides.ASCIIEllipsis__Pyx_PyDict_NextRefSequenceView.MemoryViewabcallocate_bufferasyncio.coroutinesbasec__class____class_getitem__cline_in_tracebackcount__dict__dtype_is_objectencodeenumerateerrorflagsformatfortran__func____getstate__id__import__indexinit_igraph_error_handler_is_coroutineitemsitemsize__main__memviewmode__module__name__name__ndim__new__objpackpoppyntacle._ext.cython_igraph__pyx_capi____pyx_checksum__pyx_state__pyx_type__pyx_unpickle_Enum__pyx_vtable____qualname____reduce____reduce_cython____reduce_ex__register__set_name__setdefault__setstate____setstate_cython__shapesizestartstepstopstruct__test__unpackupdatevaluesxint (__Pyx_memviewslice, __Pyx_memviewslice, int, double *)\000int (__Pyx_memviewslice, long *, int *, int)\000igraph_dijkstra\000igraph_compo""nents\200\001\360\016\000\005\035\230A\230QO";
     PyObject *data = NULL;
     CYTHON_UNUSED_VAR(__Pyx_DecompressString);
     #endif
