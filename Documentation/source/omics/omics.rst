@@ -176,10 +176,13 @@ The network is the graphical lasso estimate of the precision matrix
 (`Friedman et al. 2008`_). Its penalty is chosen by the Stability Approach to
 Regularization Selection (StARS; `Liu et al. 2010`_): the lasso is refitted
 on random subsamples along a path of penalties, and the chosen penalty gives
-the densest network whose edge instability stays below a bound. The bound is
-0.10 by default, as in the huge package (`Zhao et al. 2012`_), rather than
-the 0.05 of the original description, which can leave the network empty with
-few samples. Together, the transform and the estimator are the SPIEC-EASI
+the densest network whose edge instability stays below a bound. The bound, β,
+trades precision for recall: a lower bound selects a sparser network whose
+edges recur across subsamples, a higher bound keeps more edges, false ones
+included. Pyntacle uses 0.10, the default of the huge package
+(`Zhao et al. 2012`_), with which the networks of the case study were built;
+`Liu et al. 2010`_ and the SpiecEasi package use 0.05, which
+``--stars-beta 0.05`` selects. Together, the transform and the estimator are the SPIEC-EASI
 method (`Kurtz et al. 2015`_). For a given seed the result is deterministic.
 
 Sparse profiles limit what the network can say. After zero replacement, the
