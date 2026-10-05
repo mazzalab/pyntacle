@@ -88,3 +88,20 @@ def test_node_abundance_is_a_share_of_the_sample_whatever_the_unit():
         a, b = frac[g]["nodes"]["mean_rel_abundance"], reads[g]["nodes"]["mean_rel_abundance"]
         assert np.allclose(a, ab.T.loc[labels.index[labels == g], a.index].mean())
         assert np.allclose(a, b, atol=1e-4)
+
+
+def test_each_edge_counts_the_samples_where_both_taxa_are_present():
+    # zeros are placed by hand, so the co-presence of every pair is known
+    rng = np.random.default_rng(7)
+    taxa = ["t{}".format(i) for i in range(6)]
+    X = pd.DataFrame(rng.dirichlet(np.ones(6), size=60).T, index=taxa,
+                     columns=["s{}".format(i) for i in range(60)])
+    X.loc["t0", X.columns[:20]] = 0.0
+    X.loc["t1", X.columns[10:30]] = 0.0
+    labels = pd.Series(["A"] * 60, index=X.columns)
+    out = metagenomics.run(X, labels, prov=Provenance("metagenomics"), n_sub=5, prevalence=0.1)
+    present = X.T > 0
+    edges = out["A"]["edges"]
+    assert len(edges)
+    for a, b, n in zip(edges.source, edges.target, edges.n_copresent):
+        assert n == int((present[a] & present[b]).sum())

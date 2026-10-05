@@ -316,7 +316,9 @@ letters and digits replaced by ``_``):
 
 ``<prefix>_<g>.graphml``
    The same edges with the attributes ``assoc_weight`` (signed partial
-   correlation), ``abs_r`` and, for transcriptomics, ``q_value``. Node
+   correlation), ``abs_r``, ``q_value`` (transcriptomics) and
+   ``n_copresent`` (metagenomics: the samples of the group in which both
+   taxa are present). Node
    attributes: ``mean_log2_expr``, plus ``symbol`` and ``biotype`` with
    ``--biotype`` (transcriptomics); ``mean_rel_abundance`` (mean share
    of the sample total, 0–1, whatever the input unit) and ``prevalence``

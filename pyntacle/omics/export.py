@@ -52,6 +52,8 @@ def write_network(edges, nodes, outdir, prefix, group):
     g.es["abs_r"] = e["abs_r"].tolist()
     if "q_value" in e.columns:
         g.es["q_value"] = e["q_value"].astype(float).tolist()
+    if "n_copresent" in e.columns:
+        g.es["n_copresent"] = e["n_copresent"].astype(int).tolist()
     g.write_graphml(stem + ".graphml")
     return {"edgelist": stem + ".tsv", "graphml": stem + ".graphml",
             "n_nodes": len(names), "n_edges": len(e)}

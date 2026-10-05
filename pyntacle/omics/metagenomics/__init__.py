@@ -59,5 +59,11 @@ def run(X, labels, *, prov, meta=None, prevalence="auto", covariates=None,
         prov.diagnostic("stars_" + g, fit["instability"])
         nodes = pd.DataFrame({"mean_rel_abundance": rel.loc[by_group[g].index, taxa].mean(axis=0),
                               "prevalence": panel.prevalence(by_group[g][taxa])})
-        results[g] = {"edges": fit["edges"], "nodes": nodes, "stages": {"clr": Z}}
+        # samples in which both taxa of an edge are present (before zero
+        # replacement): an edge resting on few of them mostly records co-presence
+        present = sub > 0
+        edges = fit["edges"].copy()
+        edges["n_copresent"] = [int((present[a] & present[b]).sum())
+                                for a, b in zip(edges["source"], edges["target"])]
+        results[g] = {"edges": edges, "nodes": nodes, "stages": {"clr": Z}}
     return results

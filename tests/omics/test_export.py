@@ -37,3 +37,14 @@ def test_small_correlations_are_not_rounded_to_zero(tmp_path):
     edges = pd.DataFrame({"source": ["a"], "target": ["b"], "r": [3.2e-9]})
     out = export.write_network(edges, pd.DataFrame(), str(tmp_path), "t", "g")
     assert pd.read_csv(out["edgelist"], sep="\t")["Weight"].iloc[0] == pytest.approx(3.2e-9)
+
+
+def test_copresence_is_an_edge_attribute_of_the_graphml_only(tmp_path):
+    edges = pd.DataFrame({"source": ["a", "b"], "target": ["b", "c"], "r": [0.9, -0.4],
+                          "n_copresent": [12, 3]})
+    nodes = pd.DataFrame({"x": [1, 2, 3]}, index=["a", "b", "c"])
+    out = export.write_network(edges, nodes, str(tmp_path), "crc", "Normal")
+    g = ig.Graph.Read_GraphML(out["graphml"])
+    assert sorted(g.es["n_copresent"]) == [3, 12]
+    # the edge list Pyntacle reads keeps its three columns
+    assert list(pd.read_csv(out["edgelist"], sep="\t").columns) == ["N1", "N2", "Weight"]

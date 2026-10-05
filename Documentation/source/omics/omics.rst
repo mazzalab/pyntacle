@@ -190,7 +190,10 @@ CLR coordinate of a taxon absent from a sample depends only on the sample's
 geometric mean, so taxa absent from the same samples look associated
 (`Austin & Korem 2025`_). When most values are zeros, an edge mostly records
 that two taxa are present or absent together, not that their abundances
-covary; the fraction of zeros in the panel of each group is in the report.
+covary. The fraction of zeros in the panel of each group is in the report,
+and every edge of the GraphML file carries ``n_copresent``, the number of
+samples in which both of its taxa are present: an edge resting on a handful
+of such samples says little about how the two abundances vary together.
 
 Weights and distances
 ---------------------
