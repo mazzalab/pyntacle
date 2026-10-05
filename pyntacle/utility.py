@@ -580,3 +580,26 @@ def distance_matrix(graph, weights=None, dtype=np.float64, chunk=512):
         stop = min(n, start + chunk)
         out[start:stop] = graph.distances(source=range(start, stop), weights=weights, mode=ig.ALL)
     return out
+
+
+def path_lengths(graph):
+    """Edge lengths to hand to igraph's path searches: None when every length
+    is 1, so igraph runs a BFS instead of a Dijkstra that gives the same answer."""
+    w = graph.es["weight"] if "weight" in graph.es.attributes() else None
+    if w is None or all(x == 1 for x in w):
+        return None
+    return w
+
+
+def finite_max(sps, chunk=512):
+    """Largest finite entry of a distance matrix: the diameter of the graph it
+    was computed on (igraph's, with unconnected pairs ignored), without another
+    all-pairs search. Read a block of rows at a time so the finiteness mask
+    never spans the whole matrix."""
+    best = 0.
+    for start in range(0, sps.shape[0], chunk):
+        block = sps[start:start + chunk]
+        block = block[np.isfinite(block)]
+        if block.size:
+            best = max(best, float(block.max()))
+    return best

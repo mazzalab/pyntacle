@@ -12,6 +12,15 @@ import warnings
 from pyntacle.utility import *
 
 
+def _component_block(sps, members):
+    """Rows and columns of one component in an all-pairs distance matrix (None
+    when there is no matrix). Components are disconnected from each other, so
+    the block is exactly the component's own distance matrix."""
+    if sps is None:
+        return None
+    return np.asarray(sps)[np.ix_(members, members)]
+
+
 class Graphtacle(ig.Graph, ig.GraphBase):
     """Extended igraph.Graph subclass for Pyntacle network analysis.
 
@@ -419,8 +428,8 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         Args:
             sps: optional precomputed weighted all-pairs shortest-path matrix
                 (list of rows). If None it is computed once here.
-            diameter: optional precomputed (unweighted) diameter. If None it is
-                computed once here.
+            diameter: optional precomputed diameter, in the unit of ``sps``.
+                If None it is the largest finite entry of ``sps``.
 
         Returns:
             list[float]: Radiality score for each node in vertex order.
@@ -430,12 +439,11 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         if sps is None:
             sps = distance_matrix(self, weights=weights)
 
+        sps = np.asarray(sps, dtype=float)
         if diameter is None:
-            # same unit as sps: weighted distances need the weighted diameter
-            diameter = self.diameter(weights=weights)
+            diameter = finite_max(sps)
         norm = self.vcount() - 1
 
-        sps = np.asarray(sps, dtype=float)
         for node in self.iNodes:
             row = sps[node]
             reachable = row[np.isfinite(row)]
@@ -465,7 +473,7 @@ class Graphtacle(ig.Graph, ig.GraphBase):
                         rad = [0]
                     else:
                         part_nodes = subg.vcount()
-                        rad = subg.radiality()
+                        rad = subg.radiality(sps=_component_block(sps, c))
                         # scaling the radiality by weighting it over the total number of nodes
                         proportion_nodes = part_nodes / tot_nodes
                         rad = [r * proportion_nodes for r in rad]
@@ -486,16 +494,18 @@ class Graphtacle(ig.Graph, ig.GraphBase):
                         rad = [0] * part_nodes
                     else:
                         proportion_nodes = part_nodes / tot_nodes
-                        rad = [r * proportion_nodes for r in subg.radiality()]
+                        rad = [r * proportion_nodes for r in subg.radiality(sps=_component_block(sps, c))]
                     sub_names = subg.vs["name"]
                     for nm in wanted:
                         result[nodes.index(nm)] = rad[sub_names.index(nm)]
                 return result
 
-    def median_global_shortest_path_length(self):
-
-        # hop counts are exact in float32: half the memory of the default
-        sps = distance_matrix(self, dtype=np.float32)
+    def median_global_shortest_path_length(self, sps=None):
+        """Median hop count over connected pairs; `sps`, if given, is the hop
+        distance matrix already computed."""
+        if sps is None:
+            # hop counts are exact in float32: half the memory of the default
+            sps = distance_matrix(self, dtype=np.float32)
         finite = sps[np.isfinite(sps) & (sps != 0)]
         if finite.size == 0:
             return float("nan")

@@ -250,13 +250,17 @@ def main(args):
 			nodes_list_color = [x.replace(" ", "") for x in nodes_toColor]
 			print(f"Colored nodes : {nodes_list_color}\n")
 
+		lengths = path_lengths(g)
+		# all-pairs distances computed once and shared by radiality and radiality reach
+		sps_w = distance_matrix(g, weights=lengths)
+		diam_w = finite_max(sps_w)
 		df =  pd.DataFrame({
 					"Node Name" : g.vs["label"],
 					"Degree": g.degree(), 
-					"Betweenness": g.betweenness(weights=g.es["weight"]),
-					"Closeness": g.closeness(weights=g.es["weight"]),
-					"Radiality": g.radiality(),
-					"Radiality reach": g.radiality_reach(),
+					"Betweenness": g.betweenness(weights=lengths),
+					"Closeness": g.closeness(weights=lengths),
+					"Radiality": g.radiality(sps=sps_w, diameter=diam_w),
+					"Radiality reach": g.radiality_reach(sps=sps_w, diameter=diam_w),
 					# strength-based metrics: a heavier weight is a stronger tie
 					"Clustering Coefficient": g.transitivity_local_undirected(weights=g.affinities(),mode="zero"),
 					"Eccentricity": g.eccentricity(),
@@ -270,16 +274,21 @@ def main(args):
 	# ---- global ----
 	elif args.command == "global":
 		# all-pairs distances computed once and shared by radiality and radiality reach
-		sps_w = distance_matrix(g, weights=g.es["weight"])
-		diam_u = g.diameter()
+		lengths = path_lengths(g)
+		sps_w = distance_matrix(g, weights=lengths)
 		# radiality needs the diameter in the same unit as the distances
-		diam_w = g.diameter(weights=g.es["weight"])
+		diam_w = finite_max(sps_w)
 		radiality = g.radiality(sps=sps_w, diameter=diam_w)
 		radiality_reach = g.radiality_reach(sps=sps_w, diameter=diam_w)
+		# hop distances: the weighted matrix itself when every weight is 1
+		sps_u = sps_w if lengths is None else distance_matrix(g, dtype=np.float32)
+		diam_u = finite_max(sps_u)
+		median_hops = g.median_global_shortest_path_length(sps=sps_u)
+		del sps_u
 		df =  pd.DataFrame({
 					"Average shortest path length" : g.average_path_length(directed=directed, unconn=False),
-					"Median shortest path length": g.median_global_shortest_path_length(),
-					"Diameter": g.diameter(weights=g.es["weight"]),
+					"Median shortest path length": median_hops,
+					"Diameter": diam_w,
 					"Components": len(g.components()),
 					"Radius": float(g.radius()),
 					"Density": g.density(),
@@ -287,7 +296,7 @@ def main(args):
 					"Average clustering coefficient": g.transitivity_avglocal_undirected(),
 					"Weighted clustering coefficient": g.transitivity_undirected(),
 					"Average degree": mean(g.degree()),
-					"Average Closeness":mean(g.closeness(weights=g.es["weight"])),
+					"Average Closeness":mean(g.closeness(weights=lengths)),
 					"Average Eccentricity":mean(g.eccentricity()),
 					"Average Radiality":(mean(radiality)),
 					"Average Radiality Reach": mean(radiality_reach),
