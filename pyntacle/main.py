@@ -280,8 +280,12 @@ def main(args):
 		diam_w = finite_max(sps_w)
 		radiality = g.radiality(sps=sps_w, diameter=diam_w)
 		radiality_reach = g.radiality_reach(sps=sps_w, diameter=diam_w)
-		# hop distances: the weighted matrix itself when every weight is 1
-		sps_u = sps_w if lengths is None else distance_matrix(g, dtype=np.float32)
+		# hop distances: the weighted matrix itself when every weight is 1;
+		# otherwise the weighted one is freed before the hop one is built
+		sps_u = sps_w if lengths is None else None
+		del sps_w
+		if sps_u is None:
+			sps_u = distance_matrix(g, dtype=np.float32)
 		diam_u = finite_max(sps_u)
 		median_hops = g.median_global_shortest_path_length(sps=sps_u)
 		del sps_u

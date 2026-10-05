@@ -500,16 +500,32 @@ class Graphtacle(ig.Graph, ig.GraphBase):
                         result[nodes.index(nm)] = rad[sub_names.index(nm)]
                 return result
 
-    def median_global_shortest_path_length(self, sps=None):
+    def median_global_shortest_path_length(self, sps=None, chunk=512):
         """Median hop count over connected pairs; `sps`, if given, is the hop
-        distance matrix already computed."""
+        distance matrix already computed.
+
+        Hop counts are integers, so the median is read off their histogram,
+        filled a block of rows at a time: no copy of the matrix is made."""
         if sps is None:
             # hop counts are exact in float32: half the memory of the default
             sps = distance_matrix(self, dtype=np.float32)
-        finite = sps[np.isfinite(sps) & (sps != 0)]
-        if finite.size == 0:
+        counts = np.zeros(1, dtype=np.int64)
+        for start in range(0, sps.shape[0], chunk):
+            block = sps[start:start + chunk]
+            c = np.bincount(block[np.isfinite(block) & (block != 0)].astype(np.int64))
+            if c.size > counts.size:
+                c[:counts.size] += counts
+                counts = c
+            else:
+                counts[:c.size] += c
+        total = int(counts.sum())
+        if total == 0:
             return float("nan")
-        return float(np.median(finite))
+        # the value at sorted position i is the first whose cumulative count exceeds i
+        cum = np.cumsum(counts)
+        low = int(np.searchsorted(cum, (total - 1) // 2 + 1))
+        high = int(np.searchsorted(cum, total // 2 + 1))
+        return (low + high) / 2
 
     
 
