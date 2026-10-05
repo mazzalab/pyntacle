@@ -8,19 +8,9 @@ from pyntacle.utility import *
 
 
 def check_input_values(size, nei):
-    """
-    Check if the input values are within the valid range for the Watts-Strogatz function.
-    Parameters:
-    size (int): number of vertices (must be greater than or equal to k)
-    nei (int): degree of each vertex (must be even and less than n)
-	"""
-    if size < nei:
-        return False
-    if nei % 2 != 0:
-        return False
-    if nei >= size:
-        return False
-    return True
+    """Watts-Strogatz starts from a ring where each node reaches the nodes up to
+    `nei` steps away, 2 * nei neighbours in all: they must be fewer than the nodes."""
+    return nei >= 1 and 2 * nei < size
 
 def igraph_to_graphviz(grafo,weighted=False,directed=False):
 	if weighted:
@@ -53,7 +43,6 @@ def name_from_edge(grafo, weight=False):
 		v1 = [x[0] for x in edges]
 		v2 = [x[1] for x in edges]
 		df_edges=pd.DataFrame({"V1":v1,"V2":v2,"W":weights})
-		print(df_edges)
 		return df_edges
 	else:
 
@@ -150,19 +139,20 @@ def grafo_to_sif(grafo,name):
 			for pair in edges_listTouple:
 				file.write(f"{pair[0]}\tinteracts_with\t{pair[1]}\t{grafo.get_edge_weight(pair[0], pair[1])}\n")
 
-def output_decision(grafo,fileType,filename):
-    
-    if fileType=="matrix":
-        grafo.outdir = ""
-        grafo_to_matrix(grafo,filename)
-    elif fileType=="sif":
-        grafo_to_sif(grafo,filename)
-    elif fileType=="edgelist":
-        grafo_to_edgelist(grafo,filename)
-    elif fileType=="dot":
-        grafo_to_dot(grafo,filename)
-    else:
-        print("Error")
+def output_decision(grafo, fileType, filename, outdir=None):
+	"""Write the network as `fileType` to <outdir>/<filename>.<ext> and return the path.
+
+	Without `outdir` the network's own output directory is used (the current
+	directory when it has none)."""
+	writers = {"matrix": (grafo_to_matrix, "txt"), "sif": (grafo_to_sif, "sif"),
+	           "edgelist": (grafo_to_edgelist, "tsv"), "dot": (grafo_to_dot, "dot")}
+	if fileType not in writers:
+		raise ValueError(f"cannot write a network as '{fileType}'")
+	if outdir is not None:
+		grafo.outdir = outdir
+	writer, ext = writers[fileType]
+	writer(grafo, filename)
+	return f"{grafo.outdir}/{filename}.{ext}" if grafo.outdir else f"{filename}.{ext}"
 
 
 def define_labels(grafo):
@@ -178,16 +168,16 @@ def define_labels(grafo):
 
 def erdos_renyi(number_nodes, number_edges, probability, directed=False, loops=False):
 	if probability:
-		grafo=ig.Graph.Erdos_Renyi(number_nodes, p=probability, directed=directed, loops=False)
+		grafo=ig.Graph.Erdos_Renyi(number_nodes, p=probability, directed=directed, loops=loops)
 		grafo=define_labels(grafo)
 		return grafo
 	else:
-		grafo=ig.Graph.Erdos_Renyi(number_nodes, m=number_edges, directed=directed, loops=False)
+		grafo=ig.Graph.Erdos_Renyi(number_nodes, m=number_edges, directed=directed, loops=loops)
 		grafo=define_labels(grafo)
 		return grafo
 
 def tree_generate(number_nodes, children, directed):
-	grafo=ig.Graph.Tree(number_nodes, children, type=directed)
+	grafo=ig.Graph.Tree(number_nodes, children, mode="out" if directed else "undirected")
 	grafo=define_labels(grafo)
 	return grafo 
 
@@ -202,7 +192,7 @@ def watts_strogatz(size, nei, probability,loops=False, multiple=False, dim=1):
 		grafo=define_labels(grafo)
 		return grafo
 	else:
-		raise TypeError(u"\nInvalid input values.\nsize (int): number of vertices (must be greater than or equal to k)\nnei (int): degree of each vertex (must be even and less than n)\n")
+		raise ValueError(f"watts-strogatz needs -nei of at least 1 and 2 * nei below the lattice size (got -s {size}, -nei {nei})")
 
 
 def lattice(dimension, nei=1, directed=False, mutual=False, circular=False):

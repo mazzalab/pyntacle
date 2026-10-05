@@ -41,7 +41,7 @@ Options
      - str
      - \ 
      - \ 
-     - Use this flag if your file has a specific header (ex. ',')
+     - Column separator of the input file (ex. ','); detected automatically if omitted
    * - ``-nh``, ``--NoHeader``
      - No
      - bool
@@ -136,20 +136,25 @@ Compute metrics on a directed, weighted adjacency matrix, excluding node LR:
        -r LR \
        -o /tmp/out/
 
-**Expected output (partial):**
+**Expected output** for ``pyntacle local -t edgelist -i examples/figure_8.egl -o /tmp/out/`` (table cut here):
 
 .. code-block:: text
 
-   Working on: examples/figure_8.egl
+   pyntacle local
+   Input: examples/figure_8.egl
+   Output directory: /tmp/out
+   Network: 32 nodes, 56 edges, 1 component(s)
 
-   No nodes removed
+   Node Name  Degree  Betweenness  Closeness  Radiality  ...
+          HS       2        0.000      0.212      5.290  ...
+          PS       6       18.500      0.258      6.129  ...
+   ...
+   ... 12 more rows in the report
 
-   Number of nodes: 32
-   Number of edges: 56
-   Number of components: 1
-   Function : local
-
+   Report: /tmp/out/report_figure_8_local.tsv
    Done!
+
+The screen shows at most 20 rows; the report holds every node.
 
 Output files written to ``/tmp/out/``:
 

@@ -39,7 +39,7 @@ Options
      - \ 
      - \ 
      - fastgreedy, infomap, leading-eigenvector, random-walk, percolation
-     - Select one the subfunctions right after communities
+     - Subcommand to run, right after communities
    * - ``-t``, ``--fileType``
      - Yes
      - str
@@ -57,7 +57,7 @@ Options
      - str
      - \ 
      - \ 
-     - Use this flag if your file has a specific header (ex. ',')
+     - Column separator of the input file (ex. ','); detected automatically if omitted
    * - ``-nh``, ``--NoHeader``
      - No
      - bool
@@ -93,7 +93,7 @@ Options
      - \ 
      - \ 
      - \ 
-     - Select the node/nodes to be romev from the graph (ex. A,B,C)
+     - Select the node/nodes to be removed from the graph (ex. A,B,C)
    * - ``-nc``, ``--numberCommunities``
      - No
      - \ 
@@ -105,7 +105,7 @@ Options
      - \ 
      - \ 
      - \ 
-     - Filters the resulting communities and keeps only those with a number of vertices equal or greater than this treshold
+     - Filters the resulting communities and keeps only those with a number of vertices equal or greater than this threshold
    * - ``-N``, ``--maxNodes``
      - No
      - \ 

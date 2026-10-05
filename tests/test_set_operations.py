@@ -37,7 +37,7 @@ def test_set_subcommand_completes_and_writes_its_report(two_networks, tmp_path, 
     result = subprocess.run(
         [sys.executable, MAIN, "set", subcommand, "-i", first, "-t", "edgelist",
          "-i2", second, "-o", outdir],
-        capture_output=True, text=True, timeout=300)
+        capture_output=True, text=True, timeout=300, cwd=str(tmp_path))
 
     assert result.returncode == 0, (
         f"set {subcommand} exited {result.returncode}:\n{result.stderr[-1200:]}")

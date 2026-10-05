@@ -17,18 +17,15 @@ def _strength(grafo):
 
 
 def fastgreedy(grafo, n=None):
-	print("\nFastgreedy")
 	modules = grafo.community_fastgreedy(weights=_strength(grafo))
 	modules = modules.as_clustering(n=n)
 	return modules.subgraphs()
 
 def infomap(grafo):
-	print("\nInfomap")
 	modules=grafo.community_infomap(edge_weights=_strength(grafo), vertex_weights=None, trials=10)
 	return modules.subgraphs()
 
 def leading_eigenvector(grafo,n):
-	print("\nleading-eigenvector")
 	modules=grafo.community_leading_eigenvector(clusters=n, weights=_strength(grafo))
 	return modules.subgraphs()
 
@@ -39,7 +36,6 @@ def random_walk(grafo, n, steps=4):
 
 def percolation(g: ig.Graph, k: int = 3) -> List[ig.Graph]:
 
-	print(f"\nPercolation method (k={k})")
  
 	if k < 2:
 		raise ValueError("k must be >= 2")
@@ -110,16 +106,17 @@ def communities(grafo, algorithm, n, giant, steps=4, communitySize=3):
 
 	subgraph = get_connected_subgraph(plain_copy(grafo, directed=False), giant)
 
-	if (type(n)==str) & (algorithm!="infomap"): 
-		n=int(n)
+	if algorithm in ("infomap", "percolation"):
+		if n:
+			print(f"-nc is ignored by {algorithm}, which finds the number of communities itself")
+		n = None
+	elif n:
+		n = int(n)
+	elif algorithm == "leading-eigenvector":
+		print("No -nc given: communities are split while modularity increases")
 	else:
-		if type(n)==str or (algorithm=="percolation"):
-			print("Number of communities is ignored")
-		elif (algorithm=="infomap"):
-			pass
-		else:
-			print("WARNING: number of clusters not provided, the algorithm tries to do as many splits as possible.")
-	
+		print("No -nc given: the dendrogram is cut where modularity is highest")
+
 	if algorithm == "fastgreedy":
 		modules = fastgreedy(subgraph,n)
 	elif algorithm == "infomap":

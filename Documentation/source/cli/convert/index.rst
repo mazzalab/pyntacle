@@ -15,6 +15,10 @@ Supported conversions:
 - ``EdgeList`` ↔ ``DOT``
 - ``SIF`` ↔ ``DOT``
 
+The converted network is written as ``<-fo>.<ext>`` in the output directory
+(``-o``, or the folder of the input file); weights are kept when ``-w`` is
+given.
+
 Synopsis
 --------
 .. code-block:: console
@@ -51,7 +55,7 @@ Options
      - str
      - \ 
      - \ 
-     - Use this flag if your file has a specific header (ex. ',')
+     - Column separator of the input file (ex. ','); detected automatically if omitted
    * - ``-nh``, ``--NoHeader``
      - No
      - bool
@@ -75,7 +79,7 @@ Options
      - \ 
      - \ 
      - \ 
-     - Select the node/nodes to be romev from the graph (ex. A,B,C)
+     - Select the node/nodes to be removed from the graph (ex. A,B,C)
    * - ``-to``, ``--typeOutput``
      - Yes
      - \ 
@@ -88,12 +92,6 @@ Options
      - \ 
      - \ 
      - Output file name (extension will be automatically assigned)
-   * - ``-f``, ``--format``
-     - No
-     - str
-     - svg
-     - \ 
-     - Specify the format of the image output (svg, png)
    * - ``-o``, ``--outdir``
      - No
      - str

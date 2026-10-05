@@ -97,7 +97,7 @@ def create_parser() -> argparse.ArgumentParser:
 		description= Fore.YELLOW + '''Measures to be calculated: Degree, Betweenness, Closeness, Radiality, Radiality reach, Clustering Coefficient,  Eccentricity, Eigenvector (Scaled), Pagerank''', formatter_class=argparse.RawDescriptionHelpFormatter)
 	local.add_argument('-t', '--fileType', action='store', type=str, choices = ["matrix", "edgelist", "sif", "dot"], help='-[required] File type', required=True)
 	local.add_argument('-i', '--inputFile', action='store', help='-[required] Specify the input file name', required=True)
-	local.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Use this flag if your file has a specific header (ex. \',\')', required=False)
+	local.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Column separator of the input file (ex. \',\'); detected automatically if omitted', required=False)
 	local.add_argument('-nh', '--NoHeader', action='store_true', help='-[optional] Use this flag if your file doesn\'t have an header', required=False)
 	local.add_argument('-d', '--directed', action='store_true', help='-[optional] Use this flag if your graph is directed', required=False)
 	local.add_argument('-w', '--weight', action='store_true', help='-[optional] Use this flag if your graph is weighted', required=False)
@@ -116,7 +116,7 @@ def create_parser() -> argparse.ArgumentParser:
 		description= Fore.YELLOW + '''Measures to be calculated: Average shortest path length, Median shortest path length, Diameter, Components, Radius, Density, pi, \n\t  Average clustering coefficient, Weighted clustering coefficient, Average degree, Average Closeness, \n\t  Average Eccentricity, Average Radiality, Average Radiality Reach, Completeness Naive, Completeness, Compactness''' + Style.RESET_ALL, formatter_class=argparse.RawDescriptionHelpFormatter)
 	glb.add_argument('-t', '--fileType', action='store', type=str, choices = ["matrix", "edgelist", "sif", "dot"], help='-[required] File type', required=True)
 	glb.add_argument('-i', '--inputFile', action='store', help='-[required] Specify the input file name', required=True)
-	glb.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Use this flag if your file has a specific header (ex. \',\')', required=False)
+	glb.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Column separator of the input file (ex. \',\'); detected automatically if omitted', required=False)
 	glb.add_argument('-nh', '--NoHeader', action='store_true', help='-[optional] Use this flag if your file doesn\'t have an header', required=False)
 	glb.add_argument('-d', '--directed', action='store_true', help='-[optional] Use this flag if your graph is directed', required=False)
 	glb.add_argument('-w', '--weight', action='store_true', help='-[optional] Use this flag if your graph is weighted', required=False)
@@ -136,7 +136,7 @@ def create_parser() -> argparse.ArgumentParser:
 	groupcentrality.add_argument(dest='subcommand', choices=['gc-info', 'gc-finder'], type= str, help='''Select one the subcuntions right after groupcentrality''')
 	groupcentrality.add_argument('-t', '--fileType', action='store', type=str, choices = ["matrix", "edgelist", "sif", "dot"], help='-[required] File type', required=True)
 	groupcentrality.add_argument('-i', '--inputFile', action='store', help='-[required] Specify the input file name', required=True)
-	groupcentrality.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Use this flag if your file has a specific header (ex. \',\')', required=False)
+	groupcentrality.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Column separator of the input file (ex. \',\'); detected automatically if omitted', required=False)
 	groupcentrality.add_argument('-nh', '--NoHeader', action='store_true', help='-[optional] Use this flag if your file doesn\'t have an header', required=False)
 	groupcentrality.add_argument('-d', '--directed', action='store_true', help='-[optional] Use this flag if your graph is directed', required=False)
 	groupcentrality.add_argument('-w', '--weight', action='store_true', help='-[optional] Use this flag if your graph is weighted', required=False)
@@ -166,10 +166,10 @@ def create_parser() -> argparse.ArgumentParser:
 	keyplayer = subparsers.add_parser('keyplayer',usage=Fore.GREEN + Style.BRIGHT + 'pyntacle ' + Fore.RED +'keyplayer ' + Fore.MAGENTA + '{kp-info | kp-finder}' +   Fore.CYAN  + ' -t {fileType} -i {input_file} [optional parameters] [-k {k-size} | -n {node-list}] [optional outdir]'+  Style.RESET_ALL, help='''Computes key player metrics for a specific set of nodes (\'kp-info\') or finds a set of nodes of size `k` that owns the optimal or the best score (\'kp-finder\').'''+ Style.RESET_ALL, 
 		description=textwrap.dedent(Fore.RED + Style.BRIGHT +'''Specific usage:\n''' + Fore.GREEN + Style.BRIGHT + ''' · pyntacle keyplayer kp-info''' +  Fore.CYAN + ''' -t {fileType} -i {input_file} [optional parameters] -n {node-list} [optional outdir]\n''' + Style.RESET_ALL +  '''  kp-info: Compute individual key-player metrics for a selected set of nodes  
 		\n''' + Fore.GREEN + Style.BRIGHT + ''' · pyntacle keyplayer kp-finder''' +  Fore.CYAN  + ''' -t {fileType} -i {input_file} [optional parameters] -k {k-size} [optional outdir]\n''' + Style.RESET_ALL +  '''  kp-finder : Find the best kp-set of size k'''), formatter_class=argparse.RawDescriptionHelpFormatter)
-	keyplayer.add_argument(dest='subcommand', choices=['kp-info', 'kp-finder'], help='''Select one the subfunctions right after keyplayer''')
+	keyplayer.add_argument(dest='subcommand', choices=['kp-info', 'kp-finder'], help='''Subcommand to run, right after keyplayer''')
 	keyplayer.add_argument('-t', '--fileType', action='store', type=str, choices = ["matrix", "edgelist", "sif", "dot"], help='-[required] File type', required=True)
 	keyplayer.add_argument('-i', '--inputFile', action='store', help='-[required] Specify the input file name', required=True)
-	keyplayer.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Use this flag if your file has a specific header (ex. \',\')', required=False)
+	keyplayer.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Column separator of the input file (ex. \',\'); detected automatically if omitted', required=False)
 	keyplayer.add_argument('-nh', '--NoHeader', action='store_true', help='''\n\n-[optional] Use this flag if your file doesn\'t have an header''', required=False)
 	keyplayer.add_argument('-d', '--directed', action='store_true', help='-[optional] Use this flag if your graph is directed', required=False)
 	keyplayer.add_argument('-w', '--weight', action='store_true', help='-[optional] Use this flag if your graph is weighted', required=False)
@@ -201,15 +201,15 @@ def create_parser() -> argparse.ArgumentParser:
 		description=textwrap.dedent(Fore.RED + Style.BRIGHT +'''Specific usage:\n''' + Fore.GREEN + Style.BRIGHT + ''' · pyntacle set union'''+ Fore.CYAN + Style.BRIGHT + ''' -t {fileType} -i {input_file} [optional parameters] -i2 {input_file2} [optional outdir]\n''' + Style.RESET_ALL + '''  union : Return a resulting merged graph of the original two networks, marking the common nodes among them along with their common connecting edges \n\n''' 
 			+ Fore.GREEN + Style.BRIGHT + ''' · pyntacle set intersection''' + Fore.CYAN + Style.BRIGHT +''' -t {fileType} -i {input_file} [optional parameters] -i2 {input_file2} [optional outdir]\n''' + Style.RESET_ALL + '''  intersection : Return only the common nodes and their connecting edges among the two graphs of interest \n\n''' 
 			+ Fore.GREEN + Style.BRIGHT + ''' · pyntacle set difference'''  + Fore.CYAN + Style.BRIGHT + ''' -t {fileType} -i {input_file} [optional parameters] -i2 {input_file2} [optional outdir]\n''' + Style.RESET_ALL + '''  difference : Perform the difference between the two input graphs. NOTE: the difference among graphs is not reciprocal'''), formatter_class=argparse.RawDescriptionHelpFormatter)
-	setop.add_argument(dest='subcommand', choices=['union', 'intersection', 'difference'], help='''Select one the subfunctions right after set''')
+	setop.add_argument(dest='subcommand', choices=['union', 'intersection', 'difference'], help='''Subcommand to run, right after set''')
 	setop.add_argument('-t', '--fileType', action='store', type=str, choices = ["matrix", "edgelist", "sif", "dot"], help='-[required] File type', required=True)
 	setop.add_argument('-i', '--inputFile', action='store', help='-[required] Specify the input file name', required=True)
-	setop.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Use this flag if your file has a specific header (ex. \',\')', required=False)
+	setop.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Column separator of the input file (ex. \',\'); detected automatically if omitted', required=False)
 	setop.add_argument('-nh', '--NoHeader', action='store_true', help='-[optional] Use this flag if your file doesn\'t have an header', required=False)
 	setop.add_argument('-d', '--directed', action='store_true', help='-[optional] Use this flag if your graph is directed', required=False)
 	setop.add_argument('-w', '--weight', action='store_true', help='-[optional] Use this flag if your graph is weighted', required=False)
 	setop.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be removed from the graph (ex. A,B,C)', required=False)
-	setop.add_argument('-i2', '--inputFile2', action='store', type=str, help='-[required] Specify the second input file name (Use same format the first input file or use the \'convert\' function if necessary)', required=True)
+	setop.add_argument('-i2', '--inputFile2', action='store', type=str, help='-[required] Second network, in the same format as the first: -t, -s, -nh and -w apply to both (use \'convert\' if they differ)', required=True)
 	setop.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written', required=False)
 	setop.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output (svg, png)', required=False)
 	setop.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same directory as the input file)', required=False)
@@ -227,14 +227,13 @@ def create_parser() -> argparse.ArgumentParser:
 	· Sif and Dot (and viceversa)''' + Style.RESET_ALL, formatter_class=argparse.RawDescriptionHelpFormatter)
 	convert.add_argument('-t', '--fileType', action='store', type=str, choices = ["matrix", "edgelist", "sif", "dot"], help='-[required] File type', required=True)
 	convert.add_argument('-i', '--inputFile', action='store', help='-[required] Specify the input file name', required=True)
-	convert.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Use this flag if your file has a specific header (ex. \',\')', required=False)
+	convert.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Column separator of the input file (ex. \',\'); detected automatically if omitted', required=False)
 	convert.add_argument('-nh', '--NoHeader', action='store_true', help='-[optional] Use this flag if your file doesn\'t have an header', required=False)
 	convert.add_argument('-d', '--directed', action='store_true', help='-[optional] Use this flag if your graph is directed', required=False)
 	convert.add_argument('-w', '--weight', action='store_true', help='-[optional] Use this flag if your graph is weighted', required=False)
 	convert.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be removed from the graph (ex. A,B,C)', required=False)
 	convert.add_argument('-to', '--typeOutput', action='store', choices=["matrix","edgelist","dot","sif"], help='-[required] Output file type', required=True)
 	convert.add_argument('-fo', '--outputName', action='store', help='-[required] Output file name (extension will be automatically assigned)', required=True)
-	convert.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output (svg, png)', required=False)
 	convert.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same directory as the input file)', required=False)
 	convert._optionals.title = Fore.CYAN + Style.BRIGHT + "Arguments" + Style.RESET_ALL
 
@@ -244,10 +243,10 @@ def create_parser() -> argparse.ArgumentParser:
 		+ Fore.GREEN + Style.BRIGHT + ''' · pyntacle communities leading-eigenvector''' +  Fore.CYAN  + ''' -t {fileType} -i {input_file} [optional parameters] -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS} -nc {NUMBERCOMMUNITIES} [optional outdir]\n\n''' + Style.RESET_ALL
 		+ Fore.GREEN + Style.BRIGHT + ''' · pyntacle communities random_walk''' +  Fore.CYAN  + ''' -t {fileType} -i {input_file} [optional parameters] -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS} -steps {STEPS} [optional outdir]\n\n''' + Style.RESET_ALL
 		+ Fore.GREEN + Style.BRIGHT + ''' · pyntacle communities percolation''' +  Fore.CYAN  + ''' -t {fileType} -i {input_file} [optional parameters] -k {COMMUNITYSIZE} [optional outdir]\n''' + Style.RESET_ALL,), formatter_class=argparse.RawDescriptionHelpFormatter)
-	community.add_argument(dest='subcommand', choices=['fastgreedy','infomap','leading-eigenvector','random-walk','percolation'], help='''Select one the subfunctions right after communities''')
+	community.add_argument(dest='subcommand', choices=['fastgreedy','infomap','leading-eigenvector','random-walk','percolation'], help='''Subcommand to run, right after communities''')
 	community.add_argument('-t', '--fileType', action='store', type=str, choices = ["matrix", "edgelist", "sif", "dot"], help='-[required] File type', required=True)
 	community.add_argument('-i', '--inputFile', action='store', help='-[required] Specify the input file name', required=True)
-	community.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Use this flag if your file has a specific header (ex. \',\')', required=False)
+	community.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Column separator of the input file (ex. \',\'); detected automatically if omitted', required=False)
 	community.add_argument('-nh', '--NoHeader', action='store_true', help='-[optional] Use this flag if your file doesn\'t have an header', required=False)
 	community.add_argument('-d', '--directed', action='store_true', help='-[optional] Use this flag if your graph is directed', required=False)
 	community.add_argument('-w', '--weight', action='store_true', help='-[optional] Use this flag if your graph is weighted', required=False)
@@ -271,7 +270,7 @@ def create_parser() -> argparse.ArgumentParser:
 
 
 	# ---- extract ----
-	extract = subparsers.add_parser('extract',usage=Fore.GREEN + Style.BRIGHT + 'pyntacle ' + Fore.RED + 'extract' + Fore.CYAN + ' -t {fileType} -i {input_file} [optional parameters] [-l | -n | -l -n | -sc] [optional outdir]' + Style.RESET_ALL , help='''Return different components from the graph (suggested to use when the graph is fragmented)''', 
+	extract = subparsers.add_parser('extract',usage=Fore.GREEN + Style.BRIGHT + 'pyntacle ' + Fore.RED + 'extract' + Fore.CYAN + ' -t {fileType} -i {input_file} [optional parameters] [-l | -l -n N | -n N | -sc N | -nl NODES] [optional outdir]' + Style.RESET_ALL , help='''Return different components from the graph (suggested to use when the graph is fragmented)''', 
 		description=textwrap.dedent(Fore.RED + Style.BRIGHT +'''Specific usage:\n''' + Fore.GREEN + Style.BRIGHT + ''' · pyntacle extract''' +  Fore.CYAN + ''' -t {fileType} -i {input_file} [optional parameters] -l {largest} [optional outdir]\n''' + Style.RESET_ALL +  '''   [-l {largest}] argument in order to extract only the LARGEST component of the graph  
 		\n'''  + Fore.GREEN + Style.BRIGHT + ''' · pyntacle extract''' +  Fore.CYAN + ''' -t {fileType} -i {input_file} [optional parameters] -n {NCOMPONENTS} [optional outdir]\n''' + Style.RESET_ALL +  '''   [-n {NCOMPONENTS}] argument in order to extract the first n components of the graph  
 		\n'''  + Fore.GREEN + Style.BRIGHT + ''' · pyntacle extract''' +  Fore.CYAN + ''' -t {fileType} -i {input_file} [optional parameters] -l {largest} -n {NCOMPONENTS} [optional outdir]\n''' + Style.RESET_ALL +  '''   [-l {largest} -n {NCOMPONENTS}] arguments in order to extract the n-th largest component of the graph  
@@ -279,14 +278,14 @@ def create_parser() -> argparse.ArgumentParser:
 		\n'''), formatter_class=argparse.RawDescriptionHelpFormatter)
 	extract.add_argument('-t', '--fileType', action='store', type=str, choices = ["matrix", "edgelist", "sif", "dot"], help='-[required] File type', required=True)
 	extract.add_argument('-i', '--inputFile', action='store', help='-[required] Specify the input file name', required=True)
-	extract.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Use this flag if your file has a specific header (ex. \',\')', required=False)
+	extract.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Column separator of the input file (ex. \',\'); detected automatically if omitted', required=False)
 	extract.add_argument('-nh', '--NoHeader', action='store_true', help='-[optional] Use this flag if your file doesn\'t have an header', required=False)
 	extract.add_argument('-d', '--directed', action='store_true', help='-[optional] Use this flag if your graph is directed', required=False)
 	extract.add_argument('-w', '--weight', action='store_true', help='-[optional] Use this flag if your graph is weighted', required=False)
 	extract.add_argument('-r', '--remove', action='store', help='-[optional] Select the node/nodes to be removed from the graph (ex. A,B,C)', required=False)
-	extract.add_argument('-n','--ncomponents', action='store', help='number of components',default=False)
-	extract.add_argument('-l', '--largest', action='store_true', help='Largest component of the graph', default=False)
-	extract.add_argument('-sc', '--selectComponent', action='store', help='Node/Nodes of the graph (ex. A,B,C)', default=False)
+	extract.add_argument('-n','--ncomponents', action='store', help='-[optional] With -l: keep the N largest components. Alone: drop the N smallest components',default=False)
+	extract.add_argument('-l', '--largest', action='store_true', help='-[optional] Keep the largest component (with -n, the N largest)', default=False)
+	extract.add_argument('-sc', '--selectComponent', action='store', help='-[optional] Keep the N-th largest component (1 = the largest)', default=False)
 	extract.add_argument('--no-plot', action='store_true', help='-[optional] Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written', required=False)
 	extract.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored in same directory as the input file)', required=False)
 	extract.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output', required=False)
@@ -294,28 +293,23 @@ def create_parser() -> argparse.ArgumentParser:
 	extract._optionals.title = "Arguments"
 
 	# ---- generate ----
-	generate = subparsers.add_parser('generate',usage=Fore.GREEN + Style.BRIGHT +'pyntacle ' + Fore.RED +'generate' + Fore.MAGENTA + ' {erdos-renyi | tree | barabasi | watts-strogatz | lattice}' + Fore.CYAN + ' -t {fileType} -i {input_file} [optional parameters] [optional outdir]' + Style.RESET_ALL, help='''Generates a graph using different algorithms given some parameters and outputs the file in the desired format''', 
-		description=textwrap.dedent(Fore.RED + Style.BRIGHT +'''Specific usage:\n''' + Fore.GREEN + Style.BRIGHT + ''' · pyntacle generate erdos-renyi''' +  Fore.CYAN + ''' -t {fileType} -i {input_file} [optional parameters] -n {number of nodes} -e {number of edges} -p {probability} -l {loops} [optional outdir]\n\n''' + Style.RESET_ALL + Fore.GREEN + Style.BRIGHT + ''' · pyntacle generate tree''' +  Fore.CYAN  + ''' -t {fileType} -i {input_file} [optional parameters] -n {number of nodes} -c {children} [optional outdir]\n\n''' + Style.RESET_ALL	+ Fore.GREEN + Style.BRIGHT + ''' · pyntacle generate barabasi''' +  Fore.CYAN + ''' -t {fileType} -i {input_file} [optional parameters] -n {number of nodes} -a {avarage edge} -i {implementation} [optional outdir]\n\n''' + Style.RESET_ALL + Fore.GREEN + Style.BRIGHT + ''' · pyntacle generate watts-strogatz''' +  Fore.CYAN + ''' -t {fileType} -i {input_file} [optional parameters] -dim {dimesion} -s {size} -nei {nei} -p {probability} -l {loops} -m {multiple}
-	[optional outdir]\n\n''' + Style.RESET_ALL + Fore.GREEN + Style.BRIGHT + ''' · pyntacle generate lattice''' +  Fore.CYAN + ''' -t {fileType} -i {input_file} [optional parameters] -dim {dimension} -nei {nei} -mut {mutual} -circ {circular} [optional outdir]''' + Style.RESET_ALL ), formatter_class=argparse.RawDescriptionHelpFormatter)
-	generate.add_argument(dest='subcommand', choices=['erdos-renyi', 'tree', 'barabasi', 'watts-strogatz', 'lattice'], help='''Select one the subfunctions right after generate''')
-	generate.add_argument('-t', '--fileType', action='store', type=str, choices = ["matrix", "edgelist", "sif", "dot"], help='-[required] File type', required=True)
-	generate.add_argument('-d', '--directed', action='store_true', help='-[optional] Use this flag if your graph is directed', required=False)
-	generate.add_argument('-w', '--weight', action='store_true', help='-[optional] Use this flag if your graph is weighted', required=False)
-	generate.add_argument('-n','--numberNodes', action='store', help='Number of vertices of the resulting random graph', default=False)
-	generate.add_argument('-e', '--numberEdges', action='store', help='The resulting number of edges', default=False)
-	generate.add_argument('-p', '--probability', action='store',type=check_prob, help='The wiring probability to connect any two nodes.', default=False, metavar="")
-	generate.add_argument('-l', '--loops', action='store_true', help='Flag to determine wheter the graph should contain loops', default=False)
-	generate.add_argument('-c', '--children', action='store', help='The number of children nodes per parent', default=False)
-	generate.add_argument('-a', '--averageEdge', action='store', help='Average number of node neighbours for each vertex in the scale-free network.', default=False)
-	generate.add_argument('-i', '--implementation', action='store', choices=["bag","psumtree","psumtree_multiple"], help='implementation to use in the Barabasi algorithm', default="psumtree")
-	generate.add_argument('-s', '--size', action='store', help='The dimension of a starting lattice (for lattice is a list with the dimensions of the lattice)', default=False)
-	generate.add_argument('-m', '--multiple', action='store_true', help='Flag to determine wheter multiple edges are allowed', default=False)
-	generate.add_argument('-dim', '--dimension', action='store', help='The dimension of the lattice which the Watts-Strogatz model will be applied to generate the small-world', default=False)
-	generate.add_argument('-nei', '--nei', action='store', help='The distance between any two nodes over which these will not be considered connected', default=False)
-	generate.add_argument('-mut', '--mutual', action='store_true', help='Flag to determine wheter to create all connections as mutual in case of a directed graph.', default=False)
-	generate.add_argument('-circ', '--circular', action='store_true', help='Flag to determine wheter the generated lattice is periodic', default=False)
-	generate.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Select where to store the output (if not specified the output will be stored to the current working directory)', default=False, required=False)
-	generate.add_argument('-f', '--format', action='store', type=str, default="svg", help='-[optional] Specify the format of the image output', required=False)
+	generate = subparsers.add_parser('generate',usage=Fore.GREEN + Style.BRIGHT +'pyntacle ' + Fore.RED +'generate' + Fore.MAGENTA + ' {erdos-renyi | tree | barabasi | watts-strogatz | lattice}' + Fore.CYAN + ' -t {fileType} [model parameters] [-o outdir]' + Style.RESET_ALL, help='''Generates an undirected network from a random or regular model and writes it in the chosen format''', 
+		description=textwrap.dedent(Fore.RED + Style.BRIGHT +'''Specific usage:\n''' + Fore.GREEN + Style.BRIGHT + ''' · pyntacle generate erdos-renyi''' +  Fore.CYAN + ''' -t {fileType} -n {nodes} (-e {edges} | -p {probability}) [-l]\n\n''' + Style.RESET_ALL + Fore.GREEN + Style.BRIGHT + ''' · pyntacle generate tree''' +  Fore.CYAN  + ''' -t {fileType} -n {nodes} -c {children}\n\n''' + Style.RESET_ALL	+ Fore.GREEN + Style.BRIGHT + ''' · pyntacle generate barabasi''' +  Fore.CYAN + ''' -t {fileType} -n {nodes} -a {edges per new node} [-i {implementation}]\n\n''' + Style.RESET_ALL + Fore.GREEN + Style.BRIGHT + ''' · pyntacle generate watts-strogatz''' +  Fore.CYAN + ''' -t {fileType} -s {size} -nei {nei} -p {probability} [-dim {dimensions}] [-l] [-m]\n\n''' + Style.RESET_ALL + Fore.GREEN + Style.BRIGHT + ''' · pyntacle generate lattice''' +  Fore.CYAN + ''' -t {fileType} -dim {size per dimension, ex. 4,4} [-nei {nei}] [-circ]\n\n''' + Style.RESET_ALL + '''The file is named after the model and its size, ex. erdos_renyi_n100_e250.tsv.''' ), formatter_class=argparse.RawDescriptionHelpFormatter)
+	generate.add_argument(dest='subcommand', choices=['erdos-renyi', 'tree', 'barabasi', 'watts-strogatz', 'lattice'], help='''Subcommand to run, right after generate''')
+	generate.add_argument('-t', '--fileType', action='store', type=str, choices = ["matrix", "edgelist", "sif", "dot"], help='-[required] Format of the network file to write', required=True)
+	generate.add_argument('-n','--numberNodes', action='store', type=int, help='erdos-renyi, tree, barabasi: number of nodes', default=None)
+	generate.add_argument('-e', '--numberEdges', action='store', type=int, help='erdos-renyi: number of edges (or give -p)', default=None)
+	generate.add_argument('-p', '--probability', action='store',type=check_prob, help='erdos-renyi: probability of an edge between any two nodes (or give -e); watts-strogatz: probability of rewiring each edge', default=None, metavar="")
+	generate.add_argument('-l', '--loops', action='store_true', help='erdos-renyi, watts-strogatz: allow self-loops', default=False)
+	generate.add_argument('-c', '--children', action='store', type=int, help='tree: children of each node', default=None)
+	generate.add_argument('-a', '--averageEdge', action='store', type=int, help='barabasi: edges each new node brings to the network', default=None)
+	generate.add_argument('-i', '--implementation', action='store', choices=["bag","psumtree","psumtree_multiple"], help='barabasi: igraph implementation of preferential attachment (default psumtree)', default="psumtree")
+	generate.add_argument('-s', '--size', action='store', type=int, help='watts-strogatz: nodes along each dimension of the starting lattice', default=None)
+	generate.add_argument('-m', '--multiple', action='store_true', help='watts-strogatz: allow parallel edges after rewiring', default=False)
+	generate.add_argument('-dim', '--dimension', action='store', help='watts-strogatz: dimensions of the starting lattice (default 1, a ring); lattice: nodes along each dimension, comma-separated (ex. 4,4)', default=None)
+	generate.add_argument('-nei', '--nei', action='store', type=int, help='watts-strogatz, lattice: nodes up to this many steps apart are connected (lattice default 1)', default=None)
+	generate.add_argument('-circ', '--circular', action='store_true', help='lattice: join the opposite borders (periodic lattice)', default=False)
+	generate.add_argument('-o', '--outdir', action='store', type=str, help='-[optional] Where to write the network (default: the current working directory)', required=False)
 	generate._optionals.title = Fore.CYAN + Style.BRIGHT + "Arguments" + Style.RESET_ALL
 	generate._positionals.title = Fore.MAGENTA + Style.BRIGHT + "Subcommand" + Style.RESET_ALL
 
@@ -324,7 +318,7 @@ def create_parser() -> argparse.ArgumentParser:
 		description=Fore.RED + Style.BRIGHT +'''Metrics:\n''' + Fore.GREEN + Style.BRIGHT + ''' · Generalized Topological Overlap Measure (GTOM):''' + Style.RESET_ALL +  Fore.CYAN + ''' A measure of neighborhood similarity between all pairs of nodes in a graph. GTOM assigns a value in the range [0,1], this occurs when the neighborhoods of two nodes are identical or one is a subset of the other.\n\n'''  + Fore.GREEN + Style.BRIGHT + ''' · Topological Importance (TI): ''' + Style.RESET_ALL +  Fore.CYAN + '''TI of a node measures its influence in a network through k-step structural propagation. It is computed as the row sum of the k-th power of the edge effect matrix, capturing indirect interactions up to path length k.\n\n'''  + Fore.GREEN + Style.BRIGHT + ''' · Weighted Topological Importance (WI):''' + Style.RESET_ALL +  Fore.CYAN + ''' similar to TI it measures a node's influence in a network by accounting for both the strength and reach of its interactions.\n\n'''  + Fore.GREEN + Style.BRIGHT + ''' · Species Topological Overlap (STO):''' + Style.RESET_ALL +  Fore.CYAN + ''' quantifies pairwise structural similarity based on shared 1-step effects, extended to kk-step propagation. A threshold θθ is applied to filter out weak overlaps.''' + Style.RESET_ALL, formatter_class=argparse.RawDescriptionHelpFormatter)
 	mesoscale.add_argument('-t', '--fileType', action='store', type=str, choices = ["matrix", "edgelist", "sif", "dot"], help='-[required] File type', required=True)
 	mesoscale.add_argument('-i', '--inputFile', action='store', help='-[required] Specify the input file name', required=True)
-	mesoscale.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Use this flag if your file has a specific separator (ex. \'\\t\')', required=False)
+	mesoscale.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Column separator of the input file (ex. \',\'); detected automatically if omitted', required=False)
 	mesoscale.add_argument('-nh', '--NoHeader', action='store_true', help='-[optional] Use this flag if your file doesn\'t have an header', required=False)
 	mesoscale.add_argument('-d', '--directed', action='store_true', help='-[optional] Use this flag if your graph is directed', required=False)
 	mesoscale.add_argument('-w', '--weight', action='store_true', help='-[optional] Use this flag if your graph is weighted', required=False)
@@ -346,7 +340,7 @@ def create_parser() -> argparse.ArgumentParser:
 		description=Fore.RED + Style.BRIGHT + '''Percolation dynamics:\n\n''' + Fore.GREEN + Style.BRIGHT + ''' · Local edge thresholds p_th,ij:''' + Style.RESET_ALL + Fore.CYAN +  ''' for each edge (i,j) a local threshold p_th,ij is drawn in [0, p_thMax] from the chosen distribution.\n''' + Fore.GREEN + Style.BRIGHT + '''\n · Global percolation probability P*:''' + Style.RESET_ALL + Fore.CYAN + ''' controls how many edges become "open". An edge (i,j) can transmit only if\n''' + '''   P* ≥ p_th,ij   →   A*_ij = 1,   otherwise A*_ij = 0.\n''' + Fore.GREEN + Style.BRIGHT + '''\n · Spreading from a seed node:''' + Style.RESET_ALL + Fore.CYAN + ''' starting from the seed s at t = 0, activity spreads along open edges. The active set evolves as\n''' + '''   S_{t+1} = N_open(S_t) \\ R_t, ''' + '''where N_open(S_t) are neighbors reachable through open edges and R_t are recovered nodes.\n''' + Fore.GREEN + Style.BRIGHT + '''\n · Recovery time τ:''' + Style.RESET_ALL + Fore.CYAN + ''' a node activated at time t stays active for τ steps and then recovers (it no longer transmits).\n''' + Style.RESET_ALL, formatter_class=argparse.RawDescriptionHelpFormatter)
 	percolation.add_argument('-t', '--fileType', action='store', type=str, choices = ["matrix", "edgelist", "sif", "dot"], help='-[required] File type', required=True)
 	percolation.add_argument('-i', '--inputFile', action='store', help='-[required] Specify the input file name', required=True)
-	percolation.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Use this flag if your file has a specific separator (ex. \'\\t\')', required=False)
+	percolation.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Column separator of the input file (ex. \',\'); detected automatically if omitted', required=False)
 	percolation.add_argument('-nh', '--NoHeader', action='store_true', help='-[optional] Use this flag if your file doesn\'t have an header', required=False)
 	percolation.add_argument('-d', '--directed', action='store_true', help='-[optional] Use this flag if your graph is directed', required=False)
 	percolation.add_argument('-w', '--weight', action='store_true', help='-[optional] Use this flag if your graph is weighted', required=False)

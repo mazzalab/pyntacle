@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import itertools
 from colorama import Fore, Style
+from pyntacle.utility import warn
 from collections import defaultdict as df
     
 def gtom(graph, steps_m, verbose=False):
@@ -23,13 +24,13 @@ def gtom(graph, steps_m, verbose=False):
             topological overlap between nodes i and j at step steps_m.
     """
     if graph.is_directed():
-        print("\nThe Generalized Topological Overlap Measure, is computed on the undirected graph.\n")
+        warn("the generalized topological overlap is computed on the undirected graph")
     
     # steps beyond the diameter add nothing
     diameter = graph.diameter(directed=False, unconn=True)
 
     if steps_m > diameter:
-        print(f"\n[Warning] KSTEPS > graph diameter! -> Argument KSTEPS will be clipped to match graph diameter.\n")
+        warn(f"-k {steps_m} exceeds the network diameter: {diameter} steps are used")
         steps_m = diameter
 
     A = np.array(graph.get_adjacency().data)
@@ -41,7 +42,7 @@ def gtom(graph, steps_m, verbose=False):
     # self-loops are non-zero diagonal entries
     if np.any(A[np.diag_indices_from(A)] != 0.):
         A[np.diag_indices_from(A)] = 0.
-        print(Fore.YELLOW + Style.BRIGHT + "\n[Warning] The graph contains self-loops, which are not considered in the Generalized Topological Overlap Measures.\n" + Style.RESET_ALL)
+        warn("self-loops are left out of the generalized topological overlap")
 
     num_nodes = len(graph.iNodes)
     
@@ -131,15 +132,15 @@ def ti(graph, k, weighted=False, weight_attr="weight", threshold=0.0, verbose=Fa
     # as in GTOM, a directed graph is analysed as undirected
     if graph.is_directed():
         A = np.maximum(A, A.T)
-        print(Fore.YELLOW + Style.BRIGHT + "\nTopological Importance is computed on the undirected graph.\n" + Style.RESET_ALL)
+        warn("topological importance is computed on the undirected graph")
 
     # self-loops are non-zero diagonal entries
     if np.any(A[np.diag_indices_from(A)] != 0.):
         A[np.diag_indices_from(A)] = 0.
         if weighted:
-            print(Fore.YELLOW + Style.BRIGHT + "\n[Warning] The graph contains self-loops, which are not considered in the Weighted Topological Importance calculation.\n" + Style.RESET_ALL)
+            warn("self-loops are left out of the weighted topological importance")
         else:
-            print(Fore.YELLOW + Style.BRIGHT + "\n[Warning] The graph contains self-loops, which are not considered in the Topological Importance calculation.\n" + Style.RESET_ALL)
+            warn("self-loops are left out of the topological importance")
 
     # effect of every node on every other, averaged over steps 1..k
     def Ksteps_effect(edge_effect, weighted):

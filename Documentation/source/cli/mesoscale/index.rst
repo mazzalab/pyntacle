@@ -49,7 +49,7 @@ Options
      - str
      - \ 
      - \ 
-     - Use this flag if your file has a specific separator (ex. '\t')
+     - Column separator of the input file (ex. ','); detected automatically if omitted
    * - ``-nh``, ``--NoHeader``
      - No
      - bool
@@ -91,7 +91,7 @@ Options
      - int
      - 3
      - \ 
-     - Maximum effects lenght considered. Defautl value is 3.
+     - Maximum effects length considered. Default value is 3.
    * - ``-th``, ``--threshold``
      - No
      - float

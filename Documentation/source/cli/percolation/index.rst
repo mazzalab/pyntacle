@@ -49,7 +49,7 @@ Options
      - str
      - \ 
      - \ 
-     - Use this flag if your file has a specific separator (ex. '\t')
+     - Column separator of the input file (ex. ','); detected automatically if omitted
    * - ``-nh``, ``--NoHeader``
      - No
      - bool
@@ -97,11 +97,11 @@ Options
      - float
      - 0.5
      - \ 
-     - Global infectivity / Occupation probability (0–1). Higher P* → easier spreading / percolation. Defautl value is 0.5.
+     - Global infectivity / Occupation probability (0–1). Higher P* → easier spreading / percolation. Default value is 0.5.
    * - ``-tau``, ``--tau``
      - No
      - float
-     - 1.5
+     - 4
      - \ 
      - Recovery time τ (in simulation steps). A node can transmit for τ steps after activation, then becomes recovered. Must be > 0. Default: 4.
    * - ``-tauDist``, ``--tauDistribution``

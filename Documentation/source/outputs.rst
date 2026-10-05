@@ -315,12 +315,35 @@ graphs too large to render as a network at all.
   how many steps the underlying simulation (and therefore the animation)
   runs for.
 
-Set Theory Reports
--------------------
+Set and Extract Reports
+------------------------
 
-**Command:** ``pyntacle set``
+**Commands:** ``pyntacle set``, ``pyntacle extract``
 
-The TSV report contains a summary comparison table with the node/edge counts for
-each input graph and the result graph (union, intersection, or difference).
-The result graph is also written as an adjacency matrix file (``union.tsv``,
-``intersection.tsv``, or ``difference.tsv``).
+Both commands write a network back out, in the input format, next to a TSV
+report. The report has the common header (computed on the resulting network)
+and one row per node of the result:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 80
+
+   * - Column
+     - Description
+   * - ``Node``
+     - Node name
+   * - ``Component``
+     - Connected component of the result the node belongs to, 1 being the
+       largest; components of equal size are numbered in input order
+   * - ``Degree``
+     - Number of edges of the node in the result
+
+File names:
+
+- ``set``: ``<first>_<subcommand>_<second>.<ext>`` and
+  ``report_<first>_<subcommand>_<second>_set.tsv``;
+- ``extract``: ``<input>_extract_<selection>.<ext>`` and
+  ``report_<input>_extract_<selection>.tsv``.
+
+``<ext>`` follows the input format: ``.tsv`` (edge list), ``.sif``, ``.dot``
+or ``.txt`` (adjacency matrix).

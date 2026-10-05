@@ -15,14 +15,35 @@ Specific usage
 Subcommand summary
 ------------------
 
+Both networks are matched by node name. ``-t``, ``-s``, ``-nh`` and ``-w``
+apply to both files, so they must share format, separator and header (use
+:doc:`../convert/index` first if they do not).
+
 union
-  Return a resulting merged graph of the original two networks, marking the common nodes among them along with their common connecting edges
+  Every node and every edge of the two networks.
 
 intersection
-  Return only the common nodes and their connecting edges among the two graphs of interest
+  The edges present in both networks, and the nodes they touch.
 
 difference
-  Perform the difference between the two input graphs. NOTE: the difference among graphs is not reciprocal
+  The edges of the first network that the second lacks, and the nodes they
+  touch. The operation is not symmetric: swap ``-i`` and ``-i2`` for the other
+  direction.
+
+With ``-w`` an edge keeps the weight it has in the first network, or in the
+second for an edge only the second has. Every component of the result is
+kept. A result with no edges stops the command with an error.
+
+Output
+------
+
+In the output directory (``-o``, or the folder of the first input file):
+
+- ``<first>_<subcommand>_<second>.<ext>`` — the resulting network, in the
+  input format (``.tsv`` edge list, ``.sif``, ``.dot``, ``.txt`` matrix);
+- ``report_<first>_<subcommand>_<second>_set.tsv`` — one row per node with its
+  component (1 = the largest) and degree;
+- a figure of the result, unless ``--no-plot`` is given.
 
 Synopsis
 --------
@@ -48,7 +69,7 @@ Options
      - \ 
      - \ 
      - union, intersection, difference
-     - Select one the subfunctions right after set
+     - Subcommand to run, right after set
    * - ``-t``, ``--fileType``
      - Yes
      - str
@@ -66,7 +87,7 @@ Options
      - str
      - \ 
      - \ 
-     - Use this flag if your file has a specific header (ex. ',')
+     - Column separator of the input file (ex. ','); detected automatically if omitted
    * - ``-nh``, ``--NoHeader``
      - No
      - bool
@@ -90,25 +111,25 @@ Options
      - \ 
      - \ 
      - \ 
-     - Select the node/nodes to be romev from the graph (ex. A,B,C)
+     - Select the node/nodes to be removed from the graph (ex. A,B,C)
    * - ``-i2``, ``--inputFile2``
      - Yes
      - str
      - \ 
      - \ 
-     - Specify the second input file name (Use same format the first input file or use the 'convert' function if necessary)
-   * - ``-f``, ``--format``
-     - No
-     - str
-     - svg
-     - \ 
-     - Specify the format of the image output (svg, png)
+     - Second network, in the same format as the first: -t, -s, -nh and -w apply to both (use 'convert' if they differ)
    * - ``--no-plot``
      - No
      - bool
      - False
      - \ 
      - Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written
+   * - ``-f``, ``--format``
+     - No
+     - str
+     - svg
+     - \ 
+     - Specify the format of the image output (svg, png)
    * - ``-o``, ``--outdir``
      - No
      - str

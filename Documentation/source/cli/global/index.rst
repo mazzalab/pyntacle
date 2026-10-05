@@ -41,7 +41,7 @@ Options
      - str
      - \ 
      - \ 
-     - Use this flag if your file has a specific header (ex. ',')
+     - Column separator of the input file (ex. ','); detected automatically if omitted
    * - ``-nh``, ``--NoHeader``
      - No
      - bool

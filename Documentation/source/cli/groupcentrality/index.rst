@@ -62,7 +62,7 @@ Options
      - str
      - \ 
      - \ 
-     - Use this flag if your file has a specific header (ex. ',')
+     - Column separator of the input file (ex. ','); detected automatically if omitted
    * - ``-nh``, ``--NoHeader``
      - No
      - bool
@@ -98,7 +98,7 @@ Options
      - \ 
      - \ 
      - \ 
-     - Select the node/nodes to be romev from the graph (Comma separated)
+     - Select the node/nodes to be removed from the graph (Comma separated)
    * - ``-n``, ``--nodes``
      - No
      - \ 
@@ -171,6 +171,18 @@ Options
      - False
      - \ 
      - Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written
+   * - ``--engine``
+     - No
+     - str
+     - cython
+     - cython, python
+     - Metric engine: the compiled kernels (default) or the pure-Python reference implementation. The python engine is single-threaded and ignores -np, and it does not implement brute_force
+   * - ``--seed``
+     - No
+     - int
+     - \ 
+     - \ 
+     - Random seed for greedy / gradient_descent, so a run can be reproduced
    * - ``-o``, ``--outdir``
      - No
      - str

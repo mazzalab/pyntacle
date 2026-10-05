@@ -97,18 +97,23 @@ in ``examples/``:
        -i examples/figure_8.egl \
        -o pyntacle_test/
 
-You should see output resembling::
+You should see output resembling (table cut here)::
 
-   Working on: examples/figure_8.egl
+   pyntacle local
+   Input: examples/figure_8.egl
+   Output directory: /home/you/pyntacle/pyntacle_test
+   Network: 32 nodes, 56 edges, 1 component(s)
 
-   No nodes removed
+   Node Name  Degree  Betweenness  Closeness  Radiality  ...
+          HS       2        0.000      0.212      5.290  ...
+          PS       6       18.500      0.258      6.129  ...
+   ...
+   ... 12 more rows in the report
 
-   Number of nodes: 32
-   Number of edges: 56
-   Number of components: 1
-   Function : local
-
+   Report: pyntacle_test/report_figure_8_local.tsv
    Done!
+
+The screen shows at most 20 rows of the result; the report holds all of them.
 
 The output directory is created if it does not exist and will contain:
 

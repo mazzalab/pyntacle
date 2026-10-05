@@ -70,14 +70,14 @@ def test_ti_selfloop_emits_warning_and_ignores_it():
 def test_ti_warning_message_matches_weighted_mode():
     g = _g([(0, 0), (0, 1), (1, 2), (2, 3)], 4)
     _, out = _run(ti, g, 2, weighted=True, weight_attr="weight", threshold=0.0)
-    assert "Weighted Topological Importance" in out
+    assert "weighted topological importance" in out.lower()
 
 
 def test_ti_warning_message_matches_unweighted_mode():
     g = _g([(0, 0), (0, 1), (1, 2), (2, 3)], 4)
     _, out = _run(ti, g, 2, weighted=False, weight_attr=None, threshold=0.0)
     assert "self-loop" in out.lower()
-    assert "Weighted Topological Importance" not in out
+    assert "weighted topological importance" not in out.lower()
 
 
 # --------------------------------------------------------------------------

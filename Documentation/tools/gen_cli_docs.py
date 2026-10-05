@@ -254,6 +254,16 @@ def build_home_dropdown(commands: list[tuple[str, argparse.ArgumentParser]]) -> 
     out.append("\n")
     return "".join(out)
 
+SECTION_RE = re.compile(r"\n[^\n]+\n-{3,}\n")
+
+
+def options_section(text: str) -> tuple[int, int]:
+    """Start and end of the "Options" section of a command page."""
+    start = text.index("Options\n-------\n")
+    nxt = SECTION_RE.search(text, start + 10)
+    return start, (nxt.start() + 1 if nxt else len(text))
+
+
 def main() -> int:
     docs_dir = Path(__file__).resolve().parents[1]          # .../Documentation
     repo_root = docs_dir.parent                             # .../pyntacle
@@ -270,29 +280,28 @@ def main() -> int:
     for name, sp in sub_action.choices.items():
         commands.append((name, sp))
 
-    # rigenera cartelle comando
+    # Command pages are written by hand around the option table: only the
+    # "Options" section is regenerated from the parser; a page is generated
+    # whole only when it does not exist yet. The CLI index and the home
+    # dropdown are generated only when missing.
     for cmd, sp in commands:
-        cmd_dir = cli_root / cmd
-        # pulizia della folder comando (solo se esiste)
-        if cmd_dir.exists():
-            for p in sorted(cmd_dir.rglob("*"), reverse=True):
-                if p.is_file():
-                    p.unlink()
-                elif p.is_dir():
-                    try:
-                        p.rmdir()
-                    except OSError:
-                        pass
-        cmd_dir.mkdir(parents=True, exist_ok=True)
-        write_file(cmd_dir / "index.rst", build_command_page(cmd, sp))
+        page = cli_root / cmd / "index.rst"
+        generated = build_command_page(cmd, sp)
+        if not page.exists():
+            page.parent.mkdir(parents=True, exist_ok=True)
+            write_file(page, generated)
+            continue
+        old = page.read_text(encoding="utf-8")
+        ga, gb = options_section(generated)
+        oa, ob = options_section(old)
+        write_file(page, old[:oa] + generated[ga:gb].rstrip() + "\n\n" + old[ob:])
 
-    # rigenera cli/index.rst
-    write_file(cli_root / "index.rst", build_cli_index(commands))
+    for path, content in ((cli_root / "index.rst", build_cli_index(commands)),
+                          (source_dir / "_parts" / "cli_dropdown.rst", build_home_dropdown(commands))):
+        if not path.exists():
+            write_file(path, content)
 
-    # rigenera include per home page dropdown
-    write_file(source_dir / "_parts" / "cli_dropdown.rst", build_home_dropdown(commands))
-
-    print("[OK] CLI docs generated in Documentation/source/cli/")
+    print("[OK] option tables of Documentation/source/cli/*/index.rst updated from the parser")
     print("[OK] Home dropdown fragment: Documentation/source/_parts/cli_dropdown.rst")
     return 0
 

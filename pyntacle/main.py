@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import argparse
 import os
 import sys
+import warnings
 import pandas as pd
 import igraph as ig
 import numpy as np
@@ -86,6 +87,36 @@ def first_set_only(df):
 	return df[df["SetID"] == 1].drop(columns=["SetID"]).reset_index(drop=True)
 
 
+def fail(err):
+	"""Stop with a one-line error instead of a traceback."""
+	message = str(err) if str(err).startswith("ERROR") else "ERROR: " + str(err)
+	sys.exit(Fore.RED + Style.BRIGHT + message + Style.RESET_ALL)
+
+
+def read_network(path, args, sep, header, directed, weighted, **kwargs):
+	"""Load an input network, stopping with a one-line error when it cannot be read."""
+	if not os.path.isfile(path):
+		fail(f"input file not found: {path}")
+	if os.path.getsize(path) == 0:
+		fail(f"input file is empty: {path}")
+	try:
+		return Graphtacle.from_file(path, args.command, args.fileType, sep, header, directed, weighted, **kwargs)
+	except ValueError as err:
+		fail(err)
+	except Exception as err:
+		fail(f"could not read {path} as '{args.fileType}' ({type(err).__name__}: {err}). "
+		     "Check -t, -s and -nh.")
+
+
+def show_table(df, max_rows=20):
+	"""Print a result table whole in width, cut to `max_rows` rows: the report has all of it."""
+	with pd.option_context("display.max_columns", None, "display.width", None,
+	                       "display.max_colwidth", 60):
+		print(df.head(max_rows).to_string(index=False))
+	if len(df) > max_rows:
+		print(f"... {len(df) - max_rows} more rows in the report")
+
+
 def info_node_set(g, nodes_arg, subcommand):
 	"""The node set given with -n to kp-info / gc-info, checked against the graph."""
 	if not nodes_arg:
@@ -111,23 +142,22 @@ def main(args):
 		run_omics(args)
 		return
 
-	if args.directed:
-		directed = True
-	else:
-		directed = False
-
-	if args.weight:
-		weighted = True
-	else:
-		weighted = False
+	# generate has neither: it writes undirected, unweighted networks
+	directed = bool(getattr(args, "directed", False))
+	weighted = bool(getattr(args, "weight", False))
 
 	# The compiled kernels work on undirected graphs only: refuse -d before the
 	# file is loaded.
 	if directed and args.command in ("keyplayer", "groupcentrality"):
 		sys.exit(Fore.RED + Style.BRIGHT +
 			f"ERROR: --directed is not supported by '{args.command}'. "
-			"Drop -d to analyse the network as undirected, or use the 'local', "
-			"'global' or 'set' commands, which do handle directed graphs."
+			"Drop -d to analyse the network as undirected, or use the 'local' or "
+			"'global' commands, which do handle directed graphs."
+			+ Style.RESET_ALL)
+
+	if directed and args.command in ("set", "extract", "convert"):
+		sys.exit(Fore.RED + Style.BRIGHT +
+			f"ERROR: '{args.command}' writes undirected networks only. Drop -d."
 			+ Style.RESET_ALL)
 
 	use_cython = getattr(args, "engine", "cython") != "python"
@@ -163,37 +193,23 @@ def main(args):
 
 	# load the network
 	if args.command!="generate":
-		if args.NoHeader:
-			header = False
-		else:
-			header = True
+		header = not args.NoHeader
+		sep = str(args.sep) if args.sep else None
 
-		if args.sep:
-			sep=str(args.sep)
-			print(f"Separator used: {sep}")
-		else:
-			sep=None
-		
-		# output path
+		# outputs go to -o, or next to the input file
 		dirpath, filename = os.path.split(args.inputFile)
 		filename = filename.strip().split(".")[0]
+		outdir = dirpath if args.outdir is None else args.outdir
 
-		if args.outdir == None:
-			print("No Output directory specified")
-			outdir = dirpath
-		else:
-			outdir = args.outdir
-
-		print(f"\nWorking on: {args.inputFile}\n")
+		print(Style.BRIGHT + f"pyntacle {args.command}" + (f" {args.subcommand}" if getattr(args, "subcommand", None) else "")
+		      + Style.RESET_ALL)
+		print(f"Input: {args.inputFile}")
+		print(f"Output directory: {os.path.abspath(outdir or '.')}")
 		# analysis commands read the weights as declared by -wt/-dt; commands that
 		# only write the network back out keep them exactly as read
 		weight_type = getattr(args, "weightType", None) if weighted else None
-		try:
-			g = Graphtacle.from_file(args.inputFile, args.command, args.fileType, sep, header, directed, weighted,
-									 weight_type=weight_type,
-									 distance_transform=getattr(args, "distanceTransform", "inverse"))
-		except ValueError as err:
-			sys.exit(Fore.RED + Style.BRIGHT + str(err) + Style.RESET_ALL)
+		g = read_network(args.inputFile, args, sep, header, directed, weighted, weight_type=weight_type,
+		                 distance_transform=getattr(args, "distanceTransform", "inverse"))
 		g.path_function(outdir)
 		if weight_type is not None:
 			print(f"Edge weights: {describe_weights(g.weight_info)}")
@@ -206,8 +222,11 @@ def main(args):
 
 		# node removal (-r)
 		if args.remove:
-			nodes_toRemove = (args.remove).split(',')
-			nodes_list = [x.replace(" ", "") for x in nodes_toRemove]
+			nodes_list = [x.strip() for x in args.remove.split(",") if x.strip()]
+			unknown = sorted(set(nodes_list) - set(g.vs["name"]))
+			if unknown:
+				sys.exit(Fore.RED + Style.BRIGHT + "ERROR: -r names nodes not in the network: "
+				         + ", ".join(unknown) + Style.RESET_ALL)
 			g.remove_node(nodes_list)
 			index_toRemove = [i for i in range(len(g.vs["name"])) if g.vs["name"][i] in nodes_list]
 			g.delete_vertices(index_toRemove) #remove target nodes
@@ -216,31 +235,23 @@ def main(args):
 			g.remove_node(nodes_list)
 			g.name=g.name+"_NoNodes"
 			filename = g.name
-			print(f"Nodes removed : {nodes_list}\n")
+			print(f"Removed nodes: {', '.join(nodes_list)}")
+			nodes_toRemove = nodes_list
 		else:
-			print("No nodes removed\n")
 			nodes_toRemove = None
 
-		print(f"Number of nodes: {len(g.vs.indices)}")
-		print(f"Number of edges: {len(g.es.indices)}")
-
-		print(f"Number of components: {len(g.components())}")
-		if len(g.components())>1:
-			print("WARNING: The keyplayer colored in the figure could be only one of the possible sets\n" + Style.RESET_ALL)
-
-			print(Fore.YELLOW + Style.BRIGHT + f"WARNING: The graph is fragmented in {len(g.components())} components"+ Style.RESET_ALL)
-
+		n_components = len(g.components())
+		print(f"Network: {g.vcount()} nodes, {g.ecount()} edges, {n_components} component(s)")
+		if n_components > 1 and args.command in Graphtacle.DISTANCE_COMMANDS:
+			warn(f"the network is split into {n_components} components; metrics based on "
+			     "shortest paths only see the pairs that can reach each other")
+		print("")
 
 	else: # in case of 'generate'
-		cwd = os.getcwd()
+		outdir = args.outdir or os.getcwd()
+		print(Style.BRIGHT + f"pyntacle generate {args.subcommand}" + Style.RESET_ALL)
+		print(f"Output directory: {os.path.abspath(outdir)}")
 
-		if args.outdir == None:
-			print("No Output directory specified, the output will be stored to the current working directory")
-			outdir = cwd
-		else:
-			outdir = args.outdir
-
-	print(f"Function : {args.command}\n")
 
 	# ---- local ----
 	if args.command == "local":
@@ -526,102 +537,36 @@ def main(args):
 
 	# ---- set ----
 	elif args.command == "set":
-		print("The second input file must be of the same format as the first, including separator and header\n")
-		dirpath2, filename2 = os.path.split(args.inputFile2)
-		filename2 = filename2.strip().split(".")[0]
-		g2 = Graphtacle.from_file(args.inputFile2, args.command, args.fileType, sep, header, directed, weighted)
-
-		if args.subcommand == "union":
-			print("Union\n")
-			g1 = plain_copy(g, directed=False)
-			g2 = plain_copy(g2, directed=False)
-			gu=g1.union(g2)
-			df = summary_to_df(gu, args.outdir, filename, filename2)
-			gu=get_connected_subgraph(gu)
-			g = Graphtacle.re(gu, args.command, args.fileType, sep, header, directed, weighted, outdir+"/union.tsv")
-			g.nameSub_function(args.subcommand)
-
-			if not no_plot:
-				g.plot_set(filename,filename2,g1.vs["name"],g2.vs["name"],args.format,args.subcommand,outdir=outdir)
-			g.name = f"{filename}_&_{filename2}"
-			filename_set = f"{filename}_{filename2}"
-
-			output_decision(g,"matrix",g.name+str("_union"))
-
-
-		elif args.subcommand == 'intersection':
-			print("Intersection\n")
-			g1 = plain_copy(g, directed=False)
-			g2 = plain_copy(g2, directed=False)
-			# igraph's intersection() keeps isolated vertices: build it from the shared edges
-			common_vertices = set(g1.vs["name"]).intersection(set(g2.vs["name"]))
-			common_edges = set()
-			for edge in g1.es:
-				source, target = g1.vs[edge.source]["name"], g1.vs[edge.target]["name"]
-				if source in common_vertices and target in common_vertices and g2.are_connected(source, target):
-					common_edges.add((source, target))
-			gi = ig.Graph()
-			gi.add_vertices(list(common_vertices))
-			gi.add_edges(list(common_edges))
-			gi.vs["label"] = gi.vs["name"]
-
-			df = summary_to_df(gi, args.outdir, filename, filename2)
-			g = Graphtacle.re(gi, args.command, args.fileType, sep, header, directed, weighted, outdir+"/intersection.tsv")
-			g.nameSub_function(args.subcommand)
-			g.name = f"{filename}_&_{filename2}"
-			filename_set = f"{filename}_{filename2}"
-
-			if not no_plot:
-				if outdir:
-					ig.plot(plain_copy(g), opacity=0.7, target = f"{outdir}/{filename_set}_{g.function}_{g.sub_func}.{args.format}",vertex_label=g.vs["name"], bbox = (1000, 1000),edge_width=0.8,vertex_size=15)
-				else:
-					ig.plot(plain_copy(g), opacity=0.7, target = f"{filename_set}_{g.function}_{g.sub_func}.{args.format}", vertex_label=g.vs["name"],bbox = (1000, 1000),edge_width=0.8,vertex_size=15)
-
-			output_decision(g,"matrix",g.name+str("_intersection"))
-
-
-		elif args.subcommand == 'difference':
-			print("Difference\n")
-			g1 = plain_copy(g, directed=False)
-			g2 = plain_copy(g2, directed=False)
-
-			gd = g1.copy()
-			g2_vertices = set(g2.vs["name"])
-
-			for edge in g1.es:
-				start_vertex_name = g1.vs[edge.source]['name']
-				end_vertex_name = g1.vs[edge.target]['name']
-				if start_vertex_name in g2_vertices and end_vertex_name in g2_vertices:
-					if g2.are_connected(start_vertex_name, end_vertex_name):
-						gd.delete_edges([(start_vertex_name, end_vertex_name)])
-
-			# Remove isolated vertices (vertices with no edges) from gd
-			isolated_vertices = [v.index for v in gd.vs if gd.degree(v) == 0]
-			gd.delete_vertices(isolated_vertices)
-
-			df = summary_to_df(gd, args.outdir, filename, filename2)
-			gd=get_connected_subgraph(gd)
-			g = Graphtacle.re(gd, args.command, args.fileType, sep, header, directed, weighted, outdir+"/difference.tsv")
-			g.nameSub_function(args.subcommand)
-		
-			g.name = f"{filename}_&_{filename2}"
-			filename_set = f"{filename}_{filename2}"
-
-			if not no_plot:
-				if outdir:
-					ig.plot(plain_copy(g), opacity=0.7, target = f"{outdir}/{filename_set}_{g.function}_{g.sub_func}.{args.format}",vertex_label=g.vs["name"], bbox = (1000, 1000),edge_width=0.8,vertex_size=15)
-				else:
-					ig.plot(plain_copy(g), opacity=0.7, target = f"{filename_set}_{g.function}_{g.sub_func}.{args.format}", vertex_label=g.vs["name"],bbox = (1000, 1000),edge_width=0.8,vertex_size=15)
-
-			output_decision(g,"matrix",g.name+str("_difference"))
-
-		else:
-			raise TypeError("Select the right option: union | intersection | difference")
+		# the second network is read with the same -t, -s, -nh and -w as the first
+		filename2 = os.path.split(args.inputFile2)[1].strip().split(".")[0]
+		g2 = read_network(args.inputFile2, args, sep, header, directed, weighted)
+		try:
+			result = set_operation(plain_copy(g, directed=False), plain_copy(g2, directed=False), args.subcommand)
+		except ValueError as err:
+			fail(err)
+		g1_names, g2_names = list(g.vs["name"]), list(g2.vs["name"])
+		name = f"{filename}_{args.subcommand}_{filename2}"
+		g = Graphtacle.re(result, args.command, args.fileType, sep, header, directed, weighted, name)
+		g.name = name
+		df = component_table(result)
+		network_path = output_decision(g, args.fileType, name, outdir)
+		print(f"{args.subcommand.capitalize()} of {filename} and {filename2}: "
+		      f"{result.vcount()} nodes, {result.ecount()} edges, "
+		      f"{len(result.connected_components())} component(s)")
+		print(f"Network file: {network_path}")
+		if not no_plot:
+			if args.subcommand == "union":
+				g.plot_set(filename, filename2, g1_names, g2_names, args.format, args.subcommand, outdir=outdir)
+			else:
+				ig.plot(plain_copy(g), opacity=0.7, target=os.path.join(outdir, f"{name}.{args.format}"),
+				        vertex_label=g.vs["name"], bbox=(1000, 1000), edge_width=0.8, vertex_size=15)
+		# the generic figure at the end would draw the same network again
+		no_plot = True
 
 	# ---- convert ----
 	elif args.command == "convert":
-		print("\nConvert")
-		output_decision(g,args.typeOutput,args.outputName)
+		network_path = output_decision(g, args.typeOutput, args.outputName, outdir)
+		print(f"Network file: {network_path}")
 
 	# ---- communities ----
 	elif args.command == "communities":
@@ -630,7 +575,6 @@ def main(args):
 		else:
 			giant=False
 
-		print("\nCommunities")
 
 		modules = communities(g, args.subcommand, args.numberCommunities, giant, args.steps, args.communitySize)
 		filtered_mod = communities_filtering(modules, args.minNodes, args.maxNodes, args.minComponents, args.maxComponents)
@@ -645,106 +589,71 @@ def main(args):
 
 	# ---- extract ----
 	elif args.command == "extract":
-
 		if args.nodeList:
-			nodes_toList = (args.nodeList).split(',')
-			nodes_list_extr = [x.replace(" ", "") for x in nodes_toList]
-			print(f"Selected nodes : {nodes_list_extr}\n")
-
-		if args.selectComponent:
-			print("Selecting the n-th component...")
-			g=plain_copy(g, directed=False)
-			g,df=selecting_component(g,int(args.selectComponent))
-			g = Graphtacle.re(g, args.command, args.fileType, sep, header, directed, weighted, outdir+f"/{filename}.tsv")
-			g.function=args.command
-			g.sub_func="selected_subgraph"
-			output_decision(g,args.fileType,f"{filename}_{g.function}_{g.sub_func}")
-
-		elif (args.largest) & (args.ncomponents!=False):
-			print("Selecting n components...")
-			g=plain_copy(g, directed=False)
-			g,df=extract_and_df(g,args.ncomponents)
-			g = Graphtacle.re(g, args.command, args.fileType, sep, header, directed, weighted, outdir+f"/{filename}.tsv")
-			g.function=args.command
-			g.sub_func="largest_subgraphs"
-			output_decision(g,args.fileType,f"{filename}_{g.function}_{g.sub_func}")
-
-		elif args.largest:
-			print("Selecting largest component...")
-			g=plain_copy(g, directed=False)
-			g,df=extract_and_df(g)
-			g = Graphtacle.re(g, args.command, args.fileType, sep, header, directed, weighted, outdir+f"/{filename}.tsv")
-			g.function=args.command
-			g.sub_func="largest_component"
-			output_decision(g,args.fileType,f"{filename}_{g.function}_{g.sub_func}")
-
-		elif args.ncomponents!=False:
-			print("Removing the last n components...")
-			g=plain_copy(g, directed=False)
-			g,df=extract_and_df(g,-int(args.ncomponents))
-			g = Graphtacle.re(g, args.command, args.fileType, sep, header, directed, weighted, outdir+f"/{filename}.tsv")
-			g.function=args.command
-			g.sub_func="removed_subgraphs"
-			output_decision(g,args.fileType,f"{filename}_{g.function}_{g.sub_func}")
-
-		elif args.nodeList:
-			g,df=components_by_nodes(g,nodes_list_extr)
-			g = Graphtacle.re(g, args.command, args.fileType, sep, header, directed, weighted, outdir+f"/{filename}.tsv")
-			g.function=args.command
-			g.sub_func="selected_by_nodes"
-			output_decision(g,args.fileType,f"{filename}_{g.function}_{g.sub_func}")
-
-		else:
-			raise TypeError("Specify one of the following combination of flags -l | -l -n | -n | -sc ")
+			nodes_list_extr = [x.strip() for x in args.nodeList.split(",") if x.strip()]
+		try:
+			if args.selectComponent:
+				sub_func, (sub, df) = "selected_subgraph", selecting_component(plain_copy(g, directed=False), int(args.selectComponent))
+			elif args.largest and args.ncomponents:
+				sub_func, (sub, df) = "largest_subgraphs", extract_and_df(plain_copy(g, directed=False), int(args.ncomponents))
+			elif args.largest:
+				sub_func, (sub, df) = "largest_component", extract_and_df(plain_copy(g, directed=False))
+			elif args.ncomponents:
+				sub_func, (sub, df) = "removed_subgraphs", extract_and_df(plain_copy(g, directed=False), -int(args.ncomponents))
+			elif args.nodeList:
+				sub_func, (sub, df) = "selected_by_nodes", components_by_nodes(g, nodes_list_extr)
+			else:
+				sys.exit(Fore.RED + Style.BRIGHT + "ERROR: extract needs one of -l, -l -n N, -n N, -sc N or -nl NODES"
+				         + Style.RESET_ALL)
+		except ValueError as err:
+			fail(err)
+		g = Graphtacle.re(sub, args.command, args.fileType, sep, header, directed, weighted, filename)
+		g.function = args.command
+		g.sub_func = sub_func
+		network_path = output_decision(g, args.fileType, f"{filename}_{g.function}_{g.sub_func}", outdir)
+		print(f"Extracted: {sub.vcount()} nodes, {sub.ecount()} edges, "
+		      f"{len(sub.connected_components())} component(s)")
+		print(f"Network file: {network_path}")
+		print("")
 
 	# ---- generate ----
 	elif args.command == "generate":
-		print("\nGenerate")
-		if args.subcommand=='erdos-renyi':
-			if not all(x == False for x in [args.numberNodes, args.numberEdges, args.probability]):
-				grafo=erdos_renyi(int(args.numberNodes), int(args.numberEdges), float(args.probability), directed=args.directed, loops=args.loops)
-				filename = outdir+"/erdos_renyi"
-				g=Graphtacle.re(grafo, args.subcommand, args.fileType, file=filename)
-				output_decision(g,args.fileType,filename)
+		sub = args.subcommand
+		def need(*flags):
+			missing = [flag for flag, value in flags if value in (False, None)]
+			if missing:
+				sys.exit(Fore.RED + Style.BRIGHT + f"ERROR: generate {sub} needs " + ", ".join(missing) + Style.RESET_ALL)
+		try:
+			if sub == "erdos-renyi":
+				need(("-n", args.numberNodes))
+				if (args.probability is None) == (args.numberEdges is None):
+					fail("generate erdos-renyi needs either -e (number of edges) or -p (wiring probability), not both")
+				grafo = erdos_renyi(int(args.numberNodes), int(args.numberEdges or 0), float(args.probability or 0),
+				                    loops=args.loops)
+			elif sub == "tree":
+				need(("-n", args.numberNodes), ("-c", args.children))
+				grafo = tree_generate(int(args.numberNodes), int(args.children), False)
+			elif sub == "barabasi":
+				need(("-n", args.numberNodes), ("-a", args.averageEdge))
+				grafo = barabasi(int(args.numberNodes), int(args.averageEdge), implementation=args.implementation)
+			elif sub == "watts-strogatz":
+				need(("-s", args.size), ("-nei", args.nei), ("-p", args.probability))
+				grafo = watts_strogatz(dim=int(args.dimension or 1), size=int(args.size), nei=int(args.nei),
+				                       probability=float(args.probability), loops=args.loops, multiple=args.multiple)
 			else:
-				raise TypeError("One of the arguments is missing")
-
-		elif args.subcommand=="tree":
-			if not all(x == False for x in [int(args.numberNodes), int(args.children)]):
-				grafo=tree_generate(int(args.numberNodes), int(args.children), args.directed)
-				filename = outdir+"/tree"
-				g=Graphtacle.re(grafo, args.subcommand, args.fileType, file=filename)
-				output_decision(g,args.fileType,filename)
-			else:
-				raise TypeError("One of the arguments is missing")
-
-		elif args.subcommand=='barabasi':
-			if not all(x == False for x in [int(args.numberNodes), int(args.averageEdge)]):
-				grafo=barabasi(int(args.numberNodes), int(args.averageEdge), directed=args.directed, implementation=args.implementation)
-				filename = outdir+"/barabasi"
-				g=Graphtacle.re(grafo, args.subcommand, args.fileType, file=filename)
-				output_decision(g,args.fileType,filename)
-			else:
-				raise TypeError("One of the arguments is missing")
-
-		elif args.subcommand=='watts-strogatz':
-			grafo=watts_strogatz(dim=int(args.dimension), size=int(args.size), nei=int(args.nei), probability=int(args.probability),loops=args.loops, multiple=args.multiple)
-			filename = outdir+"/tree"
-			g=Graphtacle.re(grafo, args.subcommand, args.fileType, file=filename)
-			output_decision(g,args.fileType,filename)
-
-		elif args.subcommand=='lattice':
-			lista_dim=[int(num) for num in args.dimension.split(",") ]
-			grafo=lattice(dimension=lista_dim, nei=int(args.nei), directed=args.directed, mutual=args.mutual, circular=args.circular)
-			filename = outdir+"/lattice"
-			g=Graphtacle.re(grafo, args.subcommand, args.fileType, file=filename)
-			output_decision(g,args.fileType,filename)
-		else:
-			raise TypeError("Select the right option: erdos-renyi | tree | barabasi | watts-strogatz | lattice")
+				need(("-dim", args.dimension))
+				grafo = lattice(dimension=[int(x) for x in args.dimension.split(",")], nei=int(args.nei or 1),
+				                circular=args.circular)
+		except ValueError as err:
+			fail(err)
+		name = f"{sub.replace('-', '_')}_n{grafo.vcount()}_e{grafo.ecount()}"
+		g = Graphtacle.re(grafo, sub, args.fileType, file=name)
+		network_path = output_decision(g, args.fileType, name, outdir)
+		print(f"Generated {sub}: {grafo.vcount()} nodes, {grafo.ecount()} edges")
+		print(f"Network file: {network_path}")
 
 	# ---- mesoscale ----
 	elif args.command == "mesoscale":
-		print("Mesoscale\n")
 		
 		df_ti = ti( g, int(args.kSteps), weighted=False, weight_attr=None, threshold=args.threshold, verbose=args.verbose ) 
 		
@@ -757,7 +666,6 @@ def main(args):
 
 	# ---- percolation ----
 	elif args.command == "percolation":
-		print("Percolation\n")
 		# imported here so the other commands do not load plotly
 		from pyntacle.percolation import (run_percolation, summarize_percolation_results,
 								  save_percolation_html)
@@ -814,7 +722,7 @@ def main(args):
 			perc_df[f"State_at_t{snap_t}"] = [state_names[int(x)] for x in results["snapshot_state"]]
 
 		perc_df.to_csv(report_path, sep="\t", index=False)
-		print(f"\nCreated report in: {report_path}.\n")
+		print(f"\nReport: {report_path}")
 
 	else:
 		raise TypeError("Select the right option:  local | global | groupcentrality | keyplayer | set | convert | communities | extract | generate | mesoscale | percolation")
@@ -824,11 +732,10 @@ def main(args):
 	if args.command == "convert" or args.command == "generate" or args.command == "percolation":
 		pass
 	elif args.command == "set":
-		df=df.round(3)
 		print("")
-		print(df)
+		show_table(df)
 		report_path = g.export_file(df, outdir)
-		print(f"\nCreated report in: {report_path}.\n")
+		print(f"\nReport: {report_path}")
 
 	elif args.command == "communities":
 		if not no_plot:
@@ -840,29 +747,23 @@ def main(args):
 					ig.plot(c, target = f"{outdir}/{filename}_community_{abs(i)}.{args.format}", bbox = (600, 600))
 				else:
 					ig.plot(c, target = f"{filename}_community_{abs(i)}.{args.format}", bbox = (600, 600))
-		print("\nIn the file:")
-		print(df)
+		print("")
+		show_table(df)
 		report_path = g.export_file(df, outdir)
-		print(f"\nCreated report in: {report_path}.\n")
+		print(f"\nReport: {report_path}")
 	elif args.command == "mesoscale":
 		
 		df_ti = df_ti.round(3) 
 		df_gtom = df_gtom.round(3)
 	
-		if len(g.vs.indices) <= 100:
+		k = int(args.kSteps)
+		summary = pd.DataFrame({"Node": df_ti.index, f"TI_{k}": df_ti.iloc[:, -1].values})
+		if weighted:
+			df_wi = df_wi.round(3)
+			summary[f"WI_{k}"] = df_wi.iloc[:, -1].values
+		show_table(summary.sort_values(f"TI_{k}", ascending=False, kind="stable"))
+		print("The full topological importance and overlap matrices are in the report.")
 
-			print(f"Topological Importance ({int(args.kSteps)}):\n{df_ti}\n")
-			print("\n-----------------------------------------\n")
-			
-			if weighted:
-				df_wi = df_wi.round(3) 
-				print(f"Weighted Topological Importance ({int(args.kSteps)}):\n{df_wi}\n")
-				print("\n-----------------------------------------\n")
-
-			print(f"Generalized Topological Overlap Measure ({int(args.kSteps)}):\n{df_gtom}\n")
-		else:
-			print(f"\nGraph is too large to display detailed metrics. See the report file for details.\n")
-		
 		if not no_plot:
 			try:
 				if outdir:
@@ -900,21 +801,25 @@ def main(args):
 				f.write(df_wi.to_csv(sep="\t", index=True))
 			f.write("\nTopological Overlap Measure\n")
 			f.write(df_gtom.to_csv(sep="\t", index=True))
+		print(f"\nReport: {filename}")
 
 
 	elif args.command == "keyplayer":
 
 		df=df.round(3) 
-		print(df)
+		show_table(df)
 		report_path = g.export_file(df, outdir, notes=report_notes)
-		print(f"\nCreated report in: {report_path}.\n")
+		print(f"\nReport: {report_path}")
 
 		if not no_plot:
 			if args.subcommand=="kp-info":
 				pass
 			else:
 				g.plot_keyplayer(first_set_only(df),filename,args.format,args.operation,outdir=outdir)
-				print(Fore.YELLOW + Style.BRIGHT + "WARNING: The keyplayer colored in the figure could be only one of the possible sets\n" + Style.RESET_ALL)
+				tied = [o for o, (_sets, n_optimal, _score) in tie_info.items() if n_optimal > 1]
+				if tied:
+					print(f"The figure shows the first optimal set of {', '.join(tied)}; "
+					      "the report and the HTML page list all of them.")
 
 			# The HTML report reads one row per operation: Operation, KeySet, Score.
 			if args.subcommand == "kp-info":
@@ -947,13 +852,12 @@ def main(args):
 
 	else:
 		df=df.round(3) 
-		print("")
-		print(df)
+		show_table(df)
 		report_path = g.export_file(df, outdir, notes=report_notes)
 
 		graph = plain_copy(g)
 
-		print(f"\nCreated report in: {report_path}.\n")
+		print(f"\nReport: {report_path}")
 		if no_plot:
 			pass
 		elif hasattr(args,"color"):
@@ -1000,8 +904,13 @@ def main(args):
 
 
 
+def _show_warning(message, category, filename, lineno, file=None, line=None):
+	warn(str(message))
+
+
 def cli(argv=None):
 	"""Entry point of the ``pyntacle`` command."""
+	warnings.showwarning = _show_warning
 	parser = create_parser()
 	args = parser.parse_args(argv)
 

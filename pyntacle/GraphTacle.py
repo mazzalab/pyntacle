@@ -36,6 +36,8 @@ class Graphtacle(ig.Graph, ig.GraphBase):
 
     # edge attributes that carry the weight semantics besides es["weight"]
     WEIGHT_VIEWS = ("raw_weight", "affinity", "sign")
+    # commands whose metrics read es["weight"] as a path length
+    DISTANCE_COMMANDS = ("local", "global", "keyplayer", "groupcentrality")
 
     def __init__(self, nodes,edges,names,labels,weights,directed,fileType,sep,header,graph_name,function,
                  weight_views=None, weight_info=None, raw_weights=False):
@@ -44,9 +46,9 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         # kept. `nodes` is an int when unpickled (__reduce__) and a list of
         # indices when built by re()/from_file().
         n = nodes if isinstance(nodes, int) else len(nodes)
-        # the sub-unit warning concerns distances: raw weights that are only
-        # written back out are not checked for it
-        validate_weights(weights, warn_sub_unit=not raw_weights)
+        # the sub-unit warning concerns distances: only the commands that use
+        # weights as path lengths check for it
+        validate_weights(weights, warn_sub_unit=not raw_weights and function in self.DISTANCE_COMMANDS)
         edge_attrs = {"weight": weights}
         edge_attrs.update(weight_views or {})
         super().__init__(n=n,
