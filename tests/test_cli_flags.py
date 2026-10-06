@@ -53,6 +53,8 @@ def clean_error(proc, message):
     (["percolation", "-P", "2"], "-P/--PrInf: '2' is not a number between 0 and 1"),
     (["percolation", "-tau", "abc"], "-tau/--tau: 'abc' is not a positive number"),
     (["extract", "-n", "-1"], "-n/--ncomponents: '-1' is not a positive integer"),
+    (["keyplayer", "kp-finder", "--seed", "-1"], "--seed: '-1' is not an integer between 0 and 2**32 - 1"),
+    (["percolation", "--seed", "-1"], "--seed: '-1' is not an integer between 0 and 2**32 - 1"),
 ])
 def test_a_bad_flag_value_is_refused_by_the_parser(net, tmp_path, argv, message):
     proc = run(argv[0], "-t", "edgelist", "-i", net, *argv[1:], "-o", str(tmp_path / "out"))
@@ -136,3 +138,32 @@ def test_clique_percolation_reports_node_names(net, tmp_path):
     text = (tmp_path / "report_net_communities.tsv").read_text()
     table = pd.read_csv(io.StringIO(text[text.index("Node\tCommunity"):]), sep="\t")
     assert set(table["Node"]) == set("ABCDEFGHI")
+
+
+@pytest.mark.parametrize("engine", ["cython", "python"])
+def test_group_closeness_ranks_a_hub_above_an_isolated_pair(tmp_path, engine):
+    # a set inside a small component used to score highest: unreachable nodes
+    # counted in the numerator but not in the distances
+    path = tmp_path / "split.tsv"
+    path.write_text("N1\tN2\nA\tB\nB\tC\nC\tD\nD\tE\nE\tF\nF\tA\nA\tD\nX\tY\n")
+    proc = run("groupcentrality", "gc-finder", "-t", "edgelist", "-i", str(path), "-k", "1", "-a", "greedy",
+               "-oper", "closeness", "--engine", engine, "--no-plot", "-o", str(tmp_path))
+    assert proc.returncode == 0, proc.stderr
+    text = (tmp_path / "report_split_groupcentrality_finder_closeness_greedy.tsv").read_text()
+    table = pd.read_csv(io.StringIO(text[text.index("Groupcentrality\t"):]), sep="\t")
+    assert set(table["Groupcentrality"]) <= {"A", "D"}
+    # 5 of the 7 other nodes reached, at distances 1,1,1,2,2: (5/7) * (5/7)
+    assert table["closeness"].iloc[0] == pytest.approx(25 / 49, abs=1e-3)
+
+
+def percolation_report(net, out, *seed):
+    proc = run("percolation", "-t", "edgelist", "-i", net, *seed, "--no-plot", "-o", str(out))
+    assert proc.returncode == 0, proc.stderr
+    return proc.stdout, (out / "report_net_percolation.tsv").read_text()
+
+
+def test_percolation_repeats_with_the_printed_seed(net, tmp_path):
+    stdout, first = percolation_report(net, tmp_path / "a")
+    seed = next(l for l in stdout.splitlines() if l.startswith("Random seed: ")).split()[-1]
+    assert percolation_report(net, tmp_path / "b", "--seed", seed)[1] == first
+    assert percolation_report(net, tmp_path / "c", "--seed", seed)[1] == first

@@ -164,7 +164,7 @@ Options
      - int
      - 20260731 / 0
      - both
-     - Random seed of the permutations (transcriptomics) or of the StARS subsamples (metagenomics); non-negative
+     - Random seed of the permutations (transcriptomics) or of the StARS subsamples (metagenomics); between 0 and 2\ :sup:`32` − 1
    * - ``--save-stages``
      - No
      - bool

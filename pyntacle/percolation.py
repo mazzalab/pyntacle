@@ -342,6 +342,7 @@ def run_percolation(
     tau_vector=None,
     snapshot_infected=None,
     snapshot_node=None,
+    seed=None,
 ):
     """
     Simulates a percolation / epidemic-like dynamics on a graph.
@@ -398,6 +399,9 @@ def run_percolation(
     max_steps : int or None
         Maximum number of simulation steps.
         If None, max(1, num_nodes) is used.
+    seed : int or None
+        Seed of the random generator behind the seed node, the thresholds
+        and the recovery times; the same seed repeats the same run.
     verbose : bool
         If True, prints some optional info (no warnings here).
     use_edge_weights_as_pth : bool
@@ -447,7 +451,7 @@ def run_percolation(
           "infection_edges": dict[frozenset, float]  # u-v edges with infection time
         }
     """
-    rng = np.random.default_rng()
+    rng = np.random.default_rng(seed)
 
     # validate parameters (raises early if something is wrong)
     _validate_percolation_params(

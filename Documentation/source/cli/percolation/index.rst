@@ -128,6 +128,12 @@ Options
      - uniform
      - uniform, normal, bimodal
      - Distribution used to sample local thresholds p_th,ij in [0, p_thMax]. "uniform": all values equally likely; "normal": thresholds cluster around a central value; "bimodal": two groups of edges with low and high thresholds. Default: uniform.
+   * - ``--seed``
+     - No
+     - int
+     - \ 
+     - \ 
+     - Random seed of the seed node, thresholds and recovery times, so a run can be reproduced (default: a new one each run, printed on screen)
    * - ``-mxs``, ``--maxSteps``
      - No
      - int
@@ -216,18 +222,37 @@ Take a snapshot when 5 nodes are simultaneously infected:
        --snapshotInfected 5 \
        -o /tmp/out/
 
-**Example TSV output (time-series section):**
+**Screen output** for ``pyntacle percolation -t edgelist -i examples/figure_8.egl -n SR -P 0.7 --seed 3 -o /tmp/out/``:
 
 .. code-block:: text
 
-   Time  Infected  Non-Infected  Recovered
-   0     1         31            0
-   1     2         30            0
-   2     3         28            1
-   3     4         26            2
-   4     4         24            4
-   5     2         24            6
-   6     0         24            8
+   pyntacle percolation
+   Input: examples/figure_8.egl
+   Output directory: /tmp/out
+   Network: 32 nodes, 56 edges, 1 component(s)
+
+   Random seed: 3
+   ------------------------------------------------------------------------
+   INFECTION PERCOLATION — SUMMARY
+   ------------------------------------------------------------------------
+   Seed node: 19 (SR)
+   Params:  P* = 0.700   τ_r = 4.000   (edge usable if Δt<τ_r)
+   Graph:   N = 32   E = 56   avg_degree ≈ 3.50
+   Edges:   blocked p_th≥P* = 17 | eligible-but-slow Δt≥τ_r = 13 | usable Δt<τ_r = 26
+   ------------------------------------------------------------------------
+   Final reached (ever infected): 27 / 32  (84.38%)
+   Peak infectious I_max: 16 at t ≈ 4.000
+   End time (no infectious left): t_end ≈ 10.000
+   Infection tree depth (hops): 7
+   ------------------------------------------------------------------------
+
+   Report: /tmp/out/report_figure_8_percolation.tsv
+   HTML report: /tmp/out/figure_8_percolation.html
+   Done!
+
+The run draws the seed node (without ``-n``), the edge thresholds and the
+recovery times at random. Without ``--seed`` each run draws a new seed and
+prints it; ``--seed`` with that value repeats the run exactly.
 
 Cap a long-running simulation at 20 steps:
 
@@ -242,7 +267,7 @@ Cap a long-running simulation at 20 steps:
 
 Output files:
 
-- ``report_<graph>_percolation*.tsv`` — summary block + time-series table
+- ``report_<graph>_percolation.tsv`` — activation and recovery step of every node (see :doc:`../../outputs`)
 - ``<graph>_percolation.html`` — interactive report: the network animation
   (time slider with play/pause/step/speed, nodes coloured susceptible /
   infected / recovered, infection edges shown per step or cumulatively) with

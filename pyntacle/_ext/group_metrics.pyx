@@ -93,7 +93,9 @@ cdef double get_group_betweenness(utils.CSR* g, utils.Scratch* s, int k, int n, 
 
 
 cdef double get_group_closeness(double* all_dist, int* K_indices, int* notK_indices, int k, int n, int dist_type) noexcept nogil:
-    """Non-group node count divided by the total group-to-node distance.
+    """Reached non-group nodes divided by their total distance from the group,
+    scaled by the share of non-group nodes reached (Wasserman-Faust); on a
+    connected network this is the non-group node count over the total distance.
 
     Unreachable pairs (infinite distance) are skipped.
 
@@ -107,6 +109,7 @@ cdef double get_group_closeness(double* all_dist, int* K_indices, int* notK_indi
     cdef int reachable
     cdef double d
     cdef double dJk = 0.0
+    cdef int reached = 0
 
     for i from 0 <= i < (n - k):  # Iterate over non-K nodes
         notK_node = notK_indices[i]
@@ -151,9 +154,9 @@ cdef double get_group_closeness(double* all_dist, int* K_indices, int* notK_indi
             continue
 
         gCloseness += dJk
+        reached += 1
 
     if gCloseness <= 0.:
         return -1.
 
-    # Compute group closeness centrality
-    return (n - k) / gCloseness
+    return (<double> reached / (n - k)) * (reached / gCloseness)

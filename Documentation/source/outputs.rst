@@ -190,8 +190,8 @@ Group Centrality Report
 
 Same structure as the key-player report but the metric names are:
 ``degree``, ``closeness``, ``betweenness``, scored in [0, 1] on a connected
-network. Group closeness skips the nodes the set cannot reach, so on a split
-network a set inside a small component can score above 1. The ``gc-info``
+network. On a split network, group closeness is scaled by the share of nodes
+the set reaches, so a set inside a small component scores low. The ``gc-info``
 table has the columns ``Operation``, ``Node-set`` and ``Score``, one row per
 operation.
 
@@ -212,13 +212,38 @@ The report contains three concatenated sections:
 Percolation Report
 ------------------
 
-**Filename pattern:** ``report_<graph>_percolation*.tsv``
+**Filename pattern:** ``report_<graph>_percolation.tsv``
 
 **Command:** ``pyntacle percolation``
 
-The report has a human-readable summary block followed by a time-series table:
+The report has one row per node:
 
-**Summary block fields:**
+.. list-table::
+   :header-rows: 1
+   :widths: 25 75
+
+   * - Column
+     - Description
+   * - ``Node``
+     - Node name
+   * - ``Activation_time``
+     - Step at which the node was infected; empty if it never was
+   * - ``Recovery_time``
+     - Step at which the node recovered; empty if it was never infected
+   * - ``State_at_t<t>``
+     - Only with ``--snapshotInfected`` or ``--snapshotNode``: ``susceptible``,
+       ``infected`` or ``recovered`` at the snapshot step *t*
+
+**Example** (``-n SR -P 0.7 --seed 3 --snapshotInfected 5``):
+
+.. code-block:: text
+
+   Node  Activation_time  Recovery_time  State_at_t2
+   HS    7.0              11.0           susceptible
+   PS    6.0              10.0           susceptible
+   LR                                    susceptible
+
+The run summary is printed on screen, not written to the report:
 
 .. list-table::
    :header-rows: 1
@@ -226,8 +251,10 @@ The report has a human-readable summary block followed by a time-series table:
 
    * - Field
      - Description
+   * - ``Random seed``
+     - Seed of the run; ``--seed`` with this value repeats it
    * - ``Seed node``
-     - Starting node label and index
+     - Starting node index and label
    * - ``P*``
      - Global infectivity used
    * - ``τ_r``
@@ -247,35 +274,7 @@ The report has a human-readable summary block followed by a time-series table:
    * - ``Infection tree depth``
      - Maximum hop-distance from seed to any infected node
 
-**Time-series table columns:**
-
-.. list-table::
-   :header-rows: 1
-   :widths: 20 80
-
-   * - Column
-     - Description
-   * - ``Time``
-     - Simulation step t
-   * - ``Infected``
-     - Number of currently infectious nodes I(t)
-   * - ``Non-Infected``
-     - Number of susceptible nodes S(t)
-   * - ``Recovered``
-     - Number of recovered nodes R(t)
-
-**Example:**
-
-.. code-block:: text
-
-   Time  Infected  Non-Infected  Recovered
-   0     1         31            0
-   1     2         30            0
-   2     3         28            1
-   3     4         26            2
-   4     4         24            4
-   5     2         24            6
-   6     0         24            8
+The infected, susceptible and recovered counts over time are plotted in the HTML report.
 
 Image Outputs
 --------------

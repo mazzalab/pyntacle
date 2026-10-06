@@ -3,7 +3,7 @@ Graph Group Metrics
 
 This class of topological indices is a strict extension of that of their homonym local centrality indices, since they are applied to groups rather than to individual nodes. Differently from local metrics, a group centrality score applies to an array of nodes taken together, neglecting the contributions of the individuals. It is straightforward to notice that these indices can be useful also in Biology, other than in Social Sciences, where these were born from.
 
-The group centrality metrics implemented in Pyntacle are group degree, group closeness and group betweenness. They were firstly described by `Everett and Borgatti`_ in 1999. Pyntacle stays faithful to the definitions reported in this paper, but the reader must be warned that other formulations of these metrics exist in literature.
+The group centrality metrics implemented in Pyntacle are group degree, group closeness and group betweenness. They were firstly described by `Everett and Borgatti`_ in 1999. Pyntacle stays faithful to the definitions reported in this paper, except for group closeness on a network split into several components (see :ref:`group-closeness`), but the reader must be warned that other formulations of these metrics exist in literature.
 
 .. _`Everett and Borgatti`: https://doi.org/10.1080/0022250X.1999.9990219
 

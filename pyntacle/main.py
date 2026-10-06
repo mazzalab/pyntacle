@@ -700,6 +700,10 @@ def main(args):
 				     + (f" and {len(missing) - 10} more" if len(missing) > 10 else ""))
 			tau_vector = [tau_map[str(name)] for name in g.vs["name"]]
 
+		# a run without --seed draws one and prints it, so any run can be repeated
+		perc_seed = args.seed if args.seed is not None else int(np.random.default_rng().integers(2**31))
+		print(f"Random seed: {perc_seed}")
+
 		try:
 			results = run_percolation(
 				g,
@@ -715,6 +719,7 @@ def main(args):
 				use_edge_weights_as_pth=weighted,
 				snapshot_infected=args.snapshotInfected,
 				snapshot_node=args.snapshotNode,
+				seed=perc_seed,
 			)
 		except ValueError as err:
 			fail(err)

@@ -764,13 +764,16 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         nongroup_np_paths = np_paths.take(nongroup_nodes_indices, axis=0)
 
         group_closeness = 0
+        reached = 0
         for np_path in nongroup_np_paths:
             # unreachable group members are dropped, not charged a sentinel distance
             temp_list = [elem for elem in np_path[group_indices] if np.isfinite(elem)]
             if temp_list:
                 group_closeness += capo_dist(temp_list,distance_type)
+                reached += 1
         if group_closeness != 0:
-            normalized_score = len(nongroup_nodes) / group_closeness
-            return normalized_score
+            # Wasserman-Faust: closeness over the reached nodes, scaled by the share
+            # reached; equals (N-k)/sum on a connected network
+            return (reached / len(nongroup_nodes)) * (reached / group_closeness)
         # a set that reaches no other node scores 0
         return 0.0
