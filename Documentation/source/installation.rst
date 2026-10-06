@@ -110,7 +110,9 @@ You should see output resembling (table cut here)::
    ...
    ... 12 more rows in the report
 
-   Report: pyntacle_test/report_figure_8_local.tsv
+   Report: /home/you/pyntacle/pyntacle_test/report_figure_8_local.tsv
+   HTML report: /home/you/pyntacle/pyntacle_test/figure_8_local.html
+   Figure: /home/you/pyntacle/pyntacle_test/figure_8_local.svg
    Done!
 
 The screen shows at most 20 rows of the result; the report holds all of them.

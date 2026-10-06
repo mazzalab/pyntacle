@@ -264,6 +264,49 @@ def options_section(text: str) -> tuple[int, int]:
     return start, (nxt.start() + 1 if nxt else len(text))
 
 
+ROW_RE = re.compile(r"   \* - (.*?)(?=\n   \* - |\n\n|\Z)", re.S)
+
+
+def table_rows(section: str) -> list[list[str]]:
+    """Cells of every row of the list-table in an Options section, header first."""
+    return [[c.strip() for c in re.split(r"\n     - ", r)] for r in ROW_RE.findall(section)]
+
+
+def row_key(cells: list[str]) -> frozenset:
+    return frozenset(re.findall(r"``([^`]+)``", cells[0])) or frozenset([cells[0]])
+
+
+def merge_options(generated: str, old: str) -> str | None:
+    """The generated Options section with the hand-written cells of `old` kept.
+
+    Type, Default and Choices come from the parser, so they never drift; the
+    Help cell of an option already documented is kept, since it may carry
+    markup and wording the parser help lacks. A default the parser leaves to
+    run time (None) keeps the words of the page. Rows follow the parser: new
+    options are added, removed ones dropped. Returns None when the old table
+    has other columns, so a page with its own layout is left alone.
+    """
+    gen_rows, old_rows = table_rows(generated), table_rows(old)
+    if not old_rows or old_rows[0] != gen_rows[0]:
+        return None
+    header = gen_rows[0]
+    kept = {row_key(r): r for r in old_rows[1:]}
+    out = []
+    for row in gen_rows[1:]:
+        prev = next((r for k, r in kept.items() if k & row_key(row)), None)
+        if prev is not None:
+            row = list(row)
+            row[header.index("Help")] = prev[header.index("Help")]
+            d = header.index("Default")
+            if row[d] in ("\\", "\\ ") and prev[d] not in ("\\", "\\ "):
+                row[d] = prev[d]
+        out.append(row)
+    head = generated[:generated.index("   * - ")]
+    body = "".join("   * - " + "\n     - ".join(cell(c.rstrip("\\")) for c in r) + "\n"
+                   for r in [header] + out)
+    return head + body + "\n"
+
+
 def main() -> int:
     docs_dir = Path(__file__).resolve().parents[1]          # .../Documentation
     repo_root = docs_dir.parent                             # .../pyntacle
@@ -281,8 +324,9 @@ def main() -> int:
         commands.append((name, sp))
 
     # Command pages are written by hand around the option table: only the
-    # "Options" section is regenerated from the parser; a page is generated
-    # whole only when it does not exist yet. The CLI index and the home
+    # "Options" section is regenerated from the parser, keeping the hand-written
+    # help of each option (see merge_options); a page is generated whole only
+    # when it does not exist yet. The CLI index and the home
     # dropdown are generated only when missing.
     for cmd, sp in commands:
         page = cli_root / cmd / "index.rst"
@@ -294,7 +338,11 @@ def main() -> int:
         old = page.read_text(encoding="utf-8")
         ga, gb = options_section(generated)
         oa, ob = options_section(old)
-        write_file(page, old[:oa] + generated[ga:gb].rstrip() + "\n\n" + old[ob:])
+        merged = merge_options(generated[ga:gb], old[oa:ob])
+        if merged is None:
+            print(f"[SKIP] {page}: its option table has its own columns; edit it by hand")
+            continue
+        write_file(page, old[:oa] + merged.rstrip() + "\n\n" + old[ob:])
 
     for path, content in ((cli_root / "index.rst", build_cli_index(commands)),
                           (source_dir / "_parts" / "cli_dropdown.rst", build_home_dropdown(commands))):

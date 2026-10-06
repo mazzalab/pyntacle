@@ -243,7 +243,8 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         return filename
             
 
-    def plot_keyplayer(self,df,filename,exp_format,operation,outdir=False):
+    def plot_keyplayer(self, df, operation, path):
+        """Draw the network with the key-player sets of `df` highlighted and save it to `path`."""
 
         layout=self.layout('kk')
         coord = np.array(layout)
@@ -330,10 +331,8 @@ class Graphtacle(ig.Graph, ig.GraphBase):
             # Remove axes
             plt.axis('off')
 
-            if outdir:
-                plt.savefig(f"{outdir}/{filename}_{self.function}_{self.sub_func}.{exp_format}")
-            else:
-                plt.savefig(f"{filename}_{self.function}_{self.sub_func}.{exp_format}")
+            plt.savefig(path)
+            plt.close()
 
         else:
             metrics_names,metrics_x,metrics_y=[],[],[]
@@ -355,15 +354,13 @@ class Graphtacle(ig.Graph, ig.GraphBase):
             plt.scatter(metrics_x, metrics_y, c="#F4D03F", alpha=1, zorder=11,s=200)
             plt.axis('off')
 
-            if outdir:
-                plt.savefig(f"{outdir}/{filename}_{self.function}_{self.sub_func}.{exp_format}")
-            else:
-                plt.savefig(f"{filename}_{self.function}_{self.sub_func}.{exp_format}")
+            plt.savefig(path)
+            plt.close()
 
+        return path
 
-
-
-    def plot_set(self,filename1,filename2,g1_names,g2_names,exp_format,operation,outdir=False):
+    def plot_set(self, filename1, filename2, g1_names, g2_names, path):
+        """Draw a union with the nodes of each input network coloured and save it to `path`."""
 
         layout=self.layout('kk')
         coord = np.array(layout)
@@ -411,12 +408,9 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         # Remove axes
         plt.axis('off')
         
-        filename_set = f"{filename1}_{filename2}"
-
-        if outdir:
-            plt.savefig(f"{outdir}/{filename_set}_{self.function}_{self.sub_func}.{exp_format}")
-        else:
-            plt.savefig(f"{filename_set}_{self.function}_{self.sub_func}.{exp_format}")
+        plt.savefig(path)
+        plt.close()
+        return path
 
 
 
@@ -778,6 +772,5 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         if group_closeness != 0:
             normalized_score = len(nongroup_nodes) / group_closeness
             return normalized_score
-        else: 
-            print("Node set {} is disconnected from the rest of the grafo using the {} distance. Returning 0.\n".format(nodes, distance_type))
-            return 0.0
+        # a set that reaches no other node scores 0
+        return 0.0

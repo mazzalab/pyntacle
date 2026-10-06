@@ -38,7 +38,7 @@ def percolation(g: ig.Graph, k: int = 3) -> List[ig.Graph]:
 
  
 	if k < 2:
-		raise ValueError("k must be >= 2")
+		raise ValueError("-k must be at least 2")
 
 	# --- Preconditioning: undirected + simple graph on a working copy
 	work = g.copy()
@@ -75,8 +75,9 @@ def percolation(g: ig.Graph, k: int = 3) -> List[ig.Graph]:
 				
 	clique_graph = ig.Graph(n=len(k_cliques_sets), edges=list(edge_set), directed=False)
 	
-	# add the actual nodes that compose each clique
-	clique_graph.vs["label"] = [sorted(list(clique_set)) for clique_set in k_cliques_sets]
+	# add the actual nodes that compose each clique, by name when the graph has names
+	names = work.vs["name"] if "name" in work.vs.attributes() else list(range(work.vcount()))
+	clique_graph.vs["label"] = [sorted(names[i] for i in clique_set) for clique_set in k_cliques_sets]
 
 	# retrieve the connected components of the clique-graph => CPM communities
 	modules = clique_graph.components().subgraphs()
@@ -112,6 +113,8 @@ def communities(grafo, algorithm, n, giant, steps=4, communitySize=3):
 		n = None
 	elif n:
 		n = int(n)
+		if n > subgraph.vcount():
+			raise ValueError(f"-nc must be at most the number of nodes ({subgraph.vcount()})")
 	elif algorithm == "leading-eigenvector":
 		print("No -nc given: communities are split while modularity increases")
 	else:
@@ -146,13 +149,15 @@ def communities_filtering(modules, min_nodes=None,max_nodes=None,min_components=
 
 	return modules
 
-def communities_to_df(modules, subcommand) -> pd.DataFrame:
-
-	df = pd.DataFrame({})
+def communities_to_df(modules, subcommand, ids=None) -> pd.DataFrame:
+	"""One row per node and the community it belongs to; `ids` numbers the
+	communities (default 1, 2, ...) so a filtered list keeps its numbers."""
+	if ids is None:
+		ids = range(1, len(modules) + 1)
 
 	if subcommand == "percolation":
 		df = {'Node':{}, 'Community':[], 'Clique':[]} 
-		for idx, comp in enumerate(modules):
+		for idx, comp in zip(ids, modules):
 			for v in comp.vs:
 				for node in v["label"]:
 					if node not in df['Node']:
@@ -169,7 +174,7 @@ def communities_to_df(modules, subcommand) -> pd.DataFrame:
 	else:
 
 		df = {'Node':[], 'Community':[]} 
-		for idx, comp in enumerate(modules):
+		for idx, comp in zip(ids, modules):
 			for v in comp.vs:
 				df['Node'].append(v["name"])
 				df['Community'].append(idx)

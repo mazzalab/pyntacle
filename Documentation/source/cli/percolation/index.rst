@@ -118,7 +118,7 @@ Options
      - TSV file with fixed per-node recovery times. Must contain two columns: "Nodes" and "Recovery_time". Node labels in "Nodes" must match. When provided, these τ_i values override -tau and -tauDist.
    * - ``-pth``, ``--pthMax``
      - No
-     - int
+     - float
      - 1
      - \ 
      - Maximum local threshold p_th in [0,1]. Each edge (i,j) gets a local threshold p_th,ij drawn in [0, p_thMax]; the edge can transmit only if P* >= p_th,ij. Default: 1.0.
@@ -131,8 +131,8 @@ Options
    * - ``-mxs``, ``--maxSteps``
      - No
      - int
-     - \
-     - \
+     - \ 
+     - \ 
      - Maximum number of simulation steps. Default: number of nodes in the graph.
    * - ``--snapshotInfected``
      - No
@@ -151,24 +151,18 @@ Options
      - bool
      - False
      - \ 
-     - Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written
+     - Skip the interactive HTML report; only the TSV report is written
    * - ``-o``, ``--outdir``
      - No
      - str
      - \ 
      - \ 
      - Select where to store the output (if not specified the output will be stored in same directory as the input file)
-   * - ``-f``, ``--format``
-     - No
-     - str
-     - svg
-     - \ 
-     - Specify the format of the image output
    * - ``-v``, ``--verbose``
      - No
      - bool
      - False
-     - \
+     - \ 
      - Use this flag to receive prints of partial results of the measures.
 
 Examples

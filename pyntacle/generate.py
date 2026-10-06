@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import igraph as ig
 import csv
@@ -151,6 +152,8 @@ def output_decision(grafo, fileType, filename, outdir=None):
 	if outdir is not None:
 		grafo.outdir = outdir
 	writer, ext = writers[fileType]
+	# a name with folders in it (-fo sub/name) writes into them
+	os.makedirs(os.path.dirname(os.path.join(grafo.outdir or ".", filename)) or ".", exist_ok=True)
 	writer(grafo, filename)
 	return f"{grafo.outdir}/{filename}.{ext}" if grafo.outdir else f"{filename}.{ext}"
 

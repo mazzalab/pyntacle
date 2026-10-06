@@ -92,9 +92,9 @@ The data section is a two-column ``Measure / Score`` table (one metric per row):
    * - Measure
      - Description
    * - ``Average shortest path length``
-     - Mean over all finite node-pair shortest paths
+     - Mean over the node pairs that reach each other, in hops
    * - ``Median shortest path length``
-     - Median over all finite node-pair shortest paths
+     - Median over the node pairs that reach each other, in hops
    * - ``Diameter``
      - Longest shortest path in the graph
    * - ``Components``
@@ -189,7 +189,9 @@ Group Centrality Report
 **Command:** ``pyntacle groupcentrality gc-finder`` or ``gc-info``
 
 Same structure as the key-player report but the metric names are:
-``degree``, ``closeness``, ``betweenness`` (scored in [0, 1]). The ``gc-info``
+``degree``, ``closeness``, ``betweenness``, scored in [0, 1] on a connected
+network. Group closeness skips the nodes the set cannot reach, so on a split
+network a set inside a small component can score above 1. The ``gc-info``
 table has the columns ``Operation``, ``Node-set`` and ``Score``, one row per
 operation.
 

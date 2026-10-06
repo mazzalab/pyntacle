@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 import json
@@ -530,8 +531,10 @@ Array.prototype.forEach.call(table.querySelectorAll("th"), function(th, idx){
 
 	final_string = body_top + script_open + script_body + script_close
 
-	with open(outdir + "/" + grafo.name + "_local.html", 'w') as f:
+	path = os.path.join(outdir or ".", grafo.name + "_local.html")
+	with open(path, 'w') as f:
 	    f.write(final_string)
+	return path
 
 
 # rendering tiers, as for the local report
@@ -1014,8 +1017,10 @@ document.getElementById("export-png-btn").addEventListener("click", downloadPNG)
 
     final_string = body_top + script_open + script_body + script_close
 
-    with open(outdir + "/" + filename + "_keyplayer.html", 'w') as f:
+    path = os.path.join(outdir or ".", filename + "_keyplayer.html")
+    with open(path, 'w') as f:
         f.write(final_string)
+    return path
 
 
 # rendering tiers, as for the local report
@@ -1498,5 +1503,7 @@ document.getElementById("export-png-btn").addEventListener("click", downloadPNG)
 
     final_string = body_top + script_open + script_body + script_close
 
-    with open(outdir + "/" + filename + "_groupcentrality.html", 'w') as f:
+    path = os.path.join(outdir or ".", filename + "_groupcentrality.html")
+    with open(path, 'w') as f:
         f.write(final_string)
+    return path

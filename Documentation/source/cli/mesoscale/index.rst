@@ -114,13 +114,13 @@ Options
      - No
      - str
      - svg
-     - \ 
-     - Specify the format of the image output
+     - svg, png, pdf, ps, eps
+     - Image format of the figure
    * - ``-v``, ``--verbose``
      - No
      - bool
      - False
-     - \
+     - \ 
      - Use this flag to receive prints of partial results of the measures.
 
 Examples

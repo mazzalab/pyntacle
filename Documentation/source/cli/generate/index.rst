@@ -134,7 +134,7 @@ Options
      - watts-strogatz: allow parallel edges after rewiring
    * - ``-dim``, ``--dimension``
      - No
-     - \ 
+     - int list
      - \ 
      - \ 
      - watts-strogatz: dimensions of the starting lattice (default 1, a ring); lattice: nodes along each dimension, comma-separated (ex. 4,4)

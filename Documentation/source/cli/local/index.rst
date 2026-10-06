@@ -82,8 +82,8 @@ Options
      - No
      - str
      - svg
-     - \ 
-     - Specify the format of the image output (svg, png)
+     - svg, png, pdf, ps, eps
+     - Image format of the figure
    * - ``-c``, ``--color``
      - No
      - bool
@@ -99,8 +99,8 @@ Options
    * - ``-o``, ``--outdir``
      - No
      - str
-     - \
-     - \
+     - \ 
+     - \ 
      - Select where to store the output (if not specified the output will be stored in same directory as the input file)
 
 Examples
@@ -152,6 +152,8 @@ Compute metrics on a directed, weighted adjacency matrix, excluding node LR:
    ... 12 more rows in the report
 
    Report: /tmp/out/report_figure_8_local.tsv
+   HTML report: /tmp/out/figure_8_local.html
+   Figure: /tmp/out/figure_8_local.svg
    Done!
 
 The screen shows at most 20 rows; the report holds every node.

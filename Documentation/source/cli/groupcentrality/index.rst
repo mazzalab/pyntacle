@@ -20,6 +20,28 @@ gc-info
 gc-finder
   Find the optimal or the best set of size 'k' for a given group-centrality index
 
+Search algorithms
+-----------------
+
+``gc-finder`` looks for the set of ``-k`` nodes with the best score in one of three ways (``-a``):
+
+``brute_force`` (default)
+  Scores every set of ``-k`` nodes, so the result is the optimum. Sets tied
+  at the optimum are all counted and listed in the report (up to
+  ``--max-ties``). The work grows with the number of sets, n choose k.
+
+``greedy``
+  Starts from a random set and keeps making the swap of one member with one
+  non-member that raises the score most, until no swap raises it. The result
+  is a local optimum; ``--seed`` fixes the starting set.
+
+``gradient_descent``
+  Starts from a random set and tries random swaps, moving to any that raises
+  the score (and, with ``-p``, to one that lowers it with that probability).
+  It stops at the first swap that raises the score by no more than ``-tol``,
+  when every swap of the current set has been tried without a move, or after
+  ``-ms`` seconds.
+
 Synopsis
 --------
 .. code-block:: console
@@ -44,7 +66,7 @@ Options
      - str
      - \ 
      - gc-info, gc-finder
-     - Select one the subcuntions right after groupcentrality
+     - Subcommand to run, right after groupcentrality
    * - ``-t``, ``--fileType``
      - Yes
      - str
@@ -110,7 +132,7 @@ Options
      - int
      - 2
      - \ 
-     - Number of nodes ONLY IN GC-FINDER (default=2)
+     - Size of the node set to search, gc-finder only (default=2)
    * - ``-v``, ``--value``
      - No
      - str
@@ -128,49 +150,37 @@ Options
      - str
      - brute_force
      - brute_force, greedy, gradient_descent
-     - Select the algorithm to use when using the GC-FINDER command (default=brute_force)
+     - Search algorithm of gc-finder (default=brute_force)
    * - ``-p``, ``--probability``
      - No
      - float
      - 0
      - \ 
-     - The probability of accepting a swap of nodes (values between 0 and 1) - ONLY WHEN USING STOCHASTIC-GRADIENT-DESCENT as algorithm (default=0)
+     - gradient_descent only: probability of accepting a swap that lowers the score (default=0)
    * - ``-tol``, ``--tolerance``
      - No
      - float
      - 0.01
      - \ 
-     - The minimum accepted increase by a two-nodes swap - ONLY WHEN USING STOCHASTIC-GRADIENT-DESCENT as algorithm (default=0.01)
+     - gradient_descent only: the search stops at the first swap that raises the score by no more than this (default=0.01)
    * - ``-ms``, ``--maxsec``
      - No
      - int
      - 120
      - \ 
-     - Maximum allowed computation time (seconds) - ONLY WHEN USING STOCHASTIC-GRADIENT-DESCENT as algorithm (default=120)
+     - gradient_descent only: time limit of each search, in seconds (default=120)
    * - ``-np``, ``--nprocs``
      - No
      - int
      - 1
      - \ 
-     - Number of process (default=1)
+     - Threads of the compiled kernels (default=1)
    * - ``--max-ties``
      - No
      - int
      - 100
      - \ 
      - Maximum number of equally-scoring node sets listed by the brute-force report. The reported count of optimal sets is exact even when the list is capped; ``greedy`` and ``gradient_descent`` ignore it
-   * - ``-f``, ``--format``
-     - No
-     - str
-     - svg
-     - \ 
-     - Specify the format of the image output (svg, png)
-   * - ``--no-plot``
-     - No
-     - bool
-     - False
-     - \ 
-     - Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written
    * - ``--engine``
      - No
      - str
@@ -183,6 +193,18 @@ Options
      - \ 
      - \ 
      - Random seed for greedy / gradient_descent, so a run can be reproduced
+   * - ``--no-plot``
+     - No
+     - bool
+     - False
+     - \ 
+     - Skip SVG/PNG figure and interactive HTML report generation; only the TSV report is written
+   * - ``-f``, ``--format``
+     - No
+     - str
+     - svg
+     - svg, png, pdf, ps, eps
+     - Image format of the figure
    * - ``-o``, ``--outdir``
      - No
      - str

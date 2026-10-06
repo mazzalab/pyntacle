@@ -2,22 +2,6 @@ import random
 import pandas as pd
 from .key_player import *
 import time
-import datetime
-
-
-def count_time(t):
-	if t=="start":
-		start_time = time.time()
-		current_datetime = datetime.datetime.now()
-		formatted_time = current_datetime.strftime("%H:%M:%S")
-		print("\nStarting time (HH:MM:SS):", formatted_time)
-		return start_time
-	elif t=="end":
-		current_datetime = datetime.datetime.now()
-		formatted_time = current_datetime.strftime("%H:%M:%S")
-		print("End time (HH:MM:SS):", formatted_time)
-		return formatted_time
-	else: print("Internal Error")
 
 def operation_selector(grafo,operation,node_names,distance_type="min",mdist=None):
 	if operation=="degree":		
@@ -55,7 +39,7 @@ def operation_selector(grafo,operation,node_names,distance_type="min",mdist=None
 
 def call_stochastic_gradient_descent(grafo,k_size,operation,distance_type="min",mdist=None,probability=0,tolerance=0.01,maxsec=120,seed=None):
 
-	start_time=count_time("start")
+	start_time = time.time()
 
 	if seed is not None:
 		random.seed(seed)
@@ -81,7 +65,10 @@ def call_stochastic_gradient_descent(grafo,k_size,operation,distance_type="min",
 	nodeSet_score_history = {tuple(S_names): optimization_score}
 	nodeSet_score = {tuple(S_names): optimization_score}
 	optimal_set_found = False
-	
+	# swaps of the current set tried without a move; all of them tried means a local optimum
+	tried = set()
+	n_swaps = len(S_names) * len(notS)
+
 	while not optimal_set_found:
 		si=random.choice(S_names)
 		notsi=random.choice(notS)
@@ -113,15 +100,17 @@ def call_stochastic_gradient_descent(grafo,k_size,operation,distance_type="min",
 			nodeSet_score.clear()
 			nodeSet_score[temp_node_set_tuple] = curr_score
 			optimization_score = curr_score
-		elif curr_score == optimization_score:
-			nodeSet_score[temp_node_set_tuple] = curr_score
+			tried.clear()
 		else:
-			continue
+			if curr_score == optimization_score:
+				nodeSet_score[temp_node_set_tuple] = curr_score
+			tried.add(temp_node_set_tuple)
+			if len(tried) >= n_swaps:
+				optimal_set_found = True
 
 	# a flat list of node names, as call_greedy returns
 	best = max(nodeSet_score, key=nodeSet_score.get)
 	S_names = list(best)
-	count_time("end")
 
 	return S_names, round(optimization_score,3)
 

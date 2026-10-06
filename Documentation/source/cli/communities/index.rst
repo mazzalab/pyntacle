@@ -12,7 +12,7 @@ Specific usage
    pyntacle communities fastgreedy -t {fileType} -i {input_file} -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS} -nc {NUMBERCOMMUNITIES}
    pyntacle communities infomap -t {fileType} -i {input_file} -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS}
    pyntacle communities leading-eigenvector -t {fileType} -i {input_file} -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS} -nc {NUMBERCOMMUNITIES}
-   pyntacle communities random_walk -t {fileType} -i {input_file} -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS} -steps {STEPS}
+   pyntacle communities random-walk -t {fileType} -i {input_file} -n {MINNODES} -N {MAXNODES} -c {MINCOMPONENTS} -C {MAXCOMPONENTS} -steps {STEPS}
    pyntacle communities percolation -t {fileType} -i {input_file} -k {COMMUNITYSIZE}
 
 Synopsis
@@ -96,34 +96,34 @@ Options
      - Select the node/nodes to be removed from the graph (ex. A,B,C)
    * - ``-nc``, ``--numberCommunities``
      - No
+     - int
      - \ 
      - \ 
-     - \ 
-     - ONLY FOR FASTGREEDY Specify the number of clusters around which the modular decomposition algorithm will optimize its module search
+     - fastgreedy, leading-eigenvector, random-walk: number of communities (default: the split with the highest modularity)
    * - ``-n``, ``--minNodes``
      - No
-     - \ 
+     - int
      - \ 
      - \ 
      - Filters the resulting communities and keeps only those with a number of vertices equal or greater than this threshold
    * - ``-N``, ``--maxNodes``
      - No
-     - \ 
+     - int
      - \ 
      - \ 
      - Filters the resulting communities and keeps only those with a number of vertices equal or lesser than this threshold
    * - ``-c``, ``--minComponents``
      - No
-     - \ 
+     - int
      - \ 
      - \ 
      - Filters the resulting communities and keeps only those with a number of components equal or greater than this threshold
    * - ``-C``, ``--maxComponents``
      - No
+     - int
      - \ 
      - \ 
-     - \ 
-     - Filters the resulting communities and keeps only those with a number of components equal or greater than this threshold
+     - Filters the resulting communities and keeps only those with a number of components equal or lesser than this threshold
    * - ``-steps``, ``--steps``
      - No
      - int
@@ -158,8 +158,20 @@ Options
      - No
      - str
      - svg
-     - \ 
-     - Specify the format of the image output
+     - svg, png, pdf, ps, eps
+     - Image format of the figure
+
+Output
+------
+
+``report_<graph>_communities.tsv`` lists each node with the community it belongs
+to, numbered from 1. Clique percolation lets a node sit in several communities:
+its ``Community`` cell lists them all and ``Clique`` the cliques that put it
+there. With ``-n``, ``-N``, ``-c`` or ``-C`` only the communities that pass the
+filters are reported and drawn; they keep their numbers. A run where none passes
+stops with an error that lists the community sizes found.
+
+Each community of at most 20 nodes is drawn in ``<graph>_community_<n>.<format>``.
 
 Examples
 --------

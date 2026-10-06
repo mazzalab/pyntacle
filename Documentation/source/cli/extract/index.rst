@@ -96,7 +96,7 @@ Options
      - Select the node/nodes to be removed from the graph (ex. A,B,C)
    * - ``-n``, ``--ncomponents``
      - No
-     - bool
+     - int
      - False
      - \ 
      - With -l: keep the N largest components. Alone: drop the N smallest components
@@ -108,7 +108,7 @@ Options
      - Keep the largest component (with -n, the N largest)
    * - ``-sc``, ``--selectComponent``
      - No
-     - bool
+     - int
      - False
      - \ 
      - Keep the N-th largest component (1 = the largest)
@@ -128,8 +128,8 @@ Options
      - No
      - str
      - svg
-     - \ 
-     - Specify the format of the image output
+     - svg, png, pdf, ps, eps
+     - Image format of the figure
    * - ``-nl``, ``--nodeList``
      - No
      - bool

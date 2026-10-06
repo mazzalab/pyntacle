@@ -128,8 +128,8 @@ Options
      - No
      - str
      - svg
-     - \ 
-     - Specify the format of the image output (svg, png)
+     - svg, png, pdf, ps, eps
+     - Image format of the figure
    * - ``-o``, ``--outdir``
      - No
      - str

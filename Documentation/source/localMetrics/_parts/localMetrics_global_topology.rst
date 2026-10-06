@@ -76,7 +76,7 @@ The **average shortest path length** (also known as *characteristic path length*
 .. math::
   \bar{\ell}_{G} = \frac{1}{N(N-1)} \sum_{i \neq j} d(v_i, v_j)
 
-When the graph is **weighted**, distances :math:`d(v_i, v_j)` are computed using edge weights as path lengths. 
+Distances are counted in hops (edges), also when the graph is weighted, as for the median below. On a network split into several components only the pairs that reach each other are averaged.
 
 
 Median shortest path length

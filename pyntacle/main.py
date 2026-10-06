@@ -1,3 +1,6 @@
+import matplotlib
+# figures are written to files: no window, no display needed (cluster nodes have none)
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import argparse
 import os
@@ -168,6 +171,8 @@ def main(args):
 	# and gradient descent return a single set and leave it empty.
 	tie_info = {}
 	report_notes = []
+	# (label, path) of every figure and HTML page, printed after the report
+	written = []
 	max_ties = int(getattr(args, "max_ties", DEFAULT_MAX_TIES))
 
 	# --no-plot writes only the TSV report, without figures or HTML.
@@ -199,12 +204,12 @@ def main(args):
 		# outputs go to -o, or next to the input file
 		dirpath, filename = os.path.split(args.inputFile)
 		filename = filename.strip().split(".")[0]
-		outdir = dirpath if args.outdir is None else args.outdir
+		outdir = args.outdir or dirpath or "."
 
 		print(Style.BRIGHT + f"pyntacle {args.command}" + (f" {args.subcommand}" if getattr(args, "subcommand", None) else "")
 		      + Style.RESET_ALL)
 		print(f"Input: {args.inputFile}")
-		print(f"Output directory: {os.path.abspath(outdir or '.')}")
+		print(f"Output directory: {os.path.abspath(outdir)}")
 		# analysis commands read the weights as declared by -wt/-dt; commands that
 		# only write the network back out keep them exactly as read
 		weight_type = getattr(args, "weightType", None) if weighted else None
@@ -247,6 +252,14 @@ def main(args):
 			     "shortest paths only see the pairs that can reach each other")
 		print("")
 
+		if getattr(args, "subcommand", None) in ("kp-finder", "gc-finder"):
+			if args.k_size >= g.vcount():
+				fail(f"-k must be smaller than the number of nodes ({g.vcount()})")
+			engine = "" if use_cython else ", python engine"
+			threads = f", {args.nprocs} threads" if use_cython and args.nprocs > 1 else ""
+			print(f"Search: {args.algorithm}, k = {args.k_size}, operation {args.operation}{engine}{threads}\n")
+			search_start = time()
+
 	else: # in case of 'generate'
 		outdir = args.outdir or os.getcwd()
 		print(Style.BRIGHT + f"pyntacle generate {args.subcommand}" + Style.RESET_ALL)
@@ -257,9 +270,11 @@ def main(args):
 	if args.command == "local":
 		
 		if args.color:
-			nodes_toColor = (args.color).split(',')
-			nodes_list_color = [x.replace(" ", "") for x in nodes_toColor]
-			print(f"Colored nodes : {nodes_list_color}\n")
+			nodes_list_color = [x.strip() for x in args.color.split(",") if x.strip()]
+			unknown = sorted(set(nodes_list_color) - set(g.vs["name"]))
+			if unknown:
+				fail("-c names nodes not in the network: " + ", ".join(unknown))
+			print(f"Highlighted nodes: {', '.join(nodes_list_color)}\n")
 
 		lengths = path_lengths(g)
 		# all-pairs distances computed once and shared by radiality and radiality reach
@@ -280,7 +295,7 @@ def main(args):
 					})
 
 		if not no_plot:
-			create_local_html(df,g,outdir)
+			written.append(("HTML report", create_local_html(df, g, outdir)))
 
 	# ---- global ----
 	elif args.command == "global":
@@ -301,7 +316,8 @@ def main(args):
 		median_hops = g.median_global_shortest_path_length(sps=sps_u)
 		del sps_u
 		df =  pd.DataFrame({
-					"Average shortest path length" : g.average_path_length(directed=directed, unconn=False),
+					# over the pairs that reach each other, as the median
+					"Average shortest path length" : g.average_path_length(directed=directed, unconn=True),
 					"Median shortest path length": median_hops,
 					"Diameter": diam_w,
 					"Components": len(g.components()),
@@ -339,7 +355,6 @@ def main(args):
 					        
 				else:
 					
-					print("Using operation: ", args.operation)
 					k_set, score, tied_sets, n_optimal = cython_wrapper_bruteforce(g, int(args.k_size), args.operation, n_threads=int(args.nprocs), max_ties=max_ties)
 					tie_info[args.operation] = (tied_sets, n_optimal, score)
 					df = tied_sets_frame(tie_info, "Group Centrality", explode=True, score_column=args.operation)
@@ -349,7 +364,6 @@ def main(args):
 
 			elif args.algorithm=="greedy":
 				if use_cython:
-					start = time()
 
 					if args.operation == "all":
 						greedy_results = []
@@ -361,16 +375,11 @@ def main(args):
 						g.nameSub_function("finder_"+args.operation+"_"+args.algorithm)
 
 					else:
-						print("Using operation: ", args.operation)
 						k_set, score = cython_wrapper_greedy(g, int(args.k_size), args.operation, distance_type=args.value, n_threads=int(args.nprocs), seed=seed)
 						df = pd.DataFrame({"Groupcentrality": k_set, args.operation: score})	
 						g.nameSub_function("finder_" + args.operation + "_" + args.algorithm)
 
-					end = time()
-					print(f"Passed Time Cython: {end - start}")
 				else:
-					print("Using greedy algorithm")
-					time_start = time()
 					if args.operation=="all":
 						tmp=call_all_greedy(g,int(args.k_size),args.operation,distance_type=args.value,mdist=None,function=args.command,seed=seed)
 						df=pd.DataFrame(tmp,columns=["Groupcentrality","score"])
@@ -381,10 +390,7 @@ def main(args):
 						df=pd.DataFrame({"Groupcentrality":gc[0], args.operation:gc[1]})
 						g.nameSub_function("finder_"+args.operation+"_"+args.algorithm)
 
-					end = time()
-					print(f"Time taken: {end - time_start} seconds")
 			elif args.algorithm=="gradient_descent":
-				print("Using gradient_descent")
 				if args.operation=="all":
 					tmp=call_all_sgd(g,int(args.k_size),args.operation,distance_type=args.value,mdist=None,probability=args.probability,tolerance=args.tolerance,maxsec=args.maxsec,function=args.command,seed=seed)
 					df=pd.DataFrame(tmp,columns=["Groupcentrality","score"])
@@ -396,7 +402,8 @@ def main(args):
 					g.nameSub_function("finder_"+args.operation+"_"+args.algorithm)
 
 			else:
-				raise TypeError("Select the correct algorithm [brute_force | greedy | gradient_descent]") 
+				raise TypeError("Select the correct algorithm [brute_force | greedy | gradient_descent]")
+			print(f"Search time: {time() - search_start:.2f} s\n")
 
 			if not no_plot:
 				# The HTML report reads one row per operation: Operation, NodeSet, Score.
@@ -421,7 +428,7 @@ def main(args):
 						"NodeSet": [list(df.iloc[:, 0])],
 						"Score": [df.iloc[:, 1].iloc[0]],
 					})
-				create_groupcentrality_html(with_tie_columns(df_html, "NodeSet", tie_info), g, outdir, filename)
+				written.append(("HTML report", create_groupcentrality_html(with_tie_columns(df_html, "NodeSet", tie_info), g, outdir, filename)))
 
 		elif args.subcommand == "gc-info":
 
@@ -436,7 +443,7 @@ def main(args):
 				df_html = pd.DataFrame({"Operation": operations,
 				                        "NodeSet": [list(nodes) for _ in operations],
 				                        "Score": scores})
-				create_groupcentrality_html(with_tie_columns(df_html, "NodeSet"), g, outdir, filename)
+				written.append(("HTML report", create_groupcentrality_html(with_tie_columns(df_html, "NodeSet"), g, outdir, filename)))
 
 		else:
 			raise TypeError("Select the correct subcommand [gc-finder | gc-info]") 
@@ -459,7 +466,6 @@ def main(args):
 					        
 				else:
 					
-					print("Using operation: ", args.operation)
 					k_set, score, tied_sets, n_optimal = cython_wrapper_bruteforce(g, int(args.k_size), args.operation, mdist=int(args.mdist), n_threads=int(args.nprocs), max_ties=max_ties)
 					tie_info[args.operation] = (tied_sets, n_optimal, score)
 					df = tied_sets_frame(tie_info, "Key-player", explode=True, score_column=args.operation)
@@ -467,10 +473,8 @@ def main(args):
 					g.nameSub_function("finder_" + args.operation + "_" + args.algorithm)
 			
 			elif args.algorithm == "greedy":
-				print("Using greedy algorithm")
 
 				if use_cython:
-					start = time()
 
 					if args.operation == "all":
 						greedy_results = []
@@ -482,15 +486,11 @@ def main(args):
 						g.nameSub_function("finder_"+args.operation+"_"+args.algorithm)
 
 					else:
-						print("Using operation: ", args.operation)
 						k_set, score = cython_wrapper_greedy(g, int(args.k_size), args.operation, mdist=int(args.mdist), n_threads=int(args.nprocs), seed=seed)
 						df = pd.DataFrame({"Key-player": k_set, args.operation: score})	
 						g.nameSub_function("finder_" + args.operation + "_" + args.algorithm)
 				
-					end = time()
-					print(f"Passed Time Cython: {end - start}")
 				else:
-					start = time()
 
 					if args.operation=="all": 
 
@@ -505,11 +505,8 @@ def main(args):
 						df=pd.DataFrame({"Key-player":kset[0], args.operation:kset[1]})	
 						g.nameSub_function("finder_"+args.operation+"_"+args.algorithm)
 					
-					end = time()
-					print(f"Passed Time pure Python: {end - start}")
 
 			elif args.algorithm == "gradient_descent":
-				print("Using gradient_descent")
 				if args.operation == "all":
 					tmp=call_all_sgd(g,int(args.k_size),args.operation,distance_type=None,mdist=int(args.mdist),probability=args.probability,tolerance=args.tolerance,maxsec=args.maxsec,function=args.command,seed=seed)
 					df=pd.DataFrame(tmp,columns=["Key-player","score"])
@@ -521,6 +518,7 @@ def main(args):
 					g.nameSub_function("finder_"+args.operation+"_"+args.algorithm)
 			else:
 				raise TypeError("Select the correct algorithm [brute_force | greedy | gradient_descent]")
+			print(f"Search time: {time() - search_start:.2f} s\n")
 
 		elif args.subcommand == "kp-info":
 
@@ -539,6 +537,7 @@ def main(args):
 	elif args.command == "set":
 		# the second network is read with the same -t, -s, -nh and -w as the first
 		filename2 = os.path.split(args.inputFile2)[1].strip().split(".")[0]
+		print(f"Second input: {args.inputFile2}")
 		g2 = read_network(args.inputFile2, args, sep, header, directed, weighted)
 		try:
 			result = set_operation(plain_copy(g, directed=False), plain_copy(g2, directed=False), args.subcommand)
@@ -555,11 +554,13 @@ def main(args):
 		      f"{len(result.connected_components())} component(s)")
 		print(f"Network file: {network_path}")
 		if not no_plot:
+			path = os.path.join(outdir, f"{name}.{args.format}")
 			if args.subcommand == "union":
-				g.plot_set(filename, filename2, g1_names, g2_names, args.format, args.subcommand, outdir=outdir)
+				g.plot_set(filename, filename2, g1_names, g2_names, path)
 			else:
-				ig.plot(plain_copy(g), opacity=0.7, target=os.path.join(outdir, f"{name}.{args.format}"),
+				ig.plot(plain_copy(g), opacity=0.7, target=path,
 				        vertex_label=g.vs["name"], bbox=(1000, 1000), edge_width=0.8, vertex_size=15)
+			written.append(("Figure", path))
 		# the generic figure at the end would draw the same network again
 		no_plot = True
 
@@ -570,22 +571,26 @@ def main(args):
 
 	# ---- communities ----
 	elif args.command == "communities":
-		if args.giant:
-			giant=True
+		try:
+			modules = communities(g, args.subcommand, args.numberCommunities, args.giant, args.steps, args.communitySize)
+		except ValueError as err:
+			fail(err)
+		# clique percolation returns graphs of cliques: a community is the union of their nodes
+		if args.subcommand == "percolation":
+			members = [sorted({n for v in m.vs for n in v["label"]}) for m in modules]
 		else:
-			giant=False
-
-
-		modules = communities(g, args.subcommand, args.numberCommunities, giant, args.steps, args.communitySize)
-		filtered_mod = communities_filtering(modules, args.minNodes, args.maxNodes, args.minComponents, args.maxComponents)
-		df = communities_to_df(modules, args.subcommand)
-
-		if len(filtered_mod) == 0:
-			print(Fore.RED + Style.BRIGHT +"\nNo components respected the constraints; try and change the parameters\n" + Style.RESET_ALL)
-			print(Fore.RED + Style.BRIGHT +"These were the results:\n")
-			print(df.to_string(index=False))
-			print(""+ Style.RESET_ALL)
-			df=pd.DataFrame({})
+			members = [m.vs["name"] for m in modules]
+		base = plain_copy(g, directed=False)
+		node_graphs = [base.induced_subgraph(names) for names in members]
+		filtered_mod = communities_filtering(node_graphs, args.minNodes, args.maxNodes, args.minComponents, args.maxComponents)
+		kept = [i for i, m in enumerate(node_graphs) if any(m is f for f in filtered_mod)]
+		if not kept:
+			fail(f"no community passes the size filters; the {len(modules)} found have "
+			     + ", ".join(str(len(m)) for m in members) + " nodes")
+		print(f"Communities: {len(modules)} found" +
+		      (f", {len(kept)} kept by the filters" if len(kept) < len(modules) else ""))
+		df = communities_to_df([modules[i] for i in kept], args.subcommand, ids=[i + 1 for i in kept])
+		community_graphs = {i + 1: node_graphs[i] for i in kept}
 
 	# ---- extract ----
 	elif args.command == "extract":
@@ -620,7 +625,7 @@ def main(args):
 	elif args.command == "generate":
 		sub = args.subcommand
 		def need(*flags):
-			missing = [flag for flag, value in flags if value in (False, None)]
+			missing = [flag for flag, value in flags if value is None]
 			if missing:
 				sys.exit(Fore.RED + Style.BRIGHT + f"ERROR: generate {sub} needs " + ", ".join(missing) + Style.RESET_ALL)
 		try:
@@ -628,6 +633,10 @@ def main(args):
 				need(("-n", args.numberNodes))
 				if (args.probability is None) == (args.numberEdges is None):
 					fail("generate erdos-renyi needs either -e (number of edges) or -p (wiring probability), not both")
+				n = args.numberNodes
+				most = n * (n - 1) // 2 + (n if args.loops else 0)
+				if args.numberEdges is not None and args.numberEdges > most:
+					fail(f"-e is at most {most} for {n} nodes" + ("" if args.loops else " without self-loops (-l)"))
 				grafo = erdos_renyi(int(args.numberNodes), int(args.numberEdges or 0), float(args.probability or 0),
 				                    loops=args.loops)
 			elif sub == "tree":
@@ -638,13 +647,15 @@ def main(args):
 				grafo = barabasi(int(args.numberNodes), int(args.averageEdge), implementation=args.implementation)
 			elif sub == "watts-strogatz":
 				need(("-s", args.size), ("-nei", args.nei), ("-p", args.probability))
-				grafo = watts_strogatz(dim=int(args.dimension or 1), size=int(args.size), nei=int(args.nei),
+				if args.dimension and len(args.dimension) > 1:
+					fail("watts-strogatz takes one number with -dim: how many dimensions the starting lattice has")
+				grafo = watts_strogatz(dim=args.dimension[0] if args.dimension else 1, size=int(args.size), nei=int(args.nei),
 				                       probability=float(args.probability), loops=args.loops, multiple=args.multiple)
 			else:
 				need(("-dim", args.dimension))
-				grafo = lattice(dimension=[int(x) for x in args.dimension.split(",")], nei=int(args.nei or 1),
+				grafo = lattice(dimension=args.dimension, nei=int(args.nei or 1),
 				                circular=args.circular)
-		except ValueError as err:
+		except (ValueError, ig.InternalError) as err:
 			fail(err)
 		name = f"{sub.replace('-', '_')}_n{grafo.vcount()}_e{grafo.ecount()}"
 		g = Graphtacle.re(grafo, sub, args.fileType, file=name)
@@ -673,39 +684,50 @@ def main(args):
 		# optional per-node recovery times from a TSV file (columns: Nodes, Recovery_time)
 		tau_vector = None
 		if args.tauFile:
+			if not os.path.isfile(args.tauFile):
+				fail(f"-tauFile not found: {args.tauFile}")
 			tau_df = pd.read_csv(args.tauFile, sep=None, engine="python")
-			tau_map = dict(zip(tau_df["Nodes"].astype(str), tau_df["Recovery_time"].astype(float)))
+			if not {"Nodes", "Recovery_time"} <= set(tau_df.columns):
+				fail(f"-tauFile needs the columns Nodes and Recovery_time; {args.tauFile} has "
+				     + ", ".join(map(str, tau_df.columns)))
+			try:
+				tau_map = dict(zip(tau_df["Nodes"].astype(str), tau_df["Recovery_time"].astype(float)))
+			except ValueError:
+				fail(f"-tauFile: Recovery_time must be numeric in {args.tauFile}")
+			missing = [str(name) for name in g.vs["name"] if str(name) not in tau_map]
+			if missing:
+				fail("-tauFile has no recovery time for: " + ", ".join(missing[:10])
+				     + (f" and {len(missing) - 10} more" if len(missing) > 10 else ""))
 			tau_vector = [tau_map[str(name)] for name in g.vs["name"]]
 
-		results = run_percolation(
-			g,
-			Pstar=float(args.PrInf),
-			tau=float(args.tau),
-			tau_dist=args.tauDistribution,
-			seed_node=args.nodes,
-			pth_max=float(args.pthMax),
-			dist=args.pthDistribution,
-			max_steps=args.maxSteps,
-			verbose=args.verbose,
-			tau_vector=tau_vector,
-			use_edge_weights_as_pth=weighted,
-			snapshot_infected=args.snapshotInfected,
-			snapshot_node=args.snapshotNode,
-		)
+		try:
+			results = run_percolation(
+				g,
+				Pstar=float(args.PrInf),
+				tau=float(args.tau),
+				tau_dist=args.tauDistribution,
+				seed_node=args.nodes,
+				pth_max=float(args.pthMax),
+				dist=args.pthDistribution,
+				max_steps=args.maxSteps,
+				verbose=args.verbose,
+				tau_vector=tau_vector,
+				use_edge_weights_as_pth=weighted,
+				snapshot_infected=args.snapshotInfected,
+				snapshot_node=args.snapshotNode,
+			)
+		except ValueError as err:
+			fail(err)
 
 		print(summarize_percolation_results(g, results))
 
-		if outdir:
-			html_path = f"{outdir}/{filename}_percolation.html"
-			report_path = f"{outdir}/report_{filename}_percolation.tsv"
-		else:
-			html_path = f"{filename}_percolation.html"
-			report_path = f"report_{filename}_percolation.tsv"
+		html_path = os.path.join(outdir, f"{filename}_percolation.html")
+		report_path = os.path.join(outdir, f"report_{filename}_percolation.tsv")
 
 		if not no_plot:
 			# interactive HTML animation of the spreading process
 			save_percolation_html(g, results, filename=html_path, name=filename)
-			print(f"\nInteractive HTML saved in: {html_path}")
+			written.append(("HTML report", html_path))
 
 		# per-node activation / recovery report
 		node_labels = results["node_labels"]
@@ -739,14 +761,14 @@ def main(args):
 
 	elif args.command == "communities":
 		if not no_plot:
-			for i,c in enumerate(filtered_mod):
-				if c.vcount()>20:
-					print(Fore.YELLOW + Style.BRIGHT + f"WARNING: The community {abs(i)} has more than 20 nodes, the image will not be generated\n" + Style.RESET_ALL)
-					break
-				if outdir:
-					ig.plot(c, target = f"{outdir}/{filename}_community_{abs(i)}.{args.format}", bbox = (600, 600))
-				else:
-					ig.plot(c, target = f"{filename}_community_{abs(i)}.{args.format}", bbox = (600, 600))
+			large = [i for i, c in community_graphs.items() if c.vcount() > 20]
+			if large:
+				warn("communities with more than 20 nodes are not drawn: " + ", ".join(map(str, large)))
+			for i, c in community_graphs.items():
+				if c.vcount() <= 20:
+					path = os.path.join(outdir, f"{filename}_community_{i}.{args.format}")
+					ig.plot(c, target=path, bbox=(600, 600), vertex_label=c.vs["name"], vertex_color="#BDC3C7")
+					written.append(("Figure", path))
 		print("")
 		show_table(df)
 		report_path = g.export_file(df, outdir)
@@ -765,26 +787,14 @@ def main(args):
 		print("The full topological importance and overlap matrices are in the report.")
 
 		if not no_plot:
-			try:
-				if outdir:
-					ig.plot(plain_copy(g), opacity=0.7, target = f"{outdir}/{filename}_{g.function}.{args.format}", bbox = (1000, 1000),edge_width=0.8,vertex_size=15,vertex_label_size=2.5)
-				else:
-					ig.plot(plain_copy(g), opacity=0.7, target = f"{filename}_{g.function}.{args.format}", bbox = (1000, 1000),edge_width=0.8,vertex_size=15,vertex_label_size=2.5)
-			except Exception as e:
-				print(Fore.YELLOW + Style.BRIGHT + f"\nWARNING: Plotting skipped due to backend error: {e}" + Style.RESET_ALL)
+			path = os.path.join(outdir, f"{filename}_{g.function}.{args.format}")
+			ig.plot(plain_copy(g), opacity=0.7, target=path, bbox=(1000, 1000), edge_width=0.8,
+			        vertex_size=15, vertex_label_size=2.5)
+			written.append(("Figure", path))
 
-		if g.sub_func:
-			if outdir:
-				filename=f"{outdir}/report_{g.name}_{g.function}_{g.sub_func}.tsv"
-			else:
-				filename=f"report_{g.name}_{g.function}_{g.sub_func}.tsv"
-		else:
-			if outdir:
-				filename=f"{outdir}/report_{g.name}_{g.function}.tsv"
-			else:
-				filename=f"report_{g.name}_{g.function}.tsv"
-
-		g.name=filename
+		stem = f"report_{g.name}_{g.function}" + (f"_{g.sub_func}" if g.sub_func else "")
+		filename = os.path.join(outdir, stem + ".tsv")
+		g.name = filename
 
 		with open(filename, "w") as f:
 			f.write(f"Pyntacle report\t{g.name.strip().split('/')[-1]}\n")
@@ -815,7 +825,8 @@ def main(args):
 			if args.subcommand=="kp-info":
 				pass
 			else:
-				g.plot_keyplayer(first_set_only(df),filename,args.format,args.operation,outdir=outdir)
+				path = os.path.join(outdir, f"{filename}_{g.function}_{g.sub_func}.{args.format}")
+				written.append(("Figure", g.plot_keyplayer(first_set_only(df), args.operation, path)))
 				tied = [o for o, (_sets, n_optimal, _score) in tie_info.items() if n_optimal > 1]
 				if tied:
 					print(f"The figure shows the first optimal set of {', '.join(tied)}; "
@@ -848,58 +859,30 @@ def main(args):
 						"KeySet": [list(df["Key-player"])],
 						"Score": [df[str(args.operation)].iloc[0]],
 					})
-			create_keyplayer_html(with_tie_columns(df_html, "KeySet", tie_info), g, outdir, filename)
+			written.append(("HTML report", create_keyplayer_html(with_tie_columns(df_html, "KeySet", tie_info), g, outdir, filename)))
 
 	else:
 		df=df.round(3) 
 		show_table(df)
 		report_path = g.export_file(df, outdir, notes=report_notes)
 
-		graph = plain_copy(g)
-
 		print(f"\nReport: {report_path}")
-		if no_plot:
-			pass
-		elif hasattr(args,"color"):
-			if args.color:
-				vertex_color=[]
-				for node in g.vs:
-					if node["name"] in nodes_list_color:
-						vertex_color.append("green")
-					else:
-						vertex_color.append("red")
+		if not no_plot:
+			# -c (local) and -nl (extract) nodes are drawn green, the others red
+			marked = (nodes_list_color if getattr(args, "color", None)
+			          else nodes_list_extr if getattr(args, "nodeList", None) else None)
+			style = {"vertex_color": [("green" if n in marked else "red") for n in g.vs["name"]] if marked else "red"}
+			if args.command in ("local", "global"):
+				stem = f"{filename}_{g.function}"
 			else:
-				vertex_color='red'
-			if outdir:
-				ig.plot(graph, opacity=0.7, target = f"{outdir}/{filename}_{g.function}.{args.format}", bbox = (1000, 1000),edge_width=0.8,vertex_size=15,vertex_color=vertex_color)
-			else:
-				ig.plot(graph, opacity=0.7, target = f"{filename}_{g.function}.{args.format}", bbox = (1000, 1000),edge_width=0.8,vertex_size=15,vertex_color=vertex_color)
-		elif hasattr(args,"nodeList"):
-			vertex_color=[]
-			for node in g.vs:
-				if args.nodeList:
-					if (node["name"] in nodes_list_extr):
-						vertex_color.append("green")
-				else:
-					vertex_color.append("red")
+				stem = f"{filename}_{g.function}_{g.sub_func}" if g.sub_func else f"{filename}_{g.function}"
+				style["vertex_label_size"] = 2.5
+			path = os.path.join(outdir, f"{stem}.{args.format}")
+			ig.plot(plain_copy(g), opacity=0.7, target=path, bbox=(1000, 1000), edge_width=0.8, vertex_size=15, **style)
+			written.append(("Figure", path))
 
-			if outdir:
-				ig.plot(graph, opacity=0.7, target = f"{outdir}/{filename}_{g.function}_{g.sub_func}.{args.format}", bbox = (1000, 1000),edge_width=0.8,vertex_size=15,vertex_color=vertex_color)
-			else:
-				ig.plot(graph, opacity=0.7, target = f"{filename}_{g.function}_{g.sub_func}.{args.format}", bbox = (1000, 1000),edge_width=0.8,vertex_size=15,vertex_color=vertex_color)
-
-		else:
-			if g.sub_func:
-				if outdir:
-					ig.plot(graph, opacity=0.7, target = f"{outdir}/{filename}_{g.function}_{g.sub_func}.{args.format}", bbox = (1000, 1000),edge_width=0.8,vertex_size=15,vertex_label_size=2.5)
-				else:
-					ig.plot(graph, opacity=0.7, target = f"{filename}_{g.function}_{g.sub_func}.{args.format}", bbox = (1000, 1000),edge_width=0.8,vertex_size=15,vertex_label_size=2.5)
-			else:
-				if outdir:
-					ig.plot(graph, opacity=0.7, target = f"{outdir}/{filename}_{g.function}.{args.format}", bbox = (1000, 1000),edge_width=0.8,vertex_size=15)
-				else:
-					ig.plot(graph, opacity=0.7, target = f"{filename}_{g.function}.{args.format}", bbox = (1000, 1000),edge_width=0.8,vertex_size=15)
-
+	for label, path in written:
+		print(f"{label}: {path}")
 	print(Fore.GREEN + Style.BRIGHT + "Done!\n" + Style.RESET_ALL)
 
 
