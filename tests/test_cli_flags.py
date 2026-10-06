@@ -150,8 +150,8 @@ def test_group_closeness_ranks_a_hub_above_an_isolated_pair(tmp_path, engine):
                "-oper", "closeness", "--engine", engine, "--no-plot", "-o", str(tmp_path))
     assert proc.returncode == 0, proc.stderr
     text = (tmp_path / "report_split_groupcentrality_finder_closeness_greedy.tsv").read_text()
-    table = pd.read_csv(io.StringIO(text[text.index("Groupcentrality\t"):]), sep="\t")
-    assert set(table["Groupcentrality"]) <= {"A", "D"}
+    table = pd.read_csv(io.StringIO(text[text.index("Group Centrality\t"):]), sep="\t")
+    assert set(table["Group Centrality"]) <= {"A", "D"}
     # 5 of the 7 other nodes reached, at distances 1,1,1,2,2: (5/7) * (5/7)
     assert table["closeness"].iloc[0] == pytest.approx(25 / 49, abs=1e-3)
 
@@ -167,3 +167,61 @@ def test_percolation_repeats_with_the_printed_seed(net, tmp_path):
     seed = next(l for l in stdout.splitlines() if l.startswith("Random seed: ")).split()[-1]
     assert percolation_report(net, tmp_path / "b", "--seed", seed)[1] == first
     assert percolation_report(net, tmp_path / "c", "--seed", seed)[1] == first
+
+
+def report_header(path, first):
+    line = next(l for l in path.read_text().splitlines() if l.startswith(first + "\t"))
+    return line.split("\t")
+
+
+@pytest.mark.parametrize("argv,report,header", [
+    (["keyplayer", "kp-finder", "-a", "greedy", "--seed", "1"],
+     "report_net_keyplayer_finder_all_greedy.tsv", ["Operation", "Key-player", "Score"]),
+    (["keyplayer", "kp-finder", "-a", "brute_force"],
+     "report_net_keyplayer_finder_all_brute_force.tsv", ["Operation", "SetID", "Key-player", "Score"]),
+    (["groupcentrality", "gc-finder", "-a", "greedy", "--seed", "1"],
+     "report_net_groupcentrality_finder_all_greedy.tsv", ["Operation", "Group Centrality", "Score"]),
+    (["groupcentrality", "gc-finder", "-a", "gradient_descent", "--seed", "1"],
+     "report_net_groupcentrality_finder_all_gradient_descent.tsv", ["Operation", "Group Centrality", "Score"]),
+    (["groupcentrality", "gc-finder", "-a", "brute_force"],
+     "report_net_groupcentrality_finder_all_brute_force.tsv", ["Operation", "SetID", "Group Centrality", "Score"]),
+])
+def test_finder_reports_share_the_info_column_names(net, tmp_path, argv, report, header):
+    # finders wrote operation/score and gc greedy Groupcentrality, info Operation/Score
+    proc = run(*argv[:2], "-t", "edgelist", "-i", net, "-k", "2", *argv[2:], "--no-plot", "-o", str(tmp_path))
+    assert proc.returncode == 0, proc.stderr
+    assert report_header(tmp_path / report, "Operation") == header
+
+
+def test_global_reports_transitivity_as_global_clustering_coefficient(net, tmp_path):
+    proc = run("global", "-t", "edgelist", "-i", net, "--no-plot", "-o", str(tmp_path))
+    assert proc.returncode == 0, proc.stderr
+    assert "Global clustering coefficient" in proc.stdout
+    assert "Weighted clustering coefficient" not in proc.stdout
+
+
+@pytest.mark.parametrize("argv", [
+    ["gc-finder", "-k", "2", "-a", "greedy", "--seed", "1"],
+    ["gc-finder", "-k", "2", "-a", "brute_force"],
+    ["gc-finder", "-k", "2", "-a", "brute_force", "-oper", "degree"],
+    ["gc-finder", "-k", "2", "-a", "gradient_descent", "--seed", "1", "-oper", "closeness"],
+    ["gc-info", "-n", "A,X"],
+])
+def test_groupcentrality_figure_highlights_the_set(net, tmp_path, argv):
+    # the figure used to draw every node red, with no set marked
+    proc = run("groupcentrality", argv[0], "-t", "edgelist", "-i", net, *argv[1:], "-f", "png", "-o", str(tmp_path))
+    assert proc.returncode == 0, proc.stderr
+    figure = next(l.split(": ", 1)[1] for l in proc.stdout.splitlines() if l.startswith("Figure: "))
+    assert figure.endswith(".png") and os.path.getsize(figure) > 0
+
+
+def test_plot_node_sets_draws_one_disc_per_set_holding_a_node(tmp_path, monkeypatch):
+    import igraph as ig
+    from pyntacle import GraphTacle as gt
+    sizes = []
+    real = gt.plt.scatter
+    monkeypatch.setattr(gt.plt, "scatter", lambda *a, **k: (sizes.append(k.get("s")), real(*a, **k))[1])
+    g = ig.Graph.Formula("A-B, B-C, C-D")
+    gt.Graphtacle.plot_node_sets(g, [("degree", ["A", "B"]), ("closeness", ["B", "C"])], str(tmp_path / "f.png"))
+    # base layer, then degree (A alone, B in two sets: widest disc), then closeness (B nested, C alone)
+    assert [sorted(s) if hasattr(s, "__len__") else s for s in sizes] == [100, [300, 600], [300, 300]]

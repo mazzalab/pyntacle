@@ -468,28 +468,6 @@ def selecting_component(grafo, selectedComponent):
     return _keep_components(grafo, comps, [by_size[n - 1]])
 
 
-def process_row_modified(row):
-    found_non_zero = False
-    non_zero_count = 0
-
-    for col in ['size_F', 'size_df', 'size_dR', 'size_mreach']:
-        if not found_non_zero and row[col] != 0:
-            found_non_zero = True
-        elif found_non_zero and row[col] != 0:
-            non_zero_count += 1
-            row[col] = max(0, row[col] - non_zero_count)
-
-    # marker sizes: 3 -> 4 and 4 -> 8
-    for col in ['size_F', 'size_df', 'size_dR', 'size_mreach']:
-        if row[col] == 3:
-            row[col] = 4
-        elif row[col] == 4:
-            row[col] = 8
-
-    return row
-
-
-
 def components_by_nodes(grafo, node_list):
     """Every component that contains at least one of the given nodes."""
     g = plain_copy(grafo, directed=False)

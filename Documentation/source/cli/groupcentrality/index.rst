@@ -256,6 +256,11 @@ Output files:
 - ``report_<graph>_groupcentrality_finder_<operation>_<algorithm>.tsv``
   (``gc-finder``) or ``report_<graph>_groupcentrality_info_<operation>.tsv``
   (``gc-info``) — results table
+- ``<graph>_groupcentrality_finder_<operation>_<algorithm>.<format>`` or
+  ``<graph>_groupcentrality_info_<operation>.<format>`` — the network with the
+  found set (``gc-finder``) or the given set (``gc-info``) highlighted. With
+  ``-oper all`` each metric's set has its own colour, and a node in several
+  sets is drawn as nested discs. With ties only the first optimal set is drawn.
 - ``<graph>_groupcentrality.html`` — interactive network report (D3), same
   metric-highlight/search/edge-toggle/SVG+PNG-export pattern as the
   keyplayer report. Written by both ``gc-finder`` and ``gc-info``.

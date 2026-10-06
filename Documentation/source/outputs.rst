@@ -107,8 +107,8 @@ The data section is a two-column ``Measure / Score`` table (one metric per row):
      - Edge count divided by diameter (a compactness proxy)
    * - ``Average clustering coefficient``
      - Mean of all local clustering coefficients (unweighted mean)
-   * - ``Weighted clustering coefficient``
-     - Global (transitivity) clustering coefficient: 3 × triangles / triads
+   * - ``Global clustering coefficient``
+     - Transitivity: 3 × triangles / connected triples; ignores edge weights and direction
    * - ``Average degree``
      - Mean degree over all nodes
    * - ``Average Closeness``
@@ -143,13 +143,13 @@ For ``--operation all``, the data section has three columns:
    * - Column
      - Values
      - Description
-   * - ``operation``
+   * - ``Operation``
      - ``F``, ``dF``, ``dR``, ``mreach``
      - Which KPP metric this row reports
    * - ``Key-player``
      - ``['NodeA', 'NodeB']``
      - The optimal (or best-found) node set of size k
-   * - ``score``
+   * - ``Score``
      - float in [0, 1] or count
      - Metric score for that node set. F, dF, dR ∈ [0,1]; mreach is a raw count.
 
@@ -157,7 +157,7 @@ For ``--operation all``, the data section has three columns:
 
 .. code-block:: text
 
-   operation  Key-player    score
+   Operation  Key-player    Score
    F          ['PH', 'BM']  0.63
    dF         ['HB', 'WD']  0.815
    dR         ['KR', 'HB']  0.683
@@ -193,7 +193,7 @@ Same structure as the key-player report but the metric names are:
 network. On a split network, group closeness is scaled by the share of nodes
 the set reaches, so a set inside a small component scores low. The ``gc-info``
 table has the columns ``Operation``, ``Node-set`` and ``Score``, one row per
-operation.
+operation; the ``gc-finder`` set column is ``Group Centrality``.
 
 Mesoscale Report
 -----------------

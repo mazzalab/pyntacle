@@ -102,13 +102,17 @@ The **average clustering coefficient** is the arithmetic mean of :math:`CC_i` ac
   CC_G = \frac{1}{N}\sum_{i=1}^{N} CC_i 
 
 
-Weighted clustering coefficient
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Global clustering coefficient
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Pyntacle reports a **degree-weighted** version of clustering, i.e. a weighted average of local clustering coefficients where node degrees act as weights:
+The **global clustering coefficient** (transitivity) is the fraction of connected triples that close into a triangle:
 
 .. math::
-  CC_{w,G} = \frac{\sum_{i=1}^{N} k_i \, CC_i}{\sum_{i=1}^{N} k_i} 
+  C_G = \frac{3 \times \text{number of triangles}}{\text{number of connected triples}} = \frac{\sum_{i=1}^{N} k_i (k_i - 1) \, CC_i}{\sum_{i=1}^{N} k_i (k_i - 1)}
+
+It is a weighted average of the local clustering coefficients, each weighted by the number of triples centred on the node,
+so high-degree nodes count more than in the average clustering coefficient. It ignores edge weights and direction.
+Releases up to 1.3.2 reported this value as "Weighted clustering coefficient".
 
 
 Average degree

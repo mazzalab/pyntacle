@@ -113,7 +113,7 @@ Find the 2-node set that maximizes each KPP metric using the greedy algorithm:
 
 .. code-block:: text
 
-   operation  Key-player    score
+   Operation  Key-player    Score
    F          ['PH', 'BM']  0.63
    dF         ['HB', 'WD']  0.815
    dR         ['KR', 'HB']  0.683

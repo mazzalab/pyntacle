@@ -43,7 +43,7 @@ def tie_notes(tie_info):
 	return notes
 
 
-def tied_sets_frame(tie_info, set_column, explode=False, score_column="score"):
+def tied_sets_frame(tie_info, set_column, explode=False, score_column="Score"):
 	"""Turn the brute-force tie dictionary into the report table.
 
 	With several operations each row holds a whole node set in one cell, which is
@@ -58,8 +58,8 @@ def tied_sets_frame(tie_info, set_column, explode=False, score_column="score"):
 				for node in nodes:
 					rows.append({"SetID": set_id, set_column: node, score_column: score})
 			else:
-				rows.append({"operation": oper, "SetID": set_id,
-				             set_column: list(nodes), "score": score})
+				rows.append({"Operation": oper, "SetID": set_id,
+				             set_column: list(nodes), "Score": score})
 	return pd.DataFrame(rows)
 
 
@@ -83,11 +83,13 @@ def with_tie_columns(df_html, set_column, tie_info=None):
 	return df_html
 
 
-def first_set_only(df):
-	"""The SVG plot draws one set: keep set 1 and restore the pre-tie column shape."""
-	if "SetID" not in df.columns:
-		return df
-	return df[df["SetID"] == 1].drop(columns=["SetID"]).reset_index(drop=True)
+def found_sets(df, set_column, operation):
+	"""(operation, nodes) pairs for the figure; with ties only set 1 of each operation is drawn."""
+	if "SetID" in df.columns:
+		df = df[df["SetID"] == 1]
+	if operation == "all":
+		return [(oper, list(nodes)) for oper, nodes in zip(df["Operation"], df[set_column])]
+	return [(operation, list(df[set_column]))]
 
 
 def fail(err):
@@ -325,7 +327,7 @@ def main(args):
 					"Density": g.density(),
 					"pi": g.ecount()/diam_u,
 					"Average clustering coefficient": g.transitivity_avglocal_undirected(),
-					"Weighted clustering coefficient": g.transitivity_undirected(),
+					"Global clustering coefficient": g.transitivity_undirected(),
 					"Average degree": mean(g.degree()),
 					"Average Closeness":mean(g.closeness(weights=lengths)),
 					"Average Eccentricity":mean(g.eccentricity()),
@@ -370,35 +372,35 @@ def main(args):
 						for oper in ["degree", "betweenness", "closeness"]:
 							greedy_results.append(cython_wrapper_greedy(g, int(args.k_size), oper, distance_type=args.value, n_threads=int(args.nprocs), seed=seed))
 
-						df = pd.DataFrame(greedy_results, columns=["Groupcentrality","score"])
-						df.insert(0, 'operation', ["degree", "betweenness", "closeness"])
+						df = pd.DataFrame(greedy_results, columns=["Group Centrality","Score"])
+						df.insert(0, 'Operation', ["degree", "betweenness", "closeness"])
 						g.nameSub_function("finder_"+args.operation+"_"+args.algorithm)
 
 					else:
 						k_set, score = cython_wrapper_greedy(g, int(args.k_size), args.operation, distance_type=args.value, n_threads=int(args.nprocs), seed=seed)
-						df = pd.DataFrame({"Groupcentrality": k_set, args.operation: score})	
+						df = pd.DataFrame({"Group Centrality": k_set, args.operation: score})	
 						g.nameSub_function("finder_" + args.operation + "_" + args.algorithm)
 
 				else:
 					if args.operation=="all":
 						tmp=call_all_greedy(g,int(args.k_size),args.operation,distance_type=args.value,mdist=None,function=args.command,seed=seed)
-						df=pd.DataFrame(tmp,columns=["Groupcentrality","score"])
-						df.insert(0, 'operation', ["degree","closeness","betweenness"])
+						df=pd.DataFrame(tmp,columns=["Group Centrality","Score"])
+						df.insert(0, 'Operation', ["degree","closeness","betweenness"])
 						g.nameSub_function("finder_"+args.operation+"_"+args.algorithm)
 					else:
 						gc=call_greedy(g,int(args.k_size),args.operation,distance_type=args.value,mdist=None,seed=seed)
-						df=pd.DataFrame({"Groupcentrality":gc[0], args.operation:gc[1]})
+						df=pd.DataFrame({"Group Centrality": gc[0], args.operation:gc[1]})
 						g.nameSub_function("finder_"+args.operation+"_"+args.algorithm)
 
 			elif args.algorithm=="gradient_descent":
 				if args.operation=="all":
 					tmp=call_all_sgd(g,int(args.k_size),args.operation,distance_type=args.value,mdist=None,probability=args.probability,tolerance=args.tolerance,maxsec=args.maxsec,function=args.command,seed=seed)
-					df=pd.DataFrame(tmp,columns=["Groupcentrality","score"])
-					df.insert(0, 'operation', ["degree","closeness","betweenness"])
+					df=pd.DataFrame(tmp,columns=["Group Centrality","Score"])
+					df.insert(0, 'Operation', ["degree","closeness","betweenness"])
 					g.nameSub_function("finder_"+args.operation+"_"+args.algorithm)
 				else:
 					gc=call_stochastic_gradient_descent(g,int(args.k_size),args.operation,distance_type=args.value,mdist=None,probability=float(args.probability),tolerance=float(args.tolerance),maxsec=int(args.maxsec),seed=seed)
-					df=pd.DataFrame({"Groupcentrality":gc[0], args.operation:gc[1]})
+					df=pd.DataFrame({"Group Centrality": gc[0], args.operation:gc[1]})
 					g.nameSub_function("finder_"+args.operation+"_"+args.algorithm)
 
 			else:
@@ -481,8 +483,8 @@ def main(args):
 						for oper in ['F', 'dF', 'dR', 'mreach']:
 							greedy_results.append(cython_wrapper_greedy(g, int(args.k_size), oper, mdist=int(args.mdist), n_threads=int(args.nprocs), seed=seed))
 
-						df = pd.DataFrame(greedy_results, columns=["Key-player","score"])
-						df.insert(0, 'operation', ["F","dF","dR","mreach"])
+						df = pd.DataFrame(greedy_results, columns=["Key-player","Score"])
+						df.insert(0, 'Operation', ["F","dF","dR","mreach"])
 						g.nameSub_function("finder_"+args.operation+"_"+args.algorithm)
 
 					else:
@@ -495,8 +497,8 @@ def main(args):
 					if args.operation=="all": 
 
 						tmp=call_all_greedy(g, int(args.k_size), args.operation, distance_type=None, mdist=int(args.mdist), function=args.command, seed=seed)
-						df=pd.DataFrame(tmp,columns=["Key-player","score"])
-						df.insert(0, 'operation', ["F","dF","dR","mreach"])
+						df=pd.DataFrame(tmp,columns=["Key-player","Score"])
+						df.insert(0, 'Operation', ["F","dF","dR","mreach"])
 						g.nameSub_function("finder_"+args.operation+"_"+args.algorithm)
 					
 					else:
@@ -509,8 +511,8 @@ def main(args):
 			elif args.algorithm == "gradient_descent":
 				if args.operation == "all":
 					tmp=call_all_sgd(g,int(args.k_size),args.operation,distance_type=None,mdist=int(args.mdist),probability=args.probability,tolerance=args.tolerance,maxsec=args.maxsec,function=args.command,seed=seed)
-					df=pd.DataFrame(tmp,columns=["Key-player","score"])
-					df.insert(0, 'operation', ["F","dF","dR","mreach"])
+					df=pd.DataFrame(tmp,columns=["Key-player","Score"])
+					df.insert(0, 'Operation', ["F","dF","dR","mreach"])
 					g.nameSub_function("finder_"+args.operation+"_"+args.algorithm)
 				else:
 					kset=call_stochastic_gradient_descent(g,int(args.k_size),args.operation,distance_type=None,mdist=int(args.mdist),probability=float(args.probability),tolerance=float(args.tolerance),maxsec=int(args.maxsec),seed=seed)
@@ -831,7 +833,8 @@ def main(args):
 				pass
 			else:
 				path = os.path.join(outdir, f"{filename}_{g.function}_{g.sub_func}.{args.format}")
-				written.append(("Figure", g.plot_keyplayer(first_set_only(df), args.operation, path)))
+				written.append(("Figure", g.plot_node_sets(found_sets(df, "Key-player", args.operation), path,
+				                                           others="not-Keyplayers")))
 				tied = [o for o, (_sets, n_optimal, _score) in tie_info.items() if n_optimal > 1]
 				if tied:
 					print(f"The figure shows the first optimal set of {', '.join(tied)}; "
@@ -854,9 +857,9 @@ def main(args):
 			else:
 				if args.operation == "all":
 					df_html = pd.DataFrame({
-						"Operation": df["operation"],
+						"Operation": df["Operation"],
 						"KeySet": [list(ks) for ks in df["Key-player"]],
-						"Score": df["score"],
+						"Score": df["Score"],
 					})
 				else:
 					df_html = pd.DataFrame({
@@ -872,7 +875,16 @@ def main(args):
 		report_path = g.export_file(df, outdir, notes=report_notes)
 
 		print(f"\nReport: {report_path}")
-		if not no_plot:
+		if not no_plot and args.command == "groupcentrality":
+			sets = (found_sets(df, "Group Centrality", args.operation) if args.subcommand == "gc-finder"
+			        else [("node set", list(nodes))])
+			path = os.path.join(outdir, f"{filename}_{g.function}_{g.sub_func}.{args.format}")
+			written.append(("Figure", g.plot_node_sets(sets, path)))
+			tied = [o for o, (_sets, n_optimal, _score) in tie_info.items() if n_optimal > 1]
+			if tied:
+				print(f"The figure shows the first optimal set of {', '.join(tied)}; "
+				      "the report and the HTML page list all of them.")
+		elif not no_plot:
 			# -c (local) and -nl (extract) nodes are drawn green, the others red
 			marked = (nodes_list_color if getattr(args, "color", None)
 			          else nodes_list_extr if getattr(args, "nodeList", None) else None)

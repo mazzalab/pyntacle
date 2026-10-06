@@ -3,7 +3,7 @@
 
 global
 ======
-Measures to be calculated: Average shortest path length, Median shortest path length, Diameter, Components, Radius, Density, pi, Average clustering coefficient, Weighted clustering coefficient, Average degree, Average Closeness, Average Eccentricity, Average Radiality, Average Radiality Reach, Completeness Naive, Completeness, Compactness
+Measures to be calculated: Average shortest path length, Median shortest path length, Diameter, Components, Radius, Density, pi, Average clustering coefficient, Global clustering coefficient, Average degree, Average Closeness, Average Eccentricity, Average Radiality, Average Radiality Reach, Completeness Naive, Completeness, Compactness
 
 Synopsis
 --------

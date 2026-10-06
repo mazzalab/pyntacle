@@ -270,7 +270,7 @@ Compute only the mreach metric with m=3:
 
 .. code-block:: text
 
-   operation  Key-player    score
+   Operation  Key-player    Score
    F          ['PH', 'BM']  0.63
    dF         ['HB', 'WD']  0.815
    dR         ['KR', 'HB']  0.683
@@ -279,7 +279,7 @@ Compute only the mreach metric with m=3:
 Output files:
 
 - ``report_figure_8_keyplayer_finder_all_greedy.tsv`` — results table
-- ``figure_8_keyplayer_finder_all_greedy.svg`` — multi-metric static visualization
+- ``figure_8_keyplayer_finder_all_greedy.svg`` — the network with each metric's set in its own colour; a node in several sets is drawn as nested discs. With ties only the first optimal set is drawn
 - ``figure_8_keyplayer.html`` — interactive network report (D3): a metric
   dropdown auto-highlights that metric's key-player node set with its score;
   when brute force finds several optimal sets, the report says how many and

@@ -7,7 +7,6 @@ import os
 import math
 import itertools
 import pickle as pk
-import collections
 import warnings
 from pyntacle.utility import *
 
@@ -243,120 +242,51 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         return filename
             
 
-    def plot_keyplayer(self, df, operation, path):
-        """Draw the network with the key-player sets of `df` highlighted and save it to `path`."""
+    def plot_node_sets(self, sets, path, others="other nodes"):
+        """Draw the network with the node sets highlighted and save it to `path`.
 
-        layout=self.layout('kk')
+        `sets` is a list of (label, nodes). One set is drawn in yellow with no
+        legend. Several sets each get a colour and a legend entry; a node in m
+        sets is drawn as m concentric discs, the first set's the largest.
+        """
+        layout = self.layout('kk')
         coord = np.array(layout)
         ed = np.array(self.get_edgelist())
-        lines = coord[ed[:,:]]
-        lines = np.moveaxis(lines, 0,-1)
+        lines = np.moveaxis(coord[ed[:, :]], 0, -1)
+        cord_df = pd.DataFrame({"X": coord[:, 0], "Y": coord[:, 1]}, index=list(self.vs["name"]))
 
-        names = list(self.vs["name"])
-        cord_df = pd.DataFrame({"Node": names, "X": coord[:, 0], "Y": coord[:, 1]}).set_index("Node")
-        colors = ["#BDC3C7","#F4D03F","#2ECC71","#3498DB","#EC7063"]
-        texts=["not-Keyplayers","F","dF","dR","mreach"]
+        plt.figure(figsize=(20, 20))
+        for label, (x, y) in zip(list(self.vs["name"]), coord):
+            plt.text(x, y, label, ha='center', va='center', ma='center', zorder=20, fontsize=5)
+        plt.plot(lines[:, 0, :], lines[:, 1, :], c='black', alpha=0.2, linewidth=1.5, zorder=1)
+        plt.scatter(cord_df["X"], cord_df["Y"], c="#BDC3C7", alpha=1, zorder=10, s=100)
 
-        if operation=="all":
-            f_x,df_x,dr_x,m_x,f_y,df_y,dr_y,m_y=[],[],[],[],[],[],[],[]
-            f_names,df_names,dr_names,m_names=[],[],[],[]
-            oper_names = [f_names, df_names, dr_names, m_names]
-            duplicated_coord=[]
-            c=0
-            for c, list_nameNode in enumerate(df["Key-player"]):
-                for node in list_nameNode:
-                    if node not in oper_names[c]:
-                        f_x.append(cord_df.loc[node, 'X'])
-                        f_y.append(cord_df.loc[node, 'Y'])
-                        oper_names[c].append(node)
-    
-            f_names = list(set(f_names))
-            df_names = list(set(df_names))
-            dr_names = list(set(dr_names))
-            m_names = list(set(m_names))
-            KPs_all = (f_names) + (df_names) + (dr_names) + (m_names)    
-            duplicated_nodes=[k for k, v in collections.Counter(KPs_all).items() if v > 1]
-            dup_x = cord_df.loc[duplicated_nodes, 'X'].values
-            dup_y = cord_df.loc[duplicated_nodes, 'Y'].values
-
-            df_metrics = pd.DataFrame({"names":sorted(list(set(KPs_all)))})
-            df_metrics = df_metrics.merge(pd.DataFrame({"F":f_names}), left_on='names', right_on='F',\
-                                          how='outer') \
-            .merge(pd.DataFrame({"dF":df_names}), left_on='names', right_on='dF', how='outer') \
-            .merge(pd.DataFrame({"dR":dr_names}), left_on='names', right_on='dR', how='outer') \
-            .merge(pd.DataFrame({"mreach":m_names}), left_on='names', right_on='mreach', how='outer') \
-            .set_index("names")
-            df_metrics["counts"]=(~df_metrics.isna()).sum(axis=1)
-            df_metrics=pd.merge(cord_df,df_metrics,left_index=True,right_index=True)
-
-            df_metrics['size_F'] = df_metrics.apply(lambda row: 0 if row['F'] is np.nan \
-                                                    else row['counts'], axis=1)
-            df_metrics['size_df'] = df_metrics.apply(lambda row: 0 if row['dF'] is np.nan \
-                                                     else row['counts'], axis=1)
-            df_metrics['size_dR'] = df_metrics.apply(lambda row: 0 if row['dR'] is np.nan \
-                                                     else row['counts'], axis=1)
-            df_metrics['size_mreach'] = df_metrics.apply(lambda row: 0 if row['mreach'] is np.nan \
-                                                         else row['counts'], axis=1)
-
-
-            df_metrics = df_metrics.apply(process_row_modified, axis=1)
-
-            selected_rows_f = df_metrics.loc[f_names]
-            selected_rows_df = df_metrics.loc[df_names]
-            selected_rows_dr = df_metrics.loc[dr_names]
-            selected_rows_m = df_metrics.loc[m_names]
-
-
-            selected_rows_f=selected_rows_f[selected_rows_f.size_F!=0]
-            selected_rows_df=selected_rows_df[selected_rows_df.size_df!=0]
-            selected_rows_dr=selected_rows_dr[selected_rows_dr.size_dR!=0]
-            selected_rows_m=selected_rows_m[selected_rows_m.size_mreach!=0]
-        
-            plt.figure(figsize=(20,20))
-             
-            # Add labels for each point
-            for label, (x, y) in zip(list(self.vs["name"]), coord):
-                plt.text(x, y, label, ha='center', va='center', ma='center', zorder=20,fontsize=5)
-
-            plt.plot(lines[:,0, :], lines[:, 1, :], c='black', alpha=0.2, linewidth=1.5, zorder=1)
-
-            plt.scatter(cord_df["X"], cord_df["Y"], c="#BDC3C7", alpha=1, zorder=10,s=100)
-            plt.scatter(selected_rows_f.X, selected_rows_f.Y, c="#F4D03F", alpha=1, zorder=11,s=np.array(selected_rows_f.size_F)*300)
-            plt.scatter(selected_rows_df.X, selected_rows_df.Y, c="#2ECC71", alpha=1, zorder=12,s=np.array(selected_rows_df.size_df)*300)
-            plt.scatter(selected_rows_dr.X, selected_rows_dr.Y, c="#3498DB", alpha=1, zorder=13,s=np.array(selected_rows_dr.size_dR)*300)
-            plt.scatter(selected_rows_m.X, selected_rows_m.Y, c="#EC7063", alpha=1, zorder=14,s=np.array(selected_rows_m.size_mreach)*300)
-            patches = [ plt.plot([],[], marker="o", ms=10, ls="", mec=None, color=colors[i], \
-                        label="{:s}".format(texts[i]) )[0]  for i in range(len(texts)) ]
-            plt.legend(title="Nodes color",frameon=True,handles=patches,loc="best")
-            # Remove axes
-            plt.axis('off')
-
-            plt.savefig(path)
-            plt.close()
-
+        if len(sets) == 1:
+            nodes = list(dict.fromkeys(sets[0][1]))
+            plt.scatter(cord_df.loc[nodes, "X"], cord_df.loc[nodes, "Y"], c="#F4D03F", alpha=1, zorder=11, s=200)
         else:
-            metrics_names,metrics_x,metrics_y=[],[],[]
-            for node in df["Key-player"]:
-                if node not in metrics_names:
-                    metrics_x.append(cord_df.loc[node, 'X'])
-                    metrics_y.append(cord_df.loc[node, 'Y'])
-                    metrics_names.append(node)
+            colors = ["#F4D03F", "#2ECC71", "#3498DB", "#EC7063"]
+            members = [set(nodes) for _label, nodes in sets]
+            for i, nodes in enumerate(members):
+                rows = []
+                for node in nodes:
+                    holders = [j for j, m in enumerate(members) if node in m]
+                    # the first set holding the node gets the widest disc, later ones nest inside
+                    size = len(holders) - holders.index(i)
+                    rows.append((node, {3: 4, 4: 8}.get(size, size)))
+                rows = [(node, size) for node, size in rows if size > 0]
+                plt.scatter(cord_df.loc[[n for n, _ in rows], "X"], cord_df.loc[[n for n, _ in rows], "Y"],
+                            c=colors[i % len(colors)], alpha=1, zorder=11 + i,
+                            s=np.array([size for _, size in rows]) * 300)
+            labels = [others] + [label for label, _nodes in sets]
+            fills = ["#BDC3C7"] + [colors[i % len(colors)] for i in range(len(sets))]
+            patches = [plt.plot([], [], marker="o", ms=10, ls="", mec=None, color=c, label=l)[0]
+                       for c, l in zip(fills, labels)]
+            plt.legend(title="Nodes color", frameon=True, handles=patches, loc="best")
 
-            plt.figure(figsize=(20,20))
-             
-            # Add labels for each point
-            for label, (x, y) in zip(list(self.vs["name"]), coord):
-                plt.text(x, y, label, ha='center', va='center', ma='center', zorder=20,fontsize=5)
-
-            plt.plot(lines[:,0, :], lines[:, 1, :], c='black', alpha=0.2, linewidth=1.5, zorder=1)
-
-            plt.scatter(cord_df["X"], cord_df["Y"], c="#BDC3C7", alpha=1, zorder=10,s=100)
-            plt.scatter(metrics_x, metrics_y, c="#F4D03F", alpha=1, zorder=11,s=200)
-            plt.axis('off')
-
-            plt.savefig(path)
-            plt.close()
-
+        plt.axis('off')
+        plt.savefig(path)
+        plt.close()
         return path
 
     def plot_set(self, filename1, filename2, g1_names, g2_names, path):

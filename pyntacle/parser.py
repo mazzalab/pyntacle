@@ -134,7 +134,7 @@ def create_parser() -> argparse.ArgumentParser:
 
 	# ---- global ----
 	glb = subparsers.add_parser('global', usage=Fore.GREEN + Style.BRIGHT +'pyntacle ' + Fore.RED +'global' + Fore.CYAN + ' -t {fileType} -i {input_file} [optional parameters] [optional outdir]' +  Style.RESET_ALL, help='''Computes metrics of global nature for the whole graph''',
-		description= Fore.YELLOW + '''Measures to be calculated: Average shortest path length, Median shortest path length, Diameter, Components, Radius, Density, pi, \n\t  Average clustering coefficient, Weighted clustering coefficient, Average degree, Average Closeness, \n\t  Average Eccentricity, Average Radiality, Average Radiality Reach, Completeness Naive, Completeness, Compactness''' + Style.RESET_ALL, formatter_class=argparse.RawDescriptionHelpFormatter)
+		description= Fore.YELLOW + '''Measures to be calculated: Average shortest path length, Median shortest path length, Diameter, Components, Radius, Density, pi, \n\t  Average clustering coefficient, Global clustering coefficient, Average degree, Average Closeness, \n\t  Average Eccentricity, Average Radiality, Average Radiality Reach, Completeness Naive, Completeness, Compactness''' + Style.RESET_ALL, formatter_class=argparse.RawDescriptionHelpFormatter)
 	glb.add_argument('-t', '--fileType', action='store', type=str, choices = ["matrix", "edgelist", "sif", "dot"], help='-[required] File type', required=True)
 	glb.add_argument('-i', '--inputFile', action='store', help='-[required] Specify the input file name', required=True)
 	glb.add_argument('-s', '--sep', action='store', type=str, help='-[optional] Column separator of the input file (ex. \',\'); detected automatically if omitted', required=False)
