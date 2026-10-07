@@ -16,6 +16,7 @@ import pandas as pd
 import pytest
 
 from conftest import PKG_DIR
+from pyntacle.utility import round_report
 
 PYTHON = sys.executable
 MAIN = os.path.join(PKG_DIR, "main.py")
@@ -198,6 +199,27 @@ def test_global_reports_transitivity_as_global_clustering_coefficient(net, tmp_p
     assert proc.returncode == 0, proc.stderr
     assert "Global clustering coefficient" in proc.stdout
     assert "Weighted clustering coefficient" not in proc.stdout
+
+
+def test_global_report_keeps_small_values(tmp_path):
+    # 3 fixed decimals printed the density of a 3000-node ring, 2/2999, as 0.001
+    net = tmp_path / "ring.tsv"
+    n = 3000
+    net.write_text("N1\tN2\n" + "".join(f"v{i}\tv{(i + 1) % n}\n" for i in range(n)))
+    proc = run("global", "-t", "edgelist", "-i", str(net), "--no-plot", "-o", str(tmp_path))
+    assert proc.returncode == 0, proc.stderr
+    report = (tmp_path / "report_ring_global.tsv").read_text()
+    assert "Density\t0.000667\n" in report
+
+
+def test_round_report_keeps_three_significant_digits_below_a_hundredth():
+    df = pd.DataFrame({"Measure": list("abcdef"),
+                       "Score": [0.00024, 36.417123, 0.0, -0.0123456, float("inf"), float("nan")],
+                       "Count": [1, 2, 3, 4, 5, 6]})
+    out = round_report(df)
+    assert out["Score"].tolist()[:5] == [0.00024, 36.417, 0.0, -0.0123, float("inf")]
+    assert pd.isna(out["Score"].iloc[5])
+    assert out["Count"].tolist() == [1, 2, 3, 4, 5, 6]
 
 
 @pytest.mark.parametrize("argv", [

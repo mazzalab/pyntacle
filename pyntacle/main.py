@@ -782,13 +782,13 @@ def main(args):
 		print(f"\nReport: {report_path}")
 	elif args.command == "mesoscale":
 		
-		df_ti = df_ti.round(3) 
-		df_gtom = df_gtom.round(3)
+		df_ti = round_report(df_ti)
+		df_gtom = round_report(df_gtom)
 	
 		k = int(args.kSteps)
 		summary = pd.DataFrame({"Node": df_ti.index, f"TI_{k}": df_ti.iloc[:, -1].values})
 		if weighted:
-			df_wi = df_wi.round(3)
+			df_wi = round_report(df_wi)
 			summary[f"WI_{k}"] = df_wi.iloc[:, -1].values
 		show_table(summary.sort_values(f"TI_{k}", ascending=False, kind="stable"))
 		print("The full topological importance and overlap matrices are in the report.")
@@ -823,7 +823,7 @@ def main(args):
 
 	elif args.command == "keyplayer":
 
-		df=df.round(3) 
+		df = round_report(df)
 		show_table(df)
 		report_path = g.export_file(df, outdir, notes=report_notes)
 		print(f"\nReport: {report_path}")
@@ -870,7 +870,7 @@ def main(args):
 			written.append(("HTML report", create_keyplayer_html(with_tie_columns(df_html, "KeySet", tie_info), g, outdir, filename)))
 
 	else:
-		df=df.round(3) 
+		df = round_report(df)
 		show_table(df)
 		report_path = g.export_file(df, outdir, notes=report_notes)
 

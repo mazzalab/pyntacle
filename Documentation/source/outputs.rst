@@ -28,6 +28,11 @@ All TSV reports share a common header block:
 ``Edge weights`` states how ``-w``, ``--weight-type`` and
 ``--distance-transform`` read the weights (see :doc:`weights`).
 
+Scores are rounded to 3 decimals; values below 0.01 keep 3 significant
+digits instead, so the density of a large sparse network reads, for example,
+``0.000667`` rather than ``0.001``. The percolation report is written
+unrounded.
+
 Local Metrics Report
 ---------------------
 

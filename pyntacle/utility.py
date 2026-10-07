@@ -383,6 +383,23 @@ def warn(message):
     print(Fore.YELLOW + Style.BRIGHT + "WARNING: " + message + Style.RESET_ALL)
 
 
+def round_report(df):
+    """Round the float columns of a report to 3 decimals, or 3 significant digits below 0.01.
+
+    A plain 3-decimal rounding would print the density of a large sparse
+    network (e.g. 0.00024) as 0.0.
+    """
+    df = df.copy()
+    for col in df.columns[[np.issubdtype(t, np.floating) for t in df.dtypes]]:
+        x = df[col].to_numpy(dtype=float)
+        with np.errstate(divide="ignore", invalid="ignore"):
+            exponent = np.floor(np.log10(np.abs(x)))
+        digits = np.where(np.isfinite(exponent), np.maximum(3, 2 - exponent), 3).astype(int)
+        scale = 10.0 ** digits
+        df[col] = np.where(np.isfinite(x), np.round(x * scale) / scale, x)
+    return df
+
+
 def component_table(grafo):
     """One row per node: its connected component (1 = the largest) and degree.
 
