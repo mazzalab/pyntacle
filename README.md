@@ -23,6 +23,9 @@ parallel, compiled code.
 Edge weights can be declared as distances, affinities or signed associations:
 each metric reads the view it needs.
 
+Coming from Pyntacle 1.3.2? Version 2.0 has a new command line and a few
+metrics give different values: [CHANGELOG.md](CHANGELOG.md) lists every change.
+
 ## Installation
 
 Pyntacle runs on Linux and needs [conda](https://docs.conda.io/en/latest/miniconda.html),
@@ -62,7 +65,7 @@ The documentation covers installation, a tutorial, every command and the
 definition of every metric. Build it with:
 
 ```bash
-pip install sphinx sphinx-design sphinx-rtd-theme
+pip install -r Documentation/requirements.txt
 cd Documentation && make html
 # open Documentation/build/html/index.html
 ```
@@ -73,6 +76,9 @@ cd Documentation && make html
 python setup.py build_ext --inplace
 pytest tests
 ```
+
+GitHub Actions runs the same steps, and builds the documentation, on every
+push (`.github/workflows/tests.yml`).
 
 ## Citation
 

@@ -1,0 +1,4 @@
+# Packages that build the documentation, on top of environment.yml
+sphinx>=7
+sphinx-design
+sphinx-rtd-theme

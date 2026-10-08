@@ -1,0 +1,57 @@
+name: tests
+
+on:
+  push:
+    branches: [main, graphtacle]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -el {0}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          environment-file: environment.yml
+          activate-environment: pyntacle
+          conda-remove-defaults: true
+
+      - name: Compile the extensions in place
+        run: python setup.py build_ext --inplace
+
+      - name: Test suite
+        run: python -m pytest tests -q
+
+      - name: Install the package and run the command
+        run: |
+          pip install .
+          cd "$RUNNER_TEMP"
+          pyntacle --version
+          pyntacle keyplayer kp-finder -t edgelist -i "$GITHUB_WORKSPACE/examples/figure_8.egl" \
+            -k 2 -oper all -a greedy --seed 1 --no-plot -o out
+
+  docs:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -el {0}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          environment-file: environment.yml
+          activate-environment: pyntacle
+          conda-remove-defaults: true
+
+      - name: Build the documentation, warnings as errors
+        run: |
+          pip install -r Documentation/requirements.txt
+          sphinx-build -W --keep-going -b html Documentation/source Documentation/build/html

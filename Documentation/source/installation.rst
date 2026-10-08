@@ -160,7 +160,7 @@ Build the documentation
 
 .. code-block:: bash
 
-   pip install sphinx sphinx-design sphinx-rtd-theme
+   pip install -r Documentation/requirements.txt
    cd Documentation/
    make html
    # open Documentation/build/html/index.html
