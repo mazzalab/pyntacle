@@ -64,7 +64,7 @@ with open("README.md", encoding="utf-8") as fh:
 
 setup(
     name="pyntacle",
-    version="0.1.0",
+    version="2.0.0",
     description="Network analysis: key players, group centrality, percolation and omics networks",
     long_description=long_description,
     long_description_content_type="text/markdown",

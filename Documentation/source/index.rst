@@ -73,6 +73,7 @@ Contents
 
    installation
    tutorial
+   changelog
 
 .. toctree::
    :maxdepth: 2

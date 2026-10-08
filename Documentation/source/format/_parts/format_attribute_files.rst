@@ -1,1 +1,2 @@
-Attributes enrich graph, used in the preovious version, are now removed. Having the possibility to handle weighted graphs allowed us to compact the input necessary for the networks. In the future upgrades will also gurantee to implement the "label" feature also for the edges.
+Pyntacle 2.0 does not read attribute files. Release 1.3.2 read node and edge attributes, edge weights included,
+from separate files; edge weights now come from the network file itself (``-w``, see :doc:`../weights`).
