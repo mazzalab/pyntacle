@@ -33,6 +33,10 @@ from pyntacle.algorithms.stochastic_gradient_descent import *
 from pyntacle.create_html import *
 from time import time
 
+# commands that compute on the network rather than write it back out
+ANALYSIS_COMMANDS = ("local", "global", "keyplayer", "groupcentrality", "communities", "mesoscale", "percolation")
+
+
 def tie_notes(tie_info):
 	"""Header lines stating how many sets reach the optimum and how many are listed."""
 	notes = []
@@ -92,6 +96,18 @@ def found_sets(df, set_column, operation):
 	return [(operation, list(df[set_column]))]
 
 
+def kernel_scorer(g, distance_type, mdist, n_threads):
+	"""Score a node set with the compiled kernels, for the gradient descent.
+
+	The search meets many sets that reach nobody; their warnings are dropped.
+	"""
+	def score(names, oper):
+		with warnings.catch_warnings():
+			warnings.simplefilter("ignore", RuntimeWarning)
+			return cython_wrapper_info(g, names, oper, distance_type=distance_type, mdist=mdist, n_threads=n_threads)
+	return score
+
+
 def fail(err):
 	"""Stop with a one-line error instead of a traceback."""
 	message = str(err) if str(err).startswith("ERROR") else "ERROR: " + str(err)
@@ -117,9 +133,15 @@ def show_table(df, max_rows=20):
 	"""Print a result table whole in width, cut to `max_rows` rows: the report has all of it."""
 	with pd.option_context("display.max_columns", None, "display.width", None,
 	                       "display.max_colwidth", 60):
-		print(df.head(max_rows).to_string(index=False))
+		# %g: no scientific notation for a whole column because one value is small
+		print(df.head(max_rows).to_string(index=False, float_format=lambda x: f"{x:g}"))
 	if len(df) > max_rows:
 		print(f"... {len(df) - max_rows} more rows in the report")
+
+
+def node_list(text):
+	"""Comma-separated node names, stripped, each kept once in the order given."""
+	return list(dict.fromkeys(x.strip() for x in text.split(",") if x.strip()))
 
 
 def info_node_set(g, nodes_arg, subcommand):
@@ -127,11 +149,13 @@ def info_node_set(g, nodes_arg, subcommand):
 	if not nodes_arg:
 		sys.exit(Fore.RED + Style.BRIGHT + f"ERROR: {subcommand} needs a node set: give it with -n "
 		         "(comma-separated node names)" + Style.RESET_ALL)
-	nodes = [n.strip() for n in nodes_arg.split(",") if n.strip()]
+	nodes = node_list(nodes_arg)
 	unknown = sorted(set(nodes) - set(g.vs["name"]))
 	if unknown:
 		sys.exit(Fore.RED + Style.BRIGHT + "ERROR: nodes not in the network: " + ", ".join(unknown)
 		         + Style.RESET_ALL)
+	if len(nodes) > g.vcount() - 2:
+		fail(f"the node set must leave at least 2 of the {g.vcount()} nodes outside it")
 	return nodes
 
 
@@ -229,7 +253,7 @@ def main(args):
 
 		# node removal (-r)
 		if args.remove:
-			nodes_list = [x.strip() for x in args.remove.split(",") if x.strip()]
+			nodes_list = node_list(args.remove)
 			unknown = sorted(set(nodes_list) - set(g.vs["name"]))
 			if unknown:
 				sys.exit(Fore.RED + Style.BRIGHT + "ERROR: -r names nodes not in the network: "
@@ -249,14 +273,19 @@ def main(args):
 
 		n_components = len(g.components())
 		print(f"Network: {g.vcount()} nodes, {g.ecount()} edges, {n_components} component(s)")
+		if g.ecount() == 0 and args.command in ANALYSIS_COMMANDS:
+			fail("the network has no edges: there is nothing to analyse")
 		if n_components > 1 and args.command in Graphtacle.DISTANCE_COMMANDS:
 			warn(f"the network is split into {n_components} components; metrics based on "
 			     "shortest paths only see the pairs that can reach each other")
 		print("")
 
 		if getattr(args, "subcommand", None) in ("kp-finder", "gc-finder"):
-			if args.k_size >= g.vcount():
-				fail(f"-k must be smaller than the number of nodes ({g.vcount()})")
+			if g.vcount() < 3:
+				fail(f"a node-set search needs at least 3 nodes; the network has {g.vcount()}")
+			if args.k_size > g.vcount() - 2:
+				fail(f"-k is at most {g.vcount() - 2} here: the set must leave at least 2 of the "
+				     f"{g.vcount()} nodes outside it")
 			engine = "" if use_cython else ", python engine"
 			threads = f", {args.nprocs} threads" if use_cython and args.nprocs > 1 else ""
 			print(f"Search: {args.algorithm}, k = {args.k_size}, operation {args.operation}{engine}{threads}\n")
@@ -272,7 +301,7 @@ def main(args):
 	if args.command == "local":
 		
 		if args.color:
-			nodes_list_color = [x.strip() for x in args.color.split(",") if x.strip()]
+			nodes_list_color = node_list(args.color)
 			unknown = sorted(set(nodes_list_color) - set(g.vs["name"]))
 			if unknown:
 				fail("-c names nodes not in the network: " + ", ".join(unknown))
@@ -286,7 +315,8 @@ def main(args):
 					"Node Name" : g.vs["label"],
 					"Degree": g.degree(), 
 					"Betweenness": g.betweenness(weights=lengths),
-					"Closeness": g.closeness(weights=lengths),
+					# igraph gives NaN to a node that reaches nobody; it scores 0
+					"Closeness": np.nan_to_num(g.closeness(weights=lengths), nan=0.0),
 					"Radiality": g.radiality(sps=sps_w, diameter=diam_w),
 					"Radiality reach": g.radiality_reach(sps=sps_w, diameter=diam_w),
 					# strength-based metrics: a heavier weight is a stronger tie
@@ -326,10 +356,13 @@ def main(args):
 					"Radius": float(g.radius()),
 					"Density": g.density(),
 					"pi": g.ecount()/diam_u,
-					"Average clustering coefficient": g.transitivity_avglocal_undirected(),
-					"Global clustering coefficient": g.transitivity_undirected(),
+					# the mean is over the nodes of degree 2 or more; without any such
+					# node, or without triples, the score is 0 rather than NaN
+					"Average clustering coefficient": float(np.nan_to_num(g.transitivity_avglocal_undirected(), nan=0.0)),
+					"Global clustering coefficient": g.transitivity_undirected(mode="zero"),
 					"Average degree": mean(g.degree()),
-					"Average Closeness":mean(g.closeness(weights=lengths)),
+					# a node that reaches nobody has closeness 0, as in the local report
+					"Average Closeness": float(np.mean(np.nan_to_num(g.closeness(weights=lengths), nan=0.0))),
 					"Average Eccentricity":mean(g.eccentricity()),
 					"Average Radiality":(mean(radiality)),
 					"Average Radiality Reach": mean(radiality_reach),
@@ -348,7 +381,7 @@ def main(args):
 				if args.operation=="all":
 					
 					for oper in ['degree', 'betweenness', 'closeness']:
-						k_set, score, tied_sets, n_optimal = cython_wrapper_bruteforce(g, int(args.k_size), oper, n_threads=int(args.nprocs), max_ties=max_ties)
+						k_set, score, tied_sets, n_optimal = cython_wrapper_bruteforce(g, int(args.k_size), oper, distance_type=args.value, n_threads=int(args.nprocs), max_ties=max_ties)
 						tie_info[oper] = (tied_sets, n_optimal, score)
 
 					df = tied_sets_frame(tie_info, "Group Centrality")
@@ -357,7 +390,7 @@ def main(args):
 					        
 				else:
 					
-					k_set, score, tied_sets, n_optimal = cython_wrapper_bruteforce(g, int(args.k_size), args.operation, n_threads=int(args.nprocs), max_ties=max_ties)
+					k_set, score, tied_sets, n_optimal = cython_wrapper_bruteforce(g, int(args.k_size), args.operation, distance_type=args.value, n_threads=int(args.nprocs), max_ties=max_ties)
 					tie_info[args.operation] = (tied_sets, n_optimal, score)
 					df = tied_sets_frame(tie_info, "Group Centrality", explode=True, score_column=args.operation)
 					report_notes.extend(tie_notes(tie_info))
@@ -393,13 +426,14 @@ def main(args):
 						g.nameSub_function("finder_"+args.operation+"_"+args.algorithm)
 
 			elif args.algorithm=="gradient_descent":
+				scorer = kernel_scorer(g, args.value, -1, int(args.nprocs)) if use_cython else None
 				if args.operation=="all":
-					tmp=call_all_sgd(g,int(args.k_size),args.operation,distance_type=args.value,mdist=None,probability=args.probability,tolerance=args.tolerance,maxsec=args.maxsec,function=args.command,seed=seed)
+					tmp=call_all_sgd(g,int(args.k_size),args.operation,distance_type=args.value,mdist=None,probability=args.probability,tolerance=args.tolerance,maxsec=args.maxsec,function=args.command,seed=seed,scorer=scorer)
 					df=pd.DataFrame(tmp,columns=["Group Centrality","Score"])
 					df.insert(0, 'Operation', ["degree","closeness","betweenness"])
 					g.nameSub_function("finder_"+args.operation+"_"+args.algorithm)
 				else:
-					gc=call_stochastic_gradient_descent(g,int(args.k_size),args.operation,distance_type=args.value,mdist=None,probability=float(args.probability),tolerance=float(args.tolerance),maxsec=int(args.maxsec),seed=seed)
+					gc=call_stochastic_gradient_descent(g,int(args.k_size),args.operation,distance_type=args.value,mdist=None,probability=float(args.probability),tolerance=float(args.tolerance),maxsec=int(args.maxsec),seed=seed,scorer=scorer)
 					df=pd.DataFrame({"Group Centrality": gc[0], args.operation:gc[1]})
 					g.nameSub_function("finder_"+args.operation+"_"+args.algorithm)
 
@@ -509,13 +543,14 @@ def main(args):
 					
 
 			elif args.algorithm == "gradient_descent":
+				scorer = kernel_scorer(g, "min", int(args.mdist), int(args.nprocs)) if use_cython else None
 				if args.operation == "all":
-					tmp=call_all_sgd(g,int(args.k_size),args.operation,distance_type=None,mdist=int(args.mdist),probability=args.probability,tolerance=args.tolerance,maxsec=args.maxsec,function=args.command,seed=seed)
+					tmp=call_all_sgd(g,int(args.k_size),args.operation,distance_type=None,mdist=int(args.mdist),probability=args.probability,tolerance=args.tolerance,maxsec=args.maxsec,function=args.command,seed=seed,scorer=scorer)
 					df=pd.DataFrame(tmp,columns=["Key-player","Score"])
 					df.insert(0, 'Operation', ["F","dF","dR","mreach"])
 					g.nameSub_function("finder_"+args.operation+"_"+args.algorithm)
 				else:
-					kset=call_stochastic_gradient_descent(g,int(args.k_size),args.operation,distance_type=None,mdist=int(args.mdist),probability=float(args.probability),tolerance=float(args.tolerance),maxsec=int(args.maxsec),seed=seed)
+					kset=call_stochastic_gradient_descent(g,int(args.k_size),args.operation,distance_type=None,mdist=int(args.mdist),probability=float(args.probability),tolerance=float(args.tolerance),maxsec=int(args.maxsec),seed=seed,scorer=scorer)
 					df=pd.DataFrame({"Key-player":kset[0], args.operation:kset[1]})
 					g.nameSub_function("finder_"+args.operation+"_"+args.algorithm)
 			else:
@@ -577,6 +612,9 @@ def main(args):
 			modules = communities(g, args.subcommand, args.numberCommunities, args.giant, args.steps, args.communitySize)
 		except ValueError as err:
 			fail(err)
+		if not modules:
+			fail(f"the network has no {args.communitySize}-clique, so clique percolation finds no community; "
+			     "try a smaller -k" if args.subcommand == "percolation" else "no community found")
 		# clique percolation returns graphs of cliques: a community is the union of their nodes
 		if args.subcommand == "percolation":
 			members = [sorted({n for v in m.vs for n in v["label"]}) for m in modules]
@@ -597,7 +635,7 @@ def main(args):
 	# ---- extract ----
 	elif args.command == "extract":
 		if args.nodeList:
-			nodes_list_extr = [x.strip() for x in args.nodeList.split(",") if x.strip()]
+			nodes_list_extr = node_list(args.nodeList)
 		try:
 			if args.selectComponent:
 				sub_func, (sub, df) = "selected_subgraph", selecting_component(plain_copy(g, directed=False), int(args.selectComponent))

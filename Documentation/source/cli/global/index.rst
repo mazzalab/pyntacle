@@ -113,12 +113,15 @@ Compute global topology for the Figure 8 network:
 
 .. code-block:: text
 
-   Measure                          Score
-   Average shortest path length     3.682
-   Diameter                         9.0
-   Components                       1
-   Density                          0.113
-   Average clustering coefficient   0.588
-   Compactness                      0.083
+                         Measure  Score
+    Average shortest path length  4.083
+     Median shortest path length      4
+                        Diameter      9
+                      Components      1
+                          Radius      5
+                         Density  0.113
+                              pi  6.222
+  Average clustering coefficient  0.497
+   Global clustering coefficient  0.498
 
 See :doc:`../../outputs` for all metric definitions.

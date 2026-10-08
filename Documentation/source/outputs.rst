@@ -28,9 +28,10 @@ All TSV reports share a common header block:
 ``Edge weights`` states how ``-w``, ``--weight-type`` and
 ``--distance-transform`` read the weights (see :doc:`weights`).
 
-Scores are rounded to 3 decimals; values below 0.01 keep 3 significant
-digits instead, so the density of a large sparse network reads, for example,
-``0.000667`` rather than ``0.001``. The percolation report is written
+Scores are rounded to 3 decimals; values below 0.1 keep 3 significant
+digits instead (``0.0155``), so the density of a large sparse network reads,
+for example, ``0.000667`` rather than ``0.001``. Values below 1e-10 are
+floating-point noise and are written as 0. The percolation report is written
 unrounded.
 
 Local Metrics Report
@@ -53,16 +54,18 @@ The data section is a tab-separated table with one row per node:
    * - ``Degree``
      - Number of edges incident to the node
    * - ``Betweenness``
-     - Fraction of shortest paths that pass through the node (normalized by igraph's
-       convention: divided by (N-1)(N-2)/2 for undirected graphs)
+     - Sum, over the pairs of other nodes, of the share of their shortest paths
+       that pass through the node (not normalized)
    * - ``Closeness``
-     - Reciprocal of the mean shortest-path distance to all other reachable nodes
+     - Reciprocal of the mean distance to the nodes the node reaches; 0 for a
+       node that reaches none
    * - ``Radiality``
-     - ``(diameter + 1) - mean_distance_to_all``.
-       Higher values indicate nodes more central to the network periphery.
+     - Sum over the nodes it reaches of (diameter + 1 − distance), divided by
+       N − 1; on a connected network, (diameter + 1) minus the mean distance.
+       Nodes it cannot reach add nothing, so a node in a small component scores low
    * - ``Radiality reach``
-     - Same as Radiality but scaled by the fraction of nodes in the same connected
-       component. Equals Radiality for connected graphs.
+     - Radiality computed inside the node's component, times the share of nodes
+       in that component. Equals Radiality on a connected network
    * - ``Clustering Coefficient``
      - Local clustering coefficient: fraction of node's neighbors that are also
        neighbors of each other (``mode="zero"`` for isolated nodes)
@@ -78,8 +81,8 @@ The data section is a tab-separated table with one row per node:
 .. code-block:: text
 
    Node Name  Degree  Betweenness  Closeness  Radiality  Radiality reach  Clustering Coefficient  Eccentricity  Eigenvector (Scaled)  Pagerank
-   KR         9       36.417       0.265      6.226      6.226            0.472                   8.0           1.0                  0.056
-   BM         6       251.0        0.36       7.226      7.226            0.133                   5.0           0.03                 0.065
+   KR         9       36.417       0.265      6.226      6.226            0.472                   8.0           1.0                  0.0564
+   BM         6       251.0        0.36       7.226      7.226            0.133                   5.0           0.0304               0.065
 
 Global Metrics Report
 ----------------------
@@ -111,25 +114,28 @@ The data section is a two-column ``Measure / Score`` table (one metric per row):
    * - ``pi``
      - Edge count divided by diameter (a compactness proxy)
    * - ``Average clustering coefficient``
-     - Mean of all local clustering coefficients (unweighted mean)
+     - Mean local clustering coefficient of the nodes of degree 2 or more,
+       ignoring weights; 0 when there is none
    * - ``Global clustering coefficient``
-     - Transitivity: 3 × triangles / connected triples; ignores edge weights and direction
+     - Transitivity: 3 × triangles / connected triples; ignores edge weights and
+       direction; 0 when there is no connected triple
    * - ``Average degree``
      - Mean degree over all nodes
    * - ``Average Closeness``
-     - Mean closeness centrality over all nodes
+     - Mean of the ``Closeness`` column of the local report
    * - ``Average Eccentricity``
      - Mean eccentricity over all nodes
    * - ``Average Radiality``
-     - Mean radiality over all nodes
+     - Mean of the ``Radiality`` column of the local report
    * - ``Average Radiality Reach``
-     - Mean radiality-reach over all nodes
+     - Mean of the ``Radiality reach`` column of the local report
    * - ``Completeness Naive``
-     - Ratio of present edges to absent edges
+     - Present edges over absent node pairs (self-pairs excluded); 1 for a complete graph
    * - ``Completeness``
-     - Mazza–Capocefalo completeness score (see :ref:`localMetrics/localMetrics:Global Topology`)
+     - Mazza–Capocefalo completeness, from the zeros of the adjacency matrix
+       (see :ref:`localMetrics/localMetrics:Global Topology`)
    * - ``Compactness``
-     - Mazza compactness score (reciprocal product formulation)
+     - Reciprocal of the Randić–DeAlba product; above 1 for dense graphs, below 1 for sparse ones
 
 Key-Player Report
 ------------------
@@ -158,15 +164,15 @@ For ``--operation all``, the data section has three columns:
      - float in [0, 1] or count
      - Metric score for that node set. F, dF, dR ∈ [0,1]; mreach is a raw count.
 
-**Example (greedy, k=2, operation=all):**
+**Example (greedy, k=2, operation=all, --seed 1):**
 
 .. code-block:: text
 
    Operation  Key-player    Score
-   F          ['PH', 'BM']  0.63
+   F          ['HA', 'HB']  0.706
    dF         ['HB', 'WD']  0.815
-   dR         ['KR', 'HB']  0.683
-   mreach     ['HA', 'NP']  25.0
+   dR         ['KR', 'HB']  0.641
+   mreach     ['WD', 'SR']  23.0
 
 For a single ``--operation``, the ``kp-finder`` table has two columns:
 ``Key-player`` and the operation name (e.g., ``F``). With ``-a brute_force``,
@@ -195,7 +201,8 @@ Group Centrality Report
 
 Same structure as the key-player report but the metric names are:
 ``degree``, ``closeness``, ``betweenness``, scored in [0, 1] on a connected
-network. On a split network, group closeness is scaled by the share of nodes
+network; a group on every shortest path between the other nodes has
+betweenness 1 (releases up to 1.3.2 reported half of it). On a split network, group closeness is scaled by the share of nodes
 the set reaches, so a set inside a small component scores low. The ``gc-info``
 table has the columns ``Operation``, ``Node-set`` and ``Score``, one row per
 operation; the ``gc-finder`` set column is ``Group Centrality``.

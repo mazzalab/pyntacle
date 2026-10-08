@@ -11,8 +11,17 @@ Pyntacle computes the average fraction of geodesics intercepted by the group:
   \sum_{\substack{s < t \\ s,t \notin C}}
   \frac{\sigma_{st}(C)}{\sigma_{st}}
 
+The score is 1 when the group lies on every shortest path between the other
+nodes, as the centre of a star does.
+
 Implementation notes:
 
-* The method uses a precomputed matrix of shortest-path counts (``np_counts``) to obtain :math:`\sigma_{st}` efficiently.
-* To estimate :math:`\sigma_{st}(C)`, the code removes all edges incident to the group nodes (thus preventing paths from traversing the group), recomputes shortest-path counts in the modified graph, and subtracts from the original counts.
-* Rows/columns corresponding to group nodes are then discarded (set to zero) and the final score is normalized by :math:`(N-k)(N-k-1)/2`.
+* Shortest paths are counted, never listed. From each node outside the group
+  the other nodes are settled in order of distance, and :math:`\sigma_{st}`
+  and the number of paths that avoid the group are summed over each node's
+  shortest-path predecessors. Edge lengths are used when the network is
+  weighted (see :doc:`/weights`).
+* Pairs that cannot reach each other add nothing.
+* Releases up to 1.3.2 divided the sum by :math:`(N-k)(N-k-1)` instead of
+  :math:`(N-k)(N-k-1)/2`, so their scores are half of these; the sets they
+  found are the same.

@@ -6,7 +6,6 @@ from pyntacle.utility import plain_copy
 
 def groupcentrality_gcInfo(grafo, node_names, operation, distance_type="min"):
     
-    np_counts = grafo.get_shortestpath_count()
     np_paths = grafo.get_shortestpaths()
 
     gc_d={} # degree
@@ -19,9 +18,7 @@ def groupcentrality_gcInfo(grafo, node_names, operation, distance_type="min"):
 
     if operation == "all":
         gc_d = grafo.group_degree(nodes=node_names)
-        if np_counts is None or np_counts.size == 0:
-            np_counts = grafo.get_shortestpath_count()
-        gc_b = grafo.group_betweenness(np_counts=np_counts,nodes=node_names)
+        gc_b = grafo.group_betweenness(node_names)
         if np_paths is None or np_paths.size == 0:
             np_paths = grafo.get_shortestpaths()
         gc_c = grafo.group_closeness(nodes=node_names, np_paths=np_paths, distance_type=distance_type)
@@ -36,9 +33,7 @@ def groupcentrality_gcInfo(grafo, node_names, operation, distance_type="min"):
         score = grafo.group_closeness(nodes=node_names, np_paths=np_paths, distance_type=distance_type)
         gcset_score_pairs = score
     elif operation == "betweenness":
-        if np_counts is None or np_counts.size == 0:
-            np_counts = grafo.get_shortestpath_count()
-        score = grafo.group_betweenness(np_counts=np_counts,nodes=node_names)
+        score = grafo.group_betweenness(node_names)
         gcset_score_pairs = score
     else:
         raise WrongArgumentError("{} function not yet implemented.".format(operation))

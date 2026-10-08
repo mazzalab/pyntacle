@@ -40,7 +40,7 @@ Search algorithms
   the score (and, with ``-p``, to one that lowers it with that probability).
   It stops at the first swap that raises the score by no more than ``-tol``,
   when every swap of the current set has been tried without a move, or after
-  ``-ms`` seconds.
+  ``-ms`` seconds. Sets are scored by the engine chosen with ``--engine``.
 
 Synopsis
 --------
@@ -266,7 +266,9 @@ Output files:
   keyplayer report. Written by both ``gc-finder`` and ``gc-info``.
 
 ``gc-info`` needs the node set (``-n``) and stops with an error if it is
-missing or names nodes that are not in the network.
+missing, names nodes that are not in the network, or leaves fewer than 2 nodes
+outside it; a node named twice counts once. For the same reason ``-k`` of
+``gc-finder`` is at most the number of nodes minus 2.
 
 See :doc:`../../groupCentrality/groupCentrality` for metric definitions and
 :doc:`../../outputs` for report documentation.

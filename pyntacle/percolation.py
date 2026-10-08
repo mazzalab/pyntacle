@@ -611,10 +611,13 @@ def run_percolation(
     # snapshot_node, once, before the loop.
     snap_node_idx = None
     if snapshot_node is not None:
-        try:
+        if snapshot_node in node_labels:
             snap_node_idx = node_labels.index(snapshot_node)
-        except ValueError:
+        elif str(snapshot_node).isdigit() and int(snapshot_node) < n_nodes:
             snap_node_idx = int(snapshot_node)
+        else:
+            raise ValueError(f"--snapshotNode {snapshot_node} is neither a node name nor a node "
+                             f"index (0 to {n_nodes - 1})")
 
     # time series -- counts only, O(1) work per step.
     active_counts = []

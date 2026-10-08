@@ -35,7 +35,8 @@ cdef double get_group_betweenness(utils.CSR* g, utils.Scratch* s, int k, int n, 
 
     For every pair (u, v) of non-group nodes joined by a path, the pair adds
     the fraction of its shortest paths with an inner node in the group; the
-    sum is divided by (n - k)(n - k - 1). Shortest paths are counted, never
+    sum is divided by the (n - k)(n - k - 1) / 2 pairs, so a group on every
+    shortest path scores 1. Shortest paths are counted, never
     listed: from each source one traversal of the whole network settles the
     vertices in distance order, then one pass over that order gives sigma (the
     number of shortest paths) and sigma_avoid (the number that avoid the
@@ -89,7 +90,7 @@ cdef double get_group_betweenness(utils.CSR* g, utils.Scratch* s, int k, int n, 
             if v > src and not s.in_K[v] and sigma[v] > 0.:
                 total += 1. - sigma_avoid[v] / sigma[v]
 
-    return total / ((<double> (n - k)) * (n - k - 1))
+    return 2. * total / ((<double> (n - k)) * (n - k - 1))
 
 
 cdef double get_group_closeness(double* all_dist, int* K_indices, int* notK_indices, int k, int n, int dist_type) noexcept nogil:

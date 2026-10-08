@@ -13,4 +13,6 @@ The ``convert`` command exports the current graph into one of the supported outp
 Implementation notes:
 
 * directed exports are currently not implemented in the converter utilities.
-* when exporting a matrix, weights are rounded to 3 decimals.
+* weights are written with every digit they were read with.
+* an edge list or a SIF file cannot hold a node without edges: such nodes are
+  left out, with a warning naming them; a matrix or a DOT file keeps them.

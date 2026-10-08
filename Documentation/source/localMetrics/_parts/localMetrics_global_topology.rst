@@ -36,10 +36,12 @@ Density
 
 The graph density of a graph *G* is defined as the ratio of the number of edges *E* with respect to the maximum possible edges. 
 
-Since we are only consider unidirected graphs, the density D will be defined as:
+For an undirected graph the density is:
 
 .. math::
-  D_{G} = \frac{2E}{V(V-1)}
+  D_{G} = \frac{2E}{N(N-1)}
+
+and :math:`E / (N(N-1))` for a directed one (``-d``).
 
 
 
@@ -65,8 +67,8 @@ Pi
 
 
 
-Avarage Metrics
-^^^^^^^^^^^^^^^^
+Average Metrics
+^^^^^^^^^^^^^^^
 
 Average shortest path length
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -96,10 +98,12 @@ The (local) **clustering coefficient** of a node :math:`v_i` is defined as the p
 .. math::
   CC_i = \frac{\text{number of closed triangles connected to } v_i}{\text{number of triples centered around } v_i}
 
-The **average clustering coefficient** is the arithmetic mean of :math:`CC_i` across all nodes:
+The **average clustering coefficient** is the arithmetic mean of :math:`CC_i` over the :math:`N_2` nodes of degree 2 or more, the only ones with triples centred on them:
 
 .. math::
-  CC_G = \frac{1}{N}\sum_{i=1}^{N} CC_i 
+  CC_G = \frac{1}{N_2}\sum_{i:\ k_i \geq 2} CC_i
+
+It ignores edge weights, and is 0 when no node has degree 2. The ``Clustering Coefficient`` column of the local report gives 0 to the other nodes, so its mean can be lower.
 
 
 Global clustering coefficient
@@ -111,7 +115,7 @@ The **global clustering coefficient** (transitivity) is the fraction of connecte
   C_G = \frac{3 \times \text{number of triangles}}{\text{number of connected triples}} = \frac{\sum_{i=1}^{N} k_i (k_i - 1) \, CC_i}{\sum_{i=1}^{N} k_i (k_i - 1)}
 
 It is a weighted average of the local clustering coefficients, each weighted by the number of triples centred on the node,
-so high-degree nodes count more than in the average clustering coefficient. It ignores edge weights and direction.
+so high-degree nodes count more than in the average clustering coefficient. It ignores edge weights and direction, and is 0 when there is no connected triple.
 Releases up to 1.3.2 reported this value as "Weighted clustering coefficient".
 
 
@@ -132,7 +136,7 @@ For undirected graphs, this is equivalently:
 Average closeness
 ^^^^^^^^^^^^^^^^^
 
-The **average closeness** is the mean closeness centrality over all nodes:
+The **average closeness** is the mean closeness centrality over all nodes, a node that reaches no other counting 0:
 
 .. math::
   \overline{C}_{G} = \frac{1}{N}\sum_{i=1}^{N} C(v_i)
@@ -155,7 +159,9 @@ Average radiality
 The **radiality** of a node is an integration-like centrality based on the graph diameter :math:`D` and shortest-path distances:
 
 .. math::
-  R(v_i) = \frac{\sum_{j \neq i} (D - d(v_i, v_j) + 1)}{D(N-1)}.
+  R(v_i) = \frac{\sum_{j\ \text{reached by}\ i} (D - d(v_i, v_j) + 1)}{N-1}.
+
+Nodes that :math:`v_i` cannot reach add nothing.
   
 The **average radiality** is:
 
@@ -166,10 +172,10 @@ The **average radiality** is:
 Average radiality reach
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-When a graph has multiple components, Pyntacle defines **radiality-reach** by rescaling radiality according to the size :math:`s_k` of the component :math:`k` the node belongs to (so nodes in larger components contribute more):
+When a graph has multiple components, Pyntacle defines **radiality-reach** by computing radiality inside the component :math:`k` the node belongs to, :math:`R_k(v_i)`, and rescaling it by the size :math:`s_k` of that component (so nodes in larger components contribute more):
 
 .. math::
-  RR(v_i) = R(v_i)\cdot \frac{s_k}{N} 
+  RR(v_i) = R_k(v_i)\cdot \frac{s_k}{N} 
 
 The **average radiality reach** is:
 
@@ -180,32 +186,40 @@ The **average radiality reach** is:
 Completeness naive
 ^^^^^^^^^^^^^^^^^^
 
-The **completeness naive** is a simple sparseness proxy equivalent to graph density (for undirected graphs):
+The **completeness naive** is the ratio between the non-zero and the zero
+cells of the adjacency matrix, diagonal excluded. For an undirected graph each
+edge fills two cells:
 
 .. math::
-  \Delta = \frac{2E}{N(N-1)} 
+  \kappa_{naive} = \frac{2E}{N(N-1) - 2E}
 
-It ranges from 0 to 1, with values close to 0 indicating sparse networks.
+(:math:`E / (N(N-1) - E)` for a directed one). It is close to the density on
+sparse networks, exceeds 1 once more than half of the node pairs are linked,
+and is reported as 1 for a complete graph.
 
 
 Completeness
 ^^^^^^^^^^^^
 
-The **completeness index** :math:`\kappa` is a sparseness measure defined as the ratio between the number of edges and the number of missing edges (zeros) in the adjacency matrix:
+The **completeness index** is computed from the number :math:`Z` of zero cells
+of the :math:`N \times N` adjacency matrix, diagonal included
+(:math:`Z = N^2 - 2E` for an undirected graph, :math:`N^2 - E` for a directed one):
 
 .. math::
-  \kappa = \frac{E}{Z}
-         = \frac{\sum_{i \in V}\sum_{j \in V, j\neq i} a_{ij}}
-                {\sum_{i \in V}\sum_{j \in V, j\neq i} (1-a_{ij})} 
+  \kappa = (N - 1)\left(\frac{N^2}{Z} - 1\right)
+
+It can exceed 1; the definition is the one of release 1.3.2.
 
 
 Compactness
 ^^^^^^^^^^^
 
-The **compactness index** :math:`\rho` is another sparseness/denseness proxy. In the original formulation reported in the Pyntacle thesis, it is:
+The **compactness index** is the reciprocal of the Randić and DeAlba product
 
 .. math::
-  \rho = \left(\frac{N^2}{2E} - 1\right)\left(1 - \frac{1}{N}\right) 
+  \rho = \left(\frac{N^2}{e} - 1\right)\left(1 - \frac{1}{N}\right)
 
-This formulation is asymptotical; graphs with :math:`\rho > 1` are classified as dense, while graphs with :math:`\rho < 1` are classified as sparse.
+where :math:`e` is the number of non-zero cells of the adjacency matrix
+(:math:`2E` undirected, :math:`E` directed). Pyntacle reports :math:`1/\rho`:
+values above 1 mark dense graphs and values below 1 sparse ones.
 

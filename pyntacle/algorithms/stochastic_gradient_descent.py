@@ -9,7 +9,7 @@ def operation_selector(grafo,operation,node_names,distance_type="min",mdist=None
 	elif operation=="closeness":
 		result=grafo.group_closeness(np_paths=None,nodes=node_names, distance_type=distance_type)
 	elif operation=="betweenness":
-		result=grafo.group_betweenness(np_counts=None,nodes=node_names)
+		result=grafo.group_betweenness(node_names)
 	elif operation=="F":
 		temp_grafo = prune_graph(grafo, node_names)
 
@@ -37,7 +37,14 @@ def operation_selector(grafo,operation,node_names,distance_type="min",mdist=None
 
 
 
-def call_stochastic_gradient_descent(grafo,k_size,operation,distance_type="min",mdist=None,probability=0,tolerance=0.01,maxsec=120,seed=None):
+def call_stochastic_gradient_descent(grafo,k_size,operation,distance_type="min",mdist=None,probability=0,tolerance=0.01,maxsec=120,seed=None,scorer=None):
+	"""Gradient descent over node sets of size k_size.
+
+	`scorer(node_names, operation)` scores a set; without it the pure-Python
+	metrics are used.
+	"""
+	if scorer is None:
+		scorer = lambda names, oper: operation_selector(grafo, oper, names, distance_type, mdist)
 
 	start_time = time.time()
 
@@ -57,11 +64,12 @@ def call_stochastic_gradient_descent(grafo,k_size,operation,distance_type="min",
 	S_names = list(sorted_df["name"])
 	S_indices = list(sorted_df["indices"])
 
-	notS = list(set(node_names).difference(set(S_names)))
+	# in node order, not set order: the walk then depends on the seed alone
+	notS = [x for x in node_names if x not in S_names]
 
 	# optimization loop
 
-	optimization_score=operation_selector(grafo,operation,S_names,distance_type,mdist)
+	optimization_score=scorer(S_names,operation)
 	nodeSet_score_history = {tuple(S_names): optimization_score}
 	nodeSet_score = {tuple(S_names): optimization_score}
 	optimal_set_found = False
@@ -84,7 +92,7 @@ def call_stochastic_gradient_descent(grafo,k_size,operation,distance_type="min",
 		if temp_node_set_tuple in nodeSet_score_history:
 			curr_score = nodeSet_score_history[temp_node_set_tuple]
 		else:
-			curr_score = operation_selector(grafo,operation,temp_node_set,distance_type,mdist)
+			curr_score = scorer(temp_node_set,operation)
 			nodeSet_score_history[temp_node_set_tuple] = curr_score
 
 		if time.time() - start_time >= maxsec:
@@ -96,7 +104,7 @@ def call_stochastic_gradient_descent(grafo,k_size,operation,distance_type="min",
 			optimization_score = curr_score
 		elif curr_score > optimization_score or ((curr_score < optimization_score and random.uniform(0, 1) < probability)):
 			S_names = temp_node_set
-			notS = list(set(node_names).difference(set(S_names)))
+			notS = [x for x in node_names if x not in S_names]
 			nodeSet_score.clear()
 			nodeSet_score[temp_node_set_tuple] = curr_score
 			optimization_score = curr_score
@@ -112,19 +120,19 @@ def call_stochastic_gradient_descent(grafo,k_size,operation,distance_type="min",
 	best = max(nodeSet_score, key=nodeSet_score.get)
 	S_names = list(best)
 
-	return S_names, round(optimization_score,3)
+	return S_names, optimization_score
 
 
 
-def call_all_sgd(grafo,k_size,operation,distance_type="min",mdist=None,probability=0,tolerance=0.01,maxsec=120,function=None,seed=None):
+def call_all_sgd(grafo,k_size,operation,distance_type="min",mdist=None,probability=0,tolerance=0.01,maxsec=120,function=None,seed=None,scorer=None):
 
     results=[]
     if function=="groupcentrality":
         for oper in ["degree","closeness","betweenness"]:
-            results.append(call_stochastic_gradient_descent(grafo,k_size,oper,distance_type,mdist,probability,tolerance,maxsec,seed))
+            results.append(call_stochastic_gradient_descent(grafo,k_size,oper,distance_type,mdist,probability,tolerance,maxsec,seed,scorer))
     elif function=="keyplayer":
         for oper in ["F","dF","dR","mreach"]:
-            results.append(call_stochastic_gradient_descent(grafo,k_size,oper,distance_type,mdist,probability,tolerance,maxsec,seed))
+            results.append(call_stochastic_gradient_descent(grafo,k_size,oper,distance_type,mdist,probability,tolerance,maxsec,seed,scorer))
     else:
         raise KeyError(u"choose the correct function keyplayer | groupcentrality")
 

@@ -44,27 +44,28 @@ clustering coefficient, eccentricity, eigenvector centrality, PageRank):
 
 - ``/tmp/fig8_out/report_figure_8_local.tsv`` — tab-separated metric table
 - ``/tmp/fig8_out/figure_8_local.svg`` — static network plot
-- ``/tmp/fig8_out/figure_8_local.html`` — interactive Plotly visualization
+- ``/tmp/fig8_out/figure_8_local.html`` — interactive network report (D3)
 
 **Example output** (first 5 rows of the TSV report):
 
 .. code-block:: text
 
    Pyntacle report   report_figure_8_local.tsv
-   Analysisi type    local
+   Analysis type     local
 
    Network Overview
    Removed nodes     None
    Number of components   1
    Number of Nodes   32
    Number of Edges   56
+   Edge weights      unweighted
 
    Node Name  Degree  Betweenness  Closeness  Radiality  Radiality reach  Clustering Coefficient  Eccentricity  Eigenvector (Scaled)  Pagerank
-   HS         2       0.0          0.212      5.29       5.29             1.0                     9.0           0.296                0.015
-   BR         4       0.0          0.254      6.065      6.065            1.0                     8.0           0.623                0.026
-   WD         7       210.75       0.313      6.806      6.806            0.571                   7.0           0.845                0.046
-   KR         9       36.417       0.265      6.226      6.226            0.472                   8.0           1.0                  0.056
-   BM         6       251.0        0.36       7.226      7.226            0.133                   5.0           0.03                 0.065
+   HS         2       0.0          0.212      5.29       5.29             1.0                     9.0           0.296                0.0155
+   PS         6       18.5         0.258      6.129      6.129            0.667                   8.0           0.775                0.0385
+   KR         9       36.417       0.265      6.226      6.226            0.472                   8.0           1.0                  0.0564
+   BR         4       0.0          0.254      6.065      6.065            1.0                     8.0           0.623                0.0264
+   WD         7       210.75       0.313      6.806      6.806            0.571                   7.0           0.845                0.0458
 
 For column definitions see :doc:`outputs`.
 
@@ -75,7 +76,7 @@ For column definitions see :doc:`outputs`.
    :align: center
    :alt: Figure 8 local metrics visualization
 
-   Figure 8 network. Node size proportional to degree. Red = all nodes.
+   Figure 8 network as drawn by ``local``. With ``-c`` the named nodes are drawn green and the others red.
 
 Highlight specific nodes (e.g., ``KR`` and ``BM``) in the visualization:
 
@@ -101,6 +102,7 @@ Find the 2-node set that maximizes each KPP metric using the greedy algorithm:
        -oper all \
        -a greedy \
        -m 2 \
+       --seed 1 \
        -o /tmp/fig8_out/
 
 **Output files:**
@@ -114,17 +116,21 @@ Find the 2-node set that maximizes each KPP metric using the greedy algorithm:
 .. code-block:: text
 
    Operation  Key-player    Score
-   F          ['PH', 'BM']  0.63
+   F          ['HA', 'HB']  0.706
    dF         ['HB', 'WD']  0.815
-   dR         ['KR', 'HB']  0.683
-   mreach     ['HA', 'NP']  25.0
+   dR         ['KR', 'HB']  0.641
+   mreach     ['WD', 'SR']  23.0
 
 Interpretation:
 
-- **F** = Fragmentation: removing ``PH`` and ``BM`` leaves 63% of node pairs disconnected
+- **F** = Fragmentation: removing ``HA`` and ``HB`` leaves 70.6% of node pairs disconnected
 - **dF** = Distance-fragmentation: ``HB`` and ``WD`` maximize distance-weighted disruption
-- **dR** = Distance-weighted reach: ``KR`` and ``HB`` are optimally positioned to reach the graph
-- **mreach** = m-reach (m=2): ``HA`` and ``NP`` can reach 25 nodes within 2 hops
+- **dR** = Distance-weighted reach: ``KR`` and ``HB`` are the best placed to reach the graph
+- **mreach** = m-reach (m=2): ``WD`` and ``SR`` reach 23 nodes within 2 hops
+
+Greedy stops at a local optimum that depends on the random starting set;
+``--seed 1`` makes the run repeatable. Brute force (``-a brute_force``, the
+default) scores every pair and returns the optimum.
 
 **Visualization:**
 

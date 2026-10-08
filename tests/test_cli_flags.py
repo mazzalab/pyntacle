@@ -63,7 +63,7 @@ def test_a_bad_flag_value_is_refused_by_the_parser(net, tmp_path, argv, message)
 
 
 @pytest.mark.parametrize("argv,message", [
-    (["keyplayer", "kp-finder", "-k", "12"], "ERROR: -k must be smaller than the number of nodes (12)"),
+    (["keyplayer", "kp-finder", "-k", "12"], "ERROR: -k is at most 10 here: the set must leave at least 2 of the 12 nodes outside it"),
     (["communities", "fastgreedy", "-nc", "50"], "ERROR: -nc must be at most the number of nodes (12)"),
     (["communities", "fastgreedy", "-n", "50"], "ERROR: no community passes the size filters"),
     (["percolation", "-n", "Q"], "ERROR: Seed node 'Q' not found"),
@@ -212,7 +212,7 @@ def test_global_report_keeps_small_values(tmp_path):
     assert "Density\t0.000667\n" in report
 
 
-def test_round_report_keeps_three_significant_digits_below_a_hundredth():
+def test_round_report_keeps_three_significant_digits_below_a_tenth():
     df = pd.DataFrame({"Measure": list("abcdef"),
                        "Score": [0.00024, 36.417123, 0.0, -0.0123456, float("inf"), float("nan")],
                        "Count": [1, 2, 3, 4, 5, 6]})
@@ -247,3 +247,205 @@ def test_plot_node_sets_draws_one_disc_per_set_holding_a_node(tmp_path, monkeypa
     gt.Graphtacle.plot_node_sets(g, [("degree", ["A", "B"]), ("closeness", ["B", "C"])], str(tmp_path / "f.png"))
     # base layer, then degree (A alone, B in two sets: widest disc), then closeness (B nested, C alone)
     assert [sorted(s) if hasattr(s, "__len__") else s for s in sizes] == [100, [300, 600], [300, 300]]
+
+
+def report_table(path):
+    """The data table of a report: the lines after its last blank line."""
+    return pd.read_csv(io.StringIO(open(path).read().rstrip("\n").split("\n\n")[-1]), sep="\t")
+
+
+def report_path(proc):
+    return next(l.split(": ", 1)[1] for l in proc.stdout.splitlines() if l.startswith("Report: "))
+
+
+def test_brute_force_group_closeness_honours_the_distance_type(tmp_path):
+    # brute force used to score every -v as min
+    fig8 = os.path.join(os.path.dirname(PKG_DIR), "examples", "figure_8.egl")
+    scores = {}
+    for v in ["min", "max"]:
+        for algo in ["brute_force", "greedy"]:
+            proc = run("groupcentrality", "gc-finder", "-t", "edgelist", "-i", fig8, "-k", "2", "-a", algo,
+                       "-oper", "closeness", "-v", v, "--seed", "4", "--no-plot", "-o", str(tmp_path / f"{v}{algo}"))
+            assert proc.returncode == 0, proc.stderr
+            scores[v, algo] = report_table(report_path(proc))["closeness"].max()
+    assert scores["max", "brute_force"] < scores["min", "brute_force"]
+    assert scores["max", "brute_force"] >= scores["max", "greedy"]
+
+
+@pytest.mark.parametrize("command", [["keyplayer", "kp-finder", "-oper", "F"],
+                                     ["groupcentrality", "gc-finder", "-oper", "betweenness"]])
+@pytest.mark.parametrize("algo", ["greedy", "gradient_descent"])
+def test_python_engine_search_repeats_with_the_seed(tmp_path, command, algo):
+    # the swaps were tried in set order, which changes with the hash seed of each run
+    fig8 = os.path.join(os.path.dirname(PKG_DIR), "examples", "figure_8.egl")
+    found = set()
+    for h in ["1", "2", "3", "4"]:
+        out = tmp_path / h
+        proc = subprocess.run([PYTHON, MAIN, *command[:2], "-t", "edgelist", "-i", fig8, "-k", "3", "-a", algo,
+                               *command[2:], "--engine", "python", "--seed", "7", "--no-plot", "-o", str(out)],
+                              capture_output=True, text=True, env={**os.environ, "PYTHONHASHSEED": h})
+        assert proc.returncode == 0, proc.stderr
+        found.add(open(report_path(proc)).read().split("\n\n")[-1])
+    assert len(found) == 1, found
+
+
+def test_gradient_descent_scores_with_the_given_scorer():
+    import igraph as ig
+    from conftest import make_graphtacle
+    from pyntacle.algorithms.stochastic_gradient_descent import call_stochastic_gradient_descent
+    calls = []
+    g = make_graphtacle(ig.Graph.Famous("Zachary"))
+    call_stochastic_gradient_descent(g, 2, "dR", mdist=2, seed=1, maxsec=5,
+                                     scorer=lambda names, oper: calls.append(oper) or len(set(names) & {"0"}))
+    assert calls and set(calls) == {"dR"}
+
+
+NUMERIC = "N1\tN2\n1\t2\n2\t3\n3\t4\n4\t1\n4\t5\n0\t5\n"
+
+
+@pytest.mark.parametrize("argv", [
+    ["keyplayer", "kp-info", "-n", "0,1"],
+    ["groupcentrality", "gc-info", "-n", "0,1"],
+    ["local", "-r", "0", "-c", "1"],
+    ["extract", "-nl", "0"],
+    ["percolation", "-n", "0", "--snapshotNode", "1", "--seed", "1"],
+])
+def test_numeric_node_names_are_found_by_name(tmp_path, argv):
+    # names like 0, 1 were read as numbers and -n "0,1" then matched nothing
+    path = tmp_path / "numeric.tsv"
+    path.write_text(NUMERIC)
+    proc = run(argv[0], "-t", "edgelist", "-i", str(path), *argv[1:], "--no-plot", "-o", str(tmp_path / "out"))
+    assert proc.returncode == 0, proc.stderr
+
+
+def test_unweighted_matrix_reads_any_non_zero_cell_as_one_edge(tmp_path):
+    # a cell of 2 used to become two parallel edges, which crashed local
+    path = tmp_path / "m.txt"
+    path.write_text("\tA\tB\tC\nA\t1\t2\t0\nB\t2\t0\t3\nC\t0\t3\t0\n")
+    proc = run("local", "-t", "matrix", "-i", str(path), "--no-plot", "-o", str(tmp_path))
+    assert proc.returncode == 0, proc.stderr
+    assert "self-loop" in proc.stdout
+    assert report_table(report_path(proc))["Degree"].tolist() == [1, 2, 1]
+
+
+def test_asymmetric_matrix_needs_directed(tmp_path):
+    path = tmp_path / "m.txt"
+    path.write_text("\tA\tB\nA\t0\t1\nB\t0\t0\n")
+    clean_error(run("local", "-t", "matrix", "-i", str(path), "-o", str(tmp_path)),
+                "the matrix is not symmetric")
+
+
+def test_a_network_without_edges_is_refused(tmp_path):
+    path = tmp_path / "m.txt"
+    path.write_text("\tA\tB\tC\nA\t0\t0\t0\nB\t0\t0\t0\nC\t0\t0\t0\n")
+    clean_error(run("global", "-t", "matrix", "-i", str(path), "-o", str(tmp_path)),
+                "ERROR: the network has no edges")
+
+
+@pytest.mark.parametrize("command", [["keyplayer", "kp-info"], ["groupcentrality", "gc-info"]])
+def test_info_set_must_leave_two_nodes_out(net, tmp_path, command):
+    proc = run(*command, "-t", "edgelist", "-i", net, "-n", "A,B,C,D,E,F,G,H,I,X,Y", "-o", str(tmp_path))
+    clean_error(proc, "the node set must leave at least 2 of the 12 nodes outside it")
+
+
+def test_repeated_node_is_counted_once(net, tmp_path):
+    proc = run("groupcentrality", "gc-info", "-t", "edgelist", "-i", net, "-n", "A, A,B", "--no-plot", "-o", str(tmp_path))
+    assert proc.returncode == 0, proc.stderr
+    assert set(report_table(report_path(proc))["Node-set"]) == {"['A', 'B']"}
+
+
+def test_union_of_two_files_with_the_same_name(net, tmp_path):
+    other = tmp_path / "b"
+    other.mkdir()
+    shutil.copy(net, other / "net.tsv")
+    proc = run("set", "union", "-t", "edgelist", "-i", net, "-i2", str(other / "net.tsv"), "-f", "png",
+               "-o", str(tmp_path / "out"))
+    assert proc.returncode == 0, proc.stderr
+
+
+def test_convert_keeps_every_digit_of_the_weights(tmp_path):
+    path = tmp_path / "w.tsv"
+    path.write_text("V1\tV2\tw\nA\tB\t0.123456789\nB\tC\t1e-05\n")
+    for to in ["edgelist", "matrix", "sif", "dot"]:
+        proc = run("convert", "-t", "edgelist", "-i", str(path), "-w", "-to", to, "-fo", f"c_{to}", "-o", str(tmp_path))
+        assert proc.returncode == 0, proc.stderr
+        text = open(next(l.split(": ", 1)[1] for l in proc.stdout.splitlines() if l.startswith("Network file: "))).read()
+        assert "0.123456789" in text and "1e-05" in text, (to, text)
+
+
+def test_convert_warns_when_isolated_nodes_cannot_be_written(tmp_path):
+    path = tmp_path / "m.txt"
+    path.write_text("\tA\tB\tZ\nA\t0\t1\t0\nB\t1\t0\t0\nZ\t0\t0\t0\n")
+    proc = run("convert", "-t", "matrix", "-i", str(path), "-to", "sif", "-fo", "c", "-o", str(tmp_path))
+    assert proc.returncode == 0, proc.stderr
+    assert "cannot be written as sif and are left out (Z)" in proc.stdout
+
+
+def test_snapshot_node_not_in_the_network_is_a_clean_error(net, tmp_path):
+    clean_error(run("percolation", "-t", "edgelist", "-i", net, "--snapshotNode", "Q", "-o", str(tmp_path)),
+                "--snapshotNode Q is neither a node name nor a node index (0 to 11)")
+
+
+def test_clique_percolation_without_cliques_is_a_clean_error(tmp_path):
+    path = tmp_path / "star.tsv"
+    path.write_text("N1\tN2\nH\tA\nH\tB\nH\tC\n")
+    clean_error(run("communities", "percolation", "-t", "edgelist", "-i", str(path), "-o", str(tmp_path)),
+                "the network has no 3-clique")
+
+
+def test_round_report_writes_no_negative_zero():
+    assert str(round_report(pd.DataFrame({"x": [-0.0, 1.5]}))["x"].tolist()) == "[0.0, 1.5]"
+
+
+def test_weighted_topological_importance_survives_an_isolated_node(tmp_path):
+    # the isolated node's 0/0 made every weighted value NaN
+    path = tmp_path / "m.txt"
+    path.write_text("\tA\tB\tC\tZ\nA\t0\t2\t1\t0\nB\t2\t0\t1\t0\nC\t1\t1\t0\t0\nZ\t0\t0\t0\t0\n")
+    proc = run("mesoscale", "-t", "matrix", "-i", str(path), "-w", "-k", "2", "--no-plot", "-o", str(tmp_path))
+    assert proc.returncode == 0, proc.stderr
+    weighted = open(report_path(proc)).read().split("Weighted Topological Importance\n")[1].split("\n\n")[0]
+    assert "nan" not in weighted.lower() and "\t\t" not in weighted
+
+
+def test_group_betweenness_of_a_star_centre_is_one(tmp_path):
+    # every shortest path between two leaves crosses the centre; 1.3.2 reported 0.5
+    path = tmp_path / "star.tsv"
+    path.write_text("N1\tN2\nH\tA\nH\tB\nH\tC\nH\tD\n")
+    for engine in ["cython", "python"]:
+        proc = run("groupcentrality", "gc-finder", "-t", "edgelist", "-i", str(path), "-k", "1", "-a", "greedy",
+                   "-oper", "betweenness", "--engine", engine, "--seed", "1", "--no-plot", "-o", str(tmp_path / engine))
+        assert proc.returncode == 0, proc.stderr
+        table = report_table(report_path(proc))
+        assert table["Group Centrality"].tolist() == ["H"] and table["betweenness"].tolist() == [1.0]
+
+
+def test_split_network_radiality_counts_only_the_nodes_reached(tmp_path):
+    # unreachable nodes counted as distance 0, so a 2-node component outscored the hub
+    path = tmp_path / "split.tsv"
+    path.write_text("N1\tN2\nA\tB\nB\tC\nC\tA\nC\tD\nX\tY\n")
+    proc = run("local", "-t", "edgelist", "-i", str(path), "--no-plot", "-o", str(tmp_path))
+    assert proc.returncode == 0, proc.stderr
+    radiality = dict(zip(*report_table(report_path(proc))[["Node Name", "Radiality"]].T.values))
+    # diameter 2: A reaches B, C at 1 and D at 2 -> (3 * 3 - 4) / 5; X reaches Y at 1 -> (3 - 1) / 5
+    assert radiality["A"] == pytest.approx(1.0) and radiality["X"] == pytest.approx(0.4)
+    assert radiality["C"] > radiality["X"]
+
+
+def test_an_isolated_node_has_closeness_zero(tmp_path):
+    path = tmp_path / "m.txt"
+    path.write_text("\tA\tB\tC\tZ\nA\t0\t1\t1\t0\nB\t1\t0\t1\t0\nC\t1\t1\t0\t0\nZ\t0\t0\t0\t0\n")
+    proc = run("local", "-t", "matrix", "-i", str(path), "--no-plot", "-o", str(tmp_path / "l"))
+    assert proc.returncode == 0, proc.stderr
+    table = report_table(report_path(proc)).set_index("Node Name")
+    assert table.loc["Z", "Closeness"] == 0.0 and table.loc["Z", "Radiality"] == 0.0
+    proc = run("global", "-t", "matrix", "-i", str(path), "--no-plot", "-o", str(tmp_path / "g"))
+    assert report_table(report_path(proc)).set_index("Measure").loc["Average Closeness", "Score"] == 0.75
+
+
+def test_global_clustering_without_triples_is_zero(tmp_path):
+    path = tmp_path / "pair.tsv"
+    path.write_text("N1\tN2\nA\tB\nC\tD\n")
+    proc = run("global", "-t", "edgelist", "-i", str(path), "--no-plot", "-o", str(tmp_path))
+    assert proc.returncode == 0, proc.stderr
+    scores = report_table(report_path(proc)).set_index("Measure")["Score"]
+    assert scores["Average clustering coefficient"] == 0.0 and scores["Global clustering coefficient"] == 0.0

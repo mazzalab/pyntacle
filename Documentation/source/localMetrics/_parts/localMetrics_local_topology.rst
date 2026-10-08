@@ -70,12 +70,12 @@ Closeness
 
 Computes the closeness centralities for specified vertices within a graph.
 
-Closeness centrality for a vertex assesses the ease with which other vertices can be accessed from it (or vice versa: how easily it can be reached from other vertices). This metric is calculated as the reciprocal of the sum of the lengths of all geodesics from/to the designated vertex, normalized by the total number of vertices minus one
+Closeness centrality for a vertex assesses the ease with which other vertices can be accessed from it (or vice versa: how easily it can be reached from other vertices). It is the number of vertices the designated vertex reaches divided by the sum of their distances:
 
 .. math::
-   			C(v) = \frac{N-1}{\sum_{y}d(u,v)}
+   C(v) = \frac{r_v}{\sum_{u\ \text{reached}} d(v,u)}
 
-where :math:`d(u,v)` is the distance (length of the shortest path) between vertices *v* *u*.
+where :math:`d(v,u)` is the distance (length of the shortest path) between vertices *v* and *u* and :math:`r_v` the number of vertices *v* reaches. On a connected network :math:`r_v = N - 1`. A vertex that reaches no other vertex scores 0.
 
 .. figure:: /img/ClosenessCentrality.png
   :figwidth: 600
@@ -86,10 +86,12 @@ where :math:`d(u,v)` is the distance (length of the shortest path) between verti
 Radiality
 ^^^^^^^^^^^^^^^^^^^^^^
 
-The radiality of a node *v* is calculated by computing the **shortest path** between the node *v* and all other nodes in the graph *sp(v, u)*. The value of each path is then subtracted by the value of the diameter *+1 (ΔG + 1)* and the resulting values are summated. Finally, the obtained value is divided for the number of nodes *−1 (n − 1)*.
+The radiality of a node *v* is calculated by computing the **shortest path** between the node *v* and every other node *u* it reaches, *sp(v, u)*. Each path length is subtracted from the diameter *+1 (ΔG + 1)* and the resulting values are summed. Finally, the sum is divided by the number of nodes *−1 (n − 1)*.
 
 .. math::
-	C_{rad}(v) = \frac{\sum_{u∈N}(ΔG + 1 - sp(v,u))}{n-1}
+	C_{rad}(v) = \frac{\sum_{u\ \text{reached by}\ v}(ΔG + 1 - sp(v,u))}{n-1}
+
+A node it cannot reach adds nothing, so on a network split into components a node of a small component scores low, and an isolated node scores 0. Releases up to 1.3.2 counted such nodes as if at distance 0.
 
 .. figure:: /img/Radiality.png
   :figwidth: 600
@@ -104,9 +106,9 @@ Radiality reach
 The radiality reach of a vertex *v* is an index that assign high centrality to nodes that are at a short distance to every other node *u* in its reachable neighbors with respect to the graph.
 
 .. math::
-	RadialityReach(v) = C_{rad}(v) · \frac{N}{N_{c}}
+	RadialityReach(v) = C^{c}_{rad}(v) · \frac{N_{c}}{N}
 
-where :math:`C_{rad}(v)` is the radiality of the *v* node, *N* is the total number of nodes in the graph *G* and :math:`N_{c}` is the number of nodes in the *c* component in which the *v* lies.
+where :math:`C^{c}_{rad}(v)` is the radiality of *v* computed inside the component *c* in which *v* lies (with the diameter and node count of that component), *N* is the total number of nodes in the graph *G* and :math:`N_{c}` is the number of nodes in *c*. On a connected network it equals the radiality.
  
 .. figure:: /img/RadialityReach.png
   :figwidth: 600

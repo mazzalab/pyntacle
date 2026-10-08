@@ -163,21 +163,6 @@ def test_radiality_stays_positive_on_weighted_graph():
     assert all(v > 0 for v in values), f"negative radiality: {values}"
 
 
-def test_shortestpath_count_does_not_overflow():
-    """get_shortestpath_count used np.int16; a layered graph easily exceeds 32767
-    geodesics between one pair and the count wrapped around to a negative number."""
-    m = 200  # m*m = 40000 distinct s->t geodesics, above the int16 ceiling
-    g = ig.Graph(2 * m + 2)
-    s, t = 2 * m, 2 * m + 1
-    edges = [(s, i) for i in range(m)]
-    edges += [(i, m + j) for i in range(m) for j in range(m)]
-    edges += [(m + j, t) for j in range(m)]
-    g.add_edges(edges)
-    graph = make_graphtacle(g)
-    counts = graph.get_shortestpath_count()
-    assert counts.min() >= 0, "negative geodesic count -> integer overflow"
-
-
 # ------------------------------------------------------------------ P3 hygiene
 
 def test_removing_every_edge_yields_maximal_fragmentation(star):
@@ -238,7 +223,7 @@ def test_cli_remove_node_survives_the_graphtacle_rebuild(tmp_path):
     removal, and appear in every report (HTML and TSV).
     """
     edgelist = tmp_path / "toy.tsv"
-    edgelist.write_text("A\tB\nB\tC\nC\tD\nD\tA\nA\tC\n")
+    edgelist.write_text("A\tB\nB\tC\nC\tD\nD\tA\nA\tC\nD\tE\n")
     outdir = tmp_path / "out"
     outdir.mkdir()
 

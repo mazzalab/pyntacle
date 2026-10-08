@@ -204,7 +204,9 @@ def ti(graph, k, weighted=False, weight_attr="weight", threshold=0.0, verbose=Fa
         # two reciprocal directions is kept
         if graph.is_directed():
             A_w = np.maximum(A_w, A_w.T)
-        weighted_effect = A_w / graph.strength(graph.iNodes, weights=weight_attr)
+        strength = np.array(graph.strength(graph.iNodes, weights=weight_attr), dtype=float)
+        # an isolated node spreads nothing; 0/0 would make every product NaN
+        weighted_effect = np.divide(A_w, strength, out=np.zeros_like(A_w, dtype=float), where=strength != 0)
         
         df = Ksteps_effect(weighted_effect, weighted=True)
 

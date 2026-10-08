@@ -16540,7 +16540,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
   double __pyx_t_7;
   int __pyx_t_8;
 
-  /* "pyntacle/_ext/group_metrics.pyx":46
+  /* "pyntacle/_ext/group_metrics.pyx":47
  *     """
  *     cdef int src, v, u, e, i, reached
  *     cdef double total = 0.             # <<<<<<<<<<<<<<
@@ -16549,7 +16549,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
 */
   __pyx_v_total = 0.;
 
-  /* "pyntacle/_ext/group_metrics.pyx":48
+  /* "pyntacle/_ext/group_metrics.pyx":49
  *     cdef double total = 0.
  *     cdef double dv, tol, sig, avoid
  *     cdef double* dist = s.dist             # <<<<<<<<<<<<<<
@@ -16559,7 +16559,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
   __pyx_t_1 = __pyx_v_s->dist;
   __pyx_v_dist = __pyx_t_1;
 
-  /* "pyntacle/_ext/group_metrics.pyx":49
+  /* "pyntacle/_ext/group_metrics.pyx":50
  *     cdef double dv, tol, sig, avoid
  *     cdef double* dist = s.dist
  *     cdef double* sigma = s.sigma             # <<<<<<<<<<<<<<
@@ -16569,7 +16569,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
   __pyx_t_1 = __pyx_v_s->sigma;
   __pyx_v_sigma = __pyx_t_1;
 
-  /* "pyntacle/_ext/group_metrics.pyx":50
+  /* "pyntacle/_ext/group_metrics.pyx":51
  *     cdef double* dist = s.dist
  *     cdef double* sigma = s.sigma
  *     cdef double* sigma_avoid = s.sigma_avoid             # <<<<<<<<<<<<<<
@@ -16579,7 +16579,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
   __pyx_t_1 = __pyx_v_s->sigma_avoid;
   __pyx_v_sigma_avoid = __pyx_t_1;
 
-  /* "pyntacle/_ext/group_metrics.pyx":51
+  /* "pyntacle/_ext/group_metrics.pyx":52
  *     cdef double* sigma = s.sigma
  *     cdef double* sigma_avoid = s.sigma_avoid
  *     cdef int* order = s.stack             # <<<<<<<<<<<<<<
@@ -16589,7 +16589,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
   __pyx_t_2 = __pyx_v_s->stack;
   __pyx_v_order = __pyx_t_2;
 
-  /* "pyntacle/_ext/group_metrics.pyx":53
+  /* "pyntacle/_ext/group_metrics.pyx":54
  *     cdef int* order = s.stack
  * 
  *     if n - k < 2:             # <<<<<<<<<<<<<<
@@ -16599,7 +16599,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
   __pyx_t_3 = ((__pyx_v_n - __pyx_v_k) < 2);
   if (__pyx_t_3) {
 
-    /* "pyntacle/_ext/group_metrics.pyx":54
+    /* "pyntacle/_ext/group_metrics.pyx":55
  * 
  *     if n - k < 2:
  *         return 0.             # <<<<<<<<<<<<<<
@@ -16609,7 +16609,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
     __pyx_r = 0.;
     goto __pyx_L0;
 
-    /* "pyntacle/_ext/group_metrics.pyx":53
+    /* "pyntacle/_ext/group_metrics.pyx":54
  *     cdef int* order = s.stack
  * 
  *     if n - k < 2:             # <<<<<<<<<<<<<<
@@ -16618,7 +16618,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
 */
   }
 
-  /* "pyntacle/_ext/group_metrics.pyx":56
+  /* "pyntacle/_ext/group_metrics.pyx":57
  *         return 0.
  * 
  *     for src from 0 <= src < n:             # <<<<<<<<<<<<<<
@@ -16628,7 +16628,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
   __pyx_t_4 = __pyx_v_n;
   for (__pyx_v_src = 0; __pyx_v_src < __pyx_t_4; __pyx_v_src++) {
 
-    /* "pyntacle/_ext/group_metrics.pyx":57
+    /* "pyntacle/_ext/group_metrics.pyx":58
  * 
  *     for src from 0 <= src < n:
  *         if s.in_K[src]:             # <<<<<<<<<<<<<<
@@ -16638,7 +16638,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
     __pyx_t_3 = ((__pyx_v_s->in_K[__pyx_v_src]) != 0);
     if (__pyx_t_3) {
 
-      /* "pyntacle/_ext/group_metrics.pyx":58
+      /* "pyntacle/_ext/group_metrics.pyx":59
  *     for src from 0 <= src < n:
  *         if s.in_K[src]:
  *             continue             # <<<<<<<<<<<<<<
@@ -16647,7 +16647,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
 */
       goto __pyx_L4_continue;
 
-      /* "pyntacle/_ext/group_metrics.pyx":57
+      /* "pyntacle/_ext/group_metrics.pyx":58
  * 
  *     for src from 0 <= src < n:
  *         if s.in_K[src]:             # <<<<<<<<<<<<<<
@@ -16656,7 +16656,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
 */
     }
 
-    /* "pyntacle/_ext/group_metrics.pyx":59
+    /* "pyntacle/_ext/group_metrics.pyx":60
  *         if s.in_K[src]:
  *             continue
  *         reached = utils.csr_sssp_order(g, src, unweighted, dist, order, s.heap, s.heap_pos)             # <<<<<<<<<<<<<<
@@ -16665,7 +16665,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
 */
     __pyx_v_reached = __pyx_f_8pyntacle_4_ext_5utils_csr_sssp_order(__pyx_v_g, __pyx_v_src, __pyx_v_unweighted, __pyx_v_dist, __pyx_v_order, __pyx_v_s->heap, __pyx_v_s->heap_pos);
 
-    /* "pyntacle/_ext/group_metrics.pyx":60
+    /* "pyntacle/_ext/group_metrics.pyx":61
  *             continue
  *         reached = utils.csr_sssp_order(g, src, unweighted, dist, order, s.heap, s.heap_pos)
  *         for i from 0 <= i < reached:             # <<<<<<<<<<<<<<
@@ -16675,7 +16675,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
     __pyx_t_5 = __pyx_v_reached;
     for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_5; __pyx_v_i++) {
 
-      /* "pyntacle/_ext/group_metrics.pyx":61
+      /* "pyntacle/_ext/group_metrics.pyx":62
  *         reached = utils.csr_sssp_order(g, src, unweighted, dist, order, s.heap, s.heap_pos)
  *         for i from 0 <= i < reached:
  *             sigma[order[i]] = 0.             # <<<<<<<<<<<<<<
@@ -16684,7 +16684,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
 */
       (__pyx_v_sigma[(__pyx_v_order[__pyx_v_i])]) = 0.;
 
-      /* "pyntacle/_ext/group_metrics.pyx":62
+      /* "pyntacle/_ext/group_metrics.pyx":63
  *         for i from 0 <= i < reached:
  *             sigma[order[i]] = 0.
  *             sigma_avoid[order[i]] = 0.             # <<<<<<<<<<<<<<
@@ -16694,7 +16694,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
       (__pyx_v_sigma_avoid[(__pyx_v_order[__pyx_v_i])]) = 0.;
     }
 
-    /* "pyntacle/_ext/group_metrics.pyx":63
+    /* "pyntacle/_ext/group_metrics.pyx":64
  *             sigma[order[i]] = 0.
  *             sigma_avoid[order[i]] = 0.
  *         sigma[src] = 1.             # <<<<<<<<<<<<<<
@@ -16703,7 +16703,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
 */
     (__pyx_v_sigma[__pyx_v_src]) = 1.;
 
-    /* "pyntacle/_ext/group_metrics.pyx":64
+    /* "pyntacle/_ext/group_metrics.pyx":65
  *             sigma_avoid[order[i]] = 0.
  *         sigma[src] = 1.
  *         sigma_avoid[src] = 1.             # <<<<<<<<<<<<<<
@@ -16712,7 +16712,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
 */
     (__pyx_v_sigma_avoid[__pyx_v_src]) = 1.;
 
-    /* "pyntacle/_ext/group_metrics.pyx":66
+    /* "pyntacle/_ext/group_metrics.pyx":67
  *         sigma_avoid[src] = 1.
  * 
  *         for i from 1 <= i < reached:             # <<<<<<<<<<<<<<
@@ -16722,7 +16722,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
     __pyx_t_5 = __pyx_v_reached;
     for (__pyx_v_i = 1; __pyx_v_i < __pyx_t_5; __pyx_v_i++) {
 
-      /* "pyntacle/_ext/group_metrics.pyx":67
+      /* "pyntacle/_ext/group_metrics.pyx":68
  * 
  *         for i from 1 <= i < reached:
  *             v = order[i]             # <<<<<<<<<<<<<<
@@ -16731,7 +16731,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
 */
       __pyx_v_v = (__pyx_v_order[__pyx_v_i]);
 
-      /* "pyntacle/_ext/group_metrics.pyx":68
+      /* "pyntacle/_ext/group_metrics.pyx":69
  *         for i from 1 <= i < reached:
  *             v = order[i]
  *             dv = dist[v]             # <<<<<<<<<<<<<<
@@ -16740,7 +16740,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
 */
       __pyx_v_dv = (__pyx_v_dist[__pyx_v_v]);
 
-      /* "pyntacle/_ext/group_metrics.pyx":71
+      /* "pyntacle/_ext/group_metrics.pyx":72
  *             # Dijkstra sums lengths in different orders along different
  *             # paths: equal lengths agree to rounding, not to the bit
  *             tol = 1e-10 * fmax(1., dv)             # <<<<<<<<<<<<<<
@@ -16749,7 +16749,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
 */
       __pyx_v_tol = (1e-10 * fmax(1., __pyx_v_dv));
 
-      /* "pyntacle/_ext/group_metrics.pyx":72
+      /* "pyntacle/_ext/group_metrics.pyx":73
  *             # paths: equal lengths agree to rounding, not to the bit
  *             tol = 1e-10 * fmax(1., dv)
  *             sig = 0.             # <<<<<<<<<<<<<<
@@ -16758,7 +16758,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
 */
       __pyx_v_sig = 0.;
 
-      /* "pyntacle/_ext/group_metrics.pyx":73
+      /* "pyntacle/_ext/group_metrics.pyx":74
  *             tol = 1e-10 * fmax(1., dv)
  *             sig = 0.
  *             avoid = 0.             # <<<<<<<<<<<<<<
@@ -16767,7 +16767,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
 */
       __pyx_v_avoid = 0.;
 
-      /* "pyntacle/_ext/group_metrics.pyx":74
+      /* "pyntacle/_ext/group_metrics.pyx":75
  *             sig = 0.
  *             avoid = 0.
  *             for e from g.indptr[v] <= e < g.indptr[v + 1]:             # <<<<<<<<<<<<<<
@@ -16777,7 +16777,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
       __pyx_t_6 = (__pyx_v_g->indptr[(__pyx_v_v + 1)]);
       for (__pyx_v_e = (__pyx_v_g->indptr[__pyx_v_v]); __pyx_v_e < __pyx_t_6; __pyx_v_e++) {
 
-        /* "pyntacle/_ext/group_metrics.pyx":75
+        /* "pyntacle/_ext/group_metrics.pyx":76
  *             avoid = 0.
  *             for e from g.indptr[v] <= e < g.indptr[v + 1]:
  *                 u = g.indices[e]             # <<<<<<<<<<<<<<
@@ -16786,7 +16786,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
 */
         __pyx_v_u = (__pyx_v_g->indices[__pyx_v_e]);
 
-        /* "pyntacle/_ext/group_metrics.pyx":76
+        /* "pyntacle/_ext/group_metrics.pyx":77
  *             for e from g.indptr[v] <= e < g.indptr[v + 1]:
  *                 u = g.indices[e]
  *                 if unweighted:             # <<<<<<<<<<<<<<
@@ -16795,7 +16795,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
 */
         if (__pyx_v_unweighted) {
 
-          /* "pyntacle/_ext/group_metrics.pyx":77
+          /* "pyntacle/_ext/group_metrics.pyx":78
  *                 u = g.indices[e]
  *                 if unweighted:
  *                     if dist[u] != dv - 1.:             # <<<<<<<<<<<<<<
@@ -16805,7 +16805,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
           __pyx_t_3 = ((__pyx_v_dist[__pyx_v_u]) != (__pyx_v_dv - 1.));
           if (__pyx_t_3) {
 
-            /* "pyntacle/_ext/group_metrics.pyx":78
+            /* "pyntacle/_ext/group_metrics.pyx":79
  *                 if unweighted:
  *                     if dist[u] != dv - 1.:
  *                         continue             # <<<<<<<<<<<<<<
@@ -16814,7 +16814,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
 */
             goto __pyx_L11_continue;
 
-            /* "pyntacle/_ext/group_metrics.pyx":77
+            /* "pyntacle/_ext/group_metrics.pyx":78
  *                 u = g.indices[e]
  *                 if unweighted:
  *                     if dist[u] != dv - 1.:             # <<<<<<<<<<<<<<
@@ -16823,7 +16823,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
 */
           }
 
-          /* "pyntacle/_ext/group_metrics.pyx":76
+          /* "pyntacle/_ext/group_metrics.pyx":77
  *             for e from g.indptr[v] <= e < g.indptr[v + 1]:
  *                 u = g.indices[e]
  *                 if unweighted:             # <<<<<<<<<<<<<<
@@ -16833,7 +16833,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
           goto __pyx_L13;
         }
 
-        /* "pyntacle/_ext/group_metrics.pyx":79
+        /* "pyntacle/_ext/group_metrics.pyx":80
  *                     if dist[u] != dv - 1.:
  *                         continue
  *                 elif fabs(dist[u] + g.w[e] - dv) > tol:             # <<<<<<<<<<<<<<
@@ -16843,7 +16843,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
         __pyx_t_3 = (fabs((((__pyx_v_dist[__pyx_v_u]) + (__pyx_v_g->w[__pyx_v_e])) - __pyx_v_dv)) > __pyx_v_tol);
         if (__pyx_t_3) {
 
-          /* "pyntacle/_ext/group_metrics.pyx":80
+          /* "pyntacle/_ext/group_metrics.pyx":81
  *                         continue
  *                 elif fabs(dist[u] + g.w[e] - dv) > tol:
  *                     continue             # <<<<<<<<<<<<<<
@@ -16852,7 +16852,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
 */
           goto __pyx_L11_continue;
 
-          /* "pyntacle/_ext/group_metrics.pyx":79
+          /* "pyntacle/_ext/group_metrics.pyx":80
  *                     if dist[u] != dv - 1.:
  *                         continue
  *                 elif fabs(dist[u] + g.w[e] - dv) > tol:             # <<<<<<<<<<<<<<
@@ -16862,7 +16862,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
         }
         __pyx_L13:;
 
-        /* "pyntacle/_ext/group_metrics.pyx":81
+        /* "pyntacle/_ext/group_metrics.pyx":82
  *                 elif fabs(dist[u] + g.w[e] - dv) > tol:
  *                     continue
  *                 sig += sigma[u]             # <<<<<<<<<<<<<<
@@ -16871,7 +16871,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
 */
         __pyx_v_sig = (__pyx_v_sig + (__pyx_v_sigma[__pyx_v_u]));
 
-        /* "pyntacle/_ext/group_metrics.pyx":82
+        /* "pyntacle/_ext/group_metrics.pyx":83
  *                     continue
  *                 sig += sigma[u]
  *                 avoid += sigma_avoid[u]             # <<<<<<<<<<<<<<
@@ -16882,7 +16882,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
         __pyx_L11_continue:;
       }
 
-      /* "pyntacle/_ext/group_metrics.pyx":83
+      /* "pyntacle/_ext/group_metrics.pyx":84
  *                 sig += sigma[u]
  *                 avoid += sigma_avoid[u]
  *             sigma[v] = sig             # <<<<<<<<<<<<<<
@@ -16891,7 +16891,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
 */
       (__pyx_v_sigma[__pyx_v_v]) = __pyx_v_sig;
 
-      /* "pyntacle/_ext/group_metrics.pyx":84
+      /* "pyntacle/_ext/group_metrics.pyx":85
  *                 avoid += sigma_avoid[u]
  *             sigma[v] = sig
  *             sigma_avoid[v] = 0. if s.in_K[v] else avoid             # <<<<<<<<<<<<<<
@@ -16907,7 +16907,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
       (__pyx_v_sigma_avoid[__pyx_v_v]) = __pyx_t_7;
     }
 
-    /* "pyntacle/_ext/group_metrics.pyx":87
+    /* "pyntacle/_ext/group_metrics.pyx":88
  * 
  *         # each unordered pair once, from its lower-numbered end
  *         for i from 1 <= i < reached:             # <<<<<<<<<<<<<<
@@ -16917,7 +16917,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
     __pyx_t_5 = __pyx_v_reached;
     for (__pyx_v_i = 1; __pyx_v_i < __pyx_t_5; __pyx_v_i++) {
 
-      /* "pyntacle/_ext/group_metrics.pyx":88
+      /* "pyntacle/_ext/group_metrics.pyx":89
  *         # each unordered pair once, from its lower-numbered end
  *         for i from 1 <= i < reached:
  *             v = order[i]             # <<<<<<<<<<<<<<
@@ -16926,7 +16926,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
 */
       __pyx_v_v = (__pyx_v_order[__pyx_v_i]);
 
-      /* "pyntacle/_ext/group_metrics.pyx":89
+      /* "pyntacle/_ext/group_metrics.pyx":90
  *         for i from 1 <= i < reached:
  *             v = order[i]
  *             if v > src and not s.in_K[v] and sigma[v] > 0.:             # <<<<<<<<<<<<<<
@@ -16950,16 +16950,16 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
       __pyx_L18_bool_binop_done:;
       if (__pyx_t_3) {
 
-        /* "pyntacle/_ext/group_metrics.pyx":90
+        /* "pyntacle/_ext/group_metrics.pyx":91
  *             v = order[i]
  *             if v > src and not s.in_K[v] and sigma[v] > 0.:
  *                 total += 1. - sigma_avoid[v] / sigma[v]             # <<<<<<<<<<<<<<
  * 
- *     return total / ((<double> (n - k)) * (n - k - 1))
+ *     return 2. * total / ((<double> (n - k)) * (n - k - 1))
 */
         __pyx_v_total = (__pyx_v_total + (1. - ((__pyx_v_sigma_avoid[__pyx_v_v]) / (__pyx_v_sigma[__pyx_v_v]))));
 
-        /* "pyntacle/_ext/group_metrics.pyx":89
+        /* "pyntacle/_ext/group_metrics.pyx":90
  *         for i from 1 <= i < reached:
  *             v = order[i]
  *             if v > src and not s.in_K[v] and sigma[v] > 0.:             # <<<<<<<<<<<<<<
@@ -16971,14 +16971,14 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
     __pyx_L4_continue:;
   }
 
-  /* "pyntacle/_ext/group_metrics.pyx":92
+  /* "pyntacle/_ext/group_metrics.pyx":93
  *                 total += 1. - sigma_avoid[v] / sigma[v]
  * 
- *     return total / ((<double> (n - k)) * (n - k - 1))             # <<<<<<<<<<<<<<
+ *     return 2. * total / ((<double> (n - k)) * (n - k - 1))             # <<<<<<<<<<<<<<
  * 
  * 
 */
-  __pyx_r = (__pyx_v_total / (((double)(__pyx_v_n - __pyx_v_k)) * ((__pyx_v_n - __pyx_v_k) - 1)));
+  __pyx_r = ((2. * __pyx_v_total) / (((double)(__pyx_v_n - __pyx_v_k)) * ((__pyx_v_n - __pyx_v_k) - 1)));
   goto __pyx_L0;
 
   /* "pyntacle/_ext/group_metrics.pyx":33
@@ -16994,7 +16994,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_betweenness(stru
   return __pyx_r;
 }
 
-/* "pyntacle/_ext/group_metrics.pyx":95
+/* "pyntacle/_ext/group_metrics.pyx":96
  * 
  * 
  * cdef double get_group_closeness(double* all_dist, int* K_indices, int* notK_indices, int k, int n, int dist_type) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -17017,7 +17017,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
   int __pyx_t_2;
   int __pyx_t_3;
 
-  /* "pyntacle/_ext/group_metrics.pyx":106
+  /* "pyntacle/_ext/group_metrics.pyx":107
  *     """
  *     cdef int i, j
  *     cdef double gCloseness = 0.0             # <<<<<<<<<<<<<<
@@ -17026,7 +17026,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
   __pyx_v_gCloseness = 0.0;
 
-  /* "pyntacle/_ext/group_metrics.pyx":111
+  /* "pyntacle/_ext/group_metrics.pyx":112
  *     cdef int reachable
  *     cdef double d
  *     cdef double dJk = 0.0             # <<<<<<<<<<<<<<
@@ -17035,7 +17035,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
   __pyx_v_dJk = 0.0;
 
-  /* "pyntacle/_ext/group_metrics.pyx":112
+  /* "pyntacle/_ext/group_metrics.pyx":113
  *     cdef double d
  *     cdef double dJk = 0.0
  *     cdef int reached = 0             # <<<<<<<<<<<<<<
@@ -17044,7 +17044,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
   __pyx_v_reached = 0;
 
-  /* "pyntacle/_ext/group_metrics.pyx":114
+  /* "pyntacle/_ext/group_metrics.pyx":115
  *     cdef int reached = 0
  * 
  *     for i from 0 <= i < (n - k):  # Iterate over non-K nodes             # <<<<<<<<<<<<<<
@@ -17054,7 +17054,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
   __pyx_t_1 = (__pyx_v_n - __pyx_v_k);
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_1; __pyx_v_i++) {
 
-    /* "pyntacle/_ext/group_metrics.pyx":115
+    /* "pyntacle/_ext/group_metrics.pyx":116
  * 
  *     for i from 0 <= i < (n - k):  # Iterate over non-K nodes
  *         notK_node = notK_indices[i]             # <<<<<<<<<<<<<<
@@ -17063,7 +17063,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
     __pyx_v_notK_node = (__pyx_v_notK_indices[__pyx_v_i]);
 
-    /* "pyntacle/_ext/group_metrics.pyx":116
+    /* "pyntacle/_ext/group_metrics.pyx":117
  *     for i from 0 <= i < (n - k):  # Iterate over non-K nodes
  *         notK_node = notK_indices[i]
  *         reachable = 0             # <<<<<<<<<<<<<<
@@ -17072,7 +17072,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
     __pyx_v_reachable = 0;
 
-    /* "pyntacle/_ext/group_metrics.pyx":119
+    /* "pyntacle/_ext/group_metrics.pyx":120
  * 
  *         # mean
  *         if dist_type == 0:             # <<<<<<<<<<<<<<
@@ -17082,7 +17082,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
     switch (__pyx_v_dist_type) {
       case 0:
 
-      /* "pyntacle/_ext/group_metrics.pyx":120
+      /* "pyntacle/_ext/group_metrics.pyx":121
  *         # mean
  *         if dist_type == 0:
  *             dJk = 0.             # <<<<<<<<<<<<<<
@@ -17091,7 +17091,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
       __pyx_v_dJk = 0.;
 
-      /* "pyntacle/_ext/group_metrics.pyx":121
+      /* "pyntacle/_ext/group_metrics.pyx":122
  *         if dist_type == 0:
  *             dJk = 0.
  *             for j from 0 <= j < k:             # <<<<<<<<<<<<<<
@@ -17101,7 +17101,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
       __pyx_t_2 = __pyx_v_k;
       for (__pyx_v_j = 0; __pyx_v_j < __pyx_t_2; __pyx_v_j++) {
 
-        /* "pyntacle/_ext/group_metrics.pyx":122
+        /* "pyntacle/_ext/group_metrics.pyx":123
  *             dJk = 0.
  *             for j from 0 <= j < k:
  *                 k_node = K_indices[j]             # <<<<<<<<<<<<<<
@@ -17110,7 +17110,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
         __pyx_v_k_node = (__pyx_v_K_indices[__pyx_v_j]);
 
-        /* "pyntacle/_ext/group_metrics.pyx":123
+        /* "pyntacle/_ext/group_metrics.pyx":124
  *             for j from 0 <= j < k:
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]             # <<<<<<<<<<<<<<
@@ -17119,7 +17119,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
         __pyx_v_d = (__pyx_v_all_dist[((__pyx_v_notK_node * __pyx_v_n) + __pyx_v_k_node)]);
 
-        /* "pyntacle/_ext/group_metrics.pyx":124
+        /* "pyntacle/_ext/group_metrics.pyx":125
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):             # <<<<<<<<<<<<<<
@@ -17129,7 +17129,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
         __pyx_t_3 = (!(isinf(__pyx_v_d) != 0));
         if (__pyx_t_3) {
 
-          /* "pyntacle/_ext/group_metrics.pyx":125
+          /* "pyntacle/_ext/group_metrics.pyx":126
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):
  *                     dJk += d             # <<<<<<<<<<<<<<
@@ -17138,7 +17138,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
           __pyx_v_dJk = (__pyx_v_dJk + __pyx_v_d);
 
-          /* "pyntacle/_ext/group_metrics.pyx":126
+          /* "pyntacle/_ext/group_metrics.pyx":127
  *                 if not isinf(d):
  *                     dJk += d
  *                     reachable += 1             # <<<<<<<<<<<<<<
@@ -17147,7 +17147,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
           __pyx_v_reachable = (__pyx_v_reachable + 1);
 
-          /* "pyntacle/_ext/group_metrics.pyx":124
+          /* "pyntacle/_ext/group_metrics.pyx":125
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):             # <<<<<<<<<<<<<<
@@ -17157,7 +17157,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
         }
       }
 
-      /* "pyntacle/_ext/group_metrics.pyx":128
+      /* "pyntacle/_ext/group_metrics.pyx":129
  *                     reachable += 1
  * 
  *             if reachable > 0:             # <<<<<<<<<<<<<<
@@ -17167,7 +17167,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
       __pyx_t_3 = (__pyx_v_reachable > 0);
       if (__pyx_t_3) {
 
-        /* "pyntacle/_ext/group_metrics.pyx":129
+        /* "pyntacle/_ext/group_metrics.pyx":130
  * 
  *             if reachable > 0:
  *                 dJk = dJk / reachable             # <<<<<<<<<<<<<<
@@ -17176,7 +17176,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
         __pyx_v_dJk = (__pyx_v_dJk / ((double)__pyx_v_reachable));
 
-        /* "pyntacle/_ext/group_metrics.pyx":128
+        /* "pyntacle/_ext/group_metrics.pyx":129
  *                     reachable += 1
  * 
  *             if reachable > 0:             # <<<<<<<<<<<<<<
@@ -17185,7 +17185,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
       }
 
-      /* "pyntacle/_ext/group_metrics.pyx":119
+      /* "pyntacle/_ext/group_metrics.pyx":120
  * 
  *         # mean
  *         if dist_type == 0:             # <<<<<<<<<<<<<<
@@ -17195,7 +17195,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
       break;
       case 1:
 
-      /* "pyntacle/_ext/group_metrics.pyx":133
+      /* "pyntacle/_ext/group_metrics.pyx":134
  *         # max
  *         elif dist_type == 1:
  *             dJk = 0.             # <<<<<<<<<<<<<<
@@ -17204,7 +17204,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
       __pyx_v_dJk = 0.;
 
-      /* "pyntacle/_ext/group_metrics.pyx":134
+      /* "pyntacle/_ext/group_metrics.pyx":135
  *         elif dist_type == 1:
  *             dJk = 0.
  *             for j from 0 <= j < k:             # <<<<<<<<<<<<<<
@@ -17214,7 +17214,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
       __pyx_t_2 = __pyx_v_k;
       for (__pyx_v_j = 0; __pyx_v_j < __pyx_t_2; __pyx_v_j++) {
 
-        /* "pyntacle/_ext/group_metrics.pyx":135
+        /* "pyntacle/_ext/group_metrics.pyx":136
  *             dJk = 0.
  *             for j from 0 <= j < k:
  *                 k_node = K_indices[j]             # <<<<<<<<<<<<<<
@@ -17223,7 +17223,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
         __pyx_v_k_node = (__pyx_v_K_indices[__pyx_v_j]);
 
-        /* "pyntacle/_ext/group_metrics.pyx":136
+        /* "pyntacle/_ext/group_metrics.pyx":137
  *             for j from 0 <= j < k:
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]             # <<<<<<<<<<<<<<
@@ -17232,7 +17232,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
         __pyx_v_d = (__pyx_v_all_dist[((__pyx_v_notK_node * __pyx_v_n) + __pyx_v_k_node)]);
 
-        /* "pyntacle/_ext/group_metrics.pyx":137
+        /* "pyntacle/_ext/group_metrics.pyx":138
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):             # <<<<<<<<<<<<<<
@@ -17242,7 +17242,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
         __pyx_t_3 = (!(isinf(__pyx_v_d) != 0));
         if (__pyx_t_3) {
 
-          /* "pyntacle/_ext/group_metrics.pyx":138
+          /* "pyntacle/_ext/group_metrics.pyx":139
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):
  *                     reachable += 1             # <<<<<<<<<<<<<<
@@ -17251,7 +17251,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
           __pyx_v_reachable = (__pyx_v_reachable + 1);
 
-          /* "pyntacle/_ext/group_metrics.pyx":139
+          /* "pyntacle/_ext/group_metrics.pyx":140
  *                 if not isinf(d):
  *                     reachable += 1
  *                     if d > dJk:             # <<<<<<<<<<<<<<
@@ -17261,7 +17261,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
           __pyx_t_3 = (__pyx_v_d > __pyx_v_dJk);
           if (__pyx_t_3) {
 
-            /* "pyntacle/_ext/group_metrics.pyx":140
+            /* "pyntacle/_ext/group_metrics.pyx":141
  *                     reachable += 1
  *                     if d > dJk:
  *                         dJk = d             # <<<<<<<<<<<<<<
@@ -17270,7 +17270,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
             __pyx_v_dJk = __pyx_v_d;
 
-            /* "pyntacle/_ext/group_metrics.pyx":139
+            /* "pyntacle/_ext/group_metrics.pyx":140
  *                 if not isinf(d):
  *                     reachable += 1
  *                     if d > dJk:             # <<<<<<<<<<<<<<
@@ -17279,7 +17279,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
           }
 
-          /* "pyntacle/_ext/group_metrics.pyx":137
+          /* "pyntacle/_ext/group_metrics.pyx":138
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):             # <<<<<<<<<<<<<<
@@ -17289,7 +17289,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
         }
       }
 
-      /* "pyntacle/_ext/group_metrics.pyx":132
+      /* "pyntacle/_ext/group_metrics.pyx":133
  * 
  *         # max
  *         elif dist_type == 1:             # <<<<<<<<<<<<<<
@@ -17299,7 +17299,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
       break;
       case 2:
 
-      /* "pyntacle/_ext/group_metrics.pyx":144
+      /* "pyntacle/_ext/group_metrics.pyx":145
  *         # min
  *         elif dist_type == 2:
  *             dJk = INFINITY             # <<<<<<<<<<<<<<
@@ -17308,7 +17308,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
       __pyx_v_dJk = INFINITY;
 
-      /* "pyntacle/_ext/group_metrics.pyx":145
+      /* "pyntacle/_ext/group_metrics.pyx":146
  *         elif dist_type == 2:
  *             dJk = INFINITY
  *             for j from 0 <= j < k:             # <<<<<<<<<<<<<<
@@ -17318,7 +17318,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
       __pyx_t_2 = __pyx_v_k;
       for (__pyx_v_j = 0; __pyx_v_j < __pyx_t_2; __pyx_v_j++) {
 
-        /* "pyntacle/_ext/group_metrics.pyx":146
+        /* "pyntacle/_ext/group_metrics.pyx":147
  *             dJk = INFINITY
  *             for j from 0 <= j < k:
  *                 k_node = K_indices[j]             # <<<<<<<<<<<<<<
@@ -17327,7 +17327,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
         __pyx_v_k_node = (__pyx_v_K_indices[__pyx_v_j]);
 
-        /* "pyntacle/_ext/group_metrics.pyx":147
+        /* "pyntacle/_ext/group_metrics.pyx":148
  *             for j from 0 <= j < k:
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]             # <<<<<<<<<<<<<<
@@ -17336,7 +17336,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
         __pyx_v_d = (__pyx_v_all_dist[((__pyx_v_notK_node * __pyx_v_n) + __pyx_v_k_node)]);
 
-        /* "pyntacle/_ext/group_metrics.pyx":148
+        /* "pyntacle/_ext/group_metrics.pyx":149
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):             # <<<<<<<<<<<<<<
@@ -17346,7 +17346,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
         __pyx_t_3 = (!(isinf(__pyx_v_d) != 0));
         if (__pyx_t_3) {
 
-          /* "pyntacle/_ext/group_metrics.pyx":149
+          /* "pyntacle/_ext/group_metrics.pyx":150
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):
  *                     reachable += 1             # <<<<<<<<<<<<<<
@@ -17355,7 +17355,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
           __pyx_v_reachable = (__pyx_v_reachable + 1);
 
-          /* "pyntacle/_ext/group_metrics.pyx":150
+          /* "pyntacle/_ext/group_metrics.pyx":151
  *                 if not isinf(d):
  *                     reachable += 1
  *                     if d < dJk:             # <<<<<<<<<<<<<<
@@ -17365,7 +17365,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
           __pyx_t_3 = (__pyx_v_d < __pyx_v_dJk);
           if (__pyx_t_3) {
 
-            /* "pyntacle/_ext/group_metrics.pyx":151
+            /* "pyntacle/_ext/group_metrics.pyx":152
  *                     reachable += 1
  *                     if d < dJk:
  *                         dJk = d             # <<<<<<<<<<<<<<
@@ -17374,7 +17374,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
             __pyx_v_dJk = __pyx_v_d;
 
-            /* "pyntacle/_ext/group_metrics.pyx":150
+            /* "pyntacle/_ext/group_metrics.pyx":151
  *                 if not isinf(d):
  *                     reachable += 1
  *                     if d < dJk:             # <<<<<<<<<<<<<<
@@ -17383,7 +17383,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
           }
 
-          /* "pyntacle/_ext/group_metrics.pyx":148
+          /* "pyntacle/_ext/group_metrics.pyx":149
  *                 k_node = K_indices[j]
  *                 d = all_dist[notK_node*n + k_node]
  *                 if not isinf(d):             # <<<<<<<<<<<<<<
@@ -17393,7 +17393,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
         }
       }
 
-      /* "pyntacle/_ext/group_metrics.pyx":143
+      /* "pyntacle/_ext/group_metrics.pyx":144
  * 
  *         # min
  *         elif dist_type == 2:             # <<<<<<<<<<<<<<
@@ -17404,7 +17404,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
       default: break;
     }
 
-    /* "pyntacle/_ext/group_metrics.pyx":153
+    /* "pyntacle/_ext/group_metrics.pyx":154
  *                         dJk = d
  * 
  *         if reachable == 0:             # <<<<<<<<<<<<<<
@@ -17414,7 +17414,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
     __pyx_t_3 = (__pyx_v_reachable == 0);
     if (__pyx_t_3) {
 
-      /* "pyntacle/_ext/group_metrics.pyx":154
+      /* "pyntacle/_ext/group_metrics.pyx":155
  * 
  *         if reachable == 0:
  *             continue             # <<<<<<<<<<<<<<
@@ -17423,7 +17423,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
       goto __pyx_L3_continue;
 
-      /* "pyntacle/_ext/group_metrics.pyx":153
+      /* "pyntacle/_ext/group_metrics.pyx":154
  *                         dJk = d
  * 
  *         if reachable == 0:             # <<<<<<<<<<<<<<
@@ -17432,7 +17432,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
     }
 
-    /* "pyntacle/_ext/group_metrics.pyx":156
+    /* "pyntacle/_ext/group_metrics.pyx":157
  *             continue
  * 
  *         gCloseness += dJk             # <<<<<<<<<<<<<<
@@ -17441,7 +17441,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
     __pyx_v_gCloseness = (__pyx_v_gCloseness + __pyx_v_dJk);
 
-    /* "pyntacle/_ext/group_metrics.pyx":157
+    /* "pyntacle/_ext/group_metrics.pyx":158
  * 
  *         gCloseness += dJk
  *         reached += 1             # <<<<<<<<<<<<<<
@@ -17452,7 +17452,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
     __pyx_L3_continue:;
   }
 
-  /* "pyntacle/_ext/group_metrics.pyx":159
+  /* "pyntacle/_ext/group_metrics.pyx":160
  *         reached += 1
  * 
  *     if gCloseness <= 0.:             # <<<<<<<<<<<<<<
@@ -17462,7 +17462,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
   __pyx_t_3 = (__pyx_v_gCloseness <= 0.);
   if (__pyx_t_3) {
 
-    /* "pyntacle/_ext/group_metrics.pyx":160
+    /* "pyntacle/_ext/group_metrics.pyx":161
  * 
  *     if gCloseness <= 0.:
  *         return -1.             # <<<<<<<<<<<<<<
@@ -17472,7 +17472,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
     __pyx_r = -1.;
     goto __pyx_L0;
 
-    /* "pyntacle/_ext/group_metrics.pyx":159
+    /* "pyntacle/_ext/group_metrics.pyx":160
  *         reached += 1
  * 
  *     if gCloseness <= 0.:             # <<<<<<<<<<<<<<
@@ -17481,7 +17481,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
 */
   }
 
-  /* "pyntacle/_ext/group_metrics.pyx":162
+  /* "pyntacle/_ext/group_metrics.pyx":163
  *         return -1.
  * 
  *     return (<double> reached / (n - k)) * (reached / gCloseness)             # <<<<<<<<<<<<<<
@@ -17489,7 +17489,7 @@ static double __pyx_f_8pyntacle_4_ext_13group_metrics_get_group_closeness(double
   __pyx_r = ((((double)__pyx_v_reached) / ((double)(__pyx_v_n - __pyx_v_k))) * (((double)__pyx_v_reached) / __pyx_v_gCloseness));
   goto __pyx_L0;
 
-  /* "pyntacle/_ext/group_metrics.pyx":95
+  /* "pyntacle/_ext/group_metrics.pyx":96
  * 
  * 
  * cdef double get_group_closeness(double* all_dist, int* K_indices, int* notK_indices, int k, int n, int dist_type) noexcept nogil:             # <<<<<<<<<<<<<<

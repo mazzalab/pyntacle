@@ -232,7 +232,7 @@ cpdef cython_greedy(int[:] K_indices, int[:] notK_indices, int[:, :] edges, doub
         utils.scratch_free(main_scratch)
         utils.csr_free(csr)
 
-    return K_indices, round(optimization_score, 3)
+    return K_indices, optimization_score
 
 
 cpdef cython_info(int[:] K_indices, int[:] notK_indices, int[:, :] edges, double[:] wvec, int n, int operation, int mdist, int dist_type, int num_threads, bint unweighted=False):
@@ -280,7 +280,7 @@ cpdef cython_info(int[:] K_indices, int[:] notK_indices, int[:, :] edges, double
         utils.scratch_free(scratch)
         utils.csr_free(csr)
 
-    return round(optimization_score, 3)
+    return optimization_score
 
 
 cpdef cython_bruteforce(int[:, :] edges, double[:] wvec, int n, int[:] K_indices, int operation, int mdist, int dist_type, long long comb_num, int num_threads, bint unweighted=False, int max_ties=100):

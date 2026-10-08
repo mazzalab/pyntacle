@@ -7,6 +7,21 @@ Supported File Formats in Pyntacle
    :local:
    :depth: 2
 
+Reading rules
+-------------
+
+These hold for every format:
+
+* Node names are read as text, so ``1`` and ``01`` are two different nodes
+  and ``-n 1`` finds node ``1``.
+* Self-loops are removed and parallel edges are merged into one, keeping the
+  largest weight; a warning gives how many.
+* Without ``-w`` the weights in the file are ignored and every edge has
+  weight 1. See :doc:`/weights` for what ``-w`` reads.
+* A node with no edges can only be written in a matrix or a DOT file; an edge
+  list or a SIF file cannot hold it, and ``convert``, ``set`` and ``extract``
+  warn when they leave such nodes out.
+
 .. _format-adjacency-matrix:
 
 Adjacency Matrix

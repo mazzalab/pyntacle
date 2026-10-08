@@ -29,43 +29,62 @@ def import_adjMatrix(file, sep=None, header=True, directed=False, weight=False):
                          f"{adjMatrix.shape[0]} rows and {adjMatrix.shape[1]} columns of values"
                          + ("" if not values.isna().any().any() else ", some of them not numbers"))
     adjMatrix = values
+    # numeric names (1, 2, ...) are kept as text, as -n, -r and -nl give them
+    node_names = [str(x) for x in node_names]
 
     if directed:
         mode="directed"
     else:
         mode="undirected"
-        
+        if not np.allclose(adjMatrix.values, adjMatrix.values.T, equal_nan=True):
+            raise ValueError("the matrix is not symmetric, so it cannot be read as an undirected "
+                             "network; add -d to read it as directed")
+
     if weight:
         grafo = ig.Graph.Weighted_Adjacency(adjMatrix.values.tolist(), mode=mode, attr="weight") 
-        grafo.vs["label"] = node_names
         grafo.es["width"] = grafo.es["weight"]
-        grafo.vs["name"] = node_names
     else:
-        grafo = ig.Graph.Adjacency(adjMatrix.values.tolist(), mode=mode)
-        grafo.vs["label"] = node_names
-        grafo.vs["name"] = node_names
-        
+        cells = adjMatrix.values
+        if not np.isin(cells, (0, 1)).all():
+            print("NOTE: the matrix holds values other than 0 and 1; without -w every non-zero "
+                  "cell is one edge")
+        grafo = ig.Graph.Adjacency((cells != 0).astype(int).tolist(), mode=mode)
+    grafo.vs["name"] = node_names
+    grafo.vs["label"] = node_names
+    drop_loops_and_duplicates(grafo)
+
     return grafo
 
 
 # ---- edge list ----
 
-def edgeGraph(df_edge, weight, directed=False):
+def drop_loops_and_duplicates(grafo):
+    """Remove self-loops and merge parallel edges, keeping the largest weight.
 
-    grafo = ig.Graph.TupleList(df_edge.values.tolist(), directed=directed, weights=weight)
-
-    # Self-loops and parallel edges would corrupt the adjacency view of the
-    # compiled kernels (a loop on the diagonal, a duplicate read as weight 2):
-    # collapse them, directed graphs included.
+    Both would corrupt the adjacency view of the compiled kernels (a loop on
+    the diagonal, a duplicate read as weight 2); directed graphs included.
+    """
     loops = sum(1 for e in grafo.es if e.source == e.target)
-    duplicates = grafo.ecount() - len(set(
-        (min(e.tuple), max(e.tuple)) for e in grafo.es if e.source != e.target))
+    pairs = [e.tuple if grafo.is_directed() else (min(e.tuple), max(e.tuple))
+             for e in grafo.es if e.source != e.target]
+    duplicates = len(pairs) - len(set(pairs))
     if loops:
         warn(f"removed {loops} self-loop(s) from the input network")
     if duplicates:
         warn(f"merged {duplicates} parallel edge(s), keeping the largest weight")
-    grafo.simplify(multiple=True, loops=True, combine_edges=max)
+    if loops or duplicates:
+        combine = {a: max for a in grafo.es.attributes()} if grafo.es.attributes() else None
+        grafo.simplify(multiple=True, loops=True, combine_edges=combine)
 
+
+def edgeGraph(df_edge, weight, directed=False):
+
+    # numeric names (1, 2, ...) are kept as text, as -n, -r and -nl give them
+    df_edge = df_edge.copy()
+    for column in df_edge.columns[:2]:
+        df_edge[column] = df_edge[column].astype(str)
+    grafo = ig.Graph.TupleList(df_edge.values.tolist(), directed=directed, weights=weight)
+    drop_loops_and_duplicates(grafo)
     grafo.vs["label"] = list(grafo.vs["name"])
 
     return grafo
@@ -156,9 +175,16 @@ def import_dot(file, directed=False, weight=False):
         warn("-d given but the DOT file declares an undirected graph; every edge is read as one-way")
 
     if weight:
-        weights=[]
-        for edge in gviz.edges():
-            weights.append(edge.attr['weight'])
+        raw = [edge.attr['weight'] for edge in gviz.edges()]
+        if all(w in (None, "") for w in raw):
+            warn("-w given but the DOT edges have no weight attribute: every edge gets weight 1")
+            weights = [1.0] * len(raw)
+        else:
+            try:
+                weights = [float(w) for w in raw]
+            except (TypeError, ValueError):
+                bad = next(w for w in raw if not _is_number(w))
+                raise ValueError(f"every DOT edge needs a numeric weight attribute with -w (found {bad!r})")
         grafo.es["weight"] = weights
         grafo.es["width"] = grafo.es["weight"]
 
@@ -171,8 +197,17 @@ def import_dot(file, directed=False, weight=False):
         names = [str(node) for node in gviz.nodes()]
     grafo.vs["label"] = names
     grafo.vs["name"] = names
+    drop_loops_and_duplicates(grafo)
 
     return grafo
+
+
+def _is_number(value):
+    try:
+        float(value)
+        return True
+    except (TypeError, ValueError):
+        return False
 
 
 
@@ -303,15 +338,14 @@ def describe_weights(info):
 def validate_weights(weights, warn_sub_unit=True):
     """Reject edge weights that cannot survive the round-trip through igraph.
 
-    The Cython engine hands the network to igraph as a weighted adjacency matrix
-    built with ``get_adjacency(attribute="weight", default=0)``. In that
-    representation 0 means "no edge", so a genuine 0-weight edge silently
-    disappears: a path 0-1-2-3 whose middle weight is 0 is seen as two components
-    by the engine and as one by igraph. There is no way to tell the two apart
-    downstream, so refuse the input here rather than return a wrong number.
+    The compiled kernels read a zero weight as "no edge" and drop it, while
+    igraph keeps the edge: a path 0-1-2-3 whose middle weight is 0 is two
+    components for the kernels and one for igraph. There is no way to tell the
+    two apart downstream, so refuse the input here rather than return a wrong
+    number.
 
-    Sub-unit weights are legal but make the distance-based scores (dR, group
-    closeness, radiality) leave the [0, 1] range, so they earn a warning.
+    Sub-unit weights are legal but let dR and group closeness exceed 1, so
+    they earn a warning.
     """
     if isinstance(weights, (int, float)):
         weights = [weights]
@@ -333,24 +367,9 @@ def validate_weights(weights, warn_sub_unit=True):
 
     if warn_sub_unit and any(0.0 < w < 1.0 for w in numeric):
         warnings.warn(
-            "The network contains edge weights below 1. Weights are used directly as "
-            "distances, so dR, group closeness and radiality are not bounded in [0, 1] "
-            "for this input.",
+            "some edge lengths (the weights read as distances) are below 1, so dR and "
+            "group closeness can exceed 1 for this input.",
             RuntimeWarning, stacklevel=2)
-
-
-def subtract_count_dist_matrix(count_all, count_nogroup):
-    if count_all.shape[0] == count_all.shape[1] == count_nogroup.shape[0] == count_nogroup.shape[1]:
-        v = count_all.shape[0]
-        res = np.copy(count_all)
-        for i in range(v):
-            for j in range(i, v):
-                if count_all[j, i] == count_nogroup[j, i]:
-                    res[i, j] = count_all[i, j] - count_nogroup[i, j]
-        return res
-    else:
-        raise WrongArgumentError(u"Parameter error", "The function parameters do not have the same shape")
-
 
 
 def capo_dist(path_list,distance_type):
@@ -384,19 +403,23 @@ def warn(message):
 
 
 def round_report(df):
-    """Round the float columns of a report to 3 decimals, or 3 significant digits below 0.01.
+    """Round the float columns of a report to 3 decimals, or 3 significant digits below 0.1.
 
     A plain 3-decimal rounding would print the density of a large sparse
-    network (e.g. 0.00024) as 0.0.
+    network (e.g. 0.00024) as 0.0. Values below 1e-10 are written as 0.
     """
     df = df.copy()
     for col in df.columns[[np.issubdtype(t, np.floating) for t in df.dtypes]]:
         x = df[col].to_numpy(dtype=float)
+        # below 1e-10 a value is floating-point noise (e.g. 7.99e-18 for a zero
+        # eigenvector score), not a measure
+        x = np.where(np.abs(x) < 1e-10, 0.0, x)
         with np.errstate(divide="ignore", invalid="ignore"):
             exponent = np.floor(np.log10(np.abs(x)))
         digits = np.where(np.isfinite(exponent), np.maximum(3, 2 - exponent), 3).astype(int)
         scale = 10.0 ** digits
-        df[col] = np.where(np.isfinite(x), np.round(x * scale) / scale, x)
+        # + 0.0 turns -0.0 into 0.0
+        df[col] = np.where(np.isfinite(x), np.round(x * scale) / scale, x) + 0.0
     return df
 
 

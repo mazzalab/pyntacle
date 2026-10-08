@@ -65,9 +65,6 @@ def grafo_to_matrix(grafo,name):
 		raise TypeError(u"Not yet implemented")
 	
 	adj_matrix = grafo.get_adjacency(attribute="weight")
-	# rounded to 3 decimals
-
-	adj_matrix = [[round(elem, 3) for elem in row] for row in adj_matrix]
 	nodes=grafo.vs["name"]
 	header = [""] + nodes
 
@@ -98,7 +95,6 @@ def grafo_to_edgelist(grafo,name):
 			writer.writerows(edges_listTouple)
 	else:
 		edges_df=name_from_edge(grafo,True)
-		edges_df["W"] = edges_df["W"].round(3)
 		edges_df.to_csv(out_name,sep="\t",index=False)
 
 def grafo_to_dot(grafo,name):
@@ -152,6 +148,13 @@ def output_decision(grafo, fileType, filename, outdir=None):
 	if outdir is not None:
 		grafo.outdir = outdir
 	writer, ext = writers[fileType]
+	# utility imports this module, so its names are not all bound at import time
+	from pyntacle.utility import warn
+	isolated = [name for name, d in zip(grafo.vs["name"], grafo.degree()) if d == 0]
+	if isolated and fileType in ("edgelist", "sif"):
+		warn(f"{len(isolated)} node(s) without edges cannot be written as {fileType} and are left out "
+		     f"({', '.join(map(str, isolated[:5]))}{', ...' if len(isolated) > 5 else ''}); "
+		     "matrix and dot keep them")
 	# a name with folders in it (-fo sub/name) writes into them
 	os.makedirs(os.path.dirname(os.path.join(grafo.outdir or ".", filename)) or ".", exist_ok=True)
 	writer(grafo, filename)

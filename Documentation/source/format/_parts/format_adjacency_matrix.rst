@@ -21,7 +21,11 @@ An adjacency matrix is a squared *nxn* matrix, where row *i* and column *j* indi
    1, 0, 1
    1, 1, 0
 
-In the weighted case a non-zero float number indicates the weight on the corresponding edge.
+Without ``-w`` every non-zero cell is one edge, whatever its value. Without
+``-d`` the matrix must be symmetric; a non-zero diagonal cell is a self-loop
+and is removed.
+
+In the weighted case (``-w``) a non-zero number is the weight of the corresponding edge.
 
 .. csv-table:: Header
    :width: 30%

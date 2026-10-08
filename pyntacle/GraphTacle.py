@@ -292,64 +292,41 @@ class Graphtacle(ig.Graph, ig.GraphBase):
     def plot_set(self, filename1, filename2, g1_names, g2_names, path):
         """Draw a union with the nodes of each input network coloured and save it to `path`."""
 
-        layout=self.layout('kk')
-        coord = np.array(layout)
-        ed = np.array(self.get_edgelist())
-        lines = coord[ed[:,:]]
-        lines = np.moveaxis(lines, 0,-1)
-
+        coord = np.array(self.layout('kk'))
+        lines = np.moveaxis(coord[np.array(self.get_edgelist())], 0, -1)
         names = list(self.vs["name"])
-        cord_df = pd.DataFrame({"Node": names, "X": coord[:, 0], "Y": coord[:, 1]})
-        colors = ["#2ECC71","#3498DB","#EC7063"]
-        texts=[filename1,filename2,"Common"]
-        common_names=list(set(g1_names)&set(g2_names))
-        df_set=cord_df.merge(pd.DataFrame({filename1+"_names":g1_names}), left_on='Node', right_on=filename1+"_names",\
-                                          how='outer') \
-            .merge(pd.DataFrame({filename2+"_names":g2_names}), left_on='Node', right_on=filename2+"_names", how='outer') \
-            .merge(pd.DataFrame({"Common":common_names}), left_on='Node', right_on="Common", how='outer') \
-            .set_index("Node")
-        
-        df_set_g1 = df_set.loc[g1_names]
-        df_set_g2 = df_set.loc[g2_names]
-        df_set_common = df_set.loc[common_names]
-
-        df_set_g1=df_set_g1[df_set_g1[filename1+"_names"]!=0]
-        df_set_g2=df_set_g2[df_set_g2[filename2+"_names"]!=0]
-        df_set_common=df_set_common[df_set_common["Common"]!=0]
-
-
+        in1, in2 = set(g1_names), set(g2_names)
+        groups = [[i for i, n in enumerate(names) if n in in1 and n not in in2],
+                  [i for i, n in enumerate(names) if n in in2 and n not in in1],
+                  [i for i, n in enumerate(names) if n in in1 and n in in2]]
+        colors = ["#2ECC71", "#3498DB", "#EC7063"]
+        # two inputs with the same file name are told apart by their order
+        texts = ([filename1, filename2] if filename1 != filename2
+                 else [f"{filename1} (first)", f"{filename2} (second)"]) + ["Common"]
 
         plt.figure(figsize=(20,20))
-             
-        # Add labels for each point
-        for label, (x, y) in zip(list(self.vs["name"]), coord):
+        for label, (x, y) in zip(names, coord):
             plt.text(x, y, label, ha='center', va='center', ma='center', zorder=20,fontsize=5)
-
         plt.plot(lines[:,0, :], lines[:, 1, :], c='black', alpha=0.2, linewidth=1.5, zorder=1)
+        for z, (idx, c) in enumerate(zip(groups, colors)):
+            plt.scatter(coord[idx, 0], coord[idx, 1], c=c, alpha=1, zorder=11 + z, s=100)
 
-        plt.scatter(cord_df["X"], cord_df["Y"], c="#BDC3C7", alpha=1, zorder=10,s=100)
-        plt.scatter(df_set_g1.X, df_set_g1.Y, c="#2ECC71", alpha=1, zorder=11,s=100)
-        plt.scatter(df_set_g2.X, df_set_g2.Y, c="#3498DB", alpha=1, zorder=12,s=100)
-        plt.scatter(df_set_common.X, df_set_common.Y, c="#EC7063", alpha=1, zorder=13,s=100)
-        
-        patches = [ plt.plot([],[], marker="o", ms=10, ls="", mec=None, color=colors[i], \
-                    label="{:s}".format(texts[i]) )[0]  for i in range(len(texts)) ]
+        patches = [plt.plot([], [], marker="o", ms=10, ls="", mec=None, color=c, label=t)[0]
+                   for c, t in zip(colors, texts)]
         plt.legend(title="Nodes color",frameon=True,handles=patches,loc="best")
-        # Remove axes
         plt.axis('off')
-        
         plt.savefig(path)
         plt.close()
         return path
 
 
-
-
     def radiality(self, sps=None, diameter=None):
         """Compute radiality centrality for all nodes.
 
-        Radiality of node i = (diameter + 1) - mean shortest-path distance from i
-        to all other nodes. Higher values indicate nodes more centrally positioned.
+        Radiality of node i = sum over the nodes j it reaches of
+        (diameter + 1 - d(i, j)), divided by N - 1. On a connected network this
+        is (diameter + 1) - the mean distance from i; a node that reaches nothing
+        scores 0.
 
         Args:
             sps: optional precomputed weighted all-pairs shortest-path matrix
@@ -373,7 +350,9 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         for node in self.iNodes:
             row = sps[node]
             reachable = row[np.isfinite(row)]
-            radiality.append( (diameter + 1) - reachable.sum() / norm )
+            # each other node it reaches adds diameter + 1 - distance; a node it
+            # cannot reach adds nothing (the node itself is the one 0 in the row)
+            radiality.append(((reachable.size - 1) * (diameter + 1) - reachable.sum()) / norm)
 
         return radiality
     
@@ -463,51 +442,6 @@ class Graphtacle(ig.Graph, ig.GraphBase):
 
 
 
-    def get_shortestpath_count(self, nodes=None):
-        """Packed geodesic matrix: counts above the diagonal, path lengths below.
-
-        ``spaths[i, j]`` for ``j > i`` is the number of shortest i-j paths and
-        ``spaths[j, i]`` their length; ``group_betweenness`` needs both, and
-        ``subtract_count_dist_matrix`` only subtracts counts whose length matched.
-
-        Counts are int64: geodesic counts grow quickly on layered graphs.
-        """
-        if nodes:
-            loop_nodes = nodes
-        else:
-            loop_nodes = self.vs()
-        loop_nodes_size = len(loop_nodes)
-
-        weights = self.es["weight"] if "weight" in self.es.attributes() else None
-        spaths = np.zeros(shape=(loop_nodes_size, loop_nodes_size), dtype=np.int64)
-
-        for node in loop_nodes:
-            temp_row = np.zeros(shape=loop_nodes_size, dtype=np.int64)
-            temp_col = np.zeros(shape=loop_nodes_size, dtype=np.int64)
-
-            # index of the source in this matrix
-            row_col_index = node.index if hasattr(node, "index") else int(node)
-
-            # group_betweenness calls this on a copy without the group's edges, so
-            # unreachable targets are expected: their zero counts are correct
-            with warnings.catch_warnings():
-                warnings.filterwarnings("ignore", message=".*[Cc]ouldn't reach.*")
-                sp = self.get_all_shortest_paths(v=node, weights=weights)
-            for s in sp:
-                if len(s) > 1:
-                    last = s[-1]
-                    temp_row[last] += 1
-                    temp_col[last] = len(s) - 1
-
-            spaths[row_col_index, row_col_index:loop_nodes_size] = temp_row[row_col_index:loop_nodes_size]
-            spaths[row_col_index:loop_nodes_size, row_col_index] = temp_col[row_col_index:loop_nodes_size]
-
-        count_all = np.array(spaths)
-        return count_all
-        
-
-
-
     def completeness_naive(self, directed=False):
 
         # total number of non-zero elements (E)
@@ -594,75 +528,71 @@ class Graphtacle(ig.Graph, ig.GraphBase):
         return normalized_score
 
 
-    def group_betweenness(self, np_counts, nodes=None):
+    def group_betweenness(self, nodes):
         """Compute group betweenness centrality for a set of nodes.
 
-        Group betweenness = fraction of shortest paths between non-group nodes
-        that pass through at least one group member, normalized by
-        (N - k)(N - k - 1) / 2 where k = group size.
+        For every pair of non-group nodes joined by a path, the share of its
+        shortest paths with an inner node in the group; the sum is divided by
+        the (N - k)(N - k - 1) / 2 pairs, k being the group size, so a group on
+        every shortest path scores 1. From each source the
+        vertices are settled in distance order, and the number of shortest
+        paths (sigma) and of those avoiding the group are summed over each
+        vertex's shortest-path predecessors, weights included.
 
         Args:
-            np_counts (numpy.ndarray | None): Pre-computed shortest-path count
-                matrix (N×N). Pass None to compute on the fly.
             nodes: Iterable of node names forming the group.
 
         Returns:
-            float: Normalized group betweenness in [0, 1].
+            float: Group betweenness score.
         """
+        n = self.vcount()
+        group = {self.vs.find(name=i).index for i in nodes}
+        m = n - len(group)
+        if m < 2:
+            return 0.0
 
-        # Count geodesics of the original graph
-        if np_counts is not None:
-            if not isinstance(np_counts, np.ndarray):
-                raise TypeError("np_counts must be None or a nump.nparray, {} found".format(type(np_counts).__name__))
+        weights = self.es["weight"] if "weight" in self.es.attributes() else [1.0] * self.ecount()
+        # a zero weight is not an edge, as in the compiled kernels
+        neighbours = [[] for _ in range(n)]
+        for (u, v), w in zip(self.get_edgelist(), weights):
+            if w != 0:
+                neighbours[u].append((v, float(w)))
+                neighbours[v].append((u, float(w)))
 
-            if not all(x == self.vcount() for x in np_counts.shape):
-                raise ValueError("np_counts must be squared and of the same size of the graph ({})".format(self.vcount()))
+        total = 0.0
+        for src in range(n):
+            if src in group:
+                continue
+            dist = self.distances(source=src, weights=weights)[0]
+            order = sorted((v for v in range(n) if math.isfinite(dist[v])), key=lambda v: dist[v])
+            sigma = [0.0] * n
+            avoid = [0.0] * n
+            sigma[src] = avoid[src] = 1.0
+            for v in order:
+                if v == src:
+                    continue
+                # equal path lengths agree to rounding, not to the bit
+                tol = 1e-10 * max(1.0, dist[v])
+                for u, w in neighbours[v]:
+                    if abs(dist[u] + w - dist[v]) <= tol:
+                        sigma[v] += sigma[u]
+                        avoid[v] += avoid[u]
+                if v in group:
+                    avoid[v] = 0.0
+            for v in order:
+                if v > src and v not in group and sigma[v] > 0:
+                    total += 1.0 - avoid[v] / sigma[v]
 
-            count_all = np_counts
-        else:
-            count_all = self.get_shortestpath_count()
-
-        # node names to indices
-        nodes_index=[]
-        for i in list(nodes):
-            nodes_index.append(self.vs.find(name=i).index)
-
-
-        # Count geodesics that do not pass through the group
-        del_edg = [self.incident(vertex=nidx) for nidx in nodes_index]
-        del1 = set(list(itertools.chain(*del_edg)))
-
-        grafo_notgroup = Graphtacle.re(self, self.function, self.fileType, self.sep, self.header, self.directed, self.es["weight"], self.name)
-
-        grafo_notgroup.delete_edges(del1)
-        count_notgroup = grafo_notgroup.get_shortestpath_count()
-        # Count geodesics that do pass through the group
-        count_group = subtract_count_dist_matrix(count_all, count_notgroup)
-
-        # Divide the number of geodesics (g(C) / g)
-        group_btw_temp = np.divide(count_group, count_all,out=np.zeros_like(count_group, dtype=np.float64),where=count_all != 0)
-
-        # discard group-nodes (set group nodes' rows and columns to zero)
-        group_btw_temp[nodes_index] = 0
-        group_btw_temp[:, nodes_index] = 0
-
-        # sum not-nan counts upper triangular matrix (SUM u<v)
-        group_btw = np.sum(np.triu(group_btw_temp, 0), dtype=np.float64) / 2
-
-        # normalization
-        grafo_size = len(self.vs)
-        group_size = len(nodes_index)
-        group_btw = (2 * group_btw) / ((grafo_size - group_size) * (grafo_size - group_size - 1))
-
-        return group_btw
+        return 2 * total / (m * (m - 1))
 
 
     def group_closeness(self, np_paths, nodes=None, distance_type="min"):
         """Compute group closeness centrality for a set of nodes.
 
-        Group closeness = (number of non-group nodes) / sum over non-group nodes j
-        of d(K, j), where d(K, j) is the distance from group K to node j
-        (aggregated using distance_type).
+        Wasserman-Faust group closeness: (r / (N - k)) * (r / sum over the r
+        non-group nodes j the group reaches of d(K, j)), where d(K, j) is the
+        distance from group K to node j aggregated with distance_type. On a
+        connected network this is (N - k) / sum d(K, j).
 
         Args:
             np_paths (numpy.ndarray | None): Pre-computed shortest-path matrix.

@@ -9,7 +9,7 @@ def operation_selector(grafo,operation,node_names,distance_type="min",mdist=None
     elif operation=="closeness":
         result=grafo.group_closeness(np_paths=None,nodes=node_names, distance_type=distance_type)
     elif operation=="betweenness":
-        result=grafo.group_betweenness(np_counts=None,nodes=node_names)
+        result=grafo.group_betweenness(node_names)
     elif operation=="F":
         temp_grafo = prune_graph(grafo, node_names)
 
@@ -52,7 +52,8 @@ def call_greedy(grafo,k_size,operation,distance_type="min",mdist=None,seed=None)
     S_names = list(sorted_df["name"])
     S_indices = list(sorted_df["indices"])
 
-    notS = set(node_names).difference(set(S_names))
+    # in node order, not set order: the walk then depends on the seed alone
+    notS = [x for x in node_names if x not in S_names]
 
     optimization_score=operation_selector(grafo,operation,S_names,distance_type,mdist)
     nodeSet_score_history = {tuple(S_names): optimization_score}
@@ -85,12 +86,12 @@ def call_greedy(grafo,k_size,operation,distance_type="min",mdist=None,seed=None)
 
         if max_nodeScore > optimization_score:
             S_names = list(maxNode)
-            notS = set(node_names).difference(set(S_names))
+            notS = [x for x in node_names if x not in S_names]
             optimization_score = max_nodeScore
         else:
             optimal_set_found = True
 
-    return S_names, round(optimization_score,3)
+    return S_names, optimization_score
 
 
 

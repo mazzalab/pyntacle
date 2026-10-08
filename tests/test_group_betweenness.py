@@ -31,7 +31,8 @@ def by_definition(g, group, weights=None):
             paths[p[-1]].append(p)
         for ps in paths.values():
             total += sum(any(v in inside for v in p[1:-1]) for p in ps) / len(ps)
-    return total / ((n - k) * (n - k - 1))
+    # over the (n - k)(n - k - 1) / 2 unordered pairs of non-group nodes
+    return 2 * total / ((n - k) * (n - k - 1))
 
 
 def check(g, k, weights=None):
@@ -48,10 +49,10 @@ def check(g, k, weights=None):
 def test_a_bridge_carries_every_path_between_the_two_sides():
     """Two triangles joined by the path 2-6-3. Node 6 is an inner node of all
     9 shortest paths between {0,1,2} and {3,4,5}; node 2 (or 3) of only 8.
-    Score: 9 / (6 * 5)."""
+    Score: 9 over the 6 * 5 / 2 pairs of the other nodes."""
     g = ig.Graph(7, [(0, 1), (1, 2), (2, 0), (3, 4), (4, 5), (5, 3), (2, 6), (6, 3)])
     _, score, tied, n_optimal = cython_wrapper_bruteforce(make_graphtacle(g, name="bridge"), 1, "betweenness")
-    assert score == pytest.approx(9 / 30, abs=1e-12)
+    assert score == pytest.approx(9 / 15, abs=1e-12)
     assert [[int(x) for x in S] for S in tied] == [[6]]
     assert n_optimal == 1
 

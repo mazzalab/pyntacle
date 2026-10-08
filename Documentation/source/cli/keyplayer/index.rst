@@ -40,7 +40,7 @@ Search algorithms
   the score (and, with ``-p``, to one that lowers it with that probability).
   It stops at the first swap that raises the score by no more than ``-tol``,
   when every swap of the current set has been tried without a move, or after
-  ``-ms`` seconds.
+  ``-ms`` seconds. Sets are scored by the engine chosen with ``--engine``.
 
 Synopsis
 --------
@@ -226,6 +226,7 @@ Find the best 2-node key-player set using the greedy algorithm (all 4 metrics):
        -oper all \
        -a greedy \
        -m 2 \
+       --seed 1 \
        -o /tmp/out/
 
 Find the optimal set using exhaustive brute-force with 4 threads:
@@ -266,15 +267,18 @@ Compute only the mreach metric with m=3:
        -a greedy \
        -o /tmp/out/
 
-**Expected output for kp-finder greedy (operation=all, k=2):**
+**Expected output for the first example (kp-finder greedy, operation=all, k=2, --seed 1):**
 
 .. code-block:: text
 
-   Operation  Key-player    Score
-   F          ['PH', 'BM']  0.63
-   dF         ['HB', 'WD']  0.815
-   dR         ['KR', 'HB']  0.683
-   mreach     ['HA', 'NP']  25.0
+   Operation Key-player  Score
+           F   [HA, HB]  0.706
+          dF   [HB, WD]  0.815
+          dR   [KR, HB]  0.641
+      mreach   [WD, SR]     23
+
+Greedy reaches a local optimum from a random starting set; ``--seed`` fixes
+that set, so the same seed gives the same result.
 
 Output files:
 
@@ -288,7 +292,9 @@ Output files:
   ``kp-finder`` and ``kp-info``.
 
 ``kp-info`` needs the node set (``-n``) and stops with an error if it is
-missing or names nodes that are not in the network.
+missing, names nodes that are not in the network, or leaves fewer than 2 nodes
+outside it; a node named twice counts once. For the same reason ``-k`` of
+``kp-finder`` is at most the number of nodes minus 2.
 
 See :doc:`../../keyPlayers/keyPlayers` for metric definitions and
 :doc:`../../outputs` for column documentation.

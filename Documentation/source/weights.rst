@@ -81,7 +81,7 @@ strength *a* into the length *d* used by path-based measures:
        weighted networks (`Newman 2001`_; `Brandes 2001`_; `Opsahl et al.
        2010`_; `Rubinov & Sporns 2010`_). Accepts any positive strength. For
        strengths up to 1, such as correlations, every length is at least 1, so
-       dR, group closeness and radiality stay within [0, 1].
+       dR and group closeness stay within [0, 1].
    * - ``one-minus``
      - *d* = 1 − *a*
      - For strengths in (0, 1]; lengths are floored at 10\ :sup:`−6`.
