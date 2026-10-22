@@ -104,15 +104,19 @@ The data section is a two-column ``Measure / Score`` table (one metric per row):
    * - ``Median shortest path length``
      - Median over the node pairs that reach each other, in hops
    * - ``Diameter``
-     - Longest shortest path in the graph
+     - Longest shortest path between two nodes that reach each other, in hops
+   * - ``Weighted diameter``
+     - Weighted networks only: the longest shortest path as a sum of edge
+       lengths, the diameter used by radiality. A single weak edge (short
+       strength, long length) can make it large
    * - ``Components``
      - Number of connected components
    * - ``Radius``
-     - Minimum eccentricity over all nodes
+     - Minimum eccentricity over all nodes, in hops
    * - ``Density``
      - Fraction of possible edges that are present
    * - ``pi``
-     - Edge count divided by diameter (a compactness proxy)
+     - Edge count divided by the diameter in hops (a compactness proxy)
    * - ``Average clustering coefficient``
      - Mean local clustering coefficient of the nodes of degree 2 or more,
        ignoring weights; 0 when there is none
@@ -122,9 +126,9 @@ The data section is a two-column ``Measure / Score`` table (one metric per row):
    * - ``Average degree``
      - Mean degree over all nodes
    * - ``Average Closeness``
-     - Mean of the ``Closeness`` column of the local report
+     - Mean of the ``Closeness`` column of the local report (edge lengths)
    * - ``Average Eccentricity``
-     - Mean eccentricity over all nodes
+     - Mean eccentricity over all nodes, in hops
    * - ``Average Radiality``
      - Mean of the ``Radiality`` column of the local report
    * - ``Average Radiality Reach``

@@ -347,11 +347,17 @@ def main(args):
 		diam_u = finite_max(sps_u)
 		median_hops = g.median_global_shortest_path_length(sps=sps_u)
 		del sps_u
-		df =  pd.DataFrame({
+		# path-length descriptors count hops, so diameter, radius, eccentricity
+		# and pi share one unit; a weighted network also gets the diameter in
+		# edge lengths, the one radiality uses
+		hop_measures = {
 					# over the pairs that reach each other, as the median
 					"Average shortest path length" : g.average_path_length(directed=directed, unconn=True),
 					"Median shortest path length": median_hops,
-					"Diameter": diam_w,
+					"Diameter": float(diam_u)}
+		if lengths is not None:
+			hop_measures["Weighted diameter"] = diam_w
+		df =  pd.DataFrame({**hop_measures,
 					"Components": len(g.components()),
 					"Radius": float(g.radius()),
 					"Density": g.density(),

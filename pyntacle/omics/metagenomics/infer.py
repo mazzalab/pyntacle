@@ -78,9 +78,13 @@ def stars_glasso(X_df, n_subsample=50, beta=0.10, nlambda=30, lambda_min_ratio=0
     sel = [(i, j) for i, j in zip(*iu) if abs(prec[i, j]) > 1e-10]
     edges = pd.DataFrame({"source": [taxa[i] for i, _ in sel], "target": [taxa[j] for _, j in sel],
                           "r": [float(pcorr[i, j]) for i, j in sel]})
+    # StARS reads the path from the largest penalty down and stops at k_stars:
+    # fits at smaller penalties cannot move the choice to a denser network
     return {"edges": edges, "lambda_hat": float(lambda_path[k]), "lambda_stars": float(lambda_path[k_stars]),
             "b": b, "n_fits": n_subsample * nlambda, "n_failed_fits": int(failed.sum()),
             "n_fits_at_limit": int(at_limit.sum()), "final": info,
+            "n_fits_to_stars": n_subsample * (k_stars + 1),
+            "n_bad_fits_to_stars": int(failed[:k_stars + 1].sum() + at_limit[:k_stars + 1].sum()),
             "instability": pd.DataFrame({"lambda": lambda_path,
                                          "instability": [v if np.isfinite(v) else None for v in instability],
                                          "failed_fits": failed, "fits_at_limit": at_limit})}

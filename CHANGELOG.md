@@ -129,6 +129,7 @@ These letters exist in both versions with a different meaning:
 ### Reports and output
 
 - Every report is a TSV file. Next to it, unless `--no-plot` is given, there is a figure and, for `local`, `keyplayer`, `groupcentrality` and `percolation`, an interactive HTML report. These replace PyntacleInk.
+- `global` on a weighted network adds `Weighted diameter`, the diameter as a sum of edge lengths; `Diameter`, radius, eccentricity and the path lengths count hops, as in 1.3.2.
 - A brute-force search lists every tied optimal set (up to `--max-ties`) and reports how many there are.
 - Every output goes into `-o`, which is created if missing. Each written file is named on screen.
 - `set` and `extract` write networks in the input format.

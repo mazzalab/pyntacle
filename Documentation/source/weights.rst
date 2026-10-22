@@ -23,9 +23,8 @@ Three readings of one number
      - Measures that use it
      - A larger weight means
    * - **Length** (distance)
-     - shortest paths, closeness, betweenness, radiality, weighted diameter
-       and path-length descriptors (``global``), key-player dF and m-reach, group closeness and
-       group betweenness
+     - shortest paths, closeness, betweenness, radiality, the weighted diameter
+       (``global``), key-player dF and m-reach, group closeness and group betweenness
      - the two nodes are farther apart
    * - **Strength** (affinity)
      - clustering coefficient, eigenvector centrality, PageRank (``local``);
@@ -34,6 +33,11 @@ Three readings of one number
    * - **Threshold** (resistance)
      - ``percolation -w``: an edge transmits when P* exceeds its threshold
      - the edge transmits less easily
+
+The path-length descriptors of ``global`` (average and median shortest path
+length, diameter, radius, eccentricity, pi) count hops on every network, so
+they share one unit; on a weighted network ``global`` adds the diameter in
+edge lengths as ``Weighted diameter``.
 
 A strength is the inverse notion of a length: a strong tie is a short edge.
 Handing the same number to both kinds of measure inverts one of them, so the

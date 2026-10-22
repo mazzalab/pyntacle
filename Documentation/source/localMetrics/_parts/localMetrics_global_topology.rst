@@ -5,7 +5,8 @@ In the formulas graph is referred as *G*, the total edges as *E* and *N* for the
 Diameter
 ^^^^^^^^^^^^^^^^^^^^^^
 
-The diameter *d* of a graph is the maximum eccentricity of any vertex in the graph *G*. That is, *d* is the greatest distance between any pair of vertices or, alternatively,
+The diameter *d* of a graph is the maximum eccentricity of any vertex in the graph *G*, that is, the greatest distance between two vertices that reach each other.
+``Diameter`` counts hops; on a weighted network ``global`` also reports ``Weighted diameter``, with distances summed over edge lengths (the *D* of radiality).
 
 
 .. math::

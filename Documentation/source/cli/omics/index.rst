@@ -336,8 +336,8 @@ letters and digits replaced by ``_``):
    curve with the failed fits and the fits stopped at ``--max-iter`` at every
    penalty, prevalence grid, size factors), warnings, and package versions.
    Metagenomics also records, per group, the counts of failed and stopped
-   subsample fits and the solver, iterations and convergence of the network
-   fit.
+   subsample fits (over the whole path, and up to the selected penalty) and
+   the solver, iterations and convergence of the network fit.
 
 With ``--save-stages``, the intermediate matrices ``<prefix>_<g>_<stage>.tsv.gz``:
 ``log_norm`` and ``final`` (transcriptomics), ``clr`` (metagenomics).

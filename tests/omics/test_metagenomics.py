@@ -163,6 +163,8 @@ def test_stars_treats_a_penalty_without_any_fit_as_unstable(monkeypatch):
     table = out["instability"]
     assert out["lambda_hat"] >= 0.2 and table.loc[table["lambda"] < 0.2, "instability"].isna().all()
     assert out["n_failed_fits"] == 5 * int((table["lambda"] < 0.2).sum())
+    # the failures sit below the selected penalty: none counts towards the choice
+    assert out["n_bad_fits_to_stars"] == 0 and out["n_fits_to_stars"] == 5 * int((table["lambda"] >= out["lambda_stars"]).sum())
 
 
 def test_run_reports_convergence_and_warns_when_the_network_fit_stops_at_max_iter():
@@ -178,6 +180,7 @@ def test_run_reports_convergence_and_warns_when_the_network_fit_stops_at_max_ite
         assert values["final_fit_" + g]["value"] == "converged"
         assert values["stars_failed_fits_" + g]["value"] == 0
         assert "stars_fits_at_max_iter_" + g in values
+        assert values["stars_bad_fits_to_lambda_" + g]["value"] <= values["stars_fits_at_max_iter_" + g]["value"]
     assert values["max_iter"]["value"] == 200 and values["max_iter"]["kind"] == "default"
     assert not any("max-iter" in w for w in prov.warnings)
     prov = Provenance("metagenomics")
@@ -185,6 +188,7 @@ def test_run_reports_convergence_and_warns_when_the_network_fit_stops_at_max_ite
     values = {v["name"]: v for v in prov.values}
     assert values["final_fit_T"]["value"] == "not converged" and values["max_iter"]["kind"] == "user"
     assert any("network fit stopped at --max-iter" in w for w in prov.warnings)
+    assert any("at the selected penalty and the larger ones failed" in w for w in prov.warnings)
 
 
 def test_user_prevalence_leaving_more_taxa_than_samples_is_warned():

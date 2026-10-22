@@ -74,11 +74,14 @@ def run(X, labels, *, prov, meta=None, prevalence="auto", covariates=None,
         prov.record("network", "final_fit_" + g, "converged" if final["converged"] else "not converged",
                     "data-driven", "{}, {} iteration(s)".format(
                         "coordinate descent" if final["solver"] == "cd" else "LARS", final["n_iter"]))
-        bad = fit["n_failed_fits"] + fit["n_fits_at_limit"]
-        if bad > 0.1 * fit["n_fits"]:
-            prov.warn("group {}: {} of {} StARS subsample fits failed or stopped at --max-iter; the "
-                      "penalty rests on the others (fewer taxa, or a larger --max-iter, may help)".format(
-                          g, bad, fit["n_fits"]))
+        prov.record("network", "stars_bad_fits_to_lambda_" + g, fit["n_bad_fits_to_stars"], "data-driven",
+                    "of {} subsample fits at the StARS penalty and the larger ones: failed or stopped at "
+                    "--max-iter; fits at smaller penalties cannot make the network denser".format(
+                        fit["n_fits_to_stars"]))
+        if fit["n_bad_fits_to_stars"] > 0.1 * fit["n_fits_to_stars"]:
+            prov.warn("group {}: {} of {} StARS subsample fits at the selected penalty and the larger ones "
+                      "failed or stopped at --max-iter; the penalty rests on the others (fewer taxa, or a "
+                      "larger --max-iter, may help)".format(g, fit["n_bad_fits_to_stars"], fit["n_fits_to_stars"]))
         if not final["converged"]:
             prov.warn("group {}: the network fit stopped at --max-iter ({}) without converging; the "
                       "weights are the last estimate".format(g, max_iter))

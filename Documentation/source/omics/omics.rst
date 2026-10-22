@@ -198,9 +198,13 @@ tolerance: it is kept as the last estimate, not counted as failed. The report
 counts, for every group, the subsample fits that failed (both solvers; left
 out of the edge frequencies) and those that stopped at the limit (kept), and
 says for the network fit on all samples which solver produced it, after how
-many iterations and whether it converged; a warning follows when more than
-10% of the subsample fits failed or stopped at the limit, or when the network
-fit did not converge. If the network fit fails at the penalty chosen by
+many iterations and whether it converged. StARS reads the path from the
+largest penalty down and stops at the one it selects, so only the fits at that
+penalty and the larger ones bear on the choice; fits at smaller penalties can
+at most make the selected penalty larger and the network sparser. The report
+therefore also counts the failed and stopped fits up to the selected penalty,
+and a warning follows when they are more than 10% of the fits there, or when
+the network fit did not converge. If the network fit fails at the penalty chosen by
 StARS, the closest larger penalty of the path that fits is used, and the
 report gives both.
 

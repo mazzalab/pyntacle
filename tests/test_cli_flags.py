@@ -201,6 +201,25 @@ def test_global_reports_transitivity_as_global_clustering_coefficient(net, tmp_p
     assert "Weighted clustering coefficient" not in proc.stdout
 
 
+def test_global_diameter_counts_hops_and_weighted_diameter_sums_lengths(tmp_path):
+    # path a-b-c-d with lengths 10, 10, 1: 3 hops, 21 in edge lengths; the radius
+    # (2 hops) must be comparable with the diameter
+    net = tmp_path / "path.tsv"
+    net.write_text("N1\tN2\tWeight\na\tb\t10\nb\tc\t10\nc\td\t1\n")
+    proc = run("global", "-t", "edgelist", "-i", str(net), "-w", "--no-plot", "-o", str(tmp_path / "w"))
+    assert proc.returncode == 0, proc.stderr
+    report = (tmp_path / "w" / "report_path_global.tsv").read_text()
+    assert "Diameter\t3.0\n" in report
+    assert "Weighted diameter\t21.0\n" in report
+    assert "Radius\t2.0\n" in report
+    assert "pi\t1.0\n" in report
+    proc = run("global", "-t", "edgelist", "-i", str(net), "--no-plot", "-o", str(tmp_path / "u"))
+    assert proc.returncode == 0, proc.stderr
+    report = (tmp_path / "u" / "report_path_global.tsv").read_text()
+    assert "Diameter\t3.0\n" in report
+    assert "Weighted diameter" not in report
+
+
 def test_global_report_keeps_small_values(tmp_path):
     # 3 fixed decimals printed the density of a 3000-node ring, 2/2999, as 0.001
     net = tmp_path / "ring.tsv"
