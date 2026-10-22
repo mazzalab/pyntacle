@@ -6,7 +6,7 @@ estimator."""
 import numpy as np
 import pandas as pd
 
-GRID = np.round(np.arange(0.05, 0.51, 0.05), 2)
+GRID = np.round(np.arange(0.05, 0.96, 0.05), 2)
 
 
 def prevalence(df):

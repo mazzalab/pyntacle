@@ -414,6 +414,7 @@ def create_parser() -> argparse.ArgumentParser:
 	omics.add_argument('--prevalence', type=_prevalence, default='auto', help="-[metagenomics] Prevalence threshold in (0, 1], or 'auto' (default)")
 	omics.add_argument('--stars-beta', type=_stars_beta, default=0.10, help='-[metagenomics] StARS instability bound, in (0, 0.5) (default 0.10)')
 	omics.add_argument('--n-sub', type=_pos_int, default=50, help='-[metagenomics] StARS subsamples (default 50)')
+	omics.add_argument('--max-iter', type=_pos_int, default=200, help='-[metagenomics] Iteration limit of each graphical lasso fit; fits that reach it are counted in the report (default 200)')
 	omics._optionals.title = Fore.CYAN + Style.BRIGHT + "Arguments" + Style.RESET_ALL
 	omics._positionals.title = Fore.MAGENTA + Style.BRIGHT + "Subcommand" + Style.RESET_ALL
 

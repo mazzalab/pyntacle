@@ -145,12 +145,18 @@ Taxon panel
 
 A taxon is kept if it is present in at least a given fraction of the samples
 of **any** group, so that all groups share one panel and their networks can be
-compared. The automatic threshold is the lowest on a grid from 0.05 to 0.50
-in steps of 0.05 that leaves fewer taxa than there are samples in the
-smallest group, the limit beyond which a covariance-based estimator has more
-parameters than observations. When several taxonomic ranks are analysed,
-choose the threshold on one rank and pass it to the others with
-``--prevalence``.
+compared. The threshold is either given with ``--prevalence``, and then used
+as is, or chosen from the data (the default, ``--prevalence auto``): the
+lowest on a grid from 0.05 to 0.95 in steps of 0.05 that leaves at least two
+taxa and fewer taxa than there are samples in the smallest group, so that no
+group has more variables than observations. The report says which of the two
+applied and, for the automatic choice, lists the number of taxa at every
+threshold of the grid. A threshold given by hand is not checked against the
+sample size: when it leaves as many taxa as samples in the smallest group or
+more, the report warns, since the graphical lasso then tends to fail or stop
+before converging at small penalties (see `Network inference`_). When several
+taxonomic ranks are analysed, choose the threshold on one rank and pass it to
+the others with ``--prevalence``.
 
 Compositional transform
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -184,6 +190,19 @@ included. Pyntacle uses 0.10, the default of the huge package
 `Liu et al. 2010`_ and the SpiecEasi package use 0.05, which
 ``--stars-beta 0.05`` selects. Together, the transform and the estimator are the SPIEC-EASI
 method (`Kurtz et al. 2015`_). For a given seed the result is deterministic.
+
+Each fit runs coordinate descent; when it raises an error or returns
+non-finite values, the fit is repeated with LARS. A fit can also stop at the
+iteration limit (``--max-iter``, 200) without reaching the convergence
+tolerance: it is kept as the last estimate, not counted as failed. The report
+counts, for every group, the subsample fits that failed (both solvers; left
+out of the edge frequencies) and those that stopped at the limit (kept), and
+says for the network fit on all samples which solver produced it, after how
+many iterations and whether it converged; a warning follows when more than
+10% of the subsample fits failed or stopped at the limit, or when the network
+fit did not converge. If the network fit fails at the penalty chosen by
+StARS, the closest larger penalty of the path that fits is used, and the
+report gives both.
 
 Sparse profiles limit what the network can say. After zero replacement, the
 CLR coordinate of a taxon absent from a sample depends only on the sample's

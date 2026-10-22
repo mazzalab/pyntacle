@@ -10,11 +10,11 @@ from .provenance import Provenance
 
 # options whose explicit use is recorded as "user" rather than "default"
 _TX = ("gate_alpha", "gate_top", "gate_min_genes", "fdr", "n_perm", "seed")
-_MG = ("stars_beta", "n_sub", "seed")
+_MG = ("stars_beta", "n_sub", "max_iter", "seed")
 # options that belong to one pipeline only
 _ONLY = {"transcriptomics": ("input_scale", "tcga", "tcga_types", "biotype", "drop_sex_genes",
                              "gate_alpha", "gate_top", "gate_min_genes", "fdr", "n_perm"),
-         "metagenomics": ("rank", "prevalence", "stars_beta", "n_sub")}
+         "metagenomics": ("rank", "prevalence", "stars_beta", "n_sub", "max_iter")}
 _TABLE_EXT = (".tsv", ".csv", ".txt", ".tab")
 
 
@@ -151,7 +151,7 @@ def run_omics(args, argv=None):
         from . import metagenomics
         result = metagenomics.run(
             X, labels, prov=prov, meta=meta, prevalence=args.prevalence, covariates=covariates,
-            stars_beta=args.stars_beta, n_sub=args.n_sub, seed=0 if args.seed is None else args.seed,
+            stars_beta=args.stars_beta, n_sub=args.n_sub, max_iter=args.max_iter, seed=0 if args.seed is None else args.seed,
             user_set=frozenset(k for k in _MG if k in given))
 
     prefix = args.prefix or _prefix(args.inputFile)

@@ -255,6 +255,12 @@ Options
      - 50
      - metagenomics
      - StARS subsamples
+   * - ``--max-iter``
+     - No
+     - int
+     - 200
+     - metagenomics
+     - Iteration limit of each graphical lasso fit; the fits that reach it are counted in the report
 
 .. [1] Not with ``transcriptomics --tcga``, where the groups come from the barcodes.
 .. [2] Required when the table lists several ranks, as a merged MetaPhlAn table does.
@@ -293,11 +299,11 @@ labelled with where it came from:
      - Ledoit–Wolf analytical estimate
    * - Prevalence threshold
      - data-driven
-     - lowest threshold (0.05 to 0.50, step 0.05) leaving fewer taxa than samples in the smallest group
+     - lowest threshold (0.05 to 0.95, step 0.05) leaving fewer taxa than samples in the smallest group (``user`` with ``--prevalence``)
    * - Graphical lasso penalty
      - data-driven
-     - StARS, largest stable network under the instability bound
-   * - FDR, permutations, StARS bound, seeds
+     - StARS, largest stable network under the instability bound; the closest larger penalty if the network fit fails there
+   * - FDR, permutations, StARS bound, iteration limit, seeds
      - default
      - conventional values, overridable by flag
 
@@ -327,7 +333,11 @@ letters and digits replaced by ``_``):
 ``<prefix>_report.tsv`` and ``<prefix>_report.json``
    Every value used, with its kind (data-driven / default / user), the
    diagnostics behind the data-driven choices (gate table, StARS instability
-   curve, prevalence grid, size factors), warnings, and package versions.
+   curve with the failed fits and the fits stopped at ``--max-iter`` at every
+   penalty, prevalence grid, size factors), warnings, and package versions.
+   Metagenomics also records, per group, the counts of failed and stopped
+   subsample fits and the solver, iterations and convergence of the network
+   fit.
 
 With ``--save-stages``, the intermediate matrices ``<prefix>_<g>_<stage>.tsv.gz``:
 ``log_norm`` and ``final`` (transcriptomics), ``clr`` (metagenomics).
