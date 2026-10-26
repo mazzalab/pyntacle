@@ -8,7 +8,6 @@ from cython.cimports.libc.math cimport fabs, fmax
 from . cimport kp_metrics
 from . cimport group_metrics
 from . cimport utils
-from . cimport cython_igraph
 
 
 cdef double operation_selector(int operation, int[:, :] edges, double[:] wvec, int n, int* K_indices, int* notK_indices,  int k, int mdist, double* floWar, int dist_type, utils.CSR* csr, utils.Scratch* scratch, bint unweighted) noexcept nogil:
@@ -48,44 +47,53 @@ cdef double operation_selector(int operation, int[:, :] edges, double[:] wvec, i
     return result
 
 
-cdef double* build_all_dist(int[:, :] edges, double[:] wvec, int n, utils.CSR* csr, int op) except? NULL:
+cdef double* build_all_dist(int n, utils.CSR* csr, int op, bint unweighted, int num_threads) except? NULL:
     """All-pairs distances for the metrics that can hoist them out of the loop.
 
-    m-reach (op 3) is defined in hops, so it gets an unweighted BFS matrix; dR
-    and group closeness get the weighted one. Returns NULL when the operation
-    needs no matrix.
+    m-reach (op 3) is defined in hops, so it gets a BFS matrix; dR and group
+    closeness get the edge-length one (BFS too when every length is 1). One
+    row per source, the rows spread over num_threads threads. Returns NULL
+    when the operation needs no matrix.
     """
     cdef double* all_dist
     cdef utils.Scratch* tmp
     cdef int i
+    cdef bint hops = op == 3 or unweighted
+    # Heap cell rather than a plain int: a variable assigned inside a `parallel`
+    # block becomes thread-private, so the flag would never reach this scope.
+    cdef int* alloc_failed
 
     if op != 2 and op != 3 and op != 6:
         return NULL
 
     all_dist = <double*> malloc((<size_t> n) * n * sizeof(double))
-    if all_dist == NULL:
+    alloc_failed = <int*> malloc(sizeof(int))
+    if all_dist == NULL or alloc_failed == NULL:
+        free(all_dist)
+        free(alloc_failed)
         raise MemoryError(
             f"cannot allocate the {n}x{n} distance matrix "
             f"({(<size_t> n) * n * 8 / 1e9:.1f} GB)")
+    alloc_failed[0] = 0
 
-    if op == 3:
+    with nogil, parallel(num_threads=num_threads):
         tmp = utils.scratch_alloc(n)
         if tmp == NULL:
-            free(all_dist)
-            raise MemoryError("cannot allocate the traversal scratch buffers")
-        memset(tmp.in_K, 0, n * sizeof(char))
-        with nogil:
-            for i in range(n):
-                utils.csr_bfs_row(csr, i, tmp.in_K, all_dist + (<size_t> i) * n, tmp.stack)
+            alloc_failed[0] = 1
+        else:
+            memset(tmp.in_K, 0, n * sizeof(char))
+            for i in prange(n, schedule="dynamic"):
+                if hops:
+                    utils.csr_bfs_row(csr, i, tmp.in_K, all_dist + (<size_t> i) * n, tmp.stack)
+                else:
+                    utils.csr_dijkstra_row(csr, i, tmp.in_K, all_dist + (<size_t> i) * n, tmp.heap, tmp.heap_pos)
         utils.scratch_free(tmp)
-    else:
-        if cython_igraph.igraph_dijkstra(edges, wvec, n, all_dist) != 0:
-            free(all_dist)
-            raise RuntimeError(
-                "igraph refused to compute the shortest-path matrix. The most "
-                "common cause is a directed network: the compiled kernels only "
-                "support undirected graphs.")
 
+    if alloc_failed[0]:
+        free(all_dist)
+        free(alloc_failed)
+        raise MemoryError("a worker thread could not allocate its traversal scratch buffers")
+    free(alloc_failed)
     return all_dist
 
 
@@ -142,7 +150,7 @@ cpdef cython_greedy(int[:] K_indices, int[:] notK_indices, int[:, :] edges, doub
 
         # Distances that do not depend on the candidate set are computed once here
         # rather than per candidate.
-        all_dist = build_all_dist(edges, wvec, n, csr, op)
+        all_dist = build_all_dist(n, csr, op, unweighted, num_threads)
 
         optimization_score = operation_selector(operation,
                                                 edges, wvec, n,
@@ -235,52 +243,50 @@ cpdef cython_greedy(int[:] K_indices, int[:] notK_indices, int[:, :] edges, doub
     return K_indices, optimization_score
 
 
-cpdef cython_info(int[:] K_indices, int[:] notK_indices, int[:, :] edges, double[:] wvec, int n, int operation, int mdist, int dist_type, int num_threads, bint unweighted=False):
+cdef class SetScorer:
+    """Scores node sets of one network with one metric.
 
-    cdef int op = operation
-    cdef int k = K_indices.shape[0]
-    cdef int n_k = notK_indices.shape[0]
+    The CSR view and the all-pairs distances do not depend on the set, so they
+    are built once here (the distances over num_threads threads) and every
+    score() reuses them. Scoring itself is one set at a time, on one thread.
+    """
+    cdef utils.CSR* csr
+    cdef utils.Scratch* scratch
+    cdef double* all_dist
+    cdef int[:, :] edges
+    cdef double[:] wvec
+    cdef int n, op, mdist, dist_type
+    cdef bint unweighted
 
-    cdef double optimization_score
+    def __cinit__(self, int[:, :] edges, double[:] wvec, int n, int operation, int mdist, int dist_type, int num_threads, bint unweighted=False):
+        self.edges = edges
+        self.wvec = wvec
+        self.n = n
+        self.op = operation
+        self.mdist = mdist
+        self.dist_type = dist_type
+        self.unweighted = unweighted
 
-    cdef double* all_dist = NULL
-    cdef int* k_tmp = NULL
-    cdef int* notk_tmp = NULL
-    cdef utils.Scratch* scratch = NULL
-    cdef utils.CSR* csr = NULL
-
-    csr = utils.csr_from_edges(edges, wvec, n)
-    if csr == NULL:
-        raise MemoryError("cannot build the CSR view of the network")
-
-    try:
-        k_tmp = <int*> malloc(k * sizeof(int))
-        notk_tmp = <int*> malloc(n_k * sizeof(int))
-        scratch = utils.scratch_alloc(n)
-        if k_tmp == NULL or notk_tmp == NULL or scratch == NULL:
+        self.csr = utils.csr_from_edges(edges, wvec, n)
+        if self.csr == NULL:
+            raise MemoryError("cannot build the CSR view of the network")
+        self.scratch = utils.scratch_alloc(n)
+        if self.scratch == NULL:
             raise MemoryError("cannot allocate the working buffers")
+        self.all_dist = build_all_dist(n, self.csr, operation, unweighted, num_threads)
 
-        memcpy(k_tmp, &K_indices[0], k * sizeof(int))
-        memcpy(notk_tmp, &notK_indices[0], n_k * sizeof(int))
+    def __dealloc__(self):
+        free(self.all_dist)
+        utils.scratch_free(self.scratch)
+        utils.csr_free(self.csr)
 
-        all_dist = build_all_dist(edges, wvec, n, csr, op)
-
-        optimization_score = operation_selector(operation,
-                                                edges, wvec, n,
-                                                k_tmp,
-                                                notk_tmp,
-                                                k, mdist,
-                                                all_dist,
-                                                dist_type,
-                                                csr, scratch, unweighted)
-    finally:
-        free(k_tmp)
-        free(notk_tmp)
-        free(all_dist)
-        utils.scratch_free(scratch)
-        utils.csr_free(csr)
-
-    return optimization_score
+    def score(self, int[:] K_indices, int[:] notK_indices):
+        """Score of the set K_indices; notK_indices holds every other vertex."""
+        return operation_selector(self.op, self.edges, self.wvec, self.n,
+                                  &K_indices[0], &notK_indices[0],
+                                  K_indices.shape[0], self.mdist,
+                                  self.all_dist, self.dist_type,
+                                  self.csr, self.scratch, self.unweighted)
 
 
 cpdef cython_bruteforce(int[:, :] edges, double[:] wvec, int n, int[:] K_indices, int operation, int mdist, int dist_type, long long comb_num, int num_threads, bint unweighted=False, int max_ties=100):
@@ -351,7 +357,7 @@ cpdef cython_bruteforce(int[:, :] edges, double[:] wvec, int n, int[:] K_indices
             tie_count[i] = 0
             tie_total[i] = 0
 
-        all_dist = build_all_dist(edges, wvec, n, csr, op)
+        all_dist = build_all_dist(n, csr, op, unweighted, num_threads)
 
         with nogil, parallel(num_threads=num_threads):
 

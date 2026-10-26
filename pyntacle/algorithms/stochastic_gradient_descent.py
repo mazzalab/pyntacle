@@ -37,11 +37,15 @@ def operation_selector(grafo,operation,node_names,distance_type="min",mdist=None
 
 
 
-def call_stochastic_gradient_descent(grafo,k_size,operation,distance_type="min",mdist=None,probability=0,tolerance=0.01,maxsec=120,seed=None,scorer=None):
+def call_stochastic_gradient_descent(grafo,k_size,operation,distance_type="min",mdist=None,probability=0,tolerance=0,maxsec=120,seed=None,scorer=None):
 	"""Gradient descent over node sets of size k_size.
 
-	`scorer(node_names, operation)` scores a set; without it the pure-Python
-	metrics are used.
+	Random single-node swaps of the current set: a swap is taken when it raises
+	the score by more than `tolerance`, or, with `probability`, when it lowers
+	it. The search stops at a local optimum (every swap of the current set
+	tried without a move) or after `maxsec` seconds, and returns the best set
+	met. `scorer(node_names, operation)` scores a set; without it the
+	pure-Python metrics are used.
 	"""
 	if scorer is None:
 		scorer = lambda names, oper: operation_selector(grafo, oper, names, distance_type, mdist)
@@ -62,69 +66,48 @@ def call_stochastic_gradient_descent(grafo,k_size,operation,distance_type="min",
 	sorted_df=selected.sort_values(by="indices")
 
 	S_names = list(sorted_df["name"])
-	S_indices = list(sorted_df["indices"])
 
 	# in node order, not set order: the walk then depends on the seed alone
 	notS = [x for x in node_names if x not in S_names]
 
-	# optimization loop
-
 	optimization_score=scorer(S_names,operation)
-	nodeSet_score_history = {tuple(S_names): optimization_score}
-	nodeSet_score = {tuple(S_names): optimization_score}
-	optimal_set_found = False
+	nodeSet_score_history = {tuple(sorted(S_names)): optimization_score}
+	best_names, best_score = S_names, optimization_score
 	# swaps of the current set tried without a move; all of them tried means a local optimum
 	tried = set()
 	n_swaps = len(S_names) * len(notS)
 
-	while not optimal_set_found:
+	while time.time() - start_time < maxsec and len(tried) < n_swaps:
 		si=random.choice(S_names)
 		notsi=random.choice(notS)
-		
+
 		temp_node_set = S_names.copy()
 		temp_node_set.remove(si)
 		temp_node_set.append(notsi)
 		temp_node_set.sort()
 		temp_node_set_tuple = tuple(temp_node_set)
 
-
-		# Evaluate the score of the current set S, if not already computed
 		if temp_node_set_tuple in nodeSet_score_history:
 			curr_score = nodeSet_score_history[temp_node_set_tuple]
 		else:
 			curr_score = scorer(temp_node_set,operation)
 			nodeSet_score_history[temp_node_set_tuple] = curr_score
 
-		if time.time() - start_time >= maxsec:
-			optimal_set_found = True
-		elif curr_score > optimization_score and (curr_score - optimization_score) <= tolerance:
-			optimal_set_found = True
-			nodeSet_score.clear()
-			nodeSet_score[temp_node_set_tuple] = curr_score
-			optimization_score = curr_score
-		elif curr_score > optimization_score or ((curr_score < optimization_score and random.uniform(0, 1) < probability)):
+		if curr_score > optimization_score + tolerance or (curr_score < optimization_score and random.uniform(0, 1) < probability):
 			S_names = temp_node_set
 			notS = [x for x in node_names if x not in S_names]
-			nodeSet_score.clear()
-			nodeSet_score[temp_node_set_tuple] = curr_score
 			optimization_score = curr_score
 			tried.clear()
+			if optimization_score > best_score:
+				best_names, best_score = S_names, optimization_score
 		else:
-			if curr_score == optimization_score:
-				nodeSet_score[temp_node_set_tuple] = curr_score
 			tried.add(temp_node_set_tuple)
-			if len(tried) >= n_swaps:
-				optimal_set_found = True
 
-	# a flat list of node names, as call_greedy returns
-	best = max(nodeSet_score, key=nodeSet_score.get)
-	S_names = list(best)
-
-	return S_names, optimization_score
+	return list(best_names), best_score
 
 
 
-def call_all_sgd(grafo,k_size,operation,distance_type="min",mdist=None,probability=0,tolerance=0.01,maxsec=120,function=None,seed=None,scorer=None):
+def call_all_sgd(grafo,k_size,operation,distance_type="min",mdist=None,probability=0,tolerance=0,maxsec=120,function=None,seed=None,scorer=None):
 
     results=[]
     if function=="groupcentrality":

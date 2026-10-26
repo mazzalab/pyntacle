@@ -30,6 +30,9 @@ Values reported for the same network can differ from 1.3.2 in these cases. On un
 +---------------------------------------------------------------+------------------------------------------------------------------+------------------------------------------------------------------+
 | Average shortest path length, network with several components | a pair that cannot reach each other counted as if at distance N  | average over the pairs that reach each other                     |
 +---------------------------------------------------------------+------------------------------------------------------------------+------------------------------------------------------------------+
+| Gradient-descent search (``-a gradient_descent``; 1.3.2 ``-I  | stopped after the first swap it tried, whatever ``-T``: the      | stops at a local optimum (no swap raises the score by more than  |
+| sgd``)                                                        | reported set was the random start or one swap away from it       | ``-tol``) or after ``-ms`` seconds, and reports the best set met |
++---------------------------------------------------------------+------------------------------------------------------------------+------------------------------------------------------------------+
 | Global clustering coefficient                                 | reported as "Weighted clustering coefficient", although it never | renamed; 0 instead of NaN when the network has no triples        |
 |                                                               | used weights                                                     |                                                                  |
 +---------------------------------------------------------------+------------------------------------------------------------------+------------------------------------------------------------------+
@@ -129,6 +132,7 @@ Defaults that changed
 
 -  ``kp-finder`` and ``gc-finder`` default to ``brute_force`` (1.3.2: ``greedy``). Brute force is exact but scores every set of size k; pass ``-a greedy`` on large networks.
 -  ``-m`` defaults to 2 (1.3.2 required it for m-reach).
+-  ``-tol``, ``--tolerance`` (gradient descent) is the gain a swap must exceed to be taken, default 0 (1.3.2 ``-T``: the stop threshold, default 0.00001).
 
 Edge weights
 ~~~~~~~~~~~~
@@ -168,6 +172,7 @@ Performance
    with N².
 -  All-pairs distances for ``local`` and ``global`` are built in blocks, using breadth-first search when every weight is 1.
 -  Group betweenness counts shortest paths instead of listing them.
+-  The gradient descent computes the distances of dR, m-reach and closeness once per search instead of once per scored set. The distance matrices of the searches are built over ``-np`` threads.
 
 Installation
 ~~~~~~~~~~~~

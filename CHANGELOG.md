@@ -20,6 +20,7 @@ unweighted networks, the other metrics match 1.3.2 up to rounding.
 | Radiality, network with several components | a node it cannot reach counted as if at distance 0, so an isolated node scored highest | only the nodes it reaches count, so an isolated node scores 0; same values on a connected network |
 | Closeness of an isolated node | NaN | 0 (also in Average Closeness) |
 | Average shortest path length, network with several components | a pair that cannot reach each other counted as if at distance N | average over the pairs that reach each other |
+| Gradient-descent search (`-a gradient_descent`; 1.3.2 `-I sgd`) | stopped after the first swap it tried, whatever `-T`: the reported set was the random start or one swap away from it | stops at a local optimum (no swap raises the score by more than `-tol`) or after `-ms` seconds, and reports the best set met |
 | Global clustering coefficient | reported as "Weighted clustering coefficient", although it never used weights | renamed; 0 instead of NaN when the network has no triples |
 | Average clustering coefficient | NaN when no node has degree 2 or more | 0 in that case; otherwise unchanged |
 | Report precision | 5 decimals | 3 decimals; values below 0.1 keep 3 significant digits |
@@ -106,6 +107,7 @@ These letters exist in both versions with a different meaning:
 
 - `kp-finder` and `gc-finder` default to `brute_force` (1.3.2: `greedy`). Brute force is exact but scores every set of size k; pass `-a greedy` on large networks.
 - `-m` defaults to 2 (1.3.2 required it for m-reach).
+- `-tol`, `--tolerance` (gradient descent) is the gain a swap must exceed to be taken, default 0 (1.3.2 `-T`: the stop threshold, default 0.00001).
 
 ### Edge weights
 
@@ -139,6 +141,7 @@ These letters exist in both versions with a different meaning:
 - Key-player and group-centrality searches run in compiled Cython kernels with OpenMP threads (`-np`). The kernels read the network as an edge list, so memory grows with the number of edges, not with N².
 - All-pairs distances for `local` and `global` are built in blocks, using breadth-first search when every weight is 1.
 - Group betweenness counts shortest paths instead of listing them.
+- The gradient descent computes the distances of dR, m-reach and closeness once per search instead of once per scored set. The distance matrices of the searches are built over `-np` threads.
 
 ### Installation
 

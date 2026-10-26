@@ -36,11 +36,14 @@ Search algorithms
   is a local optimum; ``--seed`` fixes the starting set.
 
 ``gradient_descent``
-  Starts from a random set and tries random swaps, moving to any that raises
-  the score (and, with ``-p``, to one that lowers it with that probability).
-  It stops at the first swap that raises the score by no more than ``-tol``,
-  when every swap of the current set has been tried without a move, or after
-  ``-ms`` seconds. Sets are scored by the engine chosen with ``--engine``.
+  Starts from a random set and tries random swaps one at a time, moving to
+  any that raises the score by more than ``-tol`` (and, with ``-p``, to one
+  that lowers it with that probability). It stops when every swap of the
+  current set has been tried without a move (a local optimum) or after
+  ``-ms`` seconds, and reports the best set met. Sets are scored by the
+  engine chosen with ``--engine``; the compiled one computes the distances
+  of dR, m-reach and closeness once per search. Unlike ``greedy``, it scores
+  one set at a time, so ``-np`` only speeds up that distance computation.
 
 Synopsis
 --------
@@ -160,21 +163,21 @@ Options
    * - ``-tol``, ``--tolerance``
      - No
      - float
-     - 0.01
+     - 0
      - \ 
-     - gradient_descent only: the search stops at the first swap that raises the score by no more than this (default=0.01)
+     - gradient_descent only: a swap is taken only when it raises the score by more than this (default=0)
    * - ``-ms``, ``--maxsec``
      - No
      - int
      - 120
      - \ 
-     - gradient_descent only: time limit of each search, in seconds (default=120)
+     - gradient_descent only: time limit of each search, in seconds; the search otherwise stops at a local optimum (default=120)
    * - ``-np``, ``--nprocs``
      - No
      - int
      - 1
      - \ 
-     - Threads of the compiled kernels (default=1)
+     - Threads of the compiled kernels: greedy and brute force score candidate sets in parallel; every algorithm computes the distance matrix of dR, m-reach and closeness in parallel (default=1)
    * - ``--max-ties``
      - No
      - int

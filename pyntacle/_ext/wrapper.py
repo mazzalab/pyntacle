@@ -1,4 +1,4 @@
-from .cython_metrics import cython_greedy, cython_info, cython_bruteforce
+from .cython_metrics import cython_greedy, cython_bruteforce, SetScorer
 from .cython_igraph import init_igraph_error_handler
 
 import numpy as np
@@ -142,26 +142,33 @@ def cython_wrapper_greedy(graph, k_size, oper, distance_type='min', mdist=1, n_t
 
     return found_k, _finalize(found_score, oper, found_k)
 
+class KernelScorer:
+    """Scores node sets of one network with one metric.
+
+    The compiled view of the network and its all-pairs distances are built once,
+    with n_threads threads, and reused by every call, so a search that scores
+    many sets (the gradient descent) pays for them once. Names not in the
+    network are ignored.
+    """
+
+    def __init__(self, graph, oper, distance_type, mdist, n_threads):
+        _check_undirected(graph)
+        self.oper = oper
+        self._index = dict(zip(graph.vs()["name"], graph.iNodes))
+        edges, w, self._n, unweighted = _edges(graph)
+        self._kernel = SetScorer(edges, w, self._n, select_operation(oper), mdist,
+                                 select_distance_type(distance_type), n_threads, unweighted)
+
+    def __call__(self, nodes):
+        in_set = np.zeros(self._n, dtype=bool)
+        in_set[[self._index[x] for x in nodes if x in self._index]] = True
+        K_indices = np.flatnonzero(in_set).astype(np.int32)
+        notK_indices = np.flatnonzero(~in_set).astype(np.int32)
+        return _finalize(self._kernel.score(K_indices, notK_indices), self.oper, nodes)
+
+
 def cython_wrapper_info(graph, nodes, oper, distance_type, mdist, n_threads):
-
-    _check_undirected(graph)
-
-    node_names = graph.vs()["name"]
-    node_indices =  graph.iNodes
-    df_tmp = pd.DataFrame({"name":node_names, "indices":node_indices}).sort_values(by="indices")
-
-    K_indices = df_tmp[df_tmp["name"].isin(nodes)]['indices'].to_numpy().astype(np.int32)
-
-    notK_indices = df_tmp[~df_tmp["name"].isin(nodes)]['indices'].to_numpy().astype(np.int32)
-
-    edges, w, n, unweighted = _edges(graph)
-
-    oper_idx = select_operation(oper)
-    dist_idx = select_distance_type(distance_type)
-
-    found_score = cython_info(K_indices, notK_indices, edges, w, n, oper_idx, mdist, dist_idx, n_threads, unweighted)
-
-    return _finalize(found_score, oper, nodes)
+    return KernelScorer(graph, oper, distance_type, mdist, n_threads)(nodes)
 
 def cython_wrapper_bruteforce(graph, k_size, oper, distance_type='min', mdist=1, n_threads=1,
                               max_ties=DEFAULT_MAX_TIES):

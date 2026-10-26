@@ -16,7 +16,7 @@ if __package__ in (None, ""):
 	# run as a script (python pyntacle/main.py): make the package importable
 	sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from pyntacle._ext.wrapper import (cython_wrapper_greedy, cython_wrapper_info,
+from pyntacle._ext.wrapper import (cython_wrapper_greedy, cython_wrapper_info, KernelScorer,
                                    cython_wrapper_bruteforce, CYTHON_UNSUPPORTED_DIRECTED,
                                    DEFAULT_MAX_TIES)
 
@@ -99,12 +99,19 @@ def found_sets(df, set_column, operation):
 def kernel_scorer(g, distance_type, mdist, n_threads):
 	"""Score a node set with the compiled kernels, for the gradient descent.
 
-	The search meets many sets that reach nobody; their warnings are dropped.
+	One KernelScorer per operation, so the distances are computed once per
+	search; only the current one is kept, so "all" holds one distance matrix
+	at a time. The search meets many sets that reach nobody; their warnings
+	are dropped.
 	"""
+	current = {}
 	def score(names, oper):
+		if oper not in current:
+			current.clear()
+			current[oper] = KernelScorer(g, oper, distance_type, mdist, n_threads)
 		with warnings.catch_warnings():
 			warnings.simplefilter("ignore", RuntimeWarning)
-			return cython_wrapper_info(g, names, oper, distance_type=distance_type, mdist=mdist, n_threads=n_threads)
+			return current[oper](names)
 	return score
 
 
@@ -788,7 +795,7 @@ def main(args):
 			"Recovery_time": results["recovery_time"],
 		})
 
-		# optional snapshot of node states (--snapshot-infected / --snapshot-node)
+		# optional snapshot of node states (--snapshotInfected / --snapshotNode)
 		if results["snapshot_state"] is not None:
 			snap_t = results["snapshot_time"]
 			state_names = {0: "susceptible", 1: "infected", 2: "recovered"}

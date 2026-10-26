@@ -3,7 +3,9 @@
 /* BEGIN: Cython Metadata
 {
     "distutils": {
-        "depends": [],
+        "depends": [
+            "/home/manu/miniconda3/envs/graphtacle_debug/include/igraph/igraph.h"
+        ],
         "extra_compile_args": [
             "-fopenmp"
         ],
@@ -11,17 +13,17 @@
             "-fopenmp"
         ],
         "include_dirs": [
-            "/home/manu/miniconda3/include"
+            "/home/manu/miniconda3/envs/graphtacle_debug/include"
         ],
         "libraries": [
             "igraph"
         ],
         "library_dirs": [
-            "/home/manu/miniconda3/lib"
+            "/home/manu/miniconda3/envs/graphtacle_debug/lib"
         ],
         "name": "pyntacle._ext.cython_igraph",
         "runtime_library_dirs": [
-            "/home/manu/miniconda3/lib"
+            "/home/manu/miniconda3/envs/graphtacle_debug/lib"
         ],
         "sources": [
             "pyntacle/_ext/cython_igraph.pyx"
@@ -2865,7 +2867,6 @@ static PyObject *indirect_contiguous = 0;
 static int __pyx_memoryview_thread_locks_used;
 static PyThread_type_lock __pyx_memoryview_thread_locks[8];
 static PyObject *__pyx_f_8pyntacle_4_ext_13cython_igraph_init_igraph_error_handler(int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_8pyntacle_4_ext_13cython_igraph_build_igraph_from_edges(igraph_t *, igraph_vector_t *, __Pyx_memviewslice, __Pyx_memviewslice, int); /*proto*/
 static int __pyx_array_allocate_buffer(struct __pyx_array_obj *); /*proto*/
 static struct __pyx_array_obj *__pyx_array_new(PyObject *, Py_ssize_t, char *, char const *, char *); /*proto*/
 static PyObject *__pyx_memoryview_new(PyObject *, int, int, __Pyx_TypeInfo const *); /*proto*/
@@ -2917,7 +2918,6 @@ static const char __pyx_k_c[] = "c";
 static const char __pyx_k_name[] = "name";
 static const char __pyx_k_fortran[] = "fortran";
 static const char __pyx_k_Failed_to_compute_connected_comp[] = "Failed to compute connected components!";
-static const char __pyx_k_Failed_to_compute_distances_usin[] = "Failed to compute distances using Dijkstra's algorithm!";
 static const char __pyx_k_Failed_to_create_weighted_adjace[] = "Failed to create weighted adjacency matrix!";
 static const char __pyx_k_Failed_to_initialize_csize_vecto[] = "Failed to initialize csize vector!";
 static const char __pyx_k_Failed_to_initialize_igraph_matr[] = "Failed to initialize igraph_matrix_t: %d !";
@@ -3159,7 +3159,7 @@ static __pyx_mstatetype * const __pyx_mstate_global = &__pyx_mstate_global_stati
 #define __pyx_n_u_update __pyx_string_tab[111]
 #define __pyx_n_u_values __pyx_string_tab[112]
 #define __pyx_n_u_x __pyx_string_tab[113]
-#define __pyx_kp_b_int___Pyx_memviewslice___Pyx_mem __pyx_string_tab[114]
+#define __pyx_kp_b_int___Pyx_memviewslice_long_int __pyx_string_tab[114]
 #define __pyx_kp_b_iso88591_AQ __pyx_string_tab[115]
 #define __pyx_n_b_O __pyx_string_tab[116]
 #define __pyx_int_0 __pyx_number_tab[0]
@@ -16592,486 +16592,6 @@ static PyObject *__pyx_pf_8pyntacle_4_ext_13cython_igraph_init_igraph_error_hand
 /* "pyntacle/_ext/cython_igraph.pyx":78
  * 
  * 
- * cdef int build_igraph_from_edges(igraph_t* graph, igraph_vector_t* weights,             # <<<<<<<<<<<<<<
- *                                  int[:, :] edges, double[:] w, int n) noexcept nogil:
- *     """Build an undirected weighted igraph graph from an edge list, in O(E) memory.
-*/
-
-static int __pyx_f_8pyntacle_4_ext_13cython_igraph_build_igraph_from_edges(igraph_t *__pyx_v_graph, igraph_vector_t *__pyx_v_weights, __Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_w, int __pyx_v_n) {
-  int __pyx_v_e;
-  int __pyx_v_m;
-  igraph_vector_int_t __pyx_v_edge_vec;
-  int __pyx_r;
-  int __pyx_t_1;
-  int __pyx_t_2;
-  Py_ssize_t __pyx_t_3;
-  Py_ssize_t __pyx_t_4;
-
-  /* "pyntacle/_ext/cython_igraph.pyx":89
- *     """
- *     cdef int e
- *     cdef int m = edges.shape[0]             # <<<<<<<<<<<<<<
- *     cdef igraph_vector_int_t edge_vec
- * 
-*/
-  __pyx_v_m = (__pyx_v_edges.shape[0]);
-
-  /* "pyntacle/_ext/cython_igraph.pyx":92
- *     cdef igraph_vector_int_t edge_vec
- * 
- *     if igraph_vector_int_init(&edge_vec, 2 * m) != 0:             # <<<<<<<<<<<<<<
- *         return 1
- * 
-*/
-  __pyx_t_1 = (igraph_vector_int_init((&__pyx_v_edge_vec), (2 * __pyx_v_m)) != 0);
-  if (__pyx_t_1) {
-
-    /* "pyntacle/_ext/cython_igraph.pyx":93
- * 
- *     if igraph_vector_int_init(&edge_vec, 2 * m) != 0:
- *         return 1             # <<<<<<<<<<<<<<
- * 
- *     for e from 0 <= e < m:
-*/
-    __pyx_r = 1;
-    goto __pyx_L0;
-
-    /* "pyntacle/_ext/cython_igraph.pyx":92
- *     cdef igraph_vector_int_t edge_vec
- * 
- *     if igraph_vector_int_init(&edge_vec, 2 * m) != 0:             # <<<<<<<<<<<<<<
- *         return 1
- * 
-*/
-  }
-
-  /* "pyntacle/_ext/cython_igraph.pyx":95
- *         return 1
- * 
- *     for e from 0 <= e < m:             # <<<<<<<<<<<<<<
- *         igraph_vector_int_set(&edge_vec, 2 * e, edges[e, 0])
- *         igraph_vector_int_set(&edge_vec, 2 * e + 1, edges[e, 1])
-*/
-  __pyx_t_2 = __pyx_v_m;
-  for (__pyx_v_e = 0; __pyx_v_e < __pyx_t_2; __pyx_v_e++) {
-
-    /* "pyntacle/_ext/cython_igraph.pyx":96
- * 
- *     for e from 0 <= e < m:
- *         igraph_vector_int_set(&edge_vec, 2 * e, edges[e, 0])             # <<<<<<<<<<<<<<
- *         igraph_vector_int_set(&edge_vec, 2 * e + 1, edges[e, 1])
- * 
-*/
-    __pyx_t_3 = __pyx_v_e;
-    __pyx_t_4 = 0;
-    igraph_vector_int_set((&__pyx_v_edge_vec), (2 * __pyx_v_e), (*((int *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_edges.data + __pyx_t_3 * __pyx_v_edges.strides[0]) ) + __pyx_t_4 * __pyx_v_edges.strides[1]) ))));
-
-    /* "pyntacle/_ext/cython_igraph.pyx":97
- *     for e from 0 <= e < m:
- *         igraph_vector_int_set(&edge_vec, 2 * e, edges[e, 0])
- *         igraph_vector_int_set(&edge_vec, 2 * e + 1, edges[e, 1])             # <<<<<<<<<<<<<<
- * 
- *     if igraph_empty(graph, n, False) != 0:
-*/
-    __pyx_t_4 = __pyx_v_e;
-    __pyx_t_3 = 1;
-    igraph_vector_int_set((&__pyx_v_edge_vec), ((2 * __pyx_v_e) + 1), (*((int *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_edges.data + __pyx_t_4 * __pyx_v_edges.strides[0]) ) + __pyx_t_3 * __pyx_v_edges.strides[1]) ))));
-  }
-
-  /* "pyntacle/_ext/cython_igraph.pyx":99
- *         igraph_vector_int_set(&edge_vec, 2 * e + 1, edges[e, 1])
- * 
- *     if igraph_empty(graph, n, False) != 0:             # <<<<<<<<<<<<<<
- *         igraph_vector_int_destroy(&edge_vec)
- *         return 1
-*/
-  __pyx_t_1 = (igraph_empty(__pyx_v_graph, __pyx_v_n, 0) != 0);
-  if (__pyx_t_1) {
-
-    /* "pyntacle/_ext/cython_igraph.pyx":100
- * 
- *     if igraph_empty(graph, n, False) != 0:
- *         igraph_vector_int_destroy(&edge_vec)             # <<<<<<<<<<<<<<
- *         return 1
- * 
-*/
-    igraph_vector_int_destroy((&__pyx_v_edge_vec));
-
-    /* "pyntacle/_ext/cython_igraph.pyx":101
- *     if igraph_empty(graph, n, False) != 0:
- *         igraph_vector_int_destroy(&edge_vec)
- *         return 1             # <<<<<<<<<<<<<<
- * 
- *     if igraph_add_edges(graph, &edge_vec, NULL) != 0:
-*/
-    __pyx_r = 1;
-    goto __pyx_L0;
-
-    /* "pyntacle/_ext/cython_igraph.pyx":99
- *         igraph_vector_int_set(&edge_vec, 2 * e + 1, edges[e, 1])
- * 
- *     if igraph_empty(graph, n, False) != 0:             # <<<<<<<<<<<<<<
- *         igraph_vector_int_destroy(&edge_vec)
- *         return 1
-*/
-  }
-
-  /* "pyntacle/_ext/cython_igraph.pyx":103
- *         return 1
- * 
- *     if igraph_add_edges(graph, &edge_vec, NULL) != 0:             # <<<<<<<<<<<<<<
- *         igraph_vector_int_destroy(&edge_vec)
- *         igraph_destroy(graph)
-*/
-  __pyx_t_1 = (igraph_add_edges(__pyx_v_graph, (&__pyx_v_edge_vec), NULL) != 0);
-  if (__pyx_t_1) {
-
-    /* "pyntacle/_ext/cython_igraph.pyx":104
- * 
- *     if igraph_add_edges(graph, &edge_vec, NULL) != 0:
- *         igraph_vector_int_destroy(&edge_vec)             # <<<<<<<<<<<<<<
- *         igraph_destroy(graph)
- *         return 1
-*/
-    igraph_vector_int_destroy((&__pyx_v_edge_vec));
-
-    /* "pyntacle/_ext/cython_igraph.pyx":105
- *     if igraph_add_edges(graph, &edge_vec, NULL) != 0:
- *         igraph_vector_int_destroy(&edge_vec)
- *         igraph_destroy(graph)             # <<<<<<<<<<<<<<
- *         return 1
- * 
-*/
-    igraph_destroy(__pyx_v_graph);
-
-    /* "pyntacle/_ext/cython_igraph.pyx":106
- *         igraph_vector_int_destroy(&edge_vec)
- *         igraph_destroy(graph)
- *         return 1             # <<<<<<<<<<<<<<
- * 
- *     igraph_vector_int_destroy(&edge_vec)
-*/
-    __pyx_r = 1;
-    goto __pyx_L0;
-
-    /* "pyntacle/_ext/cython_igraph.pyx":103
- *         return 1
- * 
- *     if igraph_add_edges(graph, &edge_vec, NULL) != 0:             # <<<<<<<<<<<<<<
- *         igraph_vector_int_destroy(&edge_vec)
- *         igraph_destroy(graph)
-*/
-  }
-
-  /* "pyntacle/_ext/cython_igraph.pyx":108
- *         return 1
- * 
- *     igraph_vector_int_destroy(&edge_vec)             # <<<<<<<<<<<<<<
- * 
- *     if igraph_vector_init(weights, m) != 0:
-*/
-  igraph_vector_int_destroy((&__pyx_v_edge_vec));
-
-  /* "pyntacle/_ext/cython_igraph.pyx":110
- *     igraph_vector_int_destroy(&edge_vec)
- * 
- *     if igraph_vector_init(weights, m) != 0:             # <<<<<<<<<<<<<<
- *         igraph_destroy(graph)
- *         return 1
-*/
-  __pyx_t_1 = (igraph_vector_init(__pyx_v_weights, __pyx_v_m) != 0);
-  if (__pyx_t_1) {
-
-    /* "pyntacle/_ext/cython_igraph.pyx":111
- * 
- *     if igraph_vector_init(weights, m) != 0:
- *         igraph_destroy(graph)             # <<<<<<<<<<<<<<
- *         return 1
- * 
-*/
-    igraph_destroy(__pyx_v_graph);
-
-    /* "pyntacle/_ext/cython_igraph.pyx":112
- *     if igraph_vector_init(weights, m) != 0:
- *         igraph_destroy(graph)
- *         return 1             # <<<<<<<<<<<<<<
- * 
- *     for e from 0 <= e < m:
-*/
-    __pyx_r = 1;
-    goto __pyx_L0;
-
-    /* "pyntacle/_ext/cython_igraph.pyx":110
- *     igraph_vector_int_destroy(&edge_vec)
- * 
- *     if igraph_vector_init(weights, m) != 0:             # <<<<<<<<<<<<<<
- *         igraph_destroy(graph)
- *         return 1
-*/
-  }
-
-  /* "pyntacle/_ext/cython_igraph.pyx":114
- *         return 1
- * 
- *     for e from 0 <= e < m:             # <<<<<<<<<<<<<<
- *         igraph_vector_set(weights, e, w[e])
- * 
-*/
-  __pyx_t_2 = __pyx_v_m;
-  for (__pyx_v_e = 0; __pyx_v_e < __pyx_t_2; __pyx_v_e++) {
-
-    /* "pyntacle/_ext/cython_igraph.pyx":115
- * 
- *     for e from 0 <= e < m:
- *         igraph_vector_set(weights, e, w[e])             # <<<<<<<<<<<<<<
- * 
- *     return 0
-*/
-    __pyx_t_3 = __pyx_v_e;
-    igraph_vector_set(__pyx_v_weights, __pyx_v_e, (*((double *) ( /* dim=0 */ (__pyx_v_w.data + __pyx_t_3 * __pyx_v_w.strides[0]) ))));
-  }
-
-  /* "pyntacle/_ext/cython_igraph.pyx":117
- *         igraph_vector_set(weights, e, w[e])
- * 
- *     return 0             # <<<<<<<<<<<<<<
- * 
- * 
-*/
-  __pyx_r = 0;
-  goto __pyx_L0;
-
-  /* "pyntacle/_ext/cython_igraph.pyx":78
- * 
- * 
- * cdef int build_igraph_from_edges(igraph_t* graph, igraph_vector_t* weights,             # <<<<<<<<<<<<<<
- *                                  int[:, :] edges, double[:] w, int n) noexcept nogil:
- *     """Build an undirected weighted igraph graph from an edge list, in O(E) memory.
-*/
-
-  /* function exit code */
-  __pyx_L0:;
-  return __pyx_r;
-}
-
-/* "pyntacle/_ext/cython_igraph.pyx":120
- * 
- * 
- * cdef int igraph_dijkstra(int[:, :] edges, double[:] w, int n, double* distances) noexcept nogil:             # <<<<<<<<<<<<<<
- * 
- *     cdef igraph_t graph
-*/
-
-static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_dijkstra(__Pyx_memviewslice __pyx_v_edges, __Pyx_memviewslice __pyx_v_w, int __pyx_v_n, double *__pyx_v_distances) {
-  igraph_t __pyx_v_graph;
-  igraph_vector_t __pyx_v_weights;
-  igraph_matrix_t __pyx_v_dist_matrix;
-  int __pyx_r;
-  int __pyx_t_1;
-
-  /* "pyntacle/_ext/cython_igraph.pyx":126
- *     cdef igraph_matrix_t dist_matrix
- * 
- *     if build_igraph_from_edges(&graph, &weights, edges, w, n) != 0:             # <<<<<<<<<<<<<<
- *         return 1
- * 
-*/
-  __pyx_t_1 = (__pyx_f_8pyntacle_4_ext_13cython_igraph_build_igraph_from_edges((&__pyx_v_graph), (&__pyx_v_weights), __pyx_v_edges, __pyx_v_w, __pyx_v_n) != 0);
-  if (__pyx_t_1) {
-
-    /* "pyntacle/_ext/cython_igraph.pyx":127
- * 
- *     if build_igraph_from_edges(&graph, &weights, edges, w, n) != 0:
- *         return 1             # <<<<<<<<<<<<<<
- * 
- *     if igraph_matrix_init(&dist_matrix, n, n) != 0:
-*/
-    __pyx_r = 1;
-    goto __pyx_L0;
-
-    /* "pyntacle/_ext/cython_igraph.pyx":126
- *     cdef igraph_matrix_t dist_matrix
- * 
- *     if build_igraph_from_edges(&graph, &weights, edges, w, n) != 0:             # <<<<<<<<<<<<<<
- *         return 1
- * 
-*/
-  }
-
-  /* "pyntacle/_ext/cython_igraph.pyx":129
- *         return 1
- * 
- *     if igraph_matrix_init(&dist_matrix, n, n) != 0:             # <<<<<<<<<<<<<<
- *         igraph_vector_destroy(&weights)
- *         igraph_destroy(&graph)
-*/
-  __pyx_t_1 = (igraph_matrix_init((&__pyx_v_dist_matrix), __pyx_v_n, __pyx_v_n) != 0);
-  if (__pyx_t_1) {
-
-    /* "pyntacle/_ext/cython_igraph.pyx":130
- * 
- *     if igraph_matrix_init(&dist_matrix, n, n) != 0:
- *         igraph_vector_destroy(&weights)             # <<<<<<<<<<<<<<
- *         igraph_destroy(&graph)
- *         return 1
-*/
-    igraph_vector_destroy((&__pyx_v_weights));
-
-    /* "pyntacle/_ext/cython_igraph.pyx":131
- *     if igraph_matrix_init(&dist_matrix, n, n) != 0:
- *         igraph_vector_destroy(&weights)
- *         igraph_destroy(&graph)             # <<<<<<<<<<<<<<
- *         return 1
- * 
-*/
-    igraph_destroy((&__pyx_v_graph));
-
-    /* "pyntacle/_ext/cython_igraph.pyx":132
- *         igraph_vector_destroy(&weights)
- *         igraph_destroy(&graph)
- *         return 1             # <<<<<<<<<<<<<<
- * 
- *     if igraph_distances_dijkstra(&graph, &dist_matrix, igraph_vss_all(), igraph_vss_all(), &weights, IGRAPH_ALL) != 0:
-*/
-    __pyx_r = 1;
-    goto __pyx_L0;
-
-    /* "pyntacle/_ext/cython_igraph.pyx":129
- *         return 1
- * 
- *     if igraph_matrix_init(&dist_matrix, n, n) != 0:             # <<<<<<<<<<<<<<
- *         igraph_vector_destroy(&weights)
- *         igraph_destroy(&graph)
-*/
-  }
-
-  /* "pyntacle/_ext/cython_igraph.pyx":134
- *         return 1
- * 
- *     if igraph_distances_dijkstra(&graph, &dist_matrix, igraph_vss_all(), igraph_vss_all(), &weights, IGRAPH_ALL) != 0:             # <<<<<<<<<<<<<<
- *         printf("Failed to compute distances using Dijkstra's algorithm!")
- *         igraph_matrix_destroy(&dist_matrix)
-*/
-  __pyx_t_1 = (igraph_distances_dijkstra((&__pyx_v_graph), (&__pyx_v_dist_matrix), igraph_vss_all(), igraph_vss_all(), (&__pyx_v_weights), IGRAPH_ALL) != 0);
-  if (__pyx_t_1) {
-
-    /* "pyntacle/_ext/cython_igraph.pyx":135
- * 
- *     if igraph_distances_dijkstra(&graph, &dist_matrix, igraph_vss_all(), igraph_vss_all(), &weights, IGRAPH_ALL) != 0:
- *         printf("Failed to compute distances using Dijkstra's algorithm!")             # <<<<<<<<<<<<<<
- *         igraph_matrix_destroy(&dist_matrix)
- *         igraph_vector_destroy(&weights)
-*/
-    (void)(printf(__pyx_k_Failed_to_compute_distances_usin));
-
-    /* "pyntacle/_ext/cython_igraph.pyx":136
- *     if igraph_distances_dijkstra(&graph, &dist_matrix, igraph_vss_all(), igraph_vss_all(), &weights, IGRAPH_ALL) != 0:
- *         printf("Failed to compute distances using Dijkstra's algorithm!")
- *         igraph_matrix_destroy(&dist_matrix)             # <<<<<<<<<<<<<<
- *         igraph_vector_destroy(&weights)
- *         igraph_destroy(&graph)
-*/
-    igraph_matrix_destroy((&__pyx_v_dist_matrix));
-
-    /* "pyntacle/_ext/cython_igraph.pyx":137
- *         printf("Failed to compute distances using Dijkstra's algorithm!")
- *         igraph_matrix_destroy(&dist_matrix)
- *         igraph_vector_destroy(&weights)             # <<<<<<<<<<<<<<
- *         igraph_destroy(&graph)
- *         return 1
-*/
-    igraph_vector_destroy((&__pyx_v_weights));
-
-    /* "pyntacle/_ext/cython_igraph.pyx":138
- *         igraph_matrix_destroy(&dist_matrix)
- *         igraph_vector_destroy(&weights)
- *         igraph_destroy(&graph)             # <<<<<<<<<<<<<<
- *         return 1
- * 
-*/
-    igraph_destroy((&__pyx_v_graph));
-
-    /* "pyntacle/_ext/cython_igraph.pyx":139
- *         igraph_vector_destroy(&weights)
- *         igraph_destroy(&graph)
- *         return 1             # <<<<<<<<<<<<<<
- * 
- *     # symmetric matrix: row-major and column-major layouts coincide
-*/
-    __pyx_r = 1;
-    goto __pyx_L0;
-
-    /* "pyntacle/_ext/cython_igraph.pyx":134
- *         return 1
- * 
- *     if igraph_distances_dijkstra(&graph, &dist_matrix, igraph_vss_all(), igraph_vss_all(), &weights, IGRAPH_ALL) != 0:             # <<<<<<<<<<<<<<
- *         printf("Failed to compute distances using Dijkstra's algorithm!")
- *         igraph_matrix_destroy(&dist_matrix)
-*/
-  }
-
-  /* "pyntacle/_ext/cython_igraph.pyx":142
- * 
- *     # symmetric matrix: row-major and column-major layouts coincide
- *     igraph_matrix_copy_to(&dist_matrix, distances)             # <<<<<<<<<<<<<<
- * 
- *     igraph_matrix_destroy(&dist_matrix)
-*/
-  igraph_matrix_copy_to((&__pyx_v_dist_matrix), __pyx_v_distances);
-
-  /* "pyntacle/_ext/cython_igraph.pyx":144
- *     igraph_matrix_copy_to(&dist_matrix, distances)
- * 
- *     igraph_matrix_destroy(&dist_matrix)             # <<<<<<<<<<<<<<
- *     igraph_vector_destroy(&weights)
- *     igraph_destroy(&graph)
-*/
-  igraph_matrix_destroy((&__pyx_v_dist_matrix));
-
-  /* "pyntacle/_ext/cython_igraph.pyx":145
- * 
- *     igraph_matrix_destroy(&dist_matrix)
- *     igraph_vector_destroy(&weights)             # <<<<<<<<<<<<<<
- *     igraph_destroy(&graph)
- * 
-*/
-  igraph_vector_destroy((&__pyx_v_weights));
-
-  /* "pyntacle/_ext/cython_igraph.pyx":146
- *     igraph_matrix_destroy(&dist_matrix)
- *     igraph_vector_destroy(&weights)
- *     igraph_destroy(&graph)             # <<<<<<<<<<<<<<
- * 
- *     return 0
-*/
-  igraph_destroy((&__pyx_v_graph));
-
-  /* "pyntacle/_ext/cython_igraph.pyx":148
- *     igraph_destroy(&graph)
- * 
- *     return 0             # <<<<<<<<<<<<<<
- * 
- * cdef int igraph_components(double[:,:] adj_matrix, long* size_comp, int* k_set, int k) noexcept nogil:
-*/
-  __pyx_r = 0;
-  goto __pyx_L0;
-
-  /* "pyntacle/_ext/cython_igraph.pyx":120
- * 
- * 
- * cdef int igraph_dijkstra(int[:, :] edges, double[:] w, int n, double* distances) noexcept nogil:             # <<<<<<<<<<<<<<
- * 
- *     cdef igraph_t graph
-*/
-
-  /* function exit code */
-  __pyx_L0:;
-  return __pyx_r;
-}
-
-/* "pyntacle/_ext/cython_igraph.pyx":150
- *     return 0
- * 
  * cdef int igraph_components(double[:,:] adj_matrix, long* size_comp, int* k_set, int k) noexcept nogil:             # <<<<<<<<<<<<<<
  * 
  *     cdef int i, j
@@ -17095,7 +16615,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
   Py_ssize_t __pyx_t_5;
   int __pyx_t_6;
 
-  /* "pyntacle/_ext/cython_igraph.pyx":160
+  /* "pyntacle/_ext/cython_igraph.pyx":88
  * 
  * 
  *     cdef igraph_int_t ig_n = adj_matrix.shape[0]             # <<<<<<<<<<<<<<
@@ -17104,7 +16624,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
   __pyx_v_ig_n = (__pyx_v_adj_matrix.shape[0]);
 
-  /* "pyntacle/_ext/cython_igraph.pyx":162
+  /* "pyntacle/_ext/cython_igraph.pyx":90
  *     cdef igraph_int_t ig_n = adj_matrix.shape[0]
  * 
  *     result = igraph_matrix_init(&ig_adj_matrix, ig_n, ig_n)             # <<<<<<<<<<<<<<
@@ -17113,7 +16633,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
   __pyx_v_result = igraph_matrix_init((&__pyx_v_ig_adj_matrix), __pyx_v_ig_n, __pyx_v_ig_n);
 
-  /* "pyntacle/_ext/cython_igraph.pyx":163
+  /* "pyntacle/_ext/cython_igraph.pyx":91
  * 
  *     result = igraph_matrix_init(&ig_adj_matrix, ig_n, ig_n)
  *     if result != 0: # IGRAPH_SUCCESS is usually 0             # <<<<<<<<<<<<<<
@@ -17123,7 +16643,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
   __pyx_t_1 = (__pyx_v_result != 0);
   if (__pyx_t_1) {
 
-    /* "pyntacle/_ext/cython_igraph.pyx":164
+    /* "pyntacle/_ext/cython_igraph.pyx":92
  *     result = igraph_matrix_init(&ig_adj_matrix, ig_n, ig_n)
  *     if result != 0: # IGRAPH_SUCCESS is usually 0
  *         printf("Failed to initialize igraph_matrix_t: %d !", result)             # <<<<<<<<<<<<<<
@@ -17132,7 +16652,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
     (void)(printf(__pyx_k_Failed_to_initialize_igraph_matr, __pyx_v_result));
 
-    /* "pyntacle/_ext/cython_igraph.pyx":165
+    /* "pyntacle/_ext/cython_igraph.pyx":93
  *     if result != 0: # IGRAPH_SUCCESS is usually 0
  *         printf("Failed to initialize igraph_matrix_t: %d !", result)
  *         return -1             # <<<<<<<<<<<<<<
@@ -17142,7 +16662,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
     __pyx_r = -1;
     goto __pyx_L0;
 
-    /* "pyntacle/_ext/cython_igraph.pyx":163
+    /* "pyntacle/_ext/cython_igraph.pyx":91
  * 
  *     result = igraph_matrix_init(&ig_adj_matrix, ig_n, ig_n)
  *     if result != 0: # IGRAPH_SUCCESS is usually 0             # <<<<<<<<<<<<<<
@@ -17151,7 +16671,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
   }
 
-  /* "pyntacle/_ext/cython_igraph.pyx":167
+  /* "pyntacle/_ext/cython_igraph.pyx":95
  *         return -1
  * 
  *     for i from 0 <= i < ig_n:             # <<<<<<<<<<<<<<
@@ -17161,7 +16681,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
   __pyx_t_2 = __pyx_v_ig_n;
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_2; __pyx_v_i++) {
 
-    /* "pyntacle/_ext/cython_igraph.pyx":168
+    /* "pyntacle/_ext/cython_igraph.pyx":96
  * 
  *     for i from 0 <= i < ig_n:
  *         for j from 0 <= j < ig_n:             # <<<<<<<<<<<<<<
@@ -17171,7 +16691,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
     __pyx_t_3 = __pyx_v_ig_n;
     for (__pyx_v_j = 0; __pyx_v_j < __pyx_t_3; __pyx_v_j++) {
 
-      /* "pyntacle/_ext/cython_igraph.pyx":169
+      /* "pyntacle/_ext/cython_igraph.pyx":97
  *     for i from 0 <= i < ig_n:
  *         for j from 0 <= j < ig_n:
  *             igraph_matrix_set(&ig_adj_matrix, i, j, adj_matrix[i, j])             # <<<<<<<<<<<<<<
@@ -17184,7 +16704,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
     }
   }
 
-  /* "pyntacle/_ext/cython_igraph.pyx":171
+  /* "pyntacle/_ext/cython_igraph.pyx":99
  *             igraph_matrix_set(&ig_adj_matrix, i, j, adj_matrix[i, j])
  * 
  *     if k_set != NULL:             # <<<<<<<<<<<<<<
@@ -17194,7 +16714,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
   __pyx_t_1 = (__pyx_v_k_set != NULL);
   if (__pyx_t_1) {
 
-    /* "pyntacle/_ext/cython_igraph.pyx":172
+    /* "pyntacle/_ext/cython_igraph.pyx":100
  * 
  *     if k_set != NULL:
  *         for i from 0 <= i < k:             # <<<<<<<<<<<<<<
@@ -17204,7 +16724,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
     __pyx_t_6 = __pyx_v_k;
     for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_6; __pyx_v_i++) {
 
-      /* "pyntacle/_ext/cython_igraph.pyx":173
+      /* "pyntacle/_ext/cython_igraph.pyx":101
  *     if k_set != NULL:
  *         for i from 0 <= i < k:
  *             for j from 0 <= j < ig_n:             # <<<<<<<<<<<<<<
@@ -17214,7 +16734,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
       __pyx_t_2 = __pyx_v_ig_n;
       for (__pyx_v_j = 0; __pyx_v_j < __pyx_t_2; __pyx_v_j++) {
 
-        /* "pyntacle/_ext/cython_igraph.pyx":174
+        /* "pyntacle/_ext/cython_igraph.pyx":102
  *         for i from 0 <= i < k:
  *             for j from 0 <= j < ig_n:
  *                 igraph_matrix_set(&ig_adj_matrix,  k_set[i], j, 0.)  # Set the weights to 0 for the k_set vertices             # <<<<<<<<<<<<<<
@@ -17223,7 +16743,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
         igraph_matrix_set((&__pyx_v_ig_adj_matrix), (__pyx_v_k_set[__pyx_v_i]), __pyx_v_j, 0.);
 
-        /* "pyntacle/_ext/cython_igraph.pyx":175
+        /* "pyntacle/_ext/cython_igraph.pyx":103
  *             for j from 0 <= j < ig_n:
  *                 igraph_matrix_set(&ig_adj_matrix,  k_set[i], j, 0.)  # Set the weights to 0 for the k_set vertices
  *                 igraph_matrix_set(&ig_adj_matrix,  j, k_set[i], 0.)  # Set the weights to 0 for the k_set vertices             # <<<<<<<<<<<<<<
@@ -17234,7 +16754,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
       }
     }
 
-    /* "pyntacle/_ext/cython_igraph.pyx":171
+    /* "pyntacle/_ext/cython_igraph.pyx":99
  *             igraph_matrix_set(&ig_adj_matrix, i, j, adj_matrix[i, j])
  * 
  *     if k_set != NULL:             # <<<<<<<<<<<<<<
@@ -17243,7 +16763,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
   }
 
-  /* "pyntacle/_ext/cython_igraph.pyx":178
+  /* "pyntacle/_ext/cython_igraph.pyx":106
  * 
  *     # failures return a negative code (1 is a legitimate component count)
  *     if igraph_vector_init(&weights, 0)  != 0:             # <<<<<<<<<<<<<<
@@ -17253,7 +16773,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
   __pyx_t_1 = (igraph_vector_init((&__pyx_v_weights), 0) != 0);
   if (__pyx_t_1) {
 
-    /* "pyntacle/_ext/cython_igraph.pyx":179
+    /* "pyntacle/_ext/cython_igraph.pyx":107
  *     # failures return a negative code (1 is a legitimate component count)
  *     if igraph_vector_init(&weights, 0)  != 0:
  *         printf("Failed to initialize igraph_vector_t for weights!")             # <<<<<<<<<<<<<<
@@ -17262,7 +16782,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
     (void)(printf(__pyx_k_Failed_to_initialize_igraph_vect));
 
-    /* "pyntacle/_ext/cython_igraph.pyx":180
+    /* "pyntacle/_ext/cython_igraph.pyx":108
  *     if igraph_vector_init(&weights, 0)  != 0:
  *         printf("Failed to initialize igraph_vector_t for weights!")
  *         igraph_matrix_destroy(&ig_adj_matrix)             # <<<<<<<<<<<<<<
@@ -17271,7 +16791,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
     igraph_matrix_destroy((&__pyx_v_ig_adj_matrix));
 
-    /* "pyntacle/_ext/cython_igraph.pyx":181
+    /* "pyntacle/_ext/cython_igraph.pyx":109
  *         printf("Failed to initialize igraph_vector_t for weights!")
  *         igraph_matrix_destroy(&ig_adj_matrix)
  *         return -1             # <<<<<<<<<<<<<<
@@ -17281,7 +16801,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
     __pyx_r = -1;
     goto __pyx_L0;
 
-    /* "pyntacle/_ext/cython_igraph.pyx":178
+    /* "pyntacle/_ext/cython_igraph.pyx":106
  * 
  *     # failures return a negative code (1 is a legitimate component count)
  *     if igraph_vector_init(&weights, 0)  != 0:             # <<<<<<<<<<<<<<
@@ -17290,7 +16810,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
   }
 
-  /* "pyntacle/_ext/cython_igraph.pyx":183
+  /* "pyntacle/_ext/cython_igraph.pyx":111
  *         return -1
  * 
  *     if igraph_weighted_adjacency(&graph, &ig_adj_matrix, IGRAPH_ADJ_UNDIRECTED, &weights, IGRAPH_LOOPS_ONCE) != 0:             # <<<<<<<<<<<<<<
@@ -17300,7 +16820,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
   __pyx_t_1 = (igraph_weighted_adjacency((&__pyx_v_graph), (&__pyx_v_ig_adj_matrix), IGRAPH_ADJ_UNDIRECTED, (&__pyx_v_weights), IGRAPH_LOOPS_ONCE) != 0);
   if (__pyx_t_1) {
 
-    /* "pyntacle/_ext/cython_igraph.pyx":184
+    /* "pyntacle/_ext/cython_igraph.pyx":112
  * 
  *     if igraph_weighted_adjacency(&graph, &ig_adj_matrix, IGRAPH_ADJ_UNDIRECTED, &weights, IGRAPH_LOOPS_ONCE) != 0:
  *         printf("Failed to create weighted adjacency matrix!")             # <<<<<<<<<<<<<<
@@ -17309,7 +16829,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
     (void)(printf(__pyx_k_Failed_to_create_weighted_adjace));
 
-    /* "pyntacle/_ext/cython_igraph.pyx":185
+    /* "pyntacle/_ext/cython_igraph.pyx":113
  *     if igraph_weighted_adjacency(&graph, &ig_adj_matrix, IGRAPH_ADJ_UNDIRECTED, &weights, IGRAPH_LOOPS_ONCE) != 0:
  *         printf("Failed to create weighted adjacency matrix!")
  *         igraph_vector_destroy(&weights)             # <<<<<<<<<<<<<<
@@ -17318,7 +16838,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
     igraph_vector_destroy((&__pyx_v_weights));
 
-    /* "pyntacle/_ext/cython_igraph.pyx":186
+    /* "pyntacle/_ext/cython_igraph.pyx":114
  *         printf("Failed to create weighted adjacency matrix!")
  *         igraph_vector_destroy(&weights)
  *         igraph_matrix_destroy(&ig_adj_matrix)             # <<<<<<<<<<<<<<
@@ -17327,7 +16847,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
     igraph_matrix_destroy((&__pyx_v_ig_adj_matrix));
 
-    /* "pyntacle/_ext/cython_igraph.pyx":187
+    /* "pyntacle/_ext/cython_igraph.pyx":115
  *         igraph_vector_destroy(&weights)
  *         igraph_matrix_destroy(&ig_adj_matrix)
  *         return -1             # <<<<<<<<<<<<<<
@@ -17337,7 +16857,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
     __pyx_r = -1;
     goto __pyx_L0;
 
-    /* "pyntacle/_ext/cython_igraph.pyx":183
+    /* "pyntacle/_ext/cython_igraph.pyx":111
  *         return -1
  * 
  *     if igraph_weighted_adjacency(&graph, &ig_adj_matrix, IGRAPH_ADJ_UNDIRECTED, &weights, IGRAPH_LOOPS_ONCE) != 0:             # <<<<<<<<<<<<<<
@@ -17346,7 +16866,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
   }
 
-  /* "pyntacle/_ext/cython_igraph.pyx":190
+  /* "pyntacle/_ext/cython_igraph.pyx":118
  * 
  *     # initialize csize
  *     if igraph_vector_int_init(&csize, 0) != 0:             # <<<<<<<<<<<<<<
@@ -17356,7 +16876,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
   __pyx_t_1 = (igraph_vector_int_init((&__pyx_v_csize), 0) != 0);
   if (__pyx_t_1) {
 
-    /* "pyntacle/_ext/cython_igraph.pyx":191
+    /* "pyntacle/_ext/cython_igraph.pyx":119
  *     # initialize csize
  *     if igraph_vector_int_init(&csize, 0) != 0:
  *         printf("Failed to initialize csize vector!")             # <<<<<<<<<<<<<<
@@ -17365,7 +16885,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
     (void)(printf(__pyx_k_Failed_to_initialize_csize_vecto));
 
-    /* "pyntacle/_ext/cython_igraph.pyx":192
+    /* "pyntacle/_ext/cython_igraph.pyx":120
  *     if igraph_vector_int_init(&csize, 0) != 0:
  *         printf("Failed to initialize csize vector!")
  *         igraph_vector_destroy(&weights)             # <<<<<<<<<<<<<<
@@ -17374,7 +16894,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
     igraph_vector_destroy((&__pyx_v_weights));
 
-    /* "pyntacle/_ext/cython_igraph.pyx":193
+    /* "pyntacle/_ext/cython_igraph.pyx":121
  *         printf("Failed to initialize csize vector!")
  *         igraph_vector_destroy(&weights)
  *         igraph_matrix_destroy(&ig_adj_matrix)             # <<<<<<<<<<<<<<
@@ -17383,7 +16903,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
     igraph_matrix_destroy((&__pyx_v_ig_adj_matrix));
 
-    /* "pyntacle/_ext/cython_igraph.pyx":194
+    /* "pyntacle/_ext/cython_igraph.pyx":122
  *         igraph_vector_destroy(&weights)
  *         igraph_matrix_destroy(&ig_adj_matrix)
  *         igraph_destroy(&graph)             # <<<<<<<<<<<<<<
@@ -17392,7 +16912,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
     igraph_destroy((&__pyx_v_graph));
 
-    /* "pyntacle/_ext/cython_igraph.pyx":195
+    /* "pyntacle/_ext/cython_igraph.pyx":123
  *         igraph_matrix_destroy(&ig_adj_matrix)
  *         igraph_destroy(&graph)
  *         return -1             # <<<<<<<<<<<<<<
@@ -17402,7 +16922,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
     __pyx_r = -1;
     goto __pyx_L0;
 
-    /* "pyntacle/_ext/cython_igraph.pyx":190
+    /* "pyntacle/_ext/cython_igraph.pyx":118
  * 
  *     # initialize csize
  *     if igraph_vector_int_init(&csize, 0) != 0:             # <<<<<<<<<<<<<<
@@ -17411,7 +16931,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
   }
 
-  /* "pyntacle/_ext/cython_igraph.pyx":197
+  /* "pyntacle/_ext/cython_igraph.pyx":125
  *         return -1
  * 
  *     if igraph_connected_components(&graph, NULL, &csize, &comp_size, IGRAPH_WEAK) != 0:             # <<<<<<<<<<<<<<
@@ -17421,7 +16941,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
   __pyx_t_1 = (igraph_connected_components((&__pyx_v_graph), NULL, (&__pyx_v_csize), (&__pyx_v_comp_size), IGRAPH_WEAK) != 0);
   if (__pyx_t_1) {
 
-    /* "pyntacle/_ext/cython_igraph.pyx":198
+    /* "pyntacle/_ext/cython_igraph.pyx":126
  * 
  *     if igraph_connected_components(&graph, NULL, &csize, &comp_size, IGRAPH_WEAK) != 0:
  *         printf("Failed to compute connected components!")             # <<<<<<<<<<<<<<
@@ -17430,7 +16950,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
     (void)(printf(__pyx_k_Failed_to_compute_connected_comp));
 
-    /* "pyntacle/_ext/cython_igraph.pyx":199
+    /* "pyntacle/_ext/cython_igraph.pyx":127
  *     if igraph_connected_components(&graph, NULL, &csize, &comp_size, IGRAPH_WEAK) != 0:
  *         printf("Failed to compute connected components!")
  *         igraph_vector_destroy(&weights)             # <<<<<<<<<<<<<<
@@ -17439,7 +16959,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
     igraph_vector_destroy((&__pyx_v_weights));
 
-    /* "pyntacle/_ext/cython_igraph.pyx":200
+    /* "pyntacle/_ext/cython_igraph.pyx":128
  *         printf("Failed to compute connected components!")
  *         igraph_vector_destroy(&weights)
  *         igraph_vector_int_destroy(&csize)             # <<<<<<<<<<<<<<
@@ -17448,7 +16968,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
     igraph_vector_int_destroy((&__pyx_v_csize));
 
-    /* "pyntacle/_ext/cython_igraph.pyx":201
+    /* "pyntacle/_ext/cython_igraph.pyx":129
  *         igraph_vector_destroy(&weights)
  *         igraph_vector_int_destroy(&csize)
  *         igraph_matrix_destroy(&ig_adj_matrix)             # <<<<<<<<<<<<<<
@@ -17457,7 +16977,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
     igraph_matrix_destroy((&__pyx_v_ig_adj_matrix));
 
-    /* "pyntacle/_ext/cython_igraph.pyx":202
+    /* "pyntacle/_ext/cython_igraph.pyx":130
  *         igraph_vector_int_destroy(&csize)
  *         igraph_matrix_destroy(&ig_adj_matrix)
  *         igraph_destroy(&graph)             # <<<<<<<<<<<<<<
@@ -17466,7 +16986,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
     igraph_destroy((&__pyx_v_graph));
 
-    /* "pyntacle/_ext/cython_igraph.pyx":203
+    /* "pyntacle/_ext/cython_igraph.pyx":131
  *         igraph_matrix_destroy(&ig_adj_matrix)
  *         igraph_destroy(&graph)
  *         return -1             # <<<<<<<<<<<<<<
@@ -17476,7 +16996,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
     __pyx_r = -1;
     goto __pyx_L0;
 
-    /* "pyntacle/_ext/cython_igraph.pyx":197
+    /* "pyntacle/_ext/cython_igraph.pyx":125
  *         return -1
  * 
  *     if igraph_connected_components(&graph, NULL, &csize, &comp_size, IGRAPH_WEAK) != 0:             # <<<<<<<<<<<<<<
@@ -17485,7 +17005,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
   }
 
-  /* "pyntacle/_ext/cython_igraph.pyx":205
+  /* "pyntacle/_ext/cython_igraph.pyx":133
  *         return -1
  * 
  *     igraph_vector_int_copy_to(&csize, size_comp)             # <<<<<<<<<<<<<<
@@ -17494,7 +17014,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
   igraph_vector_int_copy_to((&__pyx_v_csize), __pyx_v_size_comp);
 
-  /* "pyntacle/_ext/cython_igraph.pyx":207
+  /* "pyntacle/_ext/cython_igraph.pyx":135
  *     igraph_vector_int_copy_to(&csize, size_comp)
  * 
  *     igraph_matrix_destroy(&ig_adj_matrix)             # <<<<<<<<<<<<<<
@@ -17503,7 +17023,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
   igraph_matrix_destroy((&__pyx_v_ig_adj_matrix));
 
-  /* "pyntacle/_ext/cython_igraph.pyx":208
+  /* "pyntacle/_ext/cython_igraph.pyx":136
  * 
  *     igraph_matrix_destroy(&ig_adj_matrix)
  *     igraph_vector_destroy(&weights)             # <<<<<<<<<<<<<<
@@ -17512,7 +17032,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
   igraph_vector_destroy((&__pyx_v_weights));
 
-  /* "pyntacle/_ext/cython_igraph.pyx":209
+  /* "pyntacle/_ext/cython_igraph.pyx":137
  *     igraph_matrix_destroy(&ig_adj_matrix)
  *     igraph_vector_destroy(&weights)
  *     igraph_vector_int_destroy(&csize)             # <<<<<<<<<<<<<<
@@ -17521,7 +17041,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
   igraph_vector_int_destroy((&__pyx_v_csize));
 
-  /* "pyntacle/_ext/cython_igraph.pyx":210
+  /* "pyntacle/_ext/cython_igraph.pyx":138
  *     igraph_vector_destroy(&weights)
  *     igraph_vector_int_destroy(&csize)
  *     igraph_destroy(&graph)             # <<<<<<<<<<<<<<
@@ -17530,7 +17050,7 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
 */
   igraph_destroy((&__pyx_v_graph));
 
-  /* "pyntacle/_ext/cython_igraph.pyx":212
+  /* "pyntacle/_ext/cython_igraph.pyx":140
  *     igraph_destroy(&graph)
  * 
  *     return comp_size             # <<<<<<<<<<<<<<
@@ -17538,8 +17058,8 @@ static int __pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components(__Pyx_memvi
   __pyx_r = __pyx_v_comp_size;
   goto __pyx_L0;
 
-  /* "pyntacle/_ext/cython_igraph.pyx":150
- *     return 0
+  /* "pyntacle/_ext/cython_igraph.pyx":78
+ * 
  * 
  * cdef int igraph_components(double[:,:] adj_matrix, long* size_comp, int* k_set, int k) noexcept nogil:             # <<<<<<<<<<<<<<
  * 
@@ -18453,12 +17973,12 @@ static int __Pyx_modinit_function_export_code(__pyx_mstatetype *__pyx_mstate) {
   {
     __pyx_t_1 = __Pyx_ApiExport_GetApiDict(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    const char * __pyx_export_signature = __Pyx_PyBytes_AsString(__pyx_mstate_global->__pyx_kp_b_int___Pyx_memviewslice___Pyx_mem);
+    const char * __pyx_export_signature = __Pyx_PyBytes_AsString(__pyx_mstate_global->__pyx_kp_b_int___Pyx_memviewslice_long_int);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (unlikely(!__pyx_export_signature)) __PYX_ERR(0, 1, __pyx_L1_error)
     #endif
-    const char * __pyx_export_name = __pyx_export_signature + 105;
-    void (*const __pyx_export_pointers[])(void) = {(void (*)(void))&__pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_dijkstra, (void (*)(void))&__pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components, (void (*)(void)) NULL};
+    const char * __pyx_export_name = __pyx_export_signature + 45;
+    void (*const __pyx_export_pointers[])(void) = {(void (*)(void))&__pyx_f_8pyntacle_4_ext_13cython_igraph_igraph_components, (void (*)(void)) NULL};
     void (*const *__pyx_export_pointer)(void) = __pyx_export_pointers;
     const char *__pyx_export_current_signature = __pyx_export_signature;
     while (*__pyx_export_pointer) {
@@ -19569,25 +19089,25 @@ static int __Pyx_InitCachedConstants(__pyx_mstatetype *__pyx_mstate) {
 static int __Pyx_InitConstants(__pyx_mstatetype *__pyx_mstate) {
   CYTHON_UNUSED_VAR(__pyx_mstate);
   {
-    const struct { const unsigned int length: 8; } index[] = {{2},{68},{35},{54},{37},{60},{24},{52},{26},{34},{29},{33},{45},{22},{15},{179},{37},{30},{32},{1},{1},{1},{1},{1},{8},{5},{6},{15},{23},{25},{7},{6},{2},{6},{35},{9},{30},{50},{8},{31},{20},{32},{22},{30},{37},{5},{8},{20},{8},{15},{3},{15},{18},{4},{1},{9},{17},{18},{5},{8},{15},{6},{9},{5},{5},{6},{7},{8},{12},{2},{10},{5},{25},{13},{5},{8},{8},{7},{4},{10},{4},{8},{4},{7},{3},{4},{3},{27},{12},{14},{11},{10},{19},{14},{12},{10},{17},{13},{8},{12},{10},{12},{19},{5},{4},{5},{4},{4},{6},{8},{6},{6},{6},{1},{138},{11},{1}};
-    #if (CYTHON_COMPRESS_STRINGS) == 2 /* compression: bz2 (1119 bytes) */
-const char* const cstring = "BZh91AY&SY\331\343\203\322\000\000{\377\340\342\001\000\002B\367\304W\277#\373\000\277\377\377\360@\000\000@@\000P\004lIy\206om\312\335\263\256\336\032\010\0056\202a\032\231\036\220\324i\247\251\352h\036\247\352\215\244\003\3240\231\030\000\0010\004\323\000\000\t\220\320\320i\220\202\nd\324\364\322y\032\214\207\250\032\000\000\014 H\251\212\236\217M(\320z\203\3224\320\000\000\000\320\000J\024\300H\236\223\311\222i\240\000\000\000\000\001|\007\263@@_\326\364\207\034\307\240\370\005\364\374\006s?\233\2717\264\325\273\225\373S\225\016\333\346\330\316!qT\222:\\Sv\010b\027*\265\373i\210O\021\307e\231\315\216\376\315;L[O\216\2231\210K\357\243\021F\234\334\247\376V\016\221A\327\306\370\210/\243<D\013\351~\332\311\353\275rX\330\247\250\215\016S\273\n\315f4\275m\2264\326v\001\257\233\253\010\0142\363j\320!\256\323cB\014\334\037\245\347UO\n\321k\264\3659f8{z\363`\266\321\201\361\335 ^\010\376\227\363\271\267\214_\251\272\363\243'/\321\037L\326\251\301|\3275a\013(\345\332\335\024l8\002\010\374\024\006w\325\361\261\220\003\367\377\265n\223X\341q3\255\323\220#oJpm\237\010\265\210P3kg\001\334\225\311\363\211\272\270\272\251\204\205\330\264\021\235P\r\006\250\244+\241\362\232<\214\340mw\353\3048P3\343e\277\341!w\273\233)\003\r\325\210\020\n\240w\261AP\233\362\231-\267 >+#5\324\026h\313\001\326\325\254j\223X=Ia\310^D\303\224*p\016\r\013\317~\\\325\264&\222\242B\201UQ\266$\036\365z\273\272eC\323z\3408\202\333\332\343\006a\210\315\004Y\305\007Ep\226\005\207\342\245\004]\306A\010\333~y\324%\214n..\006NRat\023\026#\251\335\301\020\340=o\317\277\375\210\202\353\221n\202z\035\265\322)\267Q\026\250D\235\352\203\nL\210\262T'Lo\001\356\263-\334@$J\273\253`\334\332\260\203Z\201\212\254\366 \363%\345\263\037\260d\204`N\235\0265\240\216,A\345\336\206\016\204u\251n\250_\204\306\026\nR\352e[\313\270\314\331\324E\003!\0213\030\204\037\304\230\036U\225\204&\004u\274O}+E I7\232o7\331\r\245I\027\240\262\254\031/P\035\206t\033\357\r7\023d ~\252\250\330Jr1\016j:nm\021\304\245\241\010\r\205\"J\226\347""\345)\201B\325\201\2038\304\020x\016&H1q\270P\261\271\320\340\030\345-\244\353\322\222\3561\246\274T\006\334\240\307\013a\006K+\304\024%\016\215~\247\203\222\346\254\310\331R\271(\347\230])\001`\340Hi~H\2535\251\213\265\010\020-(\220S\354w\200\nLM\307u\006x4?\264\331\200\350\273Q \036\201bp4I\201iai\320I\004\205!\022\0011#$\035!\350\363\032\320\252\314\341Z\204\361\030\214i\272\\\267\274\036\346\241\370,\020e\266\363\364\020\005@\234\247\230\034\002\221!\014\231\220\331\223\022\014\301o\272\255\2028\025\024\013\372\344\306\307Y\030\3544\"j2\256\303\257\262\r\306W\315a\017\036\0337\030:\353m0oa\032\350\251j*\027\026Z\"sNS\230\260\345\252\020\276\300\343cC \024\246l\006\335hw\201\022\225yM\024\322\031\311\227$\207\250\347\213\032'IU\245IY V^Ti'\265t\002\255\005BF'-Q\342F\024\302\233\342\371\022\013,:\214\257\006\003.\2501\202'\000\272\301\221\031\324\250\371$\233\t&\370\007\241HA\224U\0223bHUN9T\266\300\201b\032\0211&\225\204'\244\261\002BS\n\240\26299\344\345u\247\014Q,\351 \215\002\006\312r\035\0142\241\n\006YeB\321\344X\361\341\212\310\374\231au\365;\213\325aL\344\021\033h\210\332\014\314SL\030K\331E\306\331\217'1\006\316R(v\350\022(\371(\250\241a\025\237\023q\374]\311\024\341BCg\216\017H";
-    PyObject *data = __Pyx_DecompressString(cstring, 1119, 2);
+    const struct { const unsigned int length: 8; } index[] = {{2},{68},{35},{54},{37},{60},{24},{52},{26},{34},{29},{33},{45},{22},{15},{179},{37},{30},{32},{1},{1},{1},{1},{1},{8},{5},{6},{15},{23},{25},{7},{6},{2},{6},{35},{9},{30},{50},{8},{31},{20},{32},{22},{30},{37},{5},{8},{20},{8},{15},{3},{15},{18},{4},{1},{9},{17},{18},{5},{8},{15},{6},{9},{5},{5},{6},{7},{8},{12},{2},{10},{5},{25},{13},{5},{8},{8},{7},{4},{10},{4},{8},{4},{7},{3},{4},{3},{27},{12},{14},{11},{10},{19},{14},{12},{10},{17},{13},{8},{12},{10},{12},{19},{5},{4},{5},{4},{4},{6},{8},{6},{6},{6},{1},{62},{11},{1}};
+    #if (CYTHON_COMPRESS_STRINGS) == 2 /* compression: bz2 (1101 bytes) */
+const char* const cstring = "BZh91AY&SY\335e$+\000\000u\177\340\342\001\000\002B\367\304W\277#\373\000\277\377\377\360@\000\000@@\000P\004L\211wp\357{\335\347\236n\336^\341\240\2015<\200MM1\031@z\231\251\352bi\352~\250\361F\r\006\211\243M5\r(\323\324\036\241\246\200\000\000\000\003A\246B\t\252~\252=\014\243\023#\322i\240\006\201\240\006\010\022\232\223&\215M'\251\246d\032\217H\000h\000\000\000\022\205\036\246\024\332\232\232\036\243&\200=@\000\000\000\005\330\"`\275Y\315\373\261\034\207x^_\346q?\035\354\326pn\245~\204\337'pd%\000\223q\231\033\\S\202\350h\027J\265\373i\200\236#U\226NX\361\366pm\213j\346\244\314`%\370\357\340PN\\\247\376\326\016\241A\327\272\370\020_\277\234\010\027\324\375\265\223\327z\356,X\247xeJh\252A\355{YZ\276\022\310\353\317\000/\321\266, %e!D\027`LZ\037l\016\252\236\025\242\347[\235\3131\267\267\253\026\013\256\030\036\355q\005\261\037\317/\033\333\224t\277\241\271\261\226\247/\351\037L\326\251\301x.*\302\262[\376\r\311-\007\000A\037\202\202\n\266\370\260\000\234\035TnS\210\347\270\231\326\351\310\021\303\312\234\033g\236-b\024\014\265\263\001\303\255\23517W\027U0\220\271h#5@4\032\242\220\3054\312\243\023S:uz\203\204\206;\254\273\330D_\367\342\312@\303]b\004\002\250\037&(\006\005\r\274Wm\265\200\330\252\014\270\344*Y\312q\373\023l\232\nT\360E\026\362\226\021-\324\017\002`\271s\351\341\253d\025\211\250\256\002$\362L,\244r8\367\320 E\313\016\001Q\014\177P9\020\260e\004Y\305\006\332\351,\013\017\315J\010\273\215\300\204p\337\216w\204\261\216\"\342\340n:,.\202b\304{\035\334\210p\036\267\343\377h\034\370\326\305\305\004\355v\327H\246\357\r\252\021'\221PiI\221\026J\204\352\216@\036\353%\273\210\004\211Wum\033\305\275\244\032\324\014*\317b\0172^[#\254\026LF{\330\335\231\014o\010ts!\203\222:\344\273\242\031p\230\302\301J_Lky|L\315\231\310\240e@\231\216\220\203\321&\035:\t\221\n\004\262\300\246\030\352\267\030M\260i9\276\301\266\251\022\360X\342\006K\320\017\267;;\356\334O)s\023\237\251!\"\022\201\256\244\330\341$\303\365\332\025\3150f\005\261\022\266\352\355\211\210\\S0f\314\010(""\nQ\240\212c\200\261)\202\2670\213\224\264\223\216d*\2472\201[@A\261.r\024\350\210\210\203\277\032{\332\003\n\304\3103\246\373b\304D\215\233\326\260\005\203\211\r/\256*\315ja\332\204@\264\242AO\261\336\000)17\035\324\031\321\241\372\r\230\017%\332\211\000\364\013\007CD\230\026t\"\367*\250\252)d\013\002BB)\\GG(\263*\273(bP\225\245\245\023t\322[\334*\222\300\253\006\233\010\331\244\376\005a\000{_8\263\031\307\030\251\231\305\2652BCod\270\242\326\301\200\263\216\227\302\214\314\213\323\206\203\237\255z\256\372!\236Y0\315E\034\232\256\335@\243\024\231\002Y\203(9\2625E\206\014#\022\223(i\240k\355N\3748\016<\r\014\200R\231\264\034\232\320\337\004JU\360\232)\2443\223j\231\230W\21541\242t\225V\251+\"\n\314\245+^\325\310\n\264\025\010\230\234a\271\220\344fQ\2462\034b\304\253M`\201\371+\036\362\225D\331\204\314\225s:2s\311\236\033\354$A\325``\314\024\351\000\304\021\371\031\017\"\205\027\220\330\"\264\253xZT\346\000w\270\"\002\314n\263%E\3226\306\020\321\316\342@1\245s\014\346#x\215F\235:j0\212\366\272\352^\327\257\024`,\320\345a\241\242U;\003\304\223<I\023\331\211\344\006\022\366Qh\332\247\225lX\331\211\301\016\334\342A\036**\205\304\016\216{y\373\213\271\"\234(Hn\262\222\025\200";
+    PyObject *data = __Pyx_DecompressString(cstring, 1101, 2);
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #elif (CYTHON_COMPRESS_STRINGS) != 0 /* compression: zlib (998 bytes) */
-const char* const cstring = "x\332}UMo\0337\020M\017\275\366\037\024\230K '\26079\344P\024\256\013\327q\001\035\232\2705\332+A\221#\2111\227\334\360\303\326\346\224\237\221\237\331\237\3207\334\225e\327i\017\253\345\222\363\361\346\315\033\352G:\367\236\254\3539d\027C\246!\261a\353\302\346\260I\317-\3655\027Z1\271`y\307\226t\260\024b\241\354\035\314\177\251\3535'\272u|G6rnG\274\033bf\312%9\313\371B\007\212\301\217d\022\353\302\244i59\225\255.\3442\231\030\212\333\324X3\222P\317}Lc\007/\t\245sv\233@%\022\234\355I\2133YH\312\331h\016|\227\\\321+\317\263\301\004j\235b\377\177\276\255,\272seKe\034\230\026\363~I:\344V\306\301e2\203\207\003U\345\001wo\037\022\346&\022&\243\313~(#\345\255F\350R\007\200[\307Df,\333\030:\235\222\036\227\r@\254\205\342\232V\261\006\233\351H\357\020\345\271}\261|\232k\"\277\016CL\205\3552\334j\357\320\245h\371X\210\2071\232\2640\013B\236\005\222I!\213c\332\300ko<\301\001\327-\315\351o\255\300\277\244@@x\027Aek\315EC)\365X\366n\305\t$\203Bi+\222\264\376\005\272\272\274:y\363\303\233&\213\304\037\220>\003\335\312xt\016r\220\232\252\363\005\311\204\336\334\321rMc\254\024\0300\321\326\001v\017\035\312\226\003e.\262\240E\353\205.\250[\301\035\332\\\314\274\272[\026\357_\265\317\334\275\177D\036 \317\002\323\306p\336\263y]x\240^\217\215?\350\371\023\247x \372\317\320\224\203\220P\343-'\010\243p/\337q%Eug\213\027?kkU\020z\244X\002C\257w&z/p\320\230N\257\314\351\003-\213\321\004\366\354\337\333{\t\235Y\227%/\267\354\033CG\322\246MS\217T \303\310\273\302\241\264\3218\314\245\313\223\213\025\224\331}b:\375\211^?\321V\210h\335ZW_H\251\304\266\032V\212lm\205\206\030N\320\312[\247=N\215\013\256\340p*\367l\030C\321\306\363+\205\374\257\246\230\312m\222\036\266\3350\356N\247\331\266\217\212|\272'\032\274\257\365\321\371\375n\275'^{\037M\273 \004:Y]t\367\225\323I\274\022c\276_\272\363\353\213\345\362\322{7d\227\225\272\032wx\336B\243\352\035\300\377\301\353k\376X9\030\026\211w\007\265\243_\373\250jR\214\316c0.v&&\014\244\013\234W:\263\001;\242N\245\366\213\r\027!^>a\244\034\324\231\264""\341\22567\006\"\004\217V\322++\232W\0005\261\n\014\030S\016\265o\263\304)\305\264\366z\223\321\267^\227yX\225Z\327`$\031\322\344\"\350\224\263xz\031y\274\345\302h\335\232\372\241Z\034\205a\264\236\223d\273\207?\251c\226\210R\275\006R\205\373L.3\2711\360\021m\365x\007\335\037~\2413\374\362\235\022\334\003\212\032\342\260\027D'\202\350\036\tB)(B\031=8\001\335\326[67\271\366\323\327\\\203,\033\037mU\303\340\314\rR_\206\275\335m\273\275%\306\307\252\375\204\345 \333\373\325\234\373\260\301;Yn\\\306\245\244\024\356\216\271\016\254f\365\267\365\014\343\301z\037\251IJ(\302v\302\031\017\271D<\251J\023\013\266\225\340\005\021u\200,\031\267h\345\214\036\024:\232\3646s\332\376\023\217\351k{0>\306?d\0259\277|\361\354?}}\304\314\277l\366\363\013\306\023\315\326}\270\001(\275\3776\021\212\010r9|\376\346\357\357\236}\373\375\227\363/\277\277\377\007#\350\372\316";
-    PyObject *data = __Pyx_DecompressString(cstring, 998, 1);
+    #elif (CYTHON_COMPRESS_STRINGS) != 0 /* compression: zlib (977 bytes) */
+const char* const cstring = "x\332}UMo\0337\020M\017\275\366\037\024\230K \273p69\344P\024\256\013\327q\001\035\232\2705\332+A\221#\2115\227\334\360C\326\346\224\237\221\237\331\237\3207\334\225e\327E\017\253\345\222\363\361\346\315\033\352\007\272\364\236\254\3539d\027C\246!\261a\353\302\346\270I/-\3655\027Z1\271`y\317\226t\260\024b\241\354\035\314\177\256\3535'\3329\276'\0339\267#\336\01713\345\222\234\345|\245\003\305\340G2\211ua\322\264\232\234\312V\027r\231L\014\305mj\254\031I\250\347>\246\261\203\227\204\3229\273M\240\022\t\316\366U\2133YH\312\331h\016|\237\\\321+\317\263\301\004j\235b\377\177\276\255,\272weKe\034\230\026\363~I:\344V\306\321e2\203\207\003U\345\021w\357\036\023\346&\022&\243\353~(#\345\255F\350R\007\200[\307Df,\333\030:\235\222\036\227\r@\254\205\342\232V\261\006\233\351D\357\021\345\245=]>\3175\221_\207!\246\302v\031v\332;t)Z>\023\342a\214&-\314\202\220g\201dR\310\342\2146\360:\030Op\300uKs\376k+\360O)\020\020\336GP\331Zs\325PJ=\226\275[q\002\311\240P\332\212$\255\177\201n\256o^\275\375\376m\223E\342\277\220>\003\335\312xt\016r\220\232\252\363\005\311\204\336\334\321rMc\254\024\0300\321\326\001v\217\035\312\226\003e.\262\240E\353\205.\250[\301\035\332\\\314\274\272\035\213\367/\332g\356><!\017\220g\201ic8\037\330\274-<P\257\307\306\037\364\374\211S<\022\375Gh\312AH\250q\307\t\302(\334\313w\\IQ\335\305\342\364'm\255\nB\217\024K`\350\315\336D\357\005\016\032\323\351\2259\177\244e1\232\300^\374{\373 \241\013\353\262\344\345\226}c\350D\332\264i\352\221\nd\030y_8\2246\032\307\271tyr\261\2022\273OL\347?\322\233g\332\n\021\255[\353\352\013)\225\330V\303J\221\255\255\320\020\303+\264r\347\264\307\251q\301\025\034N\345^\014c(\332x~\255\220\377\365\024S\271M\322\303\266\033\306\375\3714\333\366I\221\317\367D\203\017\265>9\177\330\255\017\304k\357\243i\027\204@'\253\213\356\376\343t\022\257\304\230\357\227\356\362\366j\271\274\366\336\r\331e\245n\306=\236w\320\250z\017\360\277\363\372\226?V\016\206E\342\335Q\355\350\327!\252\232\024\243\363\030\214\213\235\211\t\003\351\002\347\225""\316l\300\216\250S\251\303b\303E\210\227O\030)\007u&mx\245\315\235\201\010\301\243\225\364\312\212\346\025@M\254\002\003\306\224C\355\333,qJ1\255\275\336d\364\255\327e\036V\245\3265\030I\2064\271\010:\345,\236^F\036o\2710Z\267\246~\250\026Ga\030\255\347$\331\036\340O\352\230%\242T\257\201T\341>\223\313Ln\014|D[=\336A\367\307_\350\014\277|\257\004\367\200\242\2068\034\004\321\211 \272'\202P\n\212PF\017N@\267\365\226\315]\256\375\3645\327 \313\306G[\32508s\207\324\327\341`\267k\267\267\304\370X\265\237\260\034e\373\260\232s\0377x/\313\215\313\270\224\224\302\3351\327\201\325\254\376\266\236a<Z\037\"5I\tE\330N8\343!\227\210'Uib\301\266\022\274 \242\016\220%\343\026\255\234\321\203B'\223\336fN\333\177\342\031\371\210\271\375\356\214\304`z\235\276\230\2512\021]\0142\320\237\277\372\373\233\027_\177\373\345\362\313o\037\376\001m\003\337\030";
+    PyObject *data = __Pyx_DecompressString(cstring, 977, 1);
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #else /* compression: none (2008 bytes) */
-const char* const bytes = ": All dimensions preceding dimension %d must be indexed and not slicedBuffer view does not expose stridesCan only create a buffer that is contiguous in memory.Cannot assign to read-only memoryviewCannot create writable memory view from read-only memoryviewCannot index with type 'Cannot transpose memoryview with indirect dimensionsDimension %d is not directEmpty shape tuple for cython.arrayIndex out of bounds (axis %d)Indirect dimensions not supportedInvalid mode, expected 'c' or 'fortran', got Invalid shape in axis <MemoryView of Note that Cython is deliberately stricter than PEP-484 and rejects subclasses of builtin types. If you need to pass subclasses then set the 'annotation_typing' directive to False.Out of bounds on buffer access (axis Step may not be zero (axis %d)Unable to convert item to object.>')?add_note and  at 0xcollections.abc<contiguous and direct><contiguous and indirect>disableenablegc (got got differing extents in dimension isenableditemsize <= 0 for cython.arrayno default __reduce__ due to non-trivial __cinit__ object>pyntacle/_ext/cython_igraph.pyx<strided and direct><strided and direct or indirect><strided and indirect>unable to allocate array data.unable to allocate shape and strides.ASCIIEllipsis__Pyx_PyDict_NextRefSequenceView.MemoryViewabcallocate_bufferasyncio.coroutinesbasec__class____class_getitem__cline_in_tracebackcount__dict__dtype_is_objectencodeenumerateerrorflagsformatfortran__func____getstate__id__import__indexinit_igraph_error_handler_is_coroutineitemsitemsize__main__memviewmode__module__name__name__ndim__new__objpackpoppyntacle._ext.cython_igraph__pyx_capi____pyx_checksum__pyx_state__pyx_type__pyx_unpickle_Enum__pyx_vtable____qualname____reduce____reduce_cython____reduce_ex__register__set_name__setdefault__setstate____setstate_cython__shapesizestartstepstopstruct__test__unpackupdatevaluesxint (__Pyx_memviewslice, __Pyx_memviewslice, int, double *)\000int (__Pyx_memviewslice, long *, int *, int)\000igraph_dijkstra\000igraph_compo""nents\200\001\360\016\000\005\035\230A\230QO";
+    #else /* compression: none (1932 bytes) */
+const char* const bytes = ": All dimensions preceding dimension %d must be indexed and not slicedBuffer view does not expose stridesCan only create a buffer that is contiguous in memory.Cannot assign to read-only memoryviewCannot create writable memory view from read-only memoryviewCannot index with type 'Cannot transpose memoryview with indirect dimensionsDimension %d is not directEmpty shape tuple for cython.arrayIndex out of bounds (axis %d)Indirect dimensions not supportedInvalid mode, expected 'c' or 'fortran', got Invalid shape in axis <MemoryView of Note that Cython is deliberately stricter than PEP-484 and rejects subclasses of builtin types. If you need to pass subclasses then set the 'annotation_typing' directive to False.Out of bounds on buffer access (axis Step may not be zero (axis %d)Unable to convert item to object.>')?add_note and  at 0xcollections.abc<contiguous and direct><contiguous and indirect>disableenablegc (got got differing extents in dimension isenableditemsize <= 0 for cython.arrayno default __reduce__ due to non-trivial __cinit__ object>pyntacle/_ext/cython_igraph.pyx<strided and direct><strided and direct or indirect><strided and indirect>unable to allocate array data.unable to allocate shape and strides.ASCIIEllipsis__Pyx_PyDict_NextRefSequenceView.MemoryViewabcallocate_bufferasyncio.coroutinesbasec__class____class_getitem__cline_in_tracebackcount__dict__dtype_is_objectencodeenumerateerrorflagsformatfortran__func____getstate__id__import__indexinit_igraph_error_handler_is_coroutineitemsitemsize__main__memviewmode__module__name__name__ndim__new__objpackpoppyntacle._ext.cython_igraph__pyx_capi____pyx_checksum__pyx_state__pyx_type__pyx_unpickle_Enum__pyx_vtable____qualname____reduce____reduce_cython____reduce_ex__register__set_name__setdefault__setstate____setstate_cython__shapesizestartstepstopstruct__test__unpackupdatevaluesxint (__Pyx_memviewslice, long *, int *, int)\000igraph_components\200\001\360\016\000\005\035\230A\230QO";
     PyObject *data = NULL;
     CYTHON_UNUSED_VAR(__Pyx_DecompressString);
     #endif
