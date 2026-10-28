@@ -1,17 +1,16 @@
 # Pyntacle
 
+<p align="center">
+  <img src="Documentation/source/_static/pyntacle_workflow.png" width="900"
+       alt="Pyntacle workflow: network files or omics profiles are read into the Graphtacle object, analysed by the commands and written as TSV reports, figures and interactive HTML">
+</p>
+
 Pyntacle is a command-line toolkit for network analysis. It finds the groups
 of nodes that matter most in a network — key players and central groups — and
 computes local, global and mesoscale metrics, communities and percolation
 dynamics. The `omics` command builds the networks themselves from raw
 transcriptomics or microbiome data. The compute-heavy searches run in
 parallel, compiled code.
-
-![Pyntacle overview](Documentation/source/_static/pyntacle_overview.png)
-
-*(a) Inputs, the graph object at the core, the analysis commands and their
-outputs. (b) Four analyses on Zachary's karate club: node centrality, key
-players, communities and spreading from one seed.*
 
 ## Features
 
