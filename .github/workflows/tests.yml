@@ -2,7 +2,7 @@ name: tests
 
 on:
   push:
-    branches: [main, graphtacle]
+    branches: [master, graphtacle]
   pull_request:
   workflow_dispatch:
 

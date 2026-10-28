@@ -73,6 +73,8 @@ setup(
     description="Network analysis: key players, group centrality, percolation and omics networks",
     long_description=long_description,
     long_description_content_type="text/markdown",
+    author="Manuel Mangoni, Alessandro Napoli, Michele Pieroni, Tommaso Mazza",
+    maintainer="Tommaso Mazza",
     url="https://github.com/mazzalab/pyntacle",
     license="GPL-3.0-only",
     python_requires=">=3.10",

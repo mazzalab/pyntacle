@@ -1,0 +1,45 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Pyntacle"
+abstract: "Network analysis: key players, group centrality, percolation and omics networks."
+type: software
+version: 2.0.0
+license: GPL-3.0-only
+repository-code: "https://github.com/mazzalab/pyntacle"
+authors:
+  - family-names: Mangoni
+    given-names: Manuel
+  - family-names: Napoli
+    given-names: Alessandro
+  - family-names: Pieroni
+    given-names: Michele
+  - family-names: Mazza
+    given-names: Tommaso
+preferred-citation:
+  type: article
+  title: "Pyntacle: a parallel computing-enabled framework for large-scale network biology analysis"
+  authors:
+    - family-names: Parca
+      given-names: Luca
+    - family-names: Truglio
+      given-names: Mauro
+    - family-names: Biagini
+      given-names: Tommaso
+    - family-names: Castellana
+      given-names: Stefano
+    - family-names: Petrizzelli
+      given-names: Francesco
+    - family-names: Capocefalo
+      given-names: Daniele
+    - family-names: Jordán
+      given-names: Ferenc
+    - family-names: Carella
+      given-names: Massimo
+    - family-names: Mazza
+      given-names: Tommaso
+  journal: "GigaScience"
+  year: 2020
+  volume: 9
+  issue: 10
+  start: giaa115
+  doi: "10.1093/gigascience/giaa115"

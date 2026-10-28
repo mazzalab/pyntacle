@@ -95,6 +95,8 @@ If you use Pyntacle, please cite:
 > for large-scale network biology analysis. *GigaScience* 2020;9(10):giaa115.
 > [doi:10.1093/gigascience/giaa115](https://doi.org/10.1093/gigascience/giaa115)
 
+The citation of this release is in [CITATION.cff](CITATION.cff).
+
 ## License
 
 GNU General Public License v3.0 — see [LICENSE](LICENSE).

@@ -6,8 +6,8 @@ sys.path.insert(0, os.path.abspath('../..'))
 os.environ.setdefault('PYNTACLE_DOCS', '1')
 
 project = 'Pyntacle'
-copyright = '2024, Tommaso Mazza, Alessandro Napoli, Manuel Mangoni, Michele Pieroni'
-author = 'Tommaso Mazza, Alessandro Napoli, Manuel Mangoni, Michele Pieroni'
+copyright = '2026, Manuel Mangoni, Alessandro Napoli, Michele Pieroni, Tommaso Mazza'
+author = 'Manuel Mangoni, Alessandro Napoli, Michele Pieroni, Tommaso Mazza'
 from pyntacle import __version__ as release
 version = '.'.join(release.split('.')[:2])
 
