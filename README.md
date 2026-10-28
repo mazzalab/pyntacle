@@ -7,6 +7,12 @@ dynamics. The `omics` command builds the networks themselves from raw
 transcriptomics or microbiome data. The compute-heavy searches run in
 parallel, compiled code.
 
+![Pyntacle overview](Documentation/source/_static/pyntacle_overview.png)
+
+*(a) Inputs, the graph object at the core, the analysis commands and their
+outputs. (b) Four analyses on Zachary's karate club: node centrality, key
+players, communities and spreading from one seed.*
+
 ## Features
 
 | Command | What it does |

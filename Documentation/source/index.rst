@@ -6,6 +6,14 @@ It provides a command-line interface and Python API for importing, manipulating,
 analyzing network data — from local and global topology metrics to advanced key-player
 identification, mesoscale analysis, and infection-percolation dynamics.
 
+.. figure:: _static/pyntacle_overview.png
+   :alt: Pyntacle overview
+   :width: 100%
+
+   (a) Inputs, the graph object at the core, the analysis commands and their
+   outputs. (b) Four analyses on Zachary's karate club: node centrality, key
+   players, communities and spreading from one seed.
+
 .. grid:: 2
 
    .. grid-item-card:: Quick Install
