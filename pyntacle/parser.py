@@ -2,7 +2,8 @@ import argparse
 import textwrap
 
 import os
-from importlib.metadata import PackageNotFoundError, version
+
+from pyntacle import __version__
 
 try:
     from colorama import Fore, Style
@@ -64,13 +65,6 @@ def _prevalence(value):
 	return "auto" if value == "auto" else _number(float, lambda x: 0 < x <= 1, "'auto' or a number in (0, 1]")(value)
 
 
-def _installed_version():
-	try:
-		return version("pyntacle")
-	except PackageNotFoundError:
-		return "(not installed)"
-
-
 def create_parser() -> argparse.ArgumentParser:
 
 	parser = argparse.ArgumentParser(description= Fore.GREEN + Style.BRIGHT +'''\n\n
@@ -99,7 +93,7 @@ def create_parser() -> argparse.ArgumentParser:
 
 	''' +  Style.RESET_ALL , add_help=False, prog="pyntacle", usage="pyntacle" + Fore.RED + " command" + Fore.MAGENTA + " [subcommand]" + Fore.CYAN + " parameters"+Style.RESET_ALL, formatter_class=argparse.RawDescriptionHelpFormatter)
 	parser.add_argument('-h', '--help', action='help', default=argparse.SUPPRESS, help='Show this help message and exit')
-	parser.add_argument('-v', '--version', action='version', version='Pyntacle ' + _installed_version(), help='Show version number and quit')
+	parser.add_argument('-v', '--version', action='version', version='Pyntacle ' + __version__, help='Show version number and quit')
 	subparsers = parser.add_subparsers(dest='command', prog='pyntacle', title="Functions",  metavar= Fore.CYAN + Style.BRIGHT + "The available commands in Pyntacle are:\n" + Style.RESET_ALL)
 	parser._optionals.title = 'Optional arguments'
 

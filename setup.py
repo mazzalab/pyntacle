@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 
 from setuptools import Extension, find_packages, setup
@@ -62,9 +63,13 @@ else:
 with open("README.md", encoding="utf-8") as fh:
     long_description = fh.read()
 
+# the version is set once, in pyntacle/__init__.py
+with open(os.path.join("pyntacle", "__init__.py"), encoding="utf-8") as fh:
+    VERSION = re.search(r'^__version__ = "([^"]+)"', fh.read(), re.M).group(1)
+
 setup(
     name="pyntacle",
-    version="2.0.0",
+    version=VERSION,
     description="Network analysis: key players, group centrality, percolation and omics networks",
     long_description=long_description,
     long_description_content_type="text/markdown",

@@ -8,8 +8,8 @@ os.environ.setdefault('PYNTACLE_DOCS', '1')
 project = 'Pyntacle'
 copyright = '2024, Tommaso Mazza, Alessandro Napoli, Manuel Mangoni, Michele Pieroni'
 author = 'Tommaso Mazza, Alessandro Napoli, Manuel Mangoni, Michele Pieroni'
-version = '2.0'
-release = '2.0.0'
+from pyntacle import __version__ as release
+version = '.'.join(release.split('.')[:2])
 
 extensions = [
     "sphinx_design",
