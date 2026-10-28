@@ -1,0 +1,126 @@
+cmd	tool	topology	n	d	weighted	k	algorithm	threads	same_result	max_abs_delta	max_rel_delta	notes
+gc-finder	new	ba	100	3	False	2	brute_force	1	yes	0.0002	0.000392	
+gc-finder	new	ba	100	3	False	2	greedy	1	na	0.0002	0.000392	greedy heuristic; same score
+gc-finder	new	ba	100	3	False	3	greedy	1	na	0.00046	0.000892	greedy heuristic; same score
+gc-finder	new	ba	100	3	False	4	greedy	1	na	0.00042	0.000683	greedy heuristic; same score
+gc-finder	new	ba	250	3	False	2	brute_force	1	yes	0.00048	0.00173	
+gc-finder	new	ba	250	3	False	2	greedy	1	na	0.00048	0.00173	greedy heuristic; same score
+gc-finder	new	ba	250	3	False	3	greedy	1	na	0.00028	0.000786	greedy heuristic; same score
+gc-finder	new	ba	250	3	False	4	greedy	1	na	0.00037	0.000892	greedy heuristic; same score
+gc-finder	new	ba	500	3	False	2	greedy	1	na	0.00042	0.001549	greedy heuristic; same score
+gc-finder	new	ba	500	3	False	3	greedy	1	na	0.00045	0.001864	greedy heuristic; same score
+gc-finder	new	er	100	3	False	2	brute_force	1	yes	0.00044	0.001321	
+gc-finder	new	er	100	3	False	2	greedy	1	na	0.00805	0.016264	greedy heuristic; closeness: 0.49495 vs 0.503
+gc-finder	new	er	100	3	False	3	greedy	1	na	0.00353	0.006332	greedy heuristic; closeness: 0.55747 vs 0.561
+gc-finder	new	er	100	3	False	4	greedy	1	na	0.01159	0.025231	greedy heuristic; degree: 0.40625 vs 0.396; betweenness (old doubled): 0.22206 vs 0.22; closeness: 0.60759 vs 0.596
+gc-finder	new	er	249	3	False	2	greedy	1	na	0.00104	0.002518	greedy heuristic; same score
+gc-finder	new	er	249	3	False	3	greedy	1	na	0.00044	0.002726	greedy heuristic; same score
+gc-finder	new	er	249	3	False	4	greedy	1	na	0.0003	0.002227	greedy heuristic; same score
+gc-finder	new	er	50	3	False	3	brute_force	1	yes	0.00026	0.000436	
+gc-finder	new	er	500	3	False	2	greedy	1	na	0.00043	0.001179	greedy heuristic; same score
+gc-finder	new	er	500	3	False	3	greedy	1	na	0.00056	0.00142	greedy heuristic; same score
+gc-finder	new	er	500	3	False	4	greedy	1	na	0.00023	0.001194	greedy heuristic; same score
+gc-finder	new	ws	100	3	False	2	brute_force	1	yes	0.00044	0.001654	
+gc-finder	new	ws	100	3	False	2	greedy	1	na	0.00044	0.001654	greedy heuristic; same score
+gc-finder	new	ws	100	3	False	3	greedy	1	na	0.00739	0.015008	greedy heuristic; closeness: 0.49239 vs 0.485
+gc-finder	new	ws	100	3	False	4	greedy	1	na	0.00328	0.005945	greedy heuristic; closeness: 0.55172 vs 0.555
+gc-finder	new	ws	250	3	False	2	brute_force	1	yes	0.00018	0.001785	
+gc-finder	new	ws	250	3	False	2	greedy	1	na	0.00066	0.001937	greedy heuristic; same score
+gc-finder	new	ws	250	3	False	3	greedy	1	na	0.00615	0.015885	greedy heuristic; closeness: 0.38715 vs 0.381
+gc-finder	new	ws	250	3	False	4	greedy	1	na	0.00044	0.002386	greedy heuristic; same score
+gc-finder	new	ws	500	3	False	2	greedy	1	na	0.0001	0.001107	greedy heuristic; same score
+gc-finder	new	ws	500	3	False	3	greedy	1	na	0.00067	0.002026	greedy heuristic; same score
+gc-finder	new	ws	500	3	False	4	greedy	1	na	0.00044	0.003841	greedy heuristic; same score
+global	new	ba	100	3	False			1	yes	0.00042	0.003641	
+global	new	ba	1000	3	False			1	yes	0.00044	0.002304	
+global	new	ba	10000	3	False			1	yes	0.0004	0.0005	
+global	new	ba	25000	3	False			1	yes	0.0005	0.001717	
+global	new	ba	500	3	False			1	yes	0.00049	0.001718	
+global	new	ba	5000	3	False			1	yes	0.0004	0.001509	
+global	new	er	100	3	False			1	yes	0.00025	0.000684	
+global	new	er	1990	3	False			1	yes	0.00046	0.002031	
+global	new	er	2000	10	False			1	yes	0.00049	0.001965	
+global	new	er	2000	50	False			1	yes	0.00047	0.000999	
+global	new	er	24950	3	False			1	yes	0.00047	0.02	
+global	new	er	4996	3	False			1	yes	0.00036	0.002999	
+global	new	er	500	3	False			1	yes	0.00029	0.004049	
+global	new	er	996	3	False			1	yes	0.0004	0.001616	
+global	new	er	9971	3	False			1	yes	0.00048	0.009804	
+global	new	ws	100	3	False			1	yes	0.0005	0.001152	
+global	new	ws	1000	3	False			1	yes	0.00048	0.00243	
+global	new	ws	10000	3	False			1	yes	0.00016	0.001128	
+global	new	ws	25000	3	False			1	yes	0.00048	0.002183	
+global	new	ws	500	3	False			1	yes	0.00039	0.002465	
+global	new	ws	5000	3	False			1	yes	0.00047	0.001543	
+kp-finder	new	ba	100	3	False	2	brute_force	1	yes	0.00033	0.000528	
+kp-finder	new	ba	100	3	False	2	greedy	1	na	0.00033	0.000528	greedy heuristic; same score
+kp-finder	new	ba	100	3	False	3	greedy	1	na	0.00048	0.000775	greedy heuristic; same score
+kp-finder	new	ba	100	3	False	4	greedy	1	na	1e-05	1.6e-05	greedy heuristic; same score
+kp-finder	new	ba	250	3	False	2	greedy	1	na	0.00024	0.000364	greedy heuristic; same score
+kp-finder	new	ba	250	3	False	3	greedy	1	na	1.0	0.004329	greedy heuristic; mreach: 231.0 vs 230.0
+kp-finder	new	ba	250	3	False	4	greedy	1	na	1.0	0.004237	greedy heuristic; mreach: 236.0 vs 237.0
+kp-finder	new	ba	500	3	False	2	greedy	1	na	0.00021	0.000304	greedy heuristic; same score
+kp-finder	new	ba	500	3	False	3	greedy	1	na	0.00029	0.000417	greedy heuristic; same score
+kp-finder	new	ba	500	3	False	4	greedy	1	na	0.00032	0.000457	greedy heuristic; same score
+kp-finder	new	er	100	3	False	2	brute_force	1	yes	0.00044	0.000724	
+kp-finder	new	er	100	3	False	2	greedy	1	na	1.0	0.012658	greedy heuristic; mreach: 79.0 vs 78.0
+kp-finder	new	er	100	3	False	3	brute_force	1	yes	0.00033	0.000529	
+kp-finder	new	er	100	3	False	3	greedy	1	na	0.00033	0.000529	greedy heuristic; same score
+kp-finder	new	er	100	3	False	4	greedy	1	na	2.0	0.021053	greedy heuristic; mreach: 95.0 vs 93.0
+kp-finder	new	er	249	3	False	2	brute_force	1	yes	0.00036	0.000538	
+kp-finder	new	er	249	3	False	2	greedy	1	na	0.00036	0.000538	greedy heuristic; same score
+kp-finder	new	er	249	3	False	3	greedy	1	na	0.0002	0.000298	greedy heuristic; same score
+kp-finder	new	er	249	3	False	4	greedy	1	na	2.0	0.010753	greedy heuristic; mreach: 186.0 vs 188.0
+kp-finder	new	er	50	3	False	3	brute_force	1	yes	0.00033	0.000444	
+kp-finder	new	er	500	3	False	2	greedy	1	na	0.00037	0.001664	greedy heuristic; same score
+kp-finder	new	er	500	3	False	3	greedy	1	na	0.00037	0.003115	greedy heuristic; same score
+kp-finder	new	er	500	3	False	4	greedy	1	na	6.0	0.021818	greedy heuristic; mreach: 275.0 vs 281.0
+kp-finder	new	ws	100	3	False	2	brute_force	1	yes	0.00041	0.000662	
+kp-finder	new	ws	100	3	False	2	greedy	1	na	0.00041	0.000662	greedy heuristic; same score
+kp-finder	new	ws	100	3	False	3	greedy	1	na	0.00017	0.000303	greedy heuristic; same score
+kp-finder	new	ws	100	3	False	4	greedy	1	na	0.00167	0.00273	greedy heuristic; dr: 0.61167 vs 0.61
+kp-finder	new	ws	250	3	False	2	brute_force	1	yes	0.00048	0.001021	
+kp-finder	new	ws	250	3	False	2	greedy	1	na	0.0006	0.001532	greedy heuristic; same score
+kp-finder	new	ws	250	3	False	3	greedy	1	na	0.00247	0.005659	greedy heuristic; dr: 0.43647 vs 0.434
+kp-finder	new	ws	250	3	False	4	greedy	1	na	0.00333	0.007045	greedy heuristic; dr: 0.47267 vs 0.476
+kp-finder	new	ws	500	3	False	2	greedy	1	na	0.0004	0.001181	greedy heuristic; same score
+kp-finder	new	ws	500	3	False	3	greedy	1	na	0.00043	0.001148	greedy heuristic; same score
+kp-finder	new	ws	500	3	False	4	greedy	1	na	0.00043	0.000814	greedy heuristic; same score
+kp-info	new	ba	100	3	False			1	yes	0.00042	0.000716	
+kp-info	new	ba	1000	3	False			1	yes	0.0005	0.0011	
+kp-info	new	ba	500	3	False			1	yes	0.0005	0.001017	
+kp-info	new	ba	5000	3	False			1	yes	0.00044	0.000582	
+kp-info	new	er	100	3	False			1	yes	0.00037	0.000651	
+kp-info	new	er	1990	3	False			1	yes	0.00048	0.001627	
+kp-info	new	er	2000	10	False			1	yes	0.00036	0.000814	
+kp-info	new	er	2000	50	False			1	yes	0.0005	0.000907	
+kp-info	new	er	4996	3	False			1	yes	0.00017	0.000215	
+kp-info	new	er	500	3	False			1	yes	0.00039	0.000552	
+kp-info	new	er	996	3	False			1	yes	0.00031	0.000971	
+kp-info	new	er	9971	3	False			1	yes	0.00046	0.002227	
+kp-info	new	ws	100	3	False			1	yes	0.00033	0.000764	
+kp-info	new	ws	1000	3	False			1	yes	0.00043	0.000955	
+kp-info	new	ws	10000	3	False			1	yes	0.00048	0.0029	
+kp-info	new	ws	500	3	False			1	yes	0.00034	0.000811	
+kp-info	new	ws	5000	3	False			1	yes	9e-05	0.000503	
+local	new	ba	100	3	False			1	yes	0.000501	0.003984	
+local	new	ba	1000	3	False			1	yes	0.0005	0.009434	
+local	new	ba	10000	3	False			1	yes	0.0005	0.1	
+local	new	ba	25000	3	False			1	yes	0.0005	0.25	
+local	new	ba	500	3	False			1	yes	0.0005	0.004829	
+local	new	ba	5000	3	False			1	yes	0.000503	0.05	
+local	new	er	100	3	False			1	yes	0.000523	0.003636	
+local	new	er	1990	3	False			1	yes	0.000585	0.035714	
+local	new	er	2000	10	False			1	yes	0.000683	0.021739	
+local	new	er	2000	50	False			1	yes	0.000678	0.015152	
+local	new	er	24950	3	False			1	yes	0.000715	0.49	
+local	new	er	4996	3	False			1	yes	0.00061	0.08	
+local	new	er	500	3	False			1	yes	0.000534	0.005682	
+local	new	er	996	3	False			1	yes	0.000559	0.015152	
+local	new	er	9971	3	False			1	yes	0.000609	0.156667	
+local	new	ws	100	3	False			1	yes	0.000509	0.004975	
+local	new	ws	1000	3	False			1	yes	0.000553	0.009091	
+local	new	ws	10000	3	False			1	yes	0.000609	0.12	
+local	new	ws	25000	3	False			1	yes	0.00073	0.25	
+local	new	ws	500	3	False			1	yes	0.000541	0.003105	
+local	new	ws	5000	3	False			1	yes	0.000602	0.045556	

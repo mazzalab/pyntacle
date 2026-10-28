@@ -1,0 +1,7 @@
+shard	host	arm	cpu_model	cores_allowed	ram_gb	kernel	python	igraph	numpy	tool_version	commit	install_path	governor	date	harness_numpy	harness_igraph
+0of4	nodeC	old	Intel(R) Xeon(R) Gold 6240 CPU @ 2.60GHz	32	503.6	4.18.0-193.19.1.el8_2.x86_64	3.7.12	0.8.3	1.21.6	Pyntacle v1.3.2		$PYNTACLE_OLD_BIN		2026-09-30T13:16:13	2.2.6	0.10.8
+1of4	nodeA	old	Intel(R) Xeon(R) Gold 6240 CPU @ 2.60GHz	32	503.6	4.18.0-193.19.1.el8_2.x86_64	3.7.12	0.8.3	1.21.6	Pyntacle v1.3.2		$PYNTACLE_OLD_BIN		2026-09-30T13:16:23	2.2.6	0.10.8
+2of4	nodeC	old	Intel(R) Xeon(R) Gold 6240 CPU @ 2.60GHz	32	503.6	4.18.0-193.19.1.el8_2.x86_64	3.7.12	0.8.3	1.21.6	Pyntacle v1.3.2		$PYNTACLE_OLD_BIN		2026-09-30T13:16:13	2.2.6	0.10.8
+3of4	nodeA	old	Intel(R) Xeon(R) Gold 6240 CPU @ 2.60GHz	32	503.6	4.18.0-193.19.1.el8_2.x86_64	3.7.12	0.8.3	1.21.6	Pyntacle v1.3.2		$PYNTACLE_OLD_BIN		2026-09-30T13:16:23	2.2.6	0.10.8
+0of2	nodeC	new	Intel(R) Xeon(R) Gold 6240 CPU @ 2.60GHz	32	503.6	4.18.0-193.19.1.el8_2.x86_64	3.10.20	0.10.8	2.2.6	Pyntacle 2.0.0	c5b5caf+dirty	pyntacle/main.py		2026-10-26T14:34:02	2.2.6	0.10.8
+1of2	nodeA	new	Intel(R) Xeon(R) Gold 6240 CPU @ 2.60GHz	32	503.6	4.18.0-193.19.1.el8_2.x86_64	3.10.20	0.10.8	2.2.6	Pyntacle 2.0.0	c5b5caf+dirty	pyntacle/main.py		2026-10-26T14:34:05	2.2.6	0.10.8

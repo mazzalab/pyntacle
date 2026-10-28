@@ -1,0 +1,16 @@
+{
+ "graph_id": "ba_n500_d3_s42",
+ "topology": "ba",
+ "n_requested": 500,
+ "m_per_node": 3,
+ "seed": 42,
+ "n": 500,
+ "m": 1494,
+ "density": 0.011976,
+ "sif": "ba_n500_d3_s42.sif",
+ "sif_weighted": "ba_n500_d3_s42_w.sif",
+ "probe_nodes": [
+  "n000",
+  "n250"
+ ]
+}

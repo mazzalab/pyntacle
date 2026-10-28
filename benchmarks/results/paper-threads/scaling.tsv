@@ -1,0 +1,16 @@
+cmd	tool	topology	n	k	algorithm	weighted	threads	wall_median	speedup_p	efficiency_p
+gc-finder	old	er	200	2	brute_force	False	1	1964.3764	1.0	1.0
+gc-finder	old	er	200	2	brute_force	False	2	1031.8012	1.904	0.952
+gc-finder	old	er	200	2	brute_force	False	4	549.3926	3.576	0.894
+gc-finder	old	er	200	2	brute_force	False	8	304.6318	6.448	0.806
+gc-finder	old	er	200	2	brute_force	False	16	189.6651	10.357	0.647
+kp-finder	new	er	500	2	brute_force	False	1	786.6516	1.0	1.0
+kp-finder	new	er	500	2	brute_force	False	2	394.3063	1.995	0.998
+kp-finder	new	er	500	2	brute_force	False	4	197.7283	3.978	0.995
+kp-finder	new	er	500	2	brute_force	False	8	102.2599	7.693	0.962
+kp-finder	new	er	500	2	brute_force	False	16	52.0545	15.112	0.945
+gc-finder	new	er	200	2	brute_force	False	1	54.7531	1.0	1.0
+gc-finder	new	er	200	2	brute_force	False	2	27.869	1.965	0.982
+gc-finder	new	er	200	2	brute_force	False	4	14.4455	3.79	0.948
+gc-finder	new	er	200	2	brute_force	False	8	8.2549	6.633	0.829
+gc-finder	new	er	200	2	brute_force	False	16	4.759	11.505	0.719

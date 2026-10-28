@@ -39,9 +39,13 @@ Documentation/_backup_source/
 Documentation/old_stuff/
 review_html/
 
-# Benchmark outputs and the regenerated graph corpus
-benchmarks/results/
-benchmarks/data/*_s42*
+# Benchmark runs: only the results behind the paper are part of the source
+benchmarks/results/*
+!benchmarks/results/paper/
+!benchmarks/results/paper-threads/
+benchmarks/results/*/plots/
+benchmarks/results/*/outputs/
+benchmarks/results/*/logs/
 
 # Figures used by the documentation are part of the source
 !Documentation/source/_static/*

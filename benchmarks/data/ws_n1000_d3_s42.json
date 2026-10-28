@@ -1,0 +1,16 @@
+{
+ "graph_id": "ws_n1000_d3_s42",
+ "topology": "ws",
+ "n_requested": 1000,
+ "m_per_node": 3,
+ "seed": 42,
+ "n": 1000,
+ "m": 3000,
+ "density": 0.006006,
+ "sif": "ws_n1000_d3_s42.sif",
+ "sif_weighted": "ws_n1000_d3_s42_w.sif",
+ "probe_nodes": [
+  "n0000",
+  "n0500"
+ ]
+}

@@ -1,0 +1,16 @@
+{
+ "graph_id": "er_n400_d3_s42",
+ "topology": "er",
+ "n_requested": 400,
+ "m_per_node": 3,
+ "seed": 42,
+ "n": 399,
+ "m": 1200,
+ "density": 0.015113,
+ "sif": "er_n400_d3_s42.sif",
+ "sif_weighted": "er_n400_d3_s42_w.sif",
+ "probe_nodes": [
+  "n000",
+  "n199"
+ ]
+}

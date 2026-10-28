@@ -1,0 +1,10 @@
+feature	old	new	notes
+weighted shortest paths (local/global/kp/gc)	no	yes	1.3.2 --weights only reaches PageRank
+single-direction edge list	no	yes	old rejects it as directed; needs every edge listed twice
+brute force with the python engine	n/a	no	compiled kernels only
+local runs	no	no	
+global runs	no	no	
+kp-info runs	no	no	
+kp-finder runs	yes	yes	
+gc-info runs	no	no	
+gc-finder runs	yes	yes	

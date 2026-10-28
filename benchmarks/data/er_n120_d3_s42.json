@@ -1,0 +1,16 @@
+{
+ "graph_id": "er_n120_d3_s42",
+ "topology": "er",
+ "n_requested": 120,
+ "m_per_node": 3,
+ "seed": 42,
+ "n": 120,
+ "m": 360,
+ "density": 0.05042,
+ "sif": "er_n120_d3_s42.sif",
+ "sif_weighted": "er_n120_d3_s42_w.sif",
+ "probe_nodes": [
+  "n000",
+  "n060"
+ ]
+}
