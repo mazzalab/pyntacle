@@ -57,12 +57,14 @@ pyntacle local -t edgelist -i examples/figure_8.egl -o out/
 pyntacle keyplayer kp-finder -t edgelist -i examples/figure_8.egl -k 2 -oper all -a greedy -o out/
 
 # one network per sample group from microbiome abundances, then its key players
-pyntacle omics metagenomics -i relabund.tsv -m samples.tsv --group-col condition -o nets/
+pyntacle omics metagenomics -i examples/omics/relabund.tsv -m examples/omics/samples.tsv --group-col condition -o nets/
 pyntacle keyplayer kp-finder -t edgelist -w -wt signed -i nets/relabund_tumor.tsv -k 2 -oper all -a greedy -o kp/
 ```
 
 Every analysis writes a TSV report and, unless `--no-plot` is given, a figure
 and an interactive HTML report.
+
+[examples/README.md](examples/README.md) has a command for every analysis.
 
 ## Documentation
 
