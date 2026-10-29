@@ -1,5 +1,4 @@
-from .cython_metrics import cython_greedy, cython_bruteforce, SetScorer
-from .cython_igraph import init_igraph_error_handler
+from .cython_metrics import cython_greedy, cython_bruteforce, SetScorer, OPENMP
 
 import numpy as np
 from time import time
@@ -9,20 +8,13 @@ import warnings
 import igraph as ig
 import pandas as pd
 
-# libigraph aborts the process by default when a call fails, and the kernels
-# call it from inside nogil blocks. The returning handler, installed at import
-# time, lets the wrappers below turn a failure into a Python exception.
-init_igraph_error_handler()
-
 # How many equally-scoring node sets a brute-force run reports. Symmetric networks
 # routinely have thousands of them, so the list is capped while the count that comes
 # back with it stays exact.
 DEFAULT_MAX_TIES = 100
 
 CYTHON_UNSUPPORTED_DIRECTED = (
-    "The compiled metric kernels only support undirected networks: they build the "
-    "graph through igraph's undirected weighted-adjacency constructor, which "
-    "rejects the asymmetric matrix a directed graph produces. Re-run without "
+    "The compiled metric kernels only support undirected networks. Re-run without "
     "--directed, or use the 'local', 'global' or 'set' commands."
 )
 
@@ -64,7 +56,7 @@ def _check_undirected(graph):
 def _edges(graph):
     """Edge list, weights, vertex count and a flag telling whether every weight is 1.
 
-    The kernels build their CSR and igraph views from this O(E) edge list.
+    The kernels build their CSR view from this O(E) edge list.
     Zero-weight edges are dropped (a zero weight is not an edge). The unweighted
     flag lets the kernels use a BFS instead of Dijkstra.
     """

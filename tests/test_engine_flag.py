@@ -112,3 +112,20 @@ def test_engine_flag_is_documented_as_single_threaded(network):
     engine_help = result.stdout[result.stdout.index("--engine"):]
     engine_help = engine_help[:400].lower()
     assert "single" in engine_help or "-np" in engine_help
+
+
+def test_openmp_warning_matches_the_build(network, tmp_path):
+    """-np > 1 on a build without OpenMP must say the kernels run on one thread;
+    a build with OpenMP must stay quiet."""
+    from pyntacle._ext.wrapper import OPENMP
+
+    outdir = os.path.join(str(tmp_path), "out_openmp")
+    os.makedirs(outdir, exist_ok=True)
+
+    result = run_cli("keyplayer", "kp-finder", "-i", network, "-t", "edgelist",
+                     "--algorithm", "greedy", "-oper", "F", "-k", "2", "--seed", "1",
+                     "-np", "2", "--no-plot", "-o", outdir)
+
+    assert result.returncode == 0, result.stderr[-800:]
+    warned = "compiled without OpenMP" in (result.stdout + result.stderr)
+    assert warned == (not OPENMP), result.stdout[-800:]

@@ -18,7 +18,7 @@ if __package__ in (None, ""):
 
 from pyntacle._ext.wrapper import (cython_wrapper_greedy, cython_wrapper_info, KernelScorer,
                                    cython_wrapper_bruteforce, CYTHON_UNSUPPORTED_DIRECTED,
-                                   DEFAULT_MAX_TIES)
+                                   DEFAULT_MAX_TIES, OPENMP)
 
 from pyntacle.parser import create_parser
 from pyntacle.GraphTacle import Graphtacle
@@ -218,6 +218,12 @@ def main(args):
 			f"WARNING: --engine python is single-threaded; -np {args.nprocs} will be ignored. "
 			"Drop --engine python to use the compiled kernels, which do honour -np."
 			+ Style.RESET_ALL)
+	# extensions built without OpenMP (setup.py found none) run on one thread
+	if use_cython and not OPENMP and int(getattr(args, "nprocs", 1)) > 1:
+		print(Fore.YELLOW + Style.BRIGHT +
+			f"WARNING: this Pyntacle was compiled without OpenMP; -np {args.nprocs} will be ignored "
+			"and the compiled kernels run on one thread. See 'Installation' in the documentation."
+			+ Style.RESET_ALL)
 
 	# brute_force exists only in the compiled engine. kp-info/gc-info accept -a
 	# but never search, so only the finders are checked.
@@ -294,7 +300,7 @@ def main(args):
 				fail(f"-k is at most {g.vcount() - 2} here: the set must leave at least 2 of the "
 				     f"{g.vcount()} nodes outside it")
 			engine = "" if use_cython else ", python engine"
-			threads = f", {args.nprocs} threads" if use_cython and args.nprocs > 1 else ""
+			threads = f", {args.nprocs} threads" if use_cython and OPENMP and args.nprocs > 1 else ""
 			print(f"Search: {args.algorithm}, k = {args.k_size}, operation {args.operation}{engine}{threads}\n")
 			search_start = time()
 

@@ -26,13 +26,12 @@ PYTHON = sys.executable
 # ---------------------------------------------------------------- P0 crashes
 
 def test_directed_graph_is_rejected_not_aborted():
-    """A directed graph must raise, not SIGABRT the interpreter.
+    """A directed graph must raise ValueError, not crash the interpreter.
 
-    cython_igraph.pyx hardcodes IGRAPH_ADJ_UNDIRECTED while wrapper.py feeds it an
-    asymmetric adjacency matrix; igraph's default error handler then abort()s from
-    inside a nogil block, killing the process with exit 134 and no traceback.
+    The compiled kernels only handle undirected networks, and they run inside
+    nogil blocks where a failure would kill the process with no traceback.
 
-    Run out-of-process: if the bug is present it takes the test runner down too.
+    Run out-of-process: if the process crashes it takes the test runner down too.
     """
     script = textwrap.dedent(f"""
         import sys

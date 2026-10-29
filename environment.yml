@@ -4,7 +4,8 @@
 #   conda activate pyntacle
 #   pip install .
 #
-# igraph's C library comes from Conda: the Cython extensions link against it.
+# On macOS also run `conda install llvm-openmp` in the environment, so the
+# compiled kernels run in parallel (-np).
 name: pyntacle
 channels:
   - conda-forge
@@ -13,7 +14,6 @@ dependencies:
   - pip
   - c-compiler
   - cython>=3.0
-  - igraph=0.10
   - python-igraph=0.10
   - numpy
   - pandas

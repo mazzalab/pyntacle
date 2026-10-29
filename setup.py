@@ -1,8 +1,10 @@
 import os
 import re
 import sys
+import tempfile
 
 from setuptools import Extension, find_packages, setup
+from setuptools.command.build_ext import build_ext
 
 # Use Cython when available, otherwise build from the generated .c files.
 try:
@@ -13,43 +15,75 @@ except ImportError:
     USE_CYTHON = False
     SOURCE_EXT = ".c"
 
-# The extensions link igraph's C library from the active Conda environment
-# (see environment.yml).
-if "CONDA_PREFIX" not in os.environ:
-    raise EnvironmentError(
-        "Pyntacle builds against igraph's C library from a Conda environment: "
-        "create it with `conda env create -f environment.yml`, activate it and "
-        "run `pip install .` again.")
-conda_prefix = os.environ["CONDA_PREFIX"]
-if sys.platform.startswith("win"):
-    include_dir = os.path.join(conda_prefix, "Library", "include")
-    lib_dir = os.path.join(conda_prefix, "Library", "lib")
-    openmp_arg = "/openmp"
-else:
-    include_dir = os.path.join(conda_prefix, "include")
-    lib_dir = os.path.join(conda_prefix, "lib")
-    openmp_arg = "-fopenmp"
-
 EXT_DIR = os.path.join("pyntacle", "_ext")
 
+# Only cython_metrics runs parallel loops (-np).
+OPENMP_EXTENSIONS = {"pyntacle._ext.cython_metrics"}
 
-def ext(name, **kwargs):
-    return Extension("pyntacle._ext." + name, [os.path.join(EXT_DIR, name + SOURCE_EXT)], **kwargs)
+OPENMP_TEST = """
+#include <omp.h>
+int main(void) { return omp_get_max_threads() > 0 ? 0 : 1; }
+"""
 
 
-openmp = dict(extra_compile_args=[openmp_arg], extra_link_args=[openmp_arg])
-extensions = [
-    ext("cython_metrics", **openmp),
-    ext("cython_igraph",
-        include_dirs=[include_dir],
-        library_dirs=[lib_dir],
-        runtime_library_dirs=[] if sys.platform.startswith("win") else [lib_dir],
-        libraries=["igraph"],
-        **openmp),
-    ext("kp_metrics"),
-    ext("group_metrics"),
-    ext("utils"),
-]
+def openmp_candidates(compiler_type):
+    """(compile flags, link flags) to try, in order, for this compiler."""
+    if compiler_type == "msvc":
+        return [(["/openmp"], [])]
+    candidates = [(["-fopenmp"], ["-fopenmp"])]
+    if sys.platform == "darwin":
+        # Apple clang has no -fopenmp driver flag: it needs libomp, from
+        # conda (llvm-openmp) or Homebrew (brew install libomp)
+        for prefix in (os.environ.get("CONDA_PREFIX"), "/opt/homebrew/opt/libomp",
+                       "/usr/local/opt/libomp"):
+            if prefix and os.path.exists(os.path.join(prefix, "include", "omp.h")):
+                lib = os.path.join(prefix, "lib")
+                candidates.append((["-Xpreprocessor", "-fopenmp", "-I" + os.path.join(prefix, "include")],
+                                   ["-L" + lib, "-Wl,-rpath," + lib, "-lomp"]))
+    return candidates
+
+
+class BuildExt(build_ext):
+    """Compiles cython_metrics with the first OpenMP flags that build and link a
+    test program, or without OpenMP (one thread) when none does."""
+
+    def build_extensions(self):
+        flags = None
+        if os.environ.get("PYNTACLE_NO_OPENMP") != "1":
+            for cflags, ldflags in openmp_candidates(self.compiler.compiler_type):
+                if self._links(cflags, ldflags):
+                    flags = (cflags, ldflags)
+                    break
+        if flags is None:
+            print("WARNING: no OpenMP found for this compiler; Pyntacle is built "
+                  "without it and its compiled kernels will run on one thread (-np is ignored).")
+        else:
+            print("OpenMP: compile with " + " ".join(flags[0]) + ", link with " + " ".join(flags[1]))
+        for e in self.extensions:
+            if flags is not None and e.name in OPENMP_EXTENSIONS:
+                e.extra_compile_args = e.extra_compile_args + flags[0]
+                e.extra_link_args = e.extra_link_args + flags[1]
+        super().build_extensions()
+
+    def _links(self, cflags, ldflags):
+        with tempfile.TemporaryDirectory() as tmp:
+            src = os.path.join(tmp, "openmp_test.c")
+            with open(src, "w") as fh:
+                fh.write(OPENMP_TEST)
+            try:
+                objects = self.compiler.compile([src], output_dir=tmp, extra_postargs=cflags)
+                self.compiler.link_executable(objects, os.path.join(tmp, "openmp_test"),
+                                              extra_postargs=ldflags)
+            except Exception:
+                return False
+        return True
+
+
+def ext(name):
+    return Extension("pyntacle._ext." + name, [os.path.join(EXT_DIR, name + SOURCE_EXT)])
+
+
+extensions = [ext(name) for name in ("cython_metrics", "kp_metrics", "group_metrics", "utils")]
 
 if USE_CYTHON:
     extensions = cythonize(extensions, compiler_directives={"language_level": "3"},
@@ -76,10 +110,12 @@ setup(
     author="Manuel Mangoni, Alessandro Napoli, Michele Pieroni, Tommaso Mazza",
     maintainer="Tommaso Mazza",
     url="https://github.com/mazzalab/pyntacle",
+    project_urls={"Documentation": "https://pyntacle.readthedocs.io"},
     license="GPL-3.0-only",
     python_requires=">=3.10",
     packages=find_packages(include=["pyntacle", "pyntacle.*"]),
     ext_modules=extensions,
+    cmdclass={"build_ext": BuildExt},
     install_requires=[
         "numpy>=1.23",
         "pandas>=1.5",
@@ -98,6 +134,7 @@ setup(
     classifiers=[
         "Programming Language :: Python :: 3",
         "Operating System :: POSIX :: Linux",
+        "Operating System :: MacOS",
         "Topic :: Scientific/Engineering :: Bio-Informatics",
     ],
 )

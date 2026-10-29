@@ -9,6 +9,20 @@ from . cimport kp_metrics
 from . cimport group_metrics
 from . cimport utils
 
+# True when this module was compiled with OpenMP. Without it the prange loops
+# run on one thread, whatever num_threads asks for; the results are the same.
+cdef extern from *:
+    """
+    #ifdef _OPENMP
+    #define PYNTACLE_OPENMP 1
+    #else
+    #define PYNTACLE_OPENMP 0
+    #endif
+    """
+    int PYNTACLE_OPENMP
+
+OPENMP = bool(PYNTACLE_OPENMP)
+
 
 cdef double operation_selector(int operation, int[:, :] edges, double[:] wvec, int n, int* K_indices, int* notK_indices,  int k, int mdist, double* floWar, int dist_type, utils.CSR* csr, utils.Scratch* scratch, bint unweighted) noexcept nogil:
 

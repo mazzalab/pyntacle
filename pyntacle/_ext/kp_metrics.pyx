@@ -5,7 +5,6 @@ from cython.cimports.libc.stdio cimport printf
 from libc.math cimport INFINITY, isinf
 
 from . cimport utils
-from . cimport cython_igraph
 
 
 cdef double m_reach(double* hop_dist, int* K_indices, int* notK_indices, int k, int n, int mdist) noexcept nogil:

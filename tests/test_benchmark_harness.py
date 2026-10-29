@@ -10,7 +10,11 @@ import sys
 
 import pytest
 
-BENCH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "benchmarks")
+# The benchmark pins processes to CPUs (taskset, sched_getaffinity): Linux only.
+if not sys.platform.startswith("linux"):
+    pytest.skip("the benchmark runs on Linux only", allow_module_level=True)
+
+BENCH =os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "benchmarks")
 sys.path.insert(0, BENCH)
 
 import cli_map  # noqa: E402

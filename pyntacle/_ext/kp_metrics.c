@@ -2769,8 +2769,6 @@ static void (*__pyx_f_8pyntacle_4_ext_5utils_csr_dijkstra_row)(struct __pyx_t_8p
 
 /* Module declarations from "libc.math" */
 
-/* Module declarations from "pyntacle._ext.cython_igraph" */
-
 /* Module declarations from "pyntacle._ext.kp_metrics" */
 static PyObject *__pyx_collections_abc_Sequence = 0;
 static PyObject *generic = 0;
@@ -16383,7 +16381,7 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *__
   return __pyx_r;
 }
 
-/* "pyntacle/_ext/kp_metrics.pyx":11
+/* "pyntacle/_ext/kp_metrics.pyx":10
  * 
  * 
  * cdef double m_reach(double* hop_dist, int* K_indices, int* notK_indices, int k, int n, int mdist) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16402,7 +16400,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_m_reach(double *__pyx_v_hop_d
   int __pyx_t_2;
   int __pyx_t_3;
 
-  /* "pyntacle/_ext/kp_metrics.pyx":21
+  /* "pyntacle/_ext/kp_metrics.pyx":20
  *     cdef int i, j
  *     cdef int k_node, notK_node
  *     cdef double mReach = 0.             # <<<<<<<<<<<<<<
@@ -16411,7 +16409,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_m_reach(double *__pyx_v_hop_d
 */
   __pyx_v_mReach = 0.;
 
-  /* "pyntacle/_ext/kp_metrics.pyx":23
+  /* "pyntacle/_ext/kp_metrics.pyx":22
  *     cdef double mReach = 0.
  * 
  *     for i from 0 <= i < (n - k):             # <<<<<<<<<<<<<<
@@ -16421,7 +16419,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_m_reach(double *__pyx_v_hop_d
   __pyx_t_1 = (__pyx_v_n - __pyx_v_k);
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_1; __pyx_v_i++) {
 
-    /* "pyntacle/_ext/kp_metrics.pyx":24
+    /* "pyntacle/_ext/kp_metrics.pyx":23
  * 
  *     for i from 0 <= i < (n - k):
  *         notK_node = notK_indices[i]             # <<<<<<<<<<<<<<
@@ -16430,7 +16428,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_m_reach(double *__pyx_v_hop_d
 */
     __pyx_v_notK_node = (__pyx_v_notK_indices[__pyx_v_i]);
 
-    /* "pyntacle/_ext/kp_metrics.pyx":26
+    /* "pyntacle/_ext/kp_metrics.pyx":25
  *         notK_node = notK_indices[i]
  * 
  *         for j from 0 <= j < k:             # <<<<<<<<<<<<<<
@@ -16440,7 +16438,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_m_reach(double *__pyx_v_hop_d
     __pyx_t_2 = __pyx_v_k;
     for (__pyx_v_j = 0; __pyx_v_j < __pyx_t_2; __pyx_v_j++) {
 
-      /* "pyntacle/_ext/kp_metrics.pyx":27
+      /* "pyntacle/_ext/kp_metrics.pyx":26
  * 
  *         for j from 0 <= j < k:
  *             k_node = K_indices[j]             # <<<<<<<<<<<<<<
@@ -16449,7 +16447,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_m_reach(double *__pyx_v_hop_d
 */
       __pyx_v_k_node = (__pyx_v_K_indices[__pyx_v_j]);
 
-      /* "pyntacle/_ext/kp_metrics.pyx":29
+      /* "pyntacle/_ext/kp_metrics.pyx":28
  *             k_node = K_indices[j]
  * 
  *             if hop_dist[notK_node * n + k_node] <= mdist:             # <<<<<<<<<<<<<<
@@ -16459,7 +16457,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_m_reach(double *__pyx_v_hop_d
       __pyx_t_3 = ((__pyx_v_hop_dist[((__pyx_v_notK_node * __pyx_v_n) + __pyx_v_k_node)]) <= __pyx_v_mdist);
       if (__pyx_t_3) {
 
-        /* "pyntacle/_ext/kp_metrics.pyx":30
+        /* "pyntacle/_ext/kp_metrics.pyx":29
  * 
  *             if hop_dist[notK_node * n + k_node] <= mdist:
  *                 mReach += 1             # <<<<<<<<<<<<<<
@@ -16468,7 +16466,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_m_reach(double *__pyx_v_hop_d
 */
         __pyx_v_mReach = (__pyx_v_mReach + 1.0);
 
-        /* "pyntacle/_ext/kp_metrics.pyx":31
+        /* "pyntacle/_ext/kp_metrics.pyx":30
  *             if hop_dist[notK_node * n + k_node] <= mdist:
  *                 mReach += 1
  *                 break  # this node is reached; do not count it again             # <<<<<<<<<<<<<<
@@ -16477,7 +16475,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_m_reach(double *__pyx_v_hop_d
 */
         goto __pyx_L6_break;
 
-        /* "pyntacle/_ext/kp_metrics.pyx":29
+        /* "pyntacle/_ext/kp_metrics.pyx":28
  *             k_node = K_indices[j]
  * 
  *             if hop_dist[notK_node * n + k_node] <= mdist:             # <<<<<<<<<<<<<<
@@ -16489,7 +16487,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_m_reach(double *__pyx_v_hop_d
     __pyx_L6_break:;
   }
 
-  /* "pyntacle/_ext/kp_metrics.pyx":33
+  /* "pyntacle/_ext/kp_metrics.pyx":32
  *                 break  # this node is reached; do not count it again
  * 
  *     return mReach             # <<<<<<<<<<<<<<
@@ -16499,7 +16497,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_m_reach(double *__pyx_v_hop_d
   __pyx_r = __pyx_v_mReach;
   goto __pyx_L0;
 
-  /* "pyntacle/_ext/kp_metrics.pyx":11
+  /* "pyntacle/_ext/kp_metrics.pyx":10
  * 
  * 
  * cdef double m_reach(double* hop_dist, int* K_indices, int* notK_indices, int k, int n, int mdist) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16512,7 +16510,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_m_reach(double *__pyx_v_hop_d
   return __pyx_r;
 }
 
-/* "pyntacle/_ext/kp_metrics.pyx":36
+/* "pyntacle/_ext/kp_metrics.pyx":35
  * 
  * 
  * cdef double get_distance_weighted_reach(double* all_dist, int* K_indices, int* notK_indices, int k, int n) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16533,7 +16531,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_weighted_reach(d
   int __pyx_t_3;
   int __pyx_t_4;
 
-  /* "pyntacle/_ext/kp_metrics.pyx":45
+  /* "pyntacle/_ext/kp_metrics.pyx":44
  *     cdef int i, j
  *     cdef int k_node, notK_node
  *     cdef double dR = 0             # <<<<<<<<<<<<<<
@@ -16542,7 +16540,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_weighted_reach(d
 */
   __pyx_v_dR = 0.0;
 
-  /* "pyntacle/_ext/kp_metrics.pyx":48
+  /* "pyntacle/_ext/kp_metrics.pyx":47
  *     cdef double min_sp
  * 
  *     for i from 0 <= i < (n - k):             # <<<<<<<<<<<<<<
@@ -16552,7 +16550,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_weighted_reach(d
   __pyx_t_1 = (__pyx_v_n - __pyx_v_k);
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_1; __pyx_v_i++) {
 
-    /* "pyntacle/_ext/kp_metrics.pyx":50
+    /* "pyntacle/_ext/kp_metrics.pyx":49
  *     for i from 0 <= i < (n - k):
  * 
  *         notK_node = notK_indices[i]             # <<<<<<<<<<<<<<
@@ -16561,7 +16559,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_weighted_reach(d
 */
     __pyx_v_notK_node = (__pyx_v_notK_indices[__pyx_v_i]);
 
-    /* "pyntacle/_ext/kp_metrics.pyx":52
+    /* "pyntacle/_ext/kp_metrics.pyx":51
  *         notK_node = notK_indices[i]
  * 
  *         min_sp = INFINITY             # <<<<<<<<<<<<<<
@@ -16570,7 +16568,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_weighted_reach(d
 */
     __pyx_v_min_sp = INFINITY;
 
-    /* "pyntacle/_ext/kp_metrics.pyx":54
+    /* "pyntacle/_ext/kp_metrics.pyx":53
  *         min_sp = INFINITY
  * 
  *         for j from 0 <= j < k:             # <<<<<<<<<<<<<<
@@ -16580,7 +16578,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_weighted_reach(d
     __pyx_t_2 = __pyx_v_k;
     for (__pyx_v_j = 0; __pyx_v_j < __pyx_t_2; __pyx_v_j++) {
 
-      /* "pyntacle/_ext/kp_metrics.pyx":57
+      /* "pyntacle/_ext/kp_metrics.pyx":56
  * 
  *             # need to find the min between all sp between a notK and K
  *             k_node = K_indices[j]             # <<<<<<<<<<<<<<
@@ -16589,7 +16587,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_weighted_reach(d
 */
       __pyx_v_k_node = (__pyx_v_K_indices[__pyx_v_j]);
 
-      /* "pyntacle/_ext/kp_metrics.pyx":59
+      /* "pyntacle/_ext/kp_metrics.pyx":58
  *             k_node = K_indices[j]
  * 
  *             if min_sp > all_dist[notK_node * n + k_node]:             # <<<<<<<<<<<<<<
@@ -16599,7 +16597,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_weighted_reach(d
       __pyx_t_3 = (__pyx_v_min_sp > (__pyx_v_all_dist[((__pyx_v_notK_node * __pyx_v_n) + __pyx_v_k_node)]));
       if (__pyx_t_3) {
 
-        /* "pyntacle/_ext/kp_metrics.pyx":60
+        /* "pyntacle/_ext/kp_metrics.pyx":59
  * 
  *             if min_sp > all_dist[notK_node * n + k_node]:
  *                 min_sp = all_dist[notK_node * n + k_node]             # <<<<<<<<<<<<<<
@@ -16608,7 +16606,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_weighted_reach(d
 */
         __pyx_v_min_sp = (__pyx_v_all_dist[((__pyx_v_notK_node * __pyx_v_n) + __pyx_v_k_node)]);
 
-        /* "pyntacle/_ext/kp_metrics.pyx":59
+        /* "pyntacle/_ext/kp_metrics.pyx":58
  *             k_node = K_indices[j]
  * 
  *             if min_sp > all_dist[notK_node * n + k_node]:             # <<<<<<<<<<<<<<
@@ -16618,7 +16616,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_weighted_reach(d
       }
     }
 
-    /* "pyntacle/_ext/kp_metrics.pyx":63
+    /* "pyntacle/_ext/kp_metrics.pyx":62
  * 
  *         # an unreachable node contributes no reach at all
  *         if not isinf(min_sp) and min_sp > 0.:             # <<<<<<<<<<<<<<
@@ -16636,7 +16634,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_weighted_reach(d
     __pyx_L9_bool_binop_done:;
     if (__pyx_t_3) {
 
-      /* "pyntacle/_ext/kp_metrics.pyx":64
+      /* "pyntacle/_ext/kp_metrics.pyx":63
  *         # an unreachable node contributes no reach at all
  *         if not isinf(min_sp) and min_sp > 0.:
  *             dR += 1. / min_sp             # <<<<<<<<<<<<<<
@@ -16645,7 +16643,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_weighted_reach(d
 */
       __pyx_v_dR = (__pyx_v_dR + (1. / __pyx_v_min_sp));
 
-      /* "pyntacle/_ext/kp_metrics.pyx":63
+      /* "pyntacle/_ext/kp_metrics.pyx":62
  * 
  *         # an unreachable node contributes no reach at all
  *         if not isinf(min_sp) and min_sp > 0.:             # <<<<<<<<<<<<<<
@@ -16655,7 +16653,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_weighted_reach(d
     }
   }
 
-  /* "pyntacle/_ext/kp_metrics.pyx":66
+  /* "pyntacle/_ext/kp_metrics.pyx":65
  *             dR += 1. / min_sp
  * 
  *     return dR / n             # <<<<<<<<<<<<<<
@@ -16665,7 +16663,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_weighted_reach(d
   __pyx_r = (__pyx_v_dR / ((double)__pyx_v_n));
   goto __pyx_L0;
 
-  /* "pyntacle/_ext/kp_metrics.pyx":36
+  /* "pyntacle/_ext/kp_metrics.pyx":35
  * 
  * 
  * cdef double get_distance_weighted_reach(double* all_dist, int* K_indices, int* notK_indices, int k, int n) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16678,7 +16676,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_weighted_reach(d
   return __pyx_r;
 }
 
-/* "pyntacle/_ext/kp_metrics.pyx":69
+/* "pyntacle/_ext/kp_metrics.pyx":68
  * 
  * 
  * cdef double get_fragmentation(utils.CSR* g, utils.Scratch* s, int* K_indices, int k) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16697,7 +16695,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_fragmentation(struct __py
   int __pyx_t_2;
   int __pyx_t_3;
 
-  /* "pyntacle/_ext/kp_metrics.pyx":74
+  /* "pyntacle/_ext/kp_metrics.pyx":73
  *     Flood fill over the CSR built once by the caller.
  *     """
  *     cdef int n = g.n             # <<<<<<<<<<<<<<
@@ -16707,7 +16705,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_fragmentation(struct __py
   __pyx_t_1 = __pyx_v_g->n;
   __pyx_v_n = __pyx_t_1;
 
-  /* "pyntacle/_ext/kp_metrics.pyx":76
+  /* "pyntacle/_ext/kp_metrics.pyx":75
  *     cdef int n = g.n
  *     cdef int i, comp_num
  *     cdef double component_f = 0.             # <<<<<<<<<<<<<<
@@ -16716,7 +16714,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_fragmentation(struct __py
 */
   __pyx_v_component_f = 0.;
 
-  /* "pyntacle/_ext/kp_metrics.pyx":77
+  /* "pyntacle/_ext/kp_metrics.pyx":76
  *     cdef int i, comp_num
  *     cdef double component_f = 0.
  *     cdef double denom = (<double> (n - k)) * ((n - k) - 1)             # <<<<<<<<<<<<<<
@@ -16725,7 +16723,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_fragmentation(struct __py
 */
   __pyx_v_denom = (((double)(__pyx_v_n - __pyx_v_k)) * ((__pyx_v_n - __pyx_v_k) - 1));
 
-  /* "pyntacle/_ext/kp_metrics.pyx":79
+  /* "pyntacle/_ext/kp_metrics.pyx":78
  *     cdef double denom = (<double> (n - k)) * ((n - k) - 1)
  * 
  *     utils.mark_group(s, K_indices, k)             # <<<<<<<<<<<<<<
@@ -16734,7 +16732,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_fragmentation(struct __py
 */
   __pyx_f_8pyntacle_4_ext_5utils_mark_group(__pyx_v_s, __pyx_v_K_indices, __pyx_v_k);
 
-  /* "pyntacle/_ext/kp_metrics.pyx":80
+  /* "pyntacle/_ext/kp_metrics.pyx":79
  * 
  *     utils.mark_group(s, K_indices, k)
  *     comp_num = utils.csr_components(g, s.in_K, s.comp_size, s.stack, s.visited)             # <<<<<<<<<<<<<<
@@ -16743,7 +16741,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_fragmentation(struct __py
 */
   __pyx_v_comp_num = __pyx_f_8pyntacle_4_ext_5utils_csr_components(__pyx_v_g, __pyx_v_s->in_K, __pyx_v_s->comp_size, __pyx_v_s->stack, __pyx_v_s->visited);
 
-  /* "pyntacle/_ext/kp_metrics.pyx":82
+  /* "pyntacle/_ext/kp_metrics.pyx":81
  *     comp_num = utils.csr_components(g, s.in_K, s.comp_size, s.stack, s.visited)
  * 
  *     if comp_num <= 1 or denom <= 0.:             # <<<<<<<<<<<<<<
@@ -16761,7 +16759,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_fragmentation(struct __py
   __pyx_L4_bool_binop_done:;
   if (__pyx_t_2) {
 
-    /* "pyntacle/_ext/kp_metrics.pyx":83
+    /* "pyntacle/_ext/kp_metrics.pyx":82
  * 
  *     if comp_num <= 1 or denom <= 0.:
  *         return 0.             # <<<<<<<<<<<<<<
@@ -16771,7 +16769,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_fragmentation(struct __py
     __pyx_r = 0.;
     goto __pyx_L0;
 
-    /* "pyntacle/_ext/kp_metrics.pyx":82
+    /* "pyntacle/_ext/kp_metrics.pyx":81
  *     comp_num = utils.csr_components(g, s.in_K, s.comp_size, s.stack, s.visited)
  * 
  *     if comp_num <= 1 or denom <= 0.:             # <<<<<<<<<<<<<<
@@ -16780,7 +16778,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_fragmentation(struct __py
 */
   }
 
-  /* "pyntacle/_ext/kp_metrics.pyx":85
+  /* "pyntacle/_ext/kp_metrics.pyx":84
  *         return 0.
  * 
  *     for i from 0 <= i < comp_num:             # <<<<<<<<<<<<<<
@@ -16790,7 +16788,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_fragmentation(struct __py
   __pyx_t_1 = __pyx_v_comp_num;
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_1; __pyx_v_i++) {
 
-    /* "pyntacle/_ext/kp_metrics.pyx":86
+    /* "pyntacle/_ext/kp_metrics.pyx":85
  * 
  *     for i from 0 <= i < comp_num:
  *         component_f += (<double> s.comp_size[i]) * (s.comp_size[i] - 1)             # <<<<<<<<<<<<<<
@@ -16800,7 +16798,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_fragmentation(struct __py
     __pyx_v_component_f = (__pyx_v_component_f + (((double)(__pyx_v_s->comp_size[__pyx_v_i])) * ((__pyx_v_s->comp_size[__pyx_v_i]) - 1)));
   }
 
-  /* "pyntacle/_ext/kp_metrics.pyx":88
+  /* "pyntacle/_ext/kp_metrics.pyx":87
  *         component_f += (<double> s.comp_size[i]) * (s.comp_size[i] - 1)
  * 
  *     return 1. - (component_f / denom)             # <<<<<<<<<<<<<<
@@ -16810,7 +16808,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_fragmentation(struct __py
   __pyx_r = (1. - (__pyx_v_component_f / __pyx_v_denom));
   goto __pyx_L0;
 
-  /* "pyntacle/_ext/kp_metrics.pyx":69
+  /* "pyntacle/_ext/kp_metrics.pyx":68
  * 
  * 
  * cdef double get_fragmentation(utils.CSR* g, utils.Scratch* s, int* K_indices, int k) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16823,7 +16821,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_fragmentation(struct __py
   return __pyx_r;
 }
 
-/* "pyntacle/_ext/kp_metrics.pyx":91
+/* "pyntacle/_ext/kp_metrics.pyx":90
  * 
  * 
  * cdef double get_distance_fragmentation(utils.CSR* g, utils.Scratch* s, int* K_indices, int k, bint unweighted) noexcept nogil:             # <<<<<<<<<<<<<<
@@ -16845,7 +16843,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
   int __pyx_t_3;
   int __pyx_t_4;
 
-  /* "pyntacle/_ext/kp_metrics.pyx":96
+  /* "pyntacle/_ext/kp_metrics.pyx":95
  *     One source at a time, accumulating into a single row of length n.
  *     """
  *     cdef int n = g.n             # <<<<<<<<<<<<<<
@@ -16855,7 +16853,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
   __pyx_t_1 = __pyx_v_g->n;
   __pyx_v_n = __pyx_t_1;
 
-  /* "pyntacle/_ext/kp_metrics.pyx":98
+  /* "pyntacle/_ext/kp_metrics.pyx":97
  *     cdef int n = g.n
  *     cdef int i, j
  *     cdef double df_num = 0.             # <<<<<<<<<<<<<<
@@ -16864,7 +16862,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
 */
   __pyx_v_df_num = 0.;
 
-  /* "pyntacle/_ext/kp_metrics.pyx":101
+  /* "pyntacle/_ext/kp_metrics.pyx":100
  *     cdef double sum_sp
  *     cdef double d
  *     cdef double df_denum = (<double> (n - k)) * ((n - k) - 1)             # <<<<<<<<<<<<<<
@@ -16873,7 +16871,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
 */
   __pyx_v_df_denum = (((double)(__pyx_v_n - __pyx_v_k)) * ((__pyx_v_n - __pyx_v_k) - 1));
 
-  /* "pyntacle/_ext/kp_metrics.pyx":103
+  /* "pyntacle/_ext/kp_metrics.pyx":102
  *     cdef double df_denum = (<double> (n - k)) * ((n - k) - 1)
  * 
  *     if df_denum <= 0.:             # <<<<<<<<<<<<<<
@@ -16883,7 +16881,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
   __pyx_t_2 = (__pyx_v_df_denum <= 0.);
   if (__pyx_t_2) {
 
-    /* "pyntacle/_ext/kp_metrics.pyx":104
+    /* "pyntacle/_ext/kp_metrics.pyx":103
  * 
  *     if df_denum <= 0.:
  *         return 0.             # <<<<<<<<<<<<<<
@@ -16893,7 +16891,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
     __pyx_r = 0.;
     goto __pyx_L0;
 
-    /* "pyntacle/_ext/kp_metrics.pyx":103
+    /* "pyntacle/_ext/kp_metrics.pyx":102
  *     cdef double df_denum = (<double> (n - k)) * ((n - k) - 1)
  * 
  *     if df_denum <= 0.:             # <<<<<<<<<<<<<<
@@ -16902,7 +16900,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
 */
   }
 
-  /* "pyntacle/_ext/kp_metrics.pyx":106
+  /* "pyntacle/_ext/kp_metrics.pyx":105
  *         return 0.
  * 
  *     utils.mark_group(s, K_indices, k)             # <<<<<<<<<<<<<<
@@ -16911,7 +16909,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
 */
   __pyx_f_8pyntacle_4_ext_5utils_mark_group(__pyx_v_s, __pyx_v_K_indices, __pyx_v_k);
 
-  /* "pyntacle/_ext/kp_metrics.pyx":108
+  /* "pyntacle/_ext/kp_metrics.pyx":107
  *     utils.mark_group(s, K_indices, k)
  * 
  *     for i from 0 <= i < n:             # <<<<<<<<<<<<<<
@@ -16921,7 +16919,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
   __pyx_t_1 = __pyx_v_n;
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_1; __pyx_v_i++) {
 
-    /* "pyntacle/_ext/kp_metrics.pyx":109
+    /* "pyntacle/_ext/kp_metrics.pyx":108
  * 
  *     for i from 0 <= i < n:
  *         if s.in_K[i]:             # <<<<<<<<<<<<<<
@@ -16931,7 +16929,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
     __pyx_t_2 = ((__pyx_v_s->in_K[__pyx_v_i]) != 0);
     if (__pyx_t_2) {
 
-      /* "pyntacle/_ext/kp_metrics.pyx":110
+      /* "pyntacle/_ext/kp_metrics.pyx":109
  *     for i from 0 <= i < n:
  *         if s.in_K[i]:
  *             continue             # <<<<<<<<<<<<<<
@@ -16940,7 +16938,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
 */
       goto __pyx_L4_continue;
 
-      /* "pyntacle/_ext/kp_metrics.pyx":109
+      /* "pyntacle/_ext/kp_metrics.pyx":108
  * 
  *     for i from 0 <= i < n:
  *         if s.in_K[i]:             # <<<<<<<<<<<<<<
@@ -16949,7 +16947,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
 */
     }
 
-    /* "pyntacle/_ext/kp_metrics.pyx":112
+    /* "pyntacle/_ext/kp_metrics.pyx":111
  *             continue
  * 
  *         if unweighted:             # <<<<<<<<<<<<<<
@@ -16958,7 +16956,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
 */
     if (__pyx_v_unweighted) {
 
-      /* "pyntacle/_ext/kp_metrics.pyx":113
+      /* "pyntacle/_ext/kp_metrics.pyx":112
  * 
  *         if unweighted:
  *             utils.csr_bfs_row(g, i, s.in_K, s.dist, s.stack)             # <<<<<<<<<<<<<<
@@ -16967,7 +16965,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
 */
       __pyx_f_8pyntacle_4_ext_5utils_csr_bfs_row(__pyx_v_g, __pyx_v_i, __pyx_v_s->in_K, __pyx_v_s->dist, __pyx_v_s->stack);
 
-      /* "pyntacle/_ext/kp_metrics.pyx":112
+      /* "pyntacle/_ext/kp_metrics.pyx":111
  *             continue
  * 
  *         if unweighted:             # <<<<<<<<<<<<<<
@@ -16977,7 +16975,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
       goto __pyx_L7;
     }
 
-    /* "pyntacle/_ext/kp_metrics.pyx":115
+    /* "pyntacle/_ext/kp_metrics.pyx":114
  *             utils.csr_bfs_row(g, i, s.in_K, s.dist, s.stack)
  *         else:
  *             utils.csr_dijkstra_row(g, i, s.in_K, s.dist, s.heap, s.heap_pos)             # <<<<<<<<<<<<<<
@@ -16989,7 +16987,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
     }
     __pyx_L7:;
 
-    /* "pyntacle/_ext/kp_metrics.pyx":117
+    /* "pyntacle/_ext/kp_metrics.pyx":116
  *             utils.csr_dijkstra_row(g, i, s.in_K, s.dist, s.heap, s.heap_pos)
  * 
  *         sum_sp = 0.             # <<<<<<<<<<<<<<
@@ -16998,7 +16996,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
 */
     __pyx_v_sum_sp = 0.;
 
-    /* "pyntacle/_ext/kp_metrics.pyx":118
+    /* "pyntacle/_ext/kp_metrics.pyx":117
  * 
  *         sum_sp = 0.
  *         for j from i + 1 <= j < n:             # <<<<<<<<<<<<<<
@@ -17008,7 +17006,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
     __pyx_t_3 = __pyx_v_n;
     for (__pyx_v_j = (__pyx_v_i + 1); __pyx_v_j < __pyx_t_3; __pyx_v_j++) {
 
-      /* "pyntacle/_ext/kp_metrics.pyx":119
+      /* "pyntacle/_ext/kp_metrics.pyx":118
  *         sum_sp = 0.
  *         for j from i + 1 <= j < n:
  *             if s.in_K[j]:             # <<<<<<<<<<<<<<
@@ -17018,7 +17016,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
       __pyx_t_2 = ((__pyx_v_s->in_K[__pyx_v_j]) != 0);
       if (__pyx_t_2) {
 
-        /* "pyntacle/_ext/kp_metrics.pyx":120
+        /* "pyntacle/_ext/kp_metrics.pyx":119
  *         for j from i + 1 <= j < n:
  *             if s.in_K[j]:
  *                 continue             # <<<<<<<<<<<<<<
@@ -17027,7 +17025,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
 */
         goto __pyx_L8_continue;
 
-        /* "pyntacle/_ext/kp_metrics.pyx":119
+        /* "pyntacle/_ext/kp_metrics.pyx":118
  *         sum_sp = 0.
  *         for j from i + 1 <= j < n:
  *             if s.in_K[j]:             # <<<<<<<<<<<<<<
@@ -17036,7 +17034,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
 */
       }
 
-      /* "pyntacle/_ext/kp_metrics.pyx":121
+      /* "pyntacle/_ext/kp_metrics.pyx":120
  *             if s.in_K[j]:
  *                 continue
  *             d = s.dist[j]             # <<<<<<<<<<<<<<
@@ -17045,7 +17043,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
 */
       __pyx_v_d = (__pyx_v_s->dist[__pyx_v_j]);
 
-      /* "pyntacle/_ext/kp_metrics.pyx":122
+      /* "pyntacle/_ext/kp_metrics.pyx":121
  *                 continue
  *             d = s.dist[j]
  *             if not isinf(d) and d > 0.:             # <<<<<<<<<<<<<<
@@ -17063,7 +17061,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
       __pyx_L12_bool_binop_done:;
       if (__pyx_t_2) {
 
-        /* "pyntacle/_ext/kp_metrics.pyx":123
+        /* "pyntacle/_ext/kp_metrics.pyx":122
  *             d = s.dist[j]
  *             if not isinf(d) and d > 0.:
  *                 sum_sp += 1. / d             # <<<<<<<<<<<<<<
@@ -17072,7 +17070,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
 */
         __pyx_v_sum_sp = (__pyx_v_sum_sp + (1. / __pyx_v_d));
 
-        /* "pyntacle/_ext/kp_metrics.pyx":122
+        /* "pyntacle/_ext/kp_metrics.pyx":121
  *                 continue
  *             d = s.dist[j]
  *             if not isinf(d) and d > 0.:             # <<<<<<<<<<<<<<
@@ -17083,7 +17081,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
       __pyx_L8_continue:;
     }
 
-    /* "pyntacle/_ext/kp_metrics.pyx":125
+    /* "pyntacle/_ext/kp_metrics.pyx":124
  *                 sum_sp += 1. / d
  * 
  *         df_num += sum_sp             # <<<<<<<<<<<<<<
@@ -17094,7 +17092,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
     __pyx_L4_continue:;
   }
 
-  /* "pyntacle/_ext/kp_metrics.pyx":127
+  /* "pyntacle/_ext/kp_metrics.pyx":126
  *         df_num += sum_sp
  * 
  *     df_num *= 2             # <<<<<<<<<<<<<<
@@ -17103,7 +17101,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
 */
   __pyx_v_df_num = (__pyx_v_df_num * 2.0);
 
-  /* "pyntacle/_ext/kp_metrics.pyx":129
+  /* "pyntacle/_ext/kp_metrics.pyx":128
  *     df_num *= 2
  * 
  *     return 1 - (df_num / df_denum)             # <<<<<<<<<<<<<<
@@ -17111,7 +17109,7 @@ static double __pyx_f_8pyntacle_4_ext_10kp_metrics_get_distance_fragmentation(st
   __pyx_r = (1.0 - (__pyx_v_df_num / __pyx_v_df_denum));
   goto __pyx_L0;
 
-  /* "pyntacle/_ext/kp_metrics.pyx":91
+  /* "pyntacle/_ext/kp_metrics.pyx":90
  * 
  * 
  * cdef double get_distance_fragmentation(utils.CSR* g, utils.Scratch* s, int* K_indices, int k, bint unweighted) noexcept nogil:             # <<<<<<<<<<<<<<

@@ -146,4 +146,5 @@ These letters exist in both versions with a different meaning:
 ### Installation
 
 - Pip-installable package with a `pyntacle` command; `environment.yml` provides Python 3.10, igraph 0.10 and a C compiler (1.3.2: Python 3.7).
+- Runs on Linux and macOS. The extensions need only a C compiler; OpenMP is used when the compiler has it (on macOS, `llvm-openmp` from conda), otherwise the searches run on one thread and `-np` prints a warning.
 - Licence: GPL-3.0.

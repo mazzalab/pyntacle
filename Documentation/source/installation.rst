@@ -2,14 +2,13 @@ Installation & Setup
 ====================
 
 Pyntacle is installed from source into a conda environment. Conda provides
-igraph's C library, which Pyntacle's compiled (Cython) extensions link
-against; ``pip`` then builds those extensions and installs the ``pyntacle``
-command.
+Python, a C compiler and the dependencies; ``pip`` then compiles Pyntacle's
+Cython extensions and installs the ``pyntacle`` command.
 
 Requirements
 ------------
 
-* Linux (the platform Pyntacle is developed and tested on)
+* Linux or macOS
 * `Miniconda <https://docs.conda.io/en/latest/miniconda.html>`_ or
   `Anaconda <https://www.anaconda.com/download>`_
 * Git
@@ -25,14 +24,21 @@ Step 1 — Get the source
 Step 2 — Create the conda environment
 -------------------------------------
 
-``environment.yml`` lists Python, igraph (C library and Python bindings), a C
-compiler, Cython and every runtime dependency, including the optional ones of
+``environment.yml`` lists Python, igraph, a C compiler, Cython and every
+runtime dependency, including the optional ones of
 :doc:`omics <cli/omics/index>`:
 
 .. code-block:: bash
 
    conda env create -f environment.yml
    conda activate pyntacle
+
+On macOS, also install the OpenMP runtime, which the searches use to run on
+several threads (``-np``):
+
+.. code-block:: bash
+
+   conda install llvm-openmp
 
 Step 3 — Install Pyntacle
 -------------------------
@@ -44,7 +50,12 @@ From the root of the repository, with the environment active:
    pip install .
 
 This compiles the extensions and puts the ``pyntacle`` command on the
-``PATH``. For development, ``pip install -e .`` installs in editable mode:
+``PATH``. The build prints the OpenMP flags it uses, or a warning when the
+compiler has no OpenMP: Pyntacle then works the same, but the key-player and
+group-centrality searches run on one thread and ``-np`` is ignored.
+Setting ``PYNTACLE_NO_OPENMP=1`` builds without OpenMP on purpose.
+
+For development, ``pip install -e .`` installs in editable mode:
 Python changes take effect immediately, while changes to ``pyntacle/_ext/*.pyx``
 need ``python setup.py build_ext --inplace``.
 
@@ -137,10 +148,11 @@ compiled there first:
 Troubleshooting
 ---------------
 
-**``This build requires ... a Conda environment``**
+**``WARNING: this Pyntacle was compiled without OpenMP``**
 
-``pip install .`` was run outside the environment. Run
-``conda activate pyntacle`` and repeat Step 3.
+The build found no OpenMP for the compiler, so ``-np`` has no effect. On
+macOS, run ``conda install llvm-openmp`` in the environment (or, outside conda,
+``brew install libomp``), then ``pip install .`` again.
 
 **``ModuleNotFoundError: No module named 'pyntacle._ext.cython_metrics'``**
 

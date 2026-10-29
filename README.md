@@ -33,17 +33,22 @@ metrics give different values: [CHANGELOG.md](CHANGELOG.md) lists every change.
 
 ## Installation
 
-Pyntacle runs on Linux and needs [conda](https://docs.conda.io/en/latest/miniconda.html),
-which provides igraph's C library for the compiled extensions.
+Pyntacle runs on Linux and macOS. The [conda](https://docs.conda.io/en/latest/miniconda.html)
+environment provides Python, a C compiler and the dependencies; `pip` then
+compiles the extensions.
 
 ```bash
 git clone https://github.com/mazzalab/pyntacle.git
 cd pyntacle
 conda env create -f environment.yml
 conda activate pyntacle
+conda install llvm-openmp     # macOS only
 pip install .
 pyntacle --help
 ```
+
+On macOS, `llvm-openmp` lets the compiled searches run on several threads
+(`-np`); without it they run on one.
 
 ## Quick start
 

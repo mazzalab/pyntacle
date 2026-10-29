@@ -8,7 +8,11 @@ on:
 
 jobs:
   tests:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     defaults:
       run:
         shell: bash -el {0}
@@ -22,8 +26,14 @@ jobs:
           activate-environment: pyntacle
           conda-remove-defaults: true
 
-      - name: Compile the extensions in place
-        run: python setup.py build_ext --inplace
+      - name: OpenMP runtime (macOS)
+        if: runner.os == 'macOS'
+        run: conda install -y llvm-openmp
+
+      - name: Compile the extensions in place, with OpenMP
+        run: |
+          python setup.py build_ext --inplace
+          python -c "from pyntacle._ext.wrapper import OPENMP; assert OPENMP, 'built without OpenMP'"
 
       - name: Test suite
         run: python -m pytest tests -q
