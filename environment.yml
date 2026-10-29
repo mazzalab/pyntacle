@@ -4,15 +4,16 @@
 #   conda activate pyntacle
 #   pip install .
 #
-# On macOS also run `conda install llvm-openmp` in the environment, so the
-# compiled kernels run in parallel (-np).
+# pip compiles the extensions with the system's C compiler: gcc on Linux, the
+# Xcode Command Line Tools on macOS. On macOS also run
+# `conda install llvm-openmp` in the environment, so the compiled kernels run
+# in parallel (-np).
 name: pyntacle
 channels:
   - conda-forge
 dependencies:
   - python=3.10
   - pip
-  - c-compiler
   - cython>=3.0
   - python-igraph=0.10
   - numpy

@@ -2,13 +2,15 @@ Installation & Setup
 ====================
 
 Pyntacle is installed from source into a conda environment. Conda provides
-Python, a C compiler and the dependencies; ``pip`` then compiles Pyntacle's
-Cython extensions and installs the ``pyntacle`` command.
+Python and the dependencies; ``pip`` then compiles Pyntacle's Cython
+extensions with the system's C compiler and installs the ``pyntacle`` command.
 
 Requirements
 ------------
 
 * Linux or macOS
+* A C compiler: gcc on Linux (``build-essential`` on Debian and Ubuntu), the
+  Xcode Command Line Tools on macOS (``xcode-select --install``)
 * `Miniconda <https://docs.conda.io/en/latest/miniconda.html>`_ or
   `Anaconda <https://www.anaconda.com/download>`_
 * Git
@@ -24,8 +26,8 @@ Step 1 — Get the source
 Step 2 — Create the conda environment
 -------------------------------------
 
-``environment.yml`` lists Python, igraph, a C compiler, Cython and every
-runtime dependency, including the optional ones of
+``environment.yml`` lists Python, igraph, Cython and every runtime
+dependency, including the optional ones of
 :doc:`omics <cli/omics/index>`:
 
 .. code-block:: bash

@@ -34,8 +34,9 @@ metrics give different values: [CHANGELOG.md](CHANGELOG.md) lists every change.
 ## Installation
 
 Pyntacle runs on Linux and macOS. The [conda](https://docs.conda.io/en/latest/miniconda.html)
-environment provides Python, a C compiler and the dependencies; `pip` then
-compiles the extensions.
+environment provides Python and the dependencies; `pip` then compiles the
+extensions with the system's C compiler (gcc on Linux, the Xcode Command Line
+Tools on macOS: `xcode-select --install`).
 
 ```bash
 git clone https://github.com/mazzalab/pyntacle.git
