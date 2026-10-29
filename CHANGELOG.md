@@ -115,6 +115,7 @@ These letters exist in both versions with a different meaning:
 - 2.0 reads them from the third column of the network file (`-w`). Every metric that can use weights does: shortest-path metrics, key-player indices, group centrality, clustering, PageRank, eigenvector centrality, communities, topological importance (mesoscale) and percolation thresholds.
 - `-wt` declares what the weights mean: `distance` (default), `affinity` or `signed`. `-dt` sets how affinities become distances: `inverse` (default), `one-minus` or `neglog`.
 - Negative weights are refused unless declared `signed`; they are never turned into absolute values.
+- Edge lengths below 1 let dR and group closeness exceed 1 and dF fall below 0. The scores are reported as computed, with a warning.
 
 ### Removed
 

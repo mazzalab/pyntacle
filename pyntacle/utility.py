@@ -344,8 +344,8 @@ def validate_weights(weights, warn_sub_unit=True):
     two apart downstream, so refuse the input here rather than return a wrong
     number.
 
-    Sub-unit weights are legal but let dR and group closeness exceed 1, so
-    they earn a warning.
+    Sub-unit weights are legal but let dR and group closeness exceed 1 and dF
+    fall below 0, so they earn a warning.
     """
     if isinstance(weights, (int, float)):
         weights = [weights]
@@ -368,7 +368,10 @@ def validate_weights(weights, warn_sub_unit=True):
     if warn_sub_unit and any(0.0 < w < 1.0 for w in numeric):
         warnings.warn(
             "some edge lengths (the weights read as distances) are below 1, so dR and "
-            "group closeness can exceed 1 for this input.",
+            "group closeness can exceed 1 and dF can be negative for this input. "
+            "Multiplying every length by one factor, so that the shortest is at least 1, "
+            "keeps these scores in [0, 1] and leaves the optimal key-player and group "
+            "sets unchanged.",
             RuntimeWarning, stacklevel=2)
 
 

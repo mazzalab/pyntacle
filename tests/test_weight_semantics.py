@@ -241,3 +241,38 @@ def test_kernels_refuse_a_negative_length():
     g.es["weight"] = [1.0, -0.5]
     with pytest.raises(ValueError, match="signed"):
         _edges(g)
+
+
+# ---------- dF with lengths below 1 -------------------------------------------
+
+@pytest.mark.parametrize("engine", ["cython", "python"])
+def test_df_below_zero_is_reported_as_computed(tmp_path, engine):
+    # removing A leaves B, C, D, E: four pairs at length 0.25 and two at 0.5,
+    # so dF = 1 - 2 * (4 * 4 + 2 * 2) / (4 * 3) = -7/3
+    path = _write(tmp_path, "short.txt", [("A", "B", 0.25), ("B", "C", 0.25), ("C", "D", 0.25),
+                                          ("D", "E", 0.25), ("A", "C", 0.25), ("B", "D", 0.25)])
+    out = tmp_path / f"kp_{engine}"
+    out.mkdir()
+    res = run_cli("keyplayer", "kp-info", "-i", path, "-t", "edgelist", "-w", "-wt", "distance",
+                  "-n", "A", "-oper", "dF", "--engine", engine, "-o", str(out), "--no-plot")
+    assert res.returncode == 0, res.stdout[-1500:] + res.stderr[-1500:]
+    assert "could not score" not in res.stdout + res.stderr
+    assert "dF can be negative" in res.stdout + res.stderr
+    report = [f for f in os.listdir(out) if f.endswith(".tsv")][0]
+    table = _table(str(out / report), "Operation")
+    assert table["Score"].iloc[0] == pytest.approx(-7 / 3, abs=1e-3)
+
+
+def test_python_df_of_a_weighted_complete_graph_uses_the_lengths():
+    from pyntacle.algorithms.key_player import distance_fragmentation
+    g = ig.Graph.Full(3)
+    assert distance_fragmentation(g) == 0.0
+    g.es["weight"] = [2.0] * 3
+    assert distance_fragmentation(g) == pytest.approx(0.5)
+
+
+def test_only_group_closeness_reads_minus_one_as_a_failure():
+    from pyntacle._ext.wrapper import _finalize
+    with pytest.warns(RuntimeWarning, match="cannot reach"):
+        assert _finalize(-1.0, "closeness", ["A"]) == 0.0
+    assert _finalize(-1.0, "dF") == -1.0

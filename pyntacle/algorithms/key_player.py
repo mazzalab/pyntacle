@@ -76,16 +76,21 @@ def distance_fragmentation(grafo):
     """Compute KPP-Neg distance-fragmentation (dF) of a graph.
 
     dF is the complement of the harmonic sum of pairwise inverse distances.
-    It equals 0 for a complete graph and approaches 1 as the graph fragments.
+    It equals 0 for an unweighted complete graph and approaches 1 as the graph
+    fragments.
 
     Args:
         grafo: An igraph Graph object.
 
     Returns:
-        float: dF score in [0, 1].
+        float: dF score, at most 1. It lies in [0, 1] when every distance is at
+        least 1 and is negative when the distances are below 1.
     """
-                                                               
+
     num_nodes = grafo.vcount()
+    if num_nodes < 2:  # no pair to separate, as in the compiled kernel
+        return 0.0
+
     num_edges = grafo.ecount()
 
     # a complete graph has n(n-1)/2 edges when undirected and n(n-1) when directed
@@ -93,7 +98,9 @@ def distance_fragmentation(grafo):
     if not grafo.is_directed():
         max_edges /= 2
 
-    if num_edges == max_edges:  # graph is complete, dF is 0
+    # every distance of an unweighted complete graph is 1, so dF is 0; with
+    # weights the distances are the path lengths and dF must be computed
+    if num_edges == max_edges and edge_weights_or_none(grafo) is None:
         return 0.0
 
     return distance_fragmentation_Borgatti(grafo)

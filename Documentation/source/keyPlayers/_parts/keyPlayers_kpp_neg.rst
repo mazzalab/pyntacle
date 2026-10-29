@@ -26,3 +26,6 @@ Let :math:`d_{ij}` be the shortest-path distance between nodes :math:`i` and :ma
 This score increases when the residual network is more “virtually disconnected”, either because it splits into many components or because path lengths within components are large.
 
 Implementation note: in Pyntacle, shortest paths for :math:`dF` are computed using edge weights (if present).
+With weights, :math:`dF` lies in [0, 1] only when every distance is at least 1: shorter distances make it
+negative. Pyntacle reports the value as computed and warns. Multiplying every edge length by one factor, so
+that the shortest is at least 1, brings :math:`dF` back to [0, 1] and leaves the optimal sets unchanged.

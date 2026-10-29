@@ -165,8 +165,8 @@ For ``--operation all``, the data section has three columns:
      - ``['NodeA', 'NodeB']``
      - The optimal (or best-found) node set of size k
    * - ``Score``
-     - float in [0, 1] or count
-     - Metric score for that node set. F, dF, dR ∈ [0,1]; mreach is a raw count.
+     - float or count
+     - Metric score for that node set. F ∈ [0,1]; dF and dR ∈ [0,1] when every edge length is at least 1 (see :doc:`weights`); mreach is a raw count.
 
 **Example (greedy, k=2, operation=all, --seed 1):**
 

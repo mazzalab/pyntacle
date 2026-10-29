@@ -87,16 +87,17 @@ def _edges(graph):
 
 
 def _finalize(score, oper, nodes=None):
-    """Turn the kernels' -1 failure signal into a warning plus a neutral score."""
-    if score is not None and score < 0:
-        if oper == "closeness":
-            warnings.warn(
-                f"Node set {nodes if nodes is not None else ''} cannot reach the rest "
-                "of the network with the requested distance type. Returning 0.",
-                RuntimeWarning, stacklevel=3)
-        else:
-            warnings.warn(f"The '{oper}' kernel could not score this network. Returning 0.",
-                          RuntimeWarning, stacklevel=3)
+    """Turn the group-closeness kernel's -1 failure signal into a warning plus 0.
+
+    Group closeness is the only kernel with a failure signal. Every other score
+    is returned as computed: dF, in particular, is negative when the distances
+    in the network are below 1.
+    """
+    if oper == "closeness" and score is not None and score < 0:
+        warnings.warn(
+            f"Node set {nodes if nodes is not None else ''} cannot reach the rest "
+            "of the network with the requested distance type. Returning 0.",
+            RuntimeWarning, stacklevel=3)
         return 0.0
     return score
 
